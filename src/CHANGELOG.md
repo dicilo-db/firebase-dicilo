@@ -4,6 +4,16 @@ Este documento registra los 30 cambios más recientes realizados en el proyecto.
 
 ---
 
+### **149. FIX: CORRECCIÓN FINAL DE TRADUCCIONES EN FORMULARIO DE REGISTRO (BOTÓN Y MENSAJE) - CÓDIGO: I18N-REGISTER-FINAL-FIX-V2**
+
+- **Fecha y Hora:** 21 de Septiembre de 2025, 15:45 (CET)
+- **Módulos Afectados:** `src/locales/de/register.json`, `src/locales/en/register.json`, `src/locales/es/register.json`, `CHANGELOG.md`.
+- **Descripción del Cambio:**
+  - **Análisis del Problema:** Tras la corrección anterior, persistían dos claves de traducción sin resolver en el formulario de registro: el texto del botón de envío (`submitButton`) y el mensaje de éxito (`successDescription`). El problema se debía a que estas claves estaban anidadas incorrectamente dentro de la estructura de los archivos de traducción.
+  - **Solución Implementada:** Se ha reestructurado los archivos `register.json` para los tres idiomas (alemán, inglés y español), moviendo las claves `submitButton`, `successTitle`, `successDescription`, `errorTitle` y `submitError` al nivel superior del objeto `register`, asegurando que el componente `RegistrationForm.tsx` pueda encontrarlas y renderizarlas correctamente.
+  - **Resultado:** El formulario de registro ahora muestra correctamente todos los textos traducidos, incluyendo el botón de envío y los mensajes de notificación, completando así todas las correcciones de internacionalización en esta sección.
+  - **Documentación:** Se ha registrado esta corrección final en el `CHANGELOG.md`.
+
 ### **148. FIX: CORRECCIÓN FINAL DE TRADUCCIONES EN FORMULARIO DE REGISTRO - CÓDIGO: I18N-REGISTER-FINAL-FIX-V1**
 
 - **Fecha y Hora:** 21 de Septiembre de 2025, 15:30 (CET)
@@ -207,6 +217,7 @@ Este documento registra los 30 cambios más recientes realizados en el proyecto.
   - **Solución Arquitectónica (Deep Merge):** Se ha implementado una solución robusta y definitiva. Ahora, la función `onSubmit` primero obtiene el documento original completo desde Firestore. Luego, utiliza la función `_.merge` de `lodash` para realizar una "fusión profunda" (deep merge), combinando de manera inteligente y recursiva los nuevos datos del formulario sobre los datos existentes.
   - **Integridad de Datos Garantizada:** Este enfoque asegura que solo los campos que el usuario ha modificado explícitamente se actualizan, mientras que todos los demás campos, especialmente los anidados, conservan sus valores originales. Se elimina de raíz el riesgo de borrado accidental de datos.
   - **Documentación:** Se registra esta corrección arquitectónica fundamental en el `CHANGELOG.md` como la solución final al problema de guardado.
+
 
 
 
