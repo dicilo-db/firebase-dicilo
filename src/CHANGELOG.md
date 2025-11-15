@@ -4,6 +4,16 @@ Este documento registra los 30 cambios más recientes realizados en el proyecto.
 
 ---
 
+### **141. FIX: CORRECCIÓN DE INFORMACIÓN LEGAL EN PÁGINA "DATENSCHUTZ" - CÓDIGO: LEGAL-PRIVACY-UPDATE-V1**
+
+- **Fecha y Hora:** 21 de Septiembre de 2025, 13:00 (CET)
+- **Módulos Afectados:** `src/locales/de/privacy.json`, `src/locales/en/privacy.json`, `src/locales/es/privacy.json`, `CHANGELOG.md`.
+- **Descripción del Cambio:**
+  - **Análisis del Problema:** La información de la empresa responsable en la página de Política de Privacidad (`/datenschutz`) era incorrecta y no coincidía con la del Impressum.
+  - **Solución Implementada:** Se han actualizado los archivos de traducción `privacy.json` para los tres idiomas (alemán, inglés y español), reemplazando los datos incorrectos de "MHC-Interational Services S.L." por los datos correctos de "MILENIUM HOLDING & CONSULTING (UG)" y su dirección en Hamburgo.
+  - **Resultado:** La página de Política de Privacidad ahora muestra la información legal correcta y consistente en todos los idiomas.
+  - **Documentación:** Se ha registrado esta importante corrección de contenido en el `CHANGELOG.md`.
+
 ### **140. FIX: CARGA DE TRADUCCIONES PARA PÁGINA "DATENSCHUTZ" (PRIVACIDAD) - CÓDIGO: I18N-PRIVACY-FIX-V1**
 
 - **Fecha y Hora:** 21 de Septiembre de 2025, 12:30 (CET)
