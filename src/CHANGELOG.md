@@ -4,6 +4,16 @@ Este documento registra los 30 cambios más recientes realizados en el proyecto.
 
 ---
 
+### **144. FIX: CORRECCIÓN DE Z-INDEX EN FORMULARIO DE RECOMENDACIÓN - CÓDIGO: FIX-FORM-ZINDEX-V1**
+
+- **Fecha y Hora:** 21 de Septiembre de 2025, 14:00 (CET)
+- **Módulos Afectados:** `src/components/RecommendationForm.tsx`, `CHANGELOG.md`.
+- **Descripción del Cambio:**
+  - **Análisis del Problema:** Se detectó un error de visualización en la página de búsqueda, donde el formulario modal para recomendar una nueva empresa aparecía parcialmente oculto detrás del mapa y la lista de resultados. Esto se debía a un conflicto en el orden de apilamiento de los elementos (`z-index`).
+  - **Solución Implementada:** Se ha aplicado una corrección simple y directa al componente `RecommendationForm.tsx`, aumentando el valor de `z-index` del `DialogContent` a `z-[1000]`. Esto asegura que el formulario modal siempre se renderice en una capa superior, por encima de todos los demás elementos de la página.
+  - **Resultado:** El formulario de recomendación ahora se muestra correctamente en primer plano, permitiendo una interacción fluida por parte del usuario sin problemas de visibilidad.
+  - **Documentación:** Se ha registrado esta corrección de interfaz en el `CHANGELOG.md`.
+
 ### **143. FIX: CARGA DE TRADUCCIONES PARA PÁGINA "FAQ" - CÓDIGO: I18N-FAQ-FIX-V1**
 
 - **Fecha y Hora:** 21 de Septiembre de 2025, 13:30 (CET)

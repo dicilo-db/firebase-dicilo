@@ -97,7 +97,7 @@ export function RecommendationForm({
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] z-[1000]">
         <DialogHeader>
           <DialogTitle>{t('form.title')}</DialogTitle>
           <DialogDescription>{t('form.description')}</DialogDescription>
