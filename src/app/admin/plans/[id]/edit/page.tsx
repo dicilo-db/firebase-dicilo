@@ -10,7 +10,7 @@ import { z } from 'zod';
 import { doc, getDoc, updateDoc, getFirestore } from 'firebase/firestore';
 import { app } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
-import { useTranslations } from 'next-intl';
+import { useTranslation } from 'react-i18next';
 import {
   Card,
   CardContent,
@@ -49,7 +49,9 @@ const planSchema = z.object({
 
 type PlanFormData = z.infer<typeof planSchema>;
 
-const EditPlanSkeleton = () => (
+const EditPlanSkeleton = () => {
+  const { t } = useTranslation('admin');
+  return (
   <div className="space-y-6 p-8">
     <Skeleton className="h-8 w-48" />
     <Card>
@@ -67,7 +69,7 @@ const EditPlanSkeleton = () => (
       </CardContent>
     </Card>
   </div>
-);
+)};
 
 export default function EditPlanPage() {
   useAuthGuard();
@@ -76,7 +78,7 @@ export default function EditPlanPage() {
   const params = useParams();
   const id = params.id as string;
   const { toast } = useToast();
-  const t = useTranslations();
+  const { t } = useTranslation('admin');
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -112,11 +114,11 @@ export default function EditPlanPage() {
             };
             reset(formData as PlanFormData);
           } else {
-            toast({ title: t('admin.plans.notFound'), variant: 'destructive' });
+            toast({ title: t('plans.notFound'), variant: 'destructive' });
             router.push('/admin/plans');
           }
         } catch (error) {
-          toast({ title: t('admin.plans.fetchError'), variant: 'destructive' });
+          toast({ title: t('plans.fetchError'), variant: 'destructive' });
           router.push('/admin/plans');
         } finally {
           setIsLoading(false);
@@ -139,10 +141,10 @@ export default function EditPlanPage() {
       const docRef = doc(db, 'pricing_plans', id);
       await updateDoc(docRef, planData);
 
-      toast({ title: t('admin.plans.edit.saveSuccess') });
+      toast({ title: t('plans.edit.saveSuccess') });
       router.push('/admin/plans');
     } catch (error) {
-      toast({ title: t('admin.plans.edit.saveError'), variant: 'destructive' });
+      toast({ title: t('plans.edit.saveError'), variant: 'destructive' });
     } finally {
       setIsSubmitting(false);
     }
@@ -155,24 +157,24 @@ export default function EditPlanPage() {
   return (
     <div className="p-8">
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-bold">{t('admin.plans.edit.title')}</h1>
+        <h1 className="text-2xl font-bold">{t('plans.edit.title')}</h1>
         <Button variant="outline" asChild>
           <Link href="/admin/plans">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            {t('admin.plans.back')}
+            {t('plans.back')}
           </Link>
         </Button>
       </div>
       <Card>
         <CardHeader>
           <CardTitle>{getValues('title')}</CardTitle>
-          <CardDescription>{t('admin.plans.edit.description')}</CardDescription>
+          <CardDescription>{t('plans.edit.description')}</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="title">{t('admin.plans.fields.title')}</Label>
+                <Label htmlFor="title">{t('plans.fields.title')}</Label>
                 <Input
                   id="title"
                   {...register('title')}
@@ -185,7 +187,7 @@ export default function EditPlanPage() {
                 )}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="price">{t('admin.plans.fields.price')}</Label>
+                <Label htmlFor="price">{t('plans.fields.price')}</Label>
                 <Input
                   id="price"
                   {...register('price')}
@@ -199,7 +201,7 @@ export default function EditPlanPage() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="language">
-                  {t('admin.plans.fields.language')}
+                  {t('plans.fields.language')}
                 </Label>
                 <Controller
                   name="language"
@@ -214,7 +216,7 @@ export default function EditPlanPage() {
                       >
                         <SelectValue
                           placeholder={t(
-                            'admin.plans.fields.languagePlaceholder'
+                            'plans.fields.languagePlaceholder'
                           )}
                         />
                       </SelectTrigger>
@@ -233,12 +235,12 @@ export default function EditPlanPage() {
                 )}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="period">{t('admin.plans.fields.period')}</Label>
+                <Label htmlFor="period">{t('plans.fields.period')}</Label>
                 <Input id="period" {...register('period')} />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="buttonText">
-                  {t('admin.plans.fields.buttonText')}
+                  {t('plans.fields.buttonText')}
                 </Label>
                 <Input
                   id="buttonText"
@@ -252,7 +254,7 @@ export default function EditPlanPage() {
                 )}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="order">{t('admin.plans.fields.order')}</Label>
+                <Label htmlFor="order">{t('plans.fields.order')}</Label>
                 <Input
                   id="order"
                   type="number"
@@ -268,7 +270,7 @@ export default function EditPlanPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="features">
-                {t('admin.plans.fields.features')}
+                {t('plans.fields.features')}
               </Label>
               <Textarea
                 id="features"
@@ -277,7 +279,7 @@ export default function EditPlanPage() {
                 className={errors.features ? 'border-destructive' : ''}
               />
               <p className="text-xs text-muted-foreground">
-                {t('admin.plans.fields.featuresHelp')}
+                {t('plans.fields.featuresHelp')}
               </p>
               {errors.features && (
                 <p className="text-sm text-destructive">
@@ -298,7 +300,7 @@ export default function EditPlanPage() {
                 )}
               />
               <Label htmlFor="isPopular">
-                {t('admin.plans.fields.isPopular')}
+                {t('plans.fields.isPopular')}
               </Label>
             </div>
             <div className="flex justify-end">
@@ -306,7 +308,7 @@ export default function EditPlanPage() {
                 {isSubmitting && (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 )}
-                {t('admin.plans.edit.saveButton')}
+                {t('plans.edit.saveButton')}
               </Button>
             </div>
           </form>

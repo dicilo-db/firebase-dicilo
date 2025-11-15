@@ -1,10 +1,10 @@
 // src/app/forms/embed/[clientId]/page.tsx
+'use client';
 import { getFirestore, doc, getDoc } from 'firebase/firestore';
 import { app } from '@/lib/firebase';
 import { notFound } from 'next/navigation';
 import RecommendationFormForClient from './form-client';
-import { NextIntlClientProvider, useMessages } from 'next-intl';
-import { getMessages, getTranslations } from 'next-intl/server';
+import { useEffect, useState } from 'react';
 
 const db = getFirestore(app);
 
@@ -24,24 +24,35 @@ async function getClientProducts(
   }
 }
 
-// Esto es necesario para que el provider de `next-intl` funcione en esta página aislada.
-export default async function EmbedFormPage({
+export default function EmbedFormPage({
   params,
 }: {
-  params: { clientId: string; locale: string };
+  params: { clientId: string };
 }) {
-  const products = await getClientProducts(params.clientId);
-  const messages = await getMessages();
+  const [products, setProducts] = useState<{ name: string; id: string }[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  if (!params.clientId) {
-    notFound();
+  useEffect(() => {
+    if (!params.clientId) {
+      notFound();
+      return;
+    }
+    const fetchProducts = async () => {
+      setLoading(true);
+      const fetchedProducts = await getClientProducts(params.clientId);
+      setProducts(fetchedProducts);
+      setLoading(false);
+    };
+    fetchProducts();
+  }, [params.clientId]);
+
+  if (loading) {
+    return <div>Loading form...</div>;
   }
 
   return (
-    <NextIntlClientProvider locale={params.locale} messages={messages}>
-      <div className="bg-background p-4">
-        <RecommendationFormForClient products={products} />
-      </div>
-    </NextIntlClientProvider>
+    <div className="bg-background p-4">
+      <RecommendationFormForClient products={products} />
+    </div>
   );
 }

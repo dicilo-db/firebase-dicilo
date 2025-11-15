@@ -1,7 +1,7 @@
 // src/app/forms/embed/[clientId]/form-client.tsx
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { useForm, Controller, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -18,7 +18,7 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
-import { useTranslations } from 'next-intl';
+import { useTranslation } from 'react-i18next';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, PlusCircle, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -57,7 +57,7 @@ const RecommendationFormForClient = ({
 }: {
   products: { name: string; id?: string }[];
 }) => {
-  const t = useTranslations();
+  const { t } = useTranslation(['form', 'legal', 'register']);
   const { toast } = useToast();
 
   const {
