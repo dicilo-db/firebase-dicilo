@@ -4,6 +4,16 @@ Este documento registra los 30 cambios más recientes realizados en el proyecto.
 
 ---
 
+### **131. FIX: RESTAURACIÓN DE LA ARQUITECTURA DE RENDERIZADO DEL SERVIDOR - CÓDIGO: SSR-FIX-FINAL**
+
+- **Fecha y Hora:** 20 de Septiembre de 2025, 18:00 (CET)
+- **Módulos Afectados:** `src/app/page.tsx`, `src/components/dicilo-search-page.tsx`, `CHANGELOG.md`.
+- **Descripción del Cambio:**
+  - **Análisis del Problema:** Se ha detectado un error crítico que provocaba una página en blanco en la ruta principal. El error se debía a un conflicto entre una página de cliente (`"use client"`) que intentaba cargar datos y un componente que esperaba recibirlos desde el servidor. Esta discrepancia en el flujo de datos rompía el renderizado de la aplicación.
+  - **Solución Implementada:** Se ha restaurado la arquitectura original y correcta para la página principal. El archivo `src/app/page.tsx` vuelve a ser un Componente de Servidor (`async function`) que obtiene los datos de los negocios de forma anticipada. Estos datos se pasan como `props` al componente `src/components/dicilo-search-page.tsx`, del cual se ha eliminado toda la lógica de carga de datos del lado del cliente.
+  - **Resultado:** Este cambio resuelve el conflicto de renderizado y el error de la página en blanco, restaurando la funcionalidad de la página de búsqueda. La aplicación ahora sigue el patrón de renderizado del servidor recomendado por Next.js, lo que mejora la eficiencia y la estabilidad.
+  - **Documentación:** Se ha registrado esta corrección arquitectónica en el `CHANGELOG.md`.
+
 ### **134. FIX: CORRECCIÓN DE ERROR DE HIDRATACIÓN EN I18N-PROVIDER - CÓDIGO: I18N-HYDRATION-FIX-V1**
 
 - **Fecha y Hora:** 20 de Septiembre de 2025, 14:00 (CET)
