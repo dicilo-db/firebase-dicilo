@@ -1,0 +1,19 @@
+{
+  "overview": "Übersicht",
+  "recommenders": "Empfehler",
+  "recommended": "Empfohlene",
+  "origin": "Herkunft",
+  "reports": "Berichte",
+  "settings": "Einstellungen",
+  "kpiTotal": "Gesendet gesamt",
+  "kpiAccepted": "Akzeptiert",
+  "kpiPending": "Ausstehend",
+  "kpiRejected": "Abgelehnt",
+  "topRecommenders": "Top-Empfehler",
+  "listRecommenders": "Liste der Empfehler",
+  "listRecommended": "Liste der Empfohlenen",
+  "originContacts": "Herkunft der Kontakte",
+  "reportsTitle": "Berichte",
+  "reportsConfig": "Konfigurieren Sie die Berichtshäufigkeit (wöchentlich, zweiwöchentlich, monatlich).",
+  "settingsTitle": "Kundeneinstellungen"
+}

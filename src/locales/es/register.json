@@ -1,0 +1,92 @@
+{
+  "register": {
+    "marketing": {
+      "title": "¡Estamos aquí para ti!",
+      "benefits_title": "Tus beneficios de un vistazo:",
+      "benefit1_title": "Máximo Ahorro",
+      "benefit1_desc": "Benefíciate de descuentos exclusivos y ofertas por tiempo limitado de marcas reconocidas.",
+      "benefit2_title": "Descubre Novedades",
+      "benefit2_desc": "Nuestro amplio catálogo ofrece una variedad de productos que superarán tus expectativas.",
+      "benefit3_title": "Mejor Calidad de Vida",
+      "benefit3_desc": "Invierte específicamente en lo que te importa.",
+      "benefit4_title": "Vive la Comunidad",
+      "benefit4_desc": "Forma parte de nuestra comunidad dedicada y comparte tu entusiasmo por las ofertas atractivas.",
+      "offer_title": "Lo que te ofrecemos:",
+      "offer1_title": "Asesoramiento Individual",
+      "offer1_desc": "Recibe recomendaciones de productos personalizadas y perfectamente adaptadas a tus necesidades.",
+      "offer2_title": "Calidad Verificada",
+      "offer2_desc": "Cada producto de nuestra gama se selecciona cuidadosamente para garantizar los más altos estándares de calidad.",
+      "offer3_title": "Máxima Seguridad",
+      "offer3_desc": "Tu compra está en buenas manos con nosotros. Trabajamos exclusivamente con socios certificados.",
+      "offer4_title": "Sostenibilidad",
+      "offer4_desc": "Toma una decisión consciente por el medio ambiente y elige entre nuestra gama de productos sostenibles.",
+      "hesitate": "¡No lo dudes más!"
+    },
+    "form": {
+      "title": "¡Registre su empresa y Gana!",
+      "description": "Recomiende a DIcilo una empresa amiga y asegure beneficios.",
+      "recommenderSection": "Tu Contacto",
+      "recommenderName": "Tu Nombre y Apellido*",
+      "recommenderContact": "Tu Email / Teléfono*",
+      "companySection": "Datos de contacto de la empresa recomendada",
+      "companyName": "Nombre de la Empresa*",
+      "companyContact": "Persona de Contacto (opcional)",
+      "companyWebsite": "Sitio Web (opcional)",
+      "companyCity": "Ciudad*",
+      "businessArea": "Sector*",
+      "diciloCode": "Código DICILO (opcional)",
+      "source": "¿Cómo nos conoció?*",
+      "sourcePlaceholder": "Por favor, seleccione",
+      "notes": "Notas (opcional)",
+      "consent": "Por la presente confirmo que he leído y acepto la cláusula de responsabilidad.",
+      "captchaLabel": "¿Cuál es la suma de",
+      "submitButton": "¡Enviar recomendación ahora!",
+      "laughingRegister": "( laughing Registrarse ahora )",
+      "successTitle": "¡Recomendación Enviada!",
+      "successDescription": "Su recomendación ha sido enviada con éxito."
+    },
+    "errors": {
+      "required": "Este campo es obligatorio.",
+      "invalid_url": "Por favor, introduce una URL válida.",
+      "consent_required": "Debes aceptar la cláusula de responsabilidad.",
+      "captcha_invalid": "La respuesta es incorrecta. Por favor, inténtalo de nuevo.",
+      "invalidEmail": "Formato de correo electrónico inválido.",
+      "requiredType": "Por favor, selecciona un tipo de registro."
+    },
+    "options": {
+      "private": "Privado",
+      "donor": "Donante",
+      "retailer": "Minorista",
+      "premium": "Premium"
+    },
+    "fields": {
+      "firstName": "Nombre",
+      "lastName": "Apellido",
+      "email": "Correo Electrónico",
+      "whatsapp": "WhatsApp",
+      "registrationType": "Tipo de Registro"
+    },
+    "submitButton": "Registrarse",
+    "successTitle": "¡Registro Exitoso!",
+    "successDescription": "Tu registro ha sido enviado con éxito.",
+    "errorTitle": "Error",
+    "submitError": "Ocurrió un error al enviar tu registro."
+  },
+  "form": {
+    "source": {
+      "customer": "Soy cliente",
+      "facebook": "Facebook",
+      "instagram": "Instagram",
+      "telegram": "Telegram",
+      "youtube": "YouTube",
+      "twitter": "Twitter",
+      "linkedin": "LinkedIn",
+      "tiktok": "TikTok",
+      "recommendation": "Recomendación directa",
+      "googleads": "Google Ads / Publicidad",
+      "dicilo": "DICILO",
+      "mhc": "Representante de MHC",
+      "other": "Otro"
+    }
+  }
+}

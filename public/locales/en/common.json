@@ -1,0 +1,194 @@
+{
+  "header": {
+    "nav": {
+      "home": "Home",
+      "benefits": "Benefits",
+      "planes": "Plans",
+      "directory": "Directory",
+      "login": "Login",
+      "register": "Register",
+      "language": "Language"
+    }
+  },
+  "footer": {
+    "imprint": "Imprint",
+    "privacy": "Privacy Policy",
+    "about": "About Us",
+    "register": "Registration"
+  },
+  "search": {
+    "title": "Your Trusted Recommendation Portal",
+    "description": "Discover the best products and services, recommended by a trustworthy community.",
+    "business": "Business",
+    "location": "Location",
+    "businessPlaceholder": "Name of the business...",
+    "locationPlaceholder": "City, region, or country...",
+    "ariaLabel": "Search for businesses or locations",
+    "ariaButtonLabel": "Start search",
+    "geolocationAriaLabel": "Use my location",
+    "businessNotFound": "Business not found",
+    "businessNotFoundDesc": "We couldn't find a business for '{query}'.",
+    "locationNotFound": "Location not found",
+    "locationNotFoundDesc": "We couldn't find a location for '{query}'.",
+    "error": "Search Error",
+    "errorDesc": "An error occurred during the search.",
+    "geolocationError": "Geolocation Error",
+    "geolocationErrorDesc": "We couldn't retrieve your location.",
+    "geolocationNotSupported": "Geolocation not supported",
+    "geolocationNotSupportedDesc": "Your browser does not support geolocation.",
+    "recommendationPortal": "The recommendation portal you can trust."
+  },
+  "mapPopup": {
+    "website": "Website"
+  },
+  "businessCard": {
+    "currentOffer": "Current Offer"
+  },
+  "impressum": {
+    "pageTitle": "Imprint",
+    "pageSubtitle": "Become part of a community that breathes innovation and success. Whether you are an established company or a curious customer, Dicilo opens the door to a universe of exclusive offers and unique business opportunities.",
+    "infoBox1": {
+      "title": "Consulting",
+      "value": "DE | ES"
+    },
+    "infoBox2": {
+      "title": "Customers",
+      "value": "NAT | INT"
+    },
+    "infoBox3": {
+      "title": "AI. Support",
+      "value": "365 | 24/7"
+    },
+    "cardTitle": "Our Imprint",
+    "legal": {
+      "title": "Information according to § 5 TMG",
+      "brand_of": "Dicilo is a brand of;"
+    },
+    "register": {
+      "title": "Commercial Register",
+      "value": "HRB 171236"
+    },
+    "court": {
+      "title": "Register Court",
+      "value": "Hamburg"
+    },
+    "representedBy": {
+      "title": "Represented by"
+    },
+    "contact": {
+      "title": "Contact",
+      "phone": "Phone",
+      "email": "Email"
+    },
+    "vat": {
+      "title": "VAT ID",
+      "description": "Value added tax identification number according to § 27 a of the Value Added Tax Act:"
+    },
+    "responsible": {
+      "title": "Editorially responsible"
+    },
+    "dispute": {
+      "title": "EU Dispute Resolution",
+      "description": "The European Commission provides a platform for online dispute resolution (ODR):",
+      "email": "Our e-mail address can be found above in the imprint."
+    },
+    "consumerDispute": {
+      "title": "Consumer Dispute Resolution/Universal Arbitration Board",
+      "description": "We are not willing or obliged to participate in dispute resolution proceedings before a consumer arbitration board."
+    }
+  },
+  "privacy": {
+    "pageTitle": "Privacy Policy",
+    "pageSubtitle": "Your privacy is important to us",
+    "cardTitle": "Privacy at a Glance",
+    "section1": {
+      "title": "1. General Information and Mandatory Information"
+    },
+    "section2": {
+      "title": "2. Hosting"
+    },
+    "section3": {
+      "title": "3. Social Media"
+    },
+    "section4": {
+      "title": "4. Newsletter"
+    },
+    "section5": {
+      "title": "5. Plugins and Tools"
+    },
+    "section6": {
+      "title": "6. Online Marketing and Affiliate Programs"
+    },
+    "section7": {
+      "title": "7. Own Services"
+    },
+    "section8": {
+      "title": "8. Payment Methods"
+    },
+    "section9": {
+      "title": "9. Audio and Video Conferencing"
+    },
+    "section10": {
+      "title": "10. Own Service: Dicilo"
+    },
+    "section11": {
+      "title": "11. Artificial Intelligence (AI)"
+    }
+  },
+  "about": {
+    "title": "About Us",
+    "subtitle": "We connect quality products with discerning consumers.",
+    "club": {
+      "title": "Join the Dicilo.net Club",
+      "description": "As a member, you'll have access to exclusive benefits, participate in our recommendation program, and be part of a community built on trust and quality.",
+      "cta": "Become a Member Now"
+    },
+    "consumers": {
+      "title": "For Consumers",
+      "description": "Find the best products and services based on real recommendations. Get access to exclusive offers and be rewarded for your participation.",
+      "cta": "Register as a Consumer"
+    },
+    "entrepreneurs": {
+      "title": "For Entrepreneurs",
+      "description": "Expand your network, increase your visibility, and build trust with your customers. Dicilo is your strategic partner for growth.",
+      "cta": "Register as an Entrepreneur"
+    },
+    "weAreDicilo": {
+      "title": "We Are DICILO",
+      "description": "We are an innovative platform that acts as a bridge between companies looking to enhance their visibility and consumers seeking high-quality products backed by real recommendations. At DICILO, we are convinced that the relationship between businesses and consumers should be based on trust, transparency, and efficiency. Our mission is simple but powerful: to bring companies offering quality products and services closer to an audience that values both the product and the shopping experience."
+    },
+    "ourMission": {
+      "title": "Our Mission"
+    },
+    "ourVision": {
+      "title": "Our Vision"
+    },
+    "ourValues": {
+      "title": "Our Values"
+    },
+    "ourServices": {
+      "title": "Our Services"
+    },
+    "businessModel": {
+      "title": "Business Model"
+    },
+    "innovation": {
+      "title": "Constant Innovation"
+    },
+    "sustainability": {
+      "title": "Sustainability and Future"
+    },
+    "community": {
+      "title": "We Connect the Community"
+    },
+    "data": {
+      "title": "Data and Opportunities"
+    }
+  },
+  "common": {
+    "yes": "Yes",
+    "no": "No",
+    "cancel": "Cancel",
+    "delete": "Delete"
+  }
+}

@@ -1,0 +1,182 @@
+{
+  "header": {
+    "nav": {
+      "benefits": "Ventajas",
+      "planes": "Planes",
+      "about": "Sobre nosotros",
+      "directory": "Directorio",
+      "login": "Iniciar Sesión",
+      "register": "Registrarse",
+      "language": "Idioma"
+    }
+  },
+  "footer": {
+    "imprint": "Aviso Legal",
+    "privacy": "Privacidad",
+    "about": "Sobre nosotros",
+    "faq": "FAQ",
+    "register": "Registrarse"
+  },
+  "search": {
+    "title": "Descubre Negocios Recomendados",
+    "description": "Encuentra los mejores productos y servicios cerca de ti o en tu próximo destino.",
+    "businessType": "Negocio",
+    "locationType": "Ubicación",
+    "businessPlaceholder": "Nombre del negocio o palabra clave...",
+    "locationPlaceholder": "Ciudad, región o país...",
+    "searchLabel": "Buscar",
+    "useLocationLabel": "Ubicación Actual",
+    "locationErrorTitle": "Error de Ubicación",
+    "locationErrorDesc": "Dirección o ubicación desconocida.",
+    "geolocationErrorTitle": "Error de GPS",
+    "geolocationErrorDesc": "No pudimos obtener tu ubicación.",
+    "geolocationNotSupportedTitle": "GPS no Soportado",
+    "geolocationNotSupportedDesc": "Tu navegador no soporta la búsqueda por ubicación.",
+    "locationNotFoundTitle": "Ubicación no encontrada",
+    "locationNotFoundDesc": "No se encontró la ubicación '{query}'.",
+    "searchErrorTitle": "Error de Búsqueda",
+    "searchErrorDesc": "Ocurrió un error durante la búsqueda.",
+    "noResults": "No se encontraron resultados para '{query}'.",
+    "recommendBusiness": "Recomendar un negocio"
+  },
+  "businessCard": {
+    "currentOffer": "Oferta Actual"
+  },
+  "mapPopup": {
+    "website": "Sitio Web",
+    "offer": "Oferta",
+    "map": "Mapa"
+  },
+  "form": {
+    "title": "Recomendar una empresa",
+    "description": "Rellena este formulario para recomendar una empresa. Nos pondremos en contacto con ella para incluirla en nuestro directorio.",
+    "companyNamePlaceholder": "Nombre de la empresa*",
+    "companyNameRequired": "El nombre de la empresa es obligatorio.",
+    "invalidEmail": "Formato de correo electrónico inválido.",
+    "contactNamePlaceholder": "Tu nombre",
+    "emailPlaceholder": "Tu correo electrónico (opcional)",
+    "phonePlaceholder": "Tu número de teléfono (opcional)",
+    "categoryPlaceholder": "Categoría de la empresa (opcional)",
+    "commentsPlaceholder": "Tus comentarios (opcional)",
+    "submitButton": "Enviar recomendación",
+    "successTitle": "¡Recomendación enviada!",
+    "successDesc": "Gracias por tu recomendación. Nos pondremos en contacto con la empresa.",
+    "errorTitle": "¡Error al enviar!",
+    "errorDesc": "Hubo un problema al enviar tu recomendación. Por favor, inténtalo de nuevo más tarde."
+  },
+  "cancel": "Cancelar",
+  "delete": "Eliminar",
+  "yes": "Sí",
+  "no": "No",
+  "bestChoice": "Mejor Opción",
+  "days": {
+    "one": "día",
+    "other": "días"
+  },
+  "share": {
+    "emailSubject": "¡Mira esto!"
+  },
+  "noPlansAvailable": "Actualmente no hay planes disponibles para este idioma. Se muestran los planes por defecto.",
+  "notFound": {
+    "title": "Página no encontrada",
+    "description": "Lo sentimos, la página que buscabas no se ha podido encontrar.",
+    "backToHome": "Volver al Inicio"
+  },
+  "benefits": {
+    "page_title": "¿Por qué Dicilo?",
+    "page_subtitle": "Somos más que una plataforma de recomendaciones. Somos una comunidad en crecimiento que valora la calidad, la confianza y el beneficio mutuo.",
+    "size": {
+      "title": "El tamaño no lo es todo, la calidad sí",
+      "description": "Nos enfocamos en ofrecer un grupo selecto de negocios en los que puedes confiar, en lugar de una abrumadora cantidad de opciones."
+    },
+    "experience": {
+      "title": "Experiencia que habla por sí misma",
+      "description": "Con más de 30 años de experiencia en marketing y desarrollo de negocios, sabemos cómo conectar empresas y clientes de manera significativa."
+    },
+    "two_reasons": {
+      "title": "Dos grandes razones para ser parte de Dicilo",
+      "description": "Ya seas un negocio que busca crecer o un usuario en busca de calidad, Dicilo te da las herramientas y la comunidad que necesitas."
+    },
+    "for_companies": {
+      "title": "Para Empresas",
+      "item1": {
+        "title": "Acceso directo a clientes comprometidos",
+        "description": "Llega a una audiencia que busca activamente productos y servicios de alta calidad."
+      },
+      "item2": {
+        "title": "Herramientas de marketing potentes",
+        "description": "Desde páginas de destino personalizadas hasta campañas publicitarias dirigidas, te damos todo lo que necesitas para tener éxito."
+      },
+      "item3": {
+        "title": "Fortalece tu marca",
+        "description": "Estar asociado con Dicilo es un sello de calidad que genera confianza y credibilidad entre los consumidores."
+      }
+    },
+    "for_users": {
+      "title": "Para Usuarios",
+      "item1": {
+        "title": "Recomendaciones auténticas y verificadas",
+        "description": "Dile adiós a las reseñas falsas. Cada negocio en Dicilo es cuidadosamente seleccionado."
+      },
+      "item2": {
+        "title": "Beneficios y descuentos exclusivos",
+        "description": "Como miembro del club Dicilo, tendrás acceso a ofertas especiales que no están disponibles en ningún otro lugar."
+      },
+      "item3": {
+        "title": "Sé parte de una comunidad",
+        "description": "Comparte tus experiencias y ayuda a otros a tomar las mejores decisiones, mientras eres recompensado por tu contribución."
+      }
+    },
+    "network": {
+      "title": "Una red que crece contigo",
+      "description": "Nuestra plataforma está diseñada para evolucionar contigo. Cuanto más participas, más beneficios recibes. Crecemos juntos, creando un ecosistema único de confianza y colaboración.",
+      "cta_text": "¿Estás listo para dar el siguiente paso?",
+      "cta_button_company": "Registra tu Negocio",
+      "cta_button_user": "Únete al Club"
+    },
+    "social": {
+      "title": "Únete a nuestra comunidad digital",
+      "description": "Síguenos en las redes sociales para estar al día de las últimas noticias, ofertas exclusivas y eventos de la comunidad.<br/>Estamos en WhatsApp, Telegram, Instagram, Facebook, TikTok, LinkedIn, YouTube, X (Twitter), Twitch y Pinterest."
+    },
+    "testimonials": {
+      "title": "Lo que dicen nuestros miembros",
+      "subtitle": "Opiniones reales de personas reales.",
+      "carla": {
+        "name": "Carla S.",
+        "role": "Miembro Premium",
+        "quote": "Gracias a Dicilo, he descubierto negocios locales únicos que de otro modo nunca habría encontrado. ¡Los descuentos exclusivos son un bono fantástico!"
+      },
+      "tomas": {
+        "name": "Tomás R.",
+        "role": "Dueño de Negocio",
+        "quote": "Mi base de clientes ha crecido significativamente desde que registré mi negocio en Dicilo. La plataforma me ha ayudado a conectar con clientes que realmente valoran lo que hago."
+      },
+      "lucia": {
+        "name": "Lucía M.",
+        "role": "Miembro Donante",
+        "quote": "Es genial ser parte de una comunidad que valora la calidad y la autenticidad. Cada recomendación que encuentro es de primera categoría."
+      }
+    },
+    "feedback": {
+      "title": "Comparte tu opinión",
+      "name": "Nombre",
+      "email": "Correo electrónico",
+      "country": "País",
+      "customerType": "Soy un...",
+      "customerTypePlaceholder": "Selecciona una opción",
+      "customerTypeOptions": {
+        "private": "Cliente Particular",
+        "donor": "Donante / Partidario",
+        "company": "Empresa",
+        "premium": "Cliente Premium"
+      },
+      "rating": "Tu Calificación",
+      "message": "Tu Mensaje",
+      "submit": "Enviar Comentario",
+      "successTitle": "¡Gracias!",
+      "successDesc": "Tu comentario ha sido enviado con éxito.",
+      "errorTitle": "Error",
+      "errorDesc": "Ocurrió un error al enviar tu comentario. Por favor, inténtalo de nuevo."
+    }
+  }
+}

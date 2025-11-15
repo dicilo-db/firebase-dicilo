@@ -1,0 +1,59 @@
+{
+  "title": "Acerca de Dicilo",
+  "subtitle": "Conectamos empresas de alta calidad con consumidores exigentes.",
+  "consumers": {
+    "title": "Para Consumidores",
+    "description": "Descubre negocios recomendados y disfruta de beneficios exclusivos.",
+    "cta": "Hazte Miembro"
+  },
+  "entrepreneurs": {
+    "title": "Para Emprendedores",
+    "description": "Muestra tu negocio para atraer nuevos clientes y hacer crecer tu empresa.",
+    "cta": "Regístrate Ahora"
+  },
+  "club": {
+    "title": "Únete al Club Dicilo",
+    "description": "Únete a una comunidad donde la calidad y la confianza son lo primero. Regístrate como miembro para recibir beneficios y descuentos exclusivos, o lista tu negocio para llegar a una audiencia más amplia.",
+    "cta": "Descubre nuestros Planes"
+  },
+  "weAreDicilo": {
+    "title": "Somos Dicilo",
+    "description": "En Dicilo, creamos un ecosistema donde las empresas y los consumidores se benefician del crecimiento y la confianza mutuos. No somos solo un portal de recomendaciones; somos una plataforma de marketing digital basada en recomendaciones auténticas para impulsar el éxito."
+  },
+  "ourMission": {
+    "title": "Nuestra Misión",
+    "description": "Nuestra misión es construir una red transparente y confiable que permita a los consumidores encontrar los mejores productos y servicios, mientras que las empresas tienen la oportunidad de presentarse a una audiencia que valora la calidad y la excelencia."
+  },
+  "ourVision": {
+    "title": "Nuestra Visión",
+    "description": "Nuestro objetivo es convertirnos en la plataforma global líder en recomendaciones auténticas, creando una comunidad donde la confianza entre empresas y consumidores sea la base de todas las interacciones. Nos esforzamos por crear un ecosistema donde la calidad siempre sea recompensada."
+  },
+  "ourValues": {
+    "title": "Nuestros Valores",
+    "description": "La confianza, la transparencia, la calidad, la comunidad y la innovación son los pilares sobre los que se construye Dicilo. Creemos en el poder de las recomendaciones auténticas para crear conexiones significativas y promover el crecimiento para todos."
+  },
+  "ourServices": {
+    "title": "Nuestros Servicios",
+    "description": "Ofrecemos una amplia gama de herramientas de marketing digital, páginas de destino personalizadas y beneficios exclusivos para nuestros miembros. Nuestra plataforma está diseñada para aumentar la visibilidad de las empresas y brindar a los consumidores una experiencia excepcional."
+  },
+  "businessModel": {
+    "title": "Nuestro Modelo de Negocio",
+    "description": "Nuestro modelo se basa en una relación simbiótica: las empresas obtienen visibilidad y acceso a una audiencia calificada, mientras que los usuarios disfrutan de beneficios exclusivos y la certeza de encontrar las mejores opciones del mercado. Creemos en un crecimiento justo y sostenible para todos."
+  },
+  "innovation": {
+    "title": "Innovación",
+    "description": "Estamos en constante innovación para integrar las últimas tecnologías en nuestra plataforma, desde inteligencia artificial hasta análisis de datos avanzados. Nuestro objetivo es ofrecer una experiencia en constante evolución que satisfaga las necesidades de nuestros usuarios y clientes."
+  },
+  "sustainability": {
+    "title": "Sostenibilidad",
+    "description": "Estamos comprometidos con el desarrollo sostenible y las prácticas comerciales éticas. Promovemos empresas que comparten nuestros valores de responsabilidad social y ambiental. Creemos en un crecimiento que no solo sea económico, sino también positivo para la sociedad y el planeta."
+  },
+  "data": {
+    "title": "Datos y Análisis",
+    "description": "Utilizamos el análisis de datos para comprender el comportamiento y las preferencias de los usuarios, ofreciendo recomendaciones personalizadas y relevantes. Las empresas reciben información valiosa para optimizar sus estrategias y comprender mejor a su público objetivo."
+  },
+  "community": {
+    "title": "Comunidad",
+    "description": "Dicilo es más que una plataforma; es una comunidad. Fomentamos la participación activa, el intercambio de ideas y la colaboración entre nuestros miembros y empresas. Juntos, estamos construyendo una red más fuerte y confiable."
+  }
+}

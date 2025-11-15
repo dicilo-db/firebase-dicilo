@@ -1,0 +1,55 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Allow public read access to most collections
+    match /businesses/{document=**} {
+      allow read: if true;
+      allow write: if request.auth.token.admin == true;
+    }
+    match /clients/{document=**} {
+      allow read: if true;
+      allow write: if request.auth.token.admin == true;
+    }
+    match /pricing_plans/{document=**} {
+      allow read: if true;
+      allow write: if request.auth.token.admin == true;
+    }
+    match /admins/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow write: if request.auth.token.role == 'superadmin';
+    }
+    
+    // Lock down other collections to admin-only write
+    match /registrations/{document=**} {
+      allow create: if true;
+      allow read, update, delete: if request.auth.token.admin == true;
+    }
+     match /feedbacks/{document=**} {
+      allow create: if true;
+      allow read, update, delete: if request.auth.token.admin == true;
+    }
+    match /recommendations/{document=**} {
+      allow create: if true;
+      allow read, update, delete: if request.auth.token.admin == true;
+    }
+     match /analyticsEvents/{document=**} {
+      allow create: if true;
+      allow read, update, delete: if request.auth.token.admin == true;
+    }
+    match /recommendation_tasks/{document=**} {
+      allow create: if request.auth.token.admin == true;
+      allow read, update, delete: if request.auth.token.admin == true;
+    }
+    match /i18n/{document=**} {
+      allow read: if true;
+      allow write: if request.auth.token.admin == true;
+    }
+
+    // Function invocation security
+    // This allows any authenticated user to call the 'setAdminRole' function
+    match /functions/setAdminRole {
+      allow create: if request.auth != null;
+    }
+  }
+}

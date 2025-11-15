@@ -1,0 +1,442 @@
+{
+  "title": "Admin Panel",
+  "login": {
+    "title": "Admin-Anmeldung",
+    "description": "Melden Sie sich an, um auf das Admin-Dashboard zuzugreifen",
+    "emailLabel": "E-Mail",
+    "passwordLabel": "Passwort",
+    "passwordHint": "Ihr Passwort ist sicher bei uns.",
+    "loginButton": "Anmelden",
+    "forgotPassword": "Passwort vergessen?",
+    "successTitle": "Anmeldung erfolgreich!",
+    "successDescription": "Sie werden zum Dashboard weitergeleitet.",
+    "error": {
+      "title": "Anmeldefehler",
+      "unknown": "Ein unbekannter Fehler ist aufgetreten.",
+      "invalidCredentials": "Ungültige E-Mail oder Passwort",
+      "notAdmin": "Sie haben keine Administratorrechte.",
+      "generic": "Es ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut."
+    },
+    "reset": {
+      "successTitle": "E-Mail gesendet",
+      "successDescription": "Eine E-Mail zum Zurücksetzen des Passworts wurde an {{email}} gesendet.",
+      "errorTitle": "Fehler beim Zurücksetzen",
+      "emailRequired": "Bitte geben Sie Ihre E-Mail-Adresse in das E-Mail-Feld ein.",
+      "userNotFound": "Kein Benutzer mit dieser E-Mail-Adresse gefunden.",
+      "errorGeneric": "Beim Senden der E-Mail zum Zurücksetzen des Passworts ist ein Fehler aufgetreten."
+    },
+    "showPassword": "Passwort anzeigen",
+    "hidePassword": "Passwort ausblenden",
+    "checkingAuth": "Überprüfung der Authentifizierung...",
+    "checkingPermissions": "Überprüfung der Berechtigungen...",
+    "redirecting": "Weiterleitung zum Dashboard..."
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Willkommen, {{email}} (Rolle: {{role}}).",
+    "logout": "Abmelden",
+    "logoutSuccess": "Erfolgreich abgemeldet.",
+    "logoutError": "Abmeldefehler",
+    "logoutErrorDescription": "Es gab ein Problem beim Abmelden.",
+    "contentManagement": "Inhaltsverwaltung",
+    "contentManagementDescription": "Verwalten Sie die Inhalte der Website.",
+    "manageBusinesses": "Unternehmen verwalten",
+    "superAdminArea": "Superadmin-Bereich",
+    "superAdminDescription": "Aktionen, die nur Superadmins zur Verfügung stehen.",
+    "seedDatabase": "Datenbank mit Seed-Daten füllen",
+    "seedingInProgress": "Datenbank wird befüllt...",
+    "seedingStartTitle": "Datenbank-Befüllung gestartet",
+    "seedingStartDesc": "Bitte warten Sie, dies kann einen Moment dauern.",
+    "seedingSuccessTitle": "Erfolg",
+    "seedingErrorTitle": "Fehler beim Befüllen",
+    "seedingErrorDesc": "Beim Befüllen der Datenbank ist ein Fehler aufgetreten.",
+    "seedingPermissionError": "Nur Superadmins können die Datenbank befüllen.",
+    "accessDenied": "Zugriff verweigert",
+    "noAdminRights": "Sie haben keine Administrator-Berechtigung.",
+    "sync": {
+      "button": "Kunden mit ERP synchronisieren",
+      "startTitle": "Synchronisation gestartet",
+      "startDesc": "Die Kundendaten werden mit dem ERP-System synchronisiert.",
+      "successTitle": "Synchronisation erfolgreich",
+      "errorTitle": "Synchronisationsfehler",
+      "errorDesc": "Beim Synchronisieren der Kunden ist ein Fehler aufgetreten.",
+      "permissionError": "Nur Superadmins können diese Aktion ausführen."
+    }
+  },
+  "businesses": {
+    "title": "Unternehmen",
+    "addBusiness": "Unternehmen hinzufügen",
+    "reload": "Neu laden",
+    "backToDashboard": "Zurück zum Dashboard",
+    "searchPlaceholder": "Nach Firmennamen suchen...",
+    "table": {
+      "name": "Name",
+      "category": "Kategorie",
+      "location": "Standort",
+      "actions": "Aktionen"
+    },
+    "noResults": "Keine Unternehmen gefunden.",
+    "error": "Fehler",
+    "errorDescription": "Fehler beim Abrufen der Unternehmen.",
+    "deleteSuccessTitle": "Erfolgreich gelöscht",
+    "deleteSuccessDesc": "Das Unternehmen wurde gelöscht.",
+    "deleteErrorTitle": "Löschfehler",
+    "deleteErrorDesc": "Fehler beim Löschen des Unternehmens.",
+    "confirmDeleteTitle": "Sind Sie sicher?",
+    "confirmDeleteDesc": "Diese Aktion kann nicht rückgängig gemacht werden. Dadurch wird das Unternehmen {{name}} dauerhaft gelöscht.",
+    "edit": {
+      "title": "Unternehmen bearbeiten",
+      "back": "Zurück zu Unternehmen",
+      "cardTitle": "Unternehmensdaten bearbeiten",
+      "cardDescription": "Bearbeiten Sie die Details für das Unternehmen mit der ID: {{id}}",
+      "save": "Änderungen speichern",
+      "saveSuccessTitle": "Gespeichert!",
+      "saveSuccessDesc": "Die Unternehmensdaten wurden aktualisiert.",
+      "saveErrorTitle": "Fehler",
+      "saveErrorDesc": "Die Unternehmensdaten konnten nicht gespeichert werden.",
+      "notFoundTitle": "Nicht gefunden",
+      "notFoundDesc": "Das angeforderte Unternehmen wurde nicht gefunden.",
+      "fetchErrorTitle": "Fehler",
+      "fetchErrorDesc": "Fehler beim Abrufen der Unternehmensdaten.",
+      "geocode": {
+        "successTitle": "Geocodierung erfolgreich",
+        "successDesc": "Koordinaten aktualisiert",
+        "notFoundTitle": "Standort nicht gefunden",
+        "notFoundDesc": "Konnte die Koordinaten für die angegebene Adresse nicht finden.",
+        "errorTitle": "Geocodierungsfehler",
+        "errorDesc": "Fehler bei der Abfrage des Geocodierungsdienstes.",
+        "noAddressTitle": "Keine Adresse",
+        "noAddressDesc": "Bitte geben Sie eine Adresse oder einen Standort für die Geocodierung an.",
+        "dragSuccessDesc": "Marker-Position aktualisiert"
+      },
+      "logo": {
+        "urlHelp": "Fügen Sie eine öffentliche URL zu einem Logo-Bild ein (z. B. von einer Unternehmenswebsite)."
+      }
+    },
+    "new": {
+      "title": "Neues Unternehmen erstellen",
+      "back": "Zurück zu Unternehmen",
+      "cardTitle": "Neues Unternehmen",
+      "cardDescription": "Füllen Sie das Formular aus, um ein neues Unternehmen hinzuzufügen.",
+      "save": "Unternehmen erstellen",
+      "saveSuccessTitle": "Erstellt!",
+      "saveSuccessDesc": "Das neue Unternehmen wurde erfolgreich erstellt.",
+      "saveErrorTitle": "Fehler",
+      "saveErrorDesc": "Das Unternehmen konnte nicht erstellt werden."
+    },
+    "fields": {
+      "name": "Name",
+      "category": "Kategorie",
+      "description": "Beschreibung",
+      "location": "Standort",
+      "address": "Adresse",
+      "phone": "Telefon",
+      "website": "Webseite",
+      "logoUrl": "Logo URL",
+      "logoUrlPlaceholder": "https://example.com/logo.png",
+      "imageHint": "Bild-Hinweis (für KI)",
+      "rating": "Bewertung (0-5)",
+      "coords": "Koordinaten (Lat, Lon)",
+      "coordsHelp": "Wird durch Geocodierung der Adresse oder Ziehen des Markers auf der Karte festgelegt.",
+      "currentOfferUrl": "URL des aktuellen Angebots",
+      "mapUrl": "URL Karte"
+    }
+  },
+  "clients": {
+    "title": "Kunden",
+    "addClient": "Kunden hinzufügen",
+    "reload": "Neu laden",
+    "backToDashboard": "Zum Dashboard",
+    "searchPlaceholder": "Nach Kundennamen suchen...",
+    "table": {
+      "name": "Name",
+      "title": "Titel",
+      "slug": "Slug",
+      "actions": "Aktionen"
+    },
+    "noResults": "Keine Kunden gefunden.",
+    "error": "Fehler beim Laden",
+    "errorDescription": "Beim Laden der Kundenliste ist ein Fehler aufgetreten.",
+    "deleteSuccessTitle": "Kunde gelöscht",
+    "deleteSuccessDesc": "Der Kunde wurde erfolgreich gelöscht.",
+    "deleteErrorTitle": "Fehler beim Löschen",
+    "deleteErrorDesc": "Der Kunde konnte nicht gelöscht werden.",
+    "confirmDeleteTitle": "Sind Sie sicher?",
+    "confirmDeleteDesc": "Diese Aktion kann nicht rückgängig gemacht werden. Dadurch wird der Kunde {{name}} dauerhaft gelöscht.",
+    "edit": {
+      "title": "Kunden bearbeiten",
+      "back": "Zurück zur Kundenliste",
+      "cardDescription": "Bearbeiten Sie die Details für den Kunden mit der ID: {{id}}",
+      "save": "Änderungen speichern",
+      "notFoundTitle": "Kunde nicht gefunden",
+      "notFoundDesc": "Der angeforderte Kunde existiert nicht.",
+      "fetchErrorTitle": "Fehler beim Laden",
+      "fetchErrorDesc": "Die Kundendaten konnten nicht geladen werden."
+    },
+    "new": {
+      "title": "Neuen Kunden anlegen",
+      "back": "Zurück zur Kundenliste",
+      "cardTitle": "Neuer Kunde",
+      "cardDescription": "Füllen Sie das Formular aus, um einen neuen Kunden anzulegen.",
+      "save": "Kunden anlegen",
+      "saveSuccessTitle": "Kunde erstellt!",
+      "saveSuccessDesc": "Der neue Kunde wurde erfolgreich angelegt.",
+      "saveErrorTitle": "Fehler beim Erstellen",
+      "saveErrorDesc": "Der Kunde konnte nicht angelegt werden."
+    },
+    "tabs": {
+      "general": "Allgemein",
+      "marqueeHeader": "Laufleiste",
+      "body": "Hauptteil",
+      "infoCards": "Info-Karten",
+      "products": "Produkte",
+      "graphics": "Grafiken",
+      "form": "Formular",
+      "translations": "Übersetzungen"
+    },
+    "fields": {
+      "title": "Titel",
+      "content": "Inhalt",
+      "clientName": "Kundenname",
+      "clientType": "Kundentyp",
+      "clientLogoUrl": "Kundenlogo URL",
+      "clientTitle": "Kundentitel",
+      "clientSubtitle": "Kundenuntertitel",
+      "slug": "Slug",
+      "socialLinks": "Soziale Links",
+      "products": {
+        "add": "Produkt hinzufügen",
+        "description": "Verwalten Sie den Produktkatalog, der im Empfehlungsformular angezeigt wird.",
+        "product": "Produkt",
+        "productName": "Produktname"
+      },
+      "testimonials": "Testimonials (JSON)",
+      "translations": "Übersetzungen (JSON)",
+      "jsonPlaceholder": "[{\"title\": \"Titel\", \"description\": \"Beschreibung\"}]",
+      "jsonPlaceholderObject": "{\n  \"de\": { \"key\": \"Wert\" },\n  \"en\": { \"key\": \"Value\" }\n}",
+      "jsonHelp": "Geben Sie eine gültige JSON-Anordnung von Objekten ein.",
+      "jsonHelpObject": "Geben Sie ein gültiges JSON-Objekt für Übersetzungen ein.",
+      "general": {
+        "description": "Grundlegende Informationen und Header-Stile."
+      },
+      "header": {
+        "welcomeText": "Willkommenstext",
+        "headerImageUrl": "Header-Bild-URL (Grafik)",
+        "socialShareText": "Text für soziale Netzwerke",
+        "socialShareTextPlaceholder": "Dieser Text wird beim Teilen in sozialen Netzwerken verwendet. Wenn leer, wird ein Standardtext verwendet.",
+        "bannerShareUrl": "URL zum Teilen des Banners",
+        "socialLinks": "Soziale Links",
+        "iconPlaceholder": "fa-brands fa-...",
+        "iconPlaceholderText": "Symbol (z.B. facebook)",
+        "urlPlaceholder": "https://...",
+        "socialLink": "Sozialer Link {{number}}",
+        "stylesTitle": "Stile",
+        "headerBackgroundColor": "Hintergrundfarbe des Headers",
+        "headerBackgroundImageUrl": "URL des Hintergrundbildes für den Header",
+        "clientLogoWidth": "Breite des Kundenlogos (px)",
+        "headerTextColor": "Textfarbe des Headers",
+        "dividerLine": {
+          "title": "Trennlinie",
+          "enable": "Trennlinie anzeigen",
+          "color": "Farbe der Linie",
+          "thickness": "Dicke der Linie (px)"
+        },
+        "banner": {
+          "title": "Banner-Einstellungen",
+          "embedCode": "Embed-Code",
+          "imageUrl": "Bild-URL",
+          "fileUpload": "Datei hochladen",
+          "width": "Breite des Banners",
+          "height": "Höhe des Banners",
+          "currentImage": "Aktuelles Bild"
+        }
+      },
+      "marqueeHeader": {
+        "description": "Konfigurieren Sie die Laufleiste am oberen Rand.",
+        "marqueeText": "Lauftext",
+        "offerSectionTitle": "Angebotsbereich (links)",
+        "offerEnabled": "Angebot aktivieren",
+        "leftButtonText": "Text für linken Button (Angebot)",
+        "leftButtonLink": "Link für linken Button",
+        "offerEndDate": "Enddatum des Angebots",
+        "pickDate": "Datum auswählen",
+        "offerSection": "Angebotsbereich",
+        "middleTextOffer": "Text neben dem Datum",
+        "buttonAfterDateText": "Button-Text nach Ablauf",
+        "buttonAfterDateLink": "Button-Link nach Ablauf",
+        "rightButtonsSectionTitle": "Rechte Buttons"
+      },
+      "body": {
+        "description": "Konfigurieren Sie den Hauptinhaltsbereich der Seite.",
+        "title": "Titel",
+        "subtitle": "Untertitel",
+        "descriptionField": "Beschreibung",
+        "imageUrl": "Bild-URL",
+        "imageHint": "Bild-Hinweis (für KI)",
+        "videoUrl": "Video-URL (YouTube, Vimeo)",
+        "ctaButtonText": "CTA-Button-Text",
+        "ctaButtonLink": "CTA-Button-Link",
+        "layout": "Layout"
+      },
+      "infoCards": {
+        "title": "Info-Karten (Reiter)",
+        "add": "Karte hinzufügen",
+        "card": "Karte"
+      },
+      "graphics": {
+        "title": "Titel der Grafik",
+        "add": "Grafik hinzufügen",
+        "description": "Fügen Sie Bilder hinzu, die in einem zufälligen Mosaik auf der Landing Page angezeigt werden.",
+        "graphic": "Grafik",
+        "imageUrl": "Bild-URL",
+        "targetUrl": "Ziel-URL"
+      },
+      "form": {
+        "description": "Verwalten Sie das Empfehlungsformular, das auf der Landingpage dieses Kunden angezeigt wird.",
+        "infoBlockPre": "Ihre Freunde können Vorteile erhalten (Rabatte, Geschenke, neue Angebote). Wir halten Sie mit Neuigkeiten und exklusiven Vorteilen auf dem Laufenden.",
+        "infoBlockRecommend": "Es werden keine Massen-E-Mails gesendet. Zuerst wird die Zustimmung des Kontakts eingeholt. Durch Ankreuzen bestätigen Sie, dass Sie diesen Ablauf verstehen und akzeptieren."
+      }
+    }
+  },
+  "feedbacks": {
+    "title": "Feedbacks",
+    "table": {
+      "date": "Datum",
+      "name": "Name",
+      "customerType": "Kundentyp",
+      "rating": "Bewertung",
+      "message": "Nachricht"
+    },
+    "noResults": "Keine Feedbacks gefunden."
+  },
+  "plans": {
+    "title": "Preispläne",
+    "back": "Zurück",
+    "addPlan": "Neuen Plan hinzufügen",
+    "fetchError": "Fehler beim Laden der Pläne.",
+    "deleteSuccessTitle": "Plan gelöscht",
+    "deleteErrorTitle": "Fehler beim Löschen",
+    "confirmDeleteTitle": "Sind Sie sicher?",
+    "confirmDeleteDesc": "Diese Aktion kann nicht rückgängig gemacht werden. Der Plan {{name}} wird dauerhaft gelöscht.",
+    "notFound": "Plan nicht gefunden.",
+    "table": {
+      "order": "Reihenfolge",
+      "title": "Titel",
+      "price": "Preis",
+      "popular": "Beliebt",
+      "actions": "Aktionen",
+      "language": "Sprache"
+    },
+    "edit": {
+      "title": "Preisplan bearbeiten",
+      "description": "Bearbeiten Sie die Details des Preisplans.",
+      "saveButton": "Änderungen speichern",
+      "saveSuccess": "Plan erfolgreich aktualisiert.",
+      "saveError": "Fehler beim Speichern des Plans."
+    },
+    "new": {
+      "title": "Neuen Preisplan erstellen",
+      "cardTitle": "Neuer Plan",
+      "description": "Füllen Sie das Formular aus, um einen neuen Preisplan hinzuzufügen.",
+      "saveButton": "Plan erstellen",
+      "saveSuccess": "Plan erfolgreich erstellt.",
+      "saveError": "Fehler beim Erstellen des Plans."
+    },
+    "fields": {
+      "title": "Titel",
+      "price": "Preis (z. B. 19,99 €)",
+      "period": "Zeitraum (z. B. /Monat)",
+      "features": "Merkmale (eines pro Zeile)",
+      "featuresHelp": "Jede Zeile wird zu einem separaten Punkt in der Liste der Merkmale.",
+      "buttonText": "Button-Text",
+      "isPopular": "Als beliebt markieren?",
+      "order": "Anzeigereihenfolge",
+      "language": "Sprache",
+      "languagePlaceholder": "Sprache auswählen"
+    }
+  },
+  "registrations": {
+    "title": "Registrierungen",
+    "noResults": "Keine Registrierungen für diesen Filter gefunden.",
+    "tabs": {
+      "all": "Alle",
+      "private": "Privat",
+      "donor": "Spender",
+      "retailer": "Einzelhändler",
+      "premium": "Premium"
+    },
+    "table": {
+      "name": "Name",
+      "contact": "Kontakt",
+      "type": "Typ",
+      "date": "Datum",
+      "actions": "Aktionen",
+      "noClient": "Kein Kunde erstellt",
+      "manageClient": "Kunden verwalten"
+    }
+  },
+  "seed": {
+    "pageTitle": "Datenbank einrichten",
+    "pageSubtitle": "Folgen Sie diesen Schritten, um Ihren Superadmin-Benutzer und die Datenbank zu initialisieren.",
+    "step1Title": "Superadmin-Benutzer erstellen",
+    "step1Description": "Erstellen Sie manuell einen Benutzer in der Firebase-Authentifizierung.",
+    "step1AlertTitle": "Anweisungen:",
+    "step1Instruction1": "Gehen Sie zum Firebase Console > Authentication > Users.",
+    "step1Instruction2": "Klicken Sie auf 'Benutzer hinzufügen' und verwenden Sie die folgenden Anmeldeinformationen:",
+    "emailLabel": "E-Mail",
+    "passwordLabel": "Passwort",
+    "step1Instruction3": "Klicken Sie auf 'Benutzer hinzufügen', um den Benutzer zu speichern.",
+    "step1NoteTitle": "Wichtiger Hinweis",
+    "step1NoteDescription": "Ohne diesen Benutzer können Sie sich nicht als Superadmin anmelden.",
+    "step2Title": "Superadmin-Rolle zuweisen",
+    "step2Description": "Weisen Sie dem neu erstellten Benutzer die Rolle 'superadmin' in Firestore zu.",
+    "step2AlertTitle": "Anweisungen:",
+    "step2Instruction1": "Gehen Sie zum Firebase Console > Firestore Database.",
+    "step2Instruction2": "Erstellen Sie eine neue Sammlung mit dem Namen:",
+    "collectionID": "Sammlungs-ID",
+    "step2Instruction3": "Erstellen Sie ein neues Dokument. Verwenden Sie als Dokument-ID die Benutzer-UID aus dem Authentifizierungs-Tab.",
+    "step2Instruction4": "Fügen Sie ein Feld hinzu. Setzen Sie den Feldnamen auf:",
+    "field": "Feld",
+    "value": "Wert",
+    "step3Title": "Fertig!",
+    "step3Description": "Sie können sich jetzt mit den Superadmin-Anmeldeinformationen anmelden.",
+    "step3Content": "Sobald Sie angemeldet sind, können Sie die Datenbank mit anfänglichen Daten füllen, indem Sie die Schaltfläche 'Datenbank mit Seed-Daten füllen' im Dashboard verwenden.",
+    "backToLogin": "Zurück zur Anmeldung"
+  },
+  "share": {
+    "button": "Teilen",
+    "title": "Dieses Angebot teilen",
+    "copy": "Kopieren",
+    "copied": "Link kopiert!"
+  },
+  "statistics": {
+    "title": "Statistiken",
+    "totalVisits": "Gesamtbesuche",
+    "totalRegistrations": "Gesamtregistrierungen",
+    "totalSearches": "Gesamtsuchen",
+    "totalCardClicks": "Gesamte Kartenklicks",
+    "totalPopupClicks": "Gesamte Popup-Klicks",
+    "newBusinesses": "Neue Unternehmen",
+    "activeClients": "Aktive Kunden",
+    "lastMonth": "vom letzten Monat",
+    "chartTitle": "Besuche vs. Registrierungen",
+    "recentEvents": "Letzte Aktivitäten",
+    "noEvents": "Keine aktuellen Aktivitäten zum Anzeigen.",
+    "table": {
+      "date": "Datum",
+      "eventType": "Ereignistyp",
+      "businessName": "Name des Unternehmens",
+      "details": "Details"
+    },
+    "types": {
+      "search": "Suche",
+      "cardClick": "Kartenklick",
+      "popupClick": "Popup-Klick"
+    }
+  },
+  "formsDashboard": {
+    "title": "Formulare Dashboard",
+    "managementTitle": "Formularverwaltung",
+    "managementDescription": "Verwalten Sie hier die Empfehlungsformulare und Statistiken."
+  }
+}

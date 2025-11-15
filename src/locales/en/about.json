@@ -1,0 +1,59 @@
+{
+  "title": "About Dicilo",
+  "subtitle": "We connect high-quality businesses with discerning consumers.",
+  "consumers": {
+    "title": "For Consumers",
+    "description": "Discover recommended businesses and enjoy exclusive benefits.",
+    "cta": "Become a Member"
+  },
+  "entrepreneurs": {
+    "title": "For Entrepreneurs",
+    "description": "Showcase your business to attract new customers and grow your business.",
+    "cta": "Register Now"
+  },
+  "club": {
+    "title": "Join the Dicilo Club",
+    "description": "Join a community where quality and trust come first. Register as a member to receive exclusive benefits and discounts, or list your business to reach a wider audience.",
+    "cta": "Discover our Plans"
+  },
+  "weAreDicilo": {
+    "title": "We Are Dicilo",
+    "description": "At Dicilo, we create an ecosystem where businesses and consumers benefit from mutual growth and trust. We are not just a recommendation portal; we are a digital marketing platform based on authentic recommendations to drive success."
+  },
+  "ourMission": {
+    "title": "Our Mission",
+    "description": "Our mission is to build a transparent and reliable network that allows consumers to find the best products and services, while giving businesses the opportunity to present themselves to an audience that values quality and excellence."
+  },
+  "ourVision": {
+    "title": "Our Vision",
+    "description": "We aim to become the leading global platform for authentic recommendations, creating a community where trust between businesses and consumers is the foundation of all interactions. We strive to create an ecosystem where quality is always rewarded."
+  },
+  "ourValues": {
+    "title": "Our Values",
+    "description": "Trust, transparency, quality, community, and innovation are the pillars on which Dicilo is built. We believe in the power of authentic recommendations to create meaningful connections and promote growth for all."
+  },
+  "ourServices": {
+    "title": "Our Services",
+    "description": "We offer a wide range of digital marketing tools, personalized landing pages, and exclusive benefits for our members. Our platform is designed to increase the visibility of businesses and provide consumers with an exceptional experience."
+  },
+  "businessModel": {
+    "title": "Our Business Model",
+    "description": "Our model is based on a symbiotic relationship: businesses gain visibility and access to a qualified audience, while users enjoy exclusive benefits and the certainty of finding the best options on the market. We believe in fair and sustainable growth for all."
+  },
+  "innovation": {
+    "title": "Innovation",
+    "description": "We are constantly innovating to integrate the latest technologies into our platform, from artificial intelligence to advanced data analytics. Our goal is to offer an ever-evolving experience that meets the needs of our users and clients."
+  },
+  "sustainability": {
+    "title": "Sustainability",
+    "description": "We are committed to sustainable development and ethical business practices. We promote companies that share our values of social and environmental responsibility. We believe in growth that is not only economic but also positive for society and the planet."
+  },
+  "community": {
+    "title": "Community",
+    "description": "Dicilo is more than a platform; it is a community. We encourage active participation, the exchange of ideas, and collaboration between our members and businesses. Together, we are building a stronger and more reliable network."
+  },
+  "data": {
+    "title": "Data and Analytics",
+    "description": "We use data analytics to understand user behavior and preferences, offering personalized and relevant recommendations. Businesses receive valuable insights to optimize their strategies and better understand their target audience."
+  }
+}

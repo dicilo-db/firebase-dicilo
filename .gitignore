@@ -1,0 +1,49 @@
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.env
+.env.local
+.env.development.local
+.env.production.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ======================================================
+# EXCLUSIONES ESPECÍFICAS DE DICILO.NET (SEGURIDAD Y DATOS)
+# ======================================================
+
+# Credenciales de API y Secrets (¡CRÍTICO!)
+Chat_Cerebro_Nilo_Dicilo_client_secret_*.json 
+# (¡La línea *.json general se eliminó de aquí!)
+
+# Catálogos y Datos Grandes (vimos el CSV)
+catalogo_dicilo.csv
+*.csv
+*.sql 
+*.sqlite 
+
+# Archivos de log
+*.log 
+
+# Firebase Structure (Asegurando la exclusión de node_modules dentro de functions)
+.firebase
+# (¡La línea .firebaserc se eliminó de aquí!)
+firebase-debug.log
+
+# Exclusión de carpetas de dependencias dentro de functions/ (donde estaban los binarios SWC)
+**/*/node_modules

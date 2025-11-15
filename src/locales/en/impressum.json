@@ -1,0 +1,40 @@
+{
+  "pageTitle": "Imprint",
+  "pageSubtitle": "Information according to § 5 TMG",
+  "cardTitle": "Contact Information",
+  "legal": {
+    "title": "Information according to § 5 TMG",
+    "brand_of": "A brand of",
+    "company_name": "MHC-Interational Services S.L.",
+    "address_line1": "Calle La Gaviota 6",
+    "address_line2": "38679 Costa Adeje - Spain"
+  },
+  "representedBy": {
+    "title": "Represented by",
+    "name": "Miguel Angel Hernandez"
+  },
+  "contact": {
+    "title": "Contact",
+    "phone_label": "Phone",
+    "phone_number": "+34 922 71 34 32",
+    "email_label": "Email",
+    "email_address": "info@dicilo.net"
+  },
+  "vat": {
+    "title": "VAT ID",
+    "description": "Value Added Tax identification number according to §27 a Value Added Tax Act:",
+    "id": "ESB38629559"
+  },
+  "responsible": {
+    "title": "Editorially responsible",
+    "name": "Miguel Angel Hernandez"
+  },
+  "dispute": {
+    "title": "EU Dispute Resolution",
+    "description": "The European Commission provides a platform for online dispute resolution (ODR): <a href='https://ec.europa.eu/consumers/odr/' target='_blank' rel='noopener noreferrer'>https://ec.europa.eu/consumers/odr/</a>.<br>Our email address can be found above in the imprint."
+  },
+  "consumerDispute": {
+    "title": "Consumer Dispute Resolution/Universal Arbitration Board",
+    "description": "We are not willing or obliged to participate in dispute resolution proceedings before a consumer arbitration board."
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "title": "Branchenverzeichnis",
+  "description": "Entdecken Sie empfohlene Unternehmen aus verschiedenen Branchen.",
+  "content": "Der Inhalt des Verzeichnisses wird in Kürze verfügbar sein.",
+  "categories": {
+    "consulting": {
+      "title": "Beratung",
+      "description": "Expertenrat für Einzelpersonen, Unternehmen oder Organisationen."
+    },
+    "education": {
+      "title": "Bildung",
+      "description": "Lehren und Lernen auf allen Ebenen, von Schulen bis zur Berufsbildung."
+    },
+    "finance": {
+      "title": "Finanzdienste",
+      "description": "Aktivitäten im Zusammenhang mit Geldmanagement, wie Bankwesen, Versicherungen und Investitionen."
+    },
+    "gastronomy": {
+      "title": "Gastronomie",
+      "description": "Gastgewerbe mit Restaurants, Bars, Cafés und Catering-Diensten."
+    },
+    "health": {
+      "title": "Gesundheit",
+      "description": "Alles rund um das körperliche und geistige Wohlbefinden, einschließlich medizinischer Dienstleistungen und Therapien."
+    },
+    "hospitality": {
+      "title": "Hotellerie",
+      "description": "Beherbergungsindustrie, einschließlich Hotels, Hostels und anderer Unterkünfte."
+    },
+    "realEstate": {
+      "title": "Immobilien",
+      "description": "Verwaltung, Kauf, Verkauf und Vermietung von Immobilien, Grundstücken und Gebäuden."
+    },
+    "textiles": {
+      "title": "Kleidung",
+      "description": "Textil- und Modeindustrie, einschließlich Design, Herstellung und Verkauf von Kleidung."
+    },
+    "food": {
+      "title": "Lebensmittel",
+      "description": "Produktion, Vertrieb und Verkauf von essbaren Produkten."
+    },
+    "music": {
+      "title": "Musik",
+      "description": "Schaffung, Aufnahme, Vertrieb und Konsum von Musik."
+    },
+    "social": {
+      "title": "Soziales",
+      "description": "Dienstleistungen im Zusammenhang mit dem Wohlergehen der Gesellschaft, einschließlich Sozialhilfe und gemeinnütziger Unterstützung."
+    },
+    "sports": {
+      "title": "Sport",
+      "description": "Körperliche Aktivitäten, Ligen, Vereine und Veranstaltungen im Zusammenhang mit sportlicher Leistung."
+    },
+    "travel": {
+      "title": "Reisen/Tourismus",
+      "description": "Industrie, die Reisebüros, Reiseveranstalter und Transport umfasst."
+    },
+    "technology": {
+      "title": "Technologie",
+      "description": "Produkte und Dienstleistungen, die auf angewandter Wissenschaft basieren, insbesondere Software und Hardware."
+    },
+    "pets": {
+      "title": "Tiere/Haustiere",
+      "description": "Produkte und Dienstleistungen für die Pflege von Tieren, wie Tierärzte und Fachgeschäfte."
+    },
+    "transport": {
+      "title": "Transport",
+      "description": "Bewegung von Personen und Gütern, einschließlich Logistik und öffentlichem Verkehr."
+    },
+    "environment": {
+      "title": "Umwelt",
+      "description": "Themen der Ökologie, Nachhaltigkeit und des Umweltschutzes."
+    },
+    "entertainment": {
+      "title": "Unterhaltung",
+      "description": "Medien und Aktivitäten zur Unterhaltung und Freizeitgestaltung, wie Kino und Theater."
+    }
+  }
+}

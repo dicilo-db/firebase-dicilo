@@ -1,0 +1,38 @@
+{
+  "common": {
+    "searchPage": {
+      "title": "Entdecken Sie empfohlene Unternehmen",
+      "businessType": "Unternehmen",
+      "locationType": "Standort",
+      "businessPlaceholder": "Name des Unternehmens oder Schlüsselwort...",
+      "locationPlaceholder": "Stadt, Region oder Land...",
+      "searchLabel": "Suchen",
+      "useLocationLabel": "Aktuelle Position",
+      "locationErrorTitle": "Standortfehler",
+      "locationErrorDesc": "Adresse oder Standort unbekannt.",
+      "geolocationErrorTitle": "GPS Fehler",
+      "geolocationErrorDesc": "Wir konnten Ihren Standort nicht abrufen.",
+      "geolocationNotSupportedTitle": "GPS nicht unterstützt",
+      "geolocationNotSupportedDesc": "Ihr Browser unterstützt die Standortsuche nicht.",
+      "locationNotFoundTitle": "Ort nicht gefunden",
+      "locationNotFoundDesc": "Der Ort '{query}' wurde nicht gefunden.",
+      "searchErrorTitle": "Suchfehler",
+      "searchErrorDesc": "Ein Fehler ist bei der Suche aufgetreten.",
+      "noResults": "Keine Ergebnisse für {query} gefunden.",
+      "recommendBusiness": "Empfehlen Sie ein Geschäft"
+    },
+    "businessCard": {
+      "currentOffer": "Aktuelles Angebot"
+    },
+    "header": {
+      "nav": {
+        "benefits": "Vorteile",
+        "planes": "Pläne",
+        "about": "Über uns",
+        "directory": "Verzeichnis",
+        "login": "Anmelden",
+        "register": "Registrieren"
+      }
+    }
+  }
+}

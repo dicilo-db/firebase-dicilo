@@ -1,0 +1,441 @@
+{
+  "title": "Panel de Administración",
+  "login": {
+    "title": "Inicio de Sesión de Administrador",
+    "description": "Inicie sesión para acceder al panel de administración",
+    "emailLabel": "Correo Electrónico",
+    "passwordLabel": "Contraseña",
+    "passwordHint": "Tu contraseña está segura con nosotros.",
+    "loginButton": "Iniciar Sesión",
+    "forgotPassword": "¿Olvidó su contraseña?",
+    "successTitle": "¡Inicio de sesión exitoso!",
+    "successDescription": "Serás redirigido al panel de control.",
+    "error": {
+      "title": "Error de inicio de sesión",
+      "unknown": "Ocurrió un error desconocido.",
+      "invalidCredentials": "Correo electrónico o contraseña no válidos",
+      "notAdmin": "No tienes privilegios de administrador.",
+      "generic": "Ocurrió un error. Por favor, inténtelo de nuevo más tarde."
+    },
+    "reset": {
+      "successTitle": "Correo Enviado",
+      "successDescription": "Se ha enviado un correo para restablecer la contraseña a {{email}}.",
+      "errorTitle": "Error al Restablecer",
+      "emailRequired": "Por favor, ingrese su dirección de correo en el campo de email.",
+      "userNotFound": "No se encontró ningún usuario con esta dirección de correo.",
+      "errorGeneric": "Ocurrió un error al enviar el correo de restablecimiento de contraseña."
+    },
+    "showPassword": "Mostrar contraseña",
+    "hidePassword": "Ocultar contraseña",
+    "checkingAuth": "Verificando autenticación...",
+    "checkingPermissions": "Verificando permisos...",
+    "redirecting": "Redirigiendo al panel..."
+  },
+  "dashboard": {
+    "title": "Panel de Control",
+    "welcome": "Bienvenido, {{email}} (Rol: {{role}}).",
+    "logout": "Cerrar Sesión",
+    "logoutSuccess": "Sesión cerrada con éxito.",
+    "logoutError": "Error al cerrar sesión",
+    "logoutErrorDescription": "Hubo un problema al cerrar la sesión.",
+    "contentManagement": "Gestión de Contenido",
+    "contentManagementDescription": "Gestiona el contenido del sitio web.",
+    "manageBusinesses": "Gestionar Negocios",
+    "superAdminArea": "Área de Superadministrador",
+    "superAdminDescription": "Acciones disponibles solo para superadministradores.",
+    "seedDatabase": "Poblar Base de Datos",
+    "seedingInProgress": "Poblando base de datos...",
+    "seedingStartTitle": "Poblado de base de datos iniciado",
+    "seedingStartDesc": "Por favor, espera, esto puede tardar un momento.",
+    "seedingSuccessTitle": "Éxito",
+    "seedingErrorTitle": "Error al poblar",
+    "seedingErrorDesc": "Ocurrió un error al poblar la base de datos.",
+    "seedingPermissionError": "Solo los superadministradores pueden poblar la base de datos.",
+    "accessDenied": "Acceso Denegado",
+    "noAdminRights": "No tiene permisos de administrador.",
+    "sync": {
+      "button": "Sincronizar Clientes con ERP",
+      "startTitle": "Sincronización iniciada",
+      "startDesc": "Los datos de los clientes se están sincronizando con el sistema ERP.",
+      "successTitle": "Sincronización Exitosa",
+      "errorTitle": "Error de Sincronización",
+      "errorDesc": "Ocurrió un error al sincronizar los clientes.",
+      "permissionError": "Solo los superadministradores pueden realizar esta acción."
+    }
+  },
+  "businesses": {
+    "title": "Negocios",
+    "addBusiness": "Añadir Negocio",
+    "reload": "Recargar",
+    "backToDashboard": "Volver al Panel",
+    "searchPlaceholder": "Buscar por nombre de negocio...",
+    "table": {
+      "name": "Nombre",
+      "category": "Categoría",
+      "location": "Ubicación",
+      "actions": "Acciones"
+    },
+    "noResults": "No se encontraron negocios.",
+    "error": "Error",
+    "errorDescription": "Error al obtener los negocios.",
+    "deleteSuccessTitle": "Eliminado con éxito",
+    "deleteSuccessDesc": "El negocio ha sido eliminado.",
+    "deleteErrorTitle": "Error al eliminar",
+    "deleteErrorDesc": "Error al eliminar el negocio.",
+    "confirmDeleteTitle": "¿Estás seguro?",
+    "confirmDeleteDesc": "Esta acción no se puede deshacer. Esto eliminará permanentemente el negocio {{name}}.",
+    "edit": {
+      "title": "Editar Negocio",
+      "back": "Volver a Negocios",
+      "cardTitle": "Editar Datos del Negocio",
+      "cardDescription": "Edita los detalles del negocio con ID: {{id}}",
+      "save": "Guardar Cambios",
+      "saveSuccessTitle": "¡Guardado!",
+      "saveSuccessDesc": "Los datos del negocio han sido actualizados.",
+      "saveErrorTitle": "Error",
+      "saveErrorDesc": "No se pudieron guardar los datos del negocio.",
+      "notFoundTitle": "No encontrado",
+      "notFoundDesc": "El negocio solicitado no fue encontrado.",
+      "fetchErrorTitle": "Error",
+      "fetchErrorDesc": "Error al obtener los datos del negocio.",
+      "geocode": {
+        "successTitle": "Geocodificación Exitosa",
+        "successDesc": "Coordenadas actualizadas",
+        "notFoundTitle": "Ubicación No Encontrada",
+        "notFoundDesc": "No se pudieron encontrar coordenadas para la dirección proporcionada.",
+        "errorTitle": "Error de Geocodificación",
+        "errorDesc": "Error al consultar el servicio de geocodificación.",
+        "noAddressTitle": "Sin Dirección",
+        "noAddressDesc": "Por favor, proporcione una dirección o ubicación para geocodificar.",
+        "dragSuccessDesc": "Posición del marcador actualizada"
+      },
+      "logo": {
+        "urlHelp": "Pega una URL pública a una imagen de logo (p. ej., de un sitio web de la empresa)."
+      }
+    },
+    "new": {
+      "title": "Crear Nuevo Negocio",
+      "back": "Volver a Negocios",
+      "cardTitle": "Nuevo Negocio",
+      "cardDescription": "Rellena el formulario para añadir un nuevo negocio.",
+      "save": "Crear Negocio",
+      "saveSuccessTitle": "¡Creado!",
+      "saveSuccessDesc": "El nuevo negocio ha sido creado con éxito.",
+      "saveErrorTitle": "Error",
+      "saveErrorDesc": "No se pudo crear el negocio."
+    },
+    "fields": {
+      "name": "Nombre",
+      "category": "Categoría",
+      "description": "Descripción",
+      "location": "Ubicación",
+      "address": "Dirección",
+      "phone": "Teléfono",
+      "website": "Sitio Web",
+      "logoUrl": "URL del Logo",
+      "logoUrlPlaceholder": "https://example.com/logo.png",
+      "imageHint": "Pista de Imagen (para IA)",
+      "rating": "Calificación (0-5)",
+      "coords": "Coordenadas (Lat, Lon)",
+      "coordsHelp": "Se establece geocodificando la dirección o arrastrando el marcador en el mapa.",
+      "currentOfferUrl": "URL de la Oferta Actual",
+      "mapUrl": "URL Mapa"
+    }
+  },
+  "clients": {
+    "title": "Clientes",
+    "addClient": "Añadir Cliente",
+    "reload": "Recargar",
+    "backToDashboard": "Al Panel",
+    "searchPlaceholder": "Buscar por nombre de cliente...",
+    "table": {
+      "name": "Nombre",
+      "title": "Título",
+      "slug": "Slug",
+      "actions": "Acciones"
+    },
+    "noResults": "No se encontraron clientes.",
+    "error": "Error de Carga",
+    "errorDescription": "Ocurrió un error al cargar la lista de clientes.",
+    "deleteSuccessTitle": "Cliente Eliminado",
+    "deleteSuccessDesc": "El cliente fue eliminado con éxito.",
+    "deleteErrorTitle": "Error al Eliminar",
+    "deleteErrorDesc": "No se pudo eliminar el cliente.",
+    "confirmDeleteTitle": "¿Estás seguro?",
+    "confirmDeleteDesc": "Esta acción no se puede deshacer. Esto eliminará permanentemente al cliente {{name}}.",
+    "edit": {
+      "title": "Editar Cliente",
+      "back": "Volver a la Lista de Clientes",
+      "cardDescription": "Edita los detalles del cliente con ID: {{id}}",
+      "save": "Guardar Cambios",
+      "notFoundTitle": "Cliente No Encontrado",
+      "notFoundDesc": "El cliente solicitado no existe.",
+      "fetchErrorTitle": "Error de Carga",
+      "fetchErrorDesc": "No se pudieron cargar los datos del cliente."
+    },
+    "new": {
+      "title": "Crear Nuevo Cliente",
+      "back": "Volver a la Lista de Clientes",
+      "cardTitle": "Nuevo Cliente",
+      "cardDescription": "Rellena el formulario para crear un nuevo cliente.",
+      "save": "Crear Cliente",
+      "saveSuccessTitle": "¡Cliente Creado!",
+      "saveSuccessDesc": "El nuevo cliente fue creado con éxito.",
+      "saveErrorTitle": "Error de Creación",
+      "saveErrorDesc": "No se pudo crear el cliente."
+    },
+    "tabs": {
+      "general": "General",
+      "marqueeHeader": "Marquesina",
+      "body": "Cuerpo",
+      "infoCards": "Tarjetas de Info",
+      "products": "Productos",
+      "graphics": "Gráficos",
+      "form": "Formulario",
+      "translations": "Traducciones"
+    },
+    "fields": {
+      "title": "Título",
+      "content": "Contenido",
+      "clientName": "Nombre del Cliente",
+      "clientType": "Tipo de Cliente",
+      "clientLogoUrl": "URL del Logo del Cliente",
+      "clientTitle": "Título del Cliente",
+      "clientSubtitle": "Subtítulo del Cliente",
+      "slug": "Slug",
+      "socialLinks": "Redes Sociales",
+      "products": {
+        "add": "Añadir Producto",
+        "description": "Gestiona el catálogo de productos que se mostrará en el formulario de recomendación.",
+        "product": "Producto",
+        "productName": "Nombre del Producto"
+      },
+      "testimonials": "Testimonios (JSON)",
+      "translations": "Traducciones (JSON)",
+      "jsonPlaceholder": "[{\"title\": \"Título\", \"description\": \"Descripción\"}]",
+      "jsonPlaceholderObject": "{\n  \"de\": { \"key\": \"Wert\" },\n  \"en\": { \"key\": \"Value\" }\n}",
+      "jsonHelp": "Introduce una matriz JSON válida de objetos.",
+      "jsonHelpObject": "Introduce un objeto JSON válido para las traducciones.",
+      "general": {
+        "description": "Información básica y estilos del encabezado."
+      },
+      "header": {
+        "welcomeText": "Texto de Bienvenida",
+        "headerImageUrl": "URL de Imagen del Encabezado (Gráfico)",
+        "socialShareText": "Texto para compartir en redes sociales",
+        "socialShareTextPlaceholder": "Este texto se usará al compartir en redes sociales. Si está vacío, se usará un texto por defecto.",
+        "bannerShareUrl": "URL para Compartir el Banner",
+        "socialLinks": "Redes Sociales",
+        "iconPlaceholderText": "Icono (ej. facebook)",
+        "urlPlaceholder": "https://...",
+        "socialLink": "Red Social {{number}}",
+        "stylesTitle": "Estilos",
+        "headerBackgroundColor": "Color de Fondo del Encabezado",
+        "headerBackgroundImageUrl": "URL de Imagen de Fondo del Encabezado",
+        "clientLogoWidth": "Ancho del Logo del Cliente (px)",
+        "headerTextColor": "Color del Texto del Encabezado",
+        "dividerLine": {
+          "title": "Línea Divisoria",
+          "enable": "Mostrar línea divisoria",
+          "color": "Color de la línea",
+          "thickness": "Grosor de la línea (px)"
+        },
+        "banner": {
+          "title": "Configuración del Banner",
+          "embedCode": "Código de Inserción",
+          "imageUrl": "URL de la Imagen",
+          "fileUpload": "Subir Archivo",
+          "width": "Ancho del Banner",
+          "height": "Altura del Banner",
+          "currentImage": "Imagen Actual"
+        }
+      },
+      "marqueeHeader": {
+        "description": "Configura la marquesina en la parte superior.",
+        "marqueeText": "Texto de la Marquesina",
+        "offerSectionTitle": "Sección de Oferta (Izquierda)",
+        "offerEnabled": "Habilitar Oferta",
+        "leftButtonText": "Texto del Botón Izquierdo (Oferta)",
+        "leftButtonLink": "Enlace del Botón Izquierdo",
+        "offerEndDate": "Fecha de Fin de la Oferta",
+        "pickDate": "Elige una fecha",
+        "offerSection": "Sección de Oferta",
+        "middleTextOffer": "Texto junto a la fecha",
+        "buttonAfterDateText": "Texto del Botón después de expirar",
+        "buttonAfterDateLink": "Enlace del Botón después de expirar",
+        "rightButtonsSectionTitle": "Botones Derechos"
+      },
+      "body": {
+        "description": "Configura la sección de contenido principal de la página.",
+        "title": "Título",
+        "subtitle": "Subtítulo",
+        "descriptionField": "Descripción",
+        "imageUrl": "URL de la Imagen",
+        "imageHint": "Pista de Imagen (para IA)",
+        "videoUrl": "URL del Video (YouTube, Vimeo)",
+        "ctaButtonText": "Texto del Botón CTA",
+        "ctaButtonLink": "Enlace del Botón CTA",
+        "layout": "Diseño"
+      },
+      "infoCards": {
+        "title": "Tarjetas de Información (Pestañas)",
+        "add": "Añadir Tarjeta",
+        "card": "Tarjeta"
+      },
+      "graphics": {
+        "title": "Título del Gráfico",
+        "add": "Añadir Gráfico",
+        "description": "Añade imágenes para mostrar en un mosaico aleatorio en la página de destino.",
+        "graphic": "Gráfico",
+        "imageUrl": "URL de la Imagen",
+        "targetUrl": "URL de Destino"
+      },
+      "form": {
+        "description": "Gestiona el formulario de recomendación que se muestra en la landing page de este cliente.",
+        "infoBlockPre": "Tus amigos podrán obtener beneficios (descuentos, sorteos y nuevas ofertas). Te mantendremos al día con novedades y ventajas exclusivas.",
+        "infoBlockRecommend": "No se envían emails masivos. Primero pediremos consentimiento al recomendado. Al marcar, confirmas comprender y aceptar este flujo."
+      }
+    }
+  },
+  "feedbacks": {
+    "title": "Comentarios",
+    "table": {
+      "date": "Fecha",
+      "name": "Nombre",
+      "customerType": "Tipo de Cliente",
+      "rating": "Calificación",
+      "message": "Mensaje"
+    },
+    "noResults": "No se encontraron comentarios."
+  },
+  "plans": {
+    "title": "Planes de Precios",
+    "back": "Volver",
+    "addPlan": "Añadir Nuevo Plan",
+    "fetchError": "Error al cargar los planes.",
+    "deleteSuccessTitle": "Plan Eliminado",
+    "deleteErrorTitle": "Error al Eliminar",
+    "confirmDeleteTitle": "¿Estás seguro?",
+    "confirmDeleteDesc": "Esta acción no se puede deshacer. El plan {{name}} será eliminado permanentemente.",
+    "notFound": "Plan no encontrado.",
+    "table": {
+      "order": "Orden",
+      "title": "Título",
+      "price": "Precio",
+      "popular": "Popular",
+      "actions": "Acciones",
+      "language": "Idioma"
+    },
+    "edit": {
+      "title": "Editar Plan de Precios",
+      "description": "Edita los detalles del plan de precios.",
+      "saveButton": "Guardar Cambios",
+      "saveSuccess": "Plan actualizado con éxito.",
+      "saveError": "Error al guardar el plan."
+    },
+    "new": {
+      "title": "Crear Nuevo Plan de Precios",
+      "cardTitle": "Nuevo Plan",
+      "description": "Rellena el formulario para añadir un nuevo plan de precios.",
+      "saveButton": "Crear Plan",
+      "saveSuccess": "Plan creado con éxito.",
+      "saveError": "Error al crear el plan."
+    },
+    "fields": {
+      "title": "Título",
+      "price": "Precio (ej. 19,99 €)",
+      "period": "Período (ej. /mes)",
+      "features": "Características (una por línea)",
+      "featuresHelp": "Cada línea se convertirá en un elemento separado en la lista de características.",
+      "buttonText": "Texto del Botón",
+      "isPopular": "¿Marcar como popular?",
+      "order": "Orden de Visualización",
+      "language": "Idioma",
+      "languagePlaceholder": "Seleccionar idioma"
+    }
+  },
+  "registrations": {
+    "title": "Registros",
+    "noResults": "No se encontraron registros para este filtro.",
+    "tabs": {
+      "all": "Todos",
+      "private": "Privado",
+      "donor": "Donante",
+      "retailer": "Minorista",
+      "premium": "Premium"
+    },
+    "table": {
+      "name": "Nombre",
+      "contact": "Contacto",
+      "type": "Tipo",
+      "date": "Fecha",
+      "actions": "Acciones",
+      "noClient": "Cliente no creado",
+      "manageClient": "Gestionar Cliente"
+    }
+  },
+  "seed": {
+    "pageTitle": "Configuración de la Base de Datos",
+    "pageSubtitle": "Sigue estos pasos para inicializar tu usuario superadministrador y la base de datos.",
+    "step1Title": "Crear Usuario Superadministrador",
+    "step1Description": "Crea manualmente un usuario en Firebase Authentication.",
+    "step1AlertTitle": "Instrucciones:",
+    "step1Instruction1": "Ve a Firebase Console > Authentication > Users.",
+    "step1Instruction2": "Haz clic en 'Añadir usuario' y usa las siguientes credenciales:",
+    "emailLabel": "Correo Electrónico",
+    "passwordLabel": "Contraseña",
+    "step1Instruction3": "Haz clic en 'Añadir usuario' para guardar el usuario.",
+    "step1NoteTitle": "Nota Importante",
+    "step1NoteDescription": "Sin este usuario, no podrás iniciar sesión como superadministrador.",
+    "step2Title": "Asignar Rol de Superadministrador",
+    "step2Description": "Asigna el rol 'superadmin' al usuario recién creado en Firestore.",
+    "step2AlertTitle": "Instrucciones:",
+    "step2Instruction1": "Ve a Firebase Console > Firestore Database.",
+    "step2Instruction2": "Crea una nueva colección con el nombre:",
+    "collectionID": "ID de la Colección",
+    "step2Instruction3": "Crea un nuevo documento. Usa el UID del Usuario de la pestaña de autenticación como ID del Documento.",
+    "step2Instruction4": "Añade un campo. Establece el nombre del campo en:",
+    "field": "Campo",
+    "value": "Valor",
+    "step3Title": "¡Hecho!",
+    "step3Description": "Ahora puedes iniciar sesión con las credenciales de superadministrador.",
+    "step3Content": "Una vez que hayas iniciado sesión, puedes poblar la base de datos con datos iniciales usando el botón 'Poblar Base de Datos' en el panel de control.",
+    "backToLogin": "Volver a Iniciar Sesión"
+  },
+  "share": {
+    "button": "Compartir",
+    "title": "Compartir esta oferta",
+    "copy": "Copiar",
+    "copied": "¡Enlace copiado!"
+  },
+  "statistics": {
+    "title": "Estadísticas",
+    "totalVisits": "Visitas Totales",
+    "totalRegistrations": "Registros Totales",
+    "totalSearches": "Búsquedas Totales",
+    "totalCardClicks": "Clics en Tarjetas",
+    "totalPopupClicks": "Clics en Popups",
+    "newBusinesses": "Nuevos Negocios",
+    "activeClients": "Clientes Activos",
+    "lastMonth": "del último mes",
+    "chartTitle": "Visitas vs. Registros",
+    "recentEvents": "Actividad Reciente",
+    "noEvents": "No hay actividad reciente para mostrar.",
+    "table": {
+      "date": "Fecha",
+      "eventType": "Tipo de Evento",
+      "businessName": "Nombre del Negocio",
+      "details": "Detalles"
+    },
+    "types": {
+      "search": "Búsqueda",
+      "cardClick": "Clic en Tarjeta",
+      "popupClick": "Clic en Popup"
+    }
+  },
+  "formsDashboard": {
+    "title": "Dashboard de Formularios",
+    "managementTitle": "Gestión de Formularios",
+    "managementDescription": "Gestiona aquí los formularios de recomendación y las estadísticas."
+  }
+}

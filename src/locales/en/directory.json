@@ -1,0 +1,79 @@
+{
+  "title": "Business Directory",
+  "description": "Explore recommended businesses across various industries.",
+  "content": "Directory content will be available soon.",
+  "categories": {
+    "consulting": {
+      "title": "Consulting",
+      "description": "Provision of expert advice or service to individuals, companies, or organizations."
+    },
+    "education": {
+      "title": "Education",
+      "description": "Covers teaching and learning at all levels, from schools to vocational training."
+    },
+    "finance": {
+      "title": "Financial Services",
+      "description": "Activities related to money management, such as banking, insurance, and investments."
+    },
+    "gastronomy": {
+      "title": "Gastronomy",
+      "description": "Hospitality sector that includes restaurants, bars, cafes, and catering services."
+    },
+    "health": {
+      "title": "Health",
+      "description": "Everything related to physical and mental well-being, including medical services and therapies."
+    },
+    "hospitality": {
+      "title": "Hospitality",
+      "description": "The accommodation and lodging industry, such as hotels and other establishments."
+    },
+    "realEstate": {
+      "title": "Real Estate",
+      "description": "Sector that manages the purchase, sale, rental, and administration of properties."
+    },
+    "textiles": {
+      "title": "Clothing/Apparel",
+      "description": "Textile and fashion industry, including the design, manufacture, and sale of garments."
+    },
+    "food": {
+      "title": "Food",
+      "description": "Production, distribution, and sale of edible products, from raw materials to processed goods."
+    },
+    "music": {
+      "title": "Music",
+      "description": "Creation, recording, distribution, and consumption of music."
+    },
+    "social": {
+      "title": "Social Affairs",
+      "description": "Services related to the well-being of society, including social assistance and charity."
+    },
+    "sports": {
+      "title": "Sports",
+      "description": "Physical activities, leagues, clubs, and events related to athletic performance."
+    },
+    "travel": {
+      "title": "Travel/Tourism",
+      "description": "Industry that handles agencies, tour operators, transport, and tourist destinations."
+    },
+    "technology": {
+      "title": "Technology",
+      "description": "Products and services based on applied science, especially software and hardware."
+    },
+    "pets": {
+      "title": "Animals/Pets",
+      "description": "Products and services for the care of animals, such as veterinarians and specialty stores."
+    },
+    "transport": {
+      "title": "Transport",
+      "description": "Movement of people and goods, including logistics and public transport."
+    },
+    "environment": {
+      "title": "Environment",
+      "description": "Topics of ecology, sustainability, environmental protection, and renewable energies."
+    },
+    "entertainment": {
+      "title": "Entertainment",
+      "description": "Media and activities for fun and leisure, such as cinema, theater, and shows."
+    }
+  }
+}

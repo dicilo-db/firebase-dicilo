@@ -1,0 +1,92 @@
+{
+  "register": {
+    "marketing": {
+      "title": "We are here for you!",
+      "benefits_title": "Your benefits at a glance:",
+      "benefit1_title": "Maximum Savings",
+      "benefit1_desc": "Benefit from exclusive discounts and limited-time offers from renowned brands.",
+      "benefit2_title": "Discover New Things",
+      "benefit2_desc": "Our extensive catalog offers a variety of products that will exceed your expectations.",
+      "benefit3_title": "Better Quality of Life",
+      "benefit3_desc": "Invest specifically in what is important to you.",
+      "benefit4_title": "Experience Community",
+      "benefit4_desc": "Become part of our dedicated community and share your enthusiasm for attractive offers.",
+      "offer_title": "What we offer you:",
+      "offer1_title": "Individual Consultation",
+      "offer1_desc": "Receive personalized product recommendations that are perfectly tailored to your needs.",
+      "offer2_title": "Verified Quality",
+      "offer2_desc": "Every product in our range is carefully selected to ensure the highest quality standards.",
+      "offer3_title": "Maximum Security",
+      "offer3_desc": "Your purchase is in safe hands with us. We work exclusively with certified partners.",
+      "offer4_title": "Sustainability",
+      "offer4_desc": "Make a conscious decision for the environment and choose from our range of sustainable products.",
+      "hesitate": "Don't hesitate any longer!"
+    },
+    "form": {
+      "title": "Register your company & Win!",
+      "description": "Recommend a friendly company to DICILO and secure benefits.",
+      "recommenderSection": "Your Contact",
+      "recommenderName": "Your First & Last Name*",
+      "recommenderContact": "Your Email / Phone*",
+      "companySection": "Contact details of the recommended company",
+      "companyName": "Company Name*",
+      "companyContact": "Contact Person (optional)",
+      "companyWebsite": "Website (optional)",
+      "companyCity": "City*",
+      "businessArea": "Industry*",
+      "diciloCode": "DICILO Code (optional)",
+      "source": "How did you hear about us?*",
+      "sourcePlaceholder": "Please select",
+      "notes": "Notes (optional)",
+      "consent": "I hereby confirm that I have read and agree to the liability clause.",
+      "captchaLabel": "What is the sum of",
+      "submitButton": "Send Recommendation Now!",
+      "laughingRegister": "( laughing Register Now )",
+      "successTitle": "Recommendation Sent!",
+      "successDescription": "Your recommendation has been submitted successfully."
+    },
+    "errors": {
+      "required": "This field is required.",
+      "invalid_url": "Please enter a valid URL.",
+      "consent_required": "You must agree to the liability clause.",
+      "captcha_invalid": "The answer is incorrect. Please try again.",
+      "invalidEmail": "Invalid email format.",
+      "requiredType": "Please select a registration type."
+    },
+    "options": {
+      "private": "Private",
+      "donor": "Donor",
+      "retailer": "Retailer",
+      "premium": "Premium"
+    },
+    "fields": {
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "whatsapp": "WhatsApp",
+      "registrationType": "Registration Type"
+    },
+    "submitButton": "Register",
+    "successTitle": "Registration Successful!",
+    "successDescription": "Your registration has been submitted successfully.",
+    "errorTitle": "Error",
+    "submitError": "An error occurred while submitting your registration."
+  },
+  "form": {
+    "source": {
+      "customer": "I'm a customer",
+      "facebook": "Facebook",
+      "instagram": "Instagram",
+      "telegram": "Telegram",
+      "youtube": "YouTube",
+      "twitter": "Twitter",
+      "linkedin": "LinkedIn",
+      "tiktok": "TikTok",
+      "recommendation": "Direct recommendation",
+      "googleads": "Google Ads / Advertising",
+      "dicilo": "DICILO",
+      "mhc": "MHC Representative",
+      "other": "Other"
+    }
+  }
+}

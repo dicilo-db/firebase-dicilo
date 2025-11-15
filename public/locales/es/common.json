@@ -1,0 +1,115 @@
+{
+  "header": {
+    "nav": {
+      "home": "Inicio",
+      "benefits": "Ventajas",
+      "planes": "Planes",
+      "directory": "Directorio",
+      "login": "Iniciar sesión",
+      "register": "Registrarse",
+      "language": "Idioma"
+    }
+  },
+  "footer": {
+    "imprint": "Aviso legal",
+    "privacy": "Privacidad",
+    "about": "Sobre nosotros",
+    "register": "Registro"
+  },
+  "search": {
+    "title": "Tu Portal de Recomendaciones de Confianza",
+    "description": "Descubre los mejores productos y servicios, recomendados por una comunidad de confianza.",
+    "business": "Empresa",
+    "location": "Ubicación",
+    "businessPlaceholder": "Nombre de la empresa...",
+    "locationPlaceholder": "Ciudad, región o país...",
+    "ariaLabel": "Buscar empresas o ubicaciones",
+    "ariaButtonLabel": "Iniciar búsqueda",
+    "geolocationAriaLabel": "Usar mi ubicación",
+    "businessNotFound": "Empresa no encontrada",
+    "businessNotFoundDesc": "No pudimos encontrar una empresa para '{query}'.",
+    "locationNotFound": "Ubicación no encontrada",
+    "locationNotFoundDesc": "No pudimos encontrar una ubicación para '{query}'.",
+    "error": "Error de Búsqueda",
+    "errorDesc": "Ocurrió un error durante la búsqueda.",
+    "geolocationError": "Error de Geolocalización",
+    "geolocationErrorDesc": "No pudimos obtener tu ubicación.",
+    "geolocationNotSupported": "Geolocalización no soportada",
+    "geolocationNotSupportedDesc": "Tu navegador no soporta la geolocalización.",
+    "recommendationPortal": "El portal de recomendaciones en el que puedes confiar."
+  },
+  "mapPopup": {
+    "website": "Sitio web"
+  },
+  "businessCard": {
+    "currentOffer": "Oferta Actual"
+  },
+  "impressum": {
+    "pageTitle": "Aviso Legal",
+    "pageSubtitle": "Forma parte de una comunidad que respira innovación y éxito. Ya seas una empresa consolidada o un cliente curioso, Dicilo te abre las puertas a un universo de ofertas exclusivas y oportunidades de negocio únicas.",
+    "infoBox1": {
+      "title": "Consultoría",
+      "value": "DE | ES"
+    },
+    "infoBox2": {
+      "title": "Clientes",
+      "value": "NAC | INT"
+    },
+    "infoBox3": {
+      "title": "Soporte IA",
+      "value": "365 | 24/7"
+    },
+    "cardTitle": "Nuestro Aviso Legal",
+    "legal": {
+      "title": "Información según § 5 TMG",
+      "brand_of": "Dicilo es una marca de;"
+    },
+    "register": {
+      "title": "Registro Mercantil",
+      "value": "HRB 171236"
+    },
+    "court": {
+      "title": "Tribunal de Registro",
+      "value": "Hamburgo"
+    },
+    "representedBy": {
+      "title": "Representado por"
+    },
+    "contact": {
+      "title": "Contacto",
+      "phone": "Teléfono",
+      "email": "Correo electrónico"
+    },
+    "vat": {
+      "title": "CIF",
+      "description": "Número de identificación fiscal según el § 27 a de la Ley del Impuesto sobre el Valor Añadido:"
+    },
+    "responsible": {
+      "title": "Responsable editorial"
+    },
+    "dispute": {
+      "title": "Resolución de litigios de la UE",
+      "description": "La Comisión Europea ofrece una plataforma para la resolución de litigios en línea (ODR):",
+      "email": "Nuestra dirección de correo electrónico se encuentra arriba en el aviso legal."
+    },
+    "consumerDispute": {
+      "title": "Resolución de litigios en materia de consumo/Junta de arbitraje universal",
+      "description": "No estamos dispuestos ni obligados a participar en procedimientos de resolución de litigios ante una junta de arbitraje de consumo."
+    }
+  },
+  "privacy": {
+    "pageTitle": "Política de Privacidad",
+    "pageSubtitle": "Su privacidad es importante para nosotros",
+    "cardTitle": "Privacidad de un vistazo"
+  },
+  "about": {
+    "title": "Sobre Nosotros",
+    "subtitle": "Conectamos productos de calidad con consumidores exigentes."
+  },
+  "common": {
+    "yes": "Sí",
+    "no": "No",
+    "cancel": "Cancelar",
+    "delete": "Eliminar"
+  }
+}

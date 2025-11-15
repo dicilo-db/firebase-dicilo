@@ -1,0 +1,182 @@
+{
+  "header": {
+    "nav": {
+      "benefits": "Vorteile",
+      "planes": "Pläne",
+      "about": "Über uns",
+      "directory": "Verzeichnis",
+      "login": "Anmelden",
+      "register": "Registrieren",
+      "language": "Sprache"
+    }
+  },
+  "footer": {
+    "imprint": "Impressum",
+    "privacy": "Datenschutz",
+    "about": "Über uns",
+    "faq": "FAQ",
+    "register": "Registrieren"
+  },
+  "search": {
+    "title": "Entdecken Sie empfohlene Unternehmen",
+    "description": "Finden Sie die besten Produkte und Dienstleistungen in Ihrer Nähe oder an Ihrem nächsten Reiseziel.",
+    "businessType": "Unternehmen",
+    "locationType": "Standort",
+    "businessPlaceholder": "Name des Unternehmens oder Schlüsselwort...",
+    "locationPlaceholder": "Stadt, Region oder Land...",
+    "searchLabel": "Suchen",
+    "useLocationLabel": "Aktuelle Position",
+    "locationErrorTitle": "Standortfehler",
+    "locationErrorDesc": "Adresse oder Standort unbekannt.",
+    "geolocationErrorTitle": "GPS Fehler",
+    "geolocationErrorDesc": "Wir konnten Ihren Standort nicht abrufen.",
+    "geolocationNotSupportedTitle": "GPS nicht unterstützt",
+    "geolocationNotSupportedDesc": "Ihr Browser unterstützt die Standortsuche nicht.",
+    "locationNotFoundTitle": "Ort nicht gefunden",
+    "locationNotFoundDesc": "Der Ort '{query}' wurde nicht gefunden.",
+    "searchErrorTitle": "Suchfehler",
+    "searchErrorDesc": "Ein Fehler ist bei der Suche aufgetreten.",
+    "noResults": "Keine Ergebnisse für '{query}' gefunden.",
+    "recommendBusiness": "Ein Geschäft empfehlen"
+  },
+  "businessCard": {
+    "currentOffer": "Aktuelles Angebot"
+  },
+  "mapPopup": {
+    "website": "Webseite",
+    "offer": "Angebot",
+    "map": "Karte"
+  },
+  "form": {
+    "title": "Unternehmen empfehlen",
+    "description": "Füllen Sie dieses Formular aus, um ein Unternehmen zu empfehlen. Wir werden uns bemühen, es zu kontaktieren und in unser Verzeichnis aufzunehmen.",
+    "companyNamePlaceholder": "Name des Unternehmens*",
+    "companyNameRequired": "Der Name des Unternehmens ist erforderlich.",
+    "invalidEmail": "Ungültiges E-Mail-Format.",
+    "contactNamePlaceholder": "Ihr Name",
+    "emailPlaceholder": "Ihre E-Mail (optional)",
+    "phonePlaceholder": "Ihre Telefonnummer (optional)",
+    "categoryPlaceholder": "Kategorie des Unternehmens (optional)",
+    "commentsPlaceholder": "Ihre Kommentare (optional)",
+    "submitButton": "Empfehlung senden",
+    "successTitle": "Empfehlung gesendet!",
+    "successDesc": "Vielen Dank für Ihre Empfehlung. Wir werden uns mit dem Unternehmen in Verbindung setzen.",
+    "errorTitle": "Fehler beim Senden!",
+    "errorDesc": "Es gab ein Problem beim Senden Ihrer Empfehlung. Bitte versuchen Sie es später noch einmal."
+  },
+  "cancel": "Abbrechen",
+  "delete": "Löschen",
+  "yes": "Ja",
+  "no": "Nein",
+  "bestChoice": "Beste Wahl",
+  "days": {
+    "one": "Tag",
+    "other": "Tage"
+  },
+  "share": {
+    "emailSubject": "Schau dir das an!"
+  },
+  "noPlansAvailable": "Derzeit sind keine Pläne für diese Sprache verfügbar. Es werden die Standardpläne angezeigt.",
+  "notFound": {
+    "title": "Seite nicht gefunden",
+    "description": "Die von Ihnen gesuchte Seite konnte leider nicht gefunden werden.",
+    "backToHome": "Zurück zur Startseite"
+  },
+  "benefits": {
+    "page_title": "Warum Dicilo?",
+    "page_subtitle": "Wir sind mehr als nur eine Empfehlungsplattform. Wir sind eine wachsende Gemeinschaft, die Qualität, Vertrauen und gegenseitigen Nutzen schätzt.",
+    "size": {
+      "title": "Größe ist nicht alles, Qualität schon",
+      "description": "Wir konzentrieren uns darauf, eine ausgewählte Gruppe von Unternehmen anzubieten, denen Sie vertrauen können, anstatt eine überwältigende Anzahl von Optionen."
+    },
+    "experience": {
+      "title": "Erfahrung, die für sich spricht",
+      "description": "Mit über 30 Jahren Erfahrung im Marketing und in der Geschäftsentwicklung wissen wir, wie man Unternehmen und Kunden auf sinnvolle Weise zusammenbringt."
+    },
+    "two_reasons": {
+      "title": "Zwei gute Gründe, Teil von Dicilo zu sein",
+      "description": "Egal, ob Sie ein Unternehmen sind, das wachsen möchte, oder ein Benutzer auf der Suche nach Qualität, Dicilo bietet Ihnen die Werkzeuge und die Gemeinschaft, die Sie benötigen."
+    },
+    "for_companies": {
+      "title": "Für Unternehmen",
+      "item1": {
+        "title": "Direkter Zugang zu engagierten Kunden",
+        "description": "Erreichen Sie ein Publikum, das aktiv nach hochwertigen Produkten und Dienstleistungen sucht."
+      },
+      "item2": {
+        "title": "Leistungsstarke Marketing-Tools",
+        "description": "Von personalisierten Landing Pages bis hin zu gezielten Werbekampagnen – wir geben Ihnen alles, was Sie zum Erfolg brauchen."
+      },
+      "item3": {
+        "title": "Stärken Sie Ihre Marke",
+        "description": "Die Verbindung mit Dicilo ist ein Gütesiegel, das Vertrauen und Glaubwürdigkeit bei den Verbrauchern schafft."
+      }
+    },
+    "for_users": {
+      "title": "Für Benutzer",
+      "item1": {
+        "title": "Authentische und verifizierte Empfehlungen",
+        "description": "Verabschieden Sie sich von gefälschten Bewertungen. Jedes Unternehmen auf Dicilo wird sorgfältig ausgewählt."
+      },
+      "item2": {
+        "title": "Exklusive Vorteile und Rabatte",
+        "description": "Als Mitglied des Dicilo-Clubs erhalten Sie Zugang zu Sonderangeboten, die nirgendwo anders verfügbar sind."
+      },
+      "item3": {
+        "title": "Seien Sie Teil einer Gemeinschaft",
+        "description": "Teilen Sie Ihre Erfahrungen und helfen Sie anderen, die besten Entscheidungen zu treffen, während Sie für Ihren Beitrag belohnt werden."
+      }
+    },
+    "network": {
+      "title": "Ein Netzwerk, das mit Ihnen wächst",
+      "description": "Unsere Plattform ist darauf ausgelegt, sich mit Ihnen weiterzuentwickeln. Je mehr Sie teilnehmen, desto mehr Vorteile erhalten Sie. Wir wachsen zusammen, schaffen ein einzigartiges Ökosystem des Vertrauens und der Zusammenarbeit.",
+      "cta_text": "Sind Sie bereit, den nächsten Schritt zu tun?",
+      "cta_button_company": "Registrieren Sie Ihr Unternehmen",
+      "cta_button_user": "Treten Sie dem Club bei"
+    },
+    "social": {
+      "title": "Treten Sie unserer digitalen Gemeinschaft bei",
+      "description": "Folgen Sie uns in den sozialen Netzwerken, um über die neuesten Nachrichten, exklusive Angebote und Community-Events auf dem Laufenden zu bleiben.<br/>Wir sind auf WhatsApp, Telegram, Instagram, Facebook, TikTok, LinkedIn, YouTube, X (Twitter), Twitch und Pinterest."
+    },
+    "testimonials": {
+      "title": "Was unsere Mitglieder sagen",
+      "subtitle": "Echte Meinungen von echten Menschen.",
+      "carla": {
+        "name": "Carla S.",
+        "role": "Premium-Mitglied",
+        "quote": "Dank Dicilo habe ich einzigartige lokale Geschäfte entdeckt, die ich sonst nie gefunden hätte. Die exklusiven Rabatte sind ein fantastischer Bonus!"
+      },
+      "tomas": {
+        "name": "Tomás R.",
+        "role": "Geschäftsinhaber",
+        "quote": "Seit ich mein Unternehmen bei Dicilo registriert habe, ist mein Kundenstamm erheblich gewachsen. Die Plattform hat mir geholfen, mit Kunden in Kontakt zu treten, die wirklich schätzen, was ich tue."
+      },
+      "lucia": {
+        "name": "Lucía M.",
+        "role": "Spender-Mitglied",
+        "quote": "Es ist toll, Teil einer Gemeinschaft zu sein, die Qualität und Authentizität schätzt. Jede Empfehlung, die ich finde, ist erstklassig."
+      }
+    },
+    "feedback": {
+      "title": "Teilen Sie Ihre Meinung mit",
+      "name": "Name",
+      "email": "E-Mail",
+      "country": "Land",
+      "customerType": "Ich bin ein...",
+      "customerTypePlaceholder": "Wählen Sie eine Option",
+      "customerTypeOptions": {
+        "private": "Privatkunde",
+        "donor": "Spender / Unterstützer",
+        "company": "Unternehmen",
+        "premium": "Premium-Kunde"
+      },
+      "rating": "Ihre Bewertung",
+      "message": "Ihre Nachricht",
+      "submit": "Feedback senden",
+      "successTitle": "Vielen Dank!",
+      "successDesc": "Ihr Feedback wurde erfolgreich gesendet.",
+      "errorTitle": "Fehler",
+      "errorDesc": "Beim Senden Ihres Feedbacks ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut."
+    }
+  }
+}

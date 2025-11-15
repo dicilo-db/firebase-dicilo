@@ -1,0 +1,8 @@
+{
+  "consent.subject": "[DICILO] ¿Aceptas recibir información recomendada por {{name}}?",
+  "consent.body": "Hola {{recipientName}},\\nHas recibido una recomendación de {{name}}. ¿Deseas recibir información de DICILO?",
+  "consent.cta.accept": "Sí, acepto",
+  "consent.cta.decline": "No, gracias",
+  "reminder.subject": "[DICILO] Recordatorio de consentimiento",
+  "recommendation.subject": "[DICILO] {{name}} te recomienda: {{product}}"
+}

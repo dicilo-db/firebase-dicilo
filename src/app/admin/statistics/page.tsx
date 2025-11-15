@@ -1,0 +1,289 @@
+// src/app/admin/statistics/page.tsx
+'use client';
+
+import React, { useEffect, useState, useMemo } from 'react';
+import Link from 'next/link';
+import {
+  getFirestore,
+  collection,
+  query,
+  orderBy,
+  limit,
+  onSnapshot,
+  getCountFromServer,
+  where,
+  Timestamp,
+} from 'firebase/firestore';
+import { format } from 'date-fns';
+import { app } from '@/lib/firebase';
+import { useTranslations } from 'next-intl';
+import { useAuthGuard } from '@/hooks/useAuthGuard';
+import { Header } from '@/components/header';
+import Footer from '@/components/footer';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
+import { LayoutDashboard, MousePointerClick, Search } from 'lucide-react';
+
+// --- TIPOS ---
+const db = getFirestore(app);
+interface Stats {
+  totalSearches: number;
+  totalCardClicks: number;
+  totalPopupClicks: number;
+}
+
+type EventType = 'search' | 'cardClick' | 'popupClick';
+
+interface AnalyticsEvent {
+  id: string;
+  type: EventType;
+  businessName: string;
+  timestamp: Timestamp;
+  clickedElement?: string;
+}
+
+// --- COMPONENTES AUXILIARES ---
+
+// Componente para una tarjeta de estadística individual
+const StatCard = ({
+  title,
+  value,
+  icon,
+}: {
+  title: string;
+  value: number | string;
+  icon: React.ReactNode;
+}) => (
+  <Card>
+    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+      <CardTitle className="text-sm font-medium">{title}</CardTitle>
+      {icon}
+    </CardHeader>
+    <CardContent>
+      <div className="text-2xl font-bold">{value}</div>
+    </CardContent>
+  </Card>
+);
+
+// Esqueleto de la página de estadísticas
+const StatisticsPageSkeleton = () => (
+  <div className="flex min-h-screen flex-col">
+    <Header />
+    <main className="flex-grow space-y-6 p-8">
+      <div className="flex items-center justify-between">
+        <Skeleton className="h-8 w-64" />
+        <Skeleton className="h-10 w-48" />
+      </div>
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <Skeleton className="h-28 w-full" />
+        <Skeleton className="h-28 w-full" />
+        <Skeleton className="h-28 w-full" />
+      </div>
+      <Skeleton className="h-96 w-full" />
+    </main>
+    <Footer />
+  </div>
+);
+
+// --- COMPONENTE PRINCIPAL ---
+
+export default function StatisticsPage() {
+  useAuthGuard();
+  const t = useTranslations();
+  const [stats, setStats] = useState<Stats>({
+    totalSearches: 0,
+    totalCardClicks: 0,
+    totalPopupClicks: 0,
+  });
+  const [recentEvents, setRecentEvents] = useState<AnalyticsEvent[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const analyticsCollection = collection(db, 'analyticsEvents');
+
+    const fetchInitialCounts = async () => {
+      try {
+        const [searchesSnap, cardClicksSnap, popupClicksSnap] =
+          await Promise.all([
+            getCountFromServer(
+              query(analyticsCollection, where('type', '==', 'search'))
+            ),
+            getCountFromServer(
+              query(analyticsCollection, where('type', '==', 'cardClick'))
+            ),
+            getCountFromServer(
+              query(analyticsCollection, where('type', '==', 'popupClick'))
+            ),
+          ]);
+
+        setStats({
+          totalSearches: searchesSnap.data().count,
+          totalCardClicks: cardClicksSnap.data().count,
+          totalPopupClicks: popupClicksSnap.data().count,
+        });
+      } catch (error) {
+        console.error('Error fetching initial stat counts:', error);
+      }
+    };
+
+    const subscribeToRecentEvents = () => {
+      const eventsQuery = query(
+        analyticsCollection,
+        orderBy('timestamp', 'desc'),
+        limit(10)
+      );
+
+      const unsubscribe = onSnapshot(
+        eventsQuery,
+        (snapshot) => {
+          const events = snapshot.docs.map(
+            (doc) =>
+              ({
+                id: doc.id,
+                ...doc.data(),
+              }) as AnalyticsEvent
+          );
+          setRecentEvents(events);
+          if (isLoading) setIsLoading(false);
+        },
+        (error) => {
+          console.error('Error subscribing to recent events:', error);
+          if (isLoading) setIsLoading(false);
+        }
+      );
+
+      return unsubscribe;
+    };
+
+    fetchInitialCounts();
+    const unsubscribe = subscribeToRecentEvents();
+
+    return () => unsubscribe(); // Limpiar suscripción al desmontar
+  }, [isLoading]);
+
+  const eventTypeMap: Record<EventType, string> = useMemo(
+    () => ({
+      search: t('admin.statistics.types.search'),
+      cardClick: t('admin.statistics.types.cardClick'),
+      popupClick: t('admin.statistics.types.popupClick'),
+    }),
+    [t]
+  );
+
+  const badgeVariantMap: Record<
+    EventType,
+    'outline' | 'secondary' | 'default'
+  > = {
+    search: 'outline',
+    cardClick: 'secondary',
+    popupClick: 'default',
+  };
+
+  if (isLoading) {
+    return <StatisticsPageSkeleton />;
+  }
+
+  return (
+    <div className="flex min-h-screen flex-col bg-gray-50">
+      <Header />
+      <main className="flex-grow p-4 sm:p-8">
+        <div className="mb-6 flex items-center justify-between">
+          <h1 className="text-2xl font-bold">{t('admin.statistics.title')}</h1>
+          <Button variant="outline" asChild>
+            <Link href="/admin/dashboard">
+              <LayoutDashboard className="mr-2 h-4 w-4" />
+              {t('admin.businesses.backToDashboard')}
+            </Link>
+          </Button>
+        </div>
+
+        <div className="mb-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <StatCard
+            title={t('admin.statistics.totalSearches')}
+            value={stats.totalSearches}
+            icon={<Search className="h-4 w-4 text-muted-foreground" />}
+          />
+          <StatCard
+            title={t('admin.statistics.totalCardClicks')}
+            value={stats.totalCardClicks}
+            icon={
+              <MousePointerClick className="h-4 w-4 text-muted-foreground" />
+            }
+          />
+          <StatCard
+            title={t('admin.statistics.totalPopupClicks')}
+            value={stats.totalPopupClicks}
+            icon={
+              <MousePointerClick className="h-4 w-4 text-muted-foreground" />
+            }
+          />
+        </div>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>{t('admin.statistics.recentEvents')}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>{t('admin.statistics.table.date')}</TableHead>
+                  <TableHead>{t('admin.statistics.table.eventType')}</TableHead>
+                  <TableHead>
+                    {t('admin.statistics.table.businessName')}
+                  </TableHead>
+                  <TableHead>{t('admin.statistics.table.details')}</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {recentEvents.length > 0 ? (
+                  recentEvents.map((event) => (
+                    <TableRow key={event.id}>
+                      <TableCell className="text-xs text-muted-foreground">
+                        {event.timestamp
+                          ? format(
+                              event.timestamp.toDate(),
+                              'dd/MM/yy HH:mm:ss'
+                            )
+                          : 'N/A'}
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          variant={badgeVariantMap[event.type] || 'default'}
+                        >
+                          {eventTypeMap[event.type] || event.type}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>{event.businessName}</TableCell>
+                      <TableCell>{event.clickedElement || 'N/A'}</TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell
+                      colSpan={4}
+                      className="h-24 text-center text-muted-foreground"
+                    >
+                      {t('admin.statistics.noEvents')}
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      </main>
+      <Footer />
+    </div>
+  );
+}

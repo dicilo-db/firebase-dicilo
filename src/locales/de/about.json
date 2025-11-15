@@ -1,0 +1,59 @@
+{
+  "title": "Über Dicilo",
+  "subtitle": "Wir verbinden hochwertige Unternehmen mit anspruchsvollen Verbrauchern.",
+  "consumers": {
+    "title": "Für Verbraucher",
+    "description": "Entdecken Sie empfohlene Unternehmen und genießen Sie exklusive Vorteile.",
+    "cta": "Jetzt Mitglied werden"
+  },
+  "entrepreneurs": {
+    "title": "Für Unternehmer",
+    "description": "Präsentieren Sie Ihr Unternehmen, um neue Kunden zu gewinnen und Ihr Geschäft auszubauen.",
+    "cta": "Jetzt registrieren"
+  },
+  "club": {
+    "title": "Werden Sie Teil des Dicilo Clubs",
+    "description": "Schließen Sie sich einer Gemeinschaft an, in der Qualität und Vertrauen an erster Stelle stehen. Registrieren Sie sich als Mitglied, um exklusive Vorteile und Rabatte zu erhalten, oder listen Sie Ihr Unternehmen, um ein breiteres Publikum zu erreichen.",
+    "cta": "Entdecken Sie unsere Pläne"
+  },
+  "weAreDicilo": {
+    "title": "Wir sind Dicilo",
+    "description": "Bei Dicilo schaffen wir ein Ökosystem, in dem Unternehmen und Verbraucher von gegenseitigem Wachstum und Vertrauen profitieren. Wir sind nicht nur ein Empfehlungsportal; wir sind eine digitale Marketingplattform, die auf authentischen Empfehlungen basiert, um den Erfolg voranzutreiben."
+  },
+  "ourMission": {
+    "title": "Unsere Mission",
+    "description": "Unsere Mission ist es, ein transparentes und zuverlässiges Netzwerk aufzubauen, das es Verbrauchern ermöglicht, die besten Produkte und Dienstleistungen zu finden, während Unternehmen die Möglichkeit erhalten, sich einem Publikum zu präsentieren, das Qualität und Exzellenz schätzt."
+  },
+  "ourVision": {
+    "title": "Unsere Vision",
+    "description": "Wir wollen die führende globale Plattform für authentische Empfehlungen werden und eine Gemeinschaft schaffen, in der das Vertrauen zwischen Unternehmen und Verbrauchern die Grundlage für alle Interaktionen bildet. Wir streben danach, ein Ökosystem zu schaffen, in dem Qualität immer belohnt wird."
+  },
+  "ourValues": {
+    "title": "Unsere Werte",
+    "description": "Vertrauen, Transparenz, Qualität, Gemeinschaft und Innovation sind die Säulen, auf denen Dicilo aufgebaut ist. Wir glauben an die Kraft authentischer Empfehlungen, um sinnvolle Verbindungen zu schaffen und das Wachstum für alle zu fördern."
+  },
+  "ourServices": {
+    "title": "Unsere Dienstleistungen",
+    "description": "Wir bieten eine breite Palette von digitalen Marketing-Tools, personalisierte Landing Pages und exklusive Vorteile für unsere Mitglieder. Unsere Plattform ist darauf ausgelegt, die Sichtbarkeit von Unternehmen zu erhöhen und den Verbrauchern ein außergewöhnliches Erlebnis zu bieten."
+  },
+  "businessModel": {
+    "title": "Unser Geschäftsmodell",
+    "description": "Unser Modell basiert auf einer symbiotischen Beziehung: Unternehmen erhalten Sichtbarkeit und Zugang zu einem qualifizierten Publikum, während die Nutzer exklusive Vorteile und die Gewissheit genießen, die besten Optionen auf dem Markt zu finden. Wir glauben an ein faires und nachhaltiges Wachstum für alle."
+  },
+  "innovation": {
+    "title": "Innovation",
+    "description": "Wir befinden uns in ständiger Innovation, um die neuesten Technologien in unsere Plattform zu integrieren, von künstlicher Intelligenz bis hin zu fortschrittlichen Datenanalysen. Unser Ziel ist es, ein sich ständig weiterentwickelndes Erlebnis zu bieten, das den Bedürfnissen unserer Nutzer und Kunden gerecht wird."
+  },
+  "sustainability": {
+    "title": "Nachhaltigkeit",
+    "description": "Wir sind einer nachhaltigen Entwicklung und ethischen Geschäftspraktiken verpflichtet. Wir fördern Unternehmen, die unsere Werte in Bezug auf soziale und ökologische Verantwortung teilen. Wir glauben an ein Wachstum, das nicht nur wirtschaftlich, sondern auch positiv für die Gesellschaft und den Planeten ist."
+  },
+  "community": {
+    "title": "Gemeinschaft",
+    "description": "Dicilo ist mehr als eine Plattform; es ist eine Gemeinschaft. Wir fördern die aktive Teilnahme, den Austausch von Ideen und die Zusammenarbeit zwischen unseren Mitgliedern und Unternehmen. Gemeinsam bauen wir ein stärkeres und zuverlässigeres Netzwerk auf."
+  },
+  "data": {
+    "title": "Daten und Analysen",
+    "description": "Wir nutzen Datenanalysen, um das Verhalten und die Vorlieben der Nutzer zu verstehen und so personalisierte und relevante Empfehlungen zu bieten. Unternehmen erhalten wertvolle Einblicke, um ihre Strategien zu optimieren und ihre Zielgruppe besser zu verstehen."
+  }
+}

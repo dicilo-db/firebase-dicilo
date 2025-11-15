@@ -1,0 +1,182 @@
+{
+  "header": {
+    "nav": {
+      "benefits": "Benefits",
+      "planes": "Plans",
+      "about": "About Us",
+      "directory": "Directory",
+      "login": "Login",
+      "register": "Register",
+      "language": "Language"
+    }
+  },
+  "footer": {
+    "imprint": "Imprint",
+    "privacy": "Privacy",
+    "about": "About Us",
+    "faq": "FAQ",
+    "register": "Register"
+  },
+  "search": {
+    "title": "Discover Recommended Businesses",
+    "description": "Find the best products and services near you or at your next destination.",
+    "businessType": "Business",
+    "locationType": "Location",
+    "businessPlaceholder": "Business name or keyword...",
+    "locationPlaceholder": "City, region, or country...",
+    "searchLabel": "Search",
+    "useLocationLabel": "Current Location",
+    "locationErrorTitle": "Location Error",
+    "locationErrorDesc": "Address or location unknown.",
+    "geolocationErrorTitle": "GPS Error",
+    "geolocationErrorDesc": "We could not retrieve your location.",
+    "geolocationNotSupportedTitle": "GPS Not Supported",
+    "geolocationNotSupportedDesc": "Your browser does not support location search.",
+    "locationNotFoundTitle": "Location Not Found",
+    "locationNotFoundDesc": "The location '{query}' was not found.",
+    "searchErrorTitle": "Search Error",
+    "searchErrorDesc": "An error occurred during the search.",
+    "noResults": "No results found for '{query}'.",
+    "recommendBusiness": "Recommend a Business"
+  },
+  "businessCard": {
+    "currentOffer": "Current Offer"
+  },
+  "mapPopup": {
+    "website": "Website",
+    "offer": "Offer",
+    "map": "Map"
+  },
+  "form": {
+    "title": "Recommend a Business",
+    "description": "Fill out this form to recommend a business. We will reach out to them to include them in our directory.",
+    "companyNamePlaceholder": "Company Name*",
+    "companyNameRequired": "Company name is required.",
+    "invalidEmail": "Invalid email format.",
+    "contactNamePlaceholder": "Your Name",
+    "emailPlaceholder": "Your Email (optional)",
+    "phonePlaceholder": "Your Phone Number (optional)",
+    "categoryPlaceholder": "Business Category (optional)",
+    "commentsPlaceholder": "Your Comments (optional)",
+    "submitButton": "Send Recommendation",
+    "successTitle": "Recommendation Sent!",
+    "successDesc": "Thank you for your recommendation. We will reach out to the business.",
+    "errorTitle": "Error Sending!",
+    "errorDesc": "There was an issue sending your recommendation. Please try again later."
+  },
+  "cancel": "Cancel",
+  "delete": "Delete",
+  "yes": "Yes",
+  "no": "No",
+  "bestChoice": "Best Choice",
+  "days": {
+    "one": "day",
+    "other": "days"
+  },
+  "share": {
+    "emailSubject": "Check this out!"
+  },
+  "noPlansAvailable": "No plans are currently available for this language. Displaying default plans.",
+  "notFound": {
+    "title": "Page Not Found",
+    "description": "Sorry, the page you were looking for could not be found.",
+    "backToHome": "Back to Home"
+  },
+  "benefits": {
+    "page_title": "Why Dicilo?",
+    "page_subtitle": "We are more than just a recommendation platform. We are a growing community that values quality, trust, and mutual benefit.",
+    "size": {
+      "title": "Size isn't everything, quality is",
+      "description": "We focus on offering a select group of businesses you can trust, rather than an overwhelming number of options."
+    },
+    "experience": {
+      "title": "Experience that speaks for itself",
+      "description": "With over 30 years of experience in marketing and business development, we know how to connect businesses and customers in a meaningful way."
+    },
+    "two_reasons": {
+      "title": "Two great reasons to be part of Dicilo",
+      "description": "Whether you are a business looking to grow or a user searching for quality, Dicilo gives you the tools and community you need."
+    },
+    "for_companies": {
+      "title": "For Companies",
+      "item1": {
+        "title": "Direct access to engaged customers",
+        "description": "Reach an audience that is actively looking for high-quality products and services."
+      },
+      "item2": {
+        "title": "Powerful marketing tools",
+        "description": "From personalized landing pages to targeted advertising campaigns, we give you everything you need to succeed."
+      },
+      "item3": {
+        "title": "Strengthen your brand",
+        "description": "Being associated with Dicilo is a seal of quality that generates trust and credibility among consumers."
+      }
+    },
+    "for_users": {
+      "title": "For Users",
+      "item1": {
+        "title": "Authentic and verified recommendations",
+        "description": "Say goodbye to fake reviews. Every business on Dicilo is carefully selected."
+      },
+      "item2": {
+        "title": "Exclusive benefits and discounts",
+        "description": "As a member of the Dicilo club, you will get access to special offers that are not available anywhere else."
+      },
+      "item3": {
+        "title": "Be part of a community",
+        "description": "Share your experiences and help others make the best decisions, while being rewarded for your contribution."
+      }
+    },
+    "network": {
+      "title": "A network that grows with you",
+      "description": "Our platform is designed to evolve with you. The more you participate, the more benefits you receive. We grow together, creating a unique ecosystem of trust and collaboration.",
+      "cta_text": "Are you ready to take the next step?",
+      "cta_button_company": "Register your Business",
+      "cta_button_user": "Join the Club"
+    },
+    "social": {
+      "title": "Join our digital community",
+      "description": "Follow us on social media to stay up to date with the latest news, exclusive offers, and community events.<br/>We are on WhatsApp, Telegram, Instagram, Facebook, TikTok, LinkedIn, YouTube, X (Twitter), Twitch, and Pinterest."
+    },
+    "testimonials": {
+      "title": "What Our Members Say",
+      "subtitle": "Real opinions from real people.",
+      "carla": {
+        "name": "Carla S.",
+        "role": "Premium Member",
+        "quote": "Thanks to Dicilo, I've discovered unique local businesses that I would never have found otherwise. The exclusive discounts are a fantastic bonus!"
+      },
+      "tomas": {
+        "name": "Tomás R.",
+        "role": "Business Owner",
+        "quote": "My customer base has grown significantly since I registered my business on Dicilo. The platform has helped me connect with customers who truly value what I do."
+      },
+      "lucia": {
+        "name": "Lucía M.",
+        "role": "Donor Member",
+        "quote": "It's great to be part of a community that values quality and authenticity. Every recommendation I find is top-notch."
+      }
+    },
+    "feedback": {
+      "title": "Share your opinion",
+      "name": "Name",
+      "email": "Email",
+      "country": "Country",
+      "customerType": "I am a...",
+      "customerTypePlaceholder": "Select an option",
+      "customerTypeOptions": {
+        "private": "Private Customer",
+        "donor": "Donor / Supporter",
+        "company": "Company",
+        "premium": "Premium Customer"
+      },
+      "rating": "Your Rating",
+      "message": "Your Message",
+      "submit": "Send Feedback",
+      "successTitle": "Thank you!",
+      "successDesc": "Your feedback has been sent successfully.",
+      "errorTitle": "Error",
+      "errorDesc": "An error occurred while sending your feedback. Please try again."
+    }
+  }
+}

@@ -1,0 +1,441 @@
+{
+  "title": "Admin Panel",
+  "login": {
+    "title": "Admin Login",
+    "description": "Log in to access the admin dashboard",
+    "emailLabel": "Email",
+    "passwordLabel": "Password",
+    "passwordHint": "Your password is secure with us.",
+    "loginButton": "Login",
+    "forgotPassword": "Forgot Password?",
+    "successTitle": "Login Successful!",
+    "successDescription": "You will be redirected to the dashboard.",
+    "error": {
+      "title": "Login Error",
+      "unknown": "An unknown error occurred.",
+      "invalidCredentials": "Invalid email or password",
+      "notAdmin": "You do not have administrator privileges.",
+      "generic": "An error occurred. Please try again later."
+    },
+    "reset": {
+      "successTitle": "Email Sent",
+      "successDescription": "A password reset email has been sent to {{email}}.",
+      "errorTitle": "Reset Error",
+      "emailRequired": "Please enter your email address in the email field.",
+      "userNotFound": "No user found with this email address.",
+      "errorGeneric": "An error occurred while sending the password reset email."
+    },
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "checkingAuth": "Checking authentication...",
+    "checkingPermissions": "Checking permissions...",
+    "redirecting": "Redirecting to dashboard..."
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome, {{email}} (Role: {{role}}).",
+    "logout": "Logout",
+    "logoutSuccess": "Logged out successfully.",
+    "logoutError": "Logout Error",
+    "logoutErrorDescription": "There was an issue logging out.",
+    "contentManagement": "Content Management",
+    "contentManagementDescription": "Manage the website's content.",
+    "manageBusinesses": "Manage Businesses",
+    "superAdminArea": "Superadmin Area",
+    "superAdminDescription": "Actions available only to superadmins.",
+    "seedDatabase": "Seed Database",
+    "seedingInProgress": "Seeding database...",
+    "seedingStartTitle": "Database Seeding Started",
+    "seedingStartDesc": "Please wait, this may take a moment.",
+    "seedingSuccessTitle": "Success",
+    "seedingErrorTitle": "Seeding Error",
+    "seedingErrorDesc": "An error occurred while seeding the database.",
+    "seedingPermissionError": "Only superadmins can seed the database.",
+    "accessDenied": "Access Denied",
+    "noAdminRights": "You do not have administrator privileges.",
+    "sync": {
+      "button": "Sync Customers with ERP",
+      "startTitle": "Sync started",
+      "startDesc": "Customer data is being synced with the ERP system.",
+      "successTitle": "Sync Successful",
+      "errorTitle": "Sync Error",
+      "errorDesc": "An error occurred while syncing customers.",
+      "permissionError": "Only superadmins can perform this action."
+    }
+  },
+  "businesses": {
+    "title": "Businesses",
+    "addBusiness": "Add Business",
+    "reload": "Reload",
+    "backToDashboard": "Back to Dashboard",
+    "searchPlaceholder": "Search by business name...",
+    "table": {
+      "name": "Name",
+      "category": "Category",
+      "location": "Location",
+      "actions": "Actions"
+    },
+    "noResults": "No businesses found.",
+    "error": "Error",
+    "errorDescription": "Error fetching businesses.",
+    "deleteSuccessTitle": "Successfully deleted",
+    "deleteSuccessDesc": "The business has been deleted.",
+    "deleteErrorTitle": "Deletion Error",
+    "deleteErrorDesc": "Error deleting the business.",
+    "confirmDeleteTitle": "Are you sure?",
+    "confirmDeleteDesc": "This action cannot be undone. This will permanently delete the business {{name}}.",
+    "edit": {
+      "title": "Edit Business",
+      "back": "Back to Businesses",
+      "cardTitle": "Edit Business Data",
+      "cardDescription": "Edit the details for the business with ID: {{id}}",
+      "save": "Save Changes",
+      "saveSuccessTitle": "Saved!",
+      "saveSuccessDesc": "The business data has been updated.",
+      "saveErrorTitle": "Error",
+      "saveErrorDesc": "Could not save the business data.",
+      "notFoundTitle": "Not Found",
+      "notFoundDesc": "The requested business was not found.",
+      "fetchErrorTitle": "Error",
+      "fetchErrorDesc": "Error fetching the business data.",
+      "geocode": {
+        "successTitle": "Geocoding Successful",
+        "successDesc": "Coordinates updated",
+        "notFoundTitle": "Location Not Found",
+        "notFoundDesc": "Could not find coordinates for the provided address.",
+        "errorTitle": "Geocoding Error",
+        "errorDesc": "Error querying the geocoding service.",
+        "noAddressTitle": "No Address",
+        "noAddressDesc": "Please provide an address or location to geocode.",
+        "dragSuccessDesc": "Marker position updated"
+      },
+      "logo": {
+        "urlHelp": "Paste a public URL to a logo image (e.g., from a company website)."
+      }
+    },
+    "new": {
+      "title": "Create New Business",
+      "back": "Back to Businesses",
+      "cardTitle": "New Business",
+      "cardDescription": "Fill out the form to add a new business.",
+      "save": "Create Business",
+      "saveSuccessTitle": "Created!",
+      "saveSuccessDesc": "The new business has been created successfully.",
+      "saveErrorTitle": "Error",
+      "saveErrorDesc": "The business could not be created."
+    },
+    "fields": {
+      "name": "Name",
+      "category": "Category",
+      "description": "Description",
+      "location": "Location",
+      "address": "Address",
+      "phone": "Phone",
+      "website": "Website",
+      "logoUrl": "Logo URL",
+      "logoUrlPlaceholder": "https://example.com/logo.png",
+      "imageHint": "Image Hint (for AI)",
+      "rating": "Rating (0-5)",
+      "coords": "Coordinates (Lat, Lon)",
+      "coordsHelp": "Set by geocoding the address or dragging the marker on the map.",
+      "currentOfferUrl": "Current Offer URL",
+      "mapUrl": "Map URL"
+    }
+  },
+  "clients": {
+    "title": "Clients",
+    "addClient": "Add Client",
+    "reload": "Reload",
+    "backToDashboard": "To Dashboard",
+    "searchPlaceholder": "Search by client name...",
+    "table": {
+      "name": "Name",
+      "title": "Title",
+      "slug": "Slug",
+      "actions": "Actions"
+    },
+    "noResults": "No clients found.",
+    "error": "Loading Error",
+    "errorDescription": "An error occurred while loading the client list.",
+    "deleteSuccessTitle": "Client Deleted",
+    "deleteSuccessDesc": "The client was successfully deleted.",
+    "deleteErrorTitle": "Deletion Error",
+    "deleteErrorDesc": "The client could not be deleted.",
+    "confirmDeleteTitle": "Are you sure?",
+    "confirmDeleteDesc": "This action cannot be undone. This will permanently delete the client {{name}}.",
+    "edit": {
+      "title": "Edit Client",
+      "back": "Back to Client List",
+      "cardDescription": "Edit the details for the client with ID: {{id}}",
+      "save": "Save Changes",
+      "notFoundTitle": "Client Not Found",
+      "notFoundDesc": "The requested client does not exist.",
+      "fetchErrorTitle": "Loading Error",
+      "fetchErrorDesc": "The client data could not be loaded."
+    },
+    "new": {
+      "title": "Create New Client",
+      "back": "Back to Client List",
+      "cardTitle": "New Client",
+      "cardDescription": "Fill out the form to create a new client.",
+      "save": "Create Client",
+      "saveSuccessTitle": "Client Created!",
+      "saveSuccessDesc": "The new client was successfully created.",
+      "saveErrorTitle": "Creation Error",
+      "saveErrorDesc": "The client could not be created."
+    },
+    "tabs": {
+      "general": "General",
+      "marqueeHeader": "Marquee",
+      "body": "Body",
+      "infoCards": "Info Cards",
+      "products": "Products",
+      "graphics": "Graphics",
+      "form": "Form",
+      "translations": "Translations"
+    },
+    "fields": {
+      "title": "Title",
+      "content": "Content",
+      "clientName": "Client Name",
+      "clientType": "Client Type",
+      "clientLogoUrl": "Client Logo URL",
+      "clientTitle": "Client Title",
+      "clientSubtitle": "Client Subtitle",
+      "slug": "Slug",
+      "socialLinks": "Social Links",
+      "products": {
+        "add": "Add Product",
+        "description": "Manage the product catalog that will be displayed in the recommendation form.",
+        "product": "Product",
+        "productName": "Product Name"
+      },
+      "testimonials": "Testimonials (JSON)",
+      "translations": "Translations (JSON)",
+      "jsonPlaceholder": "[{\"title\": \"Title\", \"description\": \"Description\"}]",
+      "jsonPlaceholderObject": "{\n  \"de\": { \"key\": \"Wert\" },\n  \"en\": { \"key\": \"Value\" }\n}",
+      "jsonHelp": "Enter a valid JSON array of objects.",
+      "jsonHelpObject": "Enter a valid JSON object for translations.",
+      "general": {
+        "description": "Basic information and header styles."
+      },
+      "header": {
+        "welcomeText": "Welcome Text",
+        "headerImageUrl": "Header Image URL (Graphic)",
+        "socialShareText": "Social Share Text",
+        "socialShareTextPlaceholder": "This text will be used when sharing on social media. If empty, a default text will be used.",
+        "bannerShareUrl": "URL for Banner Sharing",
+        "socialLinks": "Social Links",
+        "iconPlaceholderText": "Icon (e.g., facebook)",
+        "urlPlaceholder": "https://...",
+        "socialLink": "Social Link {{number}}",
+        "stylesTitle": "Styles",
+        "headerBackgroundColor": "Header Background Color",
+        "headerBackgroundImageUrl": "Header Background Image URL",
+        "clientLogoWidth": "Client Logo Width (px)",
+        "headerTextColor": "Header Text Color",
+        "dividerLine": {
+          "title": "Divider Line",
+          "enable": "Show divider line",
+          "color": "Line Color",
+          "thickness": "Line Thickness (px)"
+        },
+        "banner": {
+          "title": "Banner Settings",
+          "embedCode": "Embed Code",
+          "imageUrl": "Image URL",
+          "fileUpload": "File Upload",
+          "width": "Banner Width",
+          "height": "Banner Height",
+          "currentImage": "Current Image"
+        }
+      },
+      "marqueeHeader": {
+        "description": "Configure the marquee at the top.",
+        "marqueeText": "Marquee Text",
+        "offerSectionTitle": "Offer Section (Left)",
+        "offerEnabled": "Enable Offer",
+        "leftButtonText": "Left Button Text (Offer)",
+        "leftButtonLink": "Left Button Link",
+        "offerEndDate": "Offer End Date",
+        "pickDate": "Pick a date",
+        "offerSection": "Offer Section",
+        "middleTextOffer": "Text next to date",
+        "buttonAfterDateText": "Button Text after expiry",
+        "buttonAfterDateLink": "Button Link after expiry",
+        "rightButtonsSectionTitle": "Right Buttons"
+      },
+      "body": {
+        "description": "Configure the main content section of the page.",
+        "title": "Title",
+        "subtitle": "Subtitle",
+        "descriptionField": "Description",
+        "imageUrl": "Image URL",
+        "imageHint": "Image Hint (for AI)",
+        "videoUrl": "Video URL (YouTube, Vimeo)",
+        "ctaButtonText": "CTA Button Text",
+        "ctaButtonLink": "CTA Button Link",
+        "layout": "Layout"
+      },
+      "infoCards": {
+        "title": "Info Cards (Tabs)",
+        "add": "Add Card",
+        "card": "Card"
+      },
+      "graphics": {
+        "title": "Graphic Title",
+        "add": "Add Graphic",
+        "description": "Add images to be displayed in a random mosaic on the landing page.",
+        "graphic": "Graphic",
+        "imageUrl": "Image URL",
+        "targetUrl": "Target URL"
+      },
+      "form": {
+        "description": "Manage the recommendation form displayed on this client's landing page.",
+        "infoBlockPre": "Your friends can get benefits (discounts, giveaways, new offers). We will keep you updated with news and exclusive advantages.",
+        "infoBlockRecommend": "No mass emails are sent. Consent is requested from the contact first. By checking, you confirm you understand and accept this flow."
+      }
+    }
+  },
+  "feedbacks": {
+    "title": "Feedbacks",
+    "table": {
+      "date": "Date",
+      "name": "Name",
+      "customerType": "Customer Type",
+      "rating": "Rating",
+      "message": "Message"
+    },
+    "noResults": "No feedbacks found."
+  },
+  "plans": {
+    "title": "Pricing Plans",
+    "back": "Back",
+    "addPlan": "Add New Plan",
+    "fetchError": "Error loading plans.",
+    "deleteSuccessTitle": "Plan Deleted",
+    "deleteErrorTitle": "Deletion Error",
+    "confirmDeleteTitle": "Are you sure?",
+    "confirmDeleteDesc": "This action cannot be undone. Plan {{name}} will be permanently deleted.",
+    "notFound": "Plan not found.",
+    "table": {
+      "order": "Order",
+      "title": "Title",
+      "price": "Price",
+      "popular": "Popular",
+      "actions": "Actions",
+      "language": "Language"
+    },
+    "edit": {
+      "title": "Edit Pricing Plan",
+      "description": "Edit the details of the pricing plan.",
+      "saveButton": "Save Changes",
+      "saveSuccess": "Plan successfully updated.",
+      "saveError": "Error saving the plan."
+    },
+    "new": {
+      "title": "Create New Pricing Plan",
+      "cardTitle": "New Plan",
+      "description": "Fill out the form to add a new pricing plan.",
+      "saveButton": "Create Plan",
+      "saveSuccess": "Plan successfully created.",
+      "saveError": "Error creating the plan."
+    },
+    "fields": {
+      "title": "Title",
+      "price": "Price (e.g., $19.99)",
+      "period": "Period (e.g., /month)",
+      "features": "Features (one per line)",
+      "featuresHelp": "Each line will become a separate item in the features list.",
+      "buttonText": "Button Text",
+      "isPopular": "Mark as popular?",
+      "order": "Display Order",
+      "language": "Language",
+      "languagePlaceholder": "Select language"
+    }
+  },
+  "registrations": {
+    "title": "Registrations",
+    "noResults": "No registrations found for this filter.",
+    "tabs": {
+      "all": "All",
+      "private": "Private",
+      "donor": "Donor",
+      "retailer": "Retailer",
+      "premium": "Premium"
+    },
+    "table": {
+      "name": "Name",
+      "contact": "Contact",
+      "type": "Type",
+      "date": "Date",
+      "actions": "Actions",
+      "noClient": "No Client Created",
+      "manageClient": "Manage Client"
+    }
+  },
+  "seed": {
+    "pageTitle": "Database Setup",
+    "pageSubtitle": "Follow these steps to initialize your superadmin user and database.",
+    "step1Title": "Create Superadmin User",
+    "step1Description": "Manually create a user in Firebase Authentication.",
+    "step1AlertTitle": "Instructions:",
+    "step1Instruction1": "Go to Firebase Console > Authentication > Users.",
+    "step1Instruction2": "Click 'Add user' and use the following credentials:",
+    "emailLabel": "Email",
+    "passwordLabel": "Password",
+    "step1Instruction3": "Click 'Add user' to save the user.",
+    "step1NoteTitle": "Important Note",
+    "step1NoteDescription": "Without this user, you will not be able to log in as a superadmin.",
+    "step2Title": "Assign Superadmin Role",
+    "step2Description": "Assign the 'superadmin' role to the newly created user in Firestore.",
+    "step2AlertTitle": "Instructions:",
+    "step2Instruction1": "Go to Firebase Console > Firestore Database.",
+    "step2Instruction2": "Create a new collection with the name:",
+    "collectionID": "Collection ID",
+    "step2Instruction3": "Create a new document. Use the User UID from the Authentication tab as the Document ID.",
+    "step2Instruction4": "Add a field. Set the field name to:",
+    "field": "Field",
+    "value": "Value",
+    "step3Title": "Done!",
+    "step3Description": "You can now log in with the superadmin credentials.",
+    "step3Content": "Once logged in, you can seed the database with initial data using the 'Seed Database' button on the dashboard.",
+    "backToLogin": "Back to Login"
+  },
+  "share": {
+    "button": "Share",
+    "title": "Share this offer",
+    "copy": "Copy",
+    "copied": "Link copied!"
+  },
+  "statistics": {
+    "title": "Statistics",
+    "totalVisits": "Total Visits",
+    "totalRegistrations": "Total Registrations",
+    "totalSearches": "Total Searches",
+    "totalCardClicks": "Total Card Clicks",
+    "totalPopupClicks": "Total Popup Clicks",
+    "newBusinesses": "New Businesses",
+    "activeClients": "Active Clients",
+    "lastMonth": "from last month",
+    "chartTitle": "Visits vs. Registrations",
+    "recentEvents": "Recent Activity",
+    "noEvents": "No recent activity to display.",
+    "table": {
+      "date": "Date",
+      "eventType": "Event Type",
+      "businessName": "Business Name",
+      "details": "Details"
+    },
+    "types": {
+      "search": "Search",
+      "cardClick": "Card Click",
+      "popupClick": "Popup Click"
+    }
+  },
+  "formsDashboard": {
+    "title": "Forms Dashboard",
+    "managementTitle": "Forms Management",
+    "managementDescription": "Manage your recommendation forms and statistics here."
+  }
+}
