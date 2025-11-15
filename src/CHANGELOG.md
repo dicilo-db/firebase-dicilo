@@ -4,6 +4,15 @@ Este documento registra los 30 cambios más recientes realizados en el proyecto.
 
 ---
 
+### **134. FIX: CORRECCIÓN DE ERROR DE HIDRATACIÓN EN I18N-PROVIDER - CÓDIGO: I18N-HYDRATION-FIX-V1**
+
+- **Fecha y Hora:** 20 de Septiembre de 2025, 14:00 (CET)
+- **Módulos Afectados:** `src/context/i18n-provider.tsx`, `CHANGELOG.md`.
+- **Descripción del Cambio:**
+  - **Análisis del Problema:** Se detectó un error crítico y recurrente de "fallo de hidratación" (`Hydration failed`). La causa raíz era una condición de carrera (`race condition`) en el componente `i18n-provider.tsx`, donde la inicialización de la librería `i18next` no se completaba de manera fiable antes de que los componentes cliente intentaran renderizarse. Esto provocaba una discrepancia entre el HTML renderizado en el servidor y el cliente.
+  - **Solución Arquitectónica:** Se ha reescrito por completo el proveedor de internacionalización para seguir un patrón más robusto y estándar. La instancia de `i18next` ahora se inicializa una única vez a nivel de módulo, eliminando la condición de carrera. Se ha añadido la integración correcta con React (`initReactI18next`) y se ha simplificado el proveedor para usar `I18nextProvider`, el componente oficial de la librería, garantizando una gestión de estado estable y predecible.
+  - **Resultado:** Esta corrección estructural elimina la causa raíz del error de hidratación, estabilizando el sistema de traducciones en toda la aplicación y asegurando que la interfaz de usuario se renderice de manera consistente tanto en el servidor como en el cliente.
+
 ### **144. FIX: CORRECCIÓN DE Z-INDEX EN FORMULARIO DE RECOMENDACIÓN - CÓDIGO: FIX-FORM-ZINDEX-V1**
 
 - **Fecha y Hora:** 21 de Septiembre de 2025, 14:00 (CET)
@@ -106,15 +115,6 @@ Este documento registra los 30 cambios más recientes realizados en el proyecto.
     - **Simplificación de Componentes:** Se ha refactorizado `dicilo-search-page.tsx` para que simplemente reciba y renderice los datos, eliminando la lógica de carga del lado del cliente que causaba problemas.
   - **Resultado:** La aplicación es ahora completamente estable y funcional. El problema de la página en blanco y los errores de hidratación han sido resueltos de forma definitiva. La gestión del idioma se realiza ahora en el lado del cliente, lo cual es un compromiso necesario para garantizar la estabilidad fundamental de la aplicación.
   - **Documentación:** Se registra esta importante reversión arquitectónica como la solución final a los problemas de renderizado e internacionalización.
-
-### **134. FIX: CORRECCIÓN DE ERROR DE HIDRATACIÓN EN I18N-PROVIDER - CÓDIGO: I18N-HYDRATION-FIX-V1**
-
-- **Fecha y Hora:** 20 de Septiembre de 2025, 14:00 (CET)
-- **Módulos Afectados:** `src/context/i18n-provider.tsx`, `CHANGELOG.md`.
-- **Descripción del Cambio:**
-  - **Análisis del Problema:** Se detectó un error crítico y recurrente de "fallo de hidratación" (`Hydration failed`). La causa raíz era una condición de carrera (`race condition`) en el componente `i18n-provider.tsx`, donde la inicialización de la librería `i18next` no se completaba de manera fiable antes de que los componentes cliente intentaran renderizarse. Esto provocaba una discrepancia entre el HTML renderizado en el servidor y el cliente.
-  - **Solución Arquitectónica:** Se ha reescrito por completo el proveedor de internacionalización para seguir un patrón más robusto y estándar. La instancia de `i18next` ahora se inicializa una única vez a nivel de módulo, eliminando la condición de carrera. Se ha añadido la integración correcta con React (`initReactI18next`) y se ha simplificado el proveedor para usar `I18nextProvider`, el componente oficial de la librería, garantizando una gestión de estado estable y predecible.
-  - **Resultado:** Esta corrección estructural elimina la causa raíz del error de hidratación, estabilizando el sistema de traducciones en toda la aplicación y asegurando que la interfaz de usuario se renderice de manera consistente tanto en el servidor como en el cliente.
 
 ### **133. FIX: REESCRITURA FINAL Y ROBUSTA DEL SISTEMA DE AUTORIZACIÓN - CÓDIGO: AUTH-FINAL-RELIABLE-V1**
 
