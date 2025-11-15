@@ -4,6 +4,16 @@ Este documento registra los 30 cambios más recientes realizados en el proyecto.
 
 ---
 
+### **135. FIX: CARGA DE TRADUCCIONES PARA PÁGINA "SOBRE NOSOTROS" - CÓDIGO: I18N-ABOUT-FIX-V1**
+
+- **Fecha y Hora:** 21 de Septiembre de 2025, 10:30 (CET)
+- **Módulos Afectados:** `src/i18n.ts`, `CHANGELOG.md`.
+- **Descripción del Cambio:**
+  - **Análisis del Problema:** De forma similar al error en la página de planes, la página "Sobre Nosotros" (`/ueber-uns`) mostraba las claves de traducción en bruto (ej. `ourMission.title`) porque el archivo de recursos `about.json` no estaba siendo registrado en la configuración de `i18next`.
+  - **Solución Implementada:** Se ha modificado el archivo `src/i18n.ts` para importar y añadir los archivos de traducción `about.json` para los idiomas alemán, inglés y español.
+  - **Resultado:** El sistema de internacionalización ahora carga correctamente las traducciones para la página "Sobre Nosotros", mostrando el texto correcto en la interfaz y solucionando el problema.
+  - **Documentación:** Se ha registrado esta corrección en el `CHANGELOG.md`.
+
 ### **134. FIX: CORRECCIÓN DE CARGA DE TRADUCCIONES PARA PÁGINA DE PLANES - CÓDIGO: I18N-PLAN-FIX-V1**
 
 - **Fecha y Hora:** 21 de Septiembre de 2025, 10:00 (CET)

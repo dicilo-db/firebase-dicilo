@@ -13,22 +13,28 @@ import admin_es from './locales/es/admin.json';
 import pricing_page_de from './locales/de/pricing_page.json';
 import pricing_page_en from './locales/en/pricing_page.json';
 import pricing_page_es from './locales/es/pricing_page.json';
+import about_de from './locales/de/about.json';
+import about_en from './locales/en/about.json';
+import about_es from './locales/es/about.json';
 
 const resources = {
   de: {
     common: common_de,
     admin: admin_de,
     pricing_page: pricing_page_de,
+    about: about_de,
   },
   en: {
     common: common_en,
     admin: admin_en,
     pricing_page: pricing_page_en,
+    about: about_en,
   },
   es: {
     common: common_es,
     admin: admin_es,
     pricing_page: pricing_page_es,
+    about: about_es,
   },
 };
 
