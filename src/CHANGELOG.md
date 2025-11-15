@@ -4,7 +4,17 @@ Este documento registra los 30 cambios más recientes realizados en el proyecto.
 
 ---
 
-### **146. FIX: CORRECCIÓN DE TRADUCCIONES EN FORMULARIO DE RECOMENDACIÓN (ADMIN) - CÓDIGO: I18N-ADMIN-FORM-FIX-V1**
+### **148. FIX: CORRECCIÓN FINAL DE TRADUCCIONES EN FORMULARIO DE REGISTRO - CÓDIGO: I18N-REGISTER-FINAL-FIX-V1**
+
+- **Fecha y Hora:** 21 de Septiembre de 2025, 15:30 (CET)
+- **Módulos Afectados:** `src/app/registrieren/RegistrationForm.tsx`, `CHANGELOG.md`.
+- **Descripción del Cambio:**
+  - **Análisis del Problema:** Se detectaron claves de traducción sin resolver adicionales en el formulario de registro (`/registrieren`), lo que causaba que se mostraran identificadores como `submitButton` en lugar del texto real. El problema se debía a que no se estaba utilizando el espacio de nombres de traducción `register` al llamar a la función `t()`.
+  - **Solución Implementada:** Se ha modificado el componente `src/app/registrieren/RegistrationForm.tsx` para asegurar que el hook `useTranslation` cargue explícitamente el espacio de nombres `register`. Se corrigieron las llamadas a `t()` para usar el formato correcto, solucionando los problemas de texto faltante.
+  - **Resultado:** El formulario de registro ahora muestra correctamente todos los textos traducidos, mejorando la experiencia del usuario y completando las correcciones de internacionalización en esta sección.
+  - **Documentación:** Se ha registrado esta corrección de interfaz en el `CHANGELOG.md`.
+
+### **147. FIX: CORRECCIÓN DE TRADUCCIONES EN FORMULARIO DE RECOMENDACIÓN (ADMIN) - CÓDIGO: I18N-ADMIN-FORM-FIX-V1**
 
 - **Fecha y Hora:** 21 de Septiembre de 2025, 15:00 (CET)
 - **Módulos Afectados:** `src/app/admin/clients/[id]/edit/EditClientForm.tsx`, `src/i18n.ts`, `CHANGELOG.md`.
@@ -14,7 +24,7 @@ Este documento registra los 30 cambios más recientes realizados en el proyecto.
   - **Resultado:** El formulario ahora muestra correctamente todos los textos traducidos en la interfaz del panel de administración, solucionando el problema de visualización.
   - **Documentación:** Se ha registrado esta corrección de interfaz y configuración en el `CHANGELOG.md`.
 
-### **145. FIX: CARGA DE TRADUCCIONES PARA PÁGINA DE REGISTRO - CÓDIGO: I18N-REGISTER-FIX-V1**
+### **146. FIX: CARGA DE TRADUCCIONES PARA PÁGINA DE REGISTRO - CÓDIGO: I18N-REGISTER-FIX-V1**
 
 - **Fecha y Hora:** 21 de Septiembre de 2025, 14:30 (CET)
 - **Módulos Afectados:** `src/i18n.ts`, `CHANGELOG.md`.
@@ -23,6 +33,16 @@ Este documento registra los 30 cambios más recientes realizados en el proyecto.
   - **Solución Implementada:** Se ha modificado el archivo `src/i18n.ts` para importar y añadir los archivos de traducción `register.json` para los idiomas alemán, inglés y español al objeto `resources`.
   - **Resultado:** El sistema de internacionalización ahora carga correctamente las traducciones para la página de registro, mostrando el texto correcto en la interfaz de usuario.
   - **Documentación:** Se ha registrado esta corrección en el `CHANGELOG.md`.
+
+### **145. REVERT: REVERSIÓN A ARQUITECTURA ANTERIOR PARA RESTAURAR ESTABILIDAD - CÓDIGO: REVERT-TO-STABLE-BASE-V2**
+
+- **Fecha y Hora:** 21 de Septiembre de 2025, 11:00 (CET)
+- **Módulos Afectados:** `src/app/page.tsx`, `src/components/dicilo-search-page.tsx`, `CHANGELOG.md`.
+- **Descripción del Cambio:**
+  - **Motivo de la Reversión:** Tras la implementación de una arquitectura de carga de datos en el servidor, la aplicación entró en un estado inestable manifestado por una "página gris". Esto se debió a un conflicto irresoluble entre la carga de datos del servidor y la lógica del componente cliente.
+  - **Acción Realizada:** A petición del usuario y para restaurar la funcionalidad inmediata, se ha realizado una reversión controlada de `page.tsx` y `dicilo-search-page.tsx` a un estado anterior y funcional. Se restaura la lógica donde el componente de búsqueda del cliente gestiona su propia carga de datos.
+  - **Resultado:** La aplicación vuelve a ser funcional, eliminando el error crítico de la "página gris". Esto permite reanudar el desarrollo sobre una base conocida y estable.
+  - **Documentación:** Se registra esta reversión estratégica en el `CHANGELOG.md` como una medida para garantizar la estabilidad operativa.
 
 ### **144. FIX: CORRECCIÓN DE Z-INDEX EN FORMULARIO DE RECOMENDACIÓN - CÓDIGO: FIX-FORM-ZINDEX-V1**
 
@@ -34,15 +54,15 @@ Este documento registra los 30 cambios más recientes realizados en el proyecto.
   - **Resultado:** El formulario de recomendación ahora se muestra correctamente en primer plano, permitiendo una interacción fluida por parte del usuario sin problemas de visibilidad.
   - **Documentación:** Se ha registrado esta corrección de interfaz en el `CHANGELOG.md`.
 
-### **143. FIX: CARGA DE TRADUCCIONES PARA PÁGINA "FAQ" - CÓDIGO: I18N-FAQ-FIX-V1**
+### **143. FIX: ACTUALIZACIÓN Y TRADUCCIÓN COMPLETA DE PÁGINA "FAQ" - CÓDIGO: I18N-FAQ-CONTENT-V1**
 
-- **Fecha y Hora:** 21 de Septiembre de 2025, 13:30 (CET)
+- **Fecha y Hora:** 21 de Septiembre de 2025, 13:45 (CET)
 - **Módulos Afectados:** `src/i18n.ts`, `src/locales/de/faq.json`, `src/locales/en/faq.json`, `src/locales/es/faq.json`, `src/app/faq/page.tsx`, `CHANGELOG.md`.
 - **Descripción del Cambio:**
-  - **Análisis del Problema:** La página de "FAQ" (`/faq`) mostraba las claves de traducción en bruto (ej. `pageTitle`) en lugar del texto traducido, porque el archivo de recursos `faq.json` no estaba siendo registrado en la configuración de `i18next`. Además, el contenido de las FAQs estaba desactualizado.
-  - **Solución Implementada:** Se ha modificado el archivo `src/i18n.ts` para importar y añadir los archivos de traducción `faq.json`. Se ha actualizado el contenido de los archivos `faq.json` en los tres idiomas con la lista completa de 22 preguntas y respuestas. Se ha modificado el componente `src/app/faq/page.tsx` para renderizar dinámicamente todas las preguntas y respuestas.
-  - **Resultado:** El sistema de internacionalización ahora carga correctamente las traducciones para la página de preguntas frecuentes, mostrando el contenido actualizado y correcto en la interfaz de usuario.
-  - **Documentación:** Se ha registrado esta corrección en el `CHANGELOG.md`.
+  - **Análisis del Problema:** La página de "FAQ" (/faq) mostraba las claves de traducción en bruto y el contenido estaba desactualizado.
+  - **Solución Implementada:** Se ha actualizado el contenido de los archivos `faq.json` en los tres idiomas (alemán, inglés, español) con la lista completa de 22 preguntas y respuestas proporcionadas. Se ha modificado el componente `src/app/faq/page.tsx` para renderizar dinámicamente todas las preguntas y respuestas desde los archivos de traducción. Finalmente, se ha asegurado que `i18next` cargue correctamente el namespace `faq`.
+  - **Resultado:** La página de preguntas frecuentes ahora muestra el contenido completo, actualizado y traducido correctamente, solucionando tanto el problema de visualización como el de contenido obsoleto.
+  - **Documentación:** Se ha registrado esta importante actualización de contenido y corrección de i18n en el `CHANGELOG.md`.
 
 ### **142. FIX: CORRECCIÓN DE INFORMACIÓN LEGAL EN PÁGINA "DATENSCHUTZ" - CÓDIGO: LEGAL-PRIVACY-UPDATE-V1**
 
@@ -187,3 +207,5 @@ Este documento registra los 30 cambios más recientes realizados en el proyecto.
   - **Solución Arquitectónica (Deep Merge):** Se ha implementado una solución robusta y definitiva. Ahora, la función `onSubmit` primero obtiene el documento original completo desde Firestore. Luego, utiliza la función `_.merge` de `lodash` para realizar una "fusión profunda" (deep merge), combinando de manera inteligente y recursiva los nuevos datos del formulario sobre los datos existentes.
   - **Integridad de Datos Garantizada:** Este enfoque asegura que solo los campos que el usuario ha modificado explícitamente se actualizan, mientras que todos los demás campos, especialmente los anidados, conservan sus valores originales. Se elimina de raíz el riesgo de borrado accidental de datos.
   - **Documentación:** Se registra esta corrección arquitectónica fundamental en el `CHANGELOG.md` como la solución final al problema de guardado.
+
+
