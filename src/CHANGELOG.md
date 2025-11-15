@@ -4,6 +4,16 @@ Este documento registra los 30 cambios más recientes realizados en el proyecto.
 
 ---
 
+### **139. FIX: ACTUALIZACIÓN DE INFORMACIÓN LEGAL EN PÁGINA "IMPRESSUM" - CÓDIGO: LEGAL-INFO-UPDATE-V1**
+
+- **Fecha y Hora:** 21 de Septiembre de 2025, 12:00 (CET)
+- **Módulos Afectados:** `src/locales/de/impressum.json`, `src/locales/en/impressum.json`, `src/locales/es/impressum.json`, `CHANGELOG.md`.
+- **Descripción del Cambio:**
+  - **Análisis del Problema:** El usuario solicitó actualizar la información de contacto y legal que se muestra en la página de "Impressum" (Aviso Legal).
+  - **Solución Implementada:** Se han modificado los archivos de traducción `impressum.json` para los idiomas alemán, inglés y español, reemplazando los datos de la empresa, dirección, representante legal, teléfono e ID de IVA por los nuevos valores proporcionados.
+  - **Resultado:** La página "Impressum" ahora muestra la información legal y de contacto actualizada en todos los idiomas soportados.
+  - **Documentación:** Se ha registrado esta actualización de contenido en el `CHANGELOG.md`.
+
 ### **138. FIX: CARGA DE TRADUCCIONES PARA PÁGINA "IMPRESSUM" - CÓDIGO: I18N-IMPRINT-FIX-V1**
 
 - **Fecha y Hora:** 21 de Septiembre de 2025, 11:30 (CET)
