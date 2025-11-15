@@ -1,4 +1,5 @@
 // src/app/datenschutz/page.tsx
+'use client';
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
@@ -91,7 +92,7 @@ const Section = ({
   );
 };
 
-const DatenschutzClientContent = () => {
+export default function DatenschutzPage() {
   const { t } = useTranslation('privacy');
 
   // Simplified structure mapping directly to translation keys
@@ -187,46 +188,40 @@ const DatenschutzClientContent = () => {
   ];
 
   return (
-    <main className="container mx-auto flex-grow px-4 py-12">
-      <div className="mx-auto max-w-4xl">
-        <div className="mb-12 text-center">
-          <h1 className="text-4xl font-extrabold tracking-tight text-gray-800">
-            {t('pageTitle')}
-          </h1>
-          <p className="mt-4 text-lg text-muted-foreground">
-            {t('pageSubtitle')}
-          </p>
-        </div>
-
-        <div className="mb-12 grid gap-4 md:grid-cols-3">
-          <InfoBox titleKey="infoBox1.title" valueKey="infoBox1.value" />
-          <InfoBox titleKey="infoBox2.title" valueKey="infoBox2.value" />
-          <InfoBox titleKey="infoBox3.title" valueKey="infoBox3.value" />
-        </div>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>{t('cardTitle')}</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6 text-muted-foreground">
-            {sections.map(({ titleKey, content }, index) => (
-              <React.Fragment key={index}>
-                <Section titleKey={titleKey} contentKeys={content} />
-                {index < sections.length - 1 && <Separator />}
-              </React.Fragment>
-            ))}
-          </CardContent>
-        </Card>
-      </div>
-    </main>
-  );
-};
-
-export default function DatenschutzPage() {
-  return (
     <>
       <Header />
-      <DatenschutzClientContent />
+      <main className="container mx-auto flex-grow px-4 py-12">
+        <div className="mx-auto max-w-4xl">
+          <div className="mb-12 text-center">
+            <h1 className="text-4xl font-extrabold tracking-tight text-gray-800">
+              {t('pageTitle')}
+            </h1>
+            <p className="mt-4 text-lg text-muted-foreground">
+              {t('pageSubtitle')}
+            </p>
+          </div>
+
+          <div className="mb-12 grid gap-4 md:grid-cols-3">
+            <InfoBox titleKey="infoBox1.title" valueKey="infoBox1.value" />
+            <InfoBox titleKey="infoBox2.title" valueKey="infoBox2.value" />
+            <InfoBox titleKey="infoBox3.title" valueKey="infoBox3.value" />
+          </div>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>{t('cardTitle')}</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6 text-muted-foreground">
+              {sections.map(({ titleKey, content }, index) => (
+                <React.Fragment key={index}>
+                  <Section titleKey={titleKey} contentKeys={content} />
+                  {index < sections.length - 1 && <Separator />}
+                </React.Fragment>
+              ))}
+            </CardContent>
+          </Card>
+        </div>
+      </main>
       <Footer />
     </>
   );

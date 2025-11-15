@@ -30,7 +30,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
 import Link from 'next/link';
-import { useTranslations } from 'next-intl';
+import { useTranslation } from 'react-i18next';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -112,7 +112,7 @@ export default function BusinessesPage() {
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const { toast } = useToast();
-  const t = useTranslations('admin');
+  const t = useTranslation('admin').t;
 
   const fetchBusinesses = useCallback(async () => {
     setIsLoading(true);
@@ -280,12 +280,12 @@ export default function BusinessesPage() {
                           </AlertDialogHeader>
                           <AlertDialogFooter>
                             <AlertDialogCancel>
-                              {t('common:cancel')}
+                              {t('common:cancel', { ns: 'common' })}
                             </AlertDialogCancel>
                             <AlertDialogAction
                               onClick={() => handleDelete(business.id)}
                             >
-                              {t('common:delete')}
+                              {t('common:delete', { ns: 'common' })}
                             </AlertDialogAction>
                           </AlertDialogFooter>
                         </AlertDialogContent>

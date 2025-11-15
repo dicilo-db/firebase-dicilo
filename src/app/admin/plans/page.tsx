@@ -115,7 +115,7 @@ const PlansSkeleton = () => (
 
 export default function PlansPage() {
   useAuthGuard();
-  const { t } = useTranslation();
+  const { t } = useTranslation('admin');
   const { toast } = useToast();
   const [plans, setPlans] = useState<Plan[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -133,7 +133,7 @@ export default function PlansPage() {
       setPlans(planList);
     } catch (error) {
       console.error('Error fetching plans:', error);
-      toast({ title: t('admin.plans.fetchError'), variant: 'destructive' });
+      toast({ title: t('plans.fetchError'), variant: 'destructive' });
     } finally {
       setIsLoading(false);
     }
@@ -147,12 +147,12 @@ export default function PlansPage() {
     setIsDeleting(planId);
     try {
       await deleteDoc(doc(db, 'pricing_plans', planId));
-      toast({ title: t('admin.plans.deleteSuccessTitle') });
+      toast({ title: t('plans.deleteSuccessTitle') });
       setPlans((prev) => prev.filter((p) => p.id !== planId));
     } catch (error) {
       console.error('Error deleting plan:', error);
       toast({
-        title: t('admin.plans.deleteErrorTitle'),
+        title: t('plans.deleteErrorTitle'),
         variant: 'destructive',
       });
     } finally {
@@ -169,18 +169,18 @@ export default function PlansPage() {
       <Header />
       <main className="flex-grow p-8">
         <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-2xl font-bold">{t('admin.plans.title')}</h1>
+          <h1 className="text-2xl font-bold">{t('plans.title')}</h1>
           <div className="flex items-center gap-2">
             <Button variant="outline" asChild>
               <Link href="/admin/dashboard">
                 <LayoutDashboard className="mr-2 h-4 w-4" />
-                {t('admin.businesses.backToDashboard')}
+                {t('businesses.backToDashboard')}
               </Link>
             </Button>
             <Button asChild>
               <Link href="/admin/plans/new">
                 <PlusCircle className="mr-2 h-4 w-4" />
-                {t('admin.plans.addPlan')}
+                {t('plans.addPlan')}
               </Link>
             </Button>
           </div>
@@ -189,12 +189,12 @@ export default function PlansPage() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>{t('admin.plans.table.order')}</TableHead>
-                <TableHead>{t('admin.plans.table.title')}</TableHead>
-                <TableHead>{t('admin.plans.table.language')}</TableHead>
-                <TableHead>{t('admin.plans.table.price')}</TableHead>
-                <TableHead>{t('admin.plans.table.popular')}</TableHead>
-                <TableHead>{t('admin.plans.table.actions')}</TableHead>
+                <TableHead>{t('plans.table.order')}</TableHead>
+                <TableHead>{t('plans.table.title')}</TableHead>
+                <TableHead>{t('plans.table.language')}</TableHead>
+                <TableHead>{t('plans.table.price')}</TableHead>
+                <TableHead>{t('plans.table.popular')}</TableHead>
+                <TableHead>{t('plans.table.actions')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -211,7 +211,9 @@ export default function PlansPage() {
                   </TableCell>
                   <TableCell>{plan.price}</TableCell>
                   <TableCell>
-                    {plan.isPopular ? t('common.yes') : t('common.no')}
+                    {plan.isPopular
+                      ? t('common:yes', { ns: 'common' })
+                      : t('common:no', { ns: 'common' })}
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
@@ -237,22 +239,22 @@ export default function PlansPage() {
                         <AlertDialogContent>
                           <AlertDialogHeader>
                             <AlertDialogTitle>
-                              {t('admin.plans.confirmDeleteTitle')}
+                              {t('plans.confirmDeleteTitle')}
                             </AlertDialogTitle>
                             <AlertDialogDescription>
-                              {t('admin.plans.confirmDeleteDesc', {
+                              {t('plans.confirmDeleteDesc', {
                                 name: plan.title,
                               })}
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
                             <AlertDialogCancel>
-                              {t('common:cancel')}
+                              {t('common:cancel', { ns: 'common' })}
                             </AlertDialogCancel>
                             <AlertDialogAction
                               onClick={() => handleDelete(plan.id)}
                             >
-                              {t('common:delete')}
+                              {t('common:delete', { ns: 'common' })}
                             </AlertDialogAction>
                           </AlertDialogFooter>
                         </AlertDialogContent>

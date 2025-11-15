@@ -113,7 +113,7 @@ export default function ClientsPage() {
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const { toast } = useToast();
-  const { t } = useTranslation();
+  const { t } = useTranslation('admin');
 
   const fetchClients = useCallback(async () => {
     setIsLoading(true);
@@ -127,8 +127,8 @@ export default function ClientsPage() {
     } catch (error) {
       console.error('Error fetching clients:', error);
       toast({
-        title: t('admin.clients.error'),
-        description: t('admin.clients.errorDescription'),
+        title: t('clients.error'),
+        description: t('clients.errorDescription'),
         variant: 'destructive',
       });
     } finally {
@@ -151,15 +151,15 @@ export default function ClientsPage() {
     try {
       await deleteDoc(doc(db, 'clients', clientId));
       toast({
-        title: t('admin.clients.deleteSuccessTitle'),
-        description: t('admin.clients.deleteSuccessDesc'),
+        title: t('clients.deleteSuccessTitle'),
+        description: t('clients.deleteSuccessDesc'),
       });
       setClients((prev) => prev.filter((b) => b.id !== clientId));
     } catch (error) {
       console.error('Error deleting client:', error);
       toast({
-        title: t('admin.clients.deleteErrorTitle'),
-        description: t('admin.clients.deleteErrorDesc'),
+        title: t('clients.deleteErrorTitle'),
+        description: t('clients.deleteErrorDesc'),
         variant: 'destructive',
       });
     } finally {
@@ -174,24 +174,24 @@ export default function ClientsPage() {
   return (
     <div className="p-8">
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-bold">{t('admin.clients.title')}</h1>
+        <h1 className="text-2xl font-bold">{t('clients.title')}</h1>
         <div className="flex items-center gap-2">
           <Button variant="outline" asChild>
             <Link href="/admin/dashboard">
               <LayoutDashboard className="mr-2 h-4 w-4" />
-              {t('admin.clients.backToDashboard')}
+              {t('clients.backToDashboard')}
             </Link>
           </Button>
           <Button onClick={fetchClients} variant="outline" disabled={isLoading}>
             <RefreshCw
               className={`mr-2 h-4 w-4 ${isLoading ? 'animate-spin' : ''}`}
             />
-            {t('admin.clients.reload')}
+            {t('clients.reload')}
           </Button>
           <Button asChild>
             <Link href="/admin/clients/new">
               <PlusCircle className="mr-2 h-4 w-4" />
-              {t('admin.clients.addClient')}
+              {t('clients.addClient')}
             </Link>
           </Button>
         </div>
@@ -201,7 +201,7 @@ export default function ClientsPage() {
         <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
         <Input
           type="search"
-          placeholder={t('admin.clients.searchPlaceholder')}
+          placeholder={t('clients.searchPlaceholder')}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="w-full pl-10"
@@ -212,10 +212,10 @@ export default function ClientsPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>{t('admin.clients.table.name')}</TableHead>
-              <TableHead>{t('admin.clients.table.title')}</TableHead>
-              <TableHead>{t('admin.clients.table.slug')}</TableHead>
-              <TableHead>{t('admin.clients.table.actions')}</TableHead>
+              <TableHead>{t('clients.table.name')}</TableHead>
+              <TableHead>{t('clients.table.title')}</TableHead>
+              <TableHead>{t('clients.table.slug')}</TableHead>
+              <TableHead>{t('clients.table.actions')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -259,22 +259,22 @@ export default function ClientsPage() {
                         <AlertDialogContent>
                           <AlertDialogHeader>
                             <AlertDialogTitle>
-                              {t('admin.clients.confirmDeleteTitle')}
+                              {t('clients.confirmDeleteTitle')}
                             </AlertDialogTitle>
                             <AlertDialogDescription>
-                              {t('admin.clients.confirmDeleteDesc', {
+                              {t('clients.confirmDeleteDesc', {
                                 name: client.clientName,
                               })}
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
                             <AlertDialogCancel>
-                              {t('common:cancel')}
+                              {t('common:cancel', { ns: 'common' })}
                             </AlertDialogCancel>
                             <AlertDialogAction
                               onClick={() => handleDelete(client.id)}
                             >
-                              {t('common:delete')}
+                              {t('common:delete', { ns: 'common' })}
                             </AlertDialogAction>
                           </AlertDialogFooter>
                         </AlertDialogContent>
@@ -286,7 +286,7 @@ export default function ClientsPage() {
             ) : (
               <TableRow>
                 <TableCell colSpan={4} className="h-24 text-center">
-                  {isLoading ? '...' : t('admin.clients.noResults')}
+                  {isLoading ? '...' : t('clients.noResults')}
                 </TableCell>
               </TableRow>
             )}

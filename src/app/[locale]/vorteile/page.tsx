@@ -1,37 +1,35 @@
-// src/app/[locale]/vorteile/page.tsx
-import { Suspense } from 'react';
-import {
-  VorteileClientContent,
-  VorteilePageSkeleton,
-} from './VorteileClientContent';
-import { getTranslations } from 'next-intl/server';
-import { Header } from '@/components/header';
-import Footer from '@/components/footer';
+// src/app/page.tsx
+import { getFirestore, collection, getDocs, query } from 'firebase/firestore';
+import { app } from '@/lib/firebase';
+import type { Business } from '@/components/dicilo-search-page';
+import DiciloSearchPage from '@/components/dicilo-search-page';
 
-// El componente de servidor ahora recibe 'lang' de la URL para usar el idioma correcto.
-export default async function VorteilePage() {
-  // Usamos el 'lang' dinámico para obtener las traducciones del servidor.
-  const t = await getTranslations('benefits');
+async function getBusinesses(): Promise<Business[]> {
+  const db = getFirestore(app);
+  try {
+    const businessesCol = collection(db, 'businesses');
+    const q = query(businessesCol);
+    const businessSnapshot = await getDocs(q);
+    return businessSnapshot.docs.map((doc) => {
+      const data = doc.data();
+      // Data sanitization: Replace invalid or empty image URLs
+      if (!data.imageUrl || data.imageUrl.includes('1024terabox.com')) {
+        data.imageUrl = `https://placehold.co/128x128.png`;
+      }
+      return { id: doc.id, ...data } as Business;
+    });
+  } catch (error) {
+    console.error('Error fetching businesses on server:', error);
+    return [];
+  }
+}
+
+export default async function SearchPage() {
+  const initialBusinesses = await getBusinesses();
 
   return (
-    <>
-      <Header />
-      <main className="container mx-auto flex-grow space-y-16 px-4 py-12">
-        <section className="mx-auto max-w-4xl text-center">
-          <h1 className="text-4xl font-extrabold tracking-tight text-gray-800">
-            {t('page_title')}
-          </h1>
-          <p className="mt-4 text-lg text-muted-foreground">
-            {t('page_subtitle')}
-          </p>
-        </section>
-
-        {/* Suspense muestra el esqueleto mientras el componente cliente se carga */}
-        <Suspense fallback={<VorteilePageSkeleton />}>
-          <VorteileClientContent />
-        </Suspense>
-      </main>
-      <Footer />
-    </>
+    <main className="h-screen w-screen overflow-hidden">
+      <DiciloSearchPage initialBusinesses={initialBusinesses} />
+    </main>
   );
 }

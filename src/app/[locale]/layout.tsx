@@ -1,56 +1,35 @@
-// src/app/[locale]/layout.tsx
-import 'leaflet/dist/leaflet.css';
-import '../globals.css';
-import { Toaster } from '@/components/ui/toaster';
-import type { Metadata } from 'next';
-import { ptSans } from '../fonts';
-import { cn } from '@/lib/utils';
-import { getMessages, unstable_setRequestLocale } from 'next-intl/server';
-import { NextIntlClientProvider } from 'next-intl';
+// src/app/page.tsx
+import { getFirestore, collection, getDocs, query } from 'firebase/firestore';
+import { app } from '@/lib/firebase';
+import type { Business } from '@/components/dicilo-search-page';
+import DiciloSearchPage from '@/components/dicilo-search-page';
 
-export const metadata: Metadata = {
-  title: 'Dicilo.net',
-  description: 'A functional landing page with a map search feature.',
-  icons: {
-    icon: '/favicon.ico',
-    shortcut: '/favicon-16x16.png',
-    apple: '/apple-touch-icon.png',
-  },
-};
-
-interface RootLayoutProps {
-  children: React.ReactNode;
-  params: { locale: string };
+async function getBusinesses(): Promise<Business[]> {
+  const db = getFirestore(app);
+  try {
+    const businessesCol = collection(db, 'businesses');
+    const q = query(businessesCol);
+    const businessSnapshot = await getDocs(q);
+    return businessSnapshot.docs.map((doc) => {
+      const data = doc.data();
+      // Data sanitization: Replace invalid or empty image URLs
+      if (!data.imageUrl || data.imageUrl.includes('1024terabox.com')) {
+        data.imageUrl = `https://placehold.co/128x128.png`;
+      }
+      return { id: doc.id, ...data } as Business;
+    });
+  } catch (error) {
+    console.error('Error fetching businesses on server:', error);
+    return [];
+  }
 }
 
-// Lista de locales soportados
-const locales = ['de', 'en', 'es'];
-
-export function generateStaticParams() {
-  return locales.map((locale) => ({ locale }));
-}
-
-export default async function RootLayout({
-  children,
-  params: { locale },
-}: RootLayoutProps) {
-  unstable_setRequestLocale(locale);
-  const messages = await getMessages();
+export default async function SearchPage() {
+  const initialBusinesses = await getBusinesses();
 
   return (
-    <html lang={locale} suppressHydrationWarning>
-      <body
-        className={cn(
-          'font-sans',
-          ptSans.className,
-          'flex min-h-screen flex-col'
-        )}
-      >
-        <NextIntlClientProvider locale={locale} messages={messages}>
-          <div className="flex-grow">{children}</div>
-          <Toaster />
-        </NextIntlClientProvider>
-      </body>
-    </html>
+    <main className="h-screen w-screen overflow-hidden">
+      <DiciloSearchPage initialBusinesses={initialBusinesses} />
+    </main>
   );
 }

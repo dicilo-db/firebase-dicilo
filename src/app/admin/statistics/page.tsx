@@ -16,7 +16,7 @@ import {
 } from 'firebase/firestore';
 import { format } from 'date-fns';
 import { app } from '@/lib/firebase';
-import { useTranslations } from 'next-intl';
+import { useTranslation } from 'react-i18next';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { Header } from '@/components/header';
 import Footer from '@/components/footer';
@@ -99,7 +99,7 @@ const StatisticsPageSkeleton = () => (
 
 export default function StatisticsPage() {
   useAuthGuard();
-  const t = useTranslations();
+  const t = useTranslation('admin').t;
   const [stats, setStats] = useState<Stats>({
     totalSearches: 0,
     totalCardClicks: 0,
@@ -173,9 +173,9 @@ export default function StatisticsPage() {
 
   const eventTypeMap: Record<EventType, string> = useMemo(
     () => ({
-      search: t('admin.statistics.types.search'),
-      cardClick: t('admin.statistics.types.cardClick'),
-      popupClick: t('admin.statistics.types.popupClick'),
+      search: t('statistics.types.search'),
+      cardClick: t('statistics.types.cardClick'),
+      popupClick: t('statistics.types.popupClick'),
     }),
     [t]
   );
@@ -198,30 +198,30 @@ export default function StatisticsPage() {
       <Header />
       <main className="flex-grow p-4 sm:p-8">
         <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-2xl font-bold">{t('admin.statistics.title')}</h1>
+          <h1 className="text-2xl font-bold">{t('statistics.title')}</h1>
           <Button variant="outline" asChild>
             <Link href="/admin/dashboard">
               <LayoutDashboard className="mr-2 h-4 w-4" />
-              {t('admin.businesses.backToDashboard')}
+              {t('businesses.backToDashboard')}
             </Link>
           </Button>
         </div>
 
         <div className="mb-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           <StatCard
-            title={t('admin.statistics.totalSearches')}
+            title={t('statistics.totalSearches')}
             value={stats.totalSearches}
             icon={<Search className="h-4 w-4 text-muted-foreground" />}
           />
           <StatCard
-            title={t('admin.statistics.totalCardClicks')}
+            title={t('statistics.totalCardClicks')}
             value={stats.totalCardClicks}
             icon={
               <MousePointerClick className="h-4 w-4 text-muted-foreground" />
             }
           />
           <StatCard
-            title={t('admin.statistics.totalPopupClicks')}
+            title={t('statistics.totalPopupClicks')}
             value={stats.totalPopupClicks}
             icon={
               <MousePointerClick className="h-4 w-4 text-muted-foreground" />
@@ -231,18 +231,18 @@ export default function StatisticsPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>{t('admin.statistics.recentEvents')}</CardTitle>
+            <CardTitle>{t('statistics.recentEvents')}</CardTitle>
           </CardHeader>
           <CardContent>
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>{t('admin.statistics.table.date')}</TableHead>
-                  <TableHead>{t('admin.statistics.table.eventType')}</TableHead>
+                  <TableHead>{t('statistics.table.date')}</TableHead>
+                  <TableHead>{t('statistics.table.eventType')}</TableHead>
                   <TableHead>
-                    {t('admin.statistics.table.businessName')}
+                    {t('statistics.table.businessName')}
                   </TableHead>
-                  <TableHead>{t('admin.statistics.table.details')}</TableHead>
+                  <TableHead>{t('statistics.table.details')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -274,7 +274,7 @@ export default function StatisticsPage() {
                       colSpan={4}
                       className="h-24 text-center text-muted-foreground"
                     >
-                      {t('admin.statistics.noEvents')}
+                      {t('statistics.noEvents')}
                     </TableCell>
                   </TableRow>
                 )}
