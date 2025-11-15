@@ -4,6 +4,16 @@ Este documento registra los 30 cambios más recientes realizados en el proyecto.
 
 ---
 
+### **140. FIX: CARGA DE TRADUCCIONES PARA PÁGINA "DATENSCHUTZ" (PRIVACIDAD) - CÓDIGO: I18N-PRIVACY-FIX-V1**
+
+- **Fecha y Hora:** 21 de Septiembre de 2025, 12:30 (CET)
+- **Módulos Afectados:** `src/i18n.ts`, `CHANGELOG.md`.
+- **Descripción del Cambio:**
+  - **Análisis del Problema:** La página de "Datenschutz" (`/datenschutz`) mostraba las claves de traducción en bruto (ej. `pageTitle`) en lugar del texto traducido, porque el archivo de recursos `privacy.json` no estaba siendo registrado en la configuración de `i18next`.
+  - **Solución Implementada:** Se ha modificado el archivo `src/i18n.ts` para importar y añadir los archivos de traducción `privacy.json` para los idiomas alemán, inglés y español al objeto `resources`.
+  - **Resultado:** El sistema de internacionalización ahora carga correctamente las traducciones para la página de privacidad, mostrando el texto correcto en la interfaz de usuario.
+  - **Documentación:** Se ha registrado esta corrección en el `CHANGELOG.md`.
+
 ### **139. FIX: ACTUALIZACIÓN DE INFORMACIÓN LEGAL EN PÁGINA "IMPRESSUM" - CÓDIGO: LEGAL-INFO-UPDATE-V1**
 
 - **Fecha y Hora:** 21 de Septiembre de 2025, 12:00 (CET)

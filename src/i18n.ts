@@ -22,6 +22,9 @@ import directory_es from './locales/es/directory.json';
 import impressum_de from './locales/de/impressum.json';
 import impressum_en from './locales/en/impressum.json';
 import impressum_es from './locales/es/impressum.json';
+import privacy_de from './locales/de/privacy.json';
+import privacy_en from './locales/en/privacy.json';
+import privacy_es from './locales/es/privacy.json';
 
 const resources = {
   de: {
@@ -31,6 +34,7 @@ const resources = {
     about: about_de,
     directory: directory_de,
     impressum: impressum_de,
+    privacy: privacy_de,
   },
   en: {
     common: common_en,
@@ -39,6 +43,7 @@ const resources = {
     about: about_en,
     directory: directory_en,
     impressum: impressum_en,
+    privacy: privacy_en,
   },
   es: {
     common: common_es,
@@ -47,6 +52,7 @@ const resources = {
     about: about_es,
     directory: directory_es,
     impressum: impressum_es,
+    privacy: privacy_es,
   },
 };
 
