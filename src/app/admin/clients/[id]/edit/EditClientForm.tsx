@@ -659,7 +659,7 @@ interface EditClientFormProps {
 }
 
 export default function EditClientForm({ initialData }: EditClientFormProps) {
-  const { t } = useTranslation('admin');
+  const { t } = useTranslation(['admin', 'form', 'legal', 'register']);
   const db = getFirestore(app);
   const storage = getStorage(app);
   const router = useRouter();
@@ -1014,48 +1014,48 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
               )}
             </div>
             <CardDescription>
-              {t('admin.clients.edit.cardDescription', { id })}
+              {t('clients.edit.cardDescription', { id })}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Tabs defaultValue="general">
               <TabsList className="mb-6 grid w-full grid-cols-4 md:grid-cols-8">
                 <TabsTrigger value="general">
-                  {t('admin.clients.tabs.general')}
+                  {t('clients.tabs.general')}
                 </TabsTrigger>
                 <TabsTrigger value="marqueeHeader">
-                  {t('admin.clients.tabs.marqueeHeader')}
+                  {t('clients.tabs.marqueeHeader')}
                 </TabsTrigger>
                 <TabsTrigger value="body">
-                  {t('admin.clients.tabs.body')}
+                  {t('clients.tabs.body')}
                 </TabsTrigger>
                 <TabsTrigger value="cards">
-                  {t('admin.clients.tabs.infoCards')}
+                  {t('clients.tabs.infoCards')}
                 </TabsTrigger>
                 <TabsTrigger value="products">
-                  {t('admin.clients.tabs.products')}
+                  {t('clients.tabs.products')}
                 </TabsTrigger>
                 <TabsTrigger value="graphics">
-                  {t('admin.clients.tabs.graphics')}
+                  {t('clients.tabs.graphics')}
                 </TabsTrigger>
                 <TabsTrigger value="form">
-                  {t('admin.clients.tabs.form')}
+                  {t('clients.tabs.form')}
                 </TabsTrigger>
                 <TabsTrigger value="translations">
-                  {t('admin.clients.tabs.translations')}
+                  {t('clients.tabs.translations')}
                 </TabsTrigger>
               </TabsList>
 
               <TabsContent value="general" className="space-y-6">
-                <CardTitle>{t('admin.clients.tabs.general')}</CardTitle>
+                <CardTitle>{t('clients.tabs.general')}</CardTitle>
                 <CardDescription>
-                  {t('admin.clients.fields.general.description')}
+                  {t('clients.fields.general.description')}
                 </CardDescription>
 
                 <div className="grid grid-cols-1 gap-6 pt-4 md:grid-cols-2">
                   <div className="space-y-2">
                     <Label htmlFor="clientName">
-                      {t('admin.clients.fields.clientName')}
+                      {t('clients.fields.clientName')}
                     </Label>
                     <Input id="clientName" {...register('clientName')} />
                     {errors.clientName && (
@@ -1066,7 +1066,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="clientType">
-                      {t('admin.clients.fields.clientType')}
+                      {t('clients.fields.clientType')}
                     </Label>
                     <Controller
                       name="clientType"
@@ -1091,7 +1091,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                   <div className="space-y-2">
                     <Label htmlFor="clientLogoUrl">
-                      {t('admin.clients.fields.clientLogoUrl')}
+                      {t('clients.fields.clientLogoUrl')}
                     </Label>
                     <Input id="clientLogoUrl" {...register('clientLogoUrl')} />
                     {errors.clientLogoUrl && (
@@ -1102,7 +1102,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="headerData.clientLogoWidth">
-                      {t('admin.clients.fields.header.clientLogoWidth')}
+                      {t('clients.fields.header.clientLogoWidth')}
                     </Label>
                     <Input
                       id="headerData.clientLogoWidth"
@@ -1115,7 +1115,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="headerData.welcomeText">
-                    {t('admin.clients.fields.header.welcomeText')}
+                    {t('clients.fields.header.welcomeText')}
                   </Label>
                   <Input
                     id="headerData.welcomeText"
@@ -1124,21 +1124,21 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="headerData.socialShareText">
-                    {t('admin.clients.fields.header.socialShareText')}
+                    {t('clients.fields.header.socialShareText')}
                   </Label>
                   <Textarea
                     id="headerData.socialShareText"
                     {...register('headerData.socialShareText')}
                     placeholder={
                       t(
-                        'admin.clients.fields.header.socialShareTextPlaceholder'
+                        'clients.fields.header.socialShareTextPlaceholder'
                       ) as string
                     }
                   />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="headerData.bannerShareUrl">
-                    {t('admin.clients.fields.header.bannerShareUrl')}
+                    {t('clients.fields.header.bannerShareUrl')}
                   </Label>
                   <Input
                     id="headerData.bannerShareUrl"
@@ -1148,12 +1148,12 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                 </div>
 
                 <h3 className="pt-4 text-lg font-medium">
-                  {t('admin.clients.fields.header.stylesTitle')}
+                  {t('clients.fields.header.stylesTitle')}
                 </h3>
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                   <div className="space-y-2">
                     <Label htmlFor="headerData.headerBackgroundColor">
-                      {t('admin.clients.fields.header.headerBackgroundColor')}
+                      {t('clients.fields.header.headerBackgroundColor')}
                     </Label>
                     <Input
                       id="headerData.headerBackgroundColor"
@@ -1163,7 +1163,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="headerData.headerTextColor">
-                      {t('admin.clients.fields.header.headerTextColor')}
+                      {t('clients.fields.header.headerTextColor')}
                     </Label>
                     <Input
                       id="headerData.headerTextColor"
@@ -1175,7 +1175,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="headerData.headerBackgroundImageUrl">
-                    {t('admin.clients.fields.header.headerBackgroundImageUrl')}
+                    {t('clients.fields.header.headerBackgroundImageUrl')}
                   </Label>
                   <Input
                     id="headerData.headerBackgroundImageUrl"
@@ -1195,7 +1195,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="headerData.headerImageUrl">
-                    {t('admin.clients.fields.header.headerImageUrl')}
+                    {t('clients.fields.header.headerImageUrl')}
                   </Label>
                   <Input
                     id="headerData.headerImageUrl"
@@ -1212,7 +1212,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
 
                 <div className="space-y-4">
                   <h3 className="text-lg font-medium">
-                    {t('admin.clients.fields.header.dividerLine.title')}
+                    {t('clients.fields.header.dividerLine.title')}
                   </h3>
                   <div className="flex items-center space-x-2">
                     <Controller
@@ -1227,13 +1227,13 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                       )}
                     />
                     <Label htmlFor="dividerLineEnabled">
-                      {t('admin.clients.fields.header.dividerLine.enable')}
+                      {t('clients.fields.header.dividerLine.enable')}
                     </Label>
                   </div>
                   <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                     <div className="space-y-2">
                       <Label htmlFor="headerData.dividerLine.color">
-                        {t('admin.clients.fields.header.dividerLine.color')}
+                        {t('clients.fields.header.dividerLine.color')}
                       </Label>
                       <Controller
                         name="headerData.dividerLine.color"
@@ -1250,7 +1250,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="headerData.dividerLine.thickness">
-                        {t('admin.clients.fields.header.dividerLine.thickness')}
+                        {t('clients.fields.header.dividerLine.thickness')}
                       </Label>
                       <Input
                         id="headerData.dividerLine.thickness"
@@ -1266,7 +1266,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                 <Separator className="my-6" />
 
                 <h3 className="text-lg font-medium">
-                  {t('admin.clients.fields.header.socialLinks')}
+                  {t('clients.fields.header.socialLinks')}
                 </h3>
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                   {socialLinkFields.map((field, index) => (
@@ -1275,19 +1275,19 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                       className="space-y-2 rounded-lg border p-3"
                     >
                       <Label>
-                        {t('admin.clients.fields.header.socialLink', {
+                        {t('clients.fields.header.socialLink', {
                           number: index + 1,
                         })}
                       </Label>
                       <Input
                         placeholder={t(
-                          'admin.clients.fields.header.iconPlaceholderText'
+                          'clients.fields.header.iconPlaceholderText'
                         )}
                         {...register(`headerData.socialLinks.${index}.icon`)}
                       />
                       <Input
                         placeholder={t(
-                          'admin.clients.fields.header.urlPlaceholder'
+                          'clients.fields.header.urlPlaceholder'
                         )}
                         {...register(`headerData.socialLinks.${index}.url`)}
                       />
@@ -1304,7 +1304,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
 
                 <div className="space-y-4">
                   <h3 className="text-lg font-medium">
-                    {t('admin.clients.fields.header.banner.title')}
+                    {t('clients.fields.header.banner.title')}
                   </h3>
                   <Controller
                     name="headerData.bannerType"
@@ -1318,19 +1318,19 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                         <div className="flex items-center space-x-2">
                           <RadioGroupItem value="embed" id="embed" />
                           <Label htmlFor="embed">
-                            {t('admin.clients.fields.header.banner.embedCode')}
+                            {t('clients.fields.header.banner.embedCode')}
                           </Label>
                         </div>
                         <div className="flex items-center space-x-2">
                           <RadioGroupItem value="url" id="url" />
                           <Label htmlFor="url">
-                            {t('admin.clients.fields.header.banner.imageUrl')}
+                            {t('clients.fields.header.banner.imageUrl')}
                           </Label>
                         </div>
                         <div className="flex items-center space-x-2">
                           <RadioGroupItem value="upload" id="upload" />
                           <Label htmlFor="upload">
-                            {t('admin.clients.fields.header.banner.fileUpload')}
+                            {t('clients.fields.header.banner.fileUpload')}
                           </Label>
                         </div>
                       </RadioGroup>
@@ -1341,7 +1341,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                 {bannerType === 'embed' && (
                   <div className="space-y-2">
                     <Label htmlFor="headerData.bannerEmbedCode">
-                      {t('admin.clients.fields.header.banner.embedCode')}
+                      {t('clients.fields.header.banner.embedCode')}
                     </Label>
                     <Textarea
                       id="headerData.bannerEmbedCode"
@@ -1355,7 +1355,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                   <>
                     <div className="space-y-2">
                       <Label htmlFor="headerData.bannerImageUrl">
-                        {t('admin.clients.fields.header.banner.imageUrl')}
+                        {t('clients.fields.header.banner.imageUrl')}
                       </Label>
                       <Input
                         id="headerData.bannerImageUrl"
@@ -1366,7 +1366,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="headerData.bannerImageWidth">
-                          {t('admin.clients.fields.header.banner.width')}
+                          {t('clients.fields.header.banner.width')}
                         </Label>
                         <div className="flex items-center">
                           <Input
@@ -1382,7 +1382,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="headerData.bannerImageHeight">
-                          {t('admin.clients.fields.header.banner.height')}
+                          {t('clients.fields.header.banner.height')}
                         </Label>
                         <div className="flex items-center">
                           <Input
@@ -1402,7 +1402,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                 {bannerType === 'upload' && (
                   <div className="space-y-2">
                     <Label htmlFor="banner-upload">
-                      {t('admin.clients.fields.header.banner.fileUpload')}
+                      {t('clients.fields.header.banner.fileUpload')}
                     </Label>
                     <div className="flex items-center gap-4">
                       <Input
@@ -1418,7 +1418,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                     </div>
                     {watch('headerData.bannerImageUrl') && (
                       <p className="text-sm text-muted-foreground">
-                        {t('admin.clients.fields.header.banner.currentImage')}:{' '}
+                        {t('clients.fields.header.banner.currentImage')}:{' '}
                         <a
                           href={watch('headerData.bannerImageUrl')}
                           target="_blank"
@@ -1435,14 +1435,14 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
 
               {/* Marquee Header Tab */}
               <TabsContent value="marqueeHeader" className="space-y-6">
-                <CardTitle>{t('admin.clients.tabs.marqueeHeader')}</CardTitle>
+                <CardTitle>{t('clients.tabs.marqueeHeader')}</CardTitle>
                 <CardDescription>
-                  {t('admin.clients.fields.marqueeHeader.description')}
+                  {t('clients.fields.marqueeHeader.description')}
                 </CardDescription>
 
                 <div className="space-y-2">
                   <Label>
-                    {t('admin.clients.fields.marqueeHeader.marqueeText')}
+                    {t('clients.fields.marqueeHeader.marqueeText')}
                   </Label>
                   <Input {...register('marqueeHeaderData.marqueeText')} />
                 </div>
@@ -1450,7 +1450,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
 
                 <div className="space-y-4 rounded-lg border bg-secondary/50 p-4">
                   <h4 className="font-semibold">
-                    {t('admin.clients.fields.marqueeHeader.offerSectionTitle')}
+                    {t('clients.fields.marqueeHeader.offerSectionTitle')}
                   </h4>
                   <div className="flex items-center space-x-2">
                     <Controller
@@ -1465,24 +1465,24 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                       )}
                     />
                     <Label htmlFor="offerEnabled">
-                      {t('admin.clients.fields.marqueeHeader.offerEnabled')}
+                      {t('clients.fields.marqueeHeader.offerEnabled')}
                     </Label>
                   </div>
                   <div className="space-y-2">
                     <Label>
-                      {t('admin.clients.fields.marqueeHeader.leftButtonText')}
+                      {t('clients.fields.marqueeHeader.leftButtonText')}
                     </Label>
                     <Input {...register('marqueeHeaderData.leftButtonText')} />
                   </div>
                   <div className="space-y-2">
                     <Label>
-                      {t('admin.clients.fields.marqueeHeader.leftButtonLink')}
+                      {t('clients.fields.marqueeHeader.leftButtonLink')}
                     </Label>
                     <Input {...register('marqueeHeaderData.leftButtonLink')} />
                   </div>
                   <div className="space-y-2">
                     <Label>
-                      {t('admin.clients.fields.marqueeHeader.offerEndDate')}
+                      {t('clients.fields.marqueeHeader.offerEndDate')}
                     </Label>
                     <Controller
                       control={control}
@@ -1503,7 +1503,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                               ) : (
                                 <span>
                                   {t(
-                                    'admin.clients.fields.marqueeHeader.pickDate'
+                                    'clients.fields.marqueeHeader.pickDate'
                                   )}
                                 </span>
                               )}
@@ -1526,12 +1526,12 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                 <div className="grid grid-cols-1 gap-6 pt-4 md:grid-cols-2">
                   <div className="space-y-4 rounded-lg border p-4">
                     <h4 className="font-semibold">
-                      {t('admin.clients.fields.marqueeHeader.offerSection')}
+                      {t('clients.fields.marqueeHeader.offerSection')}
                     </h4>
                     <div className="space-y-2">
                       <Label>
                         {t(
-                          'admin.clients.fields.marqueeHeader.middleTextOffer'
+                          'clients.fields.marqueeHeader.middleTextOffer'
                         )}
                       </Label>
                       <Input {...register('marqueeHeaderData.middleText')} />
@@ -1539,7 +1539,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                     <div className="space-y-2">
                       <Label>
                         {t(
-                          'admin.clients.fields.marqueeHeader.buttonAfterDateText'
+                          'clients.fields.marqueeHeader.buttonAfterDateText'
                         )}
                       </Label>
                       <Input
@@ -1549,7 +1549,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                     <div className="space-y-2">
                       <Label>
                         {t(
-                          'admin.clients.fields.marqueeHeader.buttonAfterDateLink'
+                          'clients.fields.marqueeHeader.buttonAfterDateLink'
                         )}
                       </Label>
                       <Input
@@ -1560,13 +1560,13 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                   <div className="space-y-4 rounded-lg border p-4">
                     <h4 className="font-semibold">
                       {t(
-                        'admin.clients.fields.marqueeHeader.rightButtonsSectionTitle'
+                        'clients.fields.marqueeHeader.rightButtonsSectionTitle'
                       )}
                     </h4>
                     <div className="space-y-2">
                       <Label>
                         {t(
-                          'admin.clients.fields.marqueeHeader.rightButton1Text'
+                          'clients.fields.marqueeHeader.rightButton1Text'
                         )}
                       </Label>
                       <Input
@@ -1576,7 +1576,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                     <div className="space-y-2">
                       <Label>
                         {t(
-                          'admin.clients.fields.marqueeHeader.rightButton1Link'
+                          'clients.fields.marqueeHeader.rightButton1Link'
                         )}
                       </Label>
                       <Input
@@ -1586,7 +1586,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                     <div className="space-y-2">
                       <Label>
                         {t(
-                          'admin.clients.fields.marqueeHeader.rightButton2Text'
+                          'clients.fields.marqueeHeader.rightButton2Text'
                         )}
                       </Label>
                       <Input
@@ -1596,7 +1596,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                     <div className="space-y-2">
                       <Label>
                         {t(
-                          'admin.clients.fields.marqueeHeader.rightButton2Link'
+                          'clients.fields.marqueeHeader.rightButton2Link'
                         )}
                       </Label>
                       <Input
@@ -1609,19 +1609,19 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
 
               {/* Body Tab */}
               <TabsContent value="body" className="space-y-6">
-                <CardTitle>{t('admin.clients.tabs.body')}</CardTitle>
+                <CardTitle>{t('clients.tabs.body')}</CardTitle>
                 <CardDescription>
-                  {t('admin.clients.fields.body.description')}
+                  {t('clients.fields.body.description')}
                 </CardDescription>
                 <div className="space-y-2">
                   <Label htmlFor="bodyData.title">
-                    {t('admin.clients.fields.body.title')}
+                    {t('clients.fields.body.title')}
                   </Label>
                   <Input id="bodyData.title" {...register('bodyData.title')} />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="bodyData.subtitle">
-                    {t('admin.clients.fields.body.subtitle')}
+                    {t('clients.fields.body.subtitle')}
                   </Label>
                   <Input
                     id="bodyData.subtitle"
@@ -1630,7 +1630,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="bodyData.description">
-                    {t('admin.clients.fields.body.descriptionField')}
+                    {t('clients.fields.body.descriptionField')}
                   </Label>
                   <Controller
                     name="bodyData.description"
@@ -1645,7 +1645,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="bodyData.imageUrl">
-                    {t('admin.clients.fields.body.imageUrl')}
+                    {t('clients.fields.body.imageUrl')}
                   </Label>
                   <Input
                     id="bodyData.imageUrl"
@@ -1654,7 +1654,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="bodyData.videoUrl">
-                    {t('admin.clients.fields.body.videoUrl')}
+                    {t('clients.fields.body.videoUrl')}
                   </Label>
                   <Input
                     id="bodyData.videoUrl"
@@ -1664,7 +1664,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="bodyData.ctaButtonText">
-                    {t('admin.clients.fields.body.ctaButtonText')}
+                    {t('clients.fields.body.ctaButtonText')}
                   </Label>
                   <Input
                     id="bodyData.ctaButtonText"
@@ -1673,7 +1673,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="bodyData.ctaButtonLink">
-                    {t('admin.clients.fields.body.ctaButtonLink')}
+                    {t('clients.fields.body.ctaButtonLink')}
                   </Label>
                   <Input
                     id="bodyData.ctaButtonLink"
@@ -1682,7 +1682,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="bodyData.layout">
-                    {t('admin.clients.fields.body.layout')}
+                    {t('clients.fields.body.layout')}
                   </Label>
                   <Controller
                     name="bodyData.layout"
@@ -1711,7 +1711,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
               <TabsContent value="cards" className="space-y-4">
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-medium">
-                    {t('admin.clients.fields.infoCards.title')}
+                    {t('clients.fields.infoCards.title')}
                   </h3>
                   <Button
                     type="button"
@@ -1719,7 +1719,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                     onClick={() => appendInfoCard({ title: '', content: '' })}
                   >
                     <PlusCircle className="mr-2 h-4 w-4" />{' '}
-                    {t('admin.clients.fields.infoCards.add')}
+                    {t('clients.fields.infoCards.add')}
                   </Button>
                 </div>
                 <div className="max-h-[500px] space-y-4 overflow-y-auto pr-2">
@@ -1727,7 +1727,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                     <fieldset key={field.id} className="rounded-md border p-4">
                       <div className="mb-2 flex items-center justify-between">
                         <legend className="px-1 text-sm font-medium">
-                          {t('admin.clients.fields.infoCards.card')} {index + 1}
+                          {t('clients.fields.infoCards.card')} {index + 1}
                         </legend>
                         <Button
                           type="button"
@@ -1741,7 +1741,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                       <div className="mt-2 space-y-4">
                         <div className="space-y-2">
                           <Label htmlFor={`infoCards.${index}.title`}>
-                            {t('admin.clients.fields.title')}
+                            {t('clients.fields.title')}
                           </Label>
                           <Input
                             id={`infoCards.${index}.title`}
@@ -1750,7 +1750,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                         </div>
                         <div className="space-y-2">
                           <Label htmlFor={`infoCards.${index}.content`}>
-                            {t('admin.clients.fields.content')}
+                            {t('clients.fields.content')}
                           </Label>
                           <Controller
                             name={`infoCards.${index}.content`}
@@ -1773,7 +1773,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
               <TabsContent value="products" className="space-y-4">
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-medium">
-                    {t('admin.clients.tabs.products')}
+                    {t('clients.tabs.products')}
                   </h3>
                   <Button
                     type="button"
@@ -1781,18 +1781,18 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                     onClick={() => appendProduct({ name: '' })}
                   >
                     <PlusCircle className="mr-2 h-4 w-4" />{' '}
-                    {t('admin.clients.fields.products.add')}
+                    {t('clients.fields.products.add')}
                   </Button>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  {t('admin.clients.fields.products.description')}
+                  {t('clients.fields.products.description')}
                 </p>
                 <div className="max-h-[500px] space-y-4 overflow-y-auto pr-2">
                   {productFields.map((field, index) => (
                     <fieldset key={field.id} className="rounded-md border p-4">
                       <div className="mb-2 flex items-center justify-between">
                         <legend className="px-1 text-sm font-medium">
-                          {t('admin.clients.fields.products.product')}{' '}
+                          {t('clients.fields.products.product')}{' '}
                           {index + 1}
                         </legend>
                         <Button
@@ -1806,7 +1806,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor={`products.${index}.name`}>
-                          {t('admin.clients.fields.products.productName')}
+                          {t('clients.fields.products.productName')}
                         </Label>
                         <Input
                           id={`products.${index}.name`}
@@ -1827,7 +1827,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
               <TabsContent value="graphics" className="space-y-4">
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-medium">
-                    {t('admin.clients.fields.graphics.title')}
+                    {t('clients.fields.graphics.title')}
                   </h3>
                   <Button
                     type="button"
@@ -1837,18 +1837,18 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                     }
                   >
                     <PlusCircle className="mr-2 h-4 w-4" />{' '}
-                    {t('admin.clients.fields.graphics.add')}
+                    {t('clients.fields.graphics.add')}
                   </Button>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  {t('admin.clients.fields.graphics.description')}
+                  {t('clients.fields.graphics.description')}
                 </p>
                 <div className="max-h-[500px] space-y-4 overflow-y-auto pr-2">
                   {graphicsFields.map((field, index) => (
                     <fieldset key={field.id} className="rounded-md border p-4">
                       <div className="mb-2 flex items-center justify-between">
                         <legend className="px-1 text-sm font-medium">
-                          {t('admin.clients.fields.graphics.graphic')}{' '}
+                          {t('clients.fields.graphics.graphic')}{' '}
                           {index + 1}
                         </legend>
                         <Button
@@ -1863,7 +1863,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                       <div className="grid grid-cols-1 gap-4">
                         <div className="space-y-2">
                           <Label htmlFor={`graphics.${index}.imageUrl`}>
-                            {t('admin.clients.fields.graphics.imageUrl')}
+                            {t('clients.fields.graphics.imageUrl')}
                           </Label>
                           <Input
                             id={`graphics.${index}.imageUrl`}
@@ -1877,7 +1877,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                         </div>
                         <div className="space-y-2">
                           <Label htmlFor={`graphics.${index}.targetUrl`}>
-                            {t('admin.clients.fields.graphics.targetUrl')}
+                            {t('clients.fields.graphics.targetUrl')}
                           </Label>
                           <Input
                             id={`graphics.${index}.targetUrl`}
@@ -1891,7 +1891,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                         </div>
                         <div className="space-y-2">
                           <Label htmlFor={`graphics.${index}.text`}>
-                            {t('admin.clients.fields.graphics.title')}
+                            {t('clients.fields.graphics.title')}
                           </Label>
                           <Input
                             id={`graphics.${index}.text`}
@@ -1908,9 +1908,9 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
               <TabsContent value="form">
                 <div className="mb-4 flex items-center justify-between">
                   <div>
-                    <CardTitle>{t('admin.clients.tabs.form')}</CardTitle>
+                    <CardTitle>{t('clients.tabs.form')}</CardTitle>
                     <CardDescription>
-                      {t('admin.clients.fields.form.description')}
+                      {t('clients.fields.form.description')}
                     </CardDescription>
                   </div>
                   <AlertDialog>
@@ -1963,7 +1963,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
               <TabsContent value="translations">
                 <div className="space-y-2">
                   <Label htmlFor="translations">
-                    {t('admin.clients.fields.translations')}
+                    {t('clients.fields.translations')}
                   </Label>
                   <Controller
                     name="translations"
@@ -1975,7 +1975,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                         rows={15}
                         placeholder={
                           t(
-                            'admin.clients.fields.jsonPlaceholderObject'
+                            'clients.fields.jsonPlaceholderObject'
                           ) as string
                         }
                         className="w-full rounded-md border p-2 font-mono text-sm"
@@ -1983,7 +1983,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                     )}
                   />
                   <p className="text-xs text-muted-foreground">
-                    {t('admin.clients.fields.jsonHelpObject')}
+                    {t('clients.fields.jsonHelpObject')}
                   </p>
                 </div>
               </TabsContent>
@@ -1994,7 +1994,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
               {isSubmitting && (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               )}
-              {t('admin.clients.edit.save')}
+              {t('clients.edit.save')}
             </Button>
           </CardFooter>
         </Card>

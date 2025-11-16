@@ -4,6 +4,16 @@ Este documento registra los 30 cambios más recientes realizados en el proyecto.
 
 ---
 
+### **152. FIX: CORRECCIÓN DE TRADUCCIONES EN FORMULARIO DE CLIENTES (ADMIN) - CÓDIGO: I18N-ADMIN-CLIENT-FIX-V2**
+
+- **Fecha y Hora:** 22 de Septiembre de 2025, 09:15 (CET)
+- **Módulos Afectados:** `src/app/admin/clients/[id]/edit/EditClientForm.tsx`, `src/CHANGELOG.md`.
+- **Descripción del Cambio:**
+  - **Análisis del Problema:** A pesar de un intento anterior, persistía un problema de internacionalización en el formulario de edición de clientes, donde las etiquetas seguían mostrando las claves de traducción (ej. `admin.clients.tabs.general`). Se identificó que, aunque el `namespace` 'admin' se cargaba correctamente, la función de traducción `t()` se estaba llamando con un prefijo redundante (`admin.`), lo que impedía la resolución de la clave.
+  - **Solución Implementada:** Se ha modificado el componente `EditClientForm.tsx` para eliminar el prefijo `admin.` de todas las llamadas a la función `t()`. La llamada correcta es, por ejemplo, `t('clients.tabs.general')` en lugar de `t('admin.clients.tabs.general')`. Esto permite que el hook `useTranslation('admin')` resuelva las claves correctamente dentro de su `namespace`.
+  - **Resultado:** El formulario de edición de clientes en el panel de administración ahora se muestra completamente traducido, corrigiendo el error de visualización y mejorando la usabilidad para el administrador.
+  - **Documentación:** Se ha registrado esta corrección definitiva de internacionalización en el `CHANGELOG.md`.
+
 ### **151. FIX: CORRECCIÓN DE TRADUCCIONES EN FORMULARIO DE CLIENTES (ADMIN) - CÓDIGO: I18N-ADMIN-CLIENT-FIX-V1**
 
 - **Fecha y Hora:** 22 de Septiembre de 2025, 09:00 (CET)
@@ -239,4 +249,5 @@ Este documento registra los 30 cambios más recientes realizados en el proyecto.
   - **Solución Arquitectónica (Deep Merge):** Se ha implementado una solución robusta y definitiva. Ahora, la función `onSubmit` primero obtiene el documento original completo desde Firestore. Luego, utiliza la función `_.merge` de `lodash` para realizar una "fusión profunda" (deep merge), combinando de manera inteligente y recursiva los nuevos datos del formulario sobre los datos existentes.
   - **Integridad de Datos Garantizada:** Este enfoque asegura que solo los campos que el usuario ha modificado explícitamente se actualizan, mientras que todos los demás campos, especialmente los anidados, conservan sus valores originales. Se elimina de raíz el riesgo de borrado accidental de datos.
   - **Documentación:** Se registra esta corrección arquitectónica fundamental en el `CHANGELOG.md` como la solución final al problema de guardado.
+
 
