@@ -4,6 +4,16 @@ Este documento registra los 30 cambios más recientes realizados en el proyecto.
 
 ---
 
+### **155. FEAT: AÑADIR BOTÓN DE VOLVER AL DASHBOARD EN EDICIÓN DE CLIENTES - CÓDIGO: FEAT-BACK-TO-DASHBOARD-CLIENT-V1**
+
+- **Fecha y Hora:** 22 de Septiembre de 2025, 10:00 (CET)
+- **Módulos Afectados:** `src/app/admin/clients/[id]/edit/page.tsx`, `src/CHANGELOG.md`.
+- **Descripción del Cambio:**
+  - **Análisis del Problema:** La página de edición de clientes no tenía un botón de acceso rápido para volver al dashboard principal, lo que obligaba al usuario a usar la navegación del navegador o ir primero a la lista de clientes.
+  - **Solución Implementada:** Se ha añadido un botón "Volver al Dashboard" en la parte superior de la página `EditClientPage`, junto al título. Este botón, que incluye el icono `LayoutDashboard`, proporciona una ruta de navegación directa y consistente con otras páginas del panel de administración.
+  - **Resultado:** La usabilidad de la sección de edición de clientes ha mejorado al proporcionar una opción de navegación clara y directa de regreso al panel principal.
+  - **Documentación:** Se ha registrado esta nueva característica en el `CHANGELOG.md`.
+
 ### **154. FIX: CORRECCIÓN DE REGLA DE SEGURIDAD PARA PERMITIR EDICIÓN DE CLIENTES POR ADMINS - CÓDIGO: FIX-CLIENT-EDIT-PERMS-V1**
 
 - **Fecha y Hora:** 22 de Septiembre de 2025, 09:45 (CET)
@@ -39,7 +49,7 @@ Este documento registra los 30 cambios más recientes realizados en el proyecto.
 ### **151. FIX: CORRECCIÓN DE TRADUCCIONES EN FORMULARIO DE CLIENTES (ADMIN) - CÓDIGO: I18N-ADMIN-CLIENT-FIX-V1**
 
 - **Fecha y Hora:** 22 de Septiembre de 2025, 09:00 (CET)
-- **Módulos Afectados:** `src/app/admin/clients/[id]/edit/EditClientForm.tsx`, `CHANGELOG.md`.
+- **Módulos Afectados:** `src/app/admin/clients/[id]/edit/EditClientForm.tsx`, `src/CHANGELOG.md`.
 - **Descripción del Cambio:**
   - **Análisis del Problema:** Se detectó un problema de internacionalización en el formulario de edición de clientes, donde todas las etiquetas y textos descriptivos mostraban las claves de traducción (ej. `admin.clients.tabs.general`) en lugar del texto traducido al idioma correspondiente. La causa era que el hook `useTranslation` se estaba llamando sin especificar el espacio de nombres `admin`.
   - **Solución Implementada:** Se ha modificado el componente `EditClientForm.tsx` para que el hook `useTranslation` cargue explícitamente el espacio de nombres `admin`. Esto permite que todas las claves de traducción con el prefijo `admin.` se resuelvan correctamente.
@@ -271,6 +281,7 @@ Este documento registra los 30 cambios más recientes realizados en el proyecto.
   - **Solución Arquitectónica (Deep Merge):** Se ha implementado una solución robusta y definitiva. Ahora, la función `onSubmit` primero obtiene el documento original completo desde Firestore. Luego, utiliza la función `_.merge` de `lodash` para realizar una "fusión profunda" (deep merge), combinando de manera inteligente y recursiva los nuevos datos del formulario sobre los datos existentes.
   - **Integridad de Datos Garantizada:** Este enfoque asegura que solo los campos que el usuario ha modificado explícitamente se actualizan, mientras que todos los demás campos, especialmente los anidados, conservan sus valores originales. Se elimina de raíz el riesgo de borrado accidental de datos.
   - **Documentación:** Se ha registrado esta corrección arquitectónica fundamental en el `CHANGELOG.md` como la solución final al problema de guardado.
+
 
 
 

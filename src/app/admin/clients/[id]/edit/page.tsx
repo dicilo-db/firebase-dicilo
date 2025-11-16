@@ -7,6 +7,10 @@ import { doc, getDoc, getFirestore } from 'firebase/firestore';
 import { app } from '@/lib/firebase';
 import EditClientForm from './EditClientForm';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+import { LayoutDashboard } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 // Define la estructura de datos que se espera
 export interface ClientData {
@@ -28,7 +32,7 @@ const EditClientFormSkeleton = () => (
   <div className="space-y-6 p-8">
     <div className="flex items-center justify-between">
       <Skeleton className="h-8 w-48" />
-      <Skeleton className="h-10 w-24" />
+      <Skeleton className="h-10 w-48" />
     </div>
     <div className="rounded-lg border p-6">
       <Skeleton className="mb-6 h-10 w-full" />
@@ -47,6 +51,7 @@ export default function EditClientPage() {
   const params = useParams();
   const id = params.id as string;
   const router = useRouter();
+  const { t } = useTranslation('admin');
   const [clientData, setClientData] = useState<ClientData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -100,6 +105,15 @@ export default function EditClientPage() {
 
   return (
     <div className="p-8">
+      <div className="mb-6 flex items-center justify-between">
+        <h1 className="text-2xl font-bold">{t('clients.edit.title')}</h1>
+        <Button variant="outline" asChild>
+          <Link href="/admin/dashboard">
+            <LayoutDashboard className="mr-2 h-4 w-4" />
+            {t('clients.backToDashboard')}
+          </Link>
+        </Button>
+      </div>
       <EditClientForm initialData={clientData} />
     </div>
   );
