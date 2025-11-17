@@ -31,7 +31,7 @@ const Header = () => {
       <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           <Link href="/" className="text-2xl font-bold text-primary">
-            Dicilo.net
+            Dicilo
           </Link>
           <div className="hidden items-center gap-4 md:flex">
             <nav className="flex items-center gap-4">
@@ -62,7 +62,7 @@ const Header = () => {
               <SheetContent>
                 <SheetHeader>
                   <SheetTitle className="text-left text-2xl font-bold text-primary">
-                    Dicilo.net
+                    Dicilo
                   </SheetTitle>
                 </SheetHeader>
                 <div className="flex flex-col space-y-2 pt-6">
