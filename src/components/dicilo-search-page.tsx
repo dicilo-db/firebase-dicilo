@@ -18,6 +18,8 @@ import {
   ExternalLink,
   Loader2,
   Mic,
+  X,
+  Map,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { RecommendationForm } from './RecommendationForm';
@@ -116,6 +118,7 @@ export default function DiciloSearchPage({
   );
   const [isRecommendationFormOpen, setRecommendationFormOpen] = useState(false);
   const [recommendedBusiness, setRecommendedBusiness] = useState('');
+  const [isMobileMapVisible, setMobileMapVisible] = useState(false);
 
   const handleGeolocation = useCallback(
     (isInitialLoad = false) => {
@@ -289,6 +292,7 @@ export default function DiciloSearchPage({
           businessId: business.id,
           businessName: business.name,
         });
+        setMobileMapVisible(true);
       } else {
         toast({
           title: t('search.locationErrorTitle'),
@@ -316,7 +320,32 @@ export default function DiciloSearchPage({
         )}
       </div>
 
-      <div className="flex h-full w-full flex-col md:w-1/2">
+      {isMobileMapVisible && (
+        <div className="absolute inset-0 z-50 h-full w-full md:hidden">
+          <DiciloMap
+            center={mapCenter}
+            zoom={mapZoom}
+            businesses={filteredBusinesses}
+            selectedBusinessId={selectedBusinessId}
+            t={t}
+          />
+          <Button
+            onClick={() => setMobileMapVisible(false)}
+            className="absolute right-4 top-28 z-[1000]"
+            variant="secondary"
+            size="icon"
+          >
+            <X className="h-5 w-5" />
+          </Button>
+        </div>
+      )}
+
+      <div
+        className={cn(
+          'flex h-full w-full flex-col md:w-1/2',
+          isMobileMapVisible && 'hidden'
+        )}
+      >
         <Header />
 
         <div className="flex-shrink-0 px-4 pt-4">
@@ -367,13 +396,13 @@ export default function DiciloSearchPage({
                   )}
                 </div>
                 <Button
-                  type="button"
+                  onClick={() => setMobileMapVisible(true)}
                   size="icon"
                   variant="outline"
-                  aria-label="Voice Search"
-                  disabled={isGeocoding}
+                  aria-label="Show map"
+                  className="md:hidden"
                 >
-                  <Mic className="h-4 w-4" />
+                  <Map className="h-4 w-4" />
                 </Button>
                 <Button
                   type="button"
@@ -383,7 +412,7 @@ export default function DiciloSearchPage({
                   aria-label={t('search.useLocationLabel')}
                   disabled={isGeocoding}
                 >
-                  <Navigation />
+                  <Navigation className="h-4 w-4" />
                 </Button>
               </div>
             </CardContent>
