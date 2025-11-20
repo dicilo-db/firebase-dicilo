@@ -4,6 +4,19 @@ Este documento registra los 30 cambios más recientes realizados en el proyecto.
 
 ---
 
+### **156. FIX: MEJORA DE VISUALIZACIÓN DEL MAPA EN DISPOSITIVOS MÓVILES - CÓDIGO: FIX-MOBILE-MAP-VIEW-V1**
+
+- **Fecha y Hora:** 22 de Septiembre de 2025, 10:15 (CET)
+- **Módulos Afectados:** `src/components/dicilo-search-page.tsx`, `src/CHANGELOG.md`.
+- **Descripción del Cambio:**
+  - **Análisis del Problema:** La interfaz de búsqueda no permitía visualizar el mapa en dispositivos móviles de manera intuitiva. La vista de mapa estaba oculta y no había un mecanismo para activarla, lo que resultaba en una mala experiencia de usuario.
+  - **Solución Implementada:** 
+    1. Se ha añadido un botón "Mapa" en la barra de búsqueda, visible únicamente en pantallas de tamaño móvil.
+    2. Al hacer clic en este botón, se activa un estado que muestra el componente del mapa a pantalla completa, superponiéndose a la lista de resultados.
+    3. Se ha incorporado un botón de cierre ("X") en la esquina superior de la vista del mapa, permitiendo al usuario volver fácilmente a la lista de empresas.
+  - **Resultado:** La funcionalidad del mapa ahora es completamente accesible en dispositivos móviles, permitiendo a los usuarios cambiar entre la lista de resultados y la vista del mapa de forma clara y sin quedar atascados.
+  - **Documentación:** Se ha registrado esta importante mejora de usabilidad móvil en el `CHANGELOG.md`.
+
 ### **155. FEAT: AÑADIR BOTÓN DE VOLVER AL DASHBOARD EN EDICIÓN DE CLIENTES - CÓDIGO: FEAT-BACK-TO-DASHBOARD-CLIENT-V1**
 
 - **Fecha y Hora:** 22 de Septiembre de 2025, 10:00 (CET)
@@ -281,6 +294,7 @@ Este documento registra los 30 cambios más recientes realizados en el proyecto.
   - **Solución Arquitectónica (Deep Merge):** Se ha implementado una solución robusta y definitiva. Ahora, la función `onSubmit` primero obtiene el documento original completo desde Firestore. Luego, utiliza la función `_.merge` de `lodash` para realizar una "fusión profunda" (deep merge), combinando de manera inteligente y recursiva los nuevos datos del formulario sobre los datos existentes.
   - **Integridad de Datos Garantizada:** Este enfoque asegura que solo los campos que el usuario ha modificado explícitamente se actualizan, mientras que todos los demás campos, especialmente los anidados, conservan sus valores originales. Se elimina de raíz el riesgo de borrado accidental de datos.
   - **Documentación:** Se ha registrado esta corrección arquitectónica fundamental en el `CHANGELOG.md` como la solución final al problema de guardado.
+
 
 
 
