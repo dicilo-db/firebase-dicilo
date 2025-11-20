@@ -522,7 +522,7 @@ export default function EditBusinessPage() {
                         alt="Logo preview"
                         width={64}
                         height={64}
-                        className="rounded-md object-cover"
+                        className="rounded-md object-cover bg-muted"
                       />
                     )}
                     <Input

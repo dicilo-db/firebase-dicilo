@@ -80,7 +80,7 @@ export default function NewBusinessPage() {
   const db = getFirestore(app);
   const router = useRouter();
   const { toast } = useToast();
-  const { t, i18n } = useTranslation();
+  const { t, i18n } = useTranslation('admin');
   const locale = i18n.language;
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isGeocoding, setIsGeocoding] = useState(false);
@@ -139,20 +139,20 @@ export default function NewBusinessPage() {
             shouldDirty: true,
           });
           toast({
-            title: t('admin.businesses.edit.geocode.successTitle'),
-            description: `${t('admin.businesses.edit.geocode.successDesc')}: ${newCoords.join(', ')}`,
+            title: t('businesses.edit.geocode.successTitle'),
+            description: `${t('businesses.edit.geocode.successDesc')}: ${newCoords.join(', ')}`,
           });
         } else {
           toast({
-            title: t('admin.businesses.edit.geocode.notFoundTitle'),
-            description: t('admin.businesses.edit.geocode.notFoundDesc'),
+            title: t('businesses.edit.geocode.notFoundTitle'),
+            description: t('businesses.edit.geocode.notFoundDesc'),
             variant: 'destructive',
           });
         }
       } catch (error) {
         toast({
-          title: t('admin.businesses.edit.geocode.errorTitle'),
-          description: t('admin.businesses.edit.geocode.errorDesc'),
+          title: t('businesses.edit.geocode.errorTitle'),
+          description: t('businesses.edit.geocode.errorDesc'),
           variant: 'destructive',
         });
       } finally {
@@ -169,8 +169,8 @@ export default function NewBusinessPage() {
 
     if (!addressToGeocode) {
       toast({
-        title: t('admin.businesses.edit.geocode.noAddressTitle'),
-        description: t('admin.businesses.edit.geocode.noAddressDesc'),
+        title: t('businesses.edit.geocode.noAddressTitle'),
+        description: t('businesses.edit.geocode.noAddressDesc'),
         variant: 'destructive',
       });
       return;
@@ -181,8 +181,8 @@ export default function NewBusinessPage() {
   const handleMapDragEnd = (newCoords: [number, number]) => {
     setValue('coords', newCoords, { shouldDirty: true, shouldValidate: true });
     toast({
-      title: t('admin.businesses.edit.geocode.successTitle'),
-      description: `${t('admin.businesses.edit.geocode.dragSuccessDesc')}: ${newCoords[0].toFixed(6)}, ${newCoords[1].toFixed(6)}`,
+      title: t('businesses.edit.geocode.successTitle'),
+      description: `${t('businesses.edit.geocode.dragSuccessDesc')}: ${newCoords[0].toFixed(6)}, ${newCoords[1].toFixed(6)}`,
     });
   };
 
@@ -209,8 +209,8 @@ export default function NewBusinessPage() {
 
       await addDoc(collection(db, 'businesses'), finalData);
       toast({
-        title: t('admin.businesses.new.saveSuccessTitle'),
-        description: t('admin.businesses.new.saveSuccessDesc'),
+        title: t('businesses.new.saveSuccessTitle'),
+        description: t('businesses.new.saveSuccessDesc'),
       });
       router.push('/admin/businesses');
     } catch (error) {
@@ -218,7 +218,7 @@ export default function NewBusinessPage() {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
       toast({
-        title: t('admin.businesses.new.saveErrorTitle'),
+        title: t('businesses.new.saveErrorTitle'),
         description: errorMessage,
         variant: 'destructive',
       });
@@ -231,21 +231,21 @@ export default function NewBusinessPage() {
     <div className="p-8">
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-bold">
-          {t('admin.businesses.new.title')}
+          {t('businesses.new.title')}
         </h1>
         <Button variant="outline" asChild>
           <Link href="/admin/businesses">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            {t('admin.businesses.new.back')}
+            {t('businesses.new.back')}
           </Link>
         </Button>
       </div>
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>{t('admin.businesses.new.cardTitle')}</CardTitle>
+            <CardTitle>{t('businesses.new.cardTitle')}</CardTitle>
             <CardDescription>
-              {t('admin.businesses.new.cardDescription')}
+              {t('businesses.new.cardDescription')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -254,7 +254,7 @@ export default function NewBusinessPage() {
                 {/* Name */}
                 <div className="space-y-2">
                   <Label htmlFor="name">
-                    {t('admin.businesses.fields.name')}
+                    {t('businesses.fields.name')}
                   </Label>
                   <Input
                     id="name"
@@ -270,7 +270,7 @@ export default function NewBusinessPage() {
                 {/* Category */}
                 <div className="space-y-2">
                   <Label htmlFor="category">
-                    {t('admin.businesses.fields.category')}
+                    {t('businesses.fields.category')}
                   </Label>
                   <Input
                     id="category"
@@ -287,7 +287,7 @@ export default function NewBusinessPage() {
                 {/* Description */}
                 <div className="space-y-2 md:col-span-2">
                   <Label htmlFor="description">
-                    {t('admin.businesses.fields.description')}
+                    {t('businesses.fields.description')}
                   </Label>
                   <Textarea
                     id="description"
@@ -303,7 +303,7 @@ export default function NewBusinessPage() {
                 {/* Location */}
                 <div className="space-y-2">
                   <Label htmlFor="location">
-                    {t('admin.businesses.fields.location')}
+                    {t('businesses.fields.location')}
                   </Label>
                   <Input
                     id="location"
@@ -319,7 +319,7 @@ export default function NewBusinessPage() {
                 {/* Address */}
                 <div className="space-y-2">
                   <Label htmlFor="address">
-                    {t('admin.businesses.fields.address')}
+                    {t('businesses.fields.address')}
                   </Label>
                   <div className="flex items-center gap-2">
                     <Input id="address" {...register('address')} />
@@ -341,14 +341,14 @@ export default function NewBusinessPage() {
                 {/* Phone */}
                 <div className="space-y-2">
                   <Label htmlFor="phone">
-                    {t('admin.businesses.fields.phone')}
+                    {t('businesses.fields.phone')}
                   </Label>
                   <Input id="phone" {...register('phone')} />
                 </div>
                 {/* Website */}
                 <div className="space-y-2">
                   <Label htmlFor="website">
-                    {t('admin.businesses.fields.website')}
+                    {t('businesses.fields.website')}
                   </Label>
                   <Input
                     id="website"
@@ -364,7 +364,7 @@ export default function NewBusinessPage() {
                 {/* Current Offer URL */}
                 <div className="space-y-2">
                   <Label htmlFor="currentOfferUrl">
-                    {t('admin.businesses.fields.currentOfferUrl')}
+                    {t('businesses.fields.currentOfferUrl')}
                   </Label>
                   <Input
                     id="currentOfferUrl"
@@ -382,7 +382,7 @@ export default function NewBusinessPage() {
                 {/* Map URL */}
                 <div className="space-y-2">
                   <Label htmlFor="mapUrl">
-                    {t('admin.businesses.fields.mapUrl')}
+                    {t('businesses.fields.mapUrl')}
                   </Label>
                   <Input
                     id="mapUrl"
@@ -398,7 +398,7 @@ export default function NewBusinessPage() {
                 {/* Image URL */}
                 <div className="space-y-2 md:col-span-2">
                   <Label htmlFor="imageUrl">
-                    {t('admin.businesses.fields.logoUrl')}
+                    {t('businesses.fields.logoUrl')}
                   </Label>
                   <div className="flex items-center gap-4">
                     {isValidUrl(imageUrl) && (
@@ -407,7 +407,7 @@ export default function NewBusinessPage() {
                         alt="Logo preview"
                         width={64}
                         height={64}
-                        className="rounded-md object-cover"
+                        className="rounded-md object-cover bg-muted"
                       />
                     )}
                     <Input
@@ -415,14 +415,14 @@ export default function NewBusinessPage() {
                       {...register('imageUrl')}
                       placeholder={
                         t(
-                          'admin.businesses.fields.logoUrlPlaceholder'
+                          'businesses.fields.logoUrlPlaceholder'
                         ) as string
                       }
                       className={errors.imageUrl ? 'border-destructive' : ''}
                     />
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    {t('admin.businesses.edit.logo.urlHelp')}
+                    {t('businesses.edit.logo.urlHelp')}
                   </p>
                   {errors.imageUrl && (
                     <p className="text-sm text-destructive">
@@ -433,14 +433,14 @@ export default function NewBusinessPage() {
                 {/* Image Hint */}
                 <div className="space-y-2">
                   <Label htmlFor="imageHint">
-                    {t('admin.businesses.fields.imageHint')}
+                    {t('businesses.fields.imageHint')}
                   </Label>
                   <Input id="imageHint" {...register('imageHint')} />
                 </div>
                 {/* Rating */}
                 <div className="space-y-2">
                   <Label htmlFor="rating">
-                    {t('admin.businesses.fields.rating')}
+                    {t('businesses.fields.rating')}
                   </Label>
                   <Input
                     id="rating"
@@ -458,7 +458,7 @@ export default function NewBusinessPage() {
                 {/* Coords */}
                 <div className="space-y-2 md:col-span-2">
                   <Label htmlFor="coords">
-                    {t('admin.businesses.fields.coords')}
+                    {t('businesses.fields.coords')}
                   </Label>
                   <Input
                     id="coords"
@@ -471,7 +471,7 @@ export default function NewBusinessPage() {
                     disabled
                   />
                   <p className="text-xs text-muted-foreground">
-                    {t('admin.businesses.fields.coordsHelp')}
+                    {t('businesses.fields.coordsHelp')}
                   </p>
                 </div>
               </div>
@@ -480,7 +480,7 @@ export default function NewBusinessPage() {
                   {isSubmitting && (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   )}
-                  {t('admin.businesses.new.save')}
+                  {t('businesses.new.save')}
                 </Button>
               </div>
             </form>
@@ -509,5 +509,3 @@ export default function NewBusinessPage() {
         </div>
       </div>
     </div>
-  );
-}

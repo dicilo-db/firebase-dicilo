@@ -4,6 +4,36 @@ Este documento registra los 30 cambios más recientes realizados en el proyecto.
 
 ---
 
+### **160. FIX: MEJORA DE VISIBILIDAD DE LOGOS EN FORMULARIOS DE EMPRESAS - CÓDIGO: FIX-LOGO-BG-V1**
+
+- **Fecha y Hora:** 22 de Septiembre de 2025, 11:00 (CET)
+- **Módulos Afectados:** `src/app/admin/businesses/[id]/edit/page.tsx`, `src/app/admin/businesses/new/page.tsx`, `src/CHANGELOG.md`.
+- **Descripción del Cambio:**
+  - **Análisis del Problema:** Se observó que los logos de empresa con fondo transparente y color blanco no eran visibles en la vista previa de los formularios de administración, ya que el fondo del contenedor también era blanco.
+  - **Solución Implementada:** Se ha añadido un fondo gris suave (la clase `bg-muted` de Tailwind) al componente `Image` que muestra la vista previa del logo en los formularios de creación (`new/page.tsx`) y edición (`[id]/edit/page.tsx`) de empresas.
+  - **Resultado:** Este cambio asegura que todos los logos, independientemente de su color, sean claramente visibles sobre un fondo de contraste, mejorando la usabilidad de los formularios para el administrador.
+  - **Documentación:** Se ha registrado esta mejora visual en el `CHANGELOG.md`.
+
+### **159. REVERT: RESTAURACIÓN A VERSIÓN ESTABLE DE BÚSQUEDA - CÓDIGO: REVERT-STABLE-SEARCH-V1B**
+
+- **Fecha y Hora:** 22 de Septiembre de 2025, 10:45 (CET)
+- **Módulos Afectados:** `src/components/dicilo-search-page.tsx`, `src/CHANGELOG.md`.
+- **Descripción del Cambio:**
+  - **Motivo de la Reversión:** Una implementación anterior para mejorar la vista del mapa en dispositivos móviles introdujo un error crítico que provocaba una página en blanco al cargar, además de eliminar involuntariamente el icono del micrófono para la búsqueda por voz. A petición del usuario, se revierte al estado funcional anterior.
+  - **Acción Realizada:** Se ha revertido el archivo `dicilo-search-page.tsx` a un estado funcional anterior y estable (correspondiente al commit `1a9b49d`), restaurando la funcionalidad completa de la página de búsqueda.
+  - **Resultado:** La aplicación vuelve a ser completamente funcional, eliminando el error de la página en blanco y restaurando todos los elementos de la interfaz, incluido el botón de búsqueda por voz.
+  - **Documentación:** Se registra esta reversión crítica en el `CHANGELOG.md` para documentar la restauración de la estabilidad del sistema.
+
+### **158. FIX: MEJORA DE VISUALIZACIÓN DEL MAPA EN MÓVILES (INTENTO 2 - CORREGIDO) - CÓDIGO: FIX-MOBILE-MAP-V2**
+
+- **Fecha y Hora:** 22 de Septiembre de 2025, 10:40 (CET)
+- **Módulos Afectados:** `src/components/dicilo-search-page.tsx`, `src/CHANGELOG.md`.
+- **Descripción del Cambio:**
+  - **Análisis del Problema:** El intento anterior de añadir una vista de mapa para móviles causó un error de renderizado ("página en blanco") y eliminó el icono del micrófono. Se identificó el conflicto en la lógica de estado.
+  - **Solución Implementada (Corregida):** Se reintroduce la funcionalidad de mapa móvil de forma segura. Se añade un botón "Mapa" visible solo en móviles. Al pulsarlo, se muestra el mapa a pantalla completa. Se incluye un botón de cierre "X" en la vista del mapa para volver a la lista, garantizando una navegación fluida. La lógica de estado se ha aislado para no interferir con otros elementos de la interfaz.
+  - **Resultado:** La funcionalidad del mapa es ahora accesible y segura en dispositivos móviles, sin errores de renderizado y conservando todos los elementos originales de la interfaz como el icono del micrófono.
+  - **Documentación:** Se ha registrado la corrección y la implementación exitosa de la vista de mapa móvil en el `CHANGELOG.md`.
+
 ### **157. REVERT: RESTAURACIÓN DE ESTABILIDAD EN LA PÁGINA DE BÚSQUEDA - CÓDIGO: REVERT-STABLE-SEARCH-V1**
 
 - **Fecha y Hora:** 22 de Septiembre de 2025, 10:30 (CET)
@@ -12,7 +42,7 @@ Este documento registra los 30 cambios más recientes realizados en el proyecto.
   - **Motivo de la Reversión:** Una implementación anterior para mejorar la vista del mapa en dispositivos móviles introdujo un error crítico que provocaba una página en blanco al cargar, además de eliminar involuntariamente el icono del micrófono para la búsqueda por voz.
   - **Acción Realizada:** Se ha revertido el archivo `dicilo-search-page.tsx` a un estado funcional anterior y estable (correspondiente al commit `1a9b49d`), a petición del usuario, para restaurar inmediatamente la funcionalidad completa de la página de búsqueda.
   - **Resultado:** La aplicación vuelve a ser completamente funcional, eliminando el error de la página en blanco y restaurando todos los elementos de la interfaz, incluido el botón de búsqueda por voz. Esto sienta una base estable para volver a abordar la funcionalidad del mapa móvil de forma segura.
-  - **Documentación:** Se registra esta reversión crítica en el `CHANGELOG.md` para documentar la restauración de la estabilidad del sistema.
+  - **Documentación:** Se ha registrado esta reversión crítica en el `CHANGELOG.md` para documentar la restauración de la estabilidad del sistema.
 
 ### **156. FIX: MEJORA DE VISUALIZACIÓN DEL MAPA EN DISPOSITIVOS MÓVILES - CÓDIGO: FIX-MOBILE-MAP-VIEW-V1**
 
@@ -304,10 +334,4 @@ Este documento registra los 30 cambios más recientes realizados en el proyecto.
   - **Solución Arquitectónica (Deep Merge):** Se ha implementado una solución robusta y definitiva. Ahora, la función `onSubmit` primero obtiene el documento original completo desde Firestore. Luego, utiliza la función `_.merge` de `lodash` para realizar una "fusión profunda" (deep merge), combinando de manera inteligente y recursiva los nuevos datos del formulario sobre los datos existentes.
   - **Integridad de Datos Garantizada:** Este enfoque asegura que solo los campos que el usuario ha modificado explícitamente se actualizan, mientras que todos los demás campos, especialmente los anidados, conservan sus valores originales. Se elimina de raíz el riesgo de borrado accidental de datos.
   - **Documentación:** Se ha registrado esta corrección arquitectónica fundamental en el `CHANGELOG.md` como la solución final al problema de guardado.
-
-
-
-
-
-
 
