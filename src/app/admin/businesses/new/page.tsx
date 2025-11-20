@@ -509,3 +509,5 @@ export default function NewBusinessPage() {
         </div>
       </div>
     </div>
+  );
+}
