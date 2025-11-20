@@ -18,8 +18,6 @@ import {
   ExternalLink,
   Loader2,
   Mic,
-  X,
-  Map,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { RecommendationForm } from './RecommendationForm';
@@ -118,7 +116,6 @@ export default function DiciloSearchPage({
   );
   const [isRecommendationFormOpen, setRecommendationFormOpen] = useState(false);
   const [recommendedBusiness, setRecommendedBusiness] = useState('');
-  const [isMobileMapVisible, setMobileMapVisible] = useState(false);
 
   const handleGeolocation = useCallback(
     (isInitialLoad = false) => {
@@ -279,30 +276,26 @@ export default function DiciloSearchPage({
     filteredBusinesses.length,
   ]);
 
-  const handleBusinessCardClick = useCallback(
-    (business: Business) => {
-      if (
-        business.coords?.length === 2 &&
-        !isNaN(business.coords[0]) &&
-        !isNaN(business.coords[1])
-      ) {
-        setSelectedBusinessId(business.id);
-        logAnalyticsEvent({
-          type: 'cardClick',
-          businessId: business.id,
-          businessName: business.name,
-        });
-        setMobileMapVisible(true);
-      } else {
-        toast({
-          title: t('search.locationErrorTitle'),
-          description: t('search.locationErrorDesc'),
-          variant: 'destructive',
-        });
-      }
-    },
-    [toast, t]
-  );
+  const handleBusinessCardClick = (business: Business) => {
+    if (
+      business.coords?.length === 2 &&
+      !isNaN(business.coords[0]) &&
+      !isNaN(business.coords[1])
+    ) {
+      setSelectedBusinessId(business.id);
+      logAnalyticsEvent({
+        type: 'cardClick',
+        businessId: business.id,
+        businessName: business.name,
+      });
+    } else {
+      toast({
+        title: t('search.locationErrorTitle'),
+        description: t('search.locationErrorDesc'),
+        variant: 'destructive',
+      });
+    }
+  };
 
   return (
     <div className="flex h-screen w-screen bg-background text-foreground">
@@ -320,32 +313,7 @@ export default function DiciloSearchPage({
         )}
       </div>
 
-      {isMobileMapVisible && (
-        <div className="absolute inset-0 z-50 h-full w-full md:hidden">
-          <DiciloMap
-            center={mapCenter}
-            zoom={mapZoom}
-            businesses={filteredBusinesses}
-            selectedBusinessId={selectedBusinessId}
-            t={t}
-          />
-          <Button
-            onClick={() => setMobileMapVisible(false)}
-            className="absolute right-4 top-28 z-[1000]"
-            variant="secondary"
-            size="icon"
-          >
-            <X className="h-5 w-5" />
-          </Button>
-        </div>
-      )}
-
-      <div
-        className={cn(
-          'flex h-full w-full flex-col md:w-1/2',
-          isMobileMapVisible && 'hidden'
-        )}
-      >
+      <div className="flex h-full w-full flex-col md:w-1/2">
         <Header />
 
         <div className="flex-shrink-0 px-4 pt-4">
@@ -402,15 +370,6 @@ export default function DiciloSearchPage({
                   aria-label="Suche per Sprache"
                 >
                   <Mic className="h-4 w-4" />
-                </Button>
-                <Button
-                  onClick={() => setMobileMapVisible(true)}
-                  size="icon"
-                  variant="outline"
-                  aria-label="Karte anzeigen"
-                  className="md:hidden"
-                >
-                  <Map className="h-4 w-4" />
                 </Button>
                 <Button
                   type="button"

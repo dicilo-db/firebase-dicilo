@@ -4,6 +4,16 @@ Este documento registra los 30 cambios más recientes realizados en el proyecto.
 
 ---
 
+### **157. REVERT: RESTAURACIÓN DE ESTABILIDAD EN LA PÁGINA DE BÚSQUEDA - CÓDIGO: REVERT-STABLE-SEARCH-V1**
+
+- **Fecha y Hora:** 22 de Septiembre de 2025, 10:30 (CET)
+- **Módulos Afectados:** `src/components/dicilo-search-page.tsx`, `src/CHANGELOG.md`.
+- **Descripción del Cambio:**
+  - **Motivo de la Reversión:** Una implementación anterior para mejorar la vista del mapa en dispositivos móviles introdujo un error crítico que provocaba una página en blanco al cargar, además de eliminar involuntariamente el icono del micrófono para la búsqueda por voz.
+  - **Acción Realizada:** Se ha revertido el archivo `dicilo-search-page.tsx` a un estado funcional anterior y estable (correspondiente al commit `1a9b49d`), a petición del usuario, para restaurar inmediatamente la funcionalidad completa de la página de búsqueda.
+  - **Resultado:** La aplicación vuelve a ser completamente funcional, eliminando el error de la página en blanco y restaurando todos los elementos de la interfaz, incluido el botón de búsqueda por voz. Esto sienta una base estable para volver a abordar la funcionalidad del mapa móvil de forma segura.
+  - **Documentación:** Se registra esta reversión crítica en el `CHANGELOG.md` para documentar la restauración de la estabilidad del sistema.
+
 ### **156. FIX: MEJORA DE VISUALIZACIÓN DEL MAPA EN DISPOSITIVOS MÓVILES - CÓDIGO: FIX-MOBILE-MAP-VIEW-V1**
 
 - **Fecha y Hora:** 22 de Septiembre de 2025, 10:15 (CET)
@@ -294,6 +304,7 @@ Este documento registra los 30 cambios más recientes realizados en el proyecto.
   - **Solución Arquitectónica (Deep Merge):** Se ha implementado una solución robusta y definitiva. Ahora, la función `onSubmit` primero obtiene el documento original completo desde Firestore. Luego, utiliza la función `_.merge` de `lodash` para realizar una "fusión profunda" (deep merge), combinando de manera inteligente y recursiva los nuevos datos del formulario sobre los datos existentes.
   - **Integridad de Datos Garantizada:** Este enfoque asegura que solo los campos que el usuario ha modificado explícitamente se actualizan, mientras que todos los demás campos, especialmente los anidados, conservan sus valores originales. Se elimina de raíz el riesgo de borrado accidental de datos.
   - **Documentación:** Se ha registrado esta corrección arquitectónica fundamental en el `CHANGELOG.md` como la solución final al problema de guardado.
+
 
 
 
