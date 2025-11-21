@@ -6,7 +6,7 @@
 import * as functions from 'firebase-functions';
 import { initializeApp } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
-import { getFirestore, FieldValue } from 'firebase-admin/firestore';
+import { getFirestore, FieldValue, CollectionReference, DocumentData } from 'firebase-admin/firestore';
 import axios from 'axios';
 import { onDocumentCreated } from 'firebase-functions/v2/firestore';
 import { onCall, HttpsError } from 'firebase-functions/v2/https';
@@ -325,24 +325,28 @@ export const consentDecline = functions
   .region('europe-west1')
   .https.onRequest((req, res) => handleConsent(req, res, 'declined'));
 
-const doSeedDatabase = async () => {
-  const batch = db.batch();
-
-  // The 'businessesToSeed' is now an array-like object from the imported JSON
-  Object.values(businessesToSeed).forEach((business: any) => {
-    // Basic validation to ensure it's a valid business object
-    if (business && typeof business === 'object' && business.name) {
-      const docRef = db.collection('businesses').doc();
-      batch.set(docRef, business);
+  const doSeedDatabase = async () => {
+    const batch = db.batch();
+    // The 'businessesToSeed' is an object with a 'default' key containing the array.
+    const data: any[] = (businessesToSeed as any).default || businessesToSeed;
+  
+    if (!Array.isArray(data)) {
+      throw new Error('Seed data is not in the expected array format.');
     }
-  });
-
-  await batch.commit();
-  return {
-    success: true,
-    message: `${Object.keys(businessesToSeed).length} businesses from seed-data.json have been seeded.`,
+  
+    data.forEach((business: any) => {
+      if (business && typeof business === 'object' && business.name) {
+        const docRef = db.collection('businesses').doc();
+        batch.set(docRef, business);
+      }
+    });
+  
+    await batch.commit();
+    return {
+      success: true,
+      message: `${data.length} businesses from seed-data.json have been seeded.`,
+    };
   };
-};
 
 export const seedDatabaseCallable = onCall(
   { region: 'europe-west1' },
