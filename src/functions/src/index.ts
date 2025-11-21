@@ -327,10 +327,9 @@ export const consentDecline = functions
 
 const doSeedDatabase = async () => {
   const batch = db.batch();
+  const data = businessesToSeed as any[];
 
-  // The 'businessesToSeed' is now an array-like object from the imported JSON
-  Object.values(businessesToSeed).forEach((business: any) => {
-    // Basic validation to ensure it's a valid business object
+  data.forEach((business: any) => {
     if (business && typeof business === 'object' && business.name) {
       const docRef = db.collection('businesses').doc();
       batch.set(docRef, business);
@@ -340,7 +339,7 @@ const doSeedDatabase = async () => {
   await batch.commit();
   return {
     success: true,
-    message: `${Object.keys(businessesToSeed).length} businesses from seed-data.json have been seeded.`,
+    message: `${data.length} businesses from seed-data.json have been seeded.`,
   };
 };
 
