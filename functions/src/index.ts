@@ -425,7 +425,7 @@ export const promoteToClient = onCall(
         clientType: clientType,
       };
 
-      const clientRef = await addDoc(collection(db, 'clients'), clientData);
+      const clientRef = await db.collection('clients').add(clientData);
 
       return {
         success: true,
@@ -434,6 +434,9 @@ export const promoteToClient = onCall(
       };
     } catch (error: any) {
       logger.error('Error promoting business:', error);
+      if (error instanceof HttpsError) {
+        throw error;
+      }
       throw new HttpsError(
         'internal',
         error.message || 'Failed to promote business.'
@@ -441,3 +444,5 @@ export const promoteToClient = onCall(
     }
   }
 );
+
+    
