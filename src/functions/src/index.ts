@@ -327,7 +327,12 @@ export const consentDecline = functions
 
 const doSeedDatabase = async () => {
   const batch = db.batch();
-  const data = businessesToSeed as any[];
+  // The imported JSON is an object with array-like keys. We get the actual array.
+  const data = (businessesToSeed as any).default || businessesToSeed;
+
+  if (!Array.isArray(data)) {
+    throw new Error('Seed data is not in the expected array format.');
+  }
 
   data.forEach((business: any) => {
     if (business && typeof business === 'object' && business.name) {
