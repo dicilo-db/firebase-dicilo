@@ -41,7 +41,6 @@ const logAnalyticsEvent = async (eventData: object) => {
 };
 
 const fixLeafletDefaultIcons = () => {
-  // Evita problemas de bundling con Next: usa CDN para los íconos
   if (typeof window !== 'undefined') {
     delete (L.Icon.Default.prototype as any)._getIconUrl;
     L.Icon.Default.mergeOptions({
@@ -99,7 +98,7 @@ const createPopupContent = (
   return content;
 };
 
-// Función de validación y conversión robusta como sugeriste
+// Función de validación y conversión robusta
 const validateAndParseCoords = (coords: any): L.LatLngTuple | null => {
   if (!Array.isArray(coords) || coords.length !== 2) {
     return null;
@@ -131,8 +130,20 @@ const DiciloMap: React.FC<DiciloMapProps> = ({
   const markersRef = useRef<Map<string, L.Marker>>(new Map());
   const resizeObserverRef = useRef<ResizeObserver | null>(null);
 
+  // Aplicación estratégica de la validación en useMemo para crear una lista limpia
   const businessesWithCoords = useMemo(() => {
-    return businesses.filter((b) => validateAndParseCoords(b.coords));
+    return businesses
+      .map((business) => {
+        const validCoords = validateAndParseCoords(business.coords);
+        if (!validCoords) {
+          return null; // Descartar negocio si las coordenadas son inválidas
+        }
+        return {
+          ...business,
+          coords: validCoords, // Sobrescribir con coordenadas validadas
+        };
+      })
+      .filter((b): b is Business & { coords: L.LatLngTuple } => b !== null);
   }, [businesses]);
 
   useEffect(() => {
@@ -202,7 +213,6 @@ const DiciloMap: React.FC<DiciloMapProps> = ({
 
       mapRef.current = map;
 
-      // Invalida el tamaño del mapa si el contenedor cambia de tamaño
       const ro = new ResizeObserver(() => {
         map.invalidateSize();
       });
@@ -238,30 +248,28 @@ const DiciloMap: React.FC<DiciloMapProps> = ({
 
     // Añadir o actualizar marcadores
     businessesWithCoords.forEach((business) => {
-      const validCoords = validateAndParseCoords(business.coords);
-      if (validCoords) {
-        const popupContent = createPopupContent(business, t);
-        let marker = markersRef.current.get(business.id);
+      // Las coordenadas ya están validadas por `businessesWithCoords`
+      const popupContent = createPopupContent(business, t);
+      let marker = markersRef.current.get(business.id);
 
-        if (marker) {
-          marker.setLatLng(validCoords);
-          marker.getPopup()?.setContent(popupContent);
-        } else {
-          marker = L.marker(validCoords, {
-            draggable: !!onMarkerDragEnd,
-          })
-            .addTo(map)
-            .bindPopup(popupContent);
+      if (marker) {
+        marker.setLatLng(business.coords);
+        marker.getPopup()?.setContent(popupContent);
+      } else {
+        marker = L.marker(business.coords, {
+          draggable: !!onMarkerDragEnd,
+        })
+          .addTo(map)
+          .bindPopup(popupContent);
 
-          if (onMarkerDragEnd) {
-            marker.on('dragend', function (event) {
-              const newLatLng = event.target.getLatLng();
-              onMarkerDragEnd([newLatLng.lat, newLatLng.lng]);
-            });
-          }
-
-          markersRef.current.set(business.id, marker);
+        if (onMarkerDragEnd) {
+          marker.on('dragend', function (event) {
+            const newLatLng = event.target.getLatLng();
+            onMarkerDragEnd([newLatLng.lat, newLatLng.lng]);
+          });
         }
+
+        markersRef.current.set(business.id, marker);
       }
     });
   }, [businessesWithCoords, onMarkerDragEnd, t]);
@@ -275,6 +283,7 @@ const DiciloMap: React.FC<DiciloMapProps> = ({
         (b) => b.id === selectedBusinessId
       );
       
+      // La validación aquí es una capa extra de seguridad, pero los datos ya deberían ser limpios
       const validCoords = validateAndParseCoords(business?.coords);
       
       if (validCoords) {
@@ -284,7 +293,6 @@ const DiciloMap: React.FC<DiciloMapProps> = ({
         });
         const marker = markersRef.current.get(selectedBusinessId);
         if (marker) {
-          // Pequeño retraso para asegurar que el popup se abra después de que el mapa se haya movido
           setTimeout(() => {
             marker.openPopup();
           }, 1000);
