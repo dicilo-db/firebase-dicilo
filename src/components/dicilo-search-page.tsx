@@ -286,7 +286,7 @@ export default function DiciloSearchPage({
       !isNaN(business.coords[1])
     ) {
       setSelectedBusinessId(business.id);
-      if (window.innerWidth < 768) { // Check for mobile screen size
+      if (window.innerWidth < 768) {
         setShowMobileMap(true);
       }
       setMapCenter(business.coords as [number, number]);
@@ -308,37 +308,31 @@ export default function DiciloSearchPage({
   return (
     <div className="flex h-screen w-screen bg-background text-foreground">
       <div
-        className={cn('h-full w-full md:w-1/2', {
-          'hidden md:block': showMobileMap,
-        })}
+        className={cn(
+          'h-full w-full transition-all duration-300 md:w-1/2',
+          showMobileMap ? 'hidden md:block' : 'block'
+        )}
       >
-        <div
-          className={cn(
-            'relative h-full w-full',
-            showMobileMap ? 'hidden md:block' : 'block'
-          )}
-        >
-          {isMounted ? (
-            <DiciloMap
-              center={mapCenter}
-              zoom={mapZoom}
-              businesses={filteredBusinesses}
-              selectedBusinessId={selectedBusinessId}
-              t={t}
-            />
-          ) : (
-            <Skeleton className="h-full w-full" />
-          )}
-        </div>
+        {isMounted ? (
+          <DiciloMap
+            center={mapCenter}
+            zoom={mapZoom}
+            businesses={filteredBusinesses}
+            selectedBusinessId={selectedBusinessId}
+            t={t}
+          />
+        ) : (
+          <Skeleton className="h-full w-full" />
+        )}
       </div>
 
       <div
-        className={cn('flex h-full w-full flex-col md:w-1/2', {
-          'hidden md:flex': showMobileMap,
-        })}
+        className={cn(
+          'flex h-full w-full flex-col transition-all duration-300 md:flex md:w-1/2',
+          showMobileMap ? 'hidden' : 'flex'
+        )}
       >
         <Header />
-
         <div className="flex-shrink-0 px-4 pt-4">
           <Card className="w-full shadow-lg">
             <CardContent className="pt-6">
@@ -435,7 +429,7 @@ export default function DiciloSearchPage({
                 >
                   <div className="flex items-start gap-4">
                     <Image
-                      className="h-16 w-16 rounded-full border-2 border-transparent object-cover"
+                      className="h-16 w-16 rounded-full border-2 border-green-100 object-cover bg-green-100 p-1"
                       src={
                         business.imageUrl || 'https://placehold.co/64x64.png'
                       }

@@ -4,6 +4,16 @@ Este documento registra los 30 cambios más recientes realizados en el proyecto.
 
 ---
 
+### **169. FIX: CORRECCIÓN DE VISUALIZACIÓN DEL MAPA EN MÓVILES - CÓDIGO: FIX-MOBILE-MAP-V4**
+
+- **Fecha y Hora:** 22 de Septiembre de 2025, 13:45 (CET)
+- **Módulos Afectados:** `src/components/dicilo-search-page.tsx`, `src/CHANGELOG.md`.
+- **Descripción del Cambio:**
+  - **Análisis del Problema:** Se detectó una regresión crítica donde, en dispositivos móviles, al hacer clic en una tarjeta de empresa, el mapa no se mostraba a pantalla completa como se esperaba. Además, la implementación anterior había causado errores de renderizado ("página en blanco").
+  - **Solución Implementada:** Se ha refactorizado y reintroducido de forma segura la lógica para la visualización del mapa en móviles en `dicilo-search-page.tsx`. Ahora, se ha añadido un estado `showMobileMap` que controla la visibilidad. Este estado se activa al pulsar un nuevo botón "Mapa" (visible solo en móviles) o al hacer clic en una tarjeta de empresa, mostrando el mapa a pantalla completa. Se ha incluido un botón de cierre ("X") para que el usuario pueda volver a la lista de resultados, asegurando una navegación fluida y sin errores de renderizado.
+  - **Resultado:** La funcionalidad del mapa es ahora completamente accesible y funcional en dispositivos móviles, permitiendo a los usuarios cambiar entre la lista de resultados y la vista del mapa de forma clara y sin errores.
+  - **Documentación:** Se ha registrado esta importante corrección de usabilidad móvil en el `CHANGELOG.md`, haciendo referencia a la corrección anterior para mantener un historial coherente.
+
 ### **168. FIX: CORRECCIÓN DE VISUALIZACIÓN DEL MAPA EN MÓVILES - CÓDIGO: FIX-MOBILE-MAP-V3**
 
 - **Fecha y Hora:** 22 de Septiembre de 2025, 13:45 (CET)
