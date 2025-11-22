@@ -286,9 +286,6 @@ export default function DiciloSearchPage({
       !isNaN(business.coords[1])
     ) {
       setSelectedBusinessId(business.id);
-      if (window.innerWidth < 768) {
-        setShowMobileMap(true);
-      }
       setMapCenter(business.coords as [number, number]);
       setMapZoom(15);
       logAnalyticsEvent({
@@ -296,6 +293,10 @@ export default function DiciloSearchPage({
         businessId: business.id,
         businessName: business.name,
       });
+      // Show map on mobile after clicking a card
+      if (window.innerWidth < 768) {
+        setShowMobileMap(true);
+      }
     } else {
       toast({
         title: t('search.locationErrorTitle'),
@@ -306,11 +307,13 @@ export default function DiciloSearchPage({
   };
 
   return (
-    <div className="flex h-screen w-screen bg-background text-foreground">
+    <div className="flex h-screen w-screen bg-background text-foreground md:flex-row flex-col">
+      {/* Columna del Mapa */}
       <div
         className={cn(
-          'h-full w-full transition-all duration-300 md:w-1/2',
-          showMobileMap ? 'hidden md:block' : 'block'
+          'h-1/2 w-full md:h-full md:w-1/2',
+          'md:block', // Siempre visible en desktop
+          showMobileMap ? 'hidden' : 'hidden' // Por defecto oculto en movil
         )}
       >
         {isMounted ? (
@@ -326,10 +329,11 @@ export default function DiciloSearchPage({
         )}
       </div>
 
+      {/* Columna de Búsqueda y Resultados */}
       <div
         className={cn(
-          'flex h-full w-full flex-col transition-all duration-300 md:flex md:w-1/2',
-          showMobileMap ? 'hidden' : 'flex'
+          'flex h-full w-full flex-col',
+          'md:w-1/2'
         )}
       >
         <Header />
@@ -481,8 +485,9 @@ export default function DiciloSearchPage({
         </ScrollArea>
       </div>
 
+      {/* Mapa a Pantalla Completa para Móviles */}
       {showMobileMap && (
-        <div className="absolute inset-0 z-40 h-full w-full md:hidden">
+        <div className="absolute inset-0 z-40 h-full w-full bg-background md:hidden">
           <Button
             variant="default"
             size="icon"

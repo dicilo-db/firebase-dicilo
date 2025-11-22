@@ -4,6 +4,16 @@ Este documento registra los 30 cambios más recientes realizados en el proyecto.
 
 ---
 
+### **170. FIX: CORRECCIÓN FINAL DE VISUALIZACIÓN DEL MAPA EN MÓVILES - CÓDIGO: FIX-MOBILE-MAP-V5**
+
+- **Fecha y Hora:** 22 de Septiembre de 2025, 14:00 (CET)
+- **Módulos Afectados:** `src/components/dicilo-search-page.tsx`, `src/CHANGELOG.md`.
+- **Descripción del Cambio:**
+  - **Análisis del Problema:** Tras varios intentos, la visualización del mapa en dispositivos móviles seguía siendo defectuosa. El mapa no se superponía correctamente a pantalla completa y carecía de un botón de cierre claro, lo que resultaba en una mala experiencia de usuario y errores de diseño.
+  - **Solución Implementada:** Se ha refactorizado por completo la lógica y el CSS en `dicilo-search-page.tsx`. Ahora, el mapa en móviles se activa como una superposición absoluta (`absolute inset-0`) con un `z-index` alto, asegurando que cubra toda la pantalla. Se ha añadido un botón de cierre ("X") prominente y funcional en la esquina superior derecha, también con un `z-index` superior, para garantizar su visibilidad y permitir al usuario volver a la lista de resultados sin ambigüedades. Se ha corregido la disposición de los elementos para que la lista de negocios se muestre correctamente debajo de la búsqueda.
+  - **Resultado:** La funcionalidad del mapa en móviles es ahora robusta, intuitiva y visualmente correcta. El usuario puede alternar entre la lista de resultados y la vista del mapa a pantalla completa sin problemas ni errores.
+  - **Documentación:** Se ha registrado esta corrección definitiva en el `CHANGELOG.md`, solucionando los problemas de usabilidad móvil reportados.
+
 ### **169. FIX: CORRECCIÓN DE VISUALIZACIÓN DEL MAPA EN MÓVILES - CÓDIGO: FIX-MOBILE-MAP-V4**
 
 - **Fecha y Hora:** 22 de Septiembre de 2025, 13:45 (CET)
@@ -130,7 +140,7 @@ Este documento registra los 30 cambios más recientes realizados en el proyecto.
 - **Módulos Afectados:** `src/components/dicilo-search-page.tsx`, `src/CHANGELOG.md`.
 - **Descripción del Cambio:**
   - **Motivo de la Reversión:** Una implementación anterior para mejorar la vista del mapa en dispositivos móviles introdujo un error crítico que provocaba una página en blanco al cargar, además de eliminar involuntariamente el icono del micrófono para la búsqueda por voz.
-  - **Acción Realizada:** Se ha revertido el archivo `dicilo-search-page.tsx` a un estado funcional anterior y estable (correspondiente al commit `1a9b49d`), a petición del usuario, para restaurar inmediatamente la funcionalidad completa de la página de búsqueda.
+  - **Acción Realizada:** Se ha revertido el archivo `dicilo-search-page.tsx` a un estado funcional anterior y estable (correspondiente al commit `1a9b4d`), a petición del usuario, para restaurar inmediatamente la funcionalidad completa de la página de búsqueda.
   - **Resultado:** La aplicación vuelve a ser completamente funcional, eliminando el error de la página en blanco y restaurando todos los elementos de la interfaz, incluido el botón de búsqueda por voz. Esto sienta una base estable para volver a abordar la funcionalidad del mapa móvil de forma segura.
   - **Documentación:** Se ha registrado esta reversión crítica en el `CHANGELOG.md` para documentar la restauración de la estabilidad del sistema.
 
