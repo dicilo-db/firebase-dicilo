@@ -270,7 +270,7 @@ const DiciloMap: React.FC<DiciloMapProps> = ({
         isFinite(business.coords[0]) &&
         isFinite(business.coords[1])
       ) {
-        map.flyTo(business.coords, 15, {
+        map.flyTo(business.coords as L.LatLngTuple, 15, {
           animate: true,
           duration: 1,
         });

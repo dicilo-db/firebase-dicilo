@@ -4,6 +4,16 @@ Este documento registra los 30 cambios más recientes realizados en el proyecto.
 
 ---
 
+### **172. FIX: CORRECCIÓN ADICIONAL DE ERROR "INVALID LATLNG" EN EL MAPA - CÓDIGO: FIX-MAP-LATLNG-V2**
+
+- **Fecha y Hora:** 22 de Septiembre de 2025, 14:30 (CET)
+- **Módulos Afectados:** `src/components/dicilo-map.tsx`, `src/CHANGELOG.md`.
+- **Descripción del Cambio:**
+  - **Análisis del Problema:** A pesar de la corrección anterior, el error `Invalid LatLng object: (NaN, NaN)` persistía en ciertos casos, lo que indica que la validación de las coordenadas aún no era suficientemente estricta para evitar que valores no numéricos llegaran a la función `map.flyTo()`.
+  - **Solución Implementada:** Se ha reforzado la validación en `dicilo-map.tsx` para ser absolutamente a prueba de fallos. Antes de llamar a `map.flyTo()`, el código ahora comprueba explícitamente que los valores `coords[0]` y `coords[1]` son números finitos (`isFinite`). Esto previene que valores como `NaN` se pasen a la librería Leaflet, solucionando la causa raíz del error de ejecución.
+  - **Resultado:** La aplicación ya no se bloquea al intentar centrar el mapa en una empresa con datos de coordenadas corruptos o no numéricos. La estabilidad del mapa ha mejorado significativamente.
+  - **Documentación:** Se ha registrado esta corrección definitiva de estabilidad en el `CHANGELOG.md`.
+
 ### **171. FIX: CORRECCIÓN DE ERROR "INVALID LATLNG" EN EL MAPA - CÓDIGO: FIX-MAP-LATLNG-V1**
 
 - **Fecha y Hora:** 22 de Septiembre de 2025, 14:15 (CET)
