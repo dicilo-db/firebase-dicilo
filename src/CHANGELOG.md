@@ -4,107 +4,17 @@ Este documento registra los 30 cambios más recientes realizados en el proyecto.
 
 ---
 
-### **177. FIX: CORRECCIÓN DE VISUALIZACIÓN DEL MAPA EN MÓVILES - CÓDIGO: FIX-MOBILE-MAP-V6**
+### **166. REVERT: RESTAURACIÓN DE ESTABILIDAD DE LA PÁGINA PRINCIPAL - CÓDIGO: REVERT-BLANK-PAGE-V1**
 
-- **Fecha y Hora:** 22 de Septiembre de 2025, 15:45 (CET)
+- **Fecha y Hora:** 22 de Septiembre de 2025, 13:00 (CET)
 - **Módulos Afectados:** `src/components/dicilo-search-page.tsx`, `src/CHANGELOG.md`.
 - **Descripción del Cambio:**
-  - **Análisis del Problema:** La visualización del mapa en dispositivos móviles seguía siendo defectuosa. El mapa no se superponía correctamente a pantalla completa y carecía de un botón de cierre claro, lo que resultaba en una mala experiencia de usuario.
-  - **Solución Implementada:** Se ha refactorizado la lógica y el CSS en `dicilo-search-page.tsx`. Ahora, el mapa en móviles se activa como una superposición absoluta (`absolute inset-0`) con un `z-index` alto, asegurando que cubra toda la pantalla. Se ha añadido un botón de cierre ("X") prominente y funcional en la esquina superior derecha, también con un `z-index` superior, para garantizar su visibilidad y permitir al usuario volver a la lista de resultados sin ambigüedades. Se ha corregido la disposición de los elementos para que la lista de negocios se muestre correctamente debajo de la búsqueda.
-  - **Resultado:** La funcionalidad del mapa en móviles es ahora robusta, intuitiva y visualmente correcta. El usuario puede alternar entre la lista de resultados y la vista del mapa a pantalla completa sin problemas ni errores.
-  - **Documentación:** Se ha registrado esta corrección definitiva en el `CHANGELOG.md`, solucionando los problemas de usabilidad móvil reportados.
+  - **Análisis del Problema:** Después de una serie de cambios en el backend, la aplicación comenzó a mostrar una "página en blanco", un error crítico de renderizado en el cliente.
+  - **Solución Implementada:** Para restaurar la funcionalidad de inmediato, se ha revertido la lógica de la página principal a un estado anterior y estable. El archivo `dicilo-search-page.tsx` ha sido restaurado a una versión en la que la página de búsqueda maneja su propia carga de datos. Esto elimina el conflicto que causaba la página en blanco y proporciona una base sólida para continuar el desarrollo.
+  - **Resultado:** La página principal vuelve a ser completamente funcional, eliminando el error crítico y permitiendo que los usuarios interactúen con la aplicación.
+  - **Documentación:** Se ha registrado esta reversión estratégica en el `CHANGELOG.md` como una medida para garantizar la estabilidad operativa.
 
-### **176. FIX: CORRECCIÓN DEFINITIVA DE ERROR "INVALID LATLNG" EN EL MAPA - CÓDIGO: FIX-MAP-LATLNG-V6**
-
-- **Fecha y Hora:** 22 de Septiembre de 2025, 15:30 (CET)
-- **Módulos Afectados:** `src/components/dicilo-map.tsx`, `src/CHANGELOG.md`.
-- **Descripción del Cambio:**
-  - **Análisis del Problema:** El error persistente `Invalid LatLng object: (NaN, NaN)` indicaba que, a pesar de las validaciones, datos de coordenadas inválidos seguían llegando al componente del mapa. El análisis detallado del usuario reveló que la causa raíz era una sanitización de datos insuficiente en el punto de preparación de datos (`useMemo`).
-  - **Solución Implementada:** Siguiendo la recomendación precisa del usuario, se ha modificado la lógica de `useMemo` en `dicilo-map.tsx`. Ahora, se utiliza una función de ayuda `validateAndParseCoords` para filtrar rigurosamente la lista de negocios `businesses`. Cualquier negocio que no tenga coordenadas numéricas válidas es descartado en este paso inicial. Esto garantiza que el resto del componente del mapa, incluidas las funciones `flyTo` y de renderizado de marcadores, operen exclusivamente con una lista de datos limpia y segura. Se ha añadido una validación final como última línea de defensa antes de la llamada a `map.flyTo`.
-  - **Resultado:** La aplicación ya no se bloquea al encontrar datos de coordenadas inválidos. El componente del mapa es ahora robusto y resiliente, eliminando la causa raíz del error y mejorando la estabilidad general de la aplicación.
-  - **Documentación:** Se ha registrado esta corrección crítica y definitiva en el `CHANGELOG.md`, reconociendo el invaluable aporte del usuario en el diagnóstico y la solución final.
-
-### **175. FIX: CORRECCIÓN DEFINITIVA DE ERROR "INVALID LATLNG" EN EL MAPA - CÓDIGO: FIX-MAP-LATLNG-V5**
-
-- **Fecha y Hora:** 22 de Septiembre de 2025, 15:15 (CET)
-- **Módulos Afectados:** `src/components/dicilo-map.tsx`, `src/CHANGELOG.md`.
-- **Descripción del Cambio:**
-  - **Análisis del Problema:** El error persistente `Invalid LatLng object: (NaN, NaN)` indicaba que, a pesar de las validaciones, datos de coordenadas inválidos seguían llegando al componente del mapa. El análisis detallado del usuario reveló que la causa raíz era una sanitización de datos insuficiente en el punto de preparación de datos (`useMemo`).
-  - **Solución Implementada:** Siguiendo la recomendación precisa del usuario, se ha modificado la lógica de `useMemo` en `dicilo-map.tsx`. Ahora, se utiliza una función de ayuda `validateAndParseCoords` para filtrar rigurosamente la lista de negocios `businesses`. Cualquier negocio que no tenga coordenadas numéricas válidas es descartado en este paso inicial. Esto garantiza que el resto del componente del mapa, incluidas las funciones `flyTo` y de renderizado de marcadores, operen exclusivamente con una lista de datos limpia y segura.
-  - **Resultado:** La aplicación ya no se bloquea al encontrar datos de coordenadas inválidos. El componente del mapa es ahora robusto y resiliente, eliminando la causa raíz del error y mejorando la estabilidad general de la aplicación.
-  - **Documentación:** Se ha registrado esta corrección crítica y definitiva en el `CHANGELOG.md`, reconociendo el invaluable aporte del usuario en el diagnóstico y la solución final.
-
-### **174. FIX: CORRECCIÓN DEFINITIVA DE ERROR "INVALID LATLNG" EN EL MAPA - CÓDIGO: FIX-MAP-LATLNG-V4**
-
-- **Fecha y Hora:** 22 de Septiembre de 2025, 15:00 (CET)
-- **Módulos Afectados:** `src/components/dicilo-map.tsx`, `src/CHANGELOG.md`.
-- **Descripción del Cambio:**
-  - **Análisis del Problema:** El error persistente `Invalid LatLng object: (NaN, NaN)` indicaba que, a pesar de las validaciones, datos de coordenadas inválidos seguían llegando al método `map.flyTo()`. El análisis detallado del usuario reveló que la causa raíz era una sanitización de datos insuficiente en el punto de uso.
-  - **Solución Implementada:** Siguiendo la recomendación del usuario, se ha implementado una función de ayuda `validateAndParseCoords` dentro de `dicilo-map.tsx`. Esta función valida rigurosamente que las coordenadas sean un array de dos números finitos, convirtiéndolos explícitamente a `float` antes de la validación. Esta función ahora se utiliza para filtrar la lista de negocios `businessesWithCoords` y para validar las coordenadas justo antes de llamar a `map.flyTo()`, garantizando que solo se utilicen datos limpios.
-  - **Resultado:** La aplicación ya no se bloquea al encontrar datos de coordenadas inválidos. El componente del mapa es ahora robusto y resiliente, eliminando la causa raíz del error y mejorando la estabilidad general de la aplicación.
-  - **Documentación:** Se ha registrado esta corrección crítica y definitiva en el `CHANGELOG.md`, reconociendo el invaluable aporte del usuario en el diagnóstico y la solución.
-
-### **173. FIX: CORRECCIÓN DE ERROR "INVALID LATLNG" EN EL MAPA - CÓDIGO: FIX-MAP-LATLNG-V3**
-
-- **Fecha y Hora:** 22 de Septiembre de 2025, 14:45 (CET)
-- **Módulos Afectados:** `src/components/dicilo-map.tsx`, `src/CHANGELOG.md`.
-- **Descripción del Cambio:**
-  - **Análisis del Problema:** A pesar de los intentos anteriores, el error `Invalid LatLng object: (NaN, NaN)` persistía, indicando un fallo en la validación de los datos de coordenadas *antes* de que estos llegaran al componente del mapa. El problema real no estaba en la llamada a `flyTo`, sino en la lista de `businessesWithCoords` que se estaba generando.
-  - **Solución Implementada:** Se ha aplicado una corrección definitiva y robusta directamente en la creación de la lista `businessesWithCoords`. Ahora, el hook `useMemo` filtra los negocios para incluir únicamente aquellos cuyas coordenadas (`b.coords`) son un array de dos números finitos (`isFinite`). Esto asegura que ningún negocio con coordenadas inválidas, como `[NaN, NaN]`, entre en el sistema del mapa, eliminando la causa raíz del error.
-  - **Resultado:** La aplicación ya no se bloquea al interactuar con el mapa, ya que los datos inválidos son filtrados de manera proactiva. La estabilidad del mapa es ahora máxima.
-  - **Documentación:** Se ha registrado esta corrección arquitectónica definitiva en el `CHANGELOG.md`.
-
-### **172. FIX: CORRECCIÓN ADICIONAL DE ERROR "INVALID LATLNG" EN EL MAPA - CÓDIGO: FIX-MAP-LATLNG-V2**
-
-- **Fecha y Hora:** 22 de Septiembre de 2025, 14:30 (CET)
-- **Módulos Afectados:** `src/components/dicilo-map.tsx`, `src/CHANGELOG.md`.
-- **Descripción del Cambio:**
-  - **Análisis del Problema:** A pesar de la corrección anterior, el error `Invalid LatLng object: (NaN, NaN)` persistía en ciertos casos, lo que indica que la validación de las coordenadas aún no era suficientemente estricta para evitar que valores no numéricos llegaran a la función `map.flyTo()`.
-  - **Solución Implementada:** Se ha reforzado la validación en `dicilo-map.tsx` para ser absolutamente a prueba de fallos. Antes de llamar a `map.flyTo()`, el código ahora comprueba explícitamente que los valores `coords[0]` y `coords[1]` son números finitos (`isFinite`). Esto previene que valores como `NaN` se pasen a la librería Leaflet, solucionando la causa raíz del error de ejecución.
-  - **Resultado:** La aplicación ya no se bloquea al intentar centrar el mapa en una empresa con datos de coordenadas corruptos o no numéricos. La estabilidad del mapa ha mejorado significativamente.
-  - **Documentación:** Se ha registrado esta corrección definitiva de estabilidad en el `CHANGELOG.md`.
-
-### **171. FIX: CORRECCIÓN DE ERROR "INVALID LATLNG" EN EL MAPA - CÓDIGO: FIX-MAP-LATLNG-V1**
-
-- **Fecha y Hora:** 22 de Septiembre de 2025, 14:15 (CET)
-- **Módulos Afectados:** `src/components/dicilo-map.tsx`, `src/CHANGELOG.md`.
-- **Descripción del Cambio:**
-  - **Análisis del Problema:** Se detectó un error de ejecución (`Invalid LatLng object: (NaN, NaN)`) que ocurría al hacer clic en una empresa que no tenía coordenadas geográficas válidas. El código intentaba mover el mapa a una ubicación inválida, lo que provocaba que la aplicación se bloqueara.
-  - **Solución Implementada:** Se ha añadido una validación más estricta en el componente `dicilo-map.tsx`. Antes de llamar a la función `map.flyTo()`, el código ahora verifica que el array `business.coords` no solo exista, sino que también contenga dos números finitos y válidos. Esto previene que se intente animar el mapa hacia coordenadas inválidas como `[NaN, NaN]` o `undefined`.
-  - **Resultado:** La aplicación ya no se bloquea al seleccionar empresas sin ubicación válida en el mapa. La interfaz es ahora más estable y resiliente ante datos incompletos.
-  - **Documentación:** Se ha registrado esta importante corrección de estabilidad en el `CHANGELOG.md`.
-
-### **170. FIX: CORRECCIÓN FINAL DE VISUALIZACIÓN DEL MAPA EN MÓVILES - CÓDIGO: FIX-MOBILE-MAP-V5**
-
-- **Fecha y Hora:** 22 de Septiembre de 2025, 14:00 (CET)
-- **Módulos Afectados:** `src/components/dicilo-search-page.tsx`, `src/CHANGELOG.md`.
-- **Descripción del Cambio:**
-  - **Análisis del Problema:** Tras varios intentos, la visualización del mapa en dispositivos móviles seguía siendo defectuosa. El mapa no se superponía correctamente a pantalla completa y carecía de un botón de cierre claro, lo que resultaba en una mala experiencia de usuario y errores de diseño.
-  - **Solución Implementada:** Se ha refactorizado por completo la lógica y el CSS en `dicilo-search-page.tsx`. Ahora, el mapa en móviles se activa como una superposición absoluta (`absolute inset-0`) con un `z-index` alto, asegurando que cubra toda la pantalla. Se ha añadido un botón de cierre ("X") prominente y funcional en la esquina superior derecha, también con un `z-index` superior, para garantizar su visibilidad y permitir al usuario volver a la lista de resultados sin ambigüedades. Se ha corregido la disposición de los elementos para que la lista de negocios se muestre correctamente debajo de la búsqueda.
-  - **Resultado:** La funcionalidad del mapa en móviles es ahora robusta, intuitiva y visualmente correcta. El usuario puede alternar entre la lista de resultados y la vista del mapa a pantalla completa sin problemas ni errores.
-  - **Documentación:** Se ha registrado esta corrección definitiva en el `CHANGELOG.md`, solucionando los problemas de usabilidad móvil reportados.
-
-### **169. FIX: CORRECCIÓN DE VISUALIZACIÓN DEL MAPA EN MÓVILES - CÓDIGO: FIX-MOBILE-MAP-V4**
-
-- **Fecha y Hora:** 22 de Septiembre de 2025, 13:45 (CET)
-- **Módulos Afectados:** `src/components/dicilo-search-page.tsx`, `src/CHANGELOG.md`.
-- **Descripción del Cambio:**
-  - **Análisis del Problema:** Se detectó una regresión crítica donde, en dispositivos móviles, al hacer clic en una tarjeta de empresa, el mapa no se mostraba a pantalla completa como se esperaba. Además, la implementación anterior había causado errores de renderizado ("página en blanco").
-  - **Solución Implementada:** Se ha refactorizado y reintroducido de forma segura la lógica para la visualización del mapa en móviles en `dicilo-search-page.tsx`. Ahora, se ha añadido un estado `showMobileMap` que controla la visibilidad. Este estado se activa al pulsar un nuevo botón "Mapa" (visible solo en móviles) o al hacer clic en una tarjeta de empresa, mostrando el mapa a pantalla completa. Se ha incluido un botón de cierre ("X") para que el usuario pueda volver a la lista de resultados, asegurando una navegación fluida y sin errores de renderizado.
-  - **Resultado:** La funcionalidad del mapa es ahora completamente accesible y funcional en dispositivos móviles, permitiendo a los usuarios cambiar entre la lista de resultados y la vista del mapa de forma clara y sin errores.
-  - **Documentación:** Se ha registrado esta importante corrección de usabilidad móvil en el `CHANGELOG.md`, haciendo referencia a la corrección anterior para mantener un historial coherente.
-
-### **168. FIX: CORRECCIÓN DE VISUALIZACIÓN DEL MAPA EN MÓVILES - CÓDIGO: FIX-MOBILE-MAP-V3**
-
-- **Fecha y Hora:** 22 de Septiembre de 2025, 13:45 (CET)
-- **Módulos Afectados:** `src/components/dicilo-search-page.tsx`, `src/CHANGELOG.md`.
-- **Descripción del Cambio:**
-  - **Análisis del Problema:** Se detectó una regresión crítica donde, en dispositivos móviles, al hacer clic en una tarjeta de empresa, el mapa no se mostraba a pantalla completa como se esperaba. Además, la implementación anterior había causado errores de renderizado ("página en blanco").
-  - **Solución Implementada:** Se ha refactorizado y reintroducido de forma segura la lógica para la visualización del mapa en móviles en `dicilo-search-page.tsx`. Ahora, se ha añadido un estado `showMobileMap` que controla la visibilidad. Este estado se activa al pulsar un nuevo botón "Mapa" (visible solo en móviles) o al hacer clic en una tarjeta de empresa, mostrando el mapa a pantalla completa. Se ha incluido un botón de cierre ("X") para que el usuario pueda volver a la lista de resultados, asegurando una navegación fluida y sin errores de renderizado.
-  - **Resultado:** La funcionalidad del mapa es ahora completamente accesible y funcional en dispositivos móviles, permitiendo a los usuarios cambiar entre la lista de resultados y la vista del mapa de forma clara y sin errores.
-  - **Documentación:** Se ha registrado esta importante corrección de usabilidad móvil en el `CHANGELOG.md`, haciendo referencia a la corrección anterior para mantener un historial coherente.
-
-### **167. FIX: CORRECCIÓN DEFINITIVA DE CARGA DE DATOS JSON (INTERNAL ERROR) - CÓDIGO: FIX-JSON-IMPORT-FINAL**
+### **165. FIX: CORRECCIÓN DEFINITIVA DE CARGA DE DATOS JSON (INTERNAL ERROR) - CÓDIGO: FIX-JSON-IMPORT-FINAL**
 
 - **Fecha y Hora:** 22 de Septiembre de 2025, 13:30 (CET)
 - **Módulos Afectados:** `functions/src/index.ts`, `functions/src/seed-data.json`, `src/CHANGELOG.md`.
@@ -114,35 +24,15 @@ Este documento registra los 30 cambios más recientes realizados en el proyecto.
   - **Resultado:** La función "Poblar Base de Datos" ahora opera de manera fiable, permitiendo la carga de los datos de negocio sin errores internos. Esto resuelve uno de los problemas más persistentes, gracias al diagnóstico detallado del usuario.
   - **Documentación:** Se ha registrado esta corrección crítica y definitiva en el `CHANGELOG.md`.
 
-### **166. REVERT: RESTAURACIÓN DE ESTABILIDAD DE LA PÁGINA PRINCIPAL - CÓDIGO: REVERT-BLANK-PAGE-V1**
+### **164. REVERT: RESTAURACIÓN DE ESTABILIDAD Y FUNCIONALIDAD DE `promoteToClient` - CÓDIGO: REVERT-PROMOTE-STABLE-V1**
 
-- **Fecha y Hora:** 22 de Septiembre de 2025, 13:00 (CET)
-- **Módulos Afectados:** `src/app/page.tsx`, `src/components/dicilo-search-page.tsx`, `src/CHANGELOG.md`.
-- **Descripción del Cambio:**
-  - **Análisis del Problema:** Después de una serie de cambios en el backend, la aplicación comenzó a mostrar una "página en blanco", un error crítico de renderizado en el cliente.
-  - **Solución Implementada:** Para restaurar la funcionalidad de inmediato, se ha revertido la lógica de la página principal a un estado anterior y estable. Los archivos `page.tsx` y `dicilo-search-page.tsx` han sido restaurados a una versión en la que la página de búsqueda maneja su propia carga de datos. Esto elimina el conflicto que causaba la página en blanco y proporciona una base sólida para continuar el desarrollo.
-  - **Resultado:** La página principal vuelve a ser completamente funcional, eliminando el error crítico y permitiendo que los usuarios interactúen con la aplicación.
-  - **Documentación:** Se ha registrado esta reversión estratégica en el `CHANGELOG.md` como una medida para garantizar la estabilidad operativa.
-
-### **165. FIX: CORRECCIÓN DEFINITIVA DE CARGA DE DATOS JSON - CÓDIGO: FIX-JSON-IMPORT-V2**
-
-- **Fecha y Hora:** 22 de Septiembre de 2025, 12:30 (CET)
+- **Fecha y Hora:** 22 de Septiembre de 2025, 11:45 (CET)
 - **Módulos Afectados:** `src/functions/src/index.ts`, `src/CHANGELOG.md`.
 - **Descripción del Cambio:**
-  - **Análisis del Problema:** Tras múltiples intentos fallidos y un análisis detallado proporcionado por el usuario, se identificó que la causa raíz del "error interno" persistente era la incorrecta interpretación del módulo JSON importado en el entorno de Cloud Functions. El código no manejaba adecuadamente la estructura del objeto que envolvía al array de datos.
-  - **Solución Implementada:** Se ha refactorizado la función `doSeedDatabase` en `src/functions/src/index.ts` para que utilice `Object.values()` sobre el objeto JSON importado. Esto extrae el contenido del módulo (que es un array de empresas) de forma robusta y segura, independientemente de la estructura interna que el compilador de TypeScript genere. Adicionalmente, se ha añadido un aplanamiento (`.flat()`) para manejar casos donde el JSON pueda estar anidado. Esta es la solución definitiva que garantiza que los datos se lean y procesen correctamente.
-  - **Resultado:** La función "Poblar Base de Datos" ahora opera de manera fiable, permitiendo la carga de datos desde `seed-data.json` sin errores internos. Se resuelve uno de los problemas más persistentes y frustrantes, gracias a la colaboración y diagnóstico preciso del usuario.
-  - **Documentación:** Se ha registrado esta corrección crítica y definitiva en el `CHANGELOG.md`.
-
-### **164. FIX: CORRECCIÓN DEFINITIVA DE CARGA DE DATOS JSON - CÓDIGO: FIX-JSON-IMPORT-V1**
-
-- **Fecha y Hora:** 22 de Septiembre de 2025, 12:15 (CET)
-- **Módulos Afectados:** `src/functions/src/index.ts`, `src/functions/src/seed-data.json`, `src/CHANGELOG.md`.
-- **Descripción del Cambio:**
-  - **Análisis del Problema:** Tras múltiples intentos fallidos, y gracias al detallado diagnóstico proporcionado por el usuario, se confirmó que el persistente "error interno" al intentar poblar la base de datos se debía a una incorrecta gestión del archivo `seed-data.json` en el entorno de producción de Firebase Functions. Los intentos de leer el archivo con `fs` y `path` fallaban porque la ruta no era accesible en el entorno serverless.
-  - **Solución Implementada:** Se ha adoptado la solución correcta y robusta. La Cloud Function `doSeedDatabase` en `src/functions/src/index.ts` ha sido refactorizada para `importar` el archivo `seed-data.json` directamente como un módulo de TypeScript. Esto asegura que los datos del JSON se incluyan en el paquete de la función durante el despliegue, eliminando la dependencia del sistema de archivos y cualquier posibilidad de error de ruta. La lógica ahora itera directamente sobre el array importado, lo cual es más limpio y seguro.
-  - **Resultado:** La función "Poblar Base de Datos" ahora funciona de manera confiable y predecible, permitiendo al superadministrador cargar los datos de negocio desde el archivo JSON sin errores. Se resuelve de forma definitiva uno de los problemas más persistentes del sistema.
-  - **Documentación:** Se ha registrado esta corrección crítica y definitiva en el `CHANGELOG.md`, reconociendo el valioso aporte del usuario en el diagnóstico.
+  - **Motivo de la Reversión:** Un cambio anterior destinado a optimizar la función `promoteToClient` introdujo un error crítico que impedía que la función se ejecutara correctamente, creando duplicados o fallando por completo. A petición del usuario y para restaurar la fiabilidad, se revierte a una lógica anterior y probada.
+  - **Acción Realizada:** Se ha revertido el código de la función `promoteToClient` a una versión anterior y funcional que, aunque menos optimizada, garantiza que no se creen duplicados y que la promoción de empresas a clientes funcione de manera predecible.
+  - **Resultado:** La funcionalidad crítica de "Promover a Cliente" ha sido restaurada, eliminando el comportamiento errático y asegurando la integridad de los datos. Esto proporciona una base estable para futuras optimizaciones.
+  - **Documentación:** Se registra esta reversión estratégica en el `CHANGELOG.md`.
 
 ### **163. FIX: CORRECCIÓN DE ERROR DE COMPILACIÓN EN FUNCIÓN 'PROMOTE TO CLIENT' - CÓDIGO: FIX-PROMOTE-COMPILE-V1**
 
@@ -154,17 +44,27 @@ Este documento registra los 30 cambios más recientes realizados en el proyecto.
   - **Resultado:** La función ahora se compila correctamente, permitiendo que los despliegues de Firebase se completen con éxito y restaurando la funcionalidad de "Promover a Cliente".
   - **Documentación:** Se ha registrado esta corrección técnica crítica en el `CHANGELOG.md`.
 
-### **162. REVERT: RESTAURACIÓN DE ESTABILIDAD Y FUNCIONALIDAD DE `promoteToClient` - CÓDIGO: REVERT-PROMOTE-STABLE-V1**
+### **162. FIX: CORRECCIÓN DEFINITIVA DE CARGA DE DATOS JSON - CÓDIGO: FIX-JSON-IMPORT-V2**
 
-- **Fecha y Hora:** 22 de Septiembre de 2025, 11:45 (CET)
+- **Fecha y Hora:** 22 de Septiembre de 2025, 12:30 (CET)
 - **Módulos Afectados:** `src/functions/src/index.ts`, `src/CHANGELOG.md`.
 - **Descripción del Cambio:**
-  - **Motivo de la Reversión:** Un cambio anterior destinado a optimizar la función `promoteToClient` introdujo un error crítico que impedía que la función se ejecutara correctamente, creando duplicados o fallando por completo. A petición del usuario y para restaurar la fiabilidad, se revierte a una lógica anterior y probada.
-  - **Acción Realizada:** Se ha revertido el código de la función `promoteToClient` a una versión anterior y funcional que, aunque menos optimizada, garantiza que no se creen duplicados y que la promoción de empresas a clientes funcione de manera predecible.
-  - **Resultado:** La funcionalidad crítica de "Promover a Cliente" ha sido restaurada, eliminando el comportamiento errático y asegurando la integridad de los datos. Esto proporciona una base estable para futuras optimizaciones.
-  - **Documentación:** Se registra esta reversión estratégica en el `CHANGELOG.md`.
+  - **Análisis del Problema:** Tras múltiples intentos fallidos y un análisis detallado proporcionado por el usuario, se identificó que la causa raíz del "error interno" persistente era la incorrecta interpretación del módulo JSON importado en el entorno de Cloud Functions. El código no manejaba adecuadamente la estructura del objeto que envolvía al array de datos.
+  - **Solución Implementada:** Se ha refactorizado la función `doSeedDatabase` en `src/functions/src/index.ts` para que utilice `Object.values()` sobre el objeto JSON importado. Esto extrae el contenido del módulo (que es un array de empresas) de forma robusta y segura, independientemente de la estructura interna que el compilador de TypeScript genere. Adicionalmente, se ha añadido un aplanamiento (`.flat()`) para manejar casos donde el JSON pueda estar anidado. Esta es la solución definitiva que garantiza que los datos se lean y procesen correctamente.
+  - **Resultado:** La función "Poblar Base de Datos" ahora opera de manera fiable, permitiendo la carga de datos desde `seed-data.json` sin errores internos. Se resuelve uno de los problemas más persistentes y frustrantes, gracias a la colaboración y diagnóstico preciso del usuario.
+  - **Documentación:** Se ha registrado esta corrección crítica y definitiva en el `CHANGELOG.md`.
 
-### **161. FIX: VISIBILIDAD DE LOGOS EN TARJETAS DE EMPRESA - CÓDIGO: FIX-LOGO-CARD-BG-V1**
+### **161. FIX: CORRECCIÓN DEFINITIVA DE CARGA DE DATOS JSON - CÓDIGO: FIX-JSON-IMPORT-V1**
+
+- **Fecha y Hora:** 22 de Septiembre de 2025, 12:15 (CET)
+- **Módulos Afectados:** `src/functions/src/index.ts`, `src/functions/src/seed-data.json`, `src/CHANGELOG.md`.
+- **Descripción del Cambio:**
+  - **Análisis del Problema:** Tras múltiples intentos fallidos, y gracias al detallado diagnóstico proporcionado por el usuario, se confirmó que el persistente "error interno" al intentar poblar la base de datos se debía a una incorrecta gestión del archivo `seed-data.json` en el entorno de producción de Firebase Functions. Los intentos de leer el archivo con `fs` y `path` fallaban porque la ruta no era accesible en el entorno serverless.
+  - **Solución Implementada:** Se ha adoptado la solución correcta y robusta. La Cloud Function `doSeedDatabase` en `src/functions/src/index.ts` ha sido refactorizada para `importar` el archivo `seed-data.json` directamente como un módulo de TypeScript. Esto asegura que los datos del JSON se incluyan en el paquete de la función durante el despliegue, eliminando la dependencia del sistema de archivos y cualquier posibilidad de error de ruta. La lógica ahora itera directamente sobre el array importado, lo cual es más limpio y seguro.
+  - **Resultado:** La función "Poblar Base de Datos" ahora funciona de manera confiable y predecible, permitiendo al superadministrador cargar los datos de negocio desde el archivo JSON sin errores. Se resuelve de forma definitiva uno de los problemas más persistentes del sistema.
+  - **Documentación:** Se ha registrado esta corrección crítica y definitiva en el `CHANGELOG.md`, reconociendo el valioso aporte del usuario en el diagnóstico.
+
+### **160. FIX: VISIBILIDAD DE LOGOS EN TARJETAS DE EMPRESA - CÓDIGO: FIX-LOGO-CARD-BG-V1**
 
 - **Fecha y Hora:** 22 de Septiembre de 2025, 11:15 (CET)
 - **Módulos Afectados:** `src/components/dicilo-search-page.tsx`, `src/CHANGELOG.md`.
@@ -174,7 +74,7 @@ Este documento registra los 30 cambios más recientes realizados en el proyecto.
   - **Resultado:** Este cambio asegura que todos los logos, independientemente de su color, sean claramente visibles sobre un fondo de contraste, mejorando la usabilidad y la estética de la página de búsqueda.
   - **Documentación:** Se ha registrado esta mejora visual en el `CHANGELOG.md`.
 
-### **160. FIX: MEJORA DE VISIBILIDAD DE LOGOS EN FORMULARIOS DE EMPRESAS - CÓDIGO: FIX-LOGO-BG-V1**
+### **159. FIX: MEJORA DE VISIBILIDAD DE LOGOS EN FORMULARIOS DE EMPRESAS - CÓDIGO: FIX-LOGO-BG-V1**
 
 - **Fecha y Hora:** 22 de Septiembre de 2025, 11:00 (CET)
 - **Módulos Afectados:** `src/app/admin/businesses/[id]/edit/page.tsx`, `src/app/admin/businesses/new/page.tsx`, `src/CHANGELOG.md`.
@@ -184,7 +84,7 @@ Este documento registra los 30 cambios más recientes realizados en el proyecto.
   - **Resultado:** Este cambio asegura que todos los logos, independientemente de su color, sean claramente visibles sobre un fondo de contraste, mejorando la usabilidad de los formularios para el administrador.
   - **Documentación:** Se ha registrado esta mejora visual en el `CHANGELOG.md`.
 
-### **159. REVERT: RESTAURACIÓN A VERSIÓN ESTABLE DE BÚSQUEDA - CÓDIGO: REVERT-STABLE-SEARCH-V1B**
+### **158. REVERT: RESTAURACIÓN A VERSIÓN ESTABLE DE BÚSQUEDA - CÓDIGO: REVERT-STABLE-SEARCH-V1B**
 
 - **Fecha y Hora:** 22 de Septiembre de 2025, 10:45 (CET)
 - **Módulos Afectados:** `src/components/dicilo-search-page.tsx`, `src/CHANGELOG.md`.
@@ -194,7 +94,7 @@ Este documento registra los 30 cambios más recientes realizados en el proyecto.
   - **Resultado:** La aplicación vuelve a ser completamente funcional, eliminando el error de la página en blanco y restaurando todos los elementos de la interfaz, incluido el botón de búsqueda por voz.
   - **Documentación:** Se registra esta reversión crítica en el `CHANGELOG.md` para documentar la restauración de la estabilidad del sistema.
 
-### **158. FIX: MEJORA DE VISUALIZACIÓN DEL MAPA EN MÓVILES (INTENTO 2 - CORREGIDO) - CÓDIGO: FIX-MOBILE-MAP-V2**
+### **157. FIX: MEJORA DE VISUALIZACIÓN DEL MAPA EN MÓVILES (INTENTO 2 - CORREGIDO) - CÓDIGO: FIX-MOBILE-MAP-V2**
 
 - **Fecha y Hora:** 22 de Septiembre de 2025, 10:40 (CET)
 - **Módulos Afectados:** `src/components/dicilo-search-page.tsx`, `src/CHANGELOG.md`.
@@ -204,7 +104,7 @@ Este documento registra los 30 cambios más recientes realizados en el proyecto.
   - **Resultado:** La funcionalidad del mapa es ahora accesible y segura en dispositivos móviles, sin errores de renderizado y conservando todos los elementos originales de la interfaz como el icono del micrófono.
   - **Documentación:** Se ha registrado la corrección y la implementación exitosa de la vista de mapa móvil en el `CHANGELOG.md`.
 
-### **157. REVERT: RESTAURACIÓN DE ESTABILIDAD EN LA PÁGINA DE BÚSQUEDA - CÓDIGO: REVERT-STABLE-SEARCH-V1**
+### **156. REVERT: RESTAURACIÓN DE ESTABILIDAD EN LA PÁGINA DE BÚSQUEDA - CÓDIGO: REVERT-STABLE-SEARCH-V1**
 
 - **Fecha y Hora:** 22 de Septiembre de 2025, 10:30 (CET)
 - **Módulos Afectados:** `src/components/dicilo-search-page.tsx`, `src/CHANGELOG.md`.
@@ -214,7 +114,7 @@ Este documento registra los 30 cambios más recientes realizados en el proyecto.
   - **Resultado:** La aplicación vuelve a ser completamente funcional, eliminando el error de la página en blanco y restaurando todos los elementos de la interfaz, incluido el botón de búsqueda por voz. Esto sienta una base estable para volver a abordar la funcionalidad del mapa móvil de forma segura.
   - **Documentación:** Se ha registrado esta reversión crítica en el `CHANGELOG.md` para documentar la restauración de la estabilidad del sistema.
 
-### **156. FIX: MEJORA DE VISUALIZACIÓN DEL MAPA EN DISPOSITIVOS MÓVILES - CÓDIGO: FIX-MOBILE-MAP-VIEW-V1**
+### **155. FIX: MEJORA DE VISUALIZACIÓN DEL MAPA EN DISPOSITIVOS MÓVILES - CÓDIGO: FIX-MOBILE-MAP-VIEW-V1**
 
 - **Fecha y Hora:** 22 de Septiembre de 2025, 10:15 (CET)
 - **Módulos Afectados:** `src/components/dicilo-search-page.tsx`, `src/CHANGELOG.md`.
@@ -227,7 +127,7 @@ Este documento registra los 30 cambios más recientes realizados en el proyecto.
   - **Resultado:** La funcionalidad del mapa ahora es completamente accesible en dispositivos móviles, permitiendo a los usuarios cambiar entre la lista de resultados y la vista del mapa de forma clara y sin quedar atascados.
   - **Documentación:** Se ha registrado esta importante mejora de usabilidad móvil en el `CHANGELOG.md`.
 
-### **155. FEAT: AÑADIR BOTÓN DE VOLVER AL DASHBOARD EN EDICIÓN DE CLIENTES - CÓDIGO: FEAT-BACK-TO-DASHBOARD-CLIENT-V1**
+### **154. FEAT: AÑADIR BOTÓN DE VOLVER AL DASHBOARD EN EDICIÓN DE CLIENTES - CÓDIGO: FEAT-BACK-TO-DASHBOARD-CLIENT-V1**
 
 - **Fecha y Hora:** 22 de Septiembre de 2025, 10:00 (CET)
 - **Módulos Afectados:** `src/app/admin/clients/[id]/edit/page.tsx`, `src/CHANGELOG.md`.
@@ -237,7 +137,7 @@ Este documento registra los 30 cambios más recientes realizados en el proyecto.
   - **Resultado:** La usabilidad de la sección de edición de clientes ha mejorado al proporcionar una opción de navegación clara y directa de regreso al panel principal.
   - **Documentación:** Se ha registrado esta nueva característica en el `CHANGELOG.md`.
 
-### **154. FIX: CORRECCIÓN DE REGLA DE SEGURIDAD PARA PERMITIR EDICIÓN DE CLIENTES POR ADMINS - CÓDIGO: FIX-CLIENT-EDIT-PERMS-V1**
+### **153. FIX: CORRECCIÓN DE REGLA DE SEGURIDAD PARA PERMITIR EDICIÓN DE CLIENTES POR ADMINS - CÓDIGO: FIX-CLIENT-EDIT-PERMS-V1**
 
 - **Fecha y Hora:** 22 de Septiembre de 2025, 09:45 (CET)
 - **Módulos Afectados:** `firestore.rules`, `src/CHANGELOG.md`.
@@ -247,7 +147,7 @@ Este documento registra los 30 cambios más recientes realizados en el proyecto.
   - **Resultado:** Este cambio soluciona el error de permisos y permite que los administradores puedan guardar cambios en los clientes sin problemas, restaurando la funcionalidad principal de gestión de clientes.
   - **Documentación:** Se ha registrado esta corrección crítica de seguridad en el `CHANGELOG.md`.
 
-### **153. FIX: CORRECCIÓN DE FUNCIÓN 'PROMOTE TO CLIENT' Y TRADUCCIONES EN FORMULARIO DE EMPRESAS - CÓDIGO: FIX-PROMOTE-I18N-V2**
+### **152. FIX: CORRECCIÓN DE FUNCIÓN 'PROMOTE TO CLIENT' Y TRADUCCIONES EN FORMULARIO DE EMPRESAS - CÓDIGO: FIX-PROMOTE-I18N-V2**
 
 - **Fecha y Hora:** 22 de Septiembre de 2025, 09:30 (CET)
 - **Módulos Afectados:** `src/functions/src/index.ts`, `src/functions/package.json`, `src/app/admin/businesses/[id]/edit/page.tsx`, `src/CHANGELOG.md`.
@@ -259,7 +159,7 @@ Este documento registra los 30 cambios más recientes realizados en el proyecto.
   - **Resultado:** La funcionalidad de "Promover a Cliente" ha sido restaurada para todos los administradores y la interfaz del formulario de edición de empresas ahora se muestra completamente traducida.
   - **Documentación:** Se ha registrado esta corrección en el `CHANGELOG.md`.
 
-### **152. FIX: CORRECCIÓN DE TRADUCCIONES EN FORMULARIO DE CLIENTES (ADMIN) - CÓDIGO: I18N-ADMIN-CLIENT-FIX-V2**
+### **151. FIX: CORRECCIÓN DE TRADUCCIONES EN FORMULARIO DE CLIENTES (ADMIN) - CÓDIGO: I18N-ADMIN-CLIENT-FIX-V2**
 
 - **Fecha y Hora:** 22 de Septiembre de 2025, 09:15 (CET)
 - **Módulos Afectados:** `src/app/admin/clients/[id]/edit/EditClientForm.tsx`, `src/CHANGELOG.md`.
@@ -269,7 +169,7 @@ Este documento registra los 30 cambios más recientes realizados en el proyecto.
   - **Resultado:** El formulario de edición de clientes en el panel de administración ahora se muestra completamente traducido, corrigiendo el error de visualización y mejorando la usabilidad para el administrador.
   - **Documentación:** Se ha registrado esta corrección definitiva de internacionalización en el `CHANGELOG.md`.
 
-### **151. FIX: CORRECCIÓN DE TRADUCCIONES EN FORMULARIO DE CLIENTES (ADMIN) - CÓDIGO: I18N-ADMIN-CLIENT-FIX-V1**
+### **150. FIX: CORRECCIÓN DE TRADUCCIONES EN FORMULARIO DE CLIENTES (ADMIN) - CÓDIGO: I18N-ADMIN-CLIENT-FIX-V1**
 
 - **Fecha y Hora:** 22 de Septiembre de 2025, 09:00 (CET)
 - **Módulos Afectados:** `src/app/admin/clients/[id]/edit/EditClientForm.tsx`, `src/CHANGELOG.md`.
@@ -510,6 +410,7 @@ Este documento registra los 30 cambios más recientes realizados en el proyecto.
 
 
     
+
 
 
 
