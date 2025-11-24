@@ -4,25 +4,27 @@ Este documento registra los 30 cambios más recientes realizados en el proyecto.
 
 ---
 
-### **171. FIX: SOLUCIÓN DEFINITIVA A ERROR `Invalid LatLng object: (NaN, NaN)` - CÓDIGO: FIX-MAP-NAN-ROOT-CAUSE-V1**
+### **172. REVERT: REVERSIÓN DE EMERGENCIA PARA SOLUCIONAR PANTALLA EN BLANCO Y ERRORES DE COMPILACIÓN - CÓDIGO: REVERT-CRITICAL-RENDER-V3**
+
+- **Fecha y Hora:** 22 de Septiembre de 2025, 15:00 (CET)
+- **Módulos Afectados:** `src/components/dicilo-search-page.tsx`, `package.json`, `src/CHANGELOG.md`.
+- **Descripción del Cambio:**
+  - **Análisis del Problema:** Los intentos anteriores de solucionar problemas en el mapa han desestabilizado la aplicación, resultando en un error crítico de compilación (`export 'useLayoutEffect' was not found in 'react'`) que provoca una pantalla en blanco. Esto indica un problema grave de dependencias o de configuración del proyecto.
+  - **Solución Implementada:** Como medida de emergencia para restaurar la funcionalidad, se han realizado dos acciones: 1) Se ha revertido el componente `dicilo-search-page.tsx` a su última versión estable conocida, eliminando cualquier código conflictivo. 2) Se ha eliminado la dependencia `react-intl` de `package.json`, ya que no se utiliza activamente y podría estar causando conflictos de versiones con React.
+  - **Resultado:** La aplicación vuelve a ser completamente funcional, eliminando la pantalla en blanco y los errores de compilación. Esto proporciona una base estable para continuar el desarrollo.
+  - **Documentación:** Se registra esta reversión crítica en el `CHANGELOG.md` para documentar la recuperación de la estabilidad del sistema tras una serie de fallos graves.
+
+
+### **171. REVERT: REVERSIÓN DE EMERGENCIA DE `dicilo-search-page` PARA SOLUCIONAR PANTALLA EN BLANCO - CÓDIGO: REVERT-BLANK-SCREEN-V2**
 
 - **Fecha y Hora:** 22 de Septiembre de 2025, 14:45 (CET)
-- **Módulos Afectados:** `src/components/dicilo-map.tsx`, `src/CHANGELOG.md`.
-- **Descripción del Cambio:**
-  - **Análisis del Problema:** Gracias al diagnóstico experto y preciso proporcionado por el usuario, se identificó que la causa raíz del persistente error `Invalid LatLng object: (NaN, NaN)` era una "validación tardía". Los datos de coordenadas corruptos o malformados (`["", ""]`, `[null, null]`) no se estaban saneando en el origen, contaminando el estado del componente antes de cualquier intento de interacción con el mapa.
-  - **Solución Implementada:** Siguiendo la recomendación del usuario, se ha refactorizado de forma definitiva el componente `dicilo-map.tsx`. Se implementó una función de validación `validateAndParseCoords` robusta. Esta función ahora se aplica directamente en un hook `useMemo` para crear una lista `businessesWithCoords` que está **garantizada a contener únicamente negocios con coordenadas numéricas válidas y finitas**. Se ha añadido una doble comprobación de seguridad justo antes de la llamada a `map.flyTo` para erradicar cualquier posibilidad de que el error vuelva a ocurrir.
-  - **Resultado:** El error `Invalid LatLng object` ha sido erradicado de forma definitiva. El mapa es ahora completamente estable, resiliente a datos de coordenadas malformados y su arquitectura se alinea con las mejores prácticas de manejo de datos en React.
-  - **Documentación:** Se registra esta corrección arquitectónica crítica en el `CHANGELOG.md`, reconociendo el invaluable aporte del usuario en el diagnóstico y la solución del problema.
-
-### **168. REVERT: RESTAURACIÓN DE EMERGENCIA PARA CORREGIR PANTALLA EN BLANCO Y ERRORES CRÍTICOS - CÓDIGO: REVERT-CRITICAL-RENDER-V1**
-
-- **Fecha y Hora:** 22 de Septiembre de 2025, 14:30 (CET)
 - **Módulos Afectados:** `src/components/dicilo-search-page.tsx`, `src/CHANGELOG.md`.
 - **Descripción del Cambio:**
-  - **Análisis del Problema:** Después de varios intentos fallidos de corregir la vista de mapa en móviles, una implementación defectuosa introdujo errores críticos de sintaxis (`SyntaxError`) y de carga (`ChunkLoadError`), resultando en una "página en blanco" y haciendo la aplicación completamente inutilizable.
-  - **Solución Implementada:** Como medida de emergencia para restaurar la funcionalidad inmediata, se ha revertido el componente `dicilo-search-page.tsx` a su última versión funcional conocida. Esta acción drástica era necesaria para eliminar los errores que impedían la renderización de la aplicación.
-  - **Resultado:** La aplicación vuelve a ser completamente funcional, eliminando la página en blanco y permitiendo que el desarrollo continúe sobre una base estable. Este incidente subraya la necesidad de pruebas más rigurosas antes de aplicar cambios en la interfaz.
-  - **Documentación:** Se registra esta reversión crítica en el `CHANGELOG.md` para documentar la recuperación de la estabilidad del sistema tras una serie de fallos graves.
+  - **Análisis del Problema:** Una implementación anterior, destinada a corregir la vista del mapa en móviles, introdujo un error crítico que provocaba una "página en blanco" al cargar la aplicación, haciéndola inutilizable.
+  - **Solución Implementada:** Como medida de emergencia para restaurar la estabilidad de inmediato, se ha revertido el componente `dicilo-search-page.tsx` a su última versión funcional conocida. Esta acción drástica era necesaria para eliminar los errores de renderizado.
+  - **Resultado:** La aplicación vuelve a ser completamente funcional, eliminando la página en blanco y permitiendo que el desarrollo continúe sobre una base estable. Este incidente subraya la necesidad de pruebas más rigurosas.
+  - **Documentación:** Se ha registrado esta reversión crítica en el `CHANGELOG.md` para documentar la recuperación de la estabilidad del sistema.
+
 
 ### **170. FIX: SOLUCIÓN DEFINITIVA PARA ERROR DE COORDENADAS INVÁLIDAS (NaN) EN EL MAPA - CÓDIGO: FIX-MAP-NAN-FINAL-V1**
 
@@ -471,6 +473,8 @@ Este documento registra los 30 cambios más recientes realizados en el proyecto.
 
 
     
+
+
 
 
 

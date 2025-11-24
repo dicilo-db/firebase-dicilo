@@ -2,6 +2,7 @@
 'use client';
 
 import React, { useEffect, useRef, useMemo } from 'react';
+// Importamos L.latLng y LatLngTuple para la validación más estricta de Leaflet
 import L, { Map as LeafletMap, LatLngTuple } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
@@ -26,6 +27,10 @@ interface DiciloMapProps {
   onMarkerDragEnd?: (newCoords: [number, number]) => void;
   t: (key: string, options?: any) => string;
 }
+
+// VALOR POR DEFECTO: Si el 'center' inicial está corrupto, volamos a un centro por defecto (Ej: Alemania Central)
+const DEFAULT_CENTER: LatLngTuple = [50.1109, 8.6821]; 
+const DEFAULT_ZOOM = 10;
 
 // Helper para enviar eventos a la API de analíticas
 const logAnalyticsEvent = async (eventData: object) => {
@@ -104,24 +109,16 @@ const validateAndParseCoords = (coords: any): LatLngTuple | null => {
     return null;
   }
   
+  // Usar parseFloat(String(x)) para la conversión más robusta 
   const lat = parseFloat(String(coords[0]));
   const lng = parseFloat(String(coords[1]));
 
-  if (
-    !isNaN(lat) &&
-    !isNaN(lng) &&
-    isFinite(lat) &&
-    isFinite(lng) &&
-    lat >= -90 &&
-    lat <= 90 &&
-    lng >= -180 &&
-    lng <= 180
-  ) {
+  if (isFinite(lat) && isFinite(lng)) {
     return [lat, lng];
   }
-  
+
   console.error(
-    'DICILO_MAP_ERROR: Coordenadas inválidas detectadas y bloqueadas:',
+    'DICILO_MAP_ERROR: Coordenadas inválidas detectadas y bloqueadas en useMemo:',
     coords
   );
   return null;
@@ -140,7 +137,7 @@ const DiciloMap: React.FC<DiciloMapProps> = ({
   const markersRef = useRef<Map<string, L.Marker>>(new Map());
   const resizeObserverRef = useRef<ResizeObserver | null>(null);
 
-  // SOLUCIÓN DEFINITIVA: Limpieza de datos en el origen con useMemo.
+  // Nivel 1: Saneamiento de la lista de datos
   const businessesWithCoords = useMemo(() => {
     return businesses
       .map((business) => {
@@ -148,10 +145,9 @@ const DiciloMap: React.FC<DiciloMapProps> = ({
         if (!validCoords) {
           return null; // Descartar negocio si las coordenadas son inválidas
         }
-        // Devuelve un objeto limpio con coordenadas validadas
         return {
           ...business,
-          coords: validCoords,
+          coords: validCoords, // Sobrescribir con coordenadas validadas y tipadas como LatLngTuple
         };
       })
       .filter((b): b is Business & { coords: LatLngTuple } => b !== null);
@@ -206,31 +202,48 @@ const DiciloMap: React.FC<DiciloMapProps> = ({
     };
   }, []);
 
+  // Nivel 2: Saneamiento de la inicialización del mapa (setView)
   useEffect(() => {
     const currentMapContainer = mapContainerRef.current;
     if (!currentMapContainer) return;
+    
+    // Verificación del centro inicial de la prop
+    const isCenterValid = isFinite(center[0]) && isFinite(center[1]);
+    const safeCenter: LatLngTuple = isCenterValid ? center : DEFAULT_CENTER;
 
     if (!mapRef.current) {
-      const map = L.map(currentMapContainer, {
-        zoomControl: true,
-        attributionControl: true,
-      }).setView(center, zoom);
-
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution:
-          '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
-        maxZoom: 20,
-      }).addTo(map);
-
-      mapRef.current = map;
-
-      const ro = new ResizeObserver(() => {
-        map.invalidateSize();
-      });
-      ro.observe(currentMapContainer);
-      resizeObserverRef.current = ro;
+      // Inicialización del mapa
+      try {
+        const map = L.map(currentMapContainer, {
+          zoomControl: true,
+          attributionControl: true,
+        }).setView(safeCenter, zoom); // Usamos safeCenter
+  
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution:
+            '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+          maxZoom: 20,
+        }).addTo(map);
+  
+        mapRef.current = map;
+  
+        const ro = new ResizeObserver(() => {
+          map.invalidateSize();
+        });
+        ro.observe(currentMapContainer);
+        resizeObserverRef.current = ro;
+      } catch (e) {
+        console.error("DICILO_MAP_INIT_CRASH_PREVENTED: Fallo al inicializar el mapa con setView.", e);
+        // Retornar sin asignar mapRef.current para evitar errores posteriores
+        return;
+      }
     } else {
-      mapRef.current.setView(center, zoom);
+      // Actualización del mapa existente
+      if (isCenterValid) {
+        mapRef.current.setView(center, zoom);
+      } else {
+        mapRef.current.setView(DEFAULT_CENTER, DEFAULT_ZOOM);
+      }
     }
 
     return () => {
@@ -240,6 +253,7 @@ const DiciloMap: React.FC<DiciloMapProps> = ({
     };
   }, [center, zoom]);
 
+  // Nivel 3: Saneamiento de la creación de marcadores
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
@@ -257,67 +271,86 @@ const DiciloMap: React.FC<DiciloMapProps> = ({
       }
     });
 
-    // Añadir o actualizar marcadores (ahora solo con datos limpios)
+    // Añadir o actualizar marcadores
     businessesWithCoords.forEach((business) => {
-      const popupContent = createPopupContent(business, t);
-      let marker = markersRef.current.get(business.id);
+      try { // TRY-CATCH para blindar la creación de cada marcador
+        const popupContent = createPopupContent(business, t);
+        let marker = markersRef.current.get(business.id);
 
-      if (marker) {
-        marker.setLatLng(business.coords);
-        marker.getPopup()?.setContent(popupContent);
-      } else {
-        marker = L.marker(business.coords, {
-          draggable: !!onMarkerDragEnd,
-        })
-          .addTo(map)
-          .bindPopup(popupContent);
+        // Crear una tupla fresca y usar L.latLng para máxima seguridad
+        const latLng = L.latLng(
+            parseFloat(String(business.coords[0])), 
+            parseFloat(String(business.coords[1]))
+        );
+        
+        if (marker) {
+          // Usar setLatLng() con L.LatLng objeto nativo para evitar problemas de referencia
+          marker.setLatLng(latLng);
+          marker.getPopup()?.setContent(popupContent);
+        } else {
+          // CRÍTICO: Usar L.latLng objeto en lugar de array crudo
+          marker = L.marker(latLng, { 
+            draggable: !!onMarkerDragEnd,
+          })
+            .addTo(map)
+            .bindPopup(popupContent);
 
-        if (onMarkerDragEnd) {
-          marker.on('dragend', function (event) {
-            const newLatLng = event.target.getLatLng();
-            onMarkerDragEnd([newLatLng.lat, newLatLng.lng]);
-          });
+          if (onMarkerDragEnd) {
+            marker.on('dragend', function (event) {
+              const newLatLng = event.target.getLatLng();
+              onMarkerDragEnd([newLatLng.lat, newLatLng.lng]);
+            });
+          }
+
+          markersRef.current.set(business.id, marker);
         }
-
-        markersRef.current.set(business.id, marker);
+      } catch (e) {
+        console.error("DICILO_MAP_MARKER_CRASH_PREVENTED: Fallo al crear o actualizar marcador:", business.id, e);
       }
     });
   }, [businessesWithCoords, onMarkerDragEnd, t]);
 
+  // El bloque de flyTo que ya habíamos corregido (ahora más limpio gracias a la nueva función L.latLng)
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
 
     if (selectedBusinessId) {
-      // BUSCAR EN LA LISTA LIMPIA
       const business = businessesWithCoords.find(
         (b) => b.id === selectedBusinessId
       );
       
-      const validCoords = business?.coords;
+      const rawCoords = business?.coords;
       
-      // DOBLE CHECK: Seguridad final, como fue solicitado.
-      if (validCoords) {
-        const isCoordinateValid =
-          Array.isArray(validCoords) &&
-          validCoords.length === 2 &&
-          isFinite(validCoords[0]) &&
-          isFinite(validCoords[1]);
+      if (map && rawCoords) {
+        try { // TRY-CATCH Final
+          // Usar parseFloat(String(x)) para la conversión más robusta 
+          // y L.latLng para construir el objeto.
+          const latLng = L.latLng(
+            parseFloat(String(rawCoords[0])), 
+            parseFloat(String(rawCoords[1]))
+          );
 
-        if (isCoordinateValid) {
-          map.flyTo(validCoords, 15, {
-            animate: true,
-            duration: 1,
-          });
-          
-          const marker = markersRef.current.get(selectedBusinessId);
-          if (marker) {
-            setTimeout(() => {
-              marker.openPopup();
-            }, 1000);
+          // Verificar si el objeto L.LatLng es válido ANTES de flyTo
+          if (isFinite(latLng.lat) && isFinite(latLng.lng)) {
+            
+            // Ejecutar el vuelo
+            map.flyTo(latLng, 15, { // Línea 308 corregida
+              animate: true,
+              duration: 10,
+            });
+            
+            const marker = markersRef.current.get(selectedBusinessId);
+            if (marker) {
+              setTimeout(() => {
+                marker.openPopup();
+              }, 1000);
+            }
+          } else {
+            console.error("DICILO_MAP_FINAL_FAILURE: L.latLng resultó en NaN. Datos:", rawCoords);
           }
-        } else {
-          console.error("DICILO_MAP_CRITICAL_ERROR: Datos de vuelo corruptos en el último chequeo. Coords:", validCoords);
+        } catch (error) {
+          console.error("DICILO_MAP_CRASH_PREVENTED: Fallo al intentar volar el mapa.", error);
         }
       }
     }
