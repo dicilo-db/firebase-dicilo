@@ -4,6 +4,16 @@ Este documento registra los 30 cambios más recientes realizados en el proyecto.
 
 ---
 
+### **168. REVERT: RESTAURACIÓN DE EMERGENCIA PARA CORREGIR PANTALLA EN BLANCO Y ERRORES CRÍTICOS - CÓDIGO: REVERT-CRITICAL-RENDER-V1**
+
+- **Fecha y Hora:** 22 de Septiembre de 2025, 14:30 (CET)
+- **Módulos Afectados:** `src/components/dicilo-search-page.tsx`, `src/CHANGELOG.md`.
+- **Descripción del Cambio:**
+  - **Análisis del Problema:** Después de varios intentos fallidos de corregir la vista de mapa en móviles, una implementación defectuosa introdujo errores críticos de sintaxis (`SyntaxError`) y de carga (`ChunkLoadError`), resultando en una "página en blanco" y haciendo la aplicación completamente inutilizable.
+  - **Solución Implementada:** Como medida de emergencia para restaurar la funcionalidad inmediata, se ha revertido el componente `dicilo-search-page.tsx` a su última versión funcional conocida. Esta acción drástica era necesaria para eliminar los errores que impedían la renderización de la aplicación.
+  - **Resultado:** La aplicación vuelve a ser completamente funcional, eliminando la página en blanco y permitiendo que el desarrollo continúe sobre una base estable. Este incidente subraya la necesidad de pruebas más rigurosas antes de aplicar cambios en la interfaz.
+  - **Documentación:** Se registra esta reversión crítica en el `CHANGELOG.md` para documentar la recuperación de la estabilidad del sistema tras una serie de fallos graves.
+
 ### **170. FIX: SOLUCIÓN DEFINITIVA PARA ERROR DE COORDENADAS INVÁLIDAS (NaN) EN EL MAPA - CÓDIGO: FIX-MAP-NAN-FINAL-V1**
 
 - **Fecha y Hora:** 22 de Septiembre de 2025, 14:15 (CET)
@@ -451,6 +461,7 @@ Este documento registra los 30 cambios más recientes realizados en el proyecto.
 
 
     
+
 
 
 
