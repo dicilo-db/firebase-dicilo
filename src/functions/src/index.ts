@@ -465,7 +465,7 @@ export const promoteToClient = onCall(
 );
 
 export const importBusinessesFromStorage = onCall(
-  { region: 'europe-west1', timeoutSeconds: 300, memory: '1GiB' },
+  { region: 'europe-west1', timeoutSeconds: 540, memory: '2GiB' },
   async (request) => {
     if (!request.auth || request.auth.token.role !== 'superadmin') {
       throw new HttpsError(
@@ -474,63 +474,85 @@ export const importBusinessesFromStorage = onCall(
       );
     }
 
-    const bucket = admin.storage().bucket(); // Use default bucket
-    const fileName = 'BD_Espana_faderbase_extended.json';
-    const file = bucket.file(fileName);
+    const bucket = admin.storage().bucket();
+    const file = bucket.file('BD_Espana_faderbase_extended.json');
 
     try {
-      const [exists] = await file.exists();
-      if (!exists) {
-        logger.error(`File ${fileName} not found in bucket ${bucket.name}.`);
-        throw new HttpsError(
-          'not-found',
-          `File '${fileName}' not found in the default storage bucket.`
-        );
+      logger.info(
+        `Attempting to download file from bucket: ${bucket.name}, path: ${file.name}`
+      );
+
+      // Descargar el archivo desde Storage
+      const [contents] = await file.download();
+      const rawData = JSON.parse(contents.toString());
+
+      // El archivo puede ser un objeto o un array. Lo normalizamos.
+      let businesses: any[];
+      
+      if (Array.isArray(rawData)) {
+        businesses = rawData;
+      } else if (typeof rawData === 'object') {
+        // Si es un objeto, convertimos sus valores a array
+        businesses = Object.values(rawData);
+      } else {
+        throw new Error('El formato del archivo JSON no es válido.');
       }
 
-      logger.info(`Downloading file: ${fileName}`);
-      const [contents] = await file.download();
-      const businesses = JSON.parse(contents.toString());
+      // Aplanar por si hay arrays anidados
+      businesses = businesses.flat();
 
-      if (!Array.isArray(businesses)) {
-        throw new Error('The JSON file does not contain an array of businesses.');
+      if (businesses.length === 0) {
+        throw new Error('No se encontraron empresas en el archivo.');
       }
 
       logger.info(`Found ${businesses.length} businesses to import.`);
       let importedCount = 0;
-      const batchSize = 450; // Firestore batch write limit is 500
 
+      // Procesar en lotes de 450 (dejamos margen bajo el límite de 500)
+      const batchSize = 450;
       for (let i = 0; i < businesses.length; i += batchSize) {
         const batch = db.batch();
         const chunk = businesses.slice(i, i + batchSize);
 
         chunk.forEach((business: any) => {
+          // Validar que sea un objeto válido con nombre
           if (business && typeof business === 'object' && business.name) {
-            const docRef = db.collection('businesses').doc(); // Auto-generate ID
+            const docRef = db.collection('businesses').doc(); // Auto-generar ID
             batch.set(docRef, business);
           } else {
-            logger.warn('Skipping invalid business object in import data:', business);
+            logger.warn('Skipping invalid business object:', business);
           }
         });
 
         await batch.commit();
         importedCount += chunk.length;
         logger.info(
-          `Committed batch. Total processed: ${importedCount}/${businesses.length}`
+          `✅ Batch committed. Progress: ${importedCount}/${businesses.length} (${Math.round((importedCount / businesses.length) * 100)}%)`
         );
       }
 
-      const message = `${importedCount} businesses imported successfully from Storage.`;
+      const message = `✅ Successfully imported ${importedCount} businesses from Storage.`;
       logger.info(message);
-      return { success: true, message: message };
+      return { 
+        success: true, 
+        message: message,
+        imported: importedCount,
+        total: businesses.length
+      };
+
     } catch (error: any) {
-      logger.error('Error importing from Storage:', error);
-      if (error instanceof HttpsError) {
-        throw error;
+      logger.error('❌ Error importing from Storage:', error);
+      
+      if (error.code === 404) {
+        throw new HttpsError(
+          'not-found',
+          `El archivo 'BD_Espana_faderbase_extended.json' no se encontró en el bucket de almacenamiento. Verifica que el archivo existe en Storage.`
+        );
       }
+      
       throw new HttpsError(
         'internal',
-        error.message || 'Unknown error during import from Storage.'
+        `Error durante la importación: ${error.message}`
       );
     }
   }
