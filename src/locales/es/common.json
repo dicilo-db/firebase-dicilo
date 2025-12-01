@@ -24,6 +24,7 @@
     "locationType": "Ubicación",
     "businessPlaceholder": "Nombre del negocio o palabra clave...",
     "locationPlaceholder": "Ciudad, región o país...",
+    "selectOption": "Seleccione una opción",
     "searchLabel": "Buscar",
     "useLocationLabel": "Ubicación Actual",
     "locationErrorTitle": "Error de Ubicación",

@@ -54,24 +54,7 @@ const sourceOptions = [
   { value: 'other', labelKey: 'form.source.other' },
 ];
 
-const recommendationSchema = z.object({
-  recommenderName: z.string().min(1, 'errors.required'),
-  recommenderContact: z.string().min(1, 'errors.required'),
-  companyName: z.string().min(1, 'errors.required'),
-  companyContact: z.string().optional(),
-  companyWebsite: z
-    .string()
-    .url('errors.invalid_url')
-    .optional()
-    .or(z.literal('')),
-  companyCity: z.string().min(1, 'errors.required'),
-  businessArea: z.string().min(1, 'errors.required'),
-  diciloCode: z.string().optional(),
-  source: z.string().min(1, 'errors.required'),
-  notes: z.string().optional(),
-  consent: z.boolean().refine((val) => val === true, 'errors.consent_required'),
-  captcha: z.string().refine((val) => val === '23', 'errors.captcha_invalid'),
-});
+// Schema definition moved inside component for dynamic validation
 
 type RecommendationFormData = z.infer<typeof recommendationSchema>;
 
@@ -79,12 +62,40 @@ function NewBusinessRecommendationForm() {
   const t = useTranslation('register').t;
   const { toast } = useToast();
 
+  const [captchaNums, setCaptchaNums] = React.useState({ n1: 0, n2: 0 });
+
+  React.useEffect(() => {
+    setCaptchaNums({
+      n1: Math.floor(Math.random() * 10) + 1,
+      n2: Math.floor(Math.random() * 10) + 1,
+    });
+  }, []);
+
+  const recommendationSchema = React.useMemo(() => z.object({
+    recommenderName: z.string().min(1, 'register.errors.required'),
+    recommenderContact: z.string().min(1, 'register.errors.required'),
+    companyName: z.string().min(1, 'register.errors.required'),
+    companyContact: z.string().optional(),
+    companyWebsite: z
+      .string()
+      .url('register.errors.invalid_url')
+      .optional()
+      .or(z.literal('')),
+    companyCity: z.string().min(1, 'register.errors.required'),
+    businessArea: z.string().min(1, 'register.errors.required'),
+    diciloCode: z.string().optional(),
+    source: z.string().min(1, 'register.errors.required'),
+    notes: z.string().optional(),
+    consent: z.boolean().refine((val) => val === true, 'register.errors.consent_required'),
+    captcha: z.string().refine((val) => parseInt(val) === captchaNums.n1 + captchaNums.n2, 'register.errors.captcha_invalid'),
+  }), [captchaNums]);
+
   const {
     register,
     handleSubmit,
     control,
     formState: { errors, isSubmitting },
-  } = useForm<RecommendationFormData>({
+  } = useForm<z.infer<typeof recommendationSchema>>({
     resolver: zodResolver(recommendationSchema),
   });
 
@@ -272,7 +283,7 @@ function NewBusinessRecommendationForm() {
           <div className="space-y-2">
             <div className="flex items-center gap-4">
               <Label htmlFor="captcha" className="flex-shrink-0">
-                {t('register.form.captchaLabel')} 14 + 9 = ?
+                {t('register.form.captchaLabel')} {captchaNums.n1} + {captchaNums.n2} = ?
               </Label>
               <Input id="captcha" {...register('captcha')} className="w-24" />
             </div>
@@ -291,9 +302,7 @@ function NewBusinessRecommendationForm() {
               t('register.form.submitButton')
             )}
           </Button>
-          <p className="mt-4 text-center text-xs text-muted-foreground">
-            {t('register.form.laughingRegister')}
-          </p>
+
         </CardFooter>
       </form>
     </>
@@ -327,12 +336,12 @@ export default function RegistrierenPage() {
       <Header />
       <main className="container mx-auto flex-grow px-4 py-12">
         <div className="mx-auto max-w-4xl">
-          <Tabs defaultValue="recommend">
+          <Tabs defaultValue="register" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="recommend">
                 {t('register.form.title')}
               </TabsTrigger>
-              <TabsTrigger value="register">{t('submitButton')}</TabsTrigger>
+              <TabsTrigger value="register">{t('register.form.registerButton')}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="recommend">
@@ -346,12 +355,14 @@ export default function RegistrierenPage() {
             <TabsContent value="register">
               <Card className="bg-white shadow-xl">
                 <CardHeader>
-                  <CardTitle>{t('submitButton')}</CardTitle>
-                  <CardDescription>{t('successDescription')}</CardDescription>
+                  <CardTitle>{t('register.form.registerButton')}</CardTitle>
+                  <CardDescription>{t('register.form.registerSuccessDescription')}</CardDescription>
                 </CardHeader>
-                <Suspense fallback={<RegistrationFormSkeleton />}>
-                  <RegistrationForm />
-                </Suspense>
+                <CardContent>
+                  <Suspense fallback={<RegistrationFormSkeleton />}>
+                    <RegistrationForm />
+                  </Suspense>
+                </CardContent>
               </Card>
             </TabsContent>
           </Tabs>

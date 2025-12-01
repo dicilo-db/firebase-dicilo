@@ -1,4 +1,3 @@
-
 {
   "register": {
     "marketing": {
@@ -24,11 +23,13 @@
       "hesitate": "¡No lo dudes más!"
     },
     "form": {
-      "title": "¡Registre su empresa y Gana!",
-      "description": "Recomiende a DIcilo una empresa amiga y asegure beneficios.",
+      "title": "Recomiende una empresa a dicilo.net y gane premios",
+      "description": "¡Registre su empresa o recomiende la empresa de su preferencia y gane premios! Recomienda una empresa amiga y asegure premios que van desde cupones de descuento hasta premios en efectivo.",
       "recommenderSection": "Tu Contacto",
-      "recommenderName": "Tu Nombre y Apellido*",
-      "recommenderContact": "Tu Email / Teléfono*",
+      "recommenderName": "Su Nombre*",
+      "recommenderContact": "Su Email / Teléfono*",
+      "password": "Contraseña*",
+      "passwordHint": "Mínimo 6 caracteres",
       "companySection": "Datos de contacto de la empresa recomendada",
       "companyName": "Nombre de la Empresa*",
       "companyContact": "Persona de Contacto (opcional)",
@@ -51,21 +52,30 @@
       "invalid_url": "Por favor, introduce una URL válida.",
       "consent_required": "Debes aceptar la cláusula de responsabilidad.",
       "captcha_invalid": "La respuesta es incorrecta. Por favor, inténtalo de nuevo.",
-      "invalidEmail": "Formato de correo electrónico inválido.",
-      "requiredType": "Por favor, selecciona un tipo de registro."
+      "invalidEmail": "Formato de email inválido.",
+      "passwordMinLength": "La contraseña debe tener al menos 6 caracteres.",
+      "requiredType": "Por favor seleccione un tipo de registro.",
+      "passwordMismatch": "Las contraseñas no coinciden.",
+      "emailAlreadyInUse": "Este correo electrónico ya está en uso."
     },
     "options": {
-      "private": "Privado",
+      "private": "Usuario Privado",
       "donor": "Donante",
       "retailer": "Minorista",
-      "premium": "Premium"
+      "premium": "Premium",
+      "whatsapp": "WhatsApp",
+      "telegram": "Telegram"
     },
     "fields": {
       "firstName": "Nombre",
       "lastName": "Apellido",
       "email": "Correo Electrónico",
-      "whatsapp": "WhatsApp",
-      "registrationType": "Tipo de Registro"
+      "whatsapp": "Número de Contacto",
+      "contactType": "Tipo de Contacto",
+      "registrationType": "Tipo de Registro",
+      "password": "Contraseña",
+      "confirmPassword": "Confirmar Contraseña",
+      "passwordHint": "Tu contraseña está segura."
     },
     "submitButton": "Registrarse",
     "successTitle": "¡Registro Exitoso!",

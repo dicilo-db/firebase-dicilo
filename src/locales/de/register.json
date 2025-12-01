@@ -1,4 +1,3 @@
-
 {
   "register": {
     "marketing": {
@@ -24,11 +23,13 @@
       "hesitate": "Zögern Sie nicht länger!"
     },
     "form": {
-      "title": "¡Registre su empresa y Gana!",
-      "description": "Recomiende a DIcilo una empresa amiga y asegure beneficios.",
+      "title": "Empfehlen Sie ein Unternehmen an dicilo.net und gewinnen Sie Preise",
+      "description": "Registrieren Sie Ihr Unternehmen oder empfehlen Sie Ihr bevorzugtes Unternehmen und gewinnen Sie Preise! Empfehlen Sie ein befreundetes Unternehmen und sichern Sie sich Preise von Rabattgutscheinen bis hin zu Geldpreisen.",
       "recommenderSection": "Ihr Kontakt",
       "recommenderName": "Ihr Vor- & Nachname*",
       "recommenderContact": "Ihre E-Mail / Telefon*",
+      "password": "Passwort*",
+      "passwordHint": "Mindestens 6 Zeichen",
       "companySection": "Kontaktdaten des empfohlenen Unternehmens",
       "companyName": "Name des Unternehmens*",
       "companyContact": "Ansprechpartner (optional)",
@@ -44,7 +45,12 @@
       "submitButton": "Empfehlung jetzt senden!",
       "laughingRegister": "( laughing Jetzt registrieren)",
       "successTitle": "Empfehlung Gesendet!",
-      "successDescription": "Ihre Empfehlung wurde erfolgreich übermittelt."
+      "successDescription": "Ihre Empfehlung wurde erfolgreich übermittelt.",
+      "registerButton": "Registrieren Sie sich kostenlos",
+      "registerSuccessTitle": "Registrierung erfolgreich!",
+      "registerSuccessDescription": "Ihre Registrierung wurde erfolgreich übermittelt.",
+      "errorTitle": "Fehler",
+      "submitError": "Beim Senden Ihrer Registrierung ist ein Fehler aufgetreten."
     },
     "errors": {
       "required": "Dieses Feld ist erforderlich.",
@@ -52,26 +58,45 @@
       "consent_required": "Sie müssen der Haftungsklausel zustimmen.",
       "captcha_invalid": "Die Antwort ist falsch. Bitte versuchen Sie es erneut.",
       "invalidEmail": "Ungültiges E-Mail-Format.",
-      "requiredType": "Bitte wählen Sie einen Registrierungstyp."
+      "passwordMinLength": "Passwort muss mindestens 6 Zeichen lang sein.",
+      "requiredType": "Bitte wählen Sie einen Registrierungstyp.",
+      "passwordMismatch": "Die Passwörter stimmen nicht überein.",
+      "emailAlreadyInUse": "Diese E-Mail-Adresse wird bereits verwendet."
     },
     "options": {
-      "private": "Privat",
+      "private": "Privatnutzer",
       "donor": "Spender",
       "retailer": "Einzelhändler",
-      "premium": "Premium"
+      "premium": "Premium",
+      "whatsapp": "WhatsApp",
+      "telegram": "Telegram"
     },
     "fields": {
       "firstName": "Vorname",
       "lastName": "Nachname",
       "email": "E-Mail",
-      "whatsapp": "WhatsApp",
-      "registrationType": "Registrierungstyp"
-    },
-    "submitButton": "Registrieren",
-    "successTitle": "Registrierung erfolgreich!",
-    "successDescription": "Ihre Registrierung wurde erfolgreich übermittelt.",
-    "errorTitle": "Fehler",
-    "submitError": "Beim Senden Ihrer Registrierung ist ein Fehler aufgetreten."
+      "whatsapp": "Kontaktnummer",
+      "contactType": "Kontaktart",
+      "registrationType": "Registrierungstyp",
+      "password": "Passwort",
+      "confirmPassword": "Passwort bestätigen",
+      "passwordHint": "Ihr Passwort ist sicher.",
+      "businessName": "Firmenname",
+      "category": "Kategorie",
+      "description": "Beschreibung",
+      "location": "Standort",
+      "address": "Adresse",
+      "phone": "Telefon",
+      "website": "Webseite",
+      "logoUrl": "Logo URL",
+      "logoUrlPlaceholder": "https://example.com/logo.png",
+      "imageHint": "Bild-Hinweis (für KI)",
+      "rating": "Bewertung (0-5)",
+      "coords": "Koordinaten (Lat, Lon)",
+      "coordsHelp": "Wird durch Geocodierung der Adresse oder Ziehen des Markers auf der Karte festgelegt.",
+      "currentOfferUrl": "URL des aktuellen Angebots",
+      "mapUrl": "URL Karte"
+    }
   },
   "form": {
     "source": {

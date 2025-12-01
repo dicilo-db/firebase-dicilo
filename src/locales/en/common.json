@@ -24,6 +24,7 @@
     "locationType": "Location",
     "businessPlaceholder": "Business name or keyword...",
     "locationPlaceholder": "City, region, or country...",
+    "selectOption": "Select an option",
     "searchLabel": "Search",
     "useLocationLabel": "Current Location",
     "locationErrorTitle": "Location Error",

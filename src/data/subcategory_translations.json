@@ -1,0 +1,362 @@
+{
+    "Altersvorsorgeberatung": {
+        "de": "Altersvorsorgeberatung",
+        "en": "Retirement Planning",
+        "es": "Planificación de jubilación"
+    },
+    "Arbeitsrechtliche Beratung": {
+        "de": "Arbeitsrechtliche Beratung",
+        "en": "Employment Law Consulting",
+        "es": "Asesoría laboral"
+    },
+    "Baufinanzierungsberatung": {
+        "de": "Baufinanzierungsberatung",
+        "en": "Construction Financing Consulting",
+        "es": "Asesoría en financiación de construcción"
+    },
+    "Bauprojektberatung": {
+        "de": "Bauprojektberatung",
+        "en": "Construction Project Consulting",
+        "es": "Asesoría en proyectos de construcción"
+    },
+    "Betriebliches Gesundheitsmanagement": {
+        "de": "Betriebliches Gesundheitsmanagement",
+        "en": "Corporate Health Management",
+        "es": "Gestión de salud corporativa"
+    },
+    "Betriebshaftpflichtversicherung": {
+        "de": "Betriebshaftpflichtversicherung",
+        "en": "Public Liability Insurance",
+        "es": "Seguro de responsabilidad civil"
+    },
+    "Betriebsunterbrechungsversicherung": {
+        "de": "Betriebsunterbrechungsversicherung",
+        "en": "Business Interruption Insurance",
+        "es": "Seguro de interrupción de negocios"
+    },
+    "Buchhaltungsberatung": {
+        "de": "Buchhaltungsberatung",
+        "en": "Accounting Consulting",
+        "es": "Asesoría contable"
+    },
+    "Change Management": {
+        "de": "Change Management",
+        "en": "Change Management",
+        "es": "Gestión del cambio"
+    },
+    "Cloud-Beratung": {
+        "de": "Cloud-Beratung",
+        "en": "Cloud Consulting",
+        "es": "Consultoría en la nube"
+    },
+    "Coaching-Dienstleistungen": {
+        "de": "Coaching-Dienstleistungen",
+        "en": "Coaching Services",
+        "es": "Servicios de coaching"
+    },
+    "Compliance-Beratung": {
+        "de": "Compliance-Beratung",
+        "en": "Compliance Consulting",
+        "es": "Consultoría de cumplimiento"
+    },
+    "Customer Service-Beratung": {
+        "de": "Customer Service-Beratung",
+        "en": "Customer Service Consulting",
+        "es": "Consultoría de servicio al cliente"
+    },
+    "Datenschutz-Schulungen": {
+        "de": "Datenschutz-Schulungen",
+        "en": "Data Protection Training",
+        "es": "Formación en protección de datos"
+    },
+    "Datenschutzberatung": {
+        "de": "Datenschutzberatung",
+        "en": "Data Protection Consulting",
+        "es": "Consultoría de protección de datos"
+    },
+    "Digitalisierung in der Industrie": {
+        "de": "Digitalisierung in der Industrie",
+        "en": "Industrial Digitalization",
+        "es": "Digitalización industrial"
+    },
+    "Digitale Transformation": {
+        "de": "Digitale Transformation",
+        "en": "Digital Transformation",
+        "es": "Transformación digital"
+    },
+    "E-Commerce-Beratung": {
+        "de": "E-Commerce-Beratung",
+        "en": "E-Commerce Consulting",
+        "es": "Consultoría de comercio electrónico"
+    },
+    "Energieberatung": {
+        "de": "Energieberatung",
+        "en": "Energy Consulting",
+        "es": "Consultoría energética"
+    },
+    "Finanzberatung": {
+        "de": "Finanzberatung",
+        "en": "Financial Consulting",
+        "es": "Asesoría financiera"
+    },
+    "Flottenversicherungsberatung": {
+        "de": "Flottenversicherungsberatung",
+        "en": "Fleet Insurance Consulting",
+        "es": "Asesoría en seguros de flotas"
+    },
+    "Fusions- und Übernahmeberatung": {
+        "de": "Fusions- und Übernahmeberatung",
+        "en": "M&A Consulting",
+        "es": "Consultoría de fusiones y adquisiciones"
+    },
+    "Geschäftsberatung": {
+        "de": "Geschäftsberatung",
+        "en": "Business Consulting",
+        "es": "Consultoría de negocios"
+    },
+    "Haftpflichtversicherungsberatung": {
+        "de": "Haftpflichtversicherungsberatung",
+        "en": "Liability Insurance Consulting",
+        "es": "Asesoría en seguros de responsabilidad"
+    },
+    "Imageberatung": {
+        "de": "Imageberatung",
+        "en": "Image Consulting",
+        "es": "Asesoría de imagen"
+    },
+    "Innovationsberatung": {
+        "de": "Innovationsberatung",
+        "en": "Innovation Consulting",
+        "es": "Consultoría de innovación"
+    },
+    "IT-Beratung": {
+        "de": "IT-Beratung",
+        "en": "IT Consulting",
+        "es": "Consultoría TI"
+    },
+    "IT-Sicherheitsberatung": {
+        "de": "IT-Sicherheitsberatung",
+        "en": "IT Security Consulting",
+        "es": "Consultoría de seguridad TI"
+    },
+    "Kapitalanlageberatung": {
+        "de": "Kapitalanlageberatung",
+        "en": "Investment Consulting",
+        "es": "Asesoría de inversiones"
+    },
+    "Kommunikationsberatung": {
+        "de": "Kommunikationsberatung",
+        "en": "Communications Consulting",
+        "es": "Consultoría de comunicación"
+    },
+    "Kostenoptimierung": {
+        "de": "Kostenoptimierung",
+        "en": "Cost Optimization",
+        "es": "Optimización de costes"
+    },
+    "Krisenmanagement-Beratung": {
+        "de": "Krisenmanagement-Beratung",
+        "en": "Crisis Management Consulting",
+        "es": "Consultoría de gestión de crisis"
+    },
+    "Kulturwandel-Beratung": {
+        "de": "Kulturwandel-Beratung",
+        "en": "Cultural Change Consulting",
+        "es": "Consultoría de cambio cultural"
+    },
+    "Krankenversicherungsberatung": {
+        "de": "Krankenversicherungsberatung",
+        "en": "Health Insurance Consulting",
+        "es": "Asesoría de seguros de salud"
+    },
+    "Leitbildentwicklung": {
+        "de": "Leitbildentwicklung",
+        "en": "Mission Statement Development",
+        "es": "Desarrollo de misión corporativa"
+    },
+    "Lebensversicherungsberatung": {
+        "de": "Lebensversicherungsberatung",
+        "en": "Life Insurance Consulting",
+        "es": "Asesoría de seguros de vida"
+    },
+    "Logistikberatung": {
+        "de": "Logistikberatung",
+        "en": "Logistics Consulting",
+        "es": "Consultoría logística"
+    },
+    "Marketingberatung": {
+        "de": "Marketingberatung",
+        "en": "Marketing Consulting",
+        "es": "Consultoría de marketing"
+    },
+    "Nachhaltige Energieprojekte": {
+        "de": "Nachhaltige Energieprojekte",
+        "en": "Sustainable Energy Projects",
+        "es": "Proyectos de energía sostenible"
+    },
+    "Nachhaltigkeitsberatung": {
+        "de": "Nachhaltigkeitsberatung",
+        "en": "Sustainability Consulting",
+        "es": "Consultoría de sostenibilidad"
+    },
+    "Organisationsberatung": {
+        "de": "Organisationsberatung",
+        "en": "Organizational Consulting",
+        "es": "Consultoría organizacional"
+    },
+    "Pflegeversicherungsberatung": {
+        "de": "Pflegeversicherungsberatung",
+        "en": "Care Insurance Consulting",
+        "es": "Asesoría de seguros de cuidado"
+    },
+    "Private Krankenversicherung": {
+        "de": "Private Krankenversicherung",
+        "en": "Private Health Insurance",
+        "es": "Seguro médico privado"
+    },
+    "Produktentwicklung": {
+        "de": "Produktentwicklung",
+        "en": "Product Development",
+        "es": "Desarrollo de productos"
+    },
+    "Produktionsoptimierung": {
+        "de": "Produktionsoptimierung",
+        "en": "Production Optimization",
+        "es": "Optimización de producción"
+    },
+    "Produktionsplanung": {
+        "de": "Produktionsplanung",
+        "en": "Production Planning",
+        "es": "Planificación de producción"
+    },
+    "Prozessoptimierung": {
+        "de": "Prozessoptimierung",
+        "en": "Process Optimization",
+        "es": "Optimización de procesos"
+    },
+    "Projektmanagement-Beratung": {
+        "de": "Projektmanagement-Beratung",
+        "en": "Project Management Consulting",
+        "es": "Consultoría de gestión de proyectos"
+    },
+    "Rechtsschutzversicherungsberatung": {
+        "de": "Rechtsschutzversicherungsberatung",
+        "en": "Legal Protection Insurance Consulting",
+        "es": "Asesoría de seguros de protección legal"
+    },
+    "Reiseversicherungsberatung": {
+        "de": "Reiseversicherungsberatung",
+        "en": "Travel Insurance Consulting",
+        "es": "Asesoría de seguros de viaje"
+    },
+    "Rentenversicherungsberatung": {
+        "de": "Rentenversicherungsberatung",
+        "en": "Pension Insurance Consulting",
+        "es": "Asesoría de seguros de pensiones"
+    },
+    "Risikomanagement-Beratung": {
+        "de": "Risikomanagement-Beratung",
+        "en": "Risk Management Consulting",
+        "es": "Consultoría de gestión de riesgos"
+    },
+    "Schuldenberatung": {
+        "de": "Schuldenberatung",
+        "en": "Debt Counseling",
+        "es": "Asesoría de deudas"
+    },
+    "Steuerberatung": {
+        "de": "Steuerberatung",
+        "en": "Tax Consulting",
+        "es": "Asesoría fiscal"
+    },
+    "Steuerplanung": {
+        "de": "Steuerplanung",
+        "en": "Tax Planning",
+        "es": "Planificación fiscal"
+    },
+    "Strategieberatung": {
+        "de": "Strategieberatung",
+        "en": "Strategy Consulting",
+        "es": "Consultoría estratégica"
+    },
+    "Strategische Marktanalyse": {
+        "de": "Strategische Marktanalyse",
+        "en": "Strategic Market Analysis",
+        "es": "Análisis estratégico de mercado"
+    },
+    "Supply-Chain-Beratung": {
+        "de": "Supply-Chain-Beratung",
+        "en": "Supply Chain Consulting",
+        "es": "Consultoría de cadena de suministro"
+    },
+    "Technologie-Investitionen": {
+        "de": "Technologie-Investitionen",
+        "en": "Technology Investments",
+        "es": "Inversiones tecnológicas"
+    },
+    "Technologieberatung": {
+        "de": "Technologieberatung",
+        "en": "Technology Consulting",
+        "es": "Consultoría tecnológica"
+    },
+    "Todesfallversicherungsberatung": {
+        "de": "Todesfallversicherungsberatung",
+        "en": "Death Benefit Insurance Consulting",
+        "es": "Asesoría de seguros por fallecimiento"
+    },
+    "Umweltberatung": {
+        "de": "Umweltberatung",
+        "en": "Environmental Consulting",
+        "es": "Consultoría ambiental"
+    },
+    "Unternehmensberatung": {
+        "de": "Unternehmensberatung",
+        "en": "Management Consulting",
+        "es": "Consultoría de gestión"
+    },
+    "Unfallversicherungsberatung": {
+        "de": "Unfallversicherungsberatung",
+        "en": "Accident Insurance Consulting",
+        "es": "Asesoría de seguros de accidentes"
+    },
+    "Verhandlungsberatung": {
+        "de": "Verhandlungsberatung",
+        "en": "Negotiation Consulting",
+        "es": "Consultoría de negociación"
+    },
+    "Venture-Capital-Beratung": {
+        "de": "Venture-Capital-Beratung",
+        "en": "Venture Capital Consulting",
+        "es": "Consultoría de capital riesgo"
+    },
+    "Versicherungsberatung": {
+        "de": "Versicherungsberatung",
+        "en": "Insurance Consulting",
+        "es": "Asesoría de seguros"
+    },
+    "Vertriebsberatung": {
+        "de": "Vertriebsberatung",
+        "en": "Sales Consulting",
+        "es": "Consultoría de ventas"
+    },
+    "Vermögensschadenhaftpflichtversicherung": {
+        "de": "Vermögensschadenhaftpflichtversicherung",
+        "en": "Pecuniary Damage Liability Insurance",
+        "es": "Seguro de responsabilidad patrimonial"
+    },
+    "Versorgungskonzept-Beratung": {
+        "de": "Versorgungskonzept-Beratung",
+        "en": "Pension Concept Consulting",
+        "es": "Consultoría de conceptos de previsión"
+    },
+    "Zusatzversicherungsberatung": {
+        "de": "Zusatzversicherungsberatung",
+        "en": "Supplementary Insurance Consulting",
+        "es": "Asesoría de seguros complementarios"
+    },
+    "Zuschussberatung": {
+        "de": "Zuschussberatung",
+        "en": "Grant Consulting",
+        "es": "Asesoría de subvenciones"
+    }
+}

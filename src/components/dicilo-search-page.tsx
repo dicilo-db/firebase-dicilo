@@ -465,7 +465,11 @@ export default function DiciloSearchPage({
               ))
             ) : (
               <div className="w-full py-10 text-center text-muted-foreground md:col-span-2">
-                <p>{t('search.noResults', { query: searchQuery })}</p>
+                <p>
+                  {searchQuery
+                    ? t('search.noResults', { query: searchQuery })
+                    : t('search.noResultsGeneric')}
+                </p>
                 {searchQuery && (
                   <Button variant="link" onClick={handleOpenRecommendation}>
                     {t('search.recommendBusiness')}

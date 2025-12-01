@@ -1,4 +1,3 @@
-
 {
   "register": {
     "marketing": {
@@ -24,11 +23,13 @@
       "hesitate": "Don't hesitate any longer!"
     },
     "form": {
-      "title": "Register your company & Win!",
-      "description": "Recommend a friendly company to DICILO and secure benefits.",
+      "title": "Recommend a company to dicilo.net and win prizes",
+      "description": "Register your company or recommend your preferred company and win prizes! Recommend a friendly company and secure prizes ranging from discount coupons to cash prizes.",
       "recommenderSection": "Your Contact",
-      "recommenderName": "Your First & Last Name*",
+      "recommenderName": "Your Name*",
       "recommenderContact": "Your Email / Phone*",
+      "password": "Password*",
+      "passwordHint": "At least 6 characters",
       "companySection": "Contact details of the recommended company",
       "companyName": "Company Name*",
       "companyContact": "Contact Person (optional)",
@@ -52,20 +53,29 @@
       "consent_required": "You must agree to the liability clause.",
       "captcha_invalid": "The answer is incorrect. Please try again.",
       "invalidEmail": "Invalid email format.",
-      "requiredType": "Please select a registration type."
+      "passwordMinLength": "Password must be at least 6 characters long.",
+      "requiredType": "Please select a registration type.",
+      "passwordMismatch": "Passwords do not match.",
+      "emailAlreadyInUse": "This email address is already in use."
     },
     "options": {
-      "private": "Private",
+      "private": "Private User",
       "donor": "Donor",
       "retailer": "Retailer",
-      "premium": "Premium"
+      "premium": "Premium",
+      "whatsapp": "WhatsApp",
+      "telegram": "Telegram"
     },
     "fields": {
       "firstName": "First Name",
       "lastName": "Last Name",
       "email": "Email",
-      "whatsapp": "WhatsApp",
-      "registrationType": "Registration Type"
+      "whatsapp": "Contact Number",
+      "contactType": "Contact Type",
+      "registrationType": "Registration Type",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "passwordHint": "Your password is secure."
     },
     "submitButton": "Register",
     "successTitle": "Registration Successful!",

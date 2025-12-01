@@ -1,292 +1,341 @@
-// functions/src/index.ts
 /**
- * @fileoverview Cloud Functions for Firebase.
- * This file contains the backend logic for setting custom claims on users.
+ * @fileoverview Cloud Functions for Firebase (Gen 2).
+ * Migrated to Gen 2 to support Node 20 and explicit CPU/Memory configuration.
  */
-import * as functions from 'firebase-functions';
-import { initializeApp } from 'firebase-admin/app';
+import { onDocumentWritten, onDocumentCreated } from 'firebase-functions/v2/firestore';
+import { onCall, onRequest, HttpsError } from 'firebase-functions/v2/https';
+import { setGlobalOptions } from 'firebase-functions/v2';
+import * as logger from 'firebase-functions/logger';
+import { initializeApp, getApps } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
 import { getFirestore, FieldValue } from 'firebase-admin/firestore';
 import axios from 'axios';
-import { onDocumentCreated } from 'firebase-functions/v2/firestore';
-import { onCall, HttpsError } from 'firebase-functions/v2/https';
-import * as logger from 'firebase-functions/logger';
+import * as _ from 'lodash';
 import { Lang, getEmailI18n, render } from './i18n';
 import { sendMail } from './email';
-import _ from 'lodash';
-import * as businessesToSeed from './seed-data.json';
 
-// Initialize Firebase Admin SDK
-initializeApp();
-const db = getFirestore();
+// Set global options for all functions (Gen 2 specific)
+setGlobalOptions({ region: 'europe-west1', memory: '512MiB' });
 
-/**
- * Sets custom claims on a user to grant admin privileges. This function is triggered
- * automatically when a document in the 'admins' collection is created or updated.
- * This is a v1 function for robustness and reliability.
- */
-export const onAdminWrite = functions
-  .region('europe-west1')
-  .firestore.document('admins/{uid}')
-  .onWrite(async (change, context) => {
-    const uid = context.params.uid;
-    const afterData = change.after.data();
+// Initialize Firebase Admin SDK lazily
+let dbInstance: FirebaseFirestore.Firestore | null = null;
 
-    const roleAfter = afterData?.role;
-
-    // If the document is deleted or the role is removed, revoke admin claims.
-    if (
-      !change.after.exists ||
-      (roleAfter !== 'admin' && roleAfter !== 'superadmin')
-    ) {
-      logger.info(
-        `Admin role removed for user ${uid}. Revoking admin custom claim.`
-      );
-      try {
-        // Check current claims before setting new ones to prevent unnecessary updates
-        const user = await getAuth().getUser(uid);
-        if (user.customClaims?.admin === true || user.customClaims?.role) {
-          await getAuth().setCustomUserClaims(uid, { admin: null, role: null });
-          await getAuth().revokeRefreshTokens(uid); // Force re-login to apply new claims
-          logger.info(
-            `Successfully revoked admin claim and refresh tokens for ${uid}.`
-          );
-        } else {
-          logger.info(
-            `User ${uid} had no admin claims to revoke. No action taken.`
-          );
-        }
-      } catch (error) {
-        logger.error(`Error revoking admin claim for ${uid}:`, error);
-      }
-      return null;
+const getDb = () => {
+  if (!dbInstance) {
+    if (getApps().length === 0) {
+      initializeApp();
     }
+    dbInstance = getFirestore();
+  }
+  return dbInstance;
+};
 
-    // If a role of 'admin' or 'superadmin' is set, grant the claims.
-    if (roleAfter === 'admin' || roleAfter === 'superadmin') {
-      logger.info(
-        `Role document for user ${uid} written with role: ${roleAfter}. Setting/Verifying custom claims.`
-      );
-      try {
-        const user = await getAuth().getUser(uid);
-        // Force update claims even if they appear to be the same, to fix inconsistencies.
-        await getAuth().setCustomUserClaims(uid, {
-          admin: true,
-          role: roleAfter,
-        });
-        await getAuth().revokeRefreshTokens(uid); // Force re-login to apply new claims
+// --- Admin Role Management (v2) ---
+
+export const onAdminWrite = onDocumentWritten('admins/{uid}', async (event) => {
+  const uid = event.params.uid;
+  // In v2, event.data is a Change object with before/after
+  const change = event.data;
+
+  if (!change) {
+    return; // Should not happen for onWrite
+  }
+
+  const afterData = change.after.data();
+  const roleAfter = afterData?.role;
+
+  // If the document is deleted or the role is removed, revoke admin claims.
+  if (
+    !change.after.exists ||
+    (roleAfter !== 'admin' && roleAfter !== 'superadmin')
+  ) {
+    logger.info(
+      `Admin role removed for user ${uid}. Revoking admin custom claim.`
+    );
+    try {
+      if (getApps().length === 0) initializeApp();
+      const user = await getAuth().getUser(uid);
+      if (user.customClaims?.admin === true || user.customClaims?.role) {
+        await getAuth().setCustomUserClaims(uid, { admin: null, role: null });
+        await getAuth().revokeRefreshTokens(uid);
         logger.info(
-          `Successfully SET/FORCED custom claims for ${uid} with role ${roleAfter} and revoked refresh tokens.`
+          `Successfully revoked admin claim and refresh tokens for ${uid}.`
         );
-      } catch (error) {
-        logger.error(`Error setting custom claims for ${uid}:`, error);
       }
+    } catch (error) {
+      logger.error(`Error revoking admin claim for ${uid}:`, error);
     }
-    return null;
-  });
+    return;
+  }
 
-export const sendRegistrationToErp = onDocumentCreated(
-  { document: 'registrations/{registrationId}', region: 'europe-west1' },
-  async (event) => {
-    const snapshot = event.data;
-    if (!snapshot) {
-      logger.warn('No data found in event. Ending function.');
-      return;
+  // If a role of 'admin' or 'superadmin' is set, grant the claims.
+  if (roleAfter === 'admin' || roleAfter === 'superadmin') {
+    logger.info(
+      `Role document for user ${uid} written with role: ${roleAfter}. Setting/Verifying custom claims.`
+    );
+    try {
+      if (getApps().length === 0) initializeApp();
+      await getAuth().setCustomUserClaims(uid, {
+        admin: true,
+        role: roleAfter,
+      });
+      await getAuth().revokeRefreshTokens(uid);
+      logger.info(
+        `Successfully SET/FORCED custom claims for ${uid} with role ${roleAfter} and revoked refresh tokens.`
+      );
+    } catch (error) {
+      logger.error(`Error setting custom claims for ${uid}:`, error);
+    }
+  }
+});
+
+// --- Registration Handlers (v2) ---
+
+export const sendRegistrationToErp = onDocumentCreated('registrations/{registrationId}', async (event) => {
+  const snapshot = event.data;
+  if (!snapshot) return;
+
+  const newData = snapshot.data();
+  const registrationId = event.params.registrationId;
+
+  const ERP_RECEIVER_URL = process.env.ERP_RECEIVER_URL;
+  const SECRET_API_KEY = process.env.ERP_API_KEY;
+
+  if (!ERP_RECEIVER_URL || !SECRET_API_KEY) {
+    logger.error('Config Error! ERP URL or secret key not defined.');
+    return;
+  }
+
+  logger.info(
+    `New registration detected: ${registrationId}. Sending to ERP...`
+  );
+
+  const payload = {
+    ...newData,
+    id: registrationId,
+    planId: `plan_${newData.registrationType}`,
+  };
+
+  try {
+    await axios.post(ERP_RECEIVER_URL, payload, {
+      headers: { 'x-api-key': SECRET_API_KEY },
+    });
+    logger.info(`Registration ${registrationId} sent to ERP successfully.`);
+  } catch (error: any) {
+    logger.error(
+      `Failed to send registration ${registrationId} to ERP:`,
+      error.message
+    );
+  }
+});
+
+export const notifyAdminOnRegistration = onDocumentCreated('registrations/{registrationId}', async (event) => {
+  const snapshot = event.data;
+  if (!snapshot) return;
+
+  const data = snapshot.data();
+  const registrationId = event.params.registrationId;
+
+  const adminEmail = 'support@dicilo.net';
+  const subject = `New Registration: ${data.firstName} ${data.lastName}`;
+
+  const html = `
+    <h1>New Registration on Dicilo</h1>
+    <p><strong>Name:</strong> ${data.firstName} ${data.lastName}</p>
+    <p><strong>Email:</strong> ${data.email}</p>
+    <p><strong>WhatsApp:</strong> ${data.whatsapp || 'N/A'}</p>
+    <p><strong>Type:</strong> ${data.registrationType}</p>
+    <p><strong>ID:</strong> ${registrationId}</p>
+    
+    ${data.businessName
+      ? `
+      <hr/>
+      <h2>Business Details</h2>
+      <p><strong>Business Name:</strong> ${data.businessName}</p>
+      <p><strong>Category:</strong> ${data.category || 'N/A'}</p>
+      <p><strong>Location:</strong> ${data.location || 'N/A'}</p>
+      <p><strong>Address:</strong> ${data.address || 'N/A'}</p>
+      <p><strong>Phone:</strong> ${data.phone || 'N/A'}</p>
+      <p><strong>Website:</strong> ${data.website || 'N/A'}</p>
+      <p><strong>Description:</strong><br/>${data.description || 'N/A'}</p>
+    `
+      : ''
+    }
+    
+    <br/>
+    <p>This is an automated message from Dicilo Firebase Functions.</p>
+  `;
+
+  try {
+    await sendMail({
+      to: adminEmail,
+      subject: subject,
+      html: html,
+    });
+    logger.info(`Admin notification sent for registration ${registrationId}`);
+  } catch (error) {
+    logger.error(
+      `Failed to send admin notification for ${registrationId}:`,
+      error
+    );
+  }
+});
+
+// --- Sync & Tools (v2) ---
+
+export const syncExistingCustomersToErp = onCall(async (request) => {
+  if (!request.auth || request.auth.token.role !== 'superadmin') {
+    throw new HttpsError(
+      'permission-denied',
+      'Only superadmins can perform this action.'
+    );
+  }
+
+  const ERP_RECEIVER_URL = process.env.ERP_RECEIVER_URL;
+  const SECRET_API_KEY = process.env.ERP_API_KEY;
+
+  if (!ERP_RECEIVER_URL || !SECRET_API_KEY) {
+    logger.error('Config Error! ERP URL or secret key not defined.');
+    throw new HttpsError('internal', 'Config error. Contact an admin.');
+  }
+
+  logger.info('--- Sync started ---');
+
+  try {
+    const db = getDb();
+    const registrationsSnapshot = await db.collection('registrations').get();
+    if (registrationsSnapshot.empty) {
+      return { success: true, newCount: 0, message: 'No customers to sync.' };
     }
 
-    const newData = snapshot.data();
-    const registrationId = event.params.registrationId;
+    let successCount = 0;
+    const promises = registrationsSnapshot.docs.map(async (doc) => {
+      const registrationData = doc.data();
+      const regId = doc.id;
+      const payload = {
+        id: regId,
+        ...registrationData,
+        planId: `plan_${registrationData.registrationType}`,
+      };
 
-    const ERP_RECEIVER_URL = process.env.ERP_RECEIVER_URL;
-    const SECRET_API_KEY = process.env.ERP_API_KEY;
+      try {
+        await axios.post(ERP_RECEIVER_URL!, payload, {
+          headers: { 'x-api-key': SECRET_API_KEY! },
+        });
+        successCount++;
+      } catch (error) {
+        logger.error(`Error syncing customer ${regId}:`, error);
+      }
+    });
 
-    if (!ERP_RECEIVER_URL || !SECRET_API_KEY) {
-      logger.error('Config Error! ERP URL or secret key not defined.');
-      return;
-    }
+    await Promise.all(promises);
 
     logger.info(
-      `New registration detected: ${registrationId}. Sending to ERP...`
+      `Success! Synced ${successCount} of ${registrationsSnapshot.size} customers.`
     );
-
-    const payload = {
-      ...newData,
-      id: registrationId,
-      planId: `plan_${newData.registrationType}`,
+    return {
+      success: true,
+      newCount: successCount,
+      message: `Synced ${successCount} customers.`,
     };
-
-    try {
-      await axios.post(ERP_RECEIVER_URL, payload, {
-        headers: { 'x-api-key': SECRET_API_KEY },
-      });
-      logger.info(`Registration ${registrationId} sent to ERP successfully.`);
-    } catch (error: any) {
-      logger.error(
-        `Failed to send registration ${registrationId} to ERP:`,
-        error.message
-      );
-    }
+  } catch (error: any) {
+    logger.error('--- ERROR DURING SYNC ---:', error);
+    throw new HttpsError('internal', `Unexpected error: ${error.message}`);
   }
-);
+});
 
-export const syncExistingCustomersToErp = onCall(
-  { region: 'europe-west1' },
-  async (request) => {
-    if (!request.auth || request.auth.token.role !== 'superadmin') {
-      throw new HttpsError(
-        'permission-denied',
-        'Only superadmins can perform this action.'
-      );
-    }
+// --- Recommendation Engine (v2) ---
 
-    const ERP_RECEIVER_URL = process.env.ERP_RECEIVER_URL;
-    const SECRET_API_KEY = process.env.ERP_API_KEY;
-
-    if (!ERP_RECEIVER_URL || !SECRET_API_KEY) {
-      logger.error('Config Error! ERP URL or secret key not defined.');
-      throw new HttpsError('internal', 'Config error. Contact an admin.');
-    }
-
-    logger.info('--- Sync started ---');
-
-    try {
-      const registrationsSnapshot = await db.collection('registrations').get();
-      if (registrationsSnapshot.empty) {
-        return { success: true, newCount: 0, message: 'No customers to sync.' };
-      }
-
-      let successCount = 0;
-      const promises = registrationsSnapshot.docs.map(async (doc) => {
-        const registrationData = doc.data();
-        const regId = doc.id;
-        const payload = {
-          id: regId,
-          ...registrationData,
-          planId: `plan_${registrationData.registrationType}`,
-        };
-
-        try {
-          await axios.post(ERP_RECEIVER_URL!, payload, {
-            headers: { 'x-api-key': SECRET_API_KEY! },
-          });
-          successCount++;
-        } catch (error) {
-          logger.error(`Error syncing customer ${regId}:`, error);
-        }
-      });
-
-      await Promise.all(promises);
-
-      logger.info(
-        `Success! Synced ${successCount} of ${registrationsSnapshot.size} customers.`
-      );
-      return {
-        success: true,
-        newCount: successCount,
-        message: `Synced ${successCount} customers.`,
-      };
-    } catch (error: any) {
-      logger.error('--- ERROR DURING SYNC ---:', error);
-      throw new HttpsError('internal', `Unexpected error: ${error.message}`);
-    }
+export const submitRecommendation = onCall(async (request) => {
+  const data = request.data;
+  const { recommenderName, recommenderEmail, recipients, clientId, lang } = data;
+  if (
+    !recommenderName ||
+    !recommenderEmail ||
+    !recipients?.length ||
+    !clientId ||
+    !lang
+  ) {
+    throw new HttpsError('invalid-argument', 'Missing required fields.');
   }
-);
 
-// --- Recommendation Engine ---
-export const submitRecommendation = onCall(
-  { region: 'europe-west1' },
-  async (req) => {
-    // Basic validation
-    const { recommenderName, recommenderEmail, recipients, clientId, lang } =
-      req.data;
-    if (
-      !recommenderName ||
-      !recommenderEmail ||
-      !recipients?.length ||
-      !clientId ||
-      !lang
-    ) {
-      throw new HttpsError('invalid-argument', 'Missing required fields.');
-    }
+  const db = getDb();
+  const batch = db.batch();
+  const recommendationId = db.collection('recommendations').doc().id;
 
-    const batch = db.batch();
-    const recommendationId = db.collection('recommendations').doc().id;
+  const recommendationRef = db.doc(`recommendations/${recommendationId}`);
+  batch.set(recommendationRef, {
+    recommenderName,
+    recommenderEmail,
+    clientId,
+    lang,
+    createdAt: FieldValue.serverTimestamp(),
+    status: 'pending',
+    recipientsCount: recipients.length,
+    acceptedCount: 0,
+  });
 
-    // 1. Create main recommendation document
-    const recommendationRef = db.doc(`recommendations/${recommendationId}`);
-    batch.set(recommendationRef, {
-      recommenderName,
-      recommenderEmail,
+  for (const recipient of recipients) {
+    const taskId = db.collection('recommendation_tasks').doc().id;
+    const taskRef = db.doc(`recommendation_tasks/${taskId}`);
+    batch.set(taskRef, {
+      recommendationId,
+      recipientName: recipient.name,
+      recipientContact: recipient.email || recipient.whatsapp,
+      contactType: recipient.email ? 'email' : 'whatsapp',
+      status: 'pending',
+      createdAt: FieldValue.serverTimestamp(),
       clientId,
       lang,
-      createdAt: FieldValue.serverTimestamp(),
-      status: 'pending',
-      recipientsCount: recipients.length,
-      acceptedCount: 0,
-    });
-
-    // 2. Create tasks for each recipient
-    for (const recipient of recipients) {
-      const taskId = db.collection('recommendation_tasks').doc().id;
-      const taskRef = db.doc(`recommendation_tasks/${taskId}`);
-      batch.set(taskRef, {
-        recommendationId,
-        recipientName: recipient.name,
-        recipientContact: recipient.email || recipient.whatsapp,
-        contactType: recipient.email ? 'email' : 'whatsapp',
-        status: 'pending', // pending, sent, accepted, declined
-        createdAt: FieldValue.serverTimestamp(),
-        clientId,
-        lang,
-        recommenderName,
-      });
-    }
-
-    await batch.commit();
-    return { success: true, recommendationId };
-  }
-);
-
-export const taskWorker = onDocumentCreated(
-  { document: 'recommendation_tasks/{taskId}', region: 'europe-west1' },
-  async (event) => {
-    const task = event.data?.data();
-    if (!task) return logger.info('No data in task, exiting.');
-
-    const {
-      recipientName,
-      recipientContact,
-      lang,
       recommenderName,
-      contactType,
-    } = task;
-    const i18n = await getEmailI18n(lang as Lang);
-    const acceptUrl = `https://europe-west1-${process.env.GCLOUD_PROJECT}.cloudfunctions.net/consentAccept?taskId=${event.params.taskId}`;
-    const declineUrl = `https://europe-west1-${process.env.GCLOUD_PROJECT}.cloudfunctions.net/consentDecline?taskId=${event.params.taskId}`;
-
-    if (contactType === 'email') {
-      const html = render(i18n['consent.body'], {
-        recipientName,
-        name: recommenderName,
-        cta_accept: `<a href="${acceptUrl}"><b>${i18n['consent.cta.accept']}</b></a>`,
-        cta_decline: `<a href="${declineUrl}"><b>${i18n['consent.cta.decline']}</b></a>`,
-      });
-      await sendMail({
-        to: recipientContact,
-        subject: render(i18n['consent.subject'], { name: recommenderName }),
-        html,
-      });
-    }
-    await event.data?.ref.update({
-      status: 'sent',
-      sentAt: FieldValue.serverTimestamp(),
     });
   }
-);
+
+  await batch.commit();
+  return { success: true, recommendationId };
+});
+
+export const taskWorker = onDocumentCreated('recommendation_tasks/{taskId}', async (event) => {
+  const snapshot = event.data;
+  if (!snapshot) return;
+
+  const task = snapshot.data();
+  if (!task) return logger.info('No data in task, exiting.');
+
+  const {
+    recipientName,
+    recipientContact,
+    lang,
+    recommenderName,
+    contactType,
+  } = task;
+  const db = getDb();
+  const i18n = await getEmailI18n(lang as Lang, db);
+  const acceptUrl = `https://europe-west1-${process.env.GCLOUD_PROJECT}.cloudfunctions.net/consentAccept?taskId=${event.params.taskId}`;
+  const declineUrl = `https://europe-west1-${process.env.GCLOUD_PROJECT}.cloudfunctions.net/consentDecline?taskId=${event.params.taskId}`;
+
+  if (contactType === 'email') {
+    const html = render(i18n['consent.body'], {
+      recipientName,
+      name: recommenderName,
+      cta_accept: `<a href="${acceptUrl}"><b>${i18n['consent.cta.accept']}</b></a>`,
+      cta_decline: `<a href="${declineUrl}"><b>${i18n['consent.cta.decline']}</b></a>`,
+    });
+    await sendMail({
+      to: recipientContact,
+      subject: render(i18n['consent.subject'], { name: recommenderName }),
+      html,
+    });
+  }
+  await snapshot.ref.update({
+    status: 'sent',
+    sentAt: FieldValue.serverTimestamp(),
+  });
+});
 
 const handleConsent = async (
-  req: functions.https.Request,
-  res: functions.Response,
+  req: any, // v2 Request type is compatible with Express req
+  res: any, // v2 Response type is compatible with Express res
   newStatus: 'accepted' | 'declined'
 ) => {
   const taskId = req.query.taskId as string;
@@ -294,6 +343,7 @@ const handleConsent = async (
     res.status(400).send('Missing taskId parameter.');
     return;
   }
+  const db = getDb();
   const taskRef = db.doc(`recommendation_tasks/${taskId}`);
   const taskSnap = await taskRef.get();
   if (!taskSnap.exists) {
@@ -318,145 +368,260 @@ const handleConsent = async (
     .send(`Thank you! Your choice has been registered as: ${newStatus}`);
 };
 
-export const consentAccept = functions
-  .region('europe-west1')
-  .https.onRequest((req, res) => handleConsent(req, res, 'accepted'));
-export const consentDecline = functions
-  .region('europe-west1')
-  .https.onRequest((req, res) => handleConsent(req, res, 'declined'));
+export const consentAccept = onRequest((req, res) => handleConsent(req, res, 'accepted'));
 
-const doSeedDatabase = async () => {
-  const batch = db.batch();
+export const consentDecline = onRequest((req, res) => handleConsent(req, res, 'declined'));
 
-  // The direct import `* as businessesToSeed` creates a module object.
-  // We need to get the actual array, which is usually the 'default' export or just the values.
-  const businesses = Object.values(businessesToSeed).flat();
+// --- Business Tools (v2) ---
 
-  if (!Array.isArray(businesses) || businesses.length === 0) {
-    logger.error('Seed data is not an array or is empty after processing.', {
-      importedData: businessesToSeed,
-    });
-    throw new Error(
-      'Formato de datos de origen no válido o vacío. Se esperaba un array de objetos.'
+export const promoteToClient = onCall(async (request) => {
+  if (
+    !request.auth ||
+    (request.auth.token.role !== 'admin' &&
+      request.auth.token.role !== 'superadmin')
+  ) {
+    throw new HttpsError(
+      'permission-denied',
+      'Only admins or superadmins can perform this action.'
     );
   }
 
-  logger.info(`Found ${businesses.length} businesses to seed.`);
+  const data = request.data;
+  const { businessId, clientType } = data;
+  if (
+    !businessId ||
+    !clientType ||
+    (clientType !== 'retailer' && clientType !== 'premium')
+  ) {
+    throw new HttpsError(
+      'invalid-argument',
+      'Must provide "businessId" and a valid "clientType".'
+    );
+  }
 
-  businesses.forEach((business: any) => {
-    // Basic validation to ensure it's a valid business object
-    if (business && typeof business === 'object' && business.name) {
-      const docRef = db.collection('businesses').doc(); // Auto-generate ID
-      batch.set(docRef, business);
-    } else {
-      logger.warn('Skipping invalid business object in seed data:', business);
+  try {
+    const db = getDb();
+    const businessRef = db.collection('businesses').doc(businessId);
+    const businessSnap = await businessRef.get();
+
+    if (!businessSnap.exists) {
+      throw new HttpsError(
+        'not-found',
+        'The specified business does not exist.'
+      );
     }
-  });
 
-  await batch.commit();
-  return {
-    success: true,
-    message: `${businesses.length} businesses from seed-data.json have been seeded.`,
-  };
+    const businessData = businessSnap.data()!;
+    const slugify = (text: string) =>
+      text
+        .toLowerCase()
+        .replace(/\s+/g, '-')
+        .replace(/[^\w-]+/g, '');
+
+    const clientData = {
+      clientName: businessData.name,
+      slug: slugify(businessData.name),
+      clientLogoUrl:
+        businessData.imageUrl || 'https://placehold.co/128x128.png',
+      clientTitle: `Willkommen bei ${businessData.name}`,
+      clientSubtitle: `Entdecken Sie ${businessData.name}`,
+      socialLinks: { instagram: '', facebook: '', linkedin: '' },
+      products: [],
+      strengths: [],
+      testimonials: [],
+      translations: {},
+      clientType: clientType,
+    };
+
+    const clientRef = await db.collection('clients').add(clientData);
+
+    return {
+      success: true,
+      message: `Business ${businessData.name} has been promoted to a ${clientType} client with ID ${clientRef.id}.`,
+      clientId: clientRef.id,
+    };
+  } catch (error: any) {
+    logger.error('Error promoting business:', error);
+    if (error instanceof HttpsError) {
+      throw error;
+    }
+    throw new HttpsError(
+      'internal',
+      error.message || 'Failed to promote business.'
+    );
+  }
+});
+
+// --- Seeding (v2) ---
+
+import seedData from './seed-data-extended.json';
+
+// Helper to geocode address
+const geocodeAddress = async (address: string): Promise<[number, number] | null> => {
+  if (!address || address === '???' || address.length < 5) return null;
+  try {
+    // Add delay to respect Nominatim rate limits (1 request per second)
+    await new Promise(resolve => setTimeout(resolve, 1100));
+
+    const response = await axios.get('https://nominatim.openstreetmap.org/search', {
+      params: {
+        q: address,
+        format: 'json',
+        limit: 1
+      },
+      headers: {
+        'User-Agent': 'DiciloApp/1.0'
+      }
+    });
+
+    if (response.data && response.data.length > 0) {
+      return [parseFloat(response.data[0].lat), parseFloat(response.data[0].lon)];
+    }
+    return null;
+  } catch (error) {
+    logger.error(`Geocoding error for ${address}:`, error);
+    return null;
+  }
 };
 
-export const seedDatabaseCallable = onCall(
-  { region: 'europe-west1' },
-  async (request) => {
-    if (!request.auth || request.auth.token.role !== 'superadmin') {
-      throw new HttpsError(
-        'permission-denied',
-        'Only superadmins can perform this action.'
-      );
-    }
+const slugify = (text: string) =>
+  text
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/[^\w\-]+/g, '')
+    .replace(/\-\-+/g, '-');
 
-    try {
-      return await doSeedDatabase();
-    } catch (error: any) {
-      logger.error('Error seeding database from callable function:', error);
-      throw new HttpsError(
-        'internal',
-        error.message || 'Failed to seed database.'
-      );
-    }
-  }
-);
+export const seedDatabase = onRequest({ timeoutSeconds: 540, memory: '512MiB' }, async (req, res) => {
+  const db = getDb();
+  const businessesCollection = db.collection('businesses');
+  let count = 0;
+  let updatedCount = 0;
+  let skippedCount = 0;
 
-export const promoteToClient = onCall(
-  { region: 'europe-west1' },
-  async (request) => {
-    if (
-      !request.auth ||
-      (request.auth.token.role !== 'admin' &&
-        request.auth.token.role !== 'superadmin')
-    ) {
-      throw new HttpsError(
-        'permission-denied',
-        'Only admins or superadmins can perform this action.'
-      );
-    }
+  try {
+    for (const business of seedData) {
+      const businessId = slugify(business.name);
+      if (!businessId) continue;
 
-    const { businessId, clientType } = request.data;
-    if (
-      !businessId ||
-      !clientType ||
-      (clientType !== 'retailer' && clientType !== 'premium')
-    ) {
-      throw new HttpsError(
-        'invalid-argument',
-        'Must provide "businessId" and a valid "clientType".'
-      );
-    }
+      const docRef = businessesCollection.doc(businessId);
+      const docSnap = await docRef.get();
 
-    try {
-      const businessRef = db.collection('businesses').doc(businessId);
-      const businessSnap = await businessRef.get();
-
-      if (!businessSnap.exists) {
-        throw new HttpsError(
-          'not-found',
-          'The specified business does not exist.'
-        );
+      // Skip if already exists and has coords
+      if (docSnap.exists) {
+        const data = docSnap.data();
+        if (data?.coords) {
+          skippedCount++;
+          continue;
+        }
       }
 
-      const businessData = businessSnap.data()!;
-      const slugify = (text: string) =>
-        text
-          .toLowerCase()
-          .replace(/\s+/g, '-')
-          .replace(/[^\w-]+/g, '');
-
-      const clientData = {
-        clientName: businessData.name,
-        slug: slugify(businessData.name),
-        clientLogoUrl:
-          businessData.imageUrl || 'https://placehold.co/128x128.png',
-        clientTitle: `Willkommen bei ${businessData.name}`,
-        clientSubtitle: `Entdecken Sie ${businessData.name}`,
-        socialLinks: { instagram: '', facebook: '', linkedin: '' },
-        products: [],
-        strengths: [],
-        testimonials: [],
-        translations: {},
-        clientType: clientType,
-      };
-
-      const clientRef = await db.collection('clients').add(clientData);
-
-      return {
-        success: true,
-        message: `Business ${businessData.name} has been promoted to a ${clientType} client with ID ${clientRef.id}.`,
-        clientId: clientRef.id,
-      };
-    } catch (error: any) {
-      logger.error('Error promoting business:', error);
-      if (error instanceof HttpsError) {
-        throw error;
+      let coords = null;
+      // Try to geocode if address exists and is valid
+      if (business.address && business.address !== '???') {
+        logger.info(`Geocoding ${business.name}...`);
+        coords = await geocodeAddress(business.address);
       }
-      throw new HttpsError(
-        'internal',
-        error.message || 'Failed to promote business.'
-      );
+
+      await docRef.set({
+        ...business,
+        coords: coords,
+        createdAt: docSnap.exists ? docSnap.data()?.createdAt : FieldValue.serverTimestamp(),
+        updatedAt: FieldValue.serverTimestamp(),
+        status: 'verified'
+      }, { merge: true });
+
+      if (docSnap.exists) updatedCount++;
+      else count++;
+
+      logger.info(`Processed ${business.name} (Coords: ${coords ? 'YES' : 'NO'})`);
     }
+
+    const message = `Seeding complete. Created: ${count}, Updated: ${updatedCount}, Skipped: ${skippedCount}`;
+    logger.info(message);
+    res.status(200).send(message);
+  } catch (error: any) {
+    logger.error('Error seeding database:', error);
+    res.status(500).send(`Error seeding database: ${error.message}`);
   }
-);
+});
+
+export const cleanupDuplicates = onRequest({ timeoutSeconds: 540, memory: '512MiB' }, async (req, res) => {
+  const db = getDb();
+  const businessesCollection = db.collection('businesses');
+
+  try {
+    const snapshot = await businessesCollection.get();
+    const businessesByName: { [key: string]: FirebaseFirestore.QueryDocumentSnapshot[] } = {};
+
+    // Group by name
+    snapshot.docs.forEach(doc => {
+      const data = doc.data();
+      const name = data.name;
+      if (name) {
+        if (!businessesByName[name]) {
+          businessesByName[name] = [];
+        }
+        businessesByName[name].push(doc);
+      }
+    });
+
+    let deletedCount = 0;
+    const batch = db.batch();
+    let batchCount = 0;
+
+    for (const name in businessesByName) {
+      const docs = businessesByName[name];
+      if (docs.length > 1) {
+        // Sort: prefer docs with coords, then by ID length (slugs are usually cleaner/shorter than auto-ids? No, auto-ids are 20 chars. Slugs vary.
+        // Better heuristic: Prefer the one where ID == slugify(name).
+        // Or simply: prefer the one with coords.
+
+        // Let's sort so the "best" one is first.
+        docs.sort((a, b) => {
+          const dataA = a.data();
+          const dataB = b.data();
+
+          // Prefer having coords
+          if (dataA.coords && !dataB.coords) return -1;
+          if (!dataA.coords && dataB.coords) return 1;
+
+          // Prefer ID that matches slugify(name)
+          const slug = slugify(name);
+          if (a.id === slug) return -1;
+          if (b.id === slug) return 1;
+
+          // Prefer newer
+          // @ts-ignore
+          return b.createTime.toMillis() - a.createTime.toMillis();
+        });
+
+        // Keep the first one, delete the rest
+        const toDelete = docs.slice(1);
+        for (const doc of toDelete) {
+          batch.delete(doc.ref);
+          deletedCount++;
+          batchCount++;
+
+          if (batchCount >= 400) {
+            await batch.commit();
+            batchCount = 0;
+          }
+        }
+      }
+    }
+
+    if (batchCount > 0) {
+      await batch.commit();
+    }
+
+    const message = `Cleanup complete. Deleted ${deletedCount} duplicate businesses.`;
+    logger.info(message);
+    res.status(200).send(message);
+
+  } catch (error: any) {
+    logger.error('Error cleaning up duplicates:', error);
+    res.status(500).send(`Error cleaning up duplicates: ${error.message}`);
+  }
+});

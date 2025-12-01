@@ -1,0 +1,97 @@
+{
+    "Beratung": {
+        "de": "Beratung",
+        "en": "Consulting",
+        "es": "Consultoría"
+    },
+    "Bildung": {
+        "de": "Bildung",
+        "en": "Education",
+        "es": "Educación"
+    },
+    "Finanzen": {
+        "de": "Finanzen",
+        "en": "Finance",
+        "es": "Finanzas"
+    },
+    "Gastronomie": {
+        "de": "Gastronomie",
+        "en": "Gastronomy",
+        "es": "Gastronomía"
+    },
+    "Gesundheit": {
+        "de": "Gesundheit",
+        "en": "Health",
+        "es": "Salud"
+    },
+    "Hotellerie": {
+        "de": "Hotellerie",
+        "en": "Hospitality",
+        "es": "Hostelería"
+    },
+    "Immobilien": {
+        "de": "Immobilien",
+        "en": "Real Estate",
+        "es": "Bienes raíces"
+    },
+    "Lebensmittel": {
+        "de": "Lebensmittel",
+        "en": "Food",
+        "es": "Alimentación"
+    },
+    "Lifestyle & persönliche Dienste": {
+        "de": "Lifestyle & persönliche Dienste",
+        "en": "Lifestyle & Personal Services",
+        "es": "Estilo & Servicios Personales"
+    },
+    "Musik": {
+        "de": "Musik",
+        "en": "Music",
+        "es": "Música"
+    },
+    "Soziales": {
+        "de": "Soziales",
+        "en": "Social Services",
+        "es": "Sociales"
+    },
+    "Sport": {
+        "de": "Sport",
+        "en": "Sports",
+        "es": "Deportes"
+    },
+    "Reise": {
+        "de": "Reise",
+        "en": "Travel",
+        "es": "Viajes"
+    },
+    "Technologie": {
+        "de": "Technologie",
+        "en": "Technology",
+        "es": "Tecnología"
+    },
+    "Textil": {
+        "de": "Textil",
+        "en": "Textile",
+        "es": "Textil"
+    },
+    "Tier": {
+        "de": "Tier",
+        "en": "Animals",
+        "es": "Animales"
+    },
+    "Transport": {
+        "de": "Transport",
+        "en": "Transportation",
+        "es": "Transporte"
+    },
+    "Umwelt": {
+        "de": "Umwelt",
+        "en": "Environment",
+        "es": "Medio ambiente"
+    },
+    "Unterhaltung": {
+        "de": "Unterhaltung",
+        "en": "Entertainment",
+        "es": "Entretenimiento"
+    }
+}

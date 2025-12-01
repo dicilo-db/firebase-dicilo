@@ -1,7 +1,8 @@
 {
   "title": "Branchenverzeichnis",
-  "description": "Entdecken Sie empfohlene Unternehmen aus verschiedenen Branchen.",
+  "description": "Unsere Branchenverzeichnis, ist in \"Beta version\" nach un nach werden wir alle unsere kategorie uns subkategorie verbienden und ihnen ein schnellere werkzeugt geben in der Sie ihre gesuchte Produkte oder Service finden können.",
   "content": "Der Inhalt des Verzeichnisses wird in Kürze verfügbar sein.",
+  "selectOption": "Wählen Sie eine Option",
   "categories": {
     "consulting": {
       "title": "Beratung",

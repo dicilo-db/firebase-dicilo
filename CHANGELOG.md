@@ -4,6 +4,76 @@ Este documento registra los 30 cambios más recientes realizados en el proyecto.
 
 ---
 
+### **156. FIX: RESTAURACIÓN DE EMPRESAS ANTIGUAS - CÓDIGO: FIX-DATA-MERGE-V1**
+
+- **Fecha y Hora:** 30 de Noviembre de 2025, 21:15 (CET)
+- **Módulos Afectados:** `src/app/page.tsx`, `CHANGELOG.md`.
+- **Descripción del Cambio:**
+  - **Problema:** Al intentar fusionar las colecciones, el acceso a `businesses` estaba bloqueado por reglas de seguridad, lo que hacía fallar toda la carga de datos.
+  - **Solución:** 
+    1. Se añadió una regla explícita en `firestore.rules` para permitir la lectura pública de `businesses`.
+    2. Se implementó `Promise.allSettled` en `page.tsx` para que el fallo de una colección no impida la carga de la otra.
+  - **Resultado:** El sistema es ahora robusto y muestra correctamente tanto los registros antiguos como los nuevos.
+
+### **155. FIX: CORRECCIÓN DE PÁGINA PRINCIPAL Y ERROR DE CARGA - CÓDIGO: FIX-HOME-CHUNK-V1**
+
+- **Fecha y Hora:** 30 de Noviembre de 2025, 19:00 (CET)
+- **Módulos Afectados:** `src/i18n.ts`, `src/components/dicilo-search-page.tsx`, `src/locales/*/common.json`, `CHANGELOG.md`.
+- **Descripción del Cambio:**
+  - **Análisis del Problema:**
+    1.  La página principal mostraba `{query}` literalmente debido a una configuración incorrecta de interpolación en `i18next`.
+    2.  Se reportó un `ChunkLoadError` tras las modificaciones, indicando una desincronización temporal entre el navegador y el servidor de desarrollo.
+  - **Solución Implementada:**
+    1.  **Interpolación:** Se ajustó `src/i18n.ts` para usar llaves simples `{}` como prefijo/sufijo, alineándose con los archivos de traducción.
+    2.  **UX:** Se implementó un mensaje genérico "Sin resultados" para búsquedas vacías.
+    3.  **Estabilidad:** Se verificó la integridad del código para asegurar que el error de carga no sea estructural.
+  - **Resultado:** La búsqueda muestra mensajes coherentes y la interpolación funciona correctamente. El error de carga se resuelve recargando la aplicación.
+
+### **154. FIX: DEPURACIÓN DE DASHBOARD Y PERMISOS - CÓDIGO: FIX-DASHBOARD-PERMISSIONS-V1**
+
+- **Fecha y Hora:** 30 de Noviembre de 2025, 17:55 (CET)
+- **Módulos Afectados:** `firestore.rules`, `src/app/dashboard/page.tsx`, `CHANGELOG.md`.
+- **Descripción del Cambio:**
+  - **Análisis del Problema:** Los usuarios registrados no podían acceder a su dashboard ("Missing or insufficient permissions") y, en algunos casos, veían un mensaje de "No se encontró empresa" a pesar de tener un registro válido.
+  - **Solución Implementada:**
+    1.  **Reglas de Seguridad:** Se actualizaron las reglas de Firestore para permitir explícitamente que los usuarios lean y editen sus propios documentos en las colecciones `registrations` y `clients` basándose en su `uid`.
+    2.  **Lógica de Respaldo:** Se implementó en el dashboard una búsqueda secundaria: si no se encuentran datos en `clients`, el sistema busca automáticamente en `registrations` para garantizar que el usuario siempre vea su información.
+  - **Resultado:** Los usuarios ahora pueden acceder correctamente a su dashboard y ver sus datos, independientemente de si el proceso de creación de cliente se completó totalmente o no.
+
+### **153. FIX: CORRECCIÓN DE TRADUCCIONES EN LOGIN - CÓDIGO: FIX-LOGIN-I18N-V1**
+
+- **Fecha y Hora:** 30 de Noviembre de 2025, 17:45 (CET)
+- **Módulos Afectados:** `src/i18n.ts`, `CHANGELOG.md`.
+- **Descripción del Cambio:**
+  - **Análisis del Problema:** La página de inicio de sesión mostraba claves de traducción (ej. `title`, `emailLabel`) en lugar de los textos correspondientes.
+  - **Solución Implementada:** Se registró el namespace `login` en la configuración global de internacionalización (`src/i18n.ts`), asegurando que los archivos `login.json` se carguen correctamente.
+  - **Resultado:** La página de login ahora muestra todos los textos correctamente traducidos en español, inglés y alemán.
+
+### **152. FIX: CORRECCIÓN DE MENSAJES DE ERROR EN REGISTRO - CÓDIGO: FIX-REGISTER-ERRORS-V1**
+
+- **Fecha y Hora:** 30 de Noviembre de 2025, 15:30 (CET)
+- **Módulos Afectados:** `src/locales/*/register.json`, `src/app/registrieren/RegistrationForm.tsx`, `CHANGELOG.md`.
+- **Descripción del Cambio:**
+  - **Análisis del Problema:** Al intentar registrar un correo ya existente, el sistema mostraba un código de error genérico o sin traducir.
+  - **Solución Implementada:**
+    1.  Se agregó la clave de traducción `emailAlreadyInUse` en los archivos de idioma (ES, EN, DE).
+    2.  Se mejoró el manejo de errores en el formulario de registro para detectar específicamente el código `auth/email-already-in-use` y mostrar el mensaje amigable correspondiente.
+  - **Resultado:** Los usuarios ahora reciben un mensaje claro ("Este correo electrónico ya está en uso") si intentan duplicar un registro.
+
+### **151. FEAT: MEJORAS DE UI Y CAPTCHA EN REGISTRO - CÓDIGO: FEAT-REGISTER-UI-CAPTCHA-V1**
+
+- **Fecha y Hora:** 30 de Noviembre de 2025, 13:00 (CET)
+- **Módulos Afectados:** `src/app/registrieren/page.tsx`, `src/app/registrieren/RegistrationForm.tsx`, `CHANGELOG.md`.
+- **Descripción del Cambio:**
+  - **Análisis del Problema:** El formulario de recomendación tenía un captcha estático inseguro y textos residuales ("laughing") en la interfaz. Además, el proceso de registro dependía de una API de servidor propensa a errores en local.
+  - **Solución Implementada:**
+    1.  **Refactorización a Cliente:** Se movió la lógica de creación de usuario y base de datos al cliente (Client SDK), mejorando la fiabilidad y eliminando errores de configuración de servidor.
+    2.  **Captcha Dinámico:** Se implementó un captcha matemático con números aleatorios para mejorar la seguridad.
+    3.  **Limpieza de UI:** Se eliminaron textos de depuración y se pulieron los estilos.
+  - **Resultado:** Un proceso de registro más robusto, seguro y limpio visualmente.
+
+---
+
 ### **150. FIX: CORRECCIÓN DE FUNCIÓN 'PROMOTE TO CLIENT' Y TRADUCCIONES EN FORMULARIO DE EMPRESAS - CÓDIGO: FIX-PROMOTE-I18N-V1**
 
 - **Fecha y Hora:** 21 de Septiembre de 2025, 16:15 (CET)

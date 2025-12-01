@@ -1,13 +1,15 @@
-import * as admin from 'firebase-admin';
+import { Firestore } from 'firebase-admin/firestore';
 
 export type Lang = 'es' | 'de' | 'en';
 
-export async function getEmailI18n(lang: Lang) {
+export async function getEmailI18n(lang: Lang, db?: Firestore) {
   try {
     // Opción A: Firestore (si subes docs i18n/email.es|de|en)
-    const doc = await admin.firestore().doc(`i18n/email.${lang}`).get();
-    if (doc.exists) return doc.data() as any;
-  } catch {}
+    if (db) {
+      const doc = await db.doc(`i18n/email.${lang}`).get();
+      if (doc.exists) return doc.data() as any;
+    }
+  } catch { }
   // Opción B: Fallback mínimo embebido (ajusta si quieres más claves)
   const fallback: Record<Lang, any> = {
     es: {

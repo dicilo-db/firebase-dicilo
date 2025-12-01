@@ -1,7 +1,8 @@
 {
   "title": "Directorio de Negocios",
-  "description": "Explora negocios recomendados en diversas industrias.",
+  "description": "Nuestro Directorio de Empresas está en \"versión Beta\". Poco a poco conectaremos todas nuestras categorías y subcategorías y le proporcionaremos una herramienta más rápida para encontrar los productos o servicios que busca.",
   "content": "El contenido del directorio estará disponible próximamente.",
+  "selectOption": "Seleccione una opción",
   "categories": {
     "consulting": {
       "title": "Asesoramiento",

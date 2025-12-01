@@ -1,4 +1,4 @@
-
+// Force reload of translations
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
@@ -37,6 +37,9 @@ import form_es from './locales/es/form.json';
 import legal_de from './locales/de/legal.json';
 import legal_en from './locales/en/legal.json';
 import legal_es from './locales/es/legal.json';
+import login_de from './locales/de/login.json';
+import login_en from './locales/en/login.json';
+import login_es from './locales/es/login.json';
 
 const resources = {
   de: {
@@ -51,6 +54,7 @@ const resources = {
     register: register_de,
     form: form_de,
     legal: legal_de,
+    login: login_de,
   },
   en: {
     common: common_en,
@@ -64,6 +68,7 @@ const resources = {
     register: register_en,
     form: form_en,
     legal: legal_en,
+    login: login_en,
   },
   es: {
     common: common_es,
@@ -77,6 +82,7 @@ const resources = {
     register: register_es,
     form: form_es,
     legal: legal_es,
+    login: login_es,
   },
 };
 
@@ -89,6 +95,8 @@ i18n
     debug: false, // Set to true to see logs in console
     interpolation: {
       escapeValue: false, // React already safes from xss
+      prefix: '{',
+      suffix: '}',
     },
     detection: {
       order: ['queryString', 'cookie', 'localStorage', 'navigator', 'htmlTag'],

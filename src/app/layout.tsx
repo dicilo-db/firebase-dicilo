@@ -5,7 +5,8 @@ import { Toaster } from '@/components/ui/toaster';
 import type { Metadata } from 'next';
 import { ptSans } from './fonts';
 import { cn } from '@/lib/utils';
-import { I18nProvider } from '@/context/i18n-provider'; // Import the new provider
+import { I18nProvider } from '@/context/i18n-provider';
+import { AuthProvider } from '@/context/AuthContext';
 
 export const metadata: Metadata = {
   title: 'Dicilo.net',
@@ -33,8 +34,10 @@ export default function RootLayout({ children }: RootLayoutProps) {
         )}
       >
         <I18nProvider>
-          <div className="flex-grow">{children}</div>
-          <Toaster />
+          <AuthProvider>
+            <div className="flex-grow">{children}</div>
+            <Toaster />
+          </AuthProvider>
         </I18nProvider>
       </body>
     </html>

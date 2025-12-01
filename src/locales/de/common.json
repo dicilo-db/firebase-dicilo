@@ -24,6 +24,7 @@
     "locationType": "Standort",
     "businessPlaceholder": "Name des Unternehmens oder Schlüsselwort...",
     "locationPlaceholder": "Stadt, Region oder Land...",
+    "selectOption": "Wählen Sie eine Option",
     "searchLabel": "Suchen",
     "useLocationLabel": "Aktuelle Position",
     "locationErrorTitle": "Standortfehler",
@@ -37,6 +38,7 @@
     "searchErrorTitle": "Suchfehler",
     "searchErrorDesc": "Ein Fehler ist bei der Suche aufgetreten.",
     "noResults": "Keine Ergebnisse für '{query}' gefunden.",
+    "noResultsGeneric": "Keine Ergebnisse gefunden.",
     "recommendBusiness": "Ein Geschäft empfehlen"
   },
   "businessCard": {

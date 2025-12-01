@@ -7,6 +7,7 @@ import {
   serverTimestamp,
 } from 'firebase/firestore';
 import { app } from '@/lib/firebase';
+import { adminAuth } from '@/lib/firebase-admin';
 
 const db = getFirestore(app);
 
@@ -15,12 +16,29 @@ const N8N_WEBHOOK_URL =
   process.env.N8N_WEBHOOK_URL ||
   'https://webhook.site/d2a33f4a-7360-4f95-9273-d5d1c2580a37'; // URL de prueba
 
+// Define the schema for validation (must match frontend)
 const registrationSchema = z.object({
-  firstName: z.string(),
-  lastName: z.string(),
+  firstName: z.string().min(1),
+  lastName: z.string().min(1),
   email: z.string().email(),
-  whatsapp: z.string(),
+  password: z.string().min(6).optional(),
+  whatsapp: z.string().optional(),
+  contactType: z.enum(['whatsapp', 'telegram']).optional(),
   registrationType: z.enum(['private', 'donor', 'retailer', 'premium']),
+  // Business Fields
+  businessName: z.string().optional(),
+  category: z.string().optional(),
+  description: z.string().optional(),
+  location: z.string().optional(),
+  address: z.string().optional(),
+  phone: z.string().optional(),
+  website: z.string().url().optional().or(z.literal('')),
+  imageUrl: z.string().url().optional().or(z.literal('')),
+  imageHint: z.string().optional(),
+  rating: z.coerce.number().min(0).max(5).optional(),
+  currentOfferUrl: z.string().url().optional().or(z.literal('')),
+  mapUrl: z.string().url().optional().or(z.literal('')),
+  coords: z.array(z.number()).length(2).optional(),
 });
 
 // Helper function to create a URL-friendly slug
@@ -40,33 +58,107 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
 
-    // 1. Validar los datos recibidos
-    const validatedData = registrationSchema.parse(body);
+    // Validate the request body
+    const result = registrationSchema.safeParse(body);
 
-    // 2. Guardar en Firestore
-    let registrationDocRef;
-    try {
-      registrationDocRef = await addDoc(collection(db, 'registrations'), {
-        ...validatedData,
-        createdAt: serverTimestamp(),
-      });
-    } catch (dbError) {
-      console.error('Firestore Error (registrations):', dbError);
+    if (!result.success) {
       return NextResponse.json(
-        { message: 'Error saving registration data.' },
-        { status: 500 }
+        { error: 'Invalid data', details: result.error.format() },
+        { status: 400 }
       );
     }
 
+    const {
+      firstName,
+      lastName,
+      email,
+      password,
+      whatsapp,
+      contactType,
+      registrationType,
+      businessName,
+      category,
+      description,
+      location,
+      address,
+      phone,
+      website,
+      imageUrl,
+      imageHint,
+      rating,
+      currentOfferUrl,
+      mapUrl,
+      coords,
+    } = result.data;
+
+    // 1. Create Authentication User (if password provided)
+    let ownerUid = null;
+    if (password) {
+      try {
+        const userRecord = await adminAuth.createUser({
+          email,
+          password,
+          displayName: `${firstName} ${lastName}`,
+        });
+        ownerUid = userRecord.uid;
+        console.log('Successfully created new user:', ownerUid);
+      } catch (authError: any) {
+        console.error('Error creating new user:', authError);
+        // If user already exists, we might want to fail or proceed without linking.
+        // For now, let's fail to inform the user they are already registered.
+        if (authError.code === 'auth/email-already-exists') {
+          return NextResponse.json(
+            { message: 'Email already registered. Please login.' },
+            { status: 409 }
+          );
+        }
+        // Other auth errors
+        console.error('Detailed Auth Error:', authError);
+        return NextResponse.json(
+          { message: `Error creating user account: ${authError.message}` },
+          { status: 500 }
+        );
+      }
+    }
+
+    // 2. Save to Firestore
+    const registrationData = {
+      firstName,
+      lastName,
+      email,
+      whatsapp: whatsapp || null,
+      contactType: contactType || 'whatsapp', // Default to whatsapp if not provided
+      registrationType,
+      ownerUid: ownerUid, // Link to Auth User
+      // Business Fields
+      businessName: businessName || null,
+      category: category || null,
+      description: description || null,
+      location: location || null,
+      address: address || null,
+      phone: phone || null,
+      website: website || null,
+      imageUrl: imageUrl || null,
+      imageHint: imageHint || null,
+      rating: rating || null,
+      currentOfferUrl: currentOfferUrl || null,
+      mapUrl: mapUrl || null,
+      coords: coords || null,
+      createdAt: serverTimestamp(),
+      status: 'pending', // Initial status
+    };
+
+    const registrationDocRef = await addDoc(collection(db, 'registrations'), registrationData);
+
     // 3. Crear automáticamente una landing page si es Minorista o Premium
     if (
-      validatedData.registrationType === 'retailer' ||
-      validatedData.registrationType === 'premium'
+      registrationType === 'retailer' ||
+      registrationType === 'premium'
     ) {
-      const clientName = `${validatedData.firstName} ${validatedData.lastName}`;
+      const clientName = businessName || `${firstName} ${lastName}`; // Use business name if available
       const defaultClientData = {
         clientName: clientName,
-        clientLogoUrl: '',
+        clientLogoUrl: imageUrl || '',
         clientTitle: `Bienvenido a ${clientName}`,
         clientSubtitle:
           'Esta es tu página de aterrizaje. ¡Edítala desde el panel de administración!',
@@ -76,6 +168,8 @@ export async function POST(request: Request) {
         strengths: [],
         testimonials: [],
         translations: {},
+        ownerUid: ownerUid, // Link to Auth User
+        registrationId: registrationDocRef.id,
       };
 
       try {
@@ -83,7 +177,6 @@ export async function POST(request: Request) {
       } catch (dbError) {
         console.error('Firestore Error (clients):', dbError);
         // No detenemos el proceso si esto falla, pero lo registramos.
-        // El usuario ya se registró exitosamente.
       }
     }
 
@@ -95,19 +188,18 @@ export async function POST(request: Request) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          ...validatedData,
+          ...result.data,
           firestoreId: registrationDocRef.id,
+          ownerUid: ownerUid,
         }),
       });
 
       if (!webhookResponse.ok) {
         const errorBody = await webhookResponse.text();
         console.error('N8N Webhook error:', errorBody);
-        // Aunque falle el webhook, el registro en Firestore fue exitoso, así que no devolvemos un error al usuario, pero lo registramos.
       }
     } catch (webhookError) {
       console.error('Webhook fetch error:', webhookError);
-      // Similar al caso anterior, el error de webhook no debe impedir la respuesta de éxito al usuario.
     }
 
     return NextResponse.json(

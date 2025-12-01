@@ -1,55 +1,59 @@
 rules_version = '2';
-
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Allow public read access to most collections
-    match /businesses/{document=**} {
-      allow read: if true;
-      allow write: if request.auth.token.admin == true;
-    }
-    match /clients/{document=**} {
-      allow read: if true;
-      allow write: if request.auth.token.role == 'admin' || request.auth.token.role == 'superadmin';
-    }
-    match /pricing_plans/{document=**} {
-      allow read: if true;
-      allow write: if request.auth.token.admin == true;
-    }
-    match /admins/{uid} {
-      allow read: if request.auth != null && request.auth.uid == uid;
-      allow write: if request.auth.token.role == 'superadmin';
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
     }
     
-    // Lock down other collections to admin-only write
-    match /registrations/{document=**} {
-      allow create: if true;
-      allow read, update, delete: if request.auth.token.admin == true;
-    }
-     match /feedbacks/{document=**} {
-      allow create: if true;
-      allow read, update, delete: if request.auth.token.admin == true;
-    }
-    match /recommendations/{document=**} {
-      allow create: if true;
-      allow read, update, delete: if request.auth.token.admin == true;
-    }
-     match /analyticsEvents/{document=**} {
-      allow create: if true;
-      allow read, update, delete: if request.auth.token.admin == true;
-    }
-    match /recommendation_tasks/{document=**} {
-      allow create: if request.auth.token.admin == true;
-      allow read, update, delete: if request.auth.token.admin == true;
-    }
-    match /i18n/{document=**} {
-      allow read: if true;
-      allow write: if request.auth.token.admin == true;
+    function isOwner(userId) {
+      return request.auth.uid == userId;
     }
 
-    // Function invocation security
-    // This allows any authenticated user to call the 'setAdminRole' function
-    match /functions/setAdminRole {
-      allow create: if request.auth != null;
+    function isAdmin() {
+      return request.auth.token.admin == true || request.auth.token.superadmin == true;
+    }
+
+    // Registrations collection
+    match /registrations/{registrationId} {
+      // Allow create if authenticated (or even unauthenticated if that's the flow, but usually auth first)
+      // For now, we are creating auth user first, so request.auth should be present.
+      allow create: if true; // Allow public registration creation for now to avoid issues
+      
+      // Allow read/update if owner or admin
+      allow read, update: if isAuthenticated() && (resource.data.ownerUid == request.auth.uid || isAdmin());
+      allow delete: if isAdmin();
+    }
+
+    // Clients collection (public directory)
+    match /clients/{clientId} {
+      allow read: if true; // Public read access for directory
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated() && (resource.data.ownerUid == request.auth.uid || isAdmin());
+      allow delete: if isAdmin();
+    }
+
+    // Legacy Businesses collection (read-only public)
+    match /businesses/{businessId} {
+      allow read: if true;
+      allow write: if false;
+    }
+    
+    // Admins collection
+    match /admins/{adminId} {
+      allow read: if isAuthenticated();
+      allow write: if false; // Only manual or cloud function writes
+    }
+
+    // Pricing Plans collection (public read)
+    match /pricing_plans/{planId} {
+      allow read: if true;
+      allow write: if false;
+    }
+    
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
     }
   }
 }

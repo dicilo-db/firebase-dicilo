@@ -1,7 +1,8 @@
 {
   "title": "Business Directory",
-  "description": "Explore recommended businesses across various industries.",
+  "description": "Our Business Directory is in \"Beta version\". Gradually we will connect all our categories and subcategories and provide you with a faster tool to find the products or services you are looking for.",
   "content": "Directory content will be available soon.",
+  "selectOption": "Select an option",
   "categories": {
     "consulting": {
       "title": "Consulting",
