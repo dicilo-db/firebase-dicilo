@@ -181,6 +181,55 @@ export const notifyAdminOnRegistration = onDocumentCreated('registrations/{regis
   }
 });
 
+export const sendWelcomeEmail = onDocumentCreated('registrations/{registrationId}', async (event) => {
+  const snapshot = event.data;
+  if (!snapshot) return;
+
+  const data = snapshot.data();
+  const registrationId = event.params.registrationId;
+  const email = data.email;
+  const name = `${data.firstName} ${data.lastName}`;
+
+  if (!email) {
+    logger.warn(`No email found for registration ${registrationId}, skipping welcome email.`);
+    return;
+  }
+
+  const subject = 'Willkommen bei Dicilo - Ihre Registrierung war erfolgreich!';
+
+  // Simple HTML template for welcome email
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+      <h1 style="color: #333;">Willkommen bei Dicilo, ${data.firstName}!</h1>
+      <p>Vielen Dank für Ihre Registrierung. Wir freuen uns, Sie in unserem Netzwerk begrüßen zu dürfen.</p>
+      
+      <p>Sie können sich jetzt in Ihrem Dashboard anmelden, um Ihr Profil zu verwalten:</p>
+      
+      <div style="text-align: center; margin: 30px 0;">
+        <a href="https://dicilo-search.web.app/login" style="background-color: #007bff; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold;">Zum Dashboard</a>
+      </div>
+
+      <p>Falls Sie Fragen haben, stehen wir Ihnen gerne zur Verfügung.</p>
+      
+      <p>Mit freundlichen Grüßen,<br/>Ihr Dicilo Team</p>
+    </div>
+  `;
+
+  try {
+    await sendMail({
+      to: email,
+      subject: subject,
+      html: html,
+    });
+    logger.info(`Welcome email sent to ${email} for registration ${registrationId}`);
+  } catch (error) {
+    logger.error(
+      `Failed to send welcome email to ${email}:`,
+      error
+    );
+  }
+});
+
 // --- Sync & Tools (v2) ---
 
 export const syncExistingCustomersToErp = onCall(async (request) => {

@@ -48,6 +48,11 @@ const registrationSchema = z.object({
   currentOfferUrl: z.string().url('register.errors.invalid_url').optional().or(z.literal('')),
   mapUrl: z.string().url('register.errors.invalid_url').optional().or(z.literal('')),
   coords: z.array(z.number()).length(2).optional(),
+  // Premium Fields
+  welcomeText: z.string().optional(),
+  headerImageUrl: z.string().url('register.errors.invalid_url').optional().or(z.literal('')),
+  instagramUrl: z.string().url('register.errors.invalid_url').optional().or(z.literal('')),
+  facebookUrl: z.string().url('register.errors.invalid_url').optional().or(z.literal('')),
 }).refine((data) => {
   if (data.password && data.password !== data.confirmPassword) {
     return false;
@@ -105,6 +110,7 @@ export function RegistrationForm() {
 
   const registrationType = watch('registrationType');
   const showBusinessFields = ['retailer', 'premium'].includes(registrationType);
+  const showPremiumFields = registrationType === 'premium';
   const coords = watch('coords');
 
   const handleGeocode = React.useCallback(
@@ -239,11 +245,15 @@ export function RegistrationForm() {
         const defaultClientData = {
           clientName: clientName,
           clientLogoUrl: data.imageUrl || '',
-          clientTitle: `Bienvenido a ${clientName}`,
+          clientTitle: data.welcomeText || `Bienvenido a ${clientName}`,
           clientSubtitle: 'Esta es tu página de aterrizaje. ¡Edítala desde el panel de administración!',
           products: [],
           slug: slugify(clientName),
-          socialLinks: { instagram: '', facebook: '', linkedin: '' },
+          socialLinks: {
+            instagram: data.instagramUrl || '',
+            facebook: data.facebookUrl || '',
+            linkedin: ''
+          },
           strengths: [],
           testimonials: [],
           translations: {},
@@ -258,6 +268,9 @@ export function RegistrationForm() {
           phone: data.phone || '',
           website: data.website || '',
           currentOfferUrl: data.currentOfferUrl || '',
+          headerData: {
+            headerImageUrl: data.headerImageUrl || '',
+          }
         };
         await addDoc(collection(db, 'clients'), defaultClientData);
       }
@@ -541,6 +554,49 @@ export function RegistrationForm() {
                   {t(errors.currentOfferUrl.message as string)}
                 </p>
               )}
+            </div>
+          </div>
+        )}
+
+        {/* Landing Page Fields Section - Only shown for Premium */}
+        {showPremiumFields && (
+          <div className="space-y-4 border-t pt-4">
+            <h3 className="text-lg font-medium">{t('register.fields.landingPageSection')}</h3>
+
+            <div className="space-y-2">
+              <Label htmlFor="welcomeText">{t('register.fields.welcomeText')}</Label>
+              <Input id="welcomeText" {...register('welcomeText')} />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="headerImageUrl">{t('register.fields.headerImageUrl')}</Label>
+              <Input id="headerImageUrl" {...register('headerImageUrl')} />
+              {errors.headerImageUrl && (
+                <p className="text-sm text-destructive">
+                  {t(errors.headerImageUrl.message as string)}
+                </p>
+              )}
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="instagramUrl">{t('register.fields.instagramUrl')}</Label>
+                <Input id="instagramUrl" {...register('instagramUrl')} />
+                {errors.instagramUrl && (
+                  <p className="text-sm text-destructive">
+                    {t(errors.instagramUrl.message as string)}
+                  </p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="facebookUrl">{t('register.fields.facebookUrl')}</Label>
+                <Input id="facebookUrl" {...register('facebookUrl')} />
+                {errors.facebookUrl && (
+                  <p className="text-sm text-destructive">
+                    {t(errors.facebookUrl.message as string)}
+                  </p>
+                )}
+              </div>
             </div>
           </div>
         )}

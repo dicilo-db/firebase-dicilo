@@ -33,10 +33,10 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
-    // Legacy Businesses collection (read-only public)
+    // Legacy Businesses collection (read-only public, writable by admin)
     match /businesses/{businessId} {
       allow read: if true;
-      allow write: if false;
+      allow write: if isAdmin();
     }
     
     // Admins collection

@@ -381,8 +381,8 @@ const RecommendationFormForClient = ({
                 <p className="mt-2 text-sm text-destructive">
                   {t(
                     (errors.recipients?.[index]?.root?.message as any) ||
-                      (errors.recipients?.[index]?.name?.message as any) ||
-                      (errors.recipients?.[index]?.email?.message as any)
+                    (errors.recipients?.[index]?.name?.message as any) ||
+                    (errors.recipients?.[index]?.email?.message as any)
                   )}
                 </p>
               )}
@@ -1023,28 +1023,51 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                 <TabsTrigger value="general">
                   {t('clients.tabs.general')}
                 </TabsTrigger>
-                <TabsTrigger value="marqueeHeader">
-                  {t('clients.tabs.marqueeHeader')}
-                </TabsTrigger>
-                <TabsTrigger value="body">
-                  {t('clients.tabs.body')}
-                </TabsTrigger>
-                <TabsTrigger value="cards">
-                  {t('clients.tabs.infoCards')}
-                </TabsTrigger>
-                <TabsTrigger value="products">
-                  {t('clients.tabs.products')}
-                </TabsTrigger>
-                <TabsTrigger value="graphics">
-                  {t('clients.tabs.graphics')}
-                </TabsTrigger>
+                {clientType !== 'retailer' && (
+                  <>
+                    <TabsTrigger value="marqueeHeader">
+                      {t('clients.tabs.marqueeHeader')}
+                    </TabsTrigger>
+                    <TabsTrigger value="body">
+                      {t('clients.tabs.body')}
+                    </TabsTrigger>
+                    <TabsTrigger value="cards">
+                      {t('clients.tabs.infoCards')}
+                    </TabsTrigger>
+                    <TabsTrigger value="products">
+                      {t('clients.tabs.products')}
+                    </TabsTrigger>
+                    <TabsTrigger value="graphics">
+                      {t('clients.tabs.graphics')}
+                    </TabsTrigger>
+                  </>
+                )}
                 <TabsTrigger value="form">
                   {t('clients.tabs.form')}
                 </TabsTrigger>
-                <TabsTrigger value="translations">
-                  {t('clients.tabs.translations')}
-                </TabsTrigger>
+                {clientType !== 'retailer' && (
+                  <TabsTrigger value="translations">
+                    {t('clients.tabs.translations')}
+                  </TabsTrigger>
+                )}
               </TabsList>
+
+              {clientType === 'retailer' && (
+                <div className="mb-6 rounded-lg border border-blue-200 bg-blue-50 p-4 text-blue-800 dark:border-blue-800 dark:bg-blue-900/20 dark:text-blue-200">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="font-bold">Upgrade auf Premium</h3>
+                      <p className="text-sm">
+                        Schalten Sie alle Funktionen frei: Eigene Webseite,
+                        Produkte, Grafiken und mehr!
+                      </p>
+                    </div>
+                    <Button asChild variant="default">
+                      <Link href="/planes">Jetzt Upgraden</Link>
+                    </Button>
+                  </div>
+                </div>
+              )}
 
               <TabsContent value="general" className="space-y-6">
                 <CardTitle>{t('clients.tabs.general')}</CardTitle>
@@ -1147,289 +1170,293 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                   />
                 </div>
 
-                <h3 className="pt-4 text-lg font-medium">
-                  {t('clients.fields.header.stylesTitle')}
-                </h3>
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                  <div className="space-y-2">
-                    <Label htmlFor="headerData.headerBackgroundColor">
-                      {t('clients.fields.header.headerBackgroundColor')}
-                    </Label>
-                    <Input
-                      id="headerData.headerBackgroundColor"
-                      {...register('headerData.headerBackgroundColor')}
-                      placeholder="#FFFFFF"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="headerData.headerTextColor">
-                      {t('clients.fields.header.headerTextColor')}
-                    </Label>
-                    <Input
-                      id="headerData.headerTextColor"
-                      type="color"
-                      {...register('headerData.headerTextColor')}
-                      className="h-10 p-1"
-                    />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="headerData.headerBackgroundImageUrl">
-                    {t('clients.fields.header.headerBackgroundImageUrl')}
-                  </Label>
-                  <Input
-                    id="headerData.headerBackgroundImageUrl"
-                    {...register('headerData.headerBackgroundImageUrl')}
-                    placeholder="https://example.com/background.jpg"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="bodyData.body2BackgroundColor">
-                    Hintergrundfarbe de body 2
-                  </Label>
-                  <Input
-                    id="bodyData.body2BackgroundColor"
-                    {...register('bodyData.body2BackgroundColor')}
-                    placeholder="#F9FAFB"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="headerData.headerImageUrl">
-                    {t('clients.fields.header.headerImageUrl')}
-                  </Label>
-                  <Input
-                    id="headerData.headerImageUrl"
-                    {...register('headerData.headerImageUrl')}
-                  />
-                  {errors.headerData?.headerImageUrl && (
-                    <p className="text-sm text-destructive">
-                      {errors.headerData.headerImageUrl.message}
-                    </p>
-                  )}
-                </div>
-
-                <Separator className="my-6" />
-
-                <div className="space-y-4">
-                  <h3 className="text-lg font-medium">
-                    {t('clients.fields.header.dividerLine.title')}
-                  </h3>
-                  <div className="flex items-center space-x-2">
-                    <Controller
-                      control={control}
-                      name="headerData.dividerLine.enabled"
-                      render={({ field }) => (
-                        <Switch
-                          id="dividerLineEnabled"
-                          checked={field.value ?? false}
-                          onCheckedChange={field.onChange}
+                {clientType === 'premium' && (
+                  <>
+                    <h3 className="pt-4 text-lg font-medium">
+                      {t('clients.fields.header.stylesTitle')}
+                    </h3>
+                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                      <div className="space-y-2">
+                        <Label htmlFor="headerData.headerBackgroundColor">
+                          {t('clients.fields.header.headerBackgroundColor')}
+                        </Label>
+                        <Input
+                          id="headerData.headerBackgroundColor"
+                          {...register('headerData.headerBackgroundColor')}
+                          placeholder="#FFFFFF"
                         />
-                      )}
-                    />
-                    <Label htmlFor="dividerLineEnabled">
-                      {t('clients.fields.header.dividerLine.enable')}
-                    </Label>
-                  </div>
-                  <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="headerData.headerTextColor">
+                          {t('clients.fields.header.headerTextColor')}
+                        </Label>
+                        <Input
+                          id="headerData.headerTextColor"
+                          type="color"
+                          {...register('headerData.headerTextColor')}
+                          className="h-10 p-1"
+                        />
+                      </div>
+                    </div>
                     <div className="space-y-2">
-                      <Label htmlFor="headerData.dividerLine.color">
-                        {t('clients.fields.header.dividerLine.color')}
+                      <Label htmlFor="headerData.headerBackgroundImageUrl">
+                        {t('clients.fields.header.headerBackgroundImageUrl')}
                       </Label>
-                      <Controller
-                        name="headerData.dividerLine.color"
-                        control={control}
-                        render={({ field }) => (
-                          <Input
-                            id="headerData.dividerLine.color"
-                            type="color"
-                            {...field}
-                            className="h-10 p-1"
-                          />
-                        )}
+                      <Input
+                        id="headerData.headerBackgroundImageUrl"
+                        {...register('headerData.headerBackgroundImageUrl')}
+                        placeholder="https://example.com/background.jpg"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="headerData.dividerLine.thickness">
-                        {t('clients.fields.header.dividerLine.thickness')}
+                      <Label htmlFor="bodyData.body2BackgroundColor">
+                        Hintergrundfarbe de body 2
                       </Label>
                       <Input
-                        id="headerData.dividerLine.thickness"
-                        type="number"
-                        {...register('headerData.dividerLine.thickness', {
-                          valueAsNumber: true,
-                        })}
+                        id="bodyData.body2BackgroundColor"
+                        {...register('bodyData.body2BackgroundColor')}
+                        placeholder="#F9FAFB"
                       />
                     </div>
-                  </div>
-                </div>
-
-                <Separator className="my-6" />
-
-                <h3 className="text-lg font-medium">
-                  {t('clients.fields.header.socialLinks')}
-                </h3>
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-                  {socialLinkFields.map((field, index) => (
-                    <div
-                      key={field.id}
-                      className="space-y-2 rounded-lg border p-3"
-                    >
-                      <Label>
-                        {t('clients.fields.header.socialLink', {
-                          number: index + 1,
-                        })}
+                    <div className="space-y-2">
+                      <Label htmlFor="headerData.headerImageUrl">
+                        {t('clients.fields.header.headerImageUrl')}
                       </Label>
                       <Input
-                        placeholder={t(
-                          'clients.fields.header.iconPlaceholderText'
-                        )}
-                        {...register(`headerData.socialLinks.${index}.icon`)}
+                        id="headerData.headerImageUrl"
+                        {...register('headerData.headerImageUrl')}
                       />
-                      <Input
-                        placeholder={t(
-                          'clients.fields.header.urlPlaceholder'
-                        )}
-                        {...register(`headerData.socialLinks.${index}.url`)}
-                      />
-                      {errors.headerData?.socialLinks?.[index]?.url && (
+                      {errors.headerData?.headerImageUrl && (
                         <p className="text-sm text-destructive">
-                          {errors.headerData.socialLinks[index]?.url?.message}
+                          {errors.headerData.headerImageUrl.message}
                         </p>
                       )}
                     </div>
-                  ))}
-                </div>
 
-                <Separator className="my-6" />
+                    <Separator className="my-6" />
 
-                <div className="space-y-4">
-                  <h3 className="text-lg font-medium">
-                    {t('clients.fields.header.banner.title')}
-                  </h3>
-                  <Controller
-                    name="headerData.bannerType"
-                    control={control}
-                    render={({ field }) => (
-                      <RadioGroup
-                        value={field.value}
-                        onValueChange={field.onChange}
-                        className="flex items-center gap-6"
-                      >
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="embed" id="embed" />
-                          <Label htmlFor="embed">
-                            {t('clients.fields.header.banner.embedCode')}
+                    <div className="space-y-4">
+                      <h3 className="text-lg font-medium">
+                        {t('clients.fields.header.dividerLine.title')}
+                      </h3>
+                      <div className="flex items-center space-x-2">
+                        <Controller
+                          control={control}
+                          name="headerData.dividerLine.enabled"
+                          render={({ field }) => (
+                            <Switch
+                              id="dividerLineEnabled"
+                              checked={field.value ?? false}
+                              onCheckedChange={field.onChange}
+                            />
+                          )}
+                        />
+                        <Label htmlFor="dividerLineEnabled">
+                          {t('clients.fields.header.dividerLine.enable')}
+                        </Label>
+                      </div>
+                      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                        <div className="space-y-2">
+                          <Label htmlFor="headerData.dividerLine.color">
+                            {t('clients.fields.header.dividerLine.color')}
                           </Label>
+                          <Controller
+                            name="headerData.dividerLine.color"
+                            control={control}
+                            render={({ field }) => (
+                              <Input
+                                id="headerData.dividerLine.color"
+                                type="color"
+                                {...field}
+                                className="h-10 p-1"
+                              />
+                            )}
+                          />
                         </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="url" id="url" />
-                          <Label htmlFor="url">
+                        <div className="space-y-2">
+                          <Label htmlFor="headerData.dividerLine.thickness">
+                            {t('clients.fields.header.dividerLine.thickness')}
+                          </Label>
+                          <Input
+                            id="headerData.dividerLine.thickness"
+                            type="number"
+                            {...register('headerData.dividerLine.thickness', {
+                              valueAsNumber: true,
+                            })}
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <Separator className="my-6" />
+
+                    <h3 className="text-lg font-medium">
+                      {t('clients.fields.header.socialLinks')}
+                    </h3>
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                      {socialLinkFields.map((field, index) => (
+                        <div
+                          key={field.id}
+                          className="space-y-2 rounded-lg border p-3"
+                        >
+                          <Label>
+                            {t('clients.fields.header.socialLink', {
+                              number: index + 1,
+                            })}
+                          </Label>
+                          <Input
+                            placeholder={t(
+                              'clients.fields.header.iconPlaceholderText'
+                            )}
+                            {...register(`headerData.socialLinks.${index}.icon`)}
+                          />
+                          <Input
+                            placeholder={t(
+                              'clients.fields.header.urlPlaceholder'
+                            )}
+                            {...register(`headerData.socialLinks.${index}.url`)}
+                          />
+                          {errors.headerData?.socialLinks?.[index]?.url && (
+                            <p className="text-sm text-destructive">
+                              {errors.headerData.socialLinks[index]?.url?.message}
+                            </p>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+
+                    <Separator className="my-6" />
+
+                    <div className="space-y-4">
+                      <h3 className="text-lg font-medium">
+                        {t('clients.fields.header.banner.title')}
+                      </h3>
+                      <Controller
+                        name="headerData.bannerType"
+                        control={control}
+                        render={({ field }) => (
+                          <RadioGroup
+                            value={field.value}
+                            onValueChange={field.onChange}
+                            className="flex items-center gap-6"
+                          >
+                            <div className="flex items-center space-x-2">
+                              <RadioGroupItem value="embed" id="embed" />
+                              <Label htmlFor="embed">
+                                {t('clients.fields.header.banner.embedCode')}
+                              </Label>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <RadioGroupItem value="url" id="url" />
+                              <Label htmlFor="url">
+                                {t('clients.fields.header.banner.imageUrl')}
+                              </Label>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <RadioGroupItem value="upload" id="upload" />
+                              <Label htmlFor="upload">
+                                {t('clients.fields.header.banner.fileUpload')}
+                              </Label>
+                            </div>
+                          </RadioGroup>
+                        )}
+                      />
+                    </div>
+
+                    {bannerType === 'embed' && (
+                      <div className="space-y-2">
+                        <Label htmlFor="headerData.bannerEmbedCode">
+                          {t('clients.fields.header.banner.embedCode')}
+                        </Label>
+                        <Textarea
+                          id="headerData.bannerEmbedCode"
+                          {...register('headerData.bannerEmbedCode')}
+                          rows={5}
+                          placeholder={'<iframe...'}
+                        />
+                      </div>
+                    )}
+                    {(bannerType === 'url' || bannerType === 'upload') && (
+                      <>
+                        <div className="space-y-2">
+                          <Label htmlFor="headerData.bannerImageUrl">
                             {t('clients.fields.header.banner.imageUrl')}
                           </Label>
+                          <Input
+                            id="headerData.bannerImageUrl"
+                            {...register('headerData.bannerImageUrl')}
+                            placeholder="https://example.com/banner.jpg"
+                          />
                         </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="upload" id="upload" />
-                          <Label htmlFor="upload">
-                            {t('clients.fields.header.banner.fileUpload')}
-                          </Label>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="headerData.bannerImageWidth">
+                              {t('clients.fields.header.banner.width')}
+                            </Label>
+                            <div className="flex items-center">
+                              <Input
+                                id="headerData.bannerImageWidth"
+                                type="number"
+                                {...register('headerData.bannerImageWidth', {
+                                  valueAsNumber: true,
+                                })}
+                                placeholder="100"
+                              />
+                              <span className="ml-2">%</span>
+                            </div>
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="headerData.bannerImageHeight">
+                              {t('clients.fields.header.banner.height')}
+                            </Label>
+                            <div className="flex items-center">
+                              <Input
+                                id="headerData.bannerImageHeight"
+                                type="number"
+                                {...register('headerData.bannerImageHeight', {
+                                  valueAsNumber: true,
+                                })}
+                                placeholder="400"
+                              />
+                              <span className="ml-2">px</span>
+                            </div>
+                          </div>
                         </div>
-                      </RadioGroup>
+                      </>
                     )}
-                  />
-                </div>
-
-                {bannerType === 'embed' && (
-                  <div className="space-y-2">
-                    <Label htmlFor="headerData.bannerEmbedCode">
-                      {t('clients.fields.header.banner.embedCode')}
-                    </Label>
-                    <Textarea
-                      id="headerData.bannerEmbedCode"
-                      {...register('headerData.bannerEmbedCode')}
-                      rows={5}
-                      placeholder={'<iframe...'}
-                    />
-                  </div>
-                )}
-                {(bannerType === 'url' || bannerType === 'upload') && (
-                  <>
-                    <div className="space-y-2">
-                      <Label htmlFor="headerData.bannerImageUrl">
-                        {t('clients.fields.header.banner.imageUrl')}
-                      </Label>
-                      <Input
-                        id="headerData.bannerImageUrl"
-                        {...register('headerData.bannerImageUrl')}
-                        placeholder="https://example.com/banner.jpg"
-                      />
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
+                    {bannerType === 'upload' && (
                       <div className="space-y-2">
-                        <Label htmlFor="headerData.bannerImageWidth">
-                          {t('clients.fields.header.banner.width')}
+                        <Label htmlFor="banner-upload">
+                          {t('clients.fields.header.banner.fileUpload')}
                         </Label>
-                        <div className="flex items-center">
+                        <div className="flex items-center gap-4">
                           <Input
-                            id="headerData.bannerImageWidth"
-                            type="number"
-                            {...register('headerData.bannerImageWidth', {
-                              valueAsNumber: true,
-                            })}
-                            placeholder="100"
+                            id="banner-upload"
+                            type="file"
+                            onChange={handleFileUpload}
+                            accept="image/png, image/jpeg, image/gif, image/webp"
+                            className="w-full"
                           />
-                          <span className="ml-2">%</span>
+                          {uploadProgress !== null && (
+                            <Progress value={uploadProgress} className="w-full" />
+                          )}
                         </div>
+                        {watch('headerData.bannerImageUrl') && (
+                          <p className="text-sm text-muted-foreground">
+                            {t('clients.fields.header.banner.currentImage')}:{' '}
+                            <a
+                              href={watch('headerData.bannerImageUrl')}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="underline"
+                            >
+                              {watch('headerData.bannerImageUrl')}
+                            </a>
+                          </p>
+                        )}
                       </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="headerData.bannerImageHeight">
-                          {t('clients.fields.header.banner.height')}
-                        </Label>
-                        <div className="flex items-center">
-                          <Input
-                            id="headerData.bannerImageHeight"
-                            type="number"
-                            {...register('headerData.bannerImageHeight', {
-                              valueAsNumber: true,
-                            })}
-                            placeholder="400"
-                          />
-                          <span className="ml-2">px</span>
-                        </div>
-                      </div>
-                    </div>
+                    )}
                   </>
-                )}
-                {bannerType === 'upload' && (
-                  <div className="space-y-2">
-                    <Label htmlFor="banner-upload">
-                      {t('clients.fields.header.banner.fileUpload')}
-                    </Label>
-                    <div className="flex items-center gap-4">
-                      <Input
-                        id="banner-upload"
-                        type="file"
-                        onChange={handleFileUpload}
-                        accept="image/png, image/jpeg, image/gif, image/webp"
-                        className="w-full"
-                      />
-                      {uploadProgress !== null && (
-                        <Progress value={uploadProgress} className="w-full" />
-                      )}
-                    </div>
-                    {watch('headerData.bannerImageUrl') && (
-                      <p className="text-sm text-muted-foreground">
-                        {t('clients.fields.header.banner.currentImage')}:{' '}
-                        <a
-                          href={watch('headerData.bannerImageUrl')}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="underline"
-                        >
-                          {watch('headerData.bannerImageUrl')}
-                        </a>
-                      </p>
-                    )}
-                  </div>
                 )}
               </TabsContent>
 

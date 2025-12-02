@@ -75,7 +75,12 @@
       "registrationType": "Tipo de Registro",
       "password": "Contraseña",
       "confirmPassword": "Confirmar Contraseña",
-      "passwordHint": "Tu contraseña está segura."
+      "passwordHint": "Tu contraseña está segura.",
+      "landingPageSection": "Configuración de Landing Page (Premium)",
+      "welcomeText": "Texto de Bienvenida",
+      "headerImageUrl": "URL Imagen de Cabecera",
+      "instagramUrl": "URL de Instagram",
+      "facebookUrl": "URL de Facebook"
     },
     "submitButton": "Registrarse",
     "successTitle": "¡Registro Exitoso!",

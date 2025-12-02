@@ -8,6 +8,7 @@ export const dynamic = 'force-dynamic';
 
 async function getBusinesses(): Promise<Business[]> {
   const db = getFirestore(app);
+  console.log('Fetching businesses on server...');
   try {
 
     // Fetch from both collections in parallel with error handling
