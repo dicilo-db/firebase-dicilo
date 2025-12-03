@@ -599,6 +599,7 @@ const graphicSchema = z.object({
 
 const clientSchema = z.object({
   clientName: z.string().min(1, 'Name is required'),
+  slug: z.string().min(1, 'Slug is required').regex(/^[a-z0-9-]+$/, 'Slug must be lowercase alphanumeric with dashes'),
   clientType: z.enum(['retailer', 'premium']),
   clientLogoUrl: z.string().url().optional().or(z.literal('')),
 
@@ -696,6 +697,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
     resolver: zodResolver(clientSchema),
     defaultValues: {
       clientName: '',
+      slug: '',
       clientType: 'retailer',
       clientLogoUrl: '',
       headerData: {
@@ -764,8 +766,9 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
     const socialLinks = headerData.socialLinks || [];
 
     return {
-      clientName: data.clientName || '',
-      clientType: data.clientType || 'retailer',
+      clientName: initialData.clientName || '',
+      slug: initialData.slug || '',
+      clientType: initialData.clientType || 'retailer',
       clientLogoUrl: data.clientLogoUrl || '',
       headerData: {
         welcomeText: headerData.welcomeText || '',
@@ -1098,12 +1101,35 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                     <Label htmlFor="clientName">
                       {t('clients.fields.clientName')}
                     </Label>
-                    <Input id="clientName" {...register('clientName')} />
+                    <Input
+                      id="clientName"
+                      {...register('clientName')}
+                      placeholder={t('clients.fields.clientName') as string}
+                    />
                     {errors.clientName && (
                       <p className="text-sm text-destructive">
-                        {errors.clientName.message}
+                        {t(errors.clientName.message as any)}
                       </p>
                     )}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="slug">
+                      {t('clients.fields.slug')}
+                    </Label>
+                    <Input
+                      id="slug"
+                      {...register('slug')}
+                      placeholder="my-client-slug"
+                    />
+                    {errors.slug && (
+                      <p className="text-sm text-destructive">
+                        {t(errors.slug.message as any)}
+                      </p>
+                    )}
+                    <p className="text-xs text-muted-foreground">
+                      URL: {typeof window !== 'undefined' ? window.location.origin : ''}/client/{watch('slug')}
+                    </p>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="clientType">
