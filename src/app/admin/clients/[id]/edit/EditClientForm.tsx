@@ -82,6 +82,11 @@ const TiptapEditor = dynamic(() => import('@/components/TiptapEditor'), {
   loading: () => <p>Loading editor...</p>,
 });
 
+const LayoutEditor = dynamic(() => import('@/app/dashboard/LayoutEditor'), {
+  ssr: false,
+  loading: () => <p>Loading layout editor...</p>,
+});
+
 const functions = getFunctions(app, 'europe-west1');
 const submitRecommendationFn = httpsCallable(functions, 'submitRecommendation');
 
@@ -650,6 +655,8 @@ const clientSchema = z.object({
   graphics: z.array(graphicSchema).optional(),
   products: z.array(productSchema).optional(),
   translations: z.string().optional(),
+  layout: z.array(z.any()).optional(),
+  newEmailForUpdate: z.string().email().optional().or(z.literal('')),
 });
 
 type ClientFormData = z.infer<typeof clientSchema>;
@@ -742,7 +749,10 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
       infoCards: [],
       graphics: [],
       products: [],
+      products: [],
       translations: '{}',
+      layout: [],
+      newEmailForUpdate: '',
     },
   });
 
@@ -1042,6 +1052,14 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                     </TabsTrigger>
                   </>
                 )}
+                {clientType === 'premium' && (
+                  <TabsTrigger value="layout">
+                    Layout Builder
+                  </TabsTrigger>
+                )}
+                <TabsTrigger value="userManagement">
+                  User Management
+                </TabsTrigger>
                 <TabsTrigger value="form">
                   {t('clients.tabs.form')}
                 </TabsTrigger>
@@ -1458,6 +1476,123 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                     )}
                   </>
                 )}
+              </TabsContent>
+
+              {/* Layout Builder Tab */}
+              <TabsContent value="layout" className="space-y-6">
+                <CardTitle>Landing Page Builder</CardTitle>
+                <CardDescription>
+                  Drag and drop blocks to build your custom landing page.
+                </CardDescription>
+                <Controller
+                  name="layout"
+                  control={control}
+                  render={({ field }) => (
+                    <LayoutEditor
+                      initialLayout={field.value || []}
+                      onChange={field.onChange}
+                    />
+                  )}
+                />
+              </TabsContent>
+
+
+
+              {/* User Management Tab */}
+              <TabsContent value="userManagement" className="space-y-6">
+                <CardTitle>User Management</CardTitle>
+                <CardDescription>
+                  Manage the user account associated with this client.
+                </CardDescription>
+
+                <div className="space-y-4 rounded-lg border p-4">
+                  <h3 className="font-semibold">Update Email</h3>
+                  <div className="flex gap-4 items-end">
+                    <div className="space-y-2 flex-1">
+                      <Label htmlFor="newEmail">New Email Address</Label>
+                      <Input
+                        id="newEmail"
+                        placeholder="new-email@example.com"
+                        value={watch('newEmailForUpdate') || ''}
+                        onChange={(e) => setValue('newEmailForUpdate', e.target.value)}
+                      />
+                    </div>
+                    <Button
+                      type="button"
+                      onClick={async () => {
+                        const newEmail = watch('newEmailForUpdate');
+                        if (!newEmail) return;
+                        try {
+                          setIsSubmitting(true);
+                          const updateUserEmailFn = httpsCallable(functions, 'updateUserEmail');
+                          // We need the ownerUid, which should be in initialData
+                          const targetUid = initialData.ownerUid;
+                          if (!targetUid) {
+                            toast({ title: 'Error', description: 'No Owner UID found for this client.', variant: 'destructive' });
+                            return;
+                          }
+                          await updateUserEmailFn({ targetUid, newEmail });
+                          toast({ title: 'Success', description: 'Email updated successfully.' });
+                          setValue('newEmailForUpdate', '');
+                        } catch (error: any) {
+                          console.error(error);
+                          toast({ title: 'Error', description: error.message, variant: 'destructive' });
+                        } finally {
+                          setIsSubmitting(false);
+                        }
+                      }}
+                      disabled={isSubmitting}
+                    >
+                      Update Email
+                    </Button>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Warning: Changing the email will require the user to login again with the new email.
+                  </p>
+                </div>
+
+                <div className="space-y-4 rounded-lg border p-4">
+                  <h3 className="font-semibold">Password Reset</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Generate a password reset link for this user.
+                  </p>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={async () => {
+                      try {
+                        setIsSubmitting(true);
+                        const sendUserPasswordResetFn = httpsCallable(functions, 'sendUserPasswordReset');
+                        // We need the current email. 
+                        // If we don't have it in clientData, we might need to ask for it or fetch it.
+                        // Assuming we can use the 'newEmailForUpdate' field if filled, or we need to know the current email.
+                        // Actually, the function takes an email. 
+                        // Let's ask the admin to enter the email to confirm, or use the one we just updated if any.
+                        // Better: Use the input field above or a dedicated one.
+                        const emailToReset = watch('newEmailForUpdate');
+                        if (!emailToReset) {
+                          toast({ title: 'Info', description: 'Please enter the email address in the "New Email Address" box above to target the reset.', variant: 'default' });
+                          return;
+                        }
+                        const result = await sendUserPasswordResetFn({ email: emailToReset });
+                        const data = result.data as any;
+                        if (data.link) {
+                          // Copy to clipboard
+                          navigator.clipboard.writeText(data.link);
+                          toast({ title: 'Success', description: 'Reset link copied to clipboard!', duration: 5000 });
+                        }
+                      } catch (error: any) {
+                        console.error(error);
+                        toast({ title: 'Error', description: error.message, variant: 'destructive' });
+                      } finally {
+                        setIsSubmitting(false);
+                      }
+                    }}
+                    disabled={isSubmitting}
+                  >
+                    Generate Reset Link
+                  </Button>
+                </div>
               </TabsContent>
 
               {/* Marquee Header Tab */}
@@ -2025,7 +2160,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
             </Button>
           </CardFooter>
         </Card>
-      </form>
+      </form >
     </>
   );
 }

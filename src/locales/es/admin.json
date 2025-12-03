@@ -33,7 +33,7 @@
   },
   "dashboard": {
     "title": "Panel de Control",
-    "welcome": "Bienvenido, {{email}} (Rol: {{role}}).",
+    "welcome": "Bienvenido, {email} (Rol: {role}).",
     "logout": "Cerrar Sesión",
     "logoutSuccess": "Sesión cerrada con éxito.",
     "logoutError": "Error al cerrar sesión",

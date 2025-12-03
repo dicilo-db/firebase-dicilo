@@ -120,11 +120,24 @@ export default function DiciloSearchPage({
   const [recommendedBusiness, setRecommendedBusiness] = useState('');
   const [showMobileMap, setShowMobileMap] = useState(false);
 
+  const selectedBusinessIdRef = React.useRef(selectedBusinessId);
+
+  useEffect(() => {
+    selectedBusinessIdRef.current = selectedBusinessId;
+  }, [selectedBusinessId]);
+
   const handleGeolocation = useCallback(
     (isInitialLoad = false) => {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
           (pos) => {
+            // If it's the initial auto-load and the user has already selected a business,
+            // do NOT override their selection with the user's location.
+            if (isInitialLoad && selectedBusinessIdRef.current) {
+              console.log('Geolocation skipped because a business is selected.');
+              return;
+            }
+
             const { latitude, longitude } = pos.coords;
             setMapCenter([latitude, longitude]);
             setMapZoom(14);

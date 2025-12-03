@@ -25,6 +25,13 @@ import {
 } from 'lucide-react';
 import { useAdminUser, useAuthGuard } from '@/hooks/useAuthGuard';
 import { useServerAction } from '@/hooks/useServerAction';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Header } from '@/components/header';
 import Footer from '@/components/footer';
 
@@ -206,115 +213,252 @@ const DashboardContent: React.FC = () => {
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-slate-50 dark:bg-slate-900">
       <Header />
-      <main className="flex-grow p-8">
-        <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-2xl font-bold">{t('dashboard.title')}</h1>
-          <Button onClick={handleLogout} variant="destructive">
+      <main className="flex-grow p-8 container mx-auto max-w-7xl">
+        <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
+              {t('dashboard.title')}
+            </h1>
+            <p className="text-muted-foreground mt-1">
+              {t('dashboard.welcome', {
+                email: adminUser.email,
+                role: adminUser.role,
+              })}
+            </p>
+          </div>
+          <Button onClick={handleLogout} variant="outline" className="shrink-0">
             {t('dashboard.logout')}
           </Button>
         </div>
-        <p className="mt-2">
-          {t('dashboard.welcome', {
-            email: adminUser.email,
-            role: adminUser.role,
-          })}
-        </p>
 
         {adminUser.role === 'superadmin' && (
-          <div className="mt-8 rounded-lg border bg-secondary p-4">
-            <h2 className="text-xl font-semibold">
+          <div className="mb-10 space-y-4">
+            <h2 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-slate-100 flex items-center gap-2">
+              <DatabaseZap className="h-5 w-5 text-primary" />
               {t('dashboard.superAdminArea')}
             </h2>
-            <p className="mt-1 text-muted-foreground">
-              {t('dashboard.superAdminDescription')}
-            </p>
-            <div className="mt-4 flex flex-wrap gap-4">
-              <Button onClick={handleSeedDatabase} disabled={isSeeding}>
-                {isSeeding ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                ) : (
-                  <DatabaseZap className="mr-2 h-4 w-4" />
-                )}
-                {isSeeding
-                  ? t('dashboard.seedingInProgress')
-                  : t('dashboard.seedDatabase')}
-              </Button>
-              <Button onClick={handleSyncCustomers} disabled={isSyncing}>
-                {isSyncing ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                ) : (
-                  <RefreshCw className="mr-2 h-4 w-4" />
-                )}
-                {t('dashboard.sync.button')}
-              </Button>
-              <Button
-                onClick={handleImportFromStorage}
-                disabled={isImporting}
-                variant="default"
-              >
-                {isImporting ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                ) : (
-                  <DownloadCloud className="mr-2 h-4 w-4" />
-                )}
-                Importar desde Storage
-              </Button>
+            <div className="grid gap-4 md:grid-cols-3">
+              <Card className="bg-slate-100/50 dark:bg-slate-800/50 border-dashed border-slate-300 dark:border-slate-700">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">
+                    Database Seeding
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Button
+                    onClick={handleSeedDatabase}
+                    disabled={isSeeding}
+                    className="w-full"
+                    variant="secondary"
+                  >
+                    {isSeeding ? (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    ) : (
+                      <DatabaseZap className="mr-2 h-4 w-4" />
+                    )}
+                    {isSeeding
+                      ? t('dashboard.seedingInProgress')
+                      : t('dashboard.seedDatabase')}
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-slate-100/50 dark:bg-slate-800/50 border-dashed border-slate-300 dark:border-slate-700">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">
+                    ERP Sync
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Button
+                    onClick={handleSyncCustomers}
+                    disabled={isSyncing}
+                    className="w-full"
+                    variant="secondary"
+                  >
+                    {isSyncing ? (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    ) : (
+                      <RefreshCw className="mr-2 h-4 w-4" />
+                    )}
+                    {t('dashboard.sync.button')}
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-slate-100/50 dark:bg-slate-800/50 border-dashed border-slate-300 dark:border-slate-700">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">
+                    Storage Import
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Button
+                    onClick={handleImportFromStorage}
+                    disabled={isImporting}
+                    className="w-full"
+                    variant="secondary"
+                  >
+                    {isImporting ? (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    ) : (
+                      <DownloadCloud className="mr-2 h-4 w-4" />
+                    )}
+                    Importar desde Storage
+                  </Button>
+                </CardContent>
+              </Card>
             </div>
           </div>
         )}
 
-        <div className="mt-8">
-          <h2 className="text-xl font-semibold">
+        <div className="space-y-4">
+          <h2 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-slate-100 flex items-center gap-2">
+            <LayoutTemplate className="h-5 w-5 text-primary" />
             {t('dashboard.contentManagement')}
           </h2>
-          <p className="mt-1 text-muted-foreground">
+          <p className="text-muted-foreground">
             {t('dashboard.contentManagementDescription')}
           </p>
-          <div className="mt-4 flex flex-wrap gap-4">
-            <Button asChild>
-              <Link href="/admin/businesses">
-                <Building className="mr-2 h-4 w-4" />
-                {t('dashboard.manageBusinesses')}
-              </Link>
-            </Button>
-            <Button asChild>
-              <Link href="/admin/clients">
-                <LayoutTemplate className="mr-2 h-4 w-4" />
-                {t('clients.title', { ns: 'admin' })}
-              </Link>
-            </Button>
-            <Button asChild>
-              <Link href="/admin/feedbacks">
-                <MessageSquare className="mr-2 h-4 w-4" />
-                {t('feedbacks.title', { ns: 'admin' })}
-              </Link>
-            </Button>
-            <Button asChild>
-              <Link href="/admin/plans">
-                <DollarSign className="mr-2 h-4 w-4" />
-                {t('plans.title', { ns: 'admin' })}
-              </Link>
-            </Button>
-            <Button asChild>
-              <Link href="/admin/statistics">
-                <BarChartHorizontal className="mr-2 h-4 w-4" />
-                {t('statistics.title', { ns: 'admin' })}
-              </Link>
-            </Button>
-            <Button asChild>
-              <Link href="/admin/forms-dashboard">
-                <FileText className="mr-2 h-4 w-4" />
-                {t('formsDashboard.title', { ns: 'admin' })}
-              </Link>
-            </Button>
-            <Button asChild variant="outline">
-              <Link href="/admin/registrations">
-                <Users className="mr-2 h-4 w-4" />
-                {t('registrations.title', { ns: 'admin' })}
-              </Link>
-            </Button>
+
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <Link href="/admin/clients" className="group">
+              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    Landing Pages
+                  </CardTitle>
+                  <LayoutTemplate className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">Builder</div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Create and edit landing pages
+                  </p>
+                </CardContent>
+              </Card>
+            </Link>
+
+            <Link href="/admin/clients" className="group">
+              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    {t('clients.title', { ns: 'admin' })}
+                  </CardTitle>
+                  <Users className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">Clients</div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Manage client profiles
+                  </p>
+                </CardContent>
+              </Card>
+            </Link>
+
+            <Link href="/admin/businesses" className="group">
+              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    Businesses
+                  </CardTitle>
+                  <Building className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">Directory</div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {t('dashboard.manageBusinesses')}
+                  </p>
+                </CardContent>
+              </Card>
+            </Link>
+
+            <Link href="/admin/feedbacks" className="group">
+              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    {t('feedbacks.title', { ns: 'admin' })}
+                  </CardTitle>
+                  <MessageSquare className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">Feedback</div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    User reviews and ratings
+                  </p>
+                </CardContent>
+              </Card>
+            </Link>
+
+            <Link href="/admin/plans" className="group">
+              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    {t('plans.title', { ns: 'admin' })}
+                  </CardTitle>
+                  <DollarSign className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">Plans</div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Subscription and pricing
+                  </p>
+                </CardContent>
+              </Card>
+            </Link>
+
+            <Link href="/admin/statistics" className="group">
+              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    {t('statistics.title', { ns: 'admin' })}
+                  </CardTitle>
+                  <BarChartHorizontal className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">Stats</div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Analytics and reports
+                  </p>
+                </CardContent>
+              </Card>
+            </Link>
+
+            <Link href="/admin/forms-dashboard" className="group">
+              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    {t('formsDashboard.title', { ns: 'admin' })}
+                  </CardTitle>
+                  <FileText className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">Forms</div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Form submissions
+                  </p>
+                </CardContent>
+              </Card>
+            </Link>
+
+            <Link href="/admin/registrations" className="group">
+              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    {t('registrations.title', { ns: 'admin' })}
+                  </CardTitle>
+                  <Users className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">Registrations</div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    New user signups
+                  </p>
+                </CardContent>
+              </Card>
+            </Link>
           </div>
         </div>
       </main>

@@ -674,3 +674,8 @@ export const cleanupDuplicates = onRequest({ timeoutSeconds: 540, memory: '512Mi
     res.status(500).send(`Error cleaning up duplicates: ${error.message}`);
   }
 });
+
+// --- Telegram Bot ---
+export * from './telegram';
+export * from './userManagement';
+

@@ -26,6 +26,7 @@ export interface ClientData {
   products?: any[];
   translations: any;
   slug: string;
+  layout?: any[]; // For the Landing Page Builder
 }
 
 const EditClientFormSkeleton = () => (

@@ -32,6 +32,9 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -586,3 +589,6 @@ exports.cleanupDuplicates = (0, https_1.onRequest)({ timeoutSeconds: 540, memory
         res.status(500).send(`Error cleaning up duplicates: ${error.message}`);
     }
 }));
+// --- Telegram Bot ---
+__exportStar(require("./telegram"), exports);
+__exportStar(require("./userManagement"), exports);
