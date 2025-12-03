@@ -99,7 +99,7 @@ const validateAndParseCoords = (coords: any): LatLngTuple | null => {
   const lat = parseFloat(String(coords[0]));
   const lng = parseFloat(String(coords[1]));
 
-  if (isFinite(lat) && isFinite(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) {
+  if (Number.isFinite(lat) && Number.isFinite(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) {
     return [lat, lng];
   }
   return null;
@@ -140,8 +140,8 @@ const DiciloMap: React.FC<DiciloMapProps> = ({
   useEffect(() => {
     const currentMapContainer = mapContainerRef.current;
     if (!currentMapContainer) return;
-    
-    const isCenterValid = isFinite(center[0]) && isFinite(center[1]);
+
+    const isCenterValid = Number.isFinite(center[0]) && Number.isFinite(center[1]);
     const safeCenter: LatLngTuple = isCenterValid ? center : DEFAULT_CENTER;
 
     if (!mapRef.current) {
@@ -150,14 +150,14 @@ const DiciloMap: React.FC<DiciloMapProps> = ({
           zoomControl: true,
           attributionControl: true,
         }).setView(safeCenter, zoom);
-  
+
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
           attribution: '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
           maxZoom: 20,
         }).addTo(map);
-  
+
         mapRef.current = map;
-  
+
         const ro = new ResizeObserver(() => map.invalidateSize());
         ro.observe(currentMapContainer);
         resizeObserverRef.current = ro;
@@ -166,7 +166,7 @@ const DiciloMap: React.FC<DiciloMapProps> = ({
         return;
       }
     } else {
-        mapRef.current.setView(safeCenter, zoom);
+      mapRef.current.setView(safeCenter, zoom);
     }
 
     return () => {
@@ -217,26 +217,31 @@ const DiciloMap: React.FC<DiciloMapProps> = ({
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !selectedBusinessId) return;
-  
+
     const business = businessesWithCoords.find(
       (b) => b.id === selectedBusinessId
     );
     if (!business) return;
-  
+
     const validCoords = business.coords as LatLngTuple; // Sabemos que está validado por useMemo
-  
+
     // Última línea de defensa: validación final antes de la animación
     if (
       Array.isArray(validCoords) &&
       validCoords.length === 2 &&
-      isFinite(validCoords[0]) &&
-      isFinite(validCoords[1])
+      Number.isFinite(validCoords[0]) &&
+      Number.isFinite(validCoords[1])
     ) {
-      map.flyTo(validCoords, 15, {
-        animate: true,
-        duration: 1,
-      });
-  
+      try {
+        map.flyTo(validCoords, 15, {
+          animate: true,
+          duration: 1,
+        });
+      } catch (error) {
+        console.error('DICILO_MAP_ERROR: flyTo failed', error);
+        map.setView(validCoords, 15);
+      }
+
       const marker = markersRef.current.get(selectedBusinessId);
       if (marker) {
         setTimeout(() => marker.openPopup(), 1000);
@@ -248,7 +253,7 @@ const DiciloMap: React.FC<DiciloMapProps> = ({
       );
     }
   }, [selectedBusinessId, businessesWithCoords]);
-  
+
   // Efecto para manejar los clics en los popups para analíticas
   useEffect(() => {
     if (!mapRef.current) return;

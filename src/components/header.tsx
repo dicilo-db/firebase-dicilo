@@ -1,6 +1,7 @@
 // src/components/header.tsx
 'use client';
 import React from 'react';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Menu, User as UserIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -35,8 +36,15 @@ const Header = () => {
     <header className="relative z-10 flex-shrink-0 bg-white shadow-md">
       <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
-          <Link href="/" className="text-2xl font-bold text-primary">
-            Dicilo
+          <Link href="/" className="flex items-center">
+            <Image
+              src="/logo.png"
+              alt="Dicilo"
+              width={120}
+              height={50}
+              className="h-12 w-auto"
+              priority
+            />
           </Link>
           <div className="hidden items-center gap-4 md:flex">
             <nav className="flex items-center gap-4">

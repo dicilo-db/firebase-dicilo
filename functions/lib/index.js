@@ -45,7 +45,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.cleanupDuplicates = exports.seedDatabase = exports.promoteToClient = exports.consentDecline = exports.consentAccept = exports.taskWorker = exports.submitRecommendation = exports.syncExistingCustomersToErp = exports.notifyAdminOnRegistration = exports.sendRegistrationToErp = exports.onAdminWrite = void 0;
+exports.cleanupDuplicates = exports.seedDatabase = exports.promoteToClient = exports.consentDecline = exports.consentAccept = exports.taskWorker = exports.submitRecommendation = exports.syncExistingCustomersToErp = exports.sendWelcomeEmail = exports.notifyAdminOnRegistration = exports.sendRegistrationToErp = exports.onAdminWrite = void 0;
 /**
  * @fileoverview Cloud Functions for Firebase (Gen 2).
  * Migrated to Gen 2 to support Node 20 and explicit CPU/Memory configuration.
@@ -189,6 +189,48 @@ exports.notifyAdminOnRegistration = (0, firestore_1.onDocumentCreated)('registra
     }
     catch (error) {
         logger.error(`Failed to send admin notification for ${registrationId}:`, error);
+    }
+}));
+exports.sendWelcomeEmail = (0, firestore_1.onDocumentCreated)('registrations/{registrationId}', (event) => __awaiter(void 0, void 0, void 0, function* () {
+    const snapshot = event.data;
+    if (!snapshot)
+        return;
+    const data = snapshot.data();
+    const registrationId = event.params.registrationId;
+    const email = data.email;
+    const name = `${data.firstName} ${data.lastName}`;
+    if (!email) {
+        logger.warn(`No email found for registration ${registrationId}, skipping welcome email.`);
+        return;
+    }
+    const subject = 'Willkommen bei Dicilo - Ihre Registrierung war erfolgreich!';
+    // Simple HTML template for welcome email
+    const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+      <h1 style="color: #333;">Willkommen bei Dicilo, ${data.firstName}!</h1>
+      <p>Vielen Dank für Ihre Registrierung. Wir freuen uns, Sie in unserem Netzwerk begrüßen zu dürfen.</p>
+      
+      <p>Sie können sich jetzt in Ihrem Dashboard anmelden, um Ihr Profil zu verwalten:</p>
+      
+      <div style="text-align: center; margin: 30px 0;">
+        <a href="https://dicilo-search.web.app/login" style="background-color: #007bff; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold;">Zum Dashboard</a>
+      </div>
+
+      <p>Falls Sie Fragen haben, stehen wir Ihnen gerne zur Verfügung.</p>
+      
+      <p>Mit freundlichen Grüßen,<br/>Ihr Dicilo Team</p>
+    </div>
+  `;
+    try {
+        yield (0, email_1.sendMail)({
+            to: email,
+            subject: subject,
+            html: html,
+        });
+        logger.info(`Welcome email sent to ${email} for registration ${registrationId}`);
+    }
+    catch (error) {
+        logger.error(`Failed to send welcome email to ${email}:`, error);
     }
 }));
 // --- Sync & Tools (v2) ---

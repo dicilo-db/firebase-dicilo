@@ -284,8 +284,8 @@ export default function DiciloSearchPage({
     if (
       Array.isArray(business.coords) &&
       business.coords.length === 2 &&
-      isFinite(business.coords[0]) &&
-      isFinite(business.coords[1])
+      Number.isFinite(business.coords[0]) &&
+      Number.isFinite(business.coords[1])
     ) {
       setSelectedBusinessId(business.id);
       setMapCenter(business.coords as [number, number]);
@@ -488,7 +488,7 @@ export default function DiciloSearchPage({
             variant="default"
             size="icon"
             onClick={() => setShowMobileMap(false)}
-            className="absolute right-4 top-4 z-50 rounded-full"
+            className="absolute right-4 top-4 z-[2000] rounded-full shadow-md"
             aria-label="Close map view"
           >
             <X className="h-5 w-5" />

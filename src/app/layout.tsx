@@ -12,9 +12,9 @@ export const metadata: Metadata = {
   title: 'Dicilo.net',
   description: 'A functional landing page with a map search feature.',
   icons: {
-    icon: '/favicon.ico',
-    shortcut: '/favicon-16x16.png',
-    apple: '/apple-touch-icon.png',
+    icon: '/icon.png',
+    shortcut: '/icon.png',
+    apple: '/icon.png',
   },
 };
 
