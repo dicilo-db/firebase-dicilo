@@ -28,10 +28,7 @@ export function AiChatWidget() {
     const [isLoading, setIsLoading] = useState(false);
     const scrollAreaRef = useRef<HTMLDivElement>(null);
 
-    // Only show in development mode
-    if (process.env.NODE_ENV !== 'development') {
-        return null;
-    }
+
 
     useEffect(() => {
         if (scrollAreaRef.current) {
