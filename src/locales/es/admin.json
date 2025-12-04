@@ -61,7 +61,78 @@
       "errorTitle": "Error de Sincronización",
       "errorDesc": "Ocurrió un error al sincronizar los clientes.",
       "permissionError": "Solo los superadministradores pueden realizar esta acción."
+    },
+    "import": {
+      "button": "Importar desde Storage",
+      "startTitle": "Importación Iniciada",
+      "startDesc": "Los datos se están importando desde el almacenamiento.",
+      "successTitle": "Importación Exitosa",
+      "errorTitle": "Error de Importación",
+      "errorDesc": "Error al importar desde el almacenamiento.",
+      "permissionError": "Acceso Denegado."
+    },
+    "cards": {
+      "databaseSeeding": {
+        "title": "Poblado de Base de Datos"
+      },
+      "erpSync": {
+        "title": "Sincronización ERP"
+      },
+      "storageImport": {
+        "title": "Importación de Storage"
+      },
+      "builder": {
+        "title": "Constructor",
+        "description": "Crear y editar páginas de destino"
+      },
+      "clients": {
+        "title": "Clientes",
+        "description": "Gestionar perfiles de clientes"
+      },
+      "directory": {
+        "title": "Directorio",
+        "description": "Gestionar negocios"
+      },
+      "feedback": {
+        "title": "Comentarios",
+        "description": "Reseñas y calificaciones de usuarios"
+      },
+      "plans": {
+        "title": "Planes",
+        "description": "Suscripción y precios"
+      },
+      "stats": {
+        "title": "Estadísticas",
+        "description": "Análisis e informes"
+      },
+      "forms": {
+        "title": "Formularios",
+        "description": "Envíos de formularios"
+      },
+      "registrations": {
+        "title": "Registros",
+        "description": "Nuevos registros de usuarios"
+      },
+      "privateUsers": {
+        "title": "Usuarios Privados",
+        "description": "Gestionar perfiles privados"
+      }
     }
+  },
+  "privateUsers": {
+    "title": "Usuarios Privados",
+    "exportCSV": "Exportar CSV",
+    "userList": "Lista de Usuarios",
+    "searchPlaceholder": "Buscar por nombre, email o código...",
+    "table": {
+      "code": "Código",
+      "name": "Nombre",
+      "email": "Email",
+      "interests": "Intereses",
+      "joined": "Unido",
+      "selected": "seleccionado"
+    },
+    "noResults": "No se encontraron usuarios."
   },
   "businesses": {
     "title": "Negocios",

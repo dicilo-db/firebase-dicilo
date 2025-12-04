@@ -74,7 +74,7 @@ export default function NewPlanPage() {
   const db = getFirestore(app);
   const router = useRouter();
   const { toast } = useToast();
-  const { t } = useTranslation();
+  const { t } = useTranslation('admin');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
@@ -108,12 +108,12 @@ export default function NewPlanPage() {
 
       await addDoc(collection(db, 'pricing_plans'), planData);
 
-      toast({ title: t('admin.plans.new.saveSuccess') });
+      toast({ title: t('plans.new.saveSuccess') });
       router.push('/admin/plans');
     } catch (error: any) {
       console.error('Error creating plan:', error);
       toast({
-        title: t('admin.plans.new.saveError'),
+        title: t('plans.new.saveError'),
         description: error.message,
         variant: 'destructive',
       });
@@ -125,24 +125,24 @@ export default function NewPlanPage() {
   return (
     <div className="p-8">
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-bold">{t('admin.plans.new.title')}</h1>
+        <h1 className="text-2xl font-bold">{t('plans.new.title')}</h1>
         <Button variant="outline" asChild>
           <Link href="/admin/plans">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            {t('admin.plans.back')}
+            {t('plans.back')}
           </Link>
         </Button>
       </div>
       <Card>
         <CardHeader>
-          <CardTitle>{t('admin.plans.new.cardTitle')}</CardTitle>
-          <CardDescription>{t('admin.plans.new.description')}</CardDescription>
+          <CardTitle>{t('plans.new.cardTitle')}</CardTitle>
+          <CardDescription>{t('plans.new.description')}</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="title">{t('admin.plans.fields.title')}</Label>
+                <Label htmlFor="title">{t('plans.fields.title')}</Label>
                 <Input
                   id="title"
                   {...register('title')}
@@ -155,7 +155,7 @@ export default function NewPlanPage() {
                 )}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="price">{t('admin.plans.fields.price')}</Label>
+                <Label htmlFor="price">{t('plans.fields.price')}</Label>
                 <Input
                   id="price"
                   {...register('price')}
@@ -169,7 +169,7 @@ export default function NewPlanPage() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="language">
-                  {t('admin.plans.fields.language')}
+                  {t('plans.fields.language')}
                 </Label>
                 <Controller
                   name="language"
@@ -184,7 +184,7 @@ export default function NewPlanPage() {
                       >
                         <SelectValue
                           placeholder={t(
-                            'admin.plans.fields.languagePlaceholder'
+                            'plans.fields.languagePlaceholder'
                           )}
                         />
                       </SelectTrigger>
@@ -203,12 +203,12 @@ export default function NewPlanPage() {
                 )}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="period">{t('admin.plans.fields.period')}</Label>
+                <Label htmlFor="period">{t('plans.fields.period')}</Label>
                 <Input id="period" {...register('period')} />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="buttonText">
-                  {t('admin.plans.fields.buttonText')}
+                  {t('plans.fields.buttonText')}
                 </Label>
                 <Input
                   id="buttonText"
@@ -222,7 +222,7 @@ export default function NewPlanPage() {
                 )}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="order">{t('admin.plans.fields.order')}</Label>
+                <Label htmlFor="order">{t('plans.fields.order')}</Label>
                 <Input
                   id="order"
                   type="number"
@@ -239,7 +239,7 @@ export default function NewPlanPage() {
 
             <div className="space-y-2">
               <Label htmlFor="features">
-                {t('admin.plans.fields.features')}
+                {t('plans.fields.features')}
               </Label>
               <Textarea
                 id="features"
@@ -248,7 +248,7 @@ export default function NewPlanPage() {
                 className={errors.features ? 'border-destructive' : ''}
               />
               <p className="text-xs text-muted-foreground">
-                {t('admin.plans.fields.featuresHelp')}
+                {t('plans.fields.featuresHelp')}
               </p>
               {errors.features && (
                 <p className="text-sm text-destructive">
@@ -270,7 +270,7 @@ export default function NewPlanPage() {
                 )}
               />
               <Label htmlFor="isPopular">
-                {t('admin.plans.fields.isPopular')}
+                {t('plans.fields.isPopular')}
               </Label>
             </div>
 
@@ -279,7 +279,7 @@ export default function NewPlanPage() {
                 {isSubmitting && (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 )}
-                {t('admin.plans.new.saveButton')}
+                {t('plans.new.saveButton')}
               </Button>
             </div>
           </form>

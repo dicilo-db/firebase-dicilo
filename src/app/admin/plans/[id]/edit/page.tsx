@@ -52,24 +52,25 @@ type PlanFormData = z.infer<typeof planSchema>;
 const EditPlanSkeleton = () => {
   const { t } = useTranslation('admin');
   return (
-  <div className="space-y-6 p-8">
-    <Skeleton className="h-8 w-48" />
-    <Card>
-      <CardHeader>
-        <Skeleton className="h-6 w-1/2" />
-        <Skeleton className="h-4 w-3/4" />
-      </CardHeader>
-      <CardContent className="space-y-4 pt-6">
-        <Skeleton className="h-10 w-full" />
-        <Skeleton className="h-20 w-full" />
-        <Skeleton className="h-10 w-full" />
-        <div className="mt-6 flex justify-end">
-          <Skeleton className="h-10 w-28" />
-        </div>
-      </CardContent>
-    </Card>
-  </div>
-)};
+    <div className="space-y-6 p-8">
+      <Skeleton className="h-8 w-48" />
+      <Card>
+        <CardHeader>
+          <Skeleton className="h-6 w-1/2" />
+          <Skeleton className="h-4 w-3/4" />
+        </CardHeader>
+        <CardContent className="space-y-4 pt-6">
+          <Skeleton className="h-10 w-full" />
+          <Skeleton className="h-20 w-full" />
+          <Skeleton className="h-10 w-full" />
+          <div className="mt-6 flex justify-end">
+            <Skeleton className="h-10 w-28" />
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  )
+};
 
 export default function EditPlanPage() {
   useAuthGuard();
@@ -144,7 +145,8 @@ export default function EditPlanPage() {
       toast({ title: t('plans.edit.saveSuccess') });
       router.push('/admin/plans');
     } catch (error) {
-      toast({ title: t('plans.edit.saveError'), variant: 'destructive' });
+      console.error('Detailed save error:', error);
+      toast({ title: t('plans.edit.saveError'), description: (error as Error).message, variant: 'destructive' });
     } finally {
       setIsSubmitting(false);
     }

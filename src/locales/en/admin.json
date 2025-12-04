@@ -61,7 +61,78 @@
       "errorTitle": "Sync Error",
       "errorDesc": "An error occurred while syncing customers.",
       "permissionError": "Only superadmins can perform this action."
+    },
+    "import": {
+      "button": "Import from Storage",
+      "startTitle": "Import Started",
+      "startDesc": "Data is being imported from storage.",
+      "successTitle": "Import Successful",
+      "errorTitle": "Import Error",
+      "errorDesc": "Error importing from storage.",
+      "permissionError": "Access Denied."
+    },
+    "cards": {
+      "databaseSeeding": {
+        "title": "Database Seeding"
+      },
+      "erpSync": {
+        "title": "ERP Sync"
+      },
+      "storageImport": {
+        "title": "Storage Import"
+      },
+      "builder": {
+        "title": "Builder",
+        "description": "Create and edit landing pages"
+      },
+      "clients": {
+        "title": "Clients",
+        "description": "Manage client profiles"
+      },
+      "directory": {
+        "title": "Directory",
+        "description": "Manage businesses"
+      },
+      "feedback": {
+        "title": "Feedback",
+        "description": "User reviews and ratings"
+      },
+      "plans": {
+        "title": "Plans",
+        "description": "Subscription and pricing"
+      },
+      "stats": {
+        "title": "Stats",
+        "description": "Analytics and reports"
+      },
+      "forms": {
+        "title": "Forms",
+        "description": "Form submissions"
+      },
+      "registrations": {
+        "title": "Registrations",
+        "description": "New user signups"
+      },
+      "privateUsers": {
+        "title": "Private Users",
+        "description": "Manage private profiles"
+      }
     }
+  },
+  "privateUsers": {
+    "title": "Private Users",
+    "exportCSV": "Export CSV",
+    "userList": "User List",
+    "searchPlaceholder": "Search by name, email or code...",
+    "table": {
+      "code": "Code",
+      "name": "Name",
+      "email": "Email",
+      "interests": "Interests",
+      "joined": "Joined",
+      "selected": "selected"
+    },
+    "noResults": "No users found."
   },
   "businesses": {
     "title": "Businesses",

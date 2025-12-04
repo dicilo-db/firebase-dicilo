@@ -109,7 +109,7 @@ export function RegistrationForm() {
   });
 
   const registrationType = watch('registrationType');
-  const showBusinessFields = ['retailer', 'premium'].includes(registrationType);
+  const showBusinessFields = ['retailer', 'premium', 'donor'].includes(registrationType);
   const showPremiumFields = registrationType === 'premium';
   const coords = watch('coords');
 
@@ -240,7 +240,7 @@ export function RegistrationForm() {
       const registrationDocRef = await addDoc(collection(db, 'registrations'), registrationData);
 
       // 3. Create Client Document (if Retailer or Premium)
-      if (data.registrationType === 'retailer' || data.registrationType === 'premium') {
+      if (['retailer', 'premium', 'donor'].includes(data.registrationType)) {
         const clientName = data.businessName || `${data.firstName} ${data.lastName}`;
         const defaultClientData = {
           clientName: clientName,

@@ -27,9 +27,23 @@
     },
     "showPassword": "Passwort anzeigen",
     "hidePassword": "Passwort ausblenden",
-    "checkingAuth": "Überprüfung der Authentifizierung...",
     "checkingPermissions": "Überprüfung der Berechtigungen...",
     "redirecting": "Weiterleitung zum Dashboard..."
+  },
+  "privateUsers": {
+    "title": "Privatkunden",
+    "exportCSV": "CSV Exportieren",
+    "userList": "Benutzerliste",
+    "searchPlaceholder": "Suche nach Name, E-Mail oder Code...",
+    "table": {
+      "code": "Code",
+      "name": "Name",
+      "email": "E-Mail",
+      "interests": "Interessen",
+      "joined": "Beigetreten",
+      "selected": "ausgewählt"
+    },
+    "noResults": "Keine Benutzer gefunden."
   },
   "dashboard": {
     "title": "Dashboard",
@@ -61,6 +75,62 @@
       "errorTitle": "Synchronisationsfehler",
       "errorDesc": "Beim Synchronisieren der Kunden ist ein Fehler aufgetreten.",
       "permissionError": "Nur Superadmins können diese Aktion ausführen."
+    },
+    "import": {
+      "button": "Import aus Storage",
+      "startTitle": "Import gestartet",
+      "startDesc": "Daten werden aus dem Storage importiert.",
+      "successTitle": "Import erfolgreich",
+      "errorTitle": "Importfehler",
+      "errorDesc": "Fehler beim Importieren aus dem Storage.",
+      "permissionError": "Zugriff verweigert."
+    },
+    "cards": {
+      "databaseSeeding": {
+        "title": "Datenbank Seeding"
+      },
+      "erpSync": {
+        "title": "ERP Sync"
+      },
+      "storageImport": {
+        "title": "Storage Import"
+      },
+      "builder": {
+        "title": "Builder",
+        "description": "Landing Pages erstellen und bearbeiten"
+      },
+      "clients": {
+        "title": "Kunden",
+        "description": "Kundenprofile verwalten"
+      },
+      "directory": {
+        "title": "Verzeichnis",
+        "description": "Unternehmen verwalten"
+      },
+      "feedback": {
+        "title": "Feedback",
+        "description": "Benutzerbewertungen und Rezensionen"
+      },
+      "plans": {
+        "title": "Pläne",
+        "description": "Abonnements und Preise"
+      },
+      "stats": {
+        "title": "Statistiken",
+        "description": "Analysen und Berichte"
+      },
+      "forms": {
+        "title": "Formulare",
+        "description": "Formulareinsendungen"
+      },
+      "registrations": {
+        "title": "Registrierungen",
+        "description": "Neue Benutzeranmeldungen"
+      },
+      "privateUsers": {
+        "title": "Privatkunden",
+        "description": "Private Profile verwalten"
+      }
     }
   },
   "businesses": {

@@ -14,6 +14,7 @@ import {
 } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { getFunctions, httpsCallable } from 'firebase/functions';
+import { getAuth } from 'firebase/auth';
 import { app } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from 'react-i18next';
@@ -658,6 +659,7 @@ const clientSchema = z.object({
   translations: z.string().optional(),
   layout: z.array(z.any()).optional(),
   newEmailForUpdate: z.string().email().optional().or(z.literal('')),
+  ownerUid: z.string().optional(),
 });
 
 type ClientFormData = z.infer<typeof clientSchema>;
@@ -755,6 +757,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
       translations: '{}',
       layout: [],
       newEmailForUpdate: '',
+      ownerUid: '',
     },
   });
 
@@ -846,6 +849,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
       translations: data.translations
         ? JSON.stringify(data.translations, null, 2)
         : '{}',
+      ownerUid: data.ownerUid || '',
     };
   }, [initialData]);
 
@@ -1008,7 +1012,14 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
 
   return (
     <>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit, (errors) => {
+        console.error('Validation errors:', errors);
+        toast({
+          title: 'Validation Error',
+          description: 'Please check the form for errors. ' + Object.keys(errors).join(', '),
+          variant: 'destructive',
+        });
+      })}>
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
@@ -1575,6 +1586,37 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                   <p className="text-sm text-muted-foreground">
                     Warning: Changing the email will require the user to login again with the new email.
                   </p>
+                </div>
+
+                <div className="space-y-4 rounded-lg border p-4">
+                  <h3 className="font-semibold">Owner Management</h3>
+                  <div className="space-y-2">
+                    <Label htmlFor="ownerUid">Owner UID</Label>
+                    <div className="flex gap-2">
+                      <Input
+                        id="ownerUid"
+                        {...register('ownerUid')}
+                        placeholder="Firebase User UID"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => {
+                          const auth = getAuth(app);
+                          if (auth.currentUser) {
+                            setValue('ownerUid', auth.currentUser.uid, { shouldDirty: true });
+                          } else {
+                            toast({ title: 'Error', description: 'No authenticated user found.', variant: 'destructive' });
+                          }
+                        }}
+                      >
+                        Assign to Me
+                      </Button>
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      This links the client to a specific user account.
+                    </p>
+                  </div>
                 </div>
 
                 <div className="space-y-4 rounded-lg border p-4">

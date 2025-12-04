@@ -21,6 +21,7 @@ import { Header } from '@/components/header';
 import { useTranslation } from 'react-i18next';
 import { Loader2, LogOut } from 'lucide-react';
 import { checkAdminRole } from '@/lib/auth';
+import { PrivateDashboard } from '@/components/dashboard/PrivateDashboard';
 
 const auth = getAuth(app);
 const db = getFirestore(app);
@@ -46,6 +47,7 @@ export default function DashboardPage() {
     const { t } = useTranslation(['login', 'admin']); // Load admin for the form
     const [user, setUser] = useState<User | null>(null);
     const [clientData, setClientData] = useState<ClientData | null>(null);
+    const [privateProfile, setPrivateProfile] = useState<any | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [isAdmin, setIsAdmin] = useState(false);
@@ -59,15 +61,17 @@ export default function DashboardPage() {
             setUser(currentUser);
             const adminUser = await checkAdminRole(currentUser);
             setIsAdmin(!!adminUser);
-            await fetchClientData(currentUser.uid);
+            await fetchDashboardData(currentUser);
         });
 
         return () => unsubscribe();
     }, [router]);
 
-    const fetchClientData = async (uid: string) => {
+    const fetchDashboardData = async (currentUser: User) => {
         try {
-            // 1. Check 'clients' collection for ownerUid
+            const uid = currentUser.uid;
+
+            // 1. Check 'clients' collection for ownerUid (Business Users)
             const clientsRef = collection(db, 'clients');
             const q = query(clientsRef, where('ownerUid', '==', uid));
             const querySnapshot = await getDocs(q);
@@ -88,49 +92,92 @@ export default function DashboardPage() {
                     })
                 );
                 setClientData({ id: docSnap.id, ...serializableData } as ClientData);
-            } else {
-                // 2. Fallback: Check 'registrations' collection
-                // This handles cases where the client document wasn't created properly
-                const registrationsRef = collection(db, 'registrations');
-                const qReg = query(registrationsRef, where('ownerUid', '==', uid));
-                const regSnapshot = await getDocs(qReg);
+                setIsLoading(false);
+                return;
+            }
 
-                if (!regSnapshot.empty) {
-                    const regDoc = regSnapshot.docs[0];
-                    const regData = regDoc.data();
+            // 2. Check 'private_profiles' collection (Private Users - Existing)
+            const profileRef = doc(db, 'private_profiles', uid);
+            const profileSnap = await getDoc(profileRef);
 
-                    // Only proceed if it's a business type
-                    if (['retailer', 'premium'].includes(regData.registrationType)) {
-                        const clientName = regData.businessName || `${regData.firstName} ${regData.lastName}`;
-                        // Construct a temporary client object from registration data
-                        const tempClientData: any = {
-                            id: 'temp_from_registration', // Special ID to indicate it's not from clients collection
-                            clientName: clientName,
-                            clientLogoUrl: regData.imageUrl || '',
-                            clientTitle: `Bienvenido a ${clientName}`,
-                            clientSubtitle: 'Esta es tu página de aterrizaje. ¡Edítala desde el panel de administración!',
-                            products: [],
-                            slug: clientName.toLowerCase().replace(/ /g, '-'), // Simple slugify
-                            socialLinks: { instagram: '', facebook: '', linkedin: '' },
-                            strengths: [],
-                            testimonials: [],
-                            translations: {},
-                            ownerUid: uid,
-                            registrationId: regDoc.id,
-                            // Add other fields mapped from registration
-                            description: regData.description,
-                            address: regData.address,
-                            phone: regData.phone,
-                            website: regData.website,
-                            category: regData.category,
-                        };
-                        setClientData(tempClientData as ClientData);
-                        return; // Found data, exit
-                    }
+            if (profileSnap.exists()) {
+                setPrivateProfile(profileSnap.data());
+                setIsLoading(false);
+                return;
+            }
+
+            // 3. Fallback: Check 'registrations' collection to determine type and initialize if needed
+            const registrationsRef = collection(db, 'registrations');
+            const qReg = query(registrationsRef, where('ownerUid', '==', uid));
+            const regSnapshot = await getDocs(qReg);
+
+            if (!regSnapshot.empty) {
+                const regDoc = regSnapshot.docs[0];
+                const regData = regDoc.data();
+
+                // If it's a business type but client doc missing (shouldn't happen often, but handled)
+                if (['retailer', 'premium'].includes(regData.registrationType)) {
+                    // ... (Existing fallback logic for business) ...
+                    const clientName = regData.businessName || `${regData.firstName} ${regData.lastName}`;
+                    const tempClientData: any = {
+                        id: 'temp_from_registration',
+                        clientName: clientName,
+                        clientLogoUrl: regData.imageUrl || '',
+                        clientTitle: `Bienvenido a ${clientName}`,
+                        clientSubtitle: 'Esta es tu página de aterrizaje. ¡Edítala desde el panel de administración!',
+                        products: [],
+                        slug: clientName.toLowerCase().replace(/ /g, '-'),
+                        socialLinks: { instagram: '', facebook: '', linkedin: '' },
+                        strengths: [],
+                        testimonials: [],
+                        translations: {},
+                        ownerUid: uid,
+                        registrationId: regDoc.id,
+                        description: regData.description,
+                        address: regData.address,
+                        phone: regData.phone,
+                        website: regData.website,
+                        category: regData.category,
+                    };
+                    setClientData(tempClientData as ClientData);
+                    setIsLoading(false);
+                    return;
                 }
 
-                setError('no_client_found');
+                // If it's a PRIVATE user (or donor)
+                if (regData.registrationType === 'private' || regData.registrationType === 'donor') {
+                    // Initialize Private Profile via API
+                    try {
+                        const response = await fetch('/api/private-user/create', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                uid: uid,
+                                email: currentUser.email,
+                                firstName: regData.firstName,
+                                lastName: regData.lastName,
+                                phoneNumber: regData.whatsapp || regData.contactNumber || '', // Adjust field name if needed
+                                contactType: regData.contactType
+                            }),
+                        });
+
+                        if (response.ok) {
+                            const result = await response.json();
+                            setPrivateProfile(result.profile);
+                        } else {
+                            console.error('Failed to create private profile');
+                            setError('failed_create_profile');
+                        }
+                    } catch (apiError) {
+                        console.error('API Error:', apiError);
+                        setError('api_error');
+                    }
+                    setIsLoading(false);
+                    return;
+                }
             }
+
+            setError('no_client_found');
         } catch (err: any) {
             console.error('Error fetching client data:', err);
             setError(err.message);
@@ -161,7 +208,8 @@ export default function DashboardPage() {
             <main className="container mx-auto flex-grow p-4">
                 <div className="mb-6 flex items-center justify-between">
                     <h1 className="text-2xl font-bold">
-                        {t('successTitle')}
+                        {/* Title changes based on context */}
+                        {privateProfile ? 'Mein Bereich' : t('successTitle')}
                     </h1>
                     <div className="flex gap-2">
                         {isAdmin && (
@@ -190,6 +238,8 @@ export default function DashboardPage() {
                     </div>
                 ) : clientData ? (
                     <EditClientForm initialData={clientData} />
+                ) : privateProfile && user ? (
+                    <PrivateDashboard user={user} profile={privateProfile} />
                 ) : null}
             </main>
         </div>

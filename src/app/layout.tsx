@@ -7,6 +7,7 @@ import { ptSans } from './fonts';
 import { cn } from '@/lib/utils';
 import { I18nProvider } from '@/context/i18n-provider';
 import { AuthProvider } from '@/context/AuthContext';
+import { AiChatWidget } from '@/components/AiChatWidget';
 
 export const metadata: Metadata = {
   title: 'Dicilo.net',
@@ -36,6 +37,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <I18nProvider>
           <AuthProvider>
             <div className="flex-grow">{children}</div>
+            <AiChatWidget />
             <Toaster />
           </AuthProvider>
         </I18nProvider>

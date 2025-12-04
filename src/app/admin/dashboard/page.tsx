@@ -150,14 +150,14 @@ const DashboardContent: React.FC = () => {
 
   const handleImportFromStorage = async () => {
     toast({
-      title: 'Iniciando importación...',
-      description: 'Los datos se están importando desde el almacenamiento.',
+      title: t('dashboard.import.startTitle'),
+      description: t('dashboard.import.startDesc'),
     });
     try {
       const result = (await runImportAction({})) as any;
       if (result.data.success) {
         toast({
-          title: 'Importación Exitosa',
+          title: t('dashboard.import.successTitle'),
           description: result.data.message,
         });
       } else {
@@ -167,10 +167,10 @@ const DashboardContent: React.FC = () => {
       console.error('Importing error:', error);
       const errorMessage =
         error.code === 'permission-denied'
-          ? 'Permiso denegado.'
-          : error.message || 'Error al importar desde el almacenamiento.';
+          ? t('dashboard.import.permissionError')
+          : error.message || t('dashboard.import.errorDesc');
       toast({
-        title: 'Error de Importación',
+        title: t('dashboard.import.errorTitle'),
         description: errorMessage,
         variant: 'destructive',
       });
@@ -243,7 +243,7 @@ const DashboardContent: React.FC = () => {
               <Card className="bg-slate-100/50 dark:bg-slate-800/50 border-dashed border-slate-300 dark:border-slate-700">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm font-medium text-muted-foreground">
-                    Database Seeding
+                    {t('dashboard.cards.databaseSeeding.title')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -268,7 +268,7 @@ const DashboardContent: React.FC = () => {
               <Card className="bg-slate-100/50 dark:bg-slate-800/50 border-dashed border-slate-300 dark:border-slate-700">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm font-medium text-muted-foreground">
-                    ERP Sync
+                    {t('dashboard.cards.erpSync.title')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -291,7 +291,7 @@ const DashboardContent: React.FC = () => {
               <Card className="bg-slate-100/50 dark:bg-slate-800/50 border-dashed border-slate-300 dark:border-slate-700">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm font-medium text-muted-foreground">
-                    Storage Import
+                    {t('dashboard.cards.storageImport.title')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -306,7 +306,7 @@ const DashboardContent: React.FC = () => {
                     ) : (
                       <DownloadCloud className="mr-2 h-4 w-4" />
                     )}
-                    Importar desde Storage
+                    {t('dashboard.import.button')}
                   </Button>
                 </CardContent>
               </Card>
@@ -333,9 +333,9 @@ const DashboardContent: React.FC = () => {
                   <LayoutTemplate className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">Builder</div>
+                  <div className="text-2xl font-bold">{t('dashboard.cards.builder.title')}</div>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Create and edit landing pages
+                    {t('dashboard.cards.builder.description')}
                   </p>
                 </CardContent>
               </Card>
@@ -350,9 +350,9 @@ const DashboardContent: React.FC = () => {
                   <Users className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">Clients</div>
+                  <div className="text-2xl font-bold">{t('dashboard.cards.clients.title')}</div>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Manage client profiles
+                    {t('dashboard.cards.clients.description')}
                   </p>
                 </CardContent>
               </Card>
@@ -367,9 +367,9 @@ const DashboardContent: React.FC = () => {
                   <Building className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">Directory</div>
+                  <div className="text-2xl font-bold">{t('dashboard.cards.directory.title')}</div>
                   <p className="text-xs text-muted-foreground mt-1">
-                    {t('dashboard.manageBusinesses')}
+                    {t('dashboard.cards.directory.description')}
                   </p>
                 </CardContent>
               </Card>
@@ -384,9 +384,9 @@ const DashboardContent: React.FC = () => {
                   <MessageSquare className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">Feedback</div>
+                  <div className="text-2xl font-bold">{t('dashboard.cards.feedback.title')}</div>
                   <p className="text-xs text-muted-foreground mt-1">
-                    User reviews and ratings
+                    {t('dashboard.cards.feedback.description')}
                   </p>
                 </CardContent>
               </Card>
@@ -401,9 +401,9 @@ const DashboardContent: React.FC = () => {
                   <DollarSign className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">Plans</div>
+                  <div className="text-2xl font-bold">{t('dashboard.cards.plans.title')}</div>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Subscription and pricing
+                    {t('dashboard.cards.plans.description')}
                   </p>
                 </CardContent>
               </Card>
@@ -418,9 +418,9 @@ const DashboardContent: React.FC = () => {
                   <BarChartHorizontal className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">Stats</div>
+                  <div className="text-2xl font-bold">{t('dashboard.cards.stats.title')}</div>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Analytics and reports
+                    {t('dashboard.cards.stats.description')}
                   </p>
                 </CardContent>
               </Card>
@@ -435,9 +435,9 @@ const DashboardContent: React.FC = () => {
                   <FileText className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">Forms</div>
+                  <div className="text-2xl font-bold">{t('dashboard.cards.forms.title')}</div>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Form submissions
+                    {t('dashboard.cards.forms.description')}
                   </p>
                 </CardContent>
               </Card>
@@ -452,9 +452,26 @@ const DashboardContent: React.FC = () => {
                   <Users className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">Registrations</div>
+                  <div className="text-2xl font-bold">{t('dashboard.cards.registrations.title')}</div>
                   <p className="text-xs text-muted-foreground mt-1">
-                    New user signups
+                    {t('dashboard.cards.registrations.description')}
+                  </p>
+                </CardContent>
+              </Card>
+            </Link>
+
+            <Link href="/admin/private-users" className="group">
+              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    {t('dashboard.cards.privateUsers.title')}
+                  </CardTitle>
+                  <Users className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{t('dashboard.cards.privateUsers.title')}</div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {t('dashboard.cards.privateUsers.description')}
                   </p>
                 </CardContent>
               </Card>

@@ -11,7 +11,7 @@ service cloud.firestore {
     }
 
     function isAdmin() {
-      return request.auth.token.admin == true || request.auth.token.superadmin == true;
+      return request.auth.token.admin == true || request.auth.token.role == 'admin' || request.auth.token.role == 'superadmin';
     }
 
     // Registrations collection
@@ -48,7 +48,13 @@ service cloud.firestore {
     // Pricing Plans collection (public read)
     match /pricing_plans/{planId} {
       allow read: if true;
-      allow write: if false;
+      allow write: if isAdmin();
+    }
+
+    // Private Profiles collection
+    match /private_profiles/{userId} {
+      allow read, update: if isAuthenticated() && (request.auth.uid == userId || isAdmin());
+      allow create: if isAuthenticated();
     }
     
     // Default deny
