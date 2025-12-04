@@ -6,6 +6,45 @@ import DiciloSearchPage from '@/components/dicilo-search-page';
 
 export const dynamic = 'force-dynamic';
 
+function serializeBusiness(docId: string, data: any): Business {
+  let imageUrl = data.clientLogoUrl || data.imageUrl;
+  if (!imageUrl || imageUrl.includes('1024terabox.com')) {
+    imageUrl = `https://placehold.co/128x128.png`;
+  }
+
+  // Ensure coords is a simple array of numbers or undefined
+  let coords: [number, number] | undefined = undefined;
+  if (data.coords) {
+    if (Array.isArray(data.coords) && data.coords.length === 2) {
+      coords = [Number(data.coords[0]), Number(data.coords[1])];
+    } else if (typeof data.coords === 'object' && 'latitude' in data.coords && 'longitude' in data.coords) {
+      // Handle Firestore GeoPoint if it comes back as an object
+      coords = [data.coords.latitude, data.coords.longitude];
+    }
+  }
+
+  return {
+    id: docId,
+    name: data.clientName || data.name || 'Unbekanntes Unternehmen',
+    category: data.category || 'Allgemein',
+    description: data.description || '',
+    location: data.location || '',
+    imageUrl: imageUrl,
+    imageHint: data.imageHint || '',
+    coords: coords,
+    address: data.address || '',
+    phone: data.phone || '',
+    website: data.website || '',
+    currentOfferUrl: data.currentOfferUrl || '',
+    clientSlug: data.slug || '',
+    mapUrl: data.mapUrl || '',
+    // Add other fields if they are simple types and needed
+    category_key: data.category_key,
+    subcategory_key: data.subcategory_key,
+    rating: typeof data.rating === 'number' ? data.rating : undefined,
+  };
+}
+
 async function getBusinesses(): Promise<Business[]> {
   const db = getFirestore(app);
   console.log('Fetching businesses on server...');
@@ -21,13 +60,7 @@ async function getBusinesses(): Promise<Business[]> {
     ]);
 
     const businesses = businessResult.status === 'fulfilled'
-      ? businessResult.value.docs.map((doc) => {
-        const data = doc.data();
-        if (!data.imageUrl || data.imageUrl.includes('1024terabox.com')) {
-          data.imageUrl = `https://placehold.co/128x128.png`;
-        }
-        return { id: doc.id, ...data } as Business;
-      })
+      ? businessResult.value.docs.map((doc) => serializeBusiness(doc.id, doc.data()))
       : [];
 
     if (businessResult.status === 'rejected') {
@@ -35,30 +68,7 @@ async function getBusinesses(): Promise<Business[]> {
     }
 
     const clients = clientResult.status === 'fulfilled'
-      ? clientResult.value.docs.map((doc) => {
-        const data = doc.data();
-        let imageUrl = data.clientLogoUrl || data.imageUrl;
-        if (!imageUrl || imageUrl.includes('1024terabox.com')) {
-          imageUrl = `https://placehold.co/128x128.png`;
-        }
-
-        return {
-          id: doc.id,
-          name: data.clientName || data.name || 'Unbekanntes Unternehmen',
-          category: data.category || 'Allgemein',
-          description: data.description || '',
-          location: data.location || '',
-          imageUrl: imageUrl,
-          imageHint: data.imageHint || '',
-          coords: data.coords || undefined,
-          address: data.address || '',
-          phone: data.phone || '',
-          website: data.website || '',
-          currentOfferUrl: data.currentOfferUrl || '',
-          clientSlug: data.slug || '',
-          mapUrl: data.mapUrl || '',
-        } as Business;
-      })
+      ? clientResult.value.docs.map((doc) => serializeBusiness(doc.id, doc.data()))
       : [];
 
     if (clientResult.status === 'rejected') {

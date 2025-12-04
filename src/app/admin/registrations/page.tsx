@@ -121,7 +121,7 @@ const RegistrationSkeleton = () => (
 
 export default function RegistrationsPage() {
   // Hooks
-  const { t } = useTranslation();
+  const { t } = useTranslation(['admin', 'register']);
   const [allRegistrations, setAllRegistrations] = useState<Registration[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('all');
@@ -203,17 +203,17 @@ export default function RegistrationsPage() {
   // Memorizar las traducciones para evitar recálculos
   const registrationTypeMap: Record<RegistrationType, string> = useMemo(
     () => ({
-      private: t('register.options.private'),
-      donor: t('register.options.donor'),
-      retailer: t('register.options.retailer'),
-      premium: t('register.options.premium'),
+      private: t('register.options.private', { ns: 'register' }),
+      donor: t('register.options.donor', { ns: 'register' }),
+      retailer: t('register.options.retailer', { ns: 'register' }),
+      premium: t('register.options.premium', { ns: 'register' }),
     }),
     [t]
   );
 
   const tabs: { value: string; label: string }[] = useMemo(
     () => [
-      { value: 'all', label: t('admin.registrations.tabs.all') },
+      { value: 'all', label: t('registrations.tabs.all', { ns: 'admin' }) },
       { value: 'private', label: registrationTypeMap.private },
       { value: 'donor', label: registrationTypeMap.donor },
       { value: 'retailer', label: registrationTypeMap.retailer },
@@ -232,12 +232,12 @@ export default function RegistrationsPage() {
       <main className="flex-grow p-4 sm:p-8">
         <div className="mb-6 flex items-center justify-between">
           <h1 className="text-2xl font-bold">
-            {t('admin.registrations.title')}
+            {t('registrations.title', { ns: 'admin' })}
           </h1>
           <Button variant="outline" asChild>
             <Link href="/admin/dashboard">
               <LayoutDashboard className="mr-2 h-4 w-4" />
-              {t('admin.businesses.backToDashboard')}
+              {t('businesses.backToDashboard', { ns: 'admin' })}
             </Link>
           </Button>
         </div>
@@ -256,11 +256,11 @@ export default function RegistrationsPage() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>{t('admin.registrations.table.name')}</TableHead>
-                <TableHead>{t('admin.registrations.table.contact')}</TableHead>
-                <TableHead>{t('admin.registrations.table.type')}</TableHead>
-                <TableHead>{t('admin.registrations.table.date')}</TableHead>
-                <TableHead>{t('admin.registrations.table.actions')}</TableHead>
+                <TableHead>{t('registrations.table.name', { ns: 'admin' })}</TableHead>
+                <TableHead>{t('registrations.table.contact', { ns: 'admin' })}</TableHead>
+                <TableHead>{t('registrations.table.type', { ns: 'admin' })}</TableHead>
+                <TableHead>{t('registrations.table.date', { ns: 'admin' })}</TableHead>
+                <TableHead>{t('registrations.table.actions', { ns: 'admin' })}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -285,9 +285,9 @@ export default function RegistrationsPage() {
                     <TableCell className="text-sm text-muted-foreground">
                       {reg.createdAt
                         ? format(
-                            new Date(reg.createdAt.seconds * 1000),
-                            'dd/MM/yyyy HH:mm'
-                          )
+                          new Date(reg.createdAt.seconds * 1000),
+                          'dd/MM/yyyy HH:mm'
+                        )
                         : 'N/A'}
                     </TableCell>
                     <TableCell>
@@ -301,7 +301,7 @@ export default function RegistrationsPage() {
                     colSpan={5}
                     className="h-24 text-center text-muted-foreground"
                   >
-                    {t('admin.registrations.noResults')}
+                    {t('registrations.noResults', { ns: 'admin' })}
                   </TableCell>
                 </TableRow>
               )}

@@ -1,3 +1,4 @@
+
 // src/app/client/[clientSlug]/page.tsx
 import {
   getFirestore,
@@ -9,8 +10,9 @@ import {
 import { app } from '@/lib/firebase';
 import { notFound } from 'next/navigation';
 import ClientLandingPage from '@/components/ClientLandingPage';
-import { ClientData } from '@/components/ClientLandingPage';
+import { ClientData } from '@/types/client';
 import { I18nProvider } from '@/context/i18n-provider';
+import { Metadata } from 'next';
 
 const db = getFirestore(app);
 
@@ -62,7 +64,7 @@ export async function generateMetadata({
 
   const description =
     clientData.bodyData?.subtitle ||
-    `Discover ${clientData.clientName}'s profile on dicilo.net.`;
+    `Discover ${clientData.clientName} 's profile on dicilo.net.`;
 
   return {
     title: `${clientData.clientName} | dicilo.net`,

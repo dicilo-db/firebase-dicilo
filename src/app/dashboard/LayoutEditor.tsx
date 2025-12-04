@@ -6,11 +6,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { GripVertical, Plus, Trash2 } from 'lucide-react';
+import { GripVertical, Plus, Trash2, Image as ImageIcon, MapPin, Video, Star, List } from 'lucide-react';
 
 interface LayoutBlock {
     id: string;
-    type: 'hero' | 'text' | 'products' | 'contact';
+    type: 'hero' | 'text' | 'products' | 'contact' | 'gallery' | 'map' | 'video' | 'reviews' | 'amenities';
     content: any;
 }
 
@@ -20,14 +20,19 @@ interface LayoutEditorProps {
 }
 
 const AVAILABLE_BLOCKS = [
-    { type: 'hero', label: 'Hero Section (Banner)' },
-    { type: 'text', label: 'Text Block' },
-    { type: 'products', label: 'Product Grid' },
-    { type: 'contact', label: 'Contact Form' },
+    { type: 'hero', label: 'Hero Section (Banner)', icon: ImageIcon },
+    { type: 'gallery', label: 'Photo Gallery', icon: ImageIcon },
+    { type: 'text', label: 'Text Block', icon: List },
+    { type: 'amenities', label: 'Amenities / Features', icon: List },
+    { type: 'video', label: 'Video Player', icon: Video },
+    { type: 'map', label: 'Location Map', icon: MapPin },
+    { type: 'reviews', label: 'Reviews Section', icon: Star },
+    { type: 'products', label: 'Product Grid', icon: List },
+    { type: 'contact', label: 'Contact / Booking', icon: List },
 ];
 
 export default function LayoutEditor({ initialLayout = [], onChange }: LayoutEditorProps) {
-    const [blocks, setBlocks] = useState<LayoutBlock[]>(initialLayout);
+    const [blocks, setBlocks] = useState<LayoutBlock[]>(initialLayout || []);
 
     const addBlock = (type: string) => {
         const newBlock: LayoutBlock = {
@@ -67,13 +72,16 @@ export default function LayoutEditor({ initialLayout = [], onChange }: LayoutEdi
         <div className="space-y-6">
             <div className="flex gap-2">
                 <Select onValueChange={addBlock}>
-                    <SelectTrigger className="w-[200px]">
-                        <SelectValue placeholder="Add Block..." />
+                    <SelectTrigger className="w-[250px]">
+                        <SelectValue placeholder="Add Content Block..." />
                     </SelectTrigger>
                     <SelectContent>
                         {AVAILABLE_BLOCKS.map((block) => (
                             <SelectItem key={block.type} value={block.type}>
-                                {block.label}
+                                <div className="flex items-center gap-2">
+                                    <block.icon className="h-4 w-4" />
+                                    {block.label}
+                                </div>
                             </SelectItem>
                         ))}
                     </SelectContent>
@@ -98,7 +106,7 @@ export default function LayoutEditor({ initialLayout = [], onChange }: LayoutEdi
                                                         <GripVertical className="h-5 w-5" />
                                                     </div>
                                                     <CardTitle className="text-sm font-medium uppercase text-muted-foreground">
-                                                        {block.type}
+                                                        {AVAILABLE_BLOCKS.find(b => b.type === block.type)?.label || block.type}
                                                     </CardTitle>
                                                 </div>
                                                 <Button
@@ -137,14 +145,29 @@ export default function LayoutEditor({ initialLayout = [], onChange }: LayoutEdi
                                                         />
                                                     </div>
                                                 )}
-                                                {block.type === 'products' && (
-                                                    <div className="p-4 text-center text-sm text-muted-foreground border border-dashed rounded">
-                                                        Product Grid (Automatic)
+                                                {block.type === 'video' && (
+                                                    <div className="space-y-2">
+                                                        <Label>Video URL (YouTube/Vimeo)</Label>
+                                                        <Input
+                                                            value={block.content.videoUrl || ''}
+                                                            onChange={(e) => updateBlockContent(block.id, { videoUrl: e.target.value })}
+                                                            placeholder="https://youtube.com/..."
+                                                        />
                                                     </div>
                                                 )}
-                                                {block.type === 'contact' && (
-                                                    <div className="p-4 text-center text-sm text-muted-foreground border border-dashed rounded">
-                                                        Contact Form (Automatic)
+                                                {block.type === 'amenities' && (
+                                                    <div className="space-y-2">
+                                                        <Label>Amenities (comma separated)</Label>
+                                                        <Input
+                                                            value={block.content.items || ''}
+                                                            onChange={(e) => updateBlockContent(block.id, { items: e.target.value })}
+                                                            placeholder="Wifi, Parking, Pool..."
+                                                        />
+                                                    </div>
+                                                )}
+                                                {['products', 'contact', 'map', 'reviews', 'gallery'].includes(block.type) && (
+                                                    <div className="p-4 text-center text-sm text-muted-foreground border border-dashed rounded bg-muted/50">
+                                                        This block will be automatically populated with your data.
                                                     </div>
                                                 )}
                                             </CardContent>

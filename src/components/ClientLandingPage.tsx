@@ -10,75 +10,10 @@ import { getTextColor } from '@/lib/color-utils';
 import { ClientHeaderTop } from './ClientHeaderTop';
 import { ClientHeaderBody1 } from './ClientHeaderBody1';
 import { Button } from './ui/button';
-import { BodyData } from './ClientBody';
 import ClientBody from './ClientBody';
 import type { Timestamp } from 'firebase/firestore';
-
-// --- TIPOS DE DATOS ---
-
-export interface MarqueeHeaderData {
-  enabled: boolean;
-  offerEnabled?: boolean;
-  offerEndDate?: Timestamp | string; // Puede ser Timestamp de Firestore o string
-  leftButtonText?: string;
-  leftButtonLink?: string;
-  middleText?: string;
-  clubButtonText?: string;
-  clubButtonLink?: string;
-  marqueeText?: string;
-  rightButton1Text?: string;
-  rightButton1Link?: string;
-  rightButton2Text?: string;
-  rightButton2Link?: string;
-}
-
-export interface HeaderData {
-  welcomeText?: string;
-  headerImageUrl?: string;
-  embedCode?: string;
-  socialShareText?: string;
-  socialLinks?: { icon: string; url: string }[];
-  headerBackgroundColor?: string;
-  headerBackgroundImageUrl?: string;
-  clientLogoWidth?: number; // Ancho del logo en píxeles
-  headerTextColor?: string;
-  dividerLine?: {
-    enabled: boolean;
-    color?: string;
-    thickness?: number;
-  };
-  bannerType?: 'embed' | 'url' | 'upload';
-  bannerEmbedCode?: string;
-  bannerImageUrl?: string;
-  bannerImageWidth?: number;
-  bannerImageHeight?: number;
-  bannerShareUrl?: string;
-}
-
-export interface InfoCardData {
-  title: string;
-  content: string; // Permitirá HTML
-}
-
-export interface GraphicData {
-  imageUrl: string;
-  targetUrl: string;
-  text?: string;
-}
-
-export interface ClientData {
-  id: string;
-  clientName: string;
-  clientType: 'retailer' | 'premium';
-  clientLogoUrl: string;
-  headerData?: HeaderData;
-  marqueeHeaderData?: MarqueeHeaderData;
-  bodyData?: BodyData;
-  infoCards?: InfoCardData[];
-  graphics?: GraphicData[];
-  translations: any;
-  slug: string;
-}
+import ClientPremiumLayout from './ClientPremiumLayout';
+import { ClientData, HeaderData, MarqueeHeaderData, InfoCardData, GraphicData } from '@/types/client';
 
 interface LandingPageProps {
   clientData: ClientData;
@@ -433,6 +368,11 @@ export default function ClientLandingPage({ clientData }: LandingPageProps) {
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  // Use Premium Layout if client type is premium OR if layout data exists
+  if (clientData.clientType === 'premium' || (clientData.layout && clientData.layout.length > 0)) {
+    return <ClientPremiumLayout clientData={clientData} />;
+  }
 
   return (
     <div className="min-h-screen bg-white">
