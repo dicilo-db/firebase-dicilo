@@ -131,6 +131,12 @@ const StickySidebar = ({ clientData }: { clientData: ClientData }) => {
                 <div className="p-6">
                     <h3 className="mb-2 text-lg font-bold">Location</h3>
                     <p className="mb-4 text-sm text-gray-600">{clientData.address || "Address not available"}</p>
+                    {clientData.phone && <p className="mb-2 text-sm text-gray-600">📞 {clientData.phone}</p>}
+                    {clientData.website && (
+                        <a href={clientData.website} target="_blank" rel="noopener noreferrer" className="mb-4 block text-sm text-blue-600 hover:underline">
+                            🌐 Visit Website
+                        </a>
+                    )}
                     <Button className="w-full bg-blue-600 hover:bg-blue-700">Get Directions</Button>
                 </div>
             </div>

@@ -83,5 +83,9 @@ export interface ClientData {
     layout?: any[];
     coordinates?: { lat: number; lng: number };
     address?: string;
+    phone?: string;
+    website?: string;
+    email?: string;
     galleryImages?: string[];
+    ownerUid?: string;
 }
