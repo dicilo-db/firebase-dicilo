@@ -4,6 +4,28 @@ Este documento registra los 30 cambios más recientes realizados en el proyecto.
 
 ---
 
+---
+
+### **162. FEATURE: EDICIÓN MANUAL DE WALLET (ADMIN) - CÓDIGO: FEATURE-WALLET-ADMIN-V1**
+
+- **Fecha y Hora:** 05 de Diciembre de 2025, 14:45 (CET)
+- **Módulos Afectados:** `src/app/admin/clients/[id]/edit/EditClientForm.tsx`.
+- **Descripción del Cambio:**
+  - **Problema:** El campo "Werbe-Budget" era estático y no editable en el panel de administración, impidiendo cargar saldo manualmente.
+  - **Solución:** Se habilitaron campos numéricos editables para `budget_remaining` y `total_invested` en la pestaña "Wallet" del formulario de edición de cliente.
+  - **Resultado:** El administrador ahora puede asignar saldo manualmente tras recibir el pago.
+
+---
+
+### **161. FIX: ERROR CREACIÓN PERFIL PRIVADO - CÓDIGO: FIX-PROFILE-CREATE-V1**
+
+- **Fecha y Hora:** 05 de Diciembre de 2025, 13:55 (CET)
+- **Módulos Afectados:** `src/app/api/private-user/create/route.ts`.
+- **Descripción del Cambio:**
+  - **Problema:** Los usuarios recibían "Error_Feil_Create_profil" al registrarse o loguearse por primera vez. Esto se debía a que la API usaba el SDK Cliente (`firebase/firestore`) en el servidor, lo que provocaba un rechazo por reglas de seguridad.
+  - **Solución:** Se migró la lógica para utilizar `firebase-admin` (SDK Admin), permitiendo escritura privilegiada desde el servidor.
+- **Resultado:** La creación de perfiles privados ahora funciona correctamente sin errores de permisos.
+
 ### **160. FEATURE: CEREBRO IA Y ACTUALIZACIÓN DE CONOCIMIENTO - CÓDIGO: AI-BRAIN-V1**
 
 - **Fecha y Hora:** 05 de Diciembre de 2025, 13:15 (CET)

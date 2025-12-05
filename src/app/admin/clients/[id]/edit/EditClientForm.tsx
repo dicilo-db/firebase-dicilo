@@ -664,6 +664,8 @@ const clientSchema = z.object({
   newEmailForUpdate: z.string().email().optional().or(z.literal('')),
   ownerUid: z.string().optional(),
   galleryImages: z.array(z.string()).optional(),
+  budget_remaining: z.number().optional().default(0),
+  total_invested: z.number().optional().default(0),
 });
 
 type ClientFormData = z.infer<typeof clientSchema>;
@@ -763,6 +765,8 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
       newEmailForUpdate: '',
       ownerUid: '',
       galleryImages: [],
+      budget_remaining: 0,
+      total_invested: 0,
     },
   });
 
@@ -855,6 +859,8 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
         ? JSON.stringify(data.translations, null, 2)
         : '{}',
       ownerUid: data.ownerUid || '',
+      budget_remaining: data.budget_remaining || 0,
+      total_invested: data.total_invested || 0,
     };
   }, [initialData]);
 
@@ -2284,13 +2290,53 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
               </TabsContent>
 
               {/* Wallet Tab */}
-              <TabsContent value="wallet">
-                <WalletCard
-                  clientId={id}
-                  clientEmail={watch('newEmailForUpdate') || ''}
-                  currentBudget={initialData.budget_remaining || 0}
-                  totalInvested={initialData.total_invested || 0}
-                />
+              <TabsContent value="wallet" className="space-y-6">
+                <CardTitle>Wallet & Ads Management</CardTitle>
+                <CardDescription>
+                  Verwalten Sie das Werbebudget dieses Kunden. Änderungen hier werden sofort gespeichert.
+                </CardDescription>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-4 rounded-lg border p-4 bg-slate-50">
+                    <h3 className="font-semibold text-lg">Manuelle Anpassung (Admin)</h3>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="budget_remaining">Verfügbares Guthaben (€)</Label>
+                      <Input
+                        id="budget_remaining"
+                        type="number"
+                        step="0.01"
+                        {...register('budget_remaining', { valueAsNumber: true })}
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Aktuelles Guthaben für Anzeigen. Wird durch Views reduziert.
+                      </p>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="total_invested">Gesamt Investiert (€)</Label>
+                      <Input
+                        id="total_invested"
+                        type="number"
+                        step="0.01"
+                        {...register('total_invested', { valueAsNumber: true })}
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Historische Summe aller Einzahlungen.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <h3 className="font-semibold text-lg">Vorschau für Kunde</h3>
+                    <WalletCard
+                      clientId={id}
+                      clientEmail={watch('newEmailForUpdate') || ''}
+                      currentBudget={watch('budget_remaining') || 0}
+                      totalInvested={watch('total_invested') || 0}
+                    />
+                  </div>
+                </div>
               </TabsContent>
 
               {/* Translations Tab */}

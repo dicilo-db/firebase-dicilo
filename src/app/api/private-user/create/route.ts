@@ -1,9 +1,7 @@
 import { NextResponse } from 'next/server';
-import { getFirestore, collection, doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
-import { app } from '@/lib/firebase';
+import { adminDb } from '@/lib/firebase-admin';
+import * as admin from 'firebase-admin';
 import { generateUniqueCode } from '@/lib/code-generator';
-
-const db = getFirestore(app);
 
 export async function POST(request: Request) {
     try {
@@ -18,10 +16,10 @@ export async function POST(request: Request) {
         }
 
         // Check if profile already exists
-        const profileRef = doc(db, 'private_profiles', uid);
-        const profileSnap = await getDoc(profileRef);
+        const profileRef = adminDb.collection('private_profiles').doc(uid);
+        const profileSnap = await profileRef.get();
 
-        if (profileSnap.exists()) {
+        if (profileSnap.exists) {
             return NextResponse.json(
                 { message: 'Profile already exists', profile: profileSnap.data() },
                 { status: 200 }
@@ -55,11 +53,11 @@ export async function POST(request: Request) {
                 socialGroup: 'none',
             },
             referrals: [],
-            createdAt: serverTimestamp(),
-            updatedAt: serverTimestamp(),
+            createdAt: admin.firestore.FieldValue.serverTimestamp(),
+            updatedAt: admin.firestore.FieldValue.serverTimestamp(),
         };
 
-        await setDoc(profileRef, profileData);
+        await profileRef.set(profileData);
 
         return NextResponse.json(
             { message: 'Profile created successfully', profile: profileData },

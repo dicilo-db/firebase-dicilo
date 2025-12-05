@@ -28,6 +28,7 @@ export default function PrivateUsersPage() {
     const [users, setUsers] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -36,8 +37,9 @@ export default function PrivateUsersPage() {
                 const snapshot = await getDocs(q);
                 const usersData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 setUsers(usersData);
-            } catch (error) {
+            } catch (error: any) {
                 console.error('Error fetching users:', error);
+                setError(error.message || 'Unknown error fetching users.');
             } finally {
                 setIsLoading(false);
             }
@@ -45,6 +47,10 @@ export default function PrivateUsersPage() {
 
         fetchUsers();
     }, []);
+
+    // Get error from state if we implemented it properly, for now quick fix to not break types:
+    // Ideally we should add [error, setError] state.
+    // Let's re-do the tool call with a proper state implementation.
 
     const filteredUsers = users.filter(user =>
         user.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -94,6 +100,16 @@ export default function PrivateUsersPage() {
                     </div>
                 </div>
 
+                {error && (
+                    <div className="mb-6 rounded-md bg-destructive/15 p-4 text-destructive border border-destructive/20">
+                        <p className="font-semibold">Error cargando usuarios:</p>
+                        <p className="text-sm">{error}</p>
+                        {error.includes('permission') && (
+                            <p className="mt-2 text-xs">Asegúrese de que su usuario tenga rol 'superadmin' o 'admin' en el sistema.</p>
+                        )}
+                    </div>
+                )}
+
                 <Card>
                     <CardHeader>
                         <CardTitle>{t('privateUsers.userList')}</CardTitle>
@@ -137,10 +153,15 @@ export default function PrivateUsersPage() {
                                             </TableCell>
                                         </TableRow>
                                     ))}
-                                    {filteredUsers.length === 0 && (
+                                    {filteredUsers.length === 0 && !error && (
                                         <TableRow>
                                             <TableCell colSpan={5} className="text-center h-24 text-muted-foreground">
-                                                {t('privateUsers.noResults')}
+                                                <div className="flex flex-col items-center gap-2">
+                                                    <span>{t('privateUsers.noResults')}</span>
+                                                    <span className="text-xs">
+                                                        (Nota: Si hubo errores en el registro anteriormente, los perfiles no se crearon. Revise "Registros".)
+                                                    </span>
+                                                </div>
                                             </TableCell>
                                         </TableRow>
                                     )}
