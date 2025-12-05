@@ -767,7 +767,6 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
       infoCards: [],
       graphics: [],
       products: [],
-      products: [],
       translations: '{}',
       layout: [],
       newEmailForUpdate: '',
@@ -790,10 +789,15 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
     const bodyData = data.bodyData || {};
     const socialLinks = headerData.socialLinks || [];
 
+    // Ensure clientType is valid
+    const validClientType = (['retailer', 'premium'].includes(initialData.clientType)
+      ? initialData.clientType
+      : 'retailer') as 'retailer' | 'premium';
+
     return {
       clientName: initialData.clientName || '',
       slug: initialData.slug || '',
-      clientType: initialData.clientType || 'retailer',
+      clientType: validClientType,
       clientLogoUrl: data.clientLogoUrl || '',
       headerData: {
         welcomeText: headerData.welcomeText || '',
@@ -1175,566 +1179,645 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                         {t(errors.slug.message as any)}
                       </p>
                     )}
-                    URL: {typeof window !== 'undefined' ? window.location.origin : ''}/client/{watch('slug')}
-                  </p>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="address">Address</Label>
-                  <Input id="address" {...register('address')} placeholder="Calle Principal 123, Madrid" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="phone">Phone</Label>
-                  <Input id="phone" {...register('phone')} placeholder="+34 600 000 000" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="website">Website</Label>
-                  <Input id="website" {...register('website')} placeholder="https://example.com" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="email">Public Email</Label>
-                  <Input id="email" {...register('email')} placeholder="contact@example.com" />
-                </div>
-                <div className="space-y-2">
-                  <Label>Coordinates</Label>
-                  <div className="flex gap-2">
-                    <Input
-                      type="number"
-                      step="any"
-                      placeholder="Lat"
-                      {...register('coordinates.lat', { valueAsNumber: true })}
-                    />
-                    <Input
-                      type="number"
-                      step="any"
-                      placeholder="Lng"
-                      {...register('coordinates.lng', { valueAsNumber: true })}
-                    />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="clientType">
-                    {t('clients.fields.clientType')}
-                  </Label>
-                  <Controller
-                    name="clientType"
-                    control={control}
-                    render={({ field }) => (
-                      <Select
-                        onValueChange={field.onChange}
-                        value={field.value || 'retailer'}
-                      >
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="retailer">Retailer</SelectItem>
-                          <SelectItem value="premium">Premium</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    )}
-                  />
-                </div>
-              </div>
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="clientLogoUrl">
-                    {t('clients.fields.clientLogoUrl')}
-                  </Label>
-                  <Input id="clientLogoUrl" {...register('clientLogoUrl')} />
-                  {errors.clientLogoUrl && (
-                    <p className="text-sm text-destructive">
-                      {errors.clientLogoUrl.message}
+                    <p className="text-xs text-muted-foreground">
+                      URL: {typeof window !== 'undefined' ? window.location.origin : ''}/client/{watch('slug')}
                     </p>
-                  )}
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="headerData.clientLogoWidth">
-                    {t('clients.fields.header.clientLogoWidth')}
-                  </Label>
-                  <Input
-                    id="headerData.clientLogoWidth"
-                    type="number"
-                    {...register('headerData.clientLogoWidth', {
-                      valueAsNumber: true,
-                    })}
-                  />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="headerData.welcomeText">
-                  {t('clients.fields.header.welcomeText')}
-                </Label>
-                <Input
-                  id="headerData.welcomeText"
-                  {...register('headerData.welcomeText')}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="headerData.socialShareText">
-                  {t('clients.fields.header.socialShareText')}
-                </Label>
-                <Textarea
-                  id="headerData.socialShareText"
-                  {...register('headerData.socialShareText')}
-                  placeholder={
-                    t(
-                      'clients.fields.header.socialShareTextPlaceholder'
-                    ) as string
-                  }
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="headerData.bannerShareUrl">
-                  {t('clients.fields.header.bannerShareUrl')}
-                </Label>
-                <Input
-                  id="headerData.bannerShareUrl"
-                  {...register('headerData.bannerShareUrl')}
-                  placeholder="https://example.com/special-offer"
-                />
-              </div>
-
-              {clientType === 'premium' && (
-                <>
-                  <h3 className="pt-4 text-lg font-medium">
-                    {t('clients.fields.header.stylesTitle')}
-                  </h3>
-                  <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                    <div className="space-y-2">
-                      <Label htmlFor="headerData.headerBackgroundColor">
-                        {t('clients.fields.header.headerBackgroundColor')}
-                      </Label>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="address">Address</Label>
+                    <Input id="address" {...register('address')} placeholder="Calle Principal 123, Madrid" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="phone">Phone</Label>
+                    <Input id="phone" {...register('phone')} placeholder="+34 600 000 000" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="website">Website</Label>
+                    <Input id="website" {...register('website')} placeholder="https://example.com" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Public Email</Label>
+                    <Input id="email" {...register('email')} placeholder="contact@example.com" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Coordinates</Label>
+                    <div className="flex gap-2">
                       <Input
-                        id="headerData.headerBackgroundColor"
-                        {...register('headerData.headerBackgroundColor')}
-                        placeholder="#FFFFFF"
+                        type="number"
+                        step="any"
+                        placeholder="Lat"
+                        {...register('coordinates.lat', { valueAsNumber: true })}
                       />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="headerData.headerTextColor">
-                        {t('clients.fields.header.headerTextColor')}
-                      </Label>
                       <Input
-                        id="headerData.headerTextColor"
-                        type="color"
-                        {...register('headerData.headerTextColor')}
-                        className="h-10 p-1"
+                        type="number"
+                        step="any"
+                        placeholder="Lng"
+                        {...register('coordinates.lng', { valueAsNumber: true })}
                       />
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="headerData.headerBackgroundImageUrl">
-                      {t('clients.fields.header.headerBackgroundImageUrl')}
+                    <Label htmlFor="clientType">
+                      {t('clients.fields.clientType')}
                     </Label>
-                    <Input
-                      id="headerData.headerBackgroundImageUrl"
-                      {...register('headerData.headerBackgroundImageUrl')}
-                      placeholder="https://example.com/background.jpg"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="bodyData.body2BackgroundColor">
-                      Hintergrundfarbe de body 2
-                    </Label>
-                    <Input
-                      id="bodyData.body2BackgroundColor"
-                      {...register('bodyData.body2BackgroundColor')}
-                      placeholder="#F9FAFB"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="headerData.headerImageUrl">
-                      {t('clients.fields.header.headerImageUrl')}
-                    </Label>
-                    <Input
-                      id="headerData.headerImageUrl"
-                      {...register('headerData.headerImageUrl')}
-                    />
-                    {errors.headerData?.headerImageUrl && (
-                      <p className="text-sm text-destructive">
-                        {errors.headerData.headerImageUrl.message}
-                      </p>
-                    )}
-                  </div>
-
-                  <Separator className="my-6" />
-
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-medium">
-                      {t('clients.fields.header.dividerLine.title')}
-                    </h3>
-                    <div className="flex items-center space-x-2">
-                      <Controller
-                        control={control}
-                        name="headerData.dividerLine.enabled"
-                        render={({ field }) => (
-                          <Switch
-                            id="dividerLineEnabled"
-                            checked={field.value ?? false}
-                            onCheckedChange={field.onChange}
-                          />
-                        )}
-                      />
-                      <Label htmlFor="dividerLineEnabled">
-                        {t('clients.fields.header.dividerLine.enable')}
-                      </Label>
-                    </div>
-                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                      <div className="space-y-2">
-                        <Label htmlFor="headerData.dividerLine.color">
-                          {t('clients.fields.header.dividerLine.color')}
-                        </Label>
-                        <Controller
-                          name="headerData.dividerLine.color"
-                          control={control}
-                          render={({ field }) => (
-                            <Input
-                              id="headerData.dividerLine.color"
-                              type="color"
-                              {...field}
-                              className="h-10 p-1"
-                            />
-                          )}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="headerData.dividerLine.thickness">
-                          {t('clients.fields.header.dividerLine.thickness')}
-                        </Label>
-                        <Input
-                          id="headerData.dividerLine.thickness"
-                          type="number"
-                          {...register('headerData.dividerLine.thickness', {
-                            valueAsNumber: true,
-                          })}
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  <Separator className="my-6" />
-
-                  <h3 className="text-lg font-medium">
-                    {t('clients.fields.header.socialLinks')}
-                  </h3>
-                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-                    {socialLinkFields.map((field, index) => (
-                      <div
-                        key={field.id}
-                        className="space-y-2 rounded-lg border p-3"
-                      >
-                        <Label>
-                          {t('clients.fields.header.socialLink', {
-                            number: index + 1,
-                          })}
-                        </Label>
-                        <Input
-                          placeholder={t(
-                            'clients.fields.header.iconPlaceholderText'
-                          )}
-                          {...register(`headerData.socialLinks.${index}.icon`)}
-                        />
-                        <Input
-                          placeholder={t(
-                            'clients.fields.header.urlPlaceholder'
-                          )}
-                          {...register(`headerData.socialLinks.${index}.url`)}
-                        />
-                        {errors.headerData?.socialLinks?.[index]?.url && (
-                          <p className="text-sm text-destructive">
-                            {errors.headerData.socialLinks[index]?.url?.message}
-                          </p>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-
-                  <Separator className="my-6" />
-
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-medium">
-                      {t('clients.fields.header.banner.title')}
-                    </h3>
                     <Controller
-                      name="headerData.bannerType"
+                      name="clientType"
                       control={control}
                       render={({ field }) => (
-                        <RadioGroup
-                          value={field.value}
+                        <Select
                           onValueChange={field.onChange}
-                          className="flex items-center gap-6"
+                          value={field.value || 'retailer'}
                         >
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="embed" id="embed" />
-                            <Label htmlFor="embed">
-                              {t('clients.fields.header.banner.embedCode')}
-                            </Label>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="url" id="url" />
-                            <Label htmlFor="url">
-                              {t('clients.fields.header.banner.imageUrl')}
-                            </Label>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="upload" id="upload" />
-                            <Label htmlFor="upload">
-                              {t('clients.fields.header.banner.fileUpload')}
-                            </Label>
-                          </div>
-                        </RadioGroup>
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="retailer">Retailer</SelectItem>
+                            <SelectItem value="premium">Premium</SelectItem>
+                          </SelectContent>
+                        </Select>
                       )}
                     />
                   </div>
+                </div>
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="clientLogoUrl">
+                      {t('clients.fields.clientLogoUrl')}
+                    </Label>
+                    <Input id="clientLogoUrl" {...register('clientLogoUrl')} />
+                    {errors.clientLogoUrl && (
+                      <p className="text-sm text-destructive">
+                        {errors.clientLogoUrl.message}
+                      </p>
+                    )}
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="headerData.clientLogoWidth">
+                      {t('clients.fields.header.clientLogoWidth')}
+                    </Label>
+                    <Input
+                      id="headerData.clientLogoWidth"
+                      type="number"
+                      {...register('headerData.clientLogoWidth', {
+                        valueAsNumber: true,
+                      })}
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="headerData.welcomeText">
+                    {t('clients.fields.header.welcomeText')}
+                  </Label>
+                  <Input
+                    id="headerData.welcomeText"
+                    {...register('headerData.welcomeText')}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="headerData.socialShareText">
+                    {t('clients.fields.header.socialShareText')}
+                  </Label>
+                  <Textarea
+                    id="headerData.socialShareText"
+                    {...register('headerData.socialShareText')}
+                    placeholder={
+                      t(
+                        'clients.fields.header.socialShareTextPlaceholder'
+                      ) as string
+                    }
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="headerData.bannerShareUrl">
+                    {t('clients.fields.header.bannerShareUrl')}
+                  </Label>
+                  <Input
+                    id="headerData.bannerShareUrl"
+                    {...register('headerData.bannerShareUrl')}
+                    placeholder="https://example.com/special-offer"
+                  />
+                </div>
 
-                  {bannerType === 'embed' && (
-                    <div className="space-y-2">
-                      <Label htmlFor="headerData.bannerEmbedCode">
-                        {t('clients.fields.header.banner.embedCode')}
-                      </Label>
-                      <Textarea
-                        id="headerData.bannerEmbedCode"
-                        {...register('headerData.bannerEmbedCode')}
-                        rows={5}
-                        placeholder={'<iframe...'}
-                      />
-                    </div>
-                  )}
-                  {(bannerType === 'url' || bannerType === 'upload') && (
-                    <>
+                {clientType === 'premium' && (
+                  <>
+                    <h3 className="pt-4 text-lg font-medium">
+                      {t('clients.fields.header.stylesTitle')}
+                    </h3>
+                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                       <div className="space-y-2">
-                        <Label htmlFor="headerData.bannerImageUrl">
-                          {t('clients.fields.header.banner.imageUrl')}
+                        <Label htmlFor="headerData.headerBackgroundColor">
+                          {t('clients.fields.header.headerBackgroundColor')}
                         </Label>
                         <Input
-                          id="headerData.bannerImageUrl"
-                          {...register('headerData.bannerImageUrl')}
-                          placeholder="https://example.com/banner.jpg"
+                          id="headerData.headerBackgroundColor"
+                          {...register('headerData.headerBackgroundColor')}
+                          placeholder="#FFFFFF"
                         />
                       </div>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="headerData.bannerImageWidth">
-                            {t('clients.fields.header.banner.width')}
-                          </Label>
-                          <div className="flex items-center">
-                            <Input
-                              id="headerData.bannerImageWidth"
-                              type="number"
-                              {...register('headerData.bannerImageWidth', {
-                                valueAsNumber: true,
-                              })}
-                              placeholder="100"
-                            />
-                            <span className="ml-2">%</span>
-                          </div>
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="headerData.bannerImageHeight">
-                            {t('clients.fields.header.banner.height')}
-                          </Label>
-                          <div className="flex items-center">
-                            <Input
-                              id="headerData.bannerImageHeight"
-                              type="number"
-                              {...register('headerData.bannerImageHeight', {
-                                valueAsNumber: true,
-                              })}
-                              placeholder="400"
-                            />
-                            <span className="ml-2">px</span>
-                          </div>
-                        </div>
-                      </div>
-                    </>
-                  )}
-                  {bannerType === 'upload' && (
-                    <div className="space-y-2">
-                      <Label htmlFor="banner-upload">
-                        {t('clients.fields.header.banner.fileUpload')}
-                      </Label>
-                      <div className="flex items-center gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="headerData.headerTextColor">
+                          {t('clients.fields.header.headerTextColor')}
+                        </Label>
                         <Input
-                          id="banner-upload"
-                          type="file"
-                          onChange={handleFileUpload}
-                          accept="image/png, image/jpeg, image/gif, image/webp"
-                          className="w-full"
+                          id="headerData.headerTextColor"
+                          type="color"
+                          {...register('headerData.headerTextColor')}
+                          className="h-10 p-1"
                         />
-                        {uploadProgress !== null && (
-                          <Progress value={uploadProgress} className="w-full" />
-                        )}
                       </div>
-                      {watch('headerData.bannerImageUrl') && (
-                        <p className="text-sm text-muted-foreground">
-                          {t('clients.fields.header.banner.currentImage')}:{' '}
-                          <a
-                            href={watch('headerData.bannerImageUrl')}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="underline"
-                          >
-                            {watch('headerData.bannerImageUrl')}
-                          </a>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="headerData.headerBackgroundImageUrl">
+                        {t('clients.fields.header.headerBackgroundImageUrl')}
+                      </Label>
+                      <Input
+                        id="headerData.headerBackgroundImageUrl"
+                        {...register('headerData.headerBackgroundImageUrl')}
+                        placeholder="https://example.com/background.jpg"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="bodyData.body2BackgroundColor">
+                        Hintergrundfarbe de body 2
+                      </Label>
+                      <Input
+                        id="bodyData.body2BackgroundColor"
+                        {...register('bodyData.body2BackgroundColor')}
+                        placeholder="#F9FAFB"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="headerData.headerImageUrl">
+                        {t('clients.fields.header.headerImageUrl')}
+                      </Label>
+                      <Input
+                        id="headerData.headerImageUrl"
+                        {...register('headerData.headerImageUrl')}
+                      />
+                      {errors.headerData?.headerImageUrl && (
+                        <p className="text-sm text-destructive">
+                          {errors.headerData.headerImageUrl.message}
                         </p>
                       )}
                     </div>
+
+                    <Separator className="my-6" />
+
+                    <div className="space-y-4">
+                      <h3 className="text-lg font-medium">
+                        {t('clients.fields.header.dividerLine.title')}
+                      </h3>
+                      <div className="flex items-center space-x-2">
+                        <Controller
+                          control={control}
+                          name="headerData.dividerLine.enabled"
+                          render={({ field }) => (
+                            <Switch
+                              id="dividerLineEnabled"
+                              checked={field.value ?? false}
+                              onCheckedChange={field.onChange}
+                            />
+                          )}
+                        />
+                        <Label htmlFor="dividerLineEnabled">
+                          {t('clients.fields.header.dividerLine.enable')}
+                        </Label>
+                      </div>
+                      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                        <div className="space-y-2">
+                          <Label htmlFor="headerData.dividerLine.color">
+                            {t('clients.fields.header.dividerLine.color')}
+                          </Label>
+                          <Controller
+                            name="headerData.dividerLine.color"
+                            control={control}
+                            render={({ field }) => (
+                              <Input
+                                id="headerData.dividerLine.color"
+                                type="color"
+                                {...field}
+                                className="h-10 p-1"
+                              />
+                            )}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="headerData.dividerLine.thickness">
+                            {t('clients.fields.header.dividerLine.thickness')}
+                          </Label>
+                          <Input
+                            id="headerData.dividerLine.thickness"
+                            type="number"
+                            {...register('headerData.dividerLine.thickness', {
+                              valueAsNumber: true,
+                            })}
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <Separator className="my-6" />
+
+                    <h3 className="text-lg font-medium">
+                      {t('clients.fields.header.socialLinks')}
+                    </h3>
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                      {socialLinkFields.map((field, index) => (
+                        <div
+                          key={field.id}
+                          className="space-y-2 rounded-lg border p-3"
+                        >
+                          <Label>
+                            {t('clients.fields.header.socialLink', {
+                              number: index + 1,
+                            })}
+                          </Label>
+                          <Input
+                            placeholder={t(
+                              'clients.fields.header.iconPlaceholderText'
+                            )}
+                            {...register(`headerData.socialLinks.${index}.icon`)}
+                          />
+                          <Input
+                            placeholder={t(
+                              'clients.fields.header.urlPlaceholder'
+                            )}
+                            {...register(`headerData.socialLinks.${index}.url`)}
+                          />
+                          {errors.headerData?.socialLinks?.[index]?.url && (
+                            <p className="text-sm text-destructive">
+                              {errors.headerData.socialLinks[index]?.url?.message}
+                            </p>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+
+                    <Separator className="my-6" />
+
+                    <div className="space-y-4">
+                      <h3 className="text-lg font-medium">
+                        {t('clients.fields.header.banner.title')}
+                      </h3>
+                      <Controller
+                        name="headerData.bannerType"
+                        control={control}
+                        render={({ field }) => (
+                          <RadioGroup
+                            value={field.value}
+                            onValueChange={field.onChange}
+                            className="flex items-center gap-6"
+                          >
+                            <div className="flex items-center space-x-2">
+                              <RadioGroupItem value="embed" id="embed" />
+                              <Label htmlFor="embed">
+                                {t('clients.fields.header.banner.embedCode')}
+                              </Label>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <RadioGroupItem value="url" id="url" />
+                              <Label htmlFor="url">
+                                {t('clients.fields.header.banner.imageUrl')}
+                              </Label>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <RadioGroupItem value="upload" id="upload" />
+                              <Label htmlFor="upload">
+                                {t('clients.fields.header.banner.fileUpload')}
+                              </Label>
+                            </div>
+                          </RadioGroup>
+                        )}
+                      />
+                    </div>
+
+                    {bannerType === 'embed' && (
+                      <div className="space-y-2">
+                        <Label htmlFor="headerData.bannerEmbedCode">
+                          {t('clients.fields.header.banner.embedCode')}
+                        </Label>
+                        <Textarea
+                          id="headerData.bannerEmbedCode"
+                          {...register('headerData.bannerEmbedCode')}
+                          rows={5}
+                          placeholder={'<iframe...'}
+                        />
+                      </div>
+                    )}
+                    {(bannerType === 'url' || bannerType === 'upload') && (
+                      <>
+                        <div className="space-y-2">
+                          <Label htmlFor="headerData.bannerImageUrl">
+                            {t('clients.fields.header.banner.imageUrl')}
+                          </Label>
+                          <Input
+                            id="headerData.bannerImageUrl"
+                            {...register('headerData.bannerImageUrl')}
+                            placeholder="https://example.com/banner.jpg"
+                          />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="headerData.bannerImageWidth">
+                              {t('clients.fields.header.banner.width')}
+                            </Label>
+                            <div className="flex items-center">
+                              <Input
+                                id="headerData.bannerImageWidth"
+                                type="number"
+                                {...register('headerData.bannerImageWidth', {
+                                  valueAsNumber: true,
+                                })}
+                                placeholder="100"
+                              />
+                              <span className="ml-2">%</span>
+                            </div>
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="headerData.bannerImageHeight">
+                              {t('clients.fields.header.banner.height')}
+                            </Label>
+                            <div className="flex items-center">
+                              <Input
+                                id="headerData.bannerImageHeight"
+                                type="number"
+                                {...register('headerData.bannerImageHeight', {
+                                  valueAsNumber: true,
+                                })}
+                                placeholder="400"
+                              />
+                              <span className="ml-2">px</span>
+                            </div>
+                          </div>
+                        </div>
+                      </>
+                    )}
+                    {bannerType === 'upload' && (
+                      <div className="space-y-2">
+                        <Label htmlFor="banner-upload">
+                          {t('clients.fields.header.banner.fileUpload')}
+                        </Label>
+                        <div className="flex items-center gap-4">
+                          <Input
+                            id="banner-upload"
+                            type="file"
+                            onChange={handleFileUpload}
+                            accept="image/png, image/jpeg, image/gif, image/webp"
+                            className="w-full"
+                          />
+                          {uploadProgress !== null && (
+                            <Progress value={uploadProgress} className="w-full" />
+                          )}
+                        </div>
+                        {watch('headerData.bannerImageUrl') && (
+                          <p className="text-sm text-muted-foreground">
+                            {t('clients.fields.header.banner.currentImage')}:{' '}
+                            <a
+                              href={watch('headerData.bannerImageUrl')}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="underline"
+                            >
+                              {watch('headerData.bannerImageUrl')}
+                            </a>
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  </>
+                )}
+              </TabsContent>
+
+              {/* Layout Builder Tab */}
+              <TabsContent value="layout" className="space-y-6">
+                <CardTitle>Landing Page Builder</CardTitle>
+                <CardDescription>
+                  Drag and drop blocks to build your custom landing page.
+                </CardDescription>
+
+                {/* Gallery Uploader Section */}
+                <div className="rounded-lg border p-4">
+                  <h3 className="mb-4 text-lg font-semibold">Photo Gallery</h3>
+                  <div className="mb-4 grid grid-cols-2 gap-4 md:grid-cols-4">
+                    {watch('galleryImages')?.map((url, index) => (
+                      <div key={index} className="relative aspect-square overflow-hidden rounded-lg border">
+                        <Image
+                          src={url}
+                          alt={`Gallery ${index}`}
+                          fill
+                          className="object-cover"
+                        />
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          size="icon"
+                          className="absolute right-1 top-1 h-6 w-6"
+                          onClick={() => {
+                            const currentImages = watch('galleryImages') || [];
+                            setValue(
+                              'galleryImages',
+                              currentImages.filter((_, i) => i !== index),
+                              { shouldDirty: true }
+                            );
+                          }}
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    ))}
+                    <label className="flex aspect-square cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 hover:bg-gray-50">
+                      <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                        <UploadCloud className="mb-3 h-8 w-8 text-gray-400" />
+                        <p className="mb-2 text-sm text-gray-500">
+                          <span className="font-semibold">Click to upload</span>
+                        </p>
+                      </div>
+                      <input
+                        type="file"
+                        className="hidden"
+                        multiple
+                        accept="image/*"
+                        onChange={async (e) => {
+                          const files = e.target.files;
+                          if (!files || files.length === 0) return;
+
+                          toast({
+                            title: 'Subiendo...',
+                            description: `Iniciando subida de ${files.length} imágenes. Por favor espere.`,
+                          });
+
+                          setIsSubmitting(true);
+                          try {
+                            const newUrls: string[] = [];
+                            for (let i = 0; i < files.length; i++) {
+                              const file = files[i];
+                              const storageRef = ref(
+                                storage,
+                                `clients/${id}/gallery/${Date.now()}_${file.name}`
+                              );
+                              await uploadBytes(storageRef, file);
+                              const url = await getDownloadURL(storageRef);
+                              newUrls.push(url);
+                            }
+                            const currentImages = watch('galleryImages') || [];
+                            setValue('galleryImages', [...currentImages, ...newUrls], {
+                              shouldDirty: true,
+                            });
+                            toast({
+                              title: 'Éxito',
+                              description: `${newUrls.length} imágenes subidas correctamente.`,
+                            });
+                          } catch (error: any) {
+                            console.error('Error uploading images:', error);
+                            toast({
+                              title: 'Error al subir',
+                              description: `Falló la subida: ${error.message || 'Error desconocido'}`,
+                              variant: 'destructive',
+                            });
+                          } finally {
+                            setIsSubmitting(false);
+                            // Reset input
+                            e.target.value = '';
+                          }
+                        }}
+                      />
+                    </label>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Upload images for your photo gallery. These will be used in the "Gallery" block.
+                  </p>
+                </div>
+
+                <Separator className="my-6" />
+                <Controller
+                  name="layout"
+                  control={control}
+                  render={({ field }) => (
+                    <LayoutEditor
+                      initialLayout={field.value || []}
+                      onChange={field.onChange}
+                    />
                   )}
-                </>
-              )}
-            </TabsContent>
+                />
+              </TabsContent>
 
-            {/* Layout Builder Tab */}
-            <TabsContent value="layout" className="space-y-6">
-              <CardTitle>Landing Page Builder</CardTitle>
-              <CardDescription>
-                Drag and drop blocks to build your custom landing page.
-              </CardDescription>
 
-              {/* Gallery Uploader Section */}
-              <div className="rounded-lg border p-4">
-                <h3 className="mb-4 text-lg font-semibold">Photo Gallery</h3>
-                <div className="mb-4 grid grid-cols-2 gap-4 md:grid-cols-4">
-                  {watch('galleryImages')?.map((url, index) => (
-                    <div key={index} className="relative aspect-square overflow-hidden rounded-lg border">
-                      <Image
-                        src={url}
-                        alt={`Gallery ${index}`}
-                        fill
-                        className="object-cover"
+
+              {/* User Management Tab */}
+              <TabsContent value="userManagement" className="space-y-6">
+                <CardTitle>User Management</CardTitle>
+                <CardDescription>
+                  Manage the user account associated with this client.
+                </CardDescription>
+
+                <div className="space-y-4 rounded-lg border p-4">
+                  <h3 className="font-semibold">Update Email</h3>
+                  <div className="flex gap-4 items-end">
+                    <div className="space-y-2 flex-1">
+                      <Label htmlFor="newEmail">New Email Address</Label>
+                      <Input
+                        id="newEmail"
+                        placeholder="new-email@example.com"
+                        value={watch('newEmailForUpdate') || ''}
+                        onChange={(e) => setValue('newEmailForUpdate', e.target.value)}
+                      />
+                    </div>
+                    <Button
+                      type="button"
+                      onClick={async () => {
+                        const newEmail = watch('newEmailForUpdate');
+                        if (!newEmail) return;
+                        try {
+                          setIsSubmitting(true);
+                          const updateUserEmailFn = httpsCallable(functions, 'updateUserEmail');
+                          // We need the ownerUid, which should be in initialData
+                          const targetUid = initialData.ownerUid;
+                          if (!targetUid) {
+                            toast({ title: 'Error', description: 'No Owner UID found for this client.', variant: 'destructive' });
+                            return;
+                          }
+                          await updateUserEmailFn({ targetUid, newEmail });
+                          toast({ title: 'Success', description: 'Email updated successfully.' });
+                          setValue('newEmailForUpdate', '');
+                        } catch (error: any) {
+                          console.error(error);
+                          toast({ title: 'Error', description: error.message, variant: 'destructive' });
+                        } finally {
+                          setIsSubmitting(false);
+                        }
+                      }}
+                      disabled={isSubmitting}
+                    >
+                      Update Email
+                    </Button>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Warning: Changing the email will require the user to login again with the new email.
+                  </p>
+                </div>
+
+                <div className="space-y-4 rounded-lg border p-4">
+                  <h3 className="font-semibold">Owner Management</h3>
+                  <div className="space-y-2">
+                    <Label htmlFor="ownerUid">Owner UID</Label>
+                    <div className="flex gap-2">
+                      <Input
+                        id="ownerUid"
+                        {...register('ownerUid')}
+                        placeholder="Firebase User UID"
                       />
                       <Button
                         type="button"
-                        variant="destructive"
-                        size="icon"
-                        className="absolute right-1 top-1 h-6 w-6"
+                        variant="outline"
                         onClick={() => {
-                          const currentImages = watch('galleryImages') || [];
-                          setValue(
-                            'galleryImages',
-                            currentImages.filter((_, i) => i !== index),
-                            { shouldDirty: true }
-                          );
+                          const auth = getAuth(app);
+                          if (auth.currentUser) {
+                            setValue('ownerUid', auth.currentUser.uid, { shouldDirty: true });
+                          } else {
+                            toast({ title: 'Error', description: 'No authenticated user found.', variant: 'destructive' });
+                          }
                         }}
                       >
-                        <Trash2 className="h-3 w-3" />
+                        Assign to Me
                       </Button>
                     </div>
-                  ))}
-                  <label className="flex aspect-square cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 hover:bg-gray-50">
-                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                      <UploadCloud className="mb-3 h-8 w-8 text-gray-400" />
-                      <p className="mb-2 text-sm text-gray-500">
-                        <span className="font-semibold">Click to upload</span>
-                      </p>
-                    </div>
-                    <input
-                      type="file"
-                      className="hidden"
-                      multiple
-                      accept="image/*"
-                      onChange={async (e) => {
-                        const files = e.target.files;
-                        if (!files || files.length === 0) return;
-
-                        toast({
-                          title: 'Subiendo...',
-                          description: `Iniciando subida de ${files.length} imágenes. Por favor espere.`,
-                        });
-
-                        setIsSubmitting(true);
-                        try {
-                          const newUrls: string[] = [];
-                          for (let i = 0; i < files.length; i++) {
-                            const file = files[i];
-                            const storageRef = ref(
-                              storage,
-                              `clients/${id}/gallery/${Date.now()}_${file.name}`
-                            );
-                            await uploadBytes(storageRef, file);
-                            const url = await getDownloadURL(storageRef);
-                            newUrls.push(url);
-                          }
-                          const currentImages = watch('galleryImages') || [];
-                          setValue('galleryImages', [...currentImages, ...newUrls], {
-                            shouldDirty: true,
-                          });
-                          toast({
-                            title: 'Éxito',
-                            description: `${newUrls.length} imágenes subidas correctamente.`,
-                          });
-                        } catch (error: any) {
-                          console.error('Error uploading images:', error);
-                          toast({
-                            title: 'Error al subir',
-                            description: `Falló la subida: ${error.message || 'Error desconocido'}`,
-                            variant: 'destructive',
-                          });
-                        } finally {
-                          setIsSubmitting(false);
-                          // Reset input
-                          e.target.value = '';
-                        }
-                      }}
-                    />
-                  </label>
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  Upload images for your photo gallery. These will be used in the "Gallery" block.
-                </p>
-              </div>
-
-              <Separator className="my-6" />
-              <Controller
-                name="layout"
-                control={control}
-                render={({ field }) => (
-                  <LayoutEditor
-                    initialLayout={field.value || []}
-                    onChange={field.onChange}
-                  />
-                )}
-              />
-            </TabsContent>
-
-
-
-            {/* User Management Tab */}
-            <TabsContent value="userManagement" className="space-y-6">
-              <CardTitle>User Management</CardTitle>
-              <CardDescription>
-                Manage the user account associated with this client.
-              </CardDescription>
-
-              <div className="space-y-4 rounded-lg border p-4">
-                <h3 className="font-semibold">Update Email</h3>
-                <div className="flex gap-4 items-end">
-                  <div className="space-y-2 flex-1">
-                    <Label htmlFor="newEmail">New Email Address</Label>
-                    <Input
-                      id="newEmail"
-                      placeholder="new-email@example.com"
-                      value={watch('newEmailForUpdate') || ''}
-                      onChange={(e) => setValue('newEmailForUpdate', e.target.value)}
-                    />
+                    <p className="text-sm text-muted-foreground">
+                      This links the client to a specific user account.
+                    </p>
                   </div>
+                </div>
+
+                <div className="space-y-4 rounded-lg border p-4">
+                  <h3 className="font-semibold">Password Reset</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Generate a password reset link for this user.
+                  </p>
                   <Button
                     type="button"
+                    variant="outline"
                     onClick={async () => {
-                      const newEmail = watch('newEmailForUpdate');
-                      if (!newEmail) return;
                       try {
                         setIsSubmitting(true);
-                        const updateUserEmailFn = httpsCallable(functions, 'updateUserEmail');
-                        // We need the ownerUid, which should be in initialData
-                        const targetUid = initialData.ownerUid;
-                        if (!targetUid) {
-                          toast({ title: 'Error', description: 'No Owner UID found for this client.', variant: 'destructive' });
+                        const sendUserPasswordResetFn = httpsCallable(functions, 'sendUserPasswordReset');
+                        // We need the current email. 
+                        // If we don't have it in clientData, we might need to ask for it or fetch it.
+                        // Assuming we can use the 'newEmailForUpdate' field if filled, or we need to know the current email.
+                        // Actually, the function takes an email. 
+                        // Let's ask the admin to enter the email to confirm, or use the one we just updated if any.
+                        // Better: Use the input field above or a dedicated one.
+                        const emailToReset = watch('newEmailForUpdate');
+                        if (!emailToReset) {
+                          toast({ title: 'Info', description: 'Please enter the email address in the "New Email Address" box above to target the reset.', variant: 'default' });
                           return;
                         }
-                        await updateUserEmailFn({ targetUid, newEmail });
-                        toast({ title: 'Success', description: 'Email updated successfully.' });
-                        setValue('newEmailForUpdate', '');
+                        const result = await sendUserPasswordResetFn({ email: emailToReset });
+                        const data = result.data as any;
+                        if (data.link) {
+                          // Copy to clipboard
+                          navigator.clipboard.writeText(data.link);
+                          toast({ title: 'Success', description: 'Reset link copied to clipboard!', duration: 5000 });
+                        }
                       } catch (error: any) {
                         console.error(error);
                         toast({ title: 'Error', description: error.message, variant: 'destructive' });
@@ -1744,705 +1827,627 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                     }}
                     disabled={isSubmitting}
                   >
-                    Update Email
+                    Generate Reset Link
+                  </Button>
+                </div>
+              </TabsContent>
+
+              {/* Marquee Header Tab */}
+              <TabsContent value="marqueeHeader" className="space-y-6">
+                <CardTitle>{t('clients.tabs.marqueeHeader')}</CardTitle>
+                <CardDescription>
+                  {t('clients.fields.marqueeHeader.description')}
+                </CardDescription>
+
+                <div className="space-y-2">
+                  <Label>
+                    {t('clients.fields.marqueeHeader.marqueeText')}
+                  </Label>
+                  <Input {...register('marqueeHeaderData.marqueeText')} />
+                </div>
+                <hr />
+
+                <div className="space-y-4 rounded-lg border bg-secondary/50 p-4">
+                  <h4 className="font-semibold">
+                    {t('clients.fields.marqueeHeader.offerSectionTitle')}
+                  </h4>
+                  <div className="flex items-center space-x-2">
+                    <Controller
+                      control={control}
+                      name="marqueeHeaderData.offerEnabled"
+                      render={({ field }) => (
+                        <Switch
+                          id="offerEnabled"
+                          checked={field.value ?? false}
+                          onCheckedChange={field.onChange}
+                        />
+                      )}
+                    />
+                    <Label htmlFor="offerEnabled">
+                      {t('clients.fields.marqueeHeader.offerEnabled')}
+                    </Label>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>
+                      {t('clients.fields.marqueeHeader.leftButtonText')}
+                    </Label>
+                    <Input {...register('marqueeHeaderData.leftButtonText')} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>
+                      {t('clients.fields.marqueeHeader.leftButtonLink')}
+                    </Label>
+                    <Input {...register('marqueeHeaderData.leftButtonLink')} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>
+                      {t('clients.fields.marqueeHeader.offerEndDate')}
+                    </Label>
+                    <Controller
+                      control={control}
+                      name="marqueeHeaderData.offerEndDate"
+                      render={({ field }) => (
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button
+                              variant="outline"
+                              className={cn(
+                                'w-[280px] justify-start text-left font-normal',
+                                !field.value && 'text-muted-foreground'
+                              )}
+                            >
+                              <CalendarIcon className="mr-2 h-4 w-4" />
+                              {field.value ? (
+                                format(field.value, 'PPP')
+                              ) : (
+                                <span>
+                                  {t(
+                                    'clients.fields.marqueeHeader.pickDate'
+                                  )}
+                                </span>
+                              )}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0">
+                            <Calendar
+                              mode="single"
+                              selected={field.value ?? undefined}
+                              onSelect={field.onChange}
+                              initialFocus
+                            />
+                          </PopoverContent>
+                        </Popover>
+                      )}
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 gap-6 pt-4 md:grid-cols-2">
+                  <div className="space-y-4 rounded-lg border p-4">
+                    <h4 className="font-semibold">
+                      {t('clients.fields.marqueeHeader.offerSection')}
+                    </h4>
+                    <div className="space-y-2">
+                      <Label>
+                        {t(
+                          'clients.fields.marqueeHeader.middleTextOffer'
+                        )}
+                      </Label>
+                      <Input {...register('marqueeHeaderData.middleText')} />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>
+                        {t(
+                          'clients.fields.marqueeHeader.buttonAfterDateText'
+                        )}
+                      </Label>
+                      <Input
+                        {...register('marqueeHeaderData.clubButtonText')}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>
+                        {t(
+                          'clients.fields.marqueeHeader.buttonAfterDateLink'
+                        )}
+                      </Label>
+                      <Input
+                        {...register('marqueeHeaderData.clubButtonLink')}
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-4 rounded-lg border p-4">
+                    <h4 className="font-semibold">
+                      {t(
+                        'clients.fields.marqueeHeader.rightButtonsSectionTitle'
+                      )}
+                    </h4>
+                    <div className="space-y-2">
+                      <Label>
+                        {t(
+                          'clients.fields.marqueeHeader.rightButton1Text'
+                        )}
+                      </Label>
+                      <Input
+                        {...register('marqueeHeaderData.rightButton1Text')}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>
+                        {t(
+                          'clients.fields.marqueeHeader.rightButton1Link'
+                        )}
+                      </Label>
+                      <Input
+                        {...register('marqueeHeaderData.rightButton1Link')}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>
+                        {t(
+                          'clients.fields.marqueeHeader.rightButton2Text'
+                        )}
+                      </Label>
+                      <Input
+                        {...register('marqueeHeaderData.rightButton2Text')}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>
+                        {t(
+                          'clients.fields.marqueeHeader.rightButton2Link'
+                        )}
+                      </Label>
+                      <Input
+                        {...register('marqueeHeaderData.rightButton2Link')}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </TabsContent>
+
+              {/* Body Tab */}
+              <TabsContent value="body" className="space-y-6">
+                <CardTitle>{t('clients.tabs.body')}</CardTitle>
+                <CardDescription>
+                  {t('clients.fields.body.description')}
+                </CardDescription>
+                <div className="space-y-2">
+                  <Label htmlFor="bodyData.title">
+                    {t('clients.fields.body.title')}
+                  </Label>
+                  <Input id="bodyData.title" {...register('bodyData.title')} />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="bodyData.subtitle">
+                    {t('clients.fields.body.subtitle')}
+                  </Label>
+                  <Input
+                    id="bodyData.subtitle"
+                    {...register('bodyData.subtitle')}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="bodyData.description">
+                    {t('clients.fields.body.descriptionField')}
+                  </Label>
+                  <Controller
+                    name="bodyData.description"
+                    control={control}
+                    render={({ field }) => (
+                      <TiptapEditor
+                        name="bodyData.description"
+                        control={control}
+                      />
+                    )}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="bodyData.imageUrl">
+                    {t('clients.fields.body.imageUrl')}
+                  </Label>
+                  <Input
+                    id="bodyData.imageUrl"
+                    {...register('bodyData.imageUrl')}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="bodyData.videoUrl">
+                    {t('clients.fields.body.videoUrl')}
+                  </Label>
+                  <Input
+                    id="bodyData.videoUrl"
+                    {...register('bodyData.videoUrl')}
+                    placeholder="https://www.youtube.com/embed/..."
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="bodyData.ctaButtonText">
+                    {t('clients.fields.body.ctaButtonText')}
+                  </Label>
+                  <Input
+                    id="bodyData.ctaButtonText"
+                    {...register('bodyData.ctaButtonText')}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="bodyData.ctaButtonLink">
+                    {t('clients.fields.body.ctaButtonLink')}
+                  </Label>
+                  <Input
+                    id="bodyData.ctaButtonLink"
+                    {...register('bodyData.ctaButtonLink')}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="bodyData.layout">
+                    {t('clients.fields.body.layout')}
+                  </Label>
+                  <Controller
+                    name="bodyData.layout"
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value || 'image-right'}
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="image-left">Bild links</SelectItem>
+                          <SelectItem value="image-right">
+                            Bild rechts
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                </div>
+              </TabsContent>
+
+              {/* Info Cards Tab */}
+              <TabsContent value="cards" className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-medium">
+                    {t('clients.fields.infoCards.title')}
+                  </h3>
+                  <Button
+                    type="button"
+                    size="sm"
+                    onClick={() => appendInfoCard({ title: '', content: '' })}
+                  >
+                    <PlusCircle className="mr-2 h-4 w-4" />{' '}
+                    {t('clients.fields.infoCards.add')}
+                  </Button>
+                </div>
+                <div className="max-h-[500px] space-y-4 overflow-y-auto pr-2">
+                  {infoCardFields.map((field, index) => (
+                    <fieldset key={field.id} className="rounded-md border p-4">
+                      <div className="mb-2 flex items-center justify-between">
+                        <legend className="px-1 text-sm font-medium">
+                          {t('clients.fields.infoCards.card')} {index + 1}
+                        </legend>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => removeInfoCard(index)}
+                        >
+                          <Trash2 className="h-4 w-4 text-destructive" />
+                        </Button>
+                      </div>
+                      <div className="mt-2 space-y-4">
+                        <div className="space-y-2">
+                          <Label htmlFor={`infoCards.${index}.title`}>
+                            {t('clients.fields.title')}
+                          </Label>
+                          <Input
+                            id={`infoCards.${index}.title`}
+                            {...register(`infoCards.${index}.title`)}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor={`infoCards.${index}.content`}>
+                            {t('clients.fields.content')}
+                          </Label>
+                          <Controller
+                            name={`infoCards.${index}.content`}
+                            control={control}
+                            render={({ field }) => (
+                              <TiptapEditor
+                                name={`infoCards.${index}.content`}
+                                control={control}
+                              />
+                            )}
+                          />
+                        </div>
+                      </div>
+                    </fieldset>
+                  ))}
+                </div>
+              </TabsContent>
+
+              {/* Products Tab */}
+              <TabsContent value="products" className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-medium">
+                    {t('clients.tabs.products')}
+                  </h3>
+                  <Button
+                    type="button"
+                    size="sm"
+                    onClick={() => appendProduct({ name: '' })}
+                  >
+                    <PlusCircle className="mr-2 h-4 w-4" />{' '}
+                    {t('clients.fields.products.add')}
                   </Button>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  Warning: Changing the email will require the user to login again with the new email.
+                  {t('clients.fields.products.description')}
                 </p>
-              </div>
+                <div className="max-h-[500px] space-y-4 overflow-y-auto pr-2">
+                  {productFields.map((field, index) => (
+                    <fieldset key={field.id} className="rounded-md border p-4">
+                      <div className="mb-2 flex items-center justify-between">
+                        <legend className="px-1 text-sm font-medium">
+                          {t('clients.fields.products.product')}{' '}
+                          {index + 1}
+                        </legend>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => removeProduct(index)}
+                        >
+                          <Trash2 className="h-4 w-4 text-destructive" />
+                        </Button>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor={`products.${index}.name`}>
+                          {t('clients.fields.products.productName')}
+                        </Label>
+                        <Input
+                          id={`products.${index}.name`}
+                          {...register(`products.${index}.name`)}
+                        />
+                        {errors.products?.[index]?.name && (
+                          <p className="text-sm text-destructive">
+                            {errors.products?.[index]?.name?.message}
+                          </p>
+                        )}
+                      </div>
+                    </fieldset>
+                  ))}
+                </div>
+              </TabsContent>
 
-              <div className="space-y-4 rounded-lg border p-4">
-                <h3 className="font-semibold">Owner Management</h3>
-                <div className="space-y-2">
-                  <Label htmlFor="ownerUid">Owner UID</Label>
-                  <div className="flex gap-2">
-                    <Input
-                      id="ownerUid"
-                      {...register('ownerUid')}
-                      placeholder="Firebase User UID"
-                    />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => {
-                        const auth = getAuth(app);
-                        if (auth.currentUser) {
-                          setValue('ownerUid', auth.currentUser.uid, { shouldDirty: true });
-                        } else {
-                          toast({ title: 'Error', description: 'No authenticated user found.', variant: 'destructive' });
-                        }
-                      }}
-                    >
-                      Assign to Me
-                    </Button>
+              {/* Graphics Tab */}
+              <TabsContent value="graphics" className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-medium">
+                    {t('clients.fields.graphics.title')}
+                  </h3>
+                  <Button
+                    type="button"
+                    size="sm"
+                    onClick={() =>
+                      appendGraphic({ imageUrl: '', targetUrl: '', text: '' })
+                    }
+                  >
+                    <PlusCircle className="mr-2 h-4 w-4" />{' '}
+                    {t('clients.fields.graphics.add')}
+                  </Button>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  {t('clients.fields.graphics.description')}
+                </p>
+                <div className="max-h-[500px] space-y-4 overflow-y-auto pr-2">
+                  {graphicsFields.map((field, index) => (
+                    <fieldset key={field.id} className="rounded-md border p-4">
+                      <div className="mb-2 flex items-center justify-between">
+                        <legend className="px-1 text-sm font-medium">
+                          {t('clients.fields.graphics.graphic')}{' '}
+                          {index + 1}
+                        </legend>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => removeGraphic(index)}
+                        >
+                          <Trash2 className="h-4 w-4 text-destructive" />
+                        </Button>
+                      </div>
+                      <div className="grid grid-cols-1 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor={`graphics.${index}.imageUrl`}>
+                            {t('clients.fields.graphics.imageUrl')}
+                          </Label>
+                          <Input
+                            id={`graphics.${index}.imageUrl`}
+                            {...register(`graphics.${index}.imageUrl`)}
+                          />
+                          {errors.graphics?.[index]?.imageUrl && (
+                            <p className="text-sm text-destructive">
+                              {errors.graphics[index]?.imageUrl?.message}
+                            </p>
+                          )}
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor={`graphics.${index}.targetUrl`}>
+                            {t('clients.fields.graphics.targetUrl')}
+                          </Label>
+                          <Input
+                            id={`graphics.${index}.targetUrl`}
+                            {...register(`graphics.${index}.targetUrl`)}
+                          />
+                          {errors.graphics?.[index]?.targetUrl && (
+                            <p className="text-sm text-destructive">
+                              {errors.graphics[index]?.targetUrl?.message}
+                            </p>
+                          )}
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor={`graphics.${index}.text`}>
+                            {t('clients.fields.graphics.title')}
+                          </Label>
+                          <Input
+                            id={`graphics.${index}.text`}
+                            {...register(`graphics.${index}.text`)}
+                          />
+                        </div>
+                      </div>
+                    </fieldset>
+                  ))}
+                </div>
+              </TabsContent>
+
+              {/* Form Tab */}
+              <TabsContent value="form">
+                <div className="mb-4 flex items-center justify-between">
+                  <div>
+                    <CardTitle>{t('clients.tabs.form')}</CardTitle>
+                    <CardDescription>
+                      {t('clients.fields.form.description')}
+                    </CardDescription>
                   </div>
-                  <p className="text-sm text-muted-foreground">
-                    This links the client to a specific user account.
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="outline">
+                        <Code className="mr-2 h-4 w-4" /> Insertar en Landing
+                        Page
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent className="sm:max-w-2xl">
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Insertar Formulario</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Copie y pegue este código en el HTML de su landing
+                          page para insertar el formulario.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <pre className="mt-2 w-full overflow-x-auto whitespace-pre-wrap rounded-md bg-slate-950 p-4">
+                        <code className="break-all text-white">
+                          {embedCode}
+                        </code>
+                      </pre>
+                      <AlertDialogFooter>
+                        <AlertDialogAction
+                          onClick={() => {
+                            navigator.clipboard.writeText(embedCode);
+                            toast({
+                              title: '¡Copiado!',
+                              description:
+                                'El código de inserción se ha copiado al portapapeles.',
+                            });
+                          }}
+                        >
+                          Copiar Código
+                        </AlertDialogAction>
+                        <AlertDialogCancel>Cerrar</AlertDialogCancel>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </div>
+                <div className="mt-6 rounded-lg border bg-slate-50 p-4">
+                  <RecommendationFormForClient
+                    products={watch('products') || []}
+                    clientId={id}
+                  />
+                </div>
+              </TabsContent>
+
+              {/* Wallet Tab */}
+              <TabsContent value="wallet" className="space-y-6">
+                <CardTitle>Wallet & Ads Management</CardTitle>
+                <CardDescription>
+                  Verwalten Sie das Werbebudget dieses Kunden. Änderungen hier werden sofort gespeichert.
+                </CardDescription>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-4 rounded-lg border p-4 bg-slate-50">
+                    <h3 className="font-semibold text-lg">Manuelle Anpassung (Admin)</h3>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="budget_remaining">Verfügbares Guthaben (€)</Label>
+                      <Input
+                        id="budget_remaining"
+                        type="number"
+                        step="0.01"
+                        {...register('budget_remaining', { valueAsNumber: true })}
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Aktuelles Guthaben für Anzeigen. Wird durch Views reduziert.
+                      </p>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="total_invested">Gesamt Investiert (€)</Label>
+                      <Input
+                        id="total_invested"
+                        type="number"
+                        step="0.01"
+                        {...register('total_invested', { valueAsNumber: true })}
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Historische Summe aller Einzahlungen.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <h3 className="font-semibold text-lg">Vorschau für Kunde</h3>
+                    <WalletCard
+                      clientId={id}
+                      clientEmail={watch('newEmailForUpdate') || ''}
+                      currentBudget={watch('budget_remaining') || 0}
+                      totalInvested={watch('total_invested') || 0}
+                    />
+                  </div>
+                </div>
+              </TabsContent>
+
+              {/* Translations Tab */}
+              <TabsContent value="translations">
+                <div className="space-y-2">
+                  <Label htmlFor="translations">
+                    {t('clients.fields.translations')}
+                  </Label>
+                  <Controller
+                    name="translations"
+                    control={control}
+                    render={({ field }) => (
+                      <textarea
+                        id="translations"
+                        {...field}
+                        rows={15}
+                        placeholder={
+                          t(
+                            'clients.fields.jsonPlaceholderObject'
+                          ) as string
+                        }
+                        className="w-full rounded-md border p-2 font-mono text-sm"
+                      />
+                    )}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    {t('clients.fields.jsonHelpObject')}
                   </p>
                 </div>
-              </div>
-
-              <div className="space-y-4 rounded-lg border p-4">
-                <h3 className="font-semibold">Password Reset</h3>
-                <p className="text-sm text-muted-foreground">
-                  Generate a password reset link for this user.
-                </p>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={async () => {
-                    try {
-                      setIsSubmitting(true);
-                      const sendUserPasswordResetFn = httpsCallable(functions, 'sendUserPasswordReset');
-                      // We need the current email. 
-                      // If we don't have it in clientData, we might need to ask for it or fetch it.
-                      // Assuming we can use the 'newEmailForUpdate' field if filled, or we need to know the current email.
-                      // Actually, the function takes an email. 
-                      // Let's ask the admin to enter the email to confirm, or use the one we just updated if any.
-                      // Better: Use the input field above or a dedicated one.
-                      const emailToReset = watch('newEmailForUpdate');
-                      if (!emailToReset) {
-                        toast({ title: 'Info', description: 'Please enter the email address in the "New Email Address" box above to target the reset.', variant: 'default' });
-                        return;
-                      }
-                      const result = await sendUserPasswordResetFn({ email: emailToReset });
-                      const data = result.data as any;
-                      if (data.link) {
-                        // Copy to clipboard
-                        navigator.clipboard.writeText(data.link);
-                        toast({ title: 'Success', description: 'Reset link copied to clipboard!', duration: 5000 });
-                      }
-                    } catch (error: any) {
-                      console.error(error);
-                      toast({ title: 'Error', description: error.message, variant: 'destructive' });
-                    } finally {
-                      setIsSubmitting(false);
-                    }
-                  }}
-                  disabled={isSubmitting}
-                >
-                  Generate Reset Link
-                </Button>
-              </div>
-            </TabsContent>
-
-            {/* Marquee Header Tab */}
-            <TabsContent value="marqueeHeader" className="space-y-6">
-              <CardTitle>{t('clients.tabs.marqueeHeader')}</CardTitle>
-              <CardDescription>
-                {t('clients.fields.marqueeHeader.description')}
-              </CardDescription>
-
-              <div className="space-y-2">
-                <Label>
-                  {t('clients.fields.marqueeHeader.marqueeText')}
-                </Label>
-                <Input {...register('marqueeHeaderData.marqueeText')} />
-              </div>
-              <hr />
-
-              <div className="space-y-4 rounded-lg border bg-secondary/50 p-4">
-                <h4 className="font-semibold">
-                  {t('clients.fields.marqueeHeader.offerSectionTitle')}
-                </h4>
-                <div className="flex items-center space-x-2">
-                  <Controller
-                    control={control}
-                    name="marqueeHeaderData.offerEnabled"
-                    render={({ field }) => (
-                      <Switch
-                        id="offerEnabled"
-                        checked={field.value ?? false}
-                        onCheckedChange={field.onChange}
-                      />
-                    )}
-                  />
-                  <Label htmlFor="offerEnabled">
-                    {t('clients.fields.marqueeHeader.offerEnabled')}
-                  </Label>
-                </div>
-                <div className="space-y-2">
-                  <Label>
-                    {t('clients.fields.marqueeHeader.leftButtonText')}
-                  </Label>
-                  <Input {...register('marqueeHeaderData.leftButtonText')} />
-                </div>
-                <div className="space-y-2">
-                  <Label>
-                    {t('clients.fields.marqueeHeader.leftButtonLink')}
-                  </Label>
-                  <Input {...register('marqueeHeaderData.leftButtonLink')} />
-                </div>
-                <div className="space-y-2">
-                  <Label>
-                    {t('clients.fields.marqueeHeader.offerEndDate')}
-                  </Label>
-                  <Controller
-                    control={control}
-                    name="marqueeHeaderData.offerEndDate"
-                    render={({ field }) => (
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <Button
-                            variant="outline"
-                            className={cn(
-                              'w-[280px] justify-start text-left font-normal',
-                              !field.value && 'text-muted-foreground'
-                            )}
-                          >
-                            <CalendarIcon className="mr-2 h-4 w-4" />
-                            {field.value ? (
-                              format(field.value, 'PPP')
-                            ) : (
-                              <span>
-                                {t(
-                                  'clients.fields.marqueeHeader.pickDate'
-                                )}
-                              </span>
-                            )}
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0">
-                          <Calendar
-                            mode="single"
-                            selected={field.value ?? undefined}
-                            onSelect={field.onChange}
-                            initialFocus
-                          />
-                        </PopoverContent>
-                      </Popover>
-                    )}
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 gap-6 pt-4 md:grid-cols-2">
-                <div className="space-y-4 rounded-lg border p-4">
-                  <h4 className="font-semibold">
-                    {t('clients.fields.marqueeHeader.offerSection')}
-                  </h4>
-                  <div className="space-y-2">
-                    <Label>
-                      {t(
-                        'clients.fields.marqueeHeader.middleTextOffer'
-                      )}
-                    </Label>
-                    <Input {...register('marqueeHeaderData.middleText')} />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>
-                      {t(
-                        'clients.fields.marqueeHeader.buttonAfterDateText'
-                      )}
-                    </Label>
-                    <Input
-                      {...register('marqueeHeaderData.clubButtonText')}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>
-                      {t(
-                        'clients.fields.marqueeHeader.buttonAfterDateLink'
-                      )}
-                    </Label>
-                    <Input
-                      {...register('marqueeHeaderData.clubButtonLink')}
-                    />
-                  </div>
-                </div>
-                <div className="space-y-4 rounded-lg border p-4">
-                  <h4 className="font-semibold">
-                    {t(
-                      'clients.fields.marqueeHeader.rightButtonsSectionTitle'
-                    )}
-                  </h4>
-                  <div className="space-y-2">
-                    <Label>
-                      {t(
-                        'clients.fields.marqueeHeader.rightButton1Text'
-                      )}
-                    </Label>
-                    <Input
-                      {...register('marqueeHeaderData.rightButton1Text')}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>
-                      {t(
-                        'clients.fields.marqueeHeader.rightButton1Link'
-                      )}
-                    </Label>
-                    <Input
-                      {...register('marqueeHeaderData.rightButton1Link')}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>
-                      {t(
-                        'clients.fields.marqueeHeader.rightButton2Text'
-                      )}
-                    </Label>
-                    <Input
-                      {...register('marqueeHeaderData.rightButton2Text')}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>
-                      {t(
-                        'clients.fields.marqueeHeader.rightButton2Link'
-                      )}
-                    </Label>
-                    <Input
-                      {...register('marqueeHeaderData.rightButton2Link')}
-                    />
-                  </div>
-                </div>
-              </div>
-            </TabsContent>
-
-            {/* Body Tab */}
-            <TabsContent value="body" className="space-y-6">
-              <CardTitle>{t('clients.tabs.body')}</CardTitle>
-              <CardDescription>
-                {t('clients.fields.body.description')}
-              </CardDescription>
-              <div className="space-y-2">
-                <Label htmlFor="bodyData.title">
-                  {t('clients.fields.body.title')}
-                </Label>
-                <Input id="bodyData.title" {...register('bodyData.title')} />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="bodyData.subtitle">
-                  {t('clients.fields.body.subtitle')}
-                </Label>
-                <Input
-                  id="bodyData.subtitle"
-                  {...register('bodyData.subtitle')}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="bodyData.description">
-                  {t('clients.fields.body.descriptionField')}
-                </Label>
-                <Controller
-                  name="bodyData.description"
-                  control={control}
-                  render={({ field }) => (
-                    <TiptapEditor
-                      name="bodyData.description"
-                      control={control}
-                    />
-                  )}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="bodyData.imageUrl">
-                  {t('clients.fields.body.imageUrl')}
-                </Label>
-                <Input
-                  id="bodyData.imageUrl"
-                  {...register('bodyData.imageUrl')}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="bodyData.videoUrl">
-                  {t('clients.fields.body.videoUrl')}
-                </Label>
-                <Input
-                  id="bodyData.videoUrl"
-                  {...register('bodyData.videoUrl')}
-                  placeholder="https://www.youtube.com/embed/..."
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="bodyData.ctaButtonText">
-                  {t('clients.fields.body.ctaButtonText')}
-                </Label>
-                <Input
-                  id="bodyData.ctaButtonText"
-                  {...register('bodyData.ctaButtonText')}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="bodyData.ctaButtonLink">
-                  {t('clients.fields.body.ctaButtonLink')}
-                </Label>
-                <Input
-                  id="bodyData.ctaButtonLink"
-                  {...register('bodyData.ctaButtonLink')}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="bodyData.layout">
-                  {t('clients.fields.body.layout')}
-                </Label>
-                <Controller
-                  name="bodyData.layout"
-                  control={control}
-                  render={({ field }) => (
-                    <Select
-                      onValueChange={field.onChange}
-                      value={field.value || 'image-right'}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="image-left">Bild links</SelectItem>
-                        <SelectItem value="image-right">
-                          Bild rechts
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  )}
-                />
-              </div>
-            </TabsContent>
-
-            {/* Info Cards Tab */}
-            <TabsContent value="cards" className="space-y-4">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-medium">
-                  {t('clients.fields.infoCards.title')}
-                </h3>
-                <Button
-                  type="button"
-                  size="sm"
-                  onClick={() => appendInfoCard({ title: '', content: '' })}
-                >
-                  <PlusCircle className="mr-2 h-4 w-4" />{' '}
-                  {t('clients.fields.infoCards.add')}
-                </Button>
-              </div>
-              <div className="max-h-[500px] space-y-4 overflow-y-auto pr-2">
-                {infoCardFields.map((field, index) => (
-                  <fieldset key={field.id} className="rounded-md border p-4">
-                    <div className="mb-2 flex items-center justify-between">
-                      <legend className="px-1 text-sm font-medium">
-                        {t('clients.fields.infoCards.card')} {index + 1}
-                      </legend>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => removeInfoCard(index)}
-                      >
-                        <Trash2 className="h-4 w-4 text-destructive" />
-                      </Button>
-                    </div>
-                    <div className="mt-2 space-y-4">
-                      <div className="space-y-2">
-                        <Label htmlFor={`infoCards.${index}.title`}>
-                          {t('clients.fields.title')}
-                        </Label>
-                        <Input
-                          id={`infoCards.${index}.title`}
-                          {...register(`infoCards.${index}.title`)}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor={`infoCards.${index}.content`}>
-                          {t('clients.fields.content')}
-                        </Label>
-                        <Controller
-                          name={`infoCards.${index}.content`}
-                          control={control}
-                          render={({ field }) => (
-                            <TiptapEditor
-                              name={`infoCards.${index}.content`}
-                              control={control}
-                            />
-                          )}
-                        />
-                      </div>
-                    </div>
-                  </fieldset>
-                ))}
-              </div>
-            </TabsContent>
-
-            {/* Products Tab */}
-            <TabsContent value="products" className="space-y-4">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-medium">
-                  {t('clients.tabs.products')}
-                </h3>
-                <Button
-                  type="button"
-                  size="sm"
-                  onClick={() => appendProduct({ name: '' })}
-                >
-                  <PlusCircle className="mr-2 h-4 w-4" />{' '}
-                  {t('clients.fields.products.add')}
-                </Button>
-              </div>
-              <p className="text-sm text-muted-foreground">
-                {t('clients.fields.products.description')}
-              </p>
-              <div className="max-h-[500px] space-y-4 overflow-y-auto pr-2">
-                {productFields.map((field, index) => (
-                  <fieldset key={field.id} className="rounded-md border p-4">
-                    <div className="mb-2 flex items-center justify-between">
-                      <legend className="px-1 text-sm font-medium">
-                        {t('clients.fields.products.product')}{' '}
-                        {index + 1}
-                      </legend>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => removeProduct(index)}
-                      >
-                        <Trash2 className="h-4 w-4 text-destructive" />
-                      </Button>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor={`products.${index}.name`}>
-                        {t('clients.fields.products.productName')}
-                      </Label>
-                      <Input
-                        id={`products.${index}.name`}
-                        {...register(`products.${index}.name`)}
-                      />
-                      {errors.products?.[index]?.name && (
-                        <p className="text-sm text-destructive">
-                          {errors.products?.[index]?.name?.message}
-                        </p>
-                      )}
-                    </div>
-                  </fieldset>
-                ))}
-              </div>
-            </TabsContent>
-
-            {/* Graphics Tab */}
-            <TabsContent value="graphics" className="space-y-4">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-medium">
-                  {t('clients.fields.graphics.title')}
-                </h3>
-                <Button
-                  type="button"
-                  size="sm"
-                  onClick={() =>
-                    appendGraphic({ imageUrl: '', targetUrl: '', text: '' })
-                  }
-                >
-                  <PlusCircle className="mr-2 h-4 w-4" />{' '}
-                  {t('clients.fields.graphics.add')}
-                </Button>
-              </div>
-              <p className="text-sm text-muted-foreground">
-                {t('clients.fields.graphics.description')}
-              </p>
-              <div className="max-h-[500px] space-y-4 overflow-y-auto pr-2">
-                {graphicsFields.map((field, index) => (
-                  <fieldset key={field.id} className="rounded-md border p-4">
-                    <div className="mb-2 flex items-center justify-between">
-                      <legend className="px-1 text-sm font-medium">
-                        {t('clients.fields.graphics.graphic')}{' '}
-                        {index + 1}
-                      </legend>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => removeGraphic(index)}
-                      >
-                        <Trash2 className="h-4 w-4 text-destructive" />
-                      </Button>
-                    </div>
-                    <div className="grid grid-cols-1 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor={`graphics.${index}.imageUrl`}>
-                          {t('clients.fields.graphics.imageUrl')}
-                        </Label>
-                        <Input
-                          id={`graphics.${index}.imageUrl`}
-                          {...register(`graphics.${index}.imageUrl`)}
-                        />
-                        {errors.graphics?.[index]?.imageUrl && (
-                          <p className="text-sm text-destructive">
-                            {errors.graphics[index]?.imageUrl?.message}
-                          </p>
-                        )}
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor={`graphics.${index}.targetUrl`}>
-                          {t('clients.fields.graphics.targetUrl')}
-                        </Label>
-                        <Input
-                          id={`graphics.${index}.targetUrl`}
-                          {...register(`graphics.${index}.targetUrl`)}
-                        />
-                        {errors.graphics?.[index]?.targetUrl && (
-                          <p className="text-sm text-destructive">
-                            {errors.graphics[index]?.targetUrl?.message}
-                          </p>
-                        )}
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor={`graphics.${index}.text`}>
-                          {t('clients.fields.graphics.title')}
-                        </Label>
-                        <Input
-                          id={`graphics.${index}.text`}
-                          {...register(`graphics.${index}.text`)}
-                        />
-                      </div>
-                    </div>
-                  </fieldset>
-                ))}
-              </div>
-            </TabsContent>
-
-            {/* Form Tab */}
-            <TabsContent value="form">
-              <div className="mb-4 flex items-center justify-between">
-                <div>
-                  <CardTitle>{t('clients.tabs.form')}</CardTitle>
-                  <CardDescription>
-                    {t('clients.fields.form.description')}
-                  </CardDescription>
-                </div>
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button variant="outline">
-                      <Code className="mr-2 h-4 w-4" /> Insertar en Landing
-                      Page
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent className="sm:max-w-2xl">
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Insertar Formulario</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        Copie y pegue este código en el HTML de su landing
-                        page para insertar el formulario.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <pre className="mt-2 w-full overflow-x-auto whitespace-pre-wrap rounded-md bg-slate-950 p-4">
-                      <code className="break-all text-white">
-                        {embedCode}
-                      </code>
-                    </pre>
-                    <AlertDialogFooter>
-                      <AlertDialogAction
-                        onClick={() => {
-                          navigator.clipboard.writeText(embedCode);
-                          toast({
-                            title: '¡Copiado!',
-                            description:
-                              'El código de inserción se ha copiado al portapapeles.',
-                          });
-                        }}
-                      >
-                        Copiar Código
-                      </AlertDialogAction>
-                      <AlertDialogCancel>Cerrar</AlertDialogCancel>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-              </div>
-              <div className="mt-6 rounded-lg border bg-slate-50 p-4">
-                <RecommendationFormForClient
-                  products={watch('products') || []}
-                  clientId={id}
-                />
-              </div>
-            </TabsContent>
-
-            {/* Wallet Tab */}
-            <TabsContent value="wallet" className="space-y-6">
-              <CardTitle>Wallet & Ads Management</CardTitle>
-              <CardDescription>
-                Verwalten Sie das Werbebudget dieses Kunden. Änderungen hier werden sofort gespeichert.
-              </CardDescription>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-4 rounded-lg border p-4 bg-slate-50">
-                  <h3 className="font-semibold text-lg">Manuelle Anpassung (Admin)</h3>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="budget_remaining">Verfügbares Guthaben (€)</Label>
-                    <Input
-                      id="budget_remaining"
-                      type="number"
-                      step="0.01"
-                      {...register('budget_remaining', { valueAsNumber: true })}
-                    />
-                    <p className="text-xs text-muted-foreground">
-                      Aktuelles Guthaben für Anzeigen. Wird durch Views reduziert.
-                    </p>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="total_invested">Gesamt Investiert (€)</Label>
-                    <Input
-                      id="total_invested"
-                      type="number"
-                      step="0.01"
-                      {...register('total_invested', { valueAsNumber: true })}
-                    />
-                    <p className="text-xs text-muted-foreground">
-                      Historische Summe aller Einzahlungen.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <h3 className="font-semibold text-lg">Vorschau für Kunde</h3>
-                  <WalletCard
-                    clientId={id}
-                    clientEmail={watch('newEmailForUpdate') || ''}
-                    currentBudget={watch('budget_remaining') || 0}
-                    totalInvested={watch('total_invested') || 0}
-                  />
-                </div>
-              </div>
-            </TabsContent>
-
-            {/* Translations Tab */}
-            <TabsContent value="translations">
-              <div className="space-y-2">
-                <Label htmlFor="translations">
-                  {t('clients.fields.translations')}
-                </Label>
-                <Controller
-                  name="translations"
-                  control={control}
-                  render={({ field }) => (
-                    <textarea
-                      id="translations"
-                      {...field}
-                      rows={15}
-                      placeholder={
-                        t(
-                          'clients.fields.jsonPlaceholderObject'
-                        ) as string
-                      }
-                      className="w-full rounded-md border p-2 font-mono text-sm"
-                    />
-                  )}
-                />
-                <p className="text-xs text-muted-foreground">
-                  {t('clients.fields.jsonHelpObject')}
-                </p>
-              </div>
-            </TabsContent>
-          </Tabs>
-        </CardContent>
-        <CardFooter className="flex justify-end">
-          <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting && (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            )}
-            {t('clients.edit.save')}
-          </Button>
-        </CardFooter>
-      </Card>
-    </form >
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+          <CardFooter className="flex justify-end">
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
+              {t('clients.edit.save')}
+            </Button>
+          </CardFooter>
+        </Card>
+      </form >
     </>
   );
 }
