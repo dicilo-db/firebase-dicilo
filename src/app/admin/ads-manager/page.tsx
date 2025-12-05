@@ -11,9 +11,12 @@ import {
     deleteDoc,
     doc,
     updateDoc,
+    getFirestore,
 } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { app } from '@/lib/firebase';
 import { Button } from '@/components/ui/button';
+
+const db = getFirestore(app);
 import {
     Card,
     CardContent,
