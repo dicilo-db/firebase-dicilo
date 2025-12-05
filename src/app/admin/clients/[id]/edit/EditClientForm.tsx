@@ -1580,6 +1580,11 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                           const files = e.target.files;
                           if (!files || files.length === 0) return;
 
+                          toast({
+                            title: 'Subiendo...',
+                            description: `Iniciando subida de ${files.length} imágenes. Por favor espere.`,
+                          });
+
                           setIsSubmitting(true);
                           try {
                             const newUrls: string[] = [];
@@ -1598,14 +1603,14 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                               shouldDirty: true,
                             });
                             toast({
-                              title: 'Success',
-                              description: `${newUrls.length} images uploaded.`,
+                              title: 'Éxito',
+                              description: `${newUrls.length} imágenes subidas correctamente.`,
                             });
-                          } catch (error) {
+                          } catch (error: any) {
                             console.error('Error uploading images:', error);
                             toast({
-                              title: 'Error',
-                              description: 'Failed to upload images.',
+                              title: 'Error al subir',
+                              description: `Falló la subida: ${error.message || 'Error desconocido'}`,
                               variant: 'destructive',
                             });
                           } finally {
