@@ -660,6 +660,7 @@ const clientSchema = z.object({
   layout: z.array(z.any()).optional(),
   newEmailForUpdate: z.string().email().optional().or(z.literal('')),
   ownerUid: z.string().optional(),
+  galleryImages: z.array(z.string()).optional(),
 });
 
 type ClientFormData = z.infer<typeof clientSchema>;
@@ -758,6 +759,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
       layout: [],
       newEmailForUpdate: '',
       ownerUid: '',
+      galleryImages: [],
     },
   });
 
@@ -1066,11 +1068,9 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                     </TabsTrigger>
                   </>
                 )}
-                {clientType === 'premium' && (
-                  <TabsTrigger value="layout">
-                    Layout Builder
-                  </TabsTrigger>
-                )}
+                <TabsTrigger value="layout">
+                  Page Editor
+                </TabsTrigger>
                 <TabsTrigger value="userManagement">
                   User Management
                 </TabsTrigger>
@@ -1521,6 +1521,96 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                 <CardDescription>
                   Drag and drop blocks to build your custom landing page.
                 </CardDescription>
+
+                {/* Gallery Uploader Section */}
+                <div className="rounded-lg border p-4">
+                  <h3 className="mb-4 text-lg font-semibold">Photo Gallery</h3>
+                  <div className="mb-4 grid grid-cols-2 gap-4 md:grid-cols-4">
+                    {watch('galleryImages')?.map((url, index) => (
+                      <div key={index} className="relative aspect-square overflow-hidden rounded-lg border">
+                        <Image
+                          src={url}
+                          alt={`Gallery ${index}`}
+                          fill
+                          className="object-cover"
+                        />
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          size="icon"
+                          className="absolute right-1 top-1 h-6 w-6"
+                          onClick={() => {
+                            const currentImages = watch('galleryImages') || [];
+                            setValue(
+                              'galleryImages',
+                              currentImages.filter((_, i) => i !== index),
+                              { shouldDirty: true }
+                            );
+                          }}
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    ))}
+                    <label className="flex aspect-square cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 hover:bg-gray-50">
+                      <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                        <UploadCloud className="mb-3 h-8 w-8 text-gray-400" />
+                        <p className="mb-2 text-sm text-gray-500">
+                          <span className="font-semibold">Click to upload</span>
+                        </p>
+                      </div>
+                      <input
+                        type="file"
+                        className="hidden"
+                        multiple
+                        accept="image/*"
+                        onChange={async (e) => {
+                          const files = e.target.files;
+                          if (!files || files.length === 0) return;
+
+                          setIsSubmitting(true);
+                          try {
+                            const newUrls: string[] = [];
+                            for (let i = 0; i < files.length; i++) {
+                              const file = files[i];
+                              const storageRef = ref(
+                                storage,
+                                `clients/${id}/gallery/${Date.now()}_${file.name}`
+                              );
+                              await uploadBytes(storageRef, file);
+                              const url = await getDownloadURL(storageRef);
+                              newUrls.push(url);
+                            }
+                            const currentImages = watch('galleryImages') || [];
+                            setValue('galleryImages', [...currentImages, ...newUrls], {
+                              shouldDirty: true,
+                            });
+                            toast({
+                              title: 'Success',
+                              description: `${newUrls.length} images uploaded.`,
+                            });
+                          } catch (error) {
+                            console.error('Error uploading images:', error);
+                            toast({
+                              title: 'Error',
+                              description: 'Failed to upload images.',
+                              variant: 'destructive',
+                            });
+                          } finally {
+                            setIsSubmitting(false);
+                            // Reset input
+                            e.target.value = '';
+                          }
+                        }}
+                      />
+                    </label>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Upload images for your photo gallery. These will be used in the "Gallery" block.
+                  </p>
+                </div>
+
+                <Separator className="my-6" />
                 <Controller
                   name="layout"
                   control={control}

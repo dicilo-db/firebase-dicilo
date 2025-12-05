@@ -76,4 +76,7 @@ export interface ClientData {
     translations: any;
     slug: string;
     layout?: any[];
+    coordinates?: { lat: number; lng: number };
+    address?: string;
+    galleryImages?: string[];
 }

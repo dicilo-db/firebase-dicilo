@@ -106,8 +106,10 @@ const AmenitiesBlock = ({ items }: { items: string }) => {
 const StickySidebar = ({ clientData }: { clientData: ClientData }) => {
     const { t } = useTranslation('common');
 
-    // Mock coordinates if not present
-    const coords: [number, number] = [40.4168, -3.7038]; // Madrid
+    // Use client coordinates or fallback to Madrid
+    const coords: [number, number] = clientData.coordinates
+        ? [clientData.coordinates.lat, clientData.coordinates.lng]
+        : [40.4168, -3.7038];
 
     return (
         <div className="sticky top-24 space-y-6">
@@ -120,15 +122,15 @@ const StickySidebar = ({ clientData }: { clientData: ClientData }) => {
                             id: clientData.id,
                             name: clientData.clientName,
                             coords: coords,
-                            address: "Calle Gran Vía, 1, Madrid",
-                            category: "Restaurant"
+                            address: clientData.address || "Address not available",
+                            category: "Business"
                         }]}
                         t={t}
                     />
                 </div>
                 <div className="p-6">
                     <h3 className="mb-2 text-lg font-bold">Location</h3>
-                    <p className="mb-4 text-sm text-gray-600">Calle Gran Vía, 1, 28013 Madrid, Spain</p>
+                    <p className="mb-4 text-sm text-gray-600">{clientData.address || "Address not available"}</p>
                     <Button className="w-full bg-blue-600 hover:bg-blue-700">Get Directions</Button>
                 </div>
             </div>
@@ -173,14 +175,16 @@ export default function ClientPremiumLayout({ clientData }: { clientData: Client
     ];
 
     // Helper to get images for gallery
-    const galleryImages = [
-        clientData.headerData?.headerImageUrl,
-        clientData.headerData?.headerBackgroundImageUrl,
-        clientData.headerData?.bannerImageUrl,
-        // Add placeholders if not enough images
-        'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&q=80',
-        'https://images.unsplash.com/photo-1552566626-52f8b828add9?w=800&q=80'
-    ].filter(Boolean) as string[];
+    const galleryImages = (clientData as any).galleryImages?.length > 0
+        ? (clientData as any).galleryImages
+        : [
+            clientData.headerData?.headerImageUrl,
+            clientData.headerData?.headerBackgroundImageUrl,
+            clientData.headerData?.bannerImageUrl,
+            // Add placeholders if not enough images
+            'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&q=80',
+            'https://images.unsplash.com/photo-1552566626-52f8b828add9?w=800&q=80'
+        ].filter(Boolean) as string[];
 
     return (
         <div className="min-h-screen bg-gray-50 pb-20">
