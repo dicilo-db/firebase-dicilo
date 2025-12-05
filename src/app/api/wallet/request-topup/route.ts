@@ -1,9 +1,6 @@
-
 import { NextRequest, NextResponse } from 'next/server';
-import { getFirestore, collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { app } from '@/lib/firebase';
-
-const db = getFirestore(app);
+import { adminDb } from '@/lib/firebase-admin';
+import * as admin from 'firebase-admin';
 
 export async function POST(request: NextRequest) {
     try {
@@ -13,21 +10,21 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
         }
 
-        // 1. Create Request Record
-        await addDoc(collection(db, 'transaction_requests'), {
+        // 1. Create Request Record using Admin SDK (bypasses rules)
+        await adminDb.collection('transaction_requests').add({
             clientId,
             clientEmail: clientEmail || 'unknown@example.com',
             amount: Number(amount),
             status: 'pending',
-            createdAt: serverTimestamp(),
+            createdAt: admin.firestore.FieldValue.serverTimestamp(),
         });
 
-        // 2. Mock Email Notification (In real app, use SendGrid/Nodemailer/Firebase Extensions)
-        // console.log(`[EMAIL] To: admin@dicilo.net | Subject: SOLICITUD RECARGA ${amount}€ - Client ${clientId}`);
+        // 2. Log for debug (Email should be handled by a Cloud Function trigger on 'transaction_requests')
+        console.log(`[WALLET] Top-up request created: Client ${clientId}, Amount ${amount}€`);
 
         return NextResponse.json({ success: true, message: 'Request received' });
-    } catch (error) {
+    } catch (error: any) {
         console.error('Error processing top-up request:', error);
-        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+        return NextResponse.json({ error: 'Internal Server Error', details: error.message }, { status: 500 });
     }
 }

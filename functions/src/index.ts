@@ -181,6 +181,51 @@ export const notifyAdminOnRegistration = onDocumentCreated('registrations/{regis
   }
 });
 
+export const notifyAdminOnTopUp = onDocumentCreated('transaction_requests/{requestId}', async (event) => {
+  const snapshot = event.data;
+  if (!snapshot) return;
+
+  const data = snapshot.data();
+  const requestId = event.params.requestId;
+
+  const adminEmail = 'support@dicilo.net';
+  const subject = `Neue Aufladeanfrage: ${data.amount}€ von Client ${data.clientId}`;
+
+  const html = `
+    <h1>Neue Guthaben-Anfrage (Wallet)</h1>
+    <p>Ein Kunde hat eine Aufladung angefordert.</p>
+    <hr/>
+    <p><strong>Client ID:</strong> ${data.clientId}</p>
+    <p><strong>Email:</strong> ${data.clientEmail || 'N/A'}</p>
+    <p><strong>Betrag:</strong> ${data.amount}€</p>
+    <p><strong>Request ID:</strong> ${requestId}</p>
+    <p><strong>Zeitpunkt:</strong> ${data.createdAt ? data.createdAt.toDate().toLocaleString() : new Date().toLocaleString()}</p>
+    
+    <br/>
+    <h3>Aktion erforderlich:</h3>
+    <ol>
+      <li>Rechnung an Kunden senden (${data.amount}€).</li>
+      <li>Nach Zahlungseingang: Im Admin-Panel Guthaben manuell buchen.</li>
+    </ol>
+    
+    <p>Dies ist eine automatische Nachricht von Dicilo Firebase Functions.</p>
+  `;
+
+  try {
+    await sendMail({
+      to: adminEmail,
+      subject: subject,
+      html: html,
+    });
+    logger.info(`Admin notification sent for wallet top-up request ${requestId}`);
+  } catch (error) {
+    logger.error(
+      `Failed to send admin notification for top-up request ${requestId}:`,
+      error
+    );
+  }
+});
+
 export const sendWelcomeEmail = onDocumentCreated('registrations/{registrationId}', async (event) => {
   const snapshot = event.data;
   if (!snapshot) return;

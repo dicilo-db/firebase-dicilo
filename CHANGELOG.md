@@ -6,6 +6,19 @@ Este documento registra los 30 cambios más recientes realizados en el proyecto.
 
 ---
 
+### **163. FIX: WALLET TOP-UP API & EMAIL - CÓDIGO: FIX-WALLET-API-V1**
+
+- **Fecha y Hora:** 05 de Diciembre de 2025, 16:35 (CET)
+- **Módulos Afectados:** `src/app/api/wallet/request-topup/route.ts`, `functions/src/index.ts`.
+- **Descripción del Cambio:**
+  - **Problema:** Error 500 al solicitar recarga debido a permisos de escritura insuficientes en la API. Además, no se enviaba email.
+  - **Solución:**
+    1. Se migró la ruta de API a `firebase-admin` para permitir escritura privilegiada en `transaction_requests`.
+    2. Se implementó la Cloud Function `notifyAdminOnTopUp` para enviar email automático a `support@dicilo.net` tras cada solicitud.
+  - **Resultado:** La solicitud se guarda correctamente y se dispara una alerta por email al administrador.
+
+---
+
 ### **162. FEATURE: EDICIÓN MANUAL DE WALLET (ADMIN) - CÓDIGO: FEATURE-WALLET-ADMIN-V1**
 
 - **Fecha y Hora:** 05 de Diciembre de 2025, 14:45 (CET)
