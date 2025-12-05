@@ -858,6 +858,8 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
       translations: data.translations
         ? JSON.stringify(data.translations, null, 2)
         : '{}',
+      layout: data.layout || [],
+      galleryImages: data.galleryImages || [],
       ownerUid: data.ownerUid || '',
       budget_remaining: data.budget_remaining || 0,
       total_invested: data.total_invested || 0,

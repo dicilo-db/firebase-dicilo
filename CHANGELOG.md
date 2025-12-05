@@ -6,6 +6,17 @@ Este documento registra los 30 cambios más recientes realizados en el proyecto.
 
 ---
 
+### **164. FIX: CARGA DE DATOS CLIENTE (LAYOUT & GALERÍA) - CÓDIGO: FIX-CLIENT-DATA-LOAD-V1**
+
+- **Fecha y Hora:** 05 de Diciembre de 2025, 17:05 (CET)
+- **Módulos Afectados:** `src/app/admin/clients/[id]/edit/EditClientForm.tsx`.
+- **Descripción del Cambio:**
+  - **Problema:** El formulario de edición no cargaba los campos `layout` y `galleryImages` guardados en base de datos, mostrándolos vacíos y reseteándolos al guardar.
+  - **Solución:** Se añadieron estos campos al objeto `preparedData` para asegurar su carga correcta en el estado inicial del formulario.
+  - **Resultado:** Los datos de la Landing Page Premium y la galería se visualizan y persisten correctamente.
+
+---
+
 ### **163. FIX: WALLET TOP-UP API & EMAIL - CÓDIGO: FIX-WALLET-API-V1**
 
 - **Fecha y Hora:** 05 de Diciembre de 2025, 16:35 (CET)
