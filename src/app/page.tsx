@@ -45,7 +45,7 @@ function serializeBusiness(docId: string, data: any): Business {
   };
 }
 
-async function getBusinesses(): Promise<Business[]> {
+async function getBusinesses(): Promise<{ businesses: Business[], clientsRaw: any[] }> {
   const db = getFirestore(app);
   console.log('Fetching businesses on server...');
   try {
@@ -76,24 +76,49 @@ async function getBusinesses(): Promise<Business[]> {
     }
 
     // Merge and deduplicate by ID
+    // Merge and deduplicate by ID
     const allBusinesses = [...businesses, ...clients];
-    // Optional: Deduplication logic if needed, but IDs should be unique per collection. 
-    // If we want to avoid showing the same entity twice if it exists in both (migration scenario):
-    // const uniqueBusinesses = Array.from(new Map(allBusinesses.map(item => [item.id, item])).values());
-
-    return allBusinesses;
+    return { businesses: allBusinesses, clientsRaw: clients };
   } catch (error) {
     console.error('Error fetching businesses on server:', error);
+    return { businesses: [], clientsRaw: [] };
+  }
+}
+
+async function getAds(clientsRaw: any[]) {
+  const db = getFirestore(app);
+  try {
+    const adsCol = collection(db, 'ads');
+    const q = query(adsCol); // In real app, maybe filter by status == 'active'
+    const snapshot = await getDocs(q);
+
+    // Create a map of client budgets for O(1) lookup
+    const clientBudgets = new Map(clientsRaw.map((c: any) => [c.id, c.budget_remaining || 0]));
+
+    const ads = snapshot.docs.map(doc => {
+      const data = doc.data();
+      return { id: doc.id, ...data };
+    }).filter((ad: any) => {
+      // Filter: Must be active AND Client must have budget
+      if (ad.status && ad.status !== 'active') return false;
+      const budget = clientBudgets.get(ad.clientId);
+      return budget && budget > 0.05; // Threshold
+    });
+
+    return ads;
+  } catch (error) {
+    console.error("Error fetching ads:", error);
     return [];
   }
 }
 
 export default async function SearchPage() {
-  const initialBusinesses = await getBusinesses();
+  const { businesses, clientsRaw } = await getBusinesses();
+  const ads = await getAds(clientsRaw); // We need raw clients to check budget
 
   return (
     <main className="h-screen w-screen overflow-hidden">
-      <DiciloSearchPage initialBusinesses={initialBusinesses} />
+      <DiciloSearchPage initialBusinesses={businesses} initialAds={ads} />
     </main>
   );
 }

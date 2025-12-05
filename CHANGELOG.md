@@ -4,6 +4,33 @@ Este documento registra los 30 cambios más recientes realizados en el proyecto.
 
 ---
 
+### **160. FEATURE: CEREBRO IA Y ACTUALIZACIÓN DE CONOCIMIENTO - CÓDIGO: AI-BRAIN-V1**
+
+- **Fecha y Hora:** 05 de Diciembre de 2025, 13:15 (CET)
+- **Módulos Afectados:** `src/ai/data/dicilo-knowledge.ts`, `functions/dicilo-ai.js`.
+- **Descripción del Cambio:**
+  - **Base de Conocimiento (Brain):** Se integró un dataset completo de ~460 preguntas y respuestas.
+    - 20 preguntas oficiales extraídas de `dicilo.app/faq` (Suscripciones, envíos, seguridad).
+    - ~220 preguntas de entrenamiento detallado sobre la marca, el voseo zuliano y la filosofía "Decilo".
+    - ~220 ejemplos de intención de usuario para mejorar la detección de búsquedas.
+  - **Lógica de Backend (Cloud Functions):** Se generó el código para `searchEmpresas` (búsqueda con filtros), `matchFaq` (similitud semántica) y `recommendEmpresas` (regla estricta de landing+reseñas).
+- **Resultado:** La IA ahora cuenta con un contexto profundo sobre la plataforma y reglas claras de negocio.
+
+### **159. FEATURE: MÓDULO DE PUBLICIDAD Y WALLET - CÓDIGO: ADS-WALLET-V1**
+
+- **Fecha y Hora:** 05 de Diciembre de 2025, 11:30 (CET)
+- **Módulos Afectados:** `src/app/page.tsx`, `src/components/dicilo-search-page.tsx`, `src/components/dashboard/WalletCard.tsx`.
+- **Descripción del Cambio:**
+  - **Publicidad Nativa (Ads):** Implementación de inyección de anuncios cada 10 tarjetas de empresa en el listado principal. Los anuncios respetan el diseño visual de las tarjetas de negocio y se etiquetan según el idioma del usuario.
+  - **Sistema de Wallet:** Creación de un sistema de saldo prepago (Wallet) para clientes.
+    - Se añadió `budget_remaining` y `total_invested` al modelo de datos de cliente.
+    - Se creó el componente `WalletCard` en el dashboard del cliente para visualizar el saldo restante ("Tanque de gasolina") y solicitar recargas.
+  - **Transacción Segura (CPV):** Implementación de la API `/api/ads/view` que descuenta saldo de forma transaccional solo cuando el anuncio es visible (IntersectionObserver > 50%).
+  - **Admin:** Integración del tab "Wallet" en el formulario de edición de clientes (`EditClientForm`).
+- **Resultado:** El sistema ahora muestra publicidad pagada de forma dinámica y permite a los clientes gestionar su presupuesto publicitario.
+
+---
+
 ### **158. FIX: BOTÓN DE CERRAR MAPA EN MÓVIL - CÓDIGO: FIX-MAP-CLOSE-BTN-V1**
 
 - **Fecha y Hora:** 03 de Diciembre de 2025, 14:55 (CET)

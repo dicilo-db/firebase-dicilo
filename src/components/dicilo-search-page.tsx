@@ -46,10 +46,98 @@ export interface Business {
   mapUrl?: string;
 }
 
-interface DiciloSearchPageProps {
-  initialBusinesses: Business[];
+export interface Ad {
+  id: string;
+  clientId: string;
+  imageUrl: string;
+  linkUrl: string;
+  shareText?: string;
+  postalZones?: string[];
+  languages?: string[];
+  [key: string]: any;
 }
 
+interface DiciloSearchPageProps {
+  initialBusinesses: Business[];
+  initialAds?: Ad[];
+}
+
+// AdCard Component with View Tracking
+const AdCard = ({ ad, t, locale }: { ad: Ad; t: any; locale: string }) => {
+  const [hasViewed, setHasViewed] = useState(false);
+  const cardRef = React.useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (hasViewed || !cardRef.current) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setHasViewed(true);
+          // Fire and forget view logging
+          fetch('/api/ads/view', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ adId: ad.id, clientId: ad.clientId }),
+          }).catch(err => console.error("Ad view log error", err));
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.5 } // 50% visible to count
+    );
+
+    observer.observe(cardRef.current);
+    return () => observer.disconnect();
+  }, [hasViewed, ad.id, ad.clientId]);
+
+  const badgeText = useMemo(() => {
+    const lang = locale?.split('-')[0] || 'de';
+    if (lang === 'de') return 'Werbung';
+    if (lang === 'en') return 'Advertising';
+    return 'Publicidad';
+  }, [locale]);
+
+  return (
+    <div
+      ref={cardRef}
+      className="w-full overflow-hidden rounded-xl bg-card p-4 shadow-md border border-yellow-200/50 relative group select-none"
+    >
+      <div className="absolute top-2 right-2 z-10">
+        <span className="bg-yellow-100 text-yellow-800 text-[10px] font-bold px-2 py-0.5 rounded border border-yellow-200 uppercase tracking-wide">
+          {badgeText}
+        </span>
+      </div>
+
+      <div className="flex items-start gap-4">
+        <Image
+          className="h-16 w-16 rounded-full border-2 border-yellow-100 object-cover bg-yellow-50 p-1"
+          src={ad.imageUrl || 'https://placehold.co/64x64.png'}
+          alt="Ad"
+          width={64}
+          height={64}
+        />
+        <div className="min-w-0 flex-1">
+          <h3 className="truncate font-bold text-foreground">{t('ad.sponsored', 'Gesponsert')}</h3>
+          <p className="line-clamp-2 text-sm text-muted-foreground">
+            {ad.shareText || 'Besuchen Sie unsere Website für mehr Informationen.'}
+          </p>
+        </div>
+      </div>
+
+      <div onClick={(e) => e.stopPropagation()}>
+        <a
+          href={ad.linkUrl || '#'}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-3 flex items-center justify-between w-full rounded-md bg-secondary/50 px-3 py-2 text-sm font-medium text-secondary-foreground hover:bg-secondary transition-colors"
+        >
+          <span>{t('ad.visit', 'Webseite besuchen')}</span>
+          <ExternalLink className="h-4 w-4" />
+        </a>
+      </div>
+    </div>
+  );
+};
 const logAnalyticsEvent = async (eventData: object) => {
   try {
     await fetch('/api/analytics/log', {
@@ -96,6 +184,7 @@ const normalizeText = (text: string | null | undefined): string => {
 
 export default function DiciloSearchPage({
   initialBusinesses,
+  initialAds = []
 }: DiciloSearchPageProps) {
   const { toast } = useToast();
   const { t, i18n } = useTranslation('common');
@@ -271,6 +360,31 @@ export default function DiciloSearchPage({
     });
   }, [debouncedQuery, initialBusinesses, searchType]);
 
+  const businessesWithAds = useMemo(() => {
+    if (!initialAds.length || !filteredBusinesses.length) return filteredBusinesses.map(b => ({ type: 'business', data: b }));
+
+    const result: any[] = [];
+    let adIndex = 0;
+
+    filteredBusinesses.forEach((business, index) => {
+      result.push({ type: 'business', data: business });
+
+      // Inject 2 ads every 10 businesses
+      if ((index + 1) % 10 === 0) {
+        if (initialAds[adIndex % initialAds.length]) {
+          result.push({ type: 'ad', data: initialAds[adIndex % initialAds.length] });
+          adIndex++;
+        }
+        if (initialAds[adIndex % initialAds.length]) {
+          result.push({ type: 'ad', data: initialAds[adIndex % initialAds.length] });
+          adIndex++;
+        }
+      }
+    });
+
+    return result;
+  }, [filteredBusinesses, initialAds]);
+
   useEffect(() => {
     if (searchType === 'location' && debouncedQuery.length >= 3) {
       handleLocationSearch();
@@ -424,58 +538,64 @@ export default function DiciloSearchPage({
 
         <ScrollArea className="mt-4 flex-grow px-4">
           <div className="grid grid-cols-1 gap-4 pb-4 md:grid-cols-2">
-            {filteredBusinesses.length > 0 ? (
-              filteredBusinesses.map((business) => (
-                <div
-                  key={business.id}
-                  onClick={() => handleBusinessCardClick(business)}
-                  className={cn(
-                    'w-full cursor-pointer overflow-hidden rounded-xl bg-card p-4 shadow-md transition-all duration-200',
-                    selectedBusinessId === business.id
-                      ? 'border-2 border-primary ring-2 ring-primary/20'
-                      : 'border'
-                  )}
-                >
-                  <div className="flex items-start gap-4">
-                    <Image
-                      className="h-16 w-16 rounded-full border-2 border-green-100 object-cover bg-green-100 p-1"
-                      src={
-                        business.imageUrl || 'https://placehold.co/64x64.png'
-                      }
-                      alt={`${business.name} logo`}
-                      width={64}
-                      height={64}
-                      data-ai-hint={business.imageHint}
-                    />
-                    <div className="min-w-0 flex-1">
-                      <h3 className="truncate font-bold">{business.name}</h3>
-                      <p className="line-clamp-2 text-sm text-muted-foreground">
-                        {business.description}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="mt-2 truncate text-xs text-muted-foreground">
-                    {business.location}
-                  </div>
-                  {(business.clientSlug || business.currentOfferUrl) && (
-                    <div onClick={(e) => e.stopPropagation()}>
-                      <a
-                        href={
-                          business.clientSlug
-                            ? `/client/${business.clientSlug}`
-                            : business.currentOfferUrl!
+            {businessesWithAds.length > 0 ? (
+              businessesWithAds.map((item, idx) => {
+                if (item.type === 'ad') {
+                  return <AdCard key={`ad-${idx}`} ad={item.data} t={t} locale={locale} />;
+                }
+                const business = item.data;
+                return (
+                  <div
+                    key={business.id}
+                    onClick={() => handleBusinessCardClick(business)}
+                    className={cn(
+                      'w-full cursor-pointer overflow-hidden rounded-xl bg-card p-4 shadow-md transition-all duration-200',
+                      selectedBusinessId === business.id
+                        ? 'border-2 border-primary ring-2 ring-primary/20'
+                        : 'border'
+                    )}
+                  >
+                    <div className="flex items-start gap-4">
+                      <Image
+                        className="h-16 w-16 rounded-full border-2 border-green-100 object-cover bg-green-100 p-1"
+                        src={
+                          business.imageUrl || 'https://placehold.co/64x64.png'
                         }
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="mt-1 flex items-center gap-1 text-xs text-primary hover:underline"
-                      >
-                        {t('businessCard.currentOffer')}{' '}
-                        <ExternalLink className="h-3 w-3" />
-                      </a>
+                        alt={`${business.name} logo`}
+                        width={64}
+                        height={64}
+                        data-ai-hint={business.imageHint}
+                      />
+                      <div className="min-w-0 flex-1">
+                        <h3 className="truncate font-bold">{business.name}</h3>
+                        <p className="line-clamp-2 text-sm text-muted-foreground">
+                          {business.description}
+                        </p>
+                      </div>
                     </div>
-                  )}
-                </div>
-              ))
+                    <div className="mt-2 truncate text-xs text-muted-foreground">
+                      {business.location}
+                    </div>
+                    {(business.clientSlug || business.currentOfferUrl) && (
+                      <div onClick={(e) => e.stopPropagation()}>
+                        <a
+                          href={
+                            business.clientSlug
+                              ? `/client/${business.clientSlug}`
+                              : business.currentOfferUrl!
+                          }
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mt-1 flex items-center gap-1 text-xs text-primary hover:underline"
+                        >
+                          {t('businessCard.currentOffer')}{' '}
+                          <ExternalLink className="h-3 w-3" />
+                        </a>
+                      </div>
+                    )}
+                  </div>
+                )
+              })
             ) : (
               <div className="w-full py-10 text-center text-muted-foreground md:col-span-2">
                 <p>

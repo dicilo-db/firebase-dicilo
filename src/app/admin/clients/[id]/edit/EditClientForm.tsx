@@ -85,8 +85,11 @@ const TiptapEditor = dynamic(() => import('@/components/TiptapEditor'), {
 
 const LayoutEditor = dynamic(() => import('@/app/dashboard/LayoutEditor'), {
   ssr: false,
-  loading: () => <p>Loading layout editor...</p>,
 });
+
+import { WalletCard } from '@/components/dashboard/WalletCard';
+
+
 
 const functions = getFunctions(app, 'europe-west1');
 const submitRecommendationFn = httpsCallable(functions, 'submitRecommendation');
@@ -801,7 +804,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
               ? headerData.dividerLine.thickness
               : 2,
         },
-        bannerType: headerData.bannerType || 'embed',
+        bannerType: (headerData.bannerType as 'embed' | 'url' | 'upload') || 'embed',
         bannerEmbedCode: headerData.bannerEmbedCode || '',
         bannerImageUrl: headerData.bannerImageUrl || '',
         bannerImageWidth:
@@ -1077,6 +1080,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                 <TabsTrigger value="form">
                   {t('clients.tabs.form')}
                 </TabsTrigger>
+                <TabsTrigger value="wallet" className="text-blue-600 font-bold">Wallet</TabsTrigger>
                 {clientType !== 'retailer' && (
                   <TabsTrigger value="translations">
                     {t('clients.tabs.translations')}
@@ -2277,6 +2281,16 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                     clientId={id}
                   />
                 </div>
+              </TabsContent>
+
+              {/* Wallet Tab */}
+              <TabsContent value="wallet">
+                <WalletCard
+                  clientId={id}
+                  clientEmail={watch('newEmailForUpdate') || ''}
+                  currentBudget={initialData.budget_remaining || 0}
+                  totalInvested={initialData.total_invested || 0}
+                />
               </TabsContent>
 
               {/* Translations Tab */}

@@ -68,6 +68,11 @@ export interface ClientData {
     clientName: string;
     clientType: 'retailer' | 'premium';
     clientLogoUrl: string;
+
+    // Wallet / Ads fields
+    budget_remaining?: number; // Available funds
+    total_invested?: number;   // Lifetime spend
+
     headerData?: HeaderData;
     marqueeHeaderData?: MarqueeHeaderData;
     bodyData?: BodyData;
