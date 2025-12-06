@@ -37,6 +37,7 @@ import {
   UploadCloud,
   Code,
   Send,
+  LocateFixed,
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
@@ -690,8 +691,49 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
   const id = initialData.id;
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isGeocoding, setIsGeocoding] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<number | null>(null);
   const [embedCode, setEmbedCode] = useState('');
+
+  const handleGeocode = async (addressToGeocode: string) => {
+    setIsGeocoding(true);
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
+          addressToGeocode
+        )}&format=json&limit=1`
+      );
+      const data = await response.json();
+      if (data && data.length > 0) {
+        const { lat, lon } = data[0];
+        const newLat = parseFloat(lat);
+        const newLng = parseFloat(lon);
+
+        setValue('coordinates.lat', newLat, { shouldDirty: true, shouldValidate: true });
+        setValue('coordinates.lng', newLng, { shouldDirty: true, shouldValidate: true });
+
+        toast({
+          title: "Geocoding Successful",
+          description: `Coordinates found: ${newLat}, ${newLng}`,
+        });
+      } else {
+        toast({
+          title: "Location Not Found",
+          description: "Could not find coordinates for this address.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error('Geocoding error:', error);
+      toast({
+        title: "Geocoding Error",
+        description: "Failed to connect to geocoding service.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsGeocoding(false);
+    }
+  };
 
   useEffect(() => {
     if (typeof window !== 'undefined') {

@@ -208,6 +208,7 @@ export default function DiciloSearchPage({
   const [isRecommendationFormOpen, setRecommendationFormOpen] = useState(false);
   const [recommendedBusiness, setRecommendedBusiness] = useState('');
   const [showMobileMap, setShowMobileMap] = useState(false);
+  const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
 
   const selectedBusinessIdRef = React.useRef(selectedBusinessId);
 
@@ -229,6 +230,7 @@ export default function DiciloSearchPage({
 
             const { latitude, longitude } = pos.coords;
             setMapCenter([latitude, longitude]);
+            setUserLocation([latitude, longitude]);
             setMapZoom(14);
             setSelectedBusinessId(null);
           },
@@ -343,6 +345,16 @@ export default function DiciloSearchPage({
       !primaryResult.coords ||
       primaryResult.coords.length !== 2
     ) {
+      // If we have user location, sort by distance to user!
+      if (userLocation) {
+        return textFiltered.sort((a, b) => {
+          if (!a.coords || a.coords.length !== 2) return 1;
+          if (!b.coords || b.coords.length !== 2) return -1;
+          const distA = haversineDistance(userLocation, a.coords);
+          const distB = haversineDistance(userLocation, b.coords);
+          return distA - distB;
+        });
+      }
       return textFiltered.sort((a, b) => a.name.localeCompare(b.name));
     }
 
@@ -353,12 +365,15 @@ export default function DiciloSearchPage({
       if (!a.coords || a.coords.length !== 2) return 1;
       if (!b.coords || b.coords.length !== 2) return -1;
 
-      const distanceA = haversineDistance(primaryResult.coords, a.coords);
-      const distanceB = haversineDistance(primaryResult.coords, b.coords);
+      // Prioritize sorting by distance to User Location if available, else by Primary Result
+      const referencePoint = userLocation || primaryResult.coords!;
+
+      const distanceA = haversineDistance(referencePoint, a.coords as [number, number]);
+      const distanceB = haversineDistance(referencePoint, b.coords as [number, number]);
 
       return distanceA - distanceB;
     });
-  }, [debouncedQuery, initialBusinesses, searchType]);
+  }, [debouncedQuery, initialBusinesses, searchType, userLocation]);
 
   const businessesWithAds = useMemo(() => {
     if (!initialAds.length || !filteredBusinesses.length) return filteredBusinesses.map(b => ({ type: 'business', data: b }));
