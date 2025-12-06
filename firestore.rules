@@ -57,6 +57,18 @@ service cloud.firestore {
       allow create: if isAuthenticated();
     }
     
+    // Ad Banners (Public read for display, Admin write for management)
+    match /ads_banners/{bannerId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    // Ad Events (Admin/API write only, Admin read)
+    match /ad_events/{eventId} {
+      allow read: if isAdmin();
+      allow write: if false; // Writes happen via API (Admin SDK)
+    }
+
     // Default deny
     match /{document=**} {
       allow read, write: if false;

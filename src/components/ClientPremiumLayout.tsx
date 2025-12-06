@@ -107,10 +107,20 @@ const AmenitiesBlock = ({ items }: { items: string }) => {
 const StickySidebar = ({ clientData, ad }: { clientData: ClientData; ad?: any }) => {
     const { t } = useTranslation('common');
 
-    // Use client coordinates or fallback to Madrid
-    const coords: [number, number] = clientData.coordinates
-        ? [clientData.coordinates.lat, clientData.coordinates.lng]
-        : [40.4168, -3.7038];
+    // Use client coordinates or fallback to Madrid (Robust check for lat/lng or latitude/longitude)
+    const getCoords = (): [number, number] => {
+        if (!clientData.coordinates) return [40.4168, -3.7038];
+        // Handle both simple object structure and Firestore GeoPoint structure
+        const lat = (clientData.coordinates as any).lat || (clientData.coordinates as any).latitude;
+        const lng = (clientData.coordinates as any).lng || (clientData.coordinates as any).longitude;
+
+        if (typeof lat === 'number' && typeof lng === 'number') {
+            return [lat, lng];
+        }
+        return [40.4168, -3.7038];
+    };
+
+    const coords = getCoords();
 
     return (
         <div className="sticky top-24 space-y-6">
