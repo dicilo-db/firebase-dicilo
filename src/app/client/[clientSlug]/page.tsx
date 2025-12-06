@@ -79,12 +79,35 @@ export async function generateMetadata({
   };
 }
 
+async function getSidebarAd() {
+  try {
+    const adsCol = collection(db, 'ads_banners');
+    const q = query(adsCol, where('active', '==', true), where('position', '==', 'sidebar'));
+    const snapshot = await getDocs(q);
+
+    if (snapshot.empty) return null;
+
+    const ads = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    })) as any[];
+
+    // Simple random pick
+    const randomAd = ads[Math.floor(Math.random() * ads.length)];
+    return randomAd;
+  } catch (error) {
+    console.error("Error fetching sidebar ad", error);
+    return null;
+  }
+}
+
 export default async function ClientPage({
   params,
 }: {
   params: { clientSlug: string };
 }) {
   const clientData = await getClientData(params.clientSlug);
+  const sidebarAd = await getSidebarAd();
 
   if (!clientData) {
     notFound();
@@ -92,7 +115,7 @@ export default async function ClientPage({
 
   return (
     <I18nProvider>
-      <ClientLandingPage clientData={clientData} />
+      <ClientLandingPage clientData={clientData} ad={sidebarAd} />
     </I18nProvider>
   );
 }

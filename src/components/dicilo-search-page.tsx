@@ -25,6 +25,7 @@ import { cn } from '@/lib/utils';
 import { RecommendationForm } from './RecommendationForm';
 import { useTranslation } from 'react-i18next';
 import { Header } from './header';
+import { AdBanner } from '@/components/AdBanner';
 
 export interface Business {
   id: string;
@@ -62,82 +63,7 @@ interface DiciloSearchPageProps {
   initialAds?: Ad[];
 }
 
-// AdCard Component with View Tracking
-const AdCard = ({ ad, t, locale }: { ad: Ad; t: any; locale: string }) => {
-  const [hasViewed, setHasViewed] = useState(false);
-  const cardRef = React.useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (hasViewed || !cardRef.current) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          setHasViewed(true);
-          // Fire and forget view logging
-          fetch('/api/ads/view', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ adId: ad.id, clientId: ad.clientId }),
-          }).catch(err => console.error("Ad view log error", err));
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.5 } // 50% visible to count
-    );
-
-    observer.observe(cardRef.current);
-    return () => observer.disconnect();
-  }, [hasViewed, ad.id, ad.clientId]);
-
-  const badgeText = useMemo(() => {
-    const lang = locale?.split('-')[0] || 'de';
-    if (lang === 'de') return 'Werbung';
-    if (lang === 'en') return 'Advertising';
-    return 'Publicidad';
-  }, [locale]);
-
-  return (
-    <div
-      ref={cardRef}
-      className="w-full overflow-hidden rounded-xl bg-card p-4 shadow-md border border-yellow-200/50 relative group select-none"
-    >
-      <div className="absolute top-2 right-2 z-10">
-        <span className="bg-yellow-100 text-yellow-800 text-[10px] font-bold px-2 py-0.5 rounded border border-yellow-200 uppercase tracking-wide">
-          {badgeText}
-        </span>
-      </div>
-
-      <div className="flex items-start gap-4">
-        <Image
-          className="h-16 w-16 rounded-full border-2 border-yellow-100 object-cover bg-yellow-50 p-1"
-          src={ad.imageUrl || 'https://placehold.co/64x64.png'}
-          alt="Ad"
-          width={64}
-          height={64}
-        />
-        <div className="min-w-0 flex-1">
-          <h3 className="truncate font-bold text-foreground">{t('ad.sponsored', 'Gesponsert')}</h3>
-          <p className="line-clamp-2 text-sm text-muted-foreground">
-            {ad.shareText || 'Besuchen Sie unsere Website für mehr Informationen.'}
-          </p>
-        </div>
-      </div>
-
-      <div onClick={(e) => e.stopPropagation()}>
-        <a
-          href={ad.linkUrl || '#'}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-3 flex items-center justify-between w-full rounded-md bg-secondary/50 px-3 py-2 text-sm font-medium text-secondary-foreground hover:bg-secondary transition-colors"
-        >
-          <span>{t('ad.visit', 'Webseite besuchen')}</span>
-          <ExternalLink className="h-4 w-4" />
-        </a>
-      </div>
-    </div>
-  );
-};
+// AdCard removed, using AdBanner from '@/components/AdBanner'
 const logAnalyticsEvent = async (eventData: object) => {
   try {
     await fetch('/api/analytics/log', {
@@ -235,14 +161,19 @@ export default function DiciloSearchPage({
             setSelectedBusinessId(null);
           },
           (error) => {
+            console.error('Geolocation error:', error);
             if (!isInitialLoad) {
-              console.error('Geolocation error:', error);
               toast({
-                title: t('search.geolocationErrorTitle'),
-                description: t('search.geolocationErrorDesc'),
+                title: t('search.geoErrorTitle'),
+                description: t('search.geoErrorDesc'),
                 variant: 'destructive',
               });
             }
+          },
+          {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0,
           }
         );
       } else if (!isInitialLoad) {
@@ -556,7 +487,7 @@ export default function DiciloSearchPage({
             {businessesWithAds.length > 0 ? (
               businessesWithAds.map((item, idx) => {
                 if (item.type === 'ad') {
-                  return <AdCard key={`ad-${idx}`} ad={item.data} t={t} locale={locale} />;
+                  return <AdBanner key={`ad-${idx}`} ad={item.data} />;
                 }
                 const business = item.data;
                 return (

@@ -17,6 +17,7 @@ import { ClientData, HeaderData, MarqueeHeaderData, InfoCardData, GraphicData } 
 
 interface LandingPageProps {
   clientData: ClientData;
+  ad?: any;
 }
 
 // --- COMPONENTE DE PESTAÑAS (TABS) ---
@@ -339,7 +340,7 @@ const GraphicsGrid = ({ graphics }: { graphics?: GraphicData[] }) => {
   );
 };
 
-export default function ClientLandingPage({ clientData }: LandingPageProps) {
+export default function ClientLandingPage({ clientData, ad }: LandingPageProps) {
   const { i18n } = useTranslation();
 
   useEffect(() => {
@@ -371,7 +372,7 @@ export default function ClientLandingPage({ clientData }: LandingPageProps) {
 
   // Use Premium Layout if client type is premium OR if layout data exists
   if (clientData.clientType === 'premium' || (clientData.layout && clientData.layout.length > 0)) {
-    return <ClientPremiumLayout clientData={clientData} />;
+    return <ClientPremiumLayout clientData={clientData} ad={ad} />;
   }
 
   return (

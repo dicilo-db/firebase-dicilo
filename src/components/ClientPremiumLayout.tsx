@@ -8,6 +8,7 @@ import { MapPin, Star, Share2, Heart, Check, Wifi, Car, Coffee } from 'lucide-re
 import { Button } from './ui/button';
 import { useTranslation } from 'react-i18next';
 import dynamic from 'next/dynamic';
+import { AdBanner } from '@/components/AdBanner';
 
 const DiciloMap = dynamic(() => import('./dicilo-map'), {
     ssr: false,
@@ -103,7 +104,7 @@ const AmenitiesBlock = ({ items }: { items: string }) => {
     );
 };
 
-const StickySidebar = ({ clientData }: { clientData: ClientData }) => {
+const StickySidebar = ({ clientData, ad }: { clientData: ClientData; ad?: any }) => {
     const { t } = useTranslation('common');
 
     // Use client coordinates or fallback to Madrid
@@ -113,6 +114,11 @@ const StickySidebar = ({ clientData }: { clientData: ClientData }) => {
 
     return (
         <div className="sticky top-24 space-y-6">
+            {ad && (
+                <div className="mb-6">
+                    <AdBanner ad={ad} />
+                </div>
+            )}
             <div className="overflow-hidden rounded-xl border bg-white shadow-lg">
                 <div className="h-48 w-full relative">
                     <DiciloMap
@@ -171,7 +177,7 @@ const VideoBlock = ({ url }: { url: string }) => {
     )
 }
 
-export default function ClientPremiumLayout({ clientData }: { clientData: ClientData }) {
+export default function ClientPremiumLayout({ clientData, ad }: { clientData: ClientData; ad?: any }) {
     // Use layout from data or default structure
     const layout: LayoutBlock[] = (clientData as any).layout || [
         { id: '1', type: 'hero', content: {} },
@@ -265,7 +271,7 @@ export default function ClientPremiumLayout({ clientData }: { clientData: Client
 
                     {/* Sidebar (Right Column) */}
                     <div className="lg:col-span-1">
-                        <StickySidebar clientData={clientData} />
+                        <StickySidebar clientData={clientData} ad={ad} />
                     </div>
                 </div>
             </div>

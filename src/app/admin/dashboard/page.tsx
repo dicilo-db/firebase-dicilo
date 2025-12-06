@@ -476,6 +476,22 @@ const DashboardContent: React.FC = () => {
                 </CardContent>
               </Card>
             </Link>
+            <Link href="/admin/ads-manager" className="group">
+              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    Ads Manager
+                  </CardTitle>
+                  <LayoutTemplate className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">Ads Manager</div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Manage advertising banners
+                  </p>
+                </CardContent>
+              </Card>
+            </Link>
           </div>
         </div>
       </main>

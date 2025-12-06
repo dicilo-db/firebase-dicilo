@@ -20,6 +20,12 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { collection, getDocs, getFirestore, query, orderBy } from 'firebase/firestore';
+
+interface ClientOption {
+    id: string;
+    name: string;
+}
 
 const adSchema = z.object({
     title: z.string().min(1, 'Title is required'),
@@ -27,6 +33,7 @@ const adSchema = z.object({
     linkUrl: z.string().url('Target link is required'),
     active: z.boolean().default(true),
     position: z.enum(['directory', 'sidebar', 'home']).default('directory'),
+    clientId: z.string().min(1, 'Client is required for billing'),
 });
 
 type AdFormData = z.infer<typeof adSchema>;
@@ -60,8 +67,34 @@ export default function AdsForm({
             linkUrl: '',
             active: true,
             position: 'directory',
+            clientId: '',
         },
     });
+
+    const [clients, setClients] = useState<ClientOption[]>([]);
+    const [loadingClients, setLoadingClients] = useState(false);
+
+    React.useEffect(() => {
+        const fetchClients = async () => {
+            setLoadingClients(true);
+            try {
+                const db = getFirestore(app);
+                const q = query(collection(db, 'clients'), orderBy('clientName', 'asc'));
+                const snapshot = await getDocs(q);
+                const clientList = snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    name: doc.data().clientName || "Unknown"
+                }));
+                setClients(clientList);
+            } catch (error) {
+                console.error("Failed to fetch clients", error);
+                toast({ title: "Error", description: "Failed to load clients list", variant: 'destructive' });
+            } finally {
+                setLoadingClients(false);
+            }
+        };
+        fetchClients();
+    }, []);
 
     const imageUrl = watch('imageUrl');
 
@@ -176,6 +209,29 @@ export default function AdsForm({
                         </SelectContent>
                     </Select>
                 </div>
+            </div>
+
+            <div className="space-y-2">
+                <Label htmlFor="clientId">Client (Payer)</Label>
+                <Select
+                    onValueChange={(val) => setValue('clientId', val)}
+                    defaultValue={watch('clientId')}
+                    disabled={loadingClients}
+                >
+                    <SelectTrigger>
+                        <SelectValue placeholder={loadingClients ? "Loading clients..." : "Select a client"} />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {clients.map(client => (
+                            <SelectItem key={client.id} value={client.id}>
+                                {client.name}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+                {errors.clientId && (
+                    <p className="text-sm text-red-500">{errors.clientId.message}</p>
+                )}
             </div>
 
             <div className="flex items-center space-x-2">

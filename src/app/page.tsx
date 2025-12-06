@@ -88,8 +88,8 @@ async function getBusinesses(): Promise<{ businesses: Business[], clientsRaw: an
 async function getAds(clientsRaw: any[]) {
   const db = getFirestore(app);
   try {
-    const adsCol = collection(db, 'ads');
-    const q = query(adsCol); // In real app, maybe filter by status == 'active'
+    const adsCol = collection(db, 'ads_banners'); // Updated from 'ads' to 'ads_banners' (Unified)
+    const q = query(adsCol);
     const snapshot = await getDocs(q);
 
     // Create a map of client budgets for O(1) lookup
@@ -97,12 +97,33 @@ async function getAds(clientsRaw: any[]) {
 
     const ads = snapshot.docs.map(doc => {
       const data = doc.data();
-      return { id: doc.id, ...data };
+      return {
+        id: doc.id,
+        // Normalize fields if needed
+        imageUrl: data.imageUrl,
+        linkUrl: data.linkUrl,
+        title: data.title,
+        active: data.active,
+        position: data.position,
+        clientId: data.clientId,
+        ...data
+      };
     }).filter((ad: any) => {
-      // Filter: Must be active AND Client must have budget
-      if (ad.status && ad.status !== 'active') return false;
-      const budget = clientBudgets.get(ad.clientId);
-      return budget && budget > 0.05; // Threshold
+      // Filter: Must be active
+      if (ad.active === false) return false;
+
+      // Filter: If client budget check is required
+      // AdsManager might create ads without client for internal promos (if clientId is optional in schema, but I made it required).
+      // If clientId exists, check budget.
+      if (ad.clientId) {
+        const budget = clientBudgets.get(ad.clientId);
+        // If budget is undefined (client not found) or low, hide?
+        // If client not found in raw list (maybe pagination?), be careful.
+        // For now, strict check:
+        if (typeof budget === 'number' && budget <= 0.05) return false;
+      }
+
+      return true;
     });
 
     return ads;

@@ -5,30 +5,27 @@
 import { onDocumentWritten, onDocumentCreated } from 'firebase-functions/v2/firestore';
 import { onCall, onRequest, HttpsError } from 'firebase-functions/v2/https';
 import { setGlobalOptions } from 'firebase-functions/v2';
-import * as logger from 'firebase-functions/logger';
-import { initializeApp, getApps } from 'firebase-admin/app';
-import { getAuth } from 'firebase-admin/auth';
-import { getFirestore, FieldValue } from 'firebase-admin/firestore';
+import * as functions from 'firebase-functions';
+import * as admin from 'firebase-admin';
 import axios from 'axios';
-import * as _ from 'lodash';
+import * as logger from 'firebase-functions/logger';
 import { Lang, getEmailI18n, render } from './i18n';
 import { sendMail } from './email';
+import _ from 'lodash';
+import * as businessesToSeed from './seed-data.json';
+
+// Initialize Firebase Admin SDK
+try {
+  admin.initializeApp();
+} catch (e) {
+  // App already initialized, ignore
+}
 
 // Set global options for all functions (Gen 2 specific)
 setGlobalOptions({ region: 'europe-west1', memory: '512MiB' });
 
-// Initialize Firebase Admin SDK lazily
-let dbInstance: FirebaseFirestore.Firestore | null = null;
-
-const getDb = () => {
-  if (!dbInstance) {
-    if (getApps().length === 0) {
-      initializeApp();
-    }
-    dbInstance = getFirestore();
-  }
-  return dbInstance;
-};
+// Replace getDb() with db
+const db = admin.firestore();
 
 // --- Admin Role Management (v2) ---
 
@@ -53,11 +50,10 @@ export const onAdminWrite = onDocumentWritten('admins/{uid}', async (event) => {
       `Admin role removed for user ${uid}. Revoking admin custom claim.`
     );
     try {
-      if (getApps().length === 0) initializeApp();
-      const user = await getAuth().getUser(uid);
+      const user = await admin.auth().getUser(uid);
       if (user.customClaims?.admin === true || user.customClaims?.role) {
-        await getAuth().setCustomUserClaims(uid, { admin: null, role: null });
-        await getAuth().revokeRefreshTokens(uid);
+        await admin.auth().setCustomUserClaims(uid, { admin: null, role: null });
+        await admin.auth().revokeRefreshTokens(uid); // Force re-login to apply new claims
         logger.info(
           `Successfully revoked admin claim and refresh tokens for ${uid}.`
         );
@@ -74,12 +70,11 @@ export const onAdminWrite = onDocumentWritten('admins/{uid}', async (event) => {
       `Role document for user ${uid} written with role: ${roleAfter}. Setting/Verifying custom claims.`
     );
     try {
-      if (getApps().length === 0) initializeApp();
-      await getAuth().setCustomUserClaims(uid, {
+      await admin.auth().setCustomUserClaims(uid, {
         admin: true,
         role: roleAfter,
       });
-      await getAuth().revokeRefreshTokens(uid);
+      await admin.auth().revokeRefreshTokens(uid);
       logger.info(
         `Successfully SET/FORCED custom claims for ${uid} with role ${roleAfter} and revoked refresh tokens.`
       );
@@ -296,7 +291,6 @@ export const syncExistingCustomersToErp = onCall(async (request) => {
   logger.info('--- Sync started ---');
 
   try {
-    const db = getDb();
     const registrationsSnapshot = await db.collection('registrations').get();
     if (registrationsSnapshot.empty) {
       return { success: true, newCount: 0, message: 'No customers to sync.' };
@@ -353,7 +347,6 @@ export const submitRecommendation = onCall(async (request) => {
     throw new HttpsError('invalid-argument', 'Missing required fields.');
   }
 
-  const db = getDb();
   const batch = db.batch();
   const recommendationId = db.collection('recommendations').doc().id;
 
@@ -363,7 +356,7 @@ export const submitRecommendation = onCall(async (request) => {
     recommenderEmail,
     clientId,
     lang,
-    createdAt: FieldValue.serverTimestamp(),
+    createdAt: admin.firestore.FieldValue.serverTimestamp(),
     status: 'pending',
     recipientsCount: recipients.length,
     acceptedCount: 0,
@@ -377,8 +370,8 @@ export const submitRecommendation = onCall(async (request) => {
       recipientName: recipient.name,
       recipientContact: recipient.email || recipient.whatsapp,
       contactType: recipient.email ? 'email' : 'whatsapp',
-      status: 'pending',
-      createdAt: FieldValue.serverTimestamp(),
+      status: 'pending', // pending, sent, accepted, declined
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
       clientId,
       lang,
       recommenderName,
@@ -403,7 +396,6 @@ export const taskWorker = onDocumentCreated('recommendation_tasks/{taskId}', asy
     recommenderName,
     contactType,
   } = task;
-  const db = getDb();
   const i18n = await getEmailI18n(lang as Lang, db);
   const acceptUrl = `https://europe-west1-${process.env.GCLOUD_PROJECT}.cloudfunctions.net/consentAccept?taskId=${event.params.taskId}`;
   const declineUrl = `https://europe-west1-${process.env.GCLOUD_PROJECT}.cloudfunctions.net/consentDecline?taskId=${event.params.taskId}`;
@@ -420,11 +412,11 @@ export const taskWorker = onDocumentCreated('recommendation_tasks/{taskId}', asy
       subject: render(i18n['consent.subject'], { name: recommenderName }),
       html,
     });
+    await event.data?.ref.update({
+      status: 'sent',
+      sentAt: admin.firestore.FieldValue.serverTimestamp(),
+    });
   }
-  await snapshot.ref.update({
-    status: 'sent',
-    sentAt: FieldValue.serverTimestamp(),
-  });
 });
 
 const handleConsent = async (
@@ -437,7 +429,6 @@ const handleConsent = async (
     res.status(400).send('Missing taskId parameter.');
     return;
   }
-  const db = getDb();
   const taskRef = db.doc(`recommendation_tasks/${taskId}`);
   const taskSnap = await taskRef.get();
   if (!taskSnap.exists) {
@@ -447,14 +438,14 @@ const handleConsent = async (
 
   await taskRef.update({
     status: newStatus,
-    handledAt: FieldValue.serverTimestamp(),
+    handledAt: admin.firestore.FieldValue.serverTimestamp(),
   });
 
   if (newStatus === 'accepted') {
     const recommendationRef = db.doc(
       `recommendations/${taskSnap.data()?.recommendationId}`
     );
-    await recommendationRef.update({ acceptedCount: FieldValue.increment(1) });
+    await recommendationRef.update({ acceptedCount: admin.firestore.FieldValue.increment(1) });
   }
 
   res
@@ -468,6 +459,7 @@ export const consentDecline = onRequest((req, res) => handleConsent(req, res, 'd
 
 // --- Business Tools (v2) ---
 
+// Forced redeploy for promotion fix verification
 export const promoteToClient = onCall(async (request) => {
   if (
     !request.auth ||
@@ -494,7 +486,6 @@ export const promoteToClient = onCall(async (request) => {
   }
 
   try {
-    const db = getDb();
     const businessRef = db.collection('businesses').doc(businessId);
     const businessSnap = await businessRef.get();
 
@@ -588,7 +579,6 @@ const slugify = (text: string) =>
     .replace(/\-\-+/g, '-');
 
 export const seedDatabase = onRequest({ timeoutSeconds: 540, memory: '512MiB' }, async (req, res) => {
-  const db = getDb();
   const businessesCollection = db.collection('businesses');
   let count = 0;
   let updatedCount = 0;
@@ -621,8 +611,8 @@ export const seedDatabase = onRequest({ timeoutSeconds: 540, memory: '512MiB' },
       await docRef.set({
         ...business,
         coords: coords,
-        createdAt: docSnap.exists ? docSnap.data()?.createdAt : FieldValue.serverTimestamp(),
-        updatedAt: FieldValue.serverTimestamp(),
+        createdAt: docSnap.exists ? docSnap.data()?.createdAt : admin.firestore.FieldValue.serverTimestamp(),
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
         status: 'verified'
       }, { merge: true });
 
@@ -642,7 +632,6 @@ export const seedDatabase = onRequest({ timeoutSeconds: 540, memory: '512MiB' },
 });
 
 export const cleanupDuplicates = onRequest({ timeoutSeconds: 540, memory: '512MiB' }, async (req, res) => {
-  const db = getDb();
   const businessesCollection = db.collection('businesses');
 
   try {
@@ -650,7 +639,7 @@ export const cleanupDuplicates = onRequest({ timeoutSeconds: 540, memory: '512Mi
     const businessesByName: { [key: string]: FirebaseFirestore.QueryDocumentSnapshot[] } = {};
 
     // Group by name
-    snapshot.docs.forEach(doc => {
+    snapshot.docs.forEach((doc: any) => {
       const data = doc.data();
       const name = data.name;
       if (name) {

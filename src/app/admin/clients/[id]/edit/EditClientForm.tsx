@@ -38,6 +38,7 @@ import {
   Code,
   Send,
   LocateFixed,
+  MapPin,
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
@@ -1122,7 +1123,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
               )}
             </div>
             <CardDescription>
-              {t('clients.edit.cardDescription', { id })}
+              {t('clients.edit.cardDescription', { clientId: id })}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -1227,7 +1228,22 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="address">Address</Label>
-                    <Input id="address" {...register('address')} placeholder="Calle Principal 123, Madrid" />
+                    <div className="flex gap-2">
+                      <Input id="address" {...register('address')} placeholder="Calle Principal 123, Madrid" />
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        disabled={isGeocoding}
+                        onClick={() => handleGeocode(watch('address'))}
+                      >
+                        {isGeocoding ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <MapPin className="h-4 w-4" />
+                        )}
+                        <span className="ml-2 hidden sm:inline">Locate</span>
+                      </Button>
+                    </div>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="phone">Phone</Label>

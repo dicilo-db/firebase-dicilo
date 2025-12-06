@@ -56,26 +56,22 @@ exports.cleanupDuplicates = exports.seedDatabase = exports.promoteToClient = exp
 const firestore_1 = require("firebase-functions/v2/firestore");
 const https_1 = require("firebase-functions/v2/https");
 const v2_1 = require("firebase-functions/v2");
-const logger = __importStar(require("firebase-functions/logger"));
-const app_1 = require("firebase-admin/app");
-const auth_1 = require("firebase-admin/auth");
-const firestore_2 = require("firebase-admin/firestore");
+const admin = __importStar(require("firebase-admin"));
 const axios_1 = __importDefault(require("axios"));
+const logger = __importStar(require("firebase-functions/logger"));
 const i18n_1 = require("./i18n");
 const email_1 = require("./email");
+// Initialize Firebase Admin SDK
+try {
+    admin.initializeApp();
+}
+catch (e) {
+    // App already initialized, ignore
+}
 // Set global options for all functions (Gen 2 specific)
 (0, v2_1.setGlobalOptions)({ region: 'europe-west1', memory: '512MiB' });
-// Initialize Firebase Admin SDK lazily
-let dbInstance = null;
-const getDb = () => {
-    if (!dbInstance) {
-        if ((0, app_1.getApps)().length === 0) {
-            (0, app_1.initializeApp)();
-        }
-        dbInstance = (0, firestore_2.getFirestore)();
-    }
-    return dbInstance;
-};
+// Replace getDb() with db
+const db = admin.firestore();
 // --- Admin Role Management (v2) ---
 exports.onAdminWrite = (0, firestore_1.onDocumentWritten)('admins/{uid}', (event) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
@@ -92,12 +88,10 @@ exports.onAdminWrite = (0, firestore_1.onDocumentWritten)('admins/{uid}', (event
         (roleAfter !== 'admin' && roleAfter !== 'superadmin')) {
         logger.info(`Admin role removed for user ${uid}. Revoking admin custom claim.`);
         try {
-            if ((0, app_1.getApps)().length === 0)
-                (0, app_1.initializeApp)();
-            const user = yield (0, auth_1.getAuth)().getUser(uid);
+            const user = yield admin.auth().getUser(uid);
             if (((_a = user.customClaims) === null || _a === void 0 ? void 0 : _a.admin) === true || ((_b = user.customClaims) === null || _b === void 0 ? void 0 : _b.role)) {
-                yield (0, auth_1.getAuth)().setCustomUserClaims(uid, { admin: null, role: null });
-                yield (0, auth_1.getAuth)().revokeRefreshTokens(uid);
+                yield admin.auth().setCustomUserClaims(uid, { admin: null, role: null });
+                yield admin.auth().revokeRefreshTokens(uid); // Force re-login to apply new claims
                 logger.info(`Successfully revoked admin claim and refresh tokens for ${uid}.`);
             }
         }
@@ -110,13 +104,11 @@ exports.onAdminWrite = (0, firestore_1.onDocumentWritten)('admins/{uid}', (event
     if (roleAfter === 'admin' || roleAfter === 'superadmin') {
         logger.info(`Role document for user ${uid} written with role: ${roleAfter}. Setting/Verifying custom claims.`);
         try {
-            if ((0, app_1.getApps)().length === 0)
-                (0, app_1.initializeApp)();
-            yield (0, auth_1.getAuth)().setCustomUserClaims(uid, {
+            yield admin.auth().setCustomUserClaims(uid, {
                 admin: true,
                 role: roleAfter,
             });
-            yield (0, auth_1.getAuth)().revokeRefreshTokens(uid);
+            yield admin.auth().revokeRefreshTokens(uid);
             logger.info(`Successfully SET/FORCED custom claims for ${uid} with role ${roleAfter} and revoked refresh tokens.`);
         }
         catch (error) {
@@ -288,7 +280,6 @@ exports.syncExistingCustomersToErp = (0, https_1.onCall)((request) => __awaiter(
     }
     logger.info('--- Sync started ---');
     try {
-        const db = getDb();
         const registrationsSnapshot = yield db.collection('registrations').get();
         if (registrationsSnapshot.empty) {
             return { success: true, newCount: 0, message: 'No customers to sync.' };
@@ -332,7 +323,6 @@ exports.submitRecommendation = (0, https_1.onCall)((request) => __awaiter(void 0
         !lang) {
         throw new https_1.HttpsError('invalid-argument', 'Missing required fields.');
     }
-    const db = getDb();
     const batch = db.batch();
     const recommendationId = db.collection('recommendations').doc().id;
     const recommendationRef = db.doc(`recommendations/${recommendationId}`);
@@ -341,7 +331,7 @@ exports.submitRecommendation = (0, https_1.onCall)((request) => __awaiter(void 0
         recommenderEmail,
         clientId,
         lang,
-        createdAt: firestore_2.FieldValue.serverTimestamp(),
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
         status: 'pending',
         recipientsCount: recipients.length,
         acceptedCount: 0,
@@ -354,8 +344,8 @@ exports.submitRecommendation = (0, https_1.onCall)((request) => __awaiter(void 0
             recipientName: recipient.name,
             recipientContact: recipient.email || recipient.whatsapp,
             contactType: recipient.email ? 'email' : 'whatsapp',
-            status: 'pending',
-            createdAt: firestore_2.FieldValue.serverTimestamp(),
+            status: 'pending', // pending, sent, accepted, declined
+            createdAt: admin.firestore.FieldValue.serverTimestamp(),
             clientId,
             lang,
             recommenderName,
@@ -365,6 +355,7 @@ exports.submitRecommendation = (0, https_1.onCall)((request) => __awaiter(void 0
     return { success: true, recommendationId };
 }));
 exports.taskWorker = (0, firestore_1.onDocumentCreated)('recommendation_tasks/{taskId}', (event) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     const snapshot = event.data;
     if (!snapshot)
         return;
@@ -372,7 +363,6 @@ exports.taskWorker = (0, firestore_1.onDocumentCreated)('recommendation_tasks/{t
     if (!task)
         return logger.info('No data in task, exiting.');
     const { recipientName, recipientContact, lang, recommenderName, contactType, } = task;
-    const db = getDb();
     const i18n = yield (0, i18n_1.getEmailI18n)(lang, db);
     const acceptUrl = `https://europe-west1-${process.env.GCLOUD_PROJECT}.cloudfunctions.net/consentAccept?taskId=${event.params.taskId}`;
     const declineUrl = `https://europe-west1-${process.env.GCLOUD_PROJECT}.cloudfunctions.net/consentDecline?taskId=${event.params.taskId}`;
@@ -388,11 +378,11 @@ exports.taskWorker = (0, firestore_1.onDocumentCreated)('recommendation_tasks/{t
             subject: (0, i18n_1.render)(i18n['consent.subject'], { name: recommenderName }),
             html,
         });
+        yield ((_a = event.data) === null || _a === void 0 ? void 0 : _a.ref.update({
+            status: 'sent',
+            sentAt: admin.firestore.FieldValue.serverTimestamp(),
+        }));
     }
-    yield snapshot.ref.update({
-        status: 'sent',
-        sentAt: firestore_2.FieldValue.serverTimestamp(),
-    });
 }));
 const handleConsent = (req, // v2 Request type is compatible with Express req
 res, // v2 Response type is compatible with Express res
@@ -403,7 +393,6 @@ newStatus) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(400).send('Missing taskId parameter.');
         return;
     }
-    const db = getDb();
     const taskRef = db.doc(`recommendation_tasks/${taskId}`);
     const taskSnap = yield taskRef.get();
     if (!taskSnap.exists) {
@@ -412,11 +401,11 @@ newStatus) => __awaiter(void 0, void 0, void 0, function* () {
     }
     yield taskRef.update({
         status: newStatus,
-        handledAt: firestore_2.FieldValue.serverTimestamp(),
+        handledAt: admin.firestore.FieldValue.serverTimestamp(),
     });
     if (newStatus === 'accepted') {
         const recommendationRef = db.doc(`recommendations/${(_a = taskSnap.data()) === null || _a === void 0 ? void 0 : _a.recommendationId}`);
-        yield recommendationRef.update({ acceptedCount: firestore_2.FieldValue.increment(1) });
+        yield recommendationRef.update({ acceptedCount: admin.firestore.FieldValue.increment(1) });
     }
     res
         .status(200)
@@ -425,6 +414,7 @@ newStatus) => __awaiter(void 0, void 0, void 0, function* () {
 exports.consentAccept = (0, https_1.onRequest)((req, res) => handleConsent(req, res, 'accepted'));
 exports.consentDecline = (0, https_1.onRequest)((req, res) => handleConsent(req, res, 'declined'));
 // --- Business Tools (v2) ---
+// Forced redeploy for promotion fix verification
 exports.promoteToClient = (0, https_1.onCall)((request) => __awaiter(void 0, void 0, void 0, function* () {
     if (!request.auth ||
         (request.auth.token.role !== 'admin' &&
@@ -439,7 +429,6 @@ exports.promoteToClient = (0, https_1.onCall)((request) => __awaiter(void 0, voi
         throw new https_1.HttpsError('invalid-argument', 'Must provide "businessId" and a valid "clientType".');
     }
     try {
-        const db = getDb();
         const businessRef = db.collection('businesses').doc(businessId);
         const businessSnap = yield businessRef.get();
         if (!businessSnap.exists) {
@@ -516,7 +505,6 @@ const slugify = (text) => text
     .replace(/\-\-+/g, '-');
 exports.seedDatabase = (0, https_1.onRequest)({ timeoutSeconds: 540, memory: '512MiB' }, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
-    const db = getDb();
     const businessesCollection = db.collection('businesses');
     let count = 0;
     let updatedCount = 0;
@@ -542,7 +530,7 @@ exports.seedDatabase = (0, https_1.onRequest)({ timeoutSeconds: 540, memory: '51
                 logger.info(`Geocoding ${business.name}...`);
                 coords = yield geocodeAddress(business.address);
             }
-            yield docRef.set(Object.assign(Object.assign({}, business), { coords: coords, createdAt: docSnap.exists ? (_a = docSnap.data()) === null || _a === void 0 ? void 0 : _a.createdAt : firestore_2.FieldValue.serverTimestamp(), updatedAt: firestore_2.FieldValue.serverTimestamp(), status: 'verified' }), { merge: true });
+            yield docRef.set(Object.assign(Object.assign({}, business), { coords: coords, createdAt: docSnap.exists ? (_a = docSnap.data()) === null || _a === void 0 ? void 0 : _a.createdAt : admin.firestore.FieldValue.serverTimestamp(), updatedAt: admin.firestore.FieldValue.serverTimestamp(), status: 'verified' }), { merge: true });
             if (docSnap.exists)
                 updatedCount++;
             else
@@ -559,13 +547,12 @@ exports.seedDatabase = (0, https_1.onRequest)({ timeoutSeconds: 540, memory: '51
     }
 }));
 exports.cleanupDuplicates = (0, https_1.onRequest)({ timeoutSeconds: 540, memory: '512MiB' }, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const db = getDb();
     const businessesCollection = db.collection('businesses');
     try {
         const snapshot = yield businessesCollection.get();
         const businessesByName = {};
         // Group by name
-        snapshot.docs.forEach(doc => {
+        snapshot.docs.forEach((doc) => {
             const data = doc.data();
             const name = data.name;
             if (name) {
