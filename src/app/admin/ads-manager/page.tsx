@@ -15,6 +15,7 @@ import {
 } from 'firebase/firestore';
 import { app } from '@/lib/firebase';
 import { Button } from '@/components/ui/button';
+import AdsCalculator from './AdsCalculator';
 
 const db = getFirestore(app);
 import {
@@ -168,6 +169,7 @@ export default function AdsManagerPage() {
                         <Button variant="outline" onClick={handleExport}>
                             <ExternalLink className="mr-2 h-4 w-4" /> Export CSV
                         </Button>
+                        <AdsCalculator />
                         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                             <DialogTrigger asChild>
                                 <Button>
