@@ -21,6 +21,8 @@ import {
     Trees,
     Tv,
     HelpCircle,
+    Sparkles,
+    Smile,
     LucideIcon
 } from 'lucide-react';
 import {
@@ -50,8 +52,10 @@ const iconMapping: Record<string, LucideIcon> = {
     'Hotellerie': Hotel,
     'Immobilien': Building,
     'Lebensmittel': Fish,
+    'Lifestyle & persönliche Dienste': Smile,
     'Musik': Music,
     'Soziales': Users,
+    'Schönheit & Wellness': Sparkles,
     'Sport': Trophy,
     'Reise': Bus, // Using Bus as generic travel icon if Plane not available, or import Plane
     'Technologie': Bot,
@@ -99,7 +103,7 @@ export const CategoryDirectory = () => {
 
                 return (
                     <Card key={index} className="flex flex-col items-center text-center transition-shadow hover:shadow-lg">
-                        <CardHeader className="pb-2">
+                        <CardHeader className="pb-2 flex flex-col items-center">
                             <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
                                 <IconComponent className="h-8 w-8" />
                             </div>

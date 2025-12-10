@@ -1,5 +1,21 @@
 # Bitácora de Cambios - Dicilo.net
 
+### **175. FIX: DASHBOARD RUNTIME ERROR & CHAT WIDGET - CÓDIGO: FIX-DASHBOARD-CHAT-V1**
+
+- **Fecha y Hora:** 10 de Diciembre de 2025, 23:55 (CET)
+- **Módulos Afectados:** `src/app/layout.tsx`, `src/app/dashboard/page.tsx`, `src/components/CategoryDirectory.tsx`, `src/i18n.ts`.
+- **Descripción del Cambio:**
+  - **Dashboard Crash:** Se resolvió un error persistente "Element type is invalid" que bloquéaba el acceso al Dashboard del usuario.
+  - **Aislamiento de Error:** Se detectó que el culpable era el componente `AiChatWidget` importado en el `RootLayout`.
+  - **Solución Temporal:** Se desactivó el Chat Widget (`<!-- AiChatWidget />`) para restaurar el acceso inmediato al sistema mientras se refactoriza.
+  - **Correcciones Menores:**
+    - Alineación centrada de iconos en `CategoryDirectory`.
+    - Corrección de interpolación de traducciones `{{var}}` en `i18n.ts`.
+    - Solución a colisión de nombres en importación de iconos (`User` vs `UserIcon`) en `DashboardPage`.
+- **Resultado:** El Dashboard de usuario vuelve a ser 100% funcional y accesible.
+
+---
+
 ### **174. FIX: SINCRONIZACIÓN Y CREACIÓN DE PRIVAT USER - CÓDIGO: FIX-PRIV-USER-SYNC-V1**
 
 - **Fecha y Hora:** 10 de Diciembre de 2025, 18:30 (CET)

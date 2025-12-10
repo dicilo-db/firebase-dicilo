@@ -170,103 +170,28 @@ export default function FormsDashboardPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-slate-50 dark:bg-slate-900">
       <Header />
-      <main className="flex-grow p-8">
-        <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-2xl font-bold">{t('dashboard.title')}</h1>
-          <Button onClick={handleLogout} variant="destructive">
+      <main className="flex-grow container mx-auto p-8 max-w-7xl">
+        <div className="mb-8 flex items-center justify-between">
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
+            {t('formsDashboard.title')}
+          </h1>
+          <Button onClick={handleLogout} variant="outline">
             {t('dashboard.logout')}
           </Button>
         </div>
-        <p className="mt-2">
-          {t('dashboard.welcome', {
-            email: adminUser.email,
-            role: adminUser.role,
-          })}
-        </p>
 
-        {adminUser.role === 'superadmin' && (
-          <div className="mt-8 rounded-lg border bg-secondary p-4">
-            <h2 className="text-xl font-semibold">
-              {t('dashboard.superAdminArea')}
-            </h2>
-            <p className="mt-1 text-muted-foreground">
-              {t('dashboard.superAdminDescription')}
+        <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-6">
+          <div className="flex flex-col items-center justify-center space-y-4 py-12">
+            <FileText className="h-12 w-12 text-muted-foreground" />
+            <h2 className="text-xl font-semibold">{t('formsDashboard.managementTitle')}</h2>
+            <p className="text-muted-foreground text-center max-w-md">
+              {t('formsDashboard.managementDescription')}
             </p>
-            <div className="mt-4 flex flex-wrap gap-4">
-              <Button onClick={handleSeedDatabase} disabled={isSeeding}>
-                {isSeeding ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                ) : (
-                  <DatabaseZap className="mr-2 h-4 w-4" />
-                )}
-                {isSeeding
-                  ? t('dashboard.seedingInProgress')
-                  : t('dashboard.seedDatabase')}
-              </Button>
-              <Button onClick={handleSyncCustomers} disabled={isSyncing}>
-                {isSyncing ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                ) : (
-                  <RefreshCw className="mr-2 h-4 w-4" />
-                )}
-                {t('dashboard.sync.button')}
-              </Button>
-            </div>
-          </div>
-        )}
-
-        <div className="mt-8">
-          <h2 className="text-xl font-semibold">
-            {t('dashboard.contentManagement')}
-          </h2>
-          <p className="mt-1 text-muted-foreground">
-            {t('dashboard.contentManagementDescription')}
-          </p>
-          <div className="mt-4 flex flex-wrap gap-4">
-            <Button asChild>
-              <Link href="/admin/businesses">
-                <Building className="mr-2 h-4 w-4" />
-                {t('dashboard.manageBusinesses')}
-              </Link>
-            </Button>
-            <Button asChild>
-              <Link href="/admin/clients">
-                <LayoutTemplate className="mr-2 h-4 w-4" />
-                {t('clients.title', { ns: 'admin' })}
-              </Link>
-            </Button>
-            <Button asChild>
-              <Link href="/admin/feedbacks">
-                <MessageSquare className="mr-2 h-4 w-4" />
-                {t('feedbacks.title', { ns: 'admin' })}
-              </Link>
-            </Button>
-            <Button asChild>
-              <Link href="/admin/plans">
-                <DollarSign className="mr-2 h-4 w-4" />
-                {t('plans.title', { ns: 'admin' })}
-              </Link>
-            </Button>
-            <Button asChild>
-              <Link href="/admin/statistics">
-                <BarChartHorizontal className="mr-2 h-4 w-4" />
-                {t('statistics.title', { ns: 'admin' })}
-              </Link>
-            </Button>
-            <Button asChild>
-              <Link href="/admin/forms-dashboard">
-                <FileText className="mr-2 h-4 w-4" />
-                {t('formsDashboard.title', { ns: 'admin' })}
-              </Link>
-            </Button>
-            <Button asChild variant="outline">
-              <Link href="/admin/registrations">
-                <Users className="mr-2 h-4 w-4" />
-                {t('registrations.title', { ns: 'admin' })}
-              </Link>
-            </Button>
+            <p className="text-sm text-muted-foreground">
+              (Feature coming soon / Under Construction)
+            </p>
           </div>
         </div>
       </main>

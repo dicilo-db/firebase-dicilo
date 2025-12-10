@@ -37,7 +37,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <I18nProvider>
           <AuthProvider>
             <div className="flex-grow">{children}</div>
-            <AiChatWidget />
+            {/* <AiChatWidget /> */}
             <Toaster />
           </AuthProvider>
         </I18nProvider>

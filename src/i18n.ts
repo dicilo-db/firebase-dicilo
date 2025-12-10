@@ -95,8 +95,6 @@ i18n
     debug: false, // Set to true to see logs in console
     interpolation: {
       escapeValue: false, // React already safes from xss
-      prefix: '{',
-      suffix: '}',
     },
     detection: {
       order: ['queryString', 'cookie', 'localStorage', 'navigator', 'htmlTag'],
