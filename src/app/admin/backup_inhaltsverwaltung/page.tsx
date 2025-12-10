@@ -36,7 +36,7 @@ import { LayoutDashboard, Edit } from 'lucide-react';
 const db = getFirestore(app);
 
 // --- TIPOS ---
-type RegistrationType = 'private' | 'donor' | 'retailer' | 'premium' | 'starter';
+type RegistrationType = 'private' | 'donor' | 'retailer' | 'premium';
 interface Registration {
   id: string;
   firstName: string;
@@ -57,8 +57,7 @@ const ActionButton = ({ registration }: { registration: Registration }) => {
 
   if (
     registration.registrationType !== 'retailer' &&
-    registration.registrationType !== 'premium' &&
-    registration.registrationType !== 'starter'
+    registration.registrationType !== 'premium'
   ) {
     return null; // No mostrar botón para tipos no-cliente
   }
@@ -148,8 +147,7 @@ export default function RegistrationsPage() {
         ): Promise<Registration> => {
           if (
             registration.registrationType !== 'retailer' &&
-            registration.registrationType !== 'premium' &&
-            registration.registrationType !== 'starter'
+            registration.registrationType !== 'premium'
           ) {
             return registration;
           }
@@ -209,7 +207,6 @@ export default function RegistrationsPage() {
       donor: t('register.options.donor', { ns: 'register' }),
       retailer: t('register.options.retailer', { ns: 'register' }),
       premium: t('register.options.premium', { ns: 'register' }),
-      starter: 'Starter', // Add proper translation key if available, otherwise raw string for now
     }),
     [t]
   );
@@ -220,7 +217,6 @@ export default function RegistrationsPage() {
       { value: 'private', label: registrationTypeMap.private },
       { value: 'donor', label: registrationTypeMap.donor },
       { value: 'retailer', label: registrationTypeMap.retailer },
-      { value: 'starter', label: registrationTypeMap.starter },
       { value: 'premium', label: registrationTypeMap.premium },
     ],
     [t, registrationTypeMap]
@@ -247,13 +243,12 @@ export default function RegistrationsPage() {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 md:grid-cols-6">
-            <TabsTrigger value="all">{t('registrations.tabs.all', { ns: 'admin' })}</TabsTrigger>
-            <TabsTrigger value="private">{registrationTypeMap.private}</TabsTrigger>
-            <TabsTrigger value="donor">{registrationTypeMap.donor}</TabsTrigger>
-            <TabsTrigger value="retailer">{registrationTypeMap.retailer}</TabsTrigger>
-            <TabsTrigger value="premium">{registrationTypeMap.premium}</TabsTrigger>
-            <TabsTrigger value="starter">{registrationTypeMap.starter}</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 md:grid-cols-5">
+            {tabs.map((tab) => (
+              <TabsTrigger key={tab.value} value={tab.value}>
+                {tab.label}
+              </TabsTrigger>
+            ))}
           </TabsList>
         </Tabs>
 

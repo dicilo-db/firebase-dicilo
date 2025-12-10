@@ -1,7 +1,7 @@
 // src/app/admin/dashboard/page.tsx
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { getAuth, signOut } from 'firebase/auth';
 import { app } from '@/lib/firebase';
 import { Button } from '@/components/ui/button';
@@ -22,13 +22,16 @@ import {
   BarChartHorizontal,
   FileText,
   DownloadCloud,
+  Star,
+  UserCheck,
+  ThumbsUp,
+  User,
 } from 'lucide-react';
 import { useAdminUser, useAuthGuard } from '@/hooks/useAuthGuard';
 import { useServerAction } from '@/hooks/useServerAction';
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
@@ -36,6 +39,7 @@ import { Header } from '@/components/header';
 import Footer from '@/components/footer';
 
 import { getFunctions, httpsCallable } from 'firebase/functions';
+import { getFirestore, collection, query, where, getCountFromServer } from 'firebase/firestore';
 
 // --- CONFIGURACIÓN ---
 const functions = getFunctions(app, 'europe-west1');
@@ -49,8 +53,14 @@ const syncExistingCustomersToErp = httpsCallable(
   'syncExistingCustomersToErp'
 );
 const auth = getAuth(app);
+const db = getFirestore(app);
 
 // --- COMPONENTES AUXILIARES ---
+
+// Helper para formatear contadores a 7 dígitos
+const formatCount = (count: number) => {
+  return count.toString().padStart(7, '0');
+};
 
 // Esqueleto para la página del dashboard
 const DashboardSkeleton = () => (
@@ -87,12 +97,24 @@ const DashboardSkeleton = () => (
 // --- COMPONENTE PRINCIPAL ---
 
 const DashboardContent: React.FC = () => {
+  console.log('DashboardContent mounting');
   // Hooks
   useAuthGuard(); // Protege la ruta
+  console.log('useAuthGuard returns');
   const router = useRouter();
   const { toast } = useToast();
   const { t } = useTranslation('admin');
   const { user: adminUser, isLoading: isUserLoading } = useAdminUser();
+
+  // Estados para contadores
+  const [counts, setCounts] = useState({
+    starter: 0,
+    retailer: 0,
+    premium: 0,
+    private: 0,
+    registrations: 0,
+    recommendations: 0,
+  });
 
   // Hooks para las acciones de servidor
   const { isPending: isSeeding, runAction: runSeedAction } =
@@ -102,6 +124,47 @@ const DashboardContent: React.FC = () => {
   );
   const { isPending: isImporting, runAction: runImportAction } =
     useServerAction(importFromStorageCallable);
+
+  // --- EFECTOS ---
+  useEffect(() => {
+    const fetchCounts = async () => {
+      try {
+        const clientsCol = collection(db, 'clients');
+        const privateCol = collection(db, 'private_profiles');
+        const registrationsCol = collection(db, 'registrations');
+        const recommendationsCol = collection(db, 'recommendations');
+
+        const [
+          starterSnap,
+          retailerSnap,
+          premiumSnap,
+          privateSnap,
+          registrationsSnap,
+          recommendationsSnap,
+        ] = await Promise.all([
+          getCountFromServer(query(clientsCol, where('clientType', '==', 'starter'))),
+          getCountFromServer(query(clientsCol, where('clientType', '==', 'retailer'))),
+          getCountFromServer(query(clientsCol, where('clientType', '==', 'premium'))),
+          getCountFromServer(privateCol),
+          getCountFromServer(registrationsCol),
+          getCountFromServer(recommendationsCol),
+        ]);
+
+        setCounts({
+          starter: starterSnap.data().count,
+          retailer: retailerSnap.data().count,
+          premium: premiumSnap.data().count,
+          private: privateSnap.data().count,
+          registrations: registrationsSnap.data().count,
+          recommendations: recommendationsSnap.data().count,
+        });
+      } catch (error) {
+        console.error('Error fetching dashboard counts:', error);
+      }
+    };
+
+    fetchCounts();
+  }, []);
 
   // --- MANEJADORES DE EVENTOS ---
 
@@ -324,174 +387,206 @@ const DashboardContent: React.FC = () => {
           </p>
 
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+
+            {/* Landing Pages / Builder */}
             <Link href="/admin/clients" className="group">
-              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer">
+              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    Landing Pages
-                  </CardTitle>
+                  <CardTitle className="text-sm font-medium">Landing Pages</CardTitle>
                   <LayoutTemplate className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{t('dashboard.cards.builder.title')}</div>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {t('dashboard.cards.builder.description')}
-                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">{t('dashboard.cards.builder.description')}</p>
                 </CardContent>
               </Card>
             </Link>
 
-            <Link href="/admin/clients" className="group">
-              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer">
+            {/* Starter Kunden */}
+            <Link href="/admin/clients?type=starter" className="group">
+              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    {t('clients.title', { ns: 'admin' })}
-                  </CardTitle>
+                  <CardTitle className="text-sm font-medium">Starter</CardTitle>
                   <Users className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{t('dashboard.cards.clients.title')}</div>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {t('dashboard.cards.clients.description')}
-                  </p>
+                  <div className="text-2xl font-bold">Starter Kunden</div>
+                  <p className="text-xs text-muted-foreground mt-1">Kundenprofile verwalten</p>
+                  <div className="absolute bottom-4 right-4 text-sm font-mono text-muted-foreground">
+                    {formatCount(counts.starter)}
+                  </div>
                 </CardContent>
               </Card>
             </Link>
 
-            <Link href="/admin/businesses" className="group">
-              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer">
+            {/* Retailer (Einzelhändler) Kunden */}
+            <Link href="/admin/clients?type=retailer" className="group">
+              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    Businesses
-                  </CardTitle>
+                  <CardTitle className="text-sm font-medium">Businesses</CardTitle>
                   <Building className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{t('dashboard.cards.directory.title')}</div>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {t('dashboard.cards.directory.description')}
-                  </p>
+                  <div className="text-2xl font-bold">Einzelhändler Kunden</div>
+                  <p className="text-xs text-muted-foreground mt-1">Unternehmen verwalten</p>
+                  <div className="absolute bottom-4 right-4 text-sm font-mono text-muted-foreground">
+                    {formatCount(counts.retailer)}
+                  </div>
                 </CardContent>
               </Card>
             </Link>
 
-            <Link href="/admin/feedbacks" className="group">
-              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer">
+            {/* Premium Kunden */}
+            <Link href="/admin/clients?type=premium" className="group">
+              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    {t('feedbacks.title', { ns: 'admin' })}
-                  </CardTitle>
-                  <MessageSquare className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                  <CardTitle className="text-sm font-medium">Premium</CardTitle>
+                  <Star className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{t('dashboard.cards.feedback.title')}</div>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {t('dashboard.cards.feedback.description')}
-                  </p>
+                  <div className="text-2xl font-bold">Premium Kunden</div>
+                  <p className="text-xs text-muted-foreground mt-1">Premium Kunden verwalten</p>
+                  <div className="absolute bottom-4 right-4 text-sm font-mono text-muted-foreground">
+                    {formatCount(counts.premium)}
+                  </div>
                 </CardContent>
               </Card>
             </Link>
 
+            {/* Pläne */}
             <Link href="/admin/plans" className="group">
-              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer">
+              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    {t('plans.title', { ns: 'admin' })}
-                  </CardTitle>
+                  <CardTitle className="text-sm font-medium">{t('plans.title', { ns: 'admin' })}</CardTitle>
                   <DollarSign className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{t('dashboard.cards.plans.title')}</div>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {t('dashboard.cards.plans.description')}
-                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">{t('dashboard.cards.plans.description')}</p>
                 </CardContent>
               </Card>
             </Link>
 
+            {/* Statistiken */}
             <Link href="/admin/statistics" className="group">
-              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer">
+              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    {t('statistics.title', { ns: 'admin' })}
-                  </CardTitle>
+                  <CardTitle className="text-sm font-medium">{t('statistics.title', { ns: 'admin' })}</CardTitle>
                   <BarChartHorizontal className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{t('dashboard.cards.stats.title')}</div>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {t('dashboard.cards.stats.description')}
-                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">{t('dashboard.cards.stats.description')}</p>
                 </CardContent>
               </Card>
             </Link>
 
+            {/* Formulare */}
             <Link href="/admin/forms-dashboard" className="group">
-              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer">
+              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    {t('formsDashboard.title', { ns: 'admin' })}
-                  </CardTitle>
+                  <CardTitle className="text-sm font-medium">{t('formsDashboard.title', { ns: 'admin' })}</CardTitle>
                   <FileText className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{t('dashboard.cards.forms.title')}</div>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {t('dashboard.cards.forms.description')}
-                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">{t('dashboard.cards.forms.description')}</p>
                 </CardContent>
               </Card>
             </Link>
 
+            {/* Registrierungen */}
             <Link href="/admin/registrations" className="group">
-              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer">
+              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    {t('registrations.title', { ns: 'admin' })}
-                  </CardTitle>
-                  <Users className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                  <CardTitle className="text-sm font-medium">{t('registrations.title', { ns: 'admin' })}</CardTitle>
+                  <UserCheck className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{t('dashboard.cards.registrations.title')}</div>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {t('dashboard.cards.registrations.description')}
-                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">{t('dashboard.cards.registrations.description')}</p>
+                  <div className="absolute bottom-4 right-4 text-sm font-mono text-muted-foreground">
+                    {formatCount(counts.registrations)}
+                  </div>
                 </CardContent>
               </Card>
             </Link>
 
+            {/* Privat User (renamed from Privatkunden) */}
             <Link href="/admin/private-users" className="group">
-              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer">
+              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    {t('dashboard.cards.privateUsers.title')}
-                  </CardTitle>
-                  <Users className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                  <CardTitle className="text-sm font-medium">Privatkunden</CardTitle>
+                  <User className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{t('dashboard.cards.privateUsers.title')}</div>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {t('dashboard.cards.privateUsers.description')}
-                  </p>
+                  <div className="text-2xl font-bold">Privat User</div>
+                  <p className="text-xs text-muted-foreground mt-1">Private Profile verwalten</p>
+                  <div className="absolute bottom-4 right-4 text-sm font-mono text-muted-foreground">
+                    {formatCount(counts.private)}
+                  </div>
                 </CardContent>
               </Card>
             </Link>
+
+            {/* Ads Manager */}
             <Link href="/admin/ads-manager" className="group">
-              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer">
+              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    Ads Manager
-                  </CardTitle>
+                  <CardTitle className="text-sm font-medium">Ads Manager</CardTitle>
                   <LayoutTemplate className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">Ads Manager</div>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Manage advertising banners
-                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">Manage advertising banners</p>
                 </CardContent>
               </Card>
             </Link>
+
+            {/* Empfehlungen (NEW) */}
+            <Link href="/admin/recommendations" className="group">
+              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Empfehlungen</CardTitle>
+                  <ThumbsUp className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">Empfehlungen</div>
+                  <p className="text-xs text-muted-foreground mt-1">Empfehlungen auf den Landingpage</p>
+                  <div className="absolute bottom-4 right-4 text-sm font-mono text-muted-foreground">
+                    {formatCount(counts.recommendations)}
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
+
+            {/* Feedbacks */}
+            <Link href="/admin/feedbacks" className="group">
+              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">{t('feedbacks.title', { ns: 'admin' })}</CardTitle>
+                  <MessageSquare className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{t('dashboard.cards.feedback.title')}</div>
+                  <p className="text-xs text-muted-foreground mt-1">{t('dashboard.cards.feedback.description')}</p>
+                </CardContent>
+              </Card>
+            </Link>
+            {/* Businesses - Verzeichnis */}
+            <Link href="/admin/businesses" className="group">
+              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Businesses</CardTitle>
+                  <Building className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{t('dashboard.cards.directory.title')}</div>
+                  <p className="text-xs text-muted-foreground mt-1">{t('dashboard.cards.directory.description')}</p>
+                </CardContent>
+              </Card>
+            </Link>
+
           </div>
         </div>
       </main>

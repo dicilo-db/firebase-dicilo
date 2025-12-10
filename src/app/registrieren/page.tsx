@@ -356,7 +356,7 @@ export default function RegistrierenPage() {
               <Card className="bg-white shadow-xl">
                 <CardHeader>
                   <CardTitle>{t('register.form.registerButton')}</CardTitle>
-                  <CardDescription>{t('register.form.registerSuccessDescription')}</CardDescription>
+                  <CardDescription>{t('register.form.registerDescription')}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <Suspense fallback={<RegistrationFormSkeleton />}>

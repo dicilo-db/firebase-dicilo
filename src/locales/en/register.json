@@ -60,7 +60,7 @@
     },
     "options": {
       "private": "Private User",
-      "donor": "Starter",
+      "donor": "Basic",
       "retailer": "Retailer",
       "premium": "Premium",
       "whatsapp": "WhatsApp",
@@ -83,8 +83,9 @@
       "facebookUrl": "Facebook URL"
     },
     "submitButton": "Register",
-    "successTitle": "Registration Successful!",
-    "successDescription": "Your registration has been submitted successfully.",
+    "registerSuccessTitle": "Registration successful!",
+    "registerSuccessDescription": "Your registration has been successfully submitted.",
+    "registerDescription": "Register for free and without obligation on our Dicilo portal. Your registration—whether as 'Starter', 'Retailer', or 'Premium'—will initially be created as Basic. This secures you a place on the landing page. After your registration, we will contact you to explain all the benefits of our Starter, Retailer, and Premium packages.",
     "errorTitle": "Error",
     "submitError": "An error occurred while submitting your registration."
   },

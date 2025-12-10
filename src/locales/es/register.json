@@ -60,7 +60,7 @@
     },
     "options": {
       "private": "Usuario Privado",
-      "donor": "Starter",
+      "donor": "Basic",
       "retailer": "Minorista",
       "premium": "Premium",
       "whatsapp": "WhatsApp",
@@ -83,8 +83,9 @@
       "facebookUrl": "URL de Facebook"
     },
     "submitButton": "Registrarse",
-    "successTitle": "¡Registro Exitoso!",
-    "successDescription": "Tu registro ha sido enviado con éxito.",
+    "registerSuccessTitle": "¡Registro exitoso!",
+    "registerSuccessDescription": "Su registro se ha enviado correctamente.",
+    "registerDescription": "Regístrese gratis y sin compromiso en nuestro portal Dicilo. Su registro, ya sea como 'Starter', 'Minorista' o 'Premium', se creará inicialmente como Básico. Esto le asegura un lugar en la página de aterrizaje. Después de su registro, le contactaremos para explicarle todos los beneficios de los paquetes Starter, Minorista y Premium.",
     "errorTitle": "Error",
     "submitError": "Ocurrió un error al enviar tu registro."
   },

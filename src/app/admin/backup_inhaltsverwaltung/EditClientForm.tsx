@@ -606,7 +606,7 @@ const graphicSchema = z.object({
 const clientSchema = z.object({
   clientName: z.string().min(1, 'Name is required'),
   slug: z.string().min(1, 'Slug is required').regex(/^[a-z0-9-]+$/, 'Slug must be lowercase alphanumeric with dashes'),
-  clientType: z.enum(['retailer', 'premium', 'starter']),
+  clientType: z.enum(['retailer', 'premium']),
   clientLogoUrl: z.string().url().optional().or(z.literal('')),
 
   headerData: z
@@ -882,7 +882,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
         bannerShareUrl: headerData.bannerShareUrl || '',
       },
       marqueeHeaderData: {
-        enabled: marqueeData.enabled === true || marqueeData.enabled === 'true',
+        enabled: marqueeData.enabled ?? true,
         offerEnabled: marqueeData.offerEnabled ?? false,
         offerEndDate: marqueeData.offerEndDate
           ? typeof marqueeData.offerEndDate === 'string'
@@ -1290,9 +1290,8 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="retailer">{t('client.type.retailer')}</SelectItem>
-                            <SelectItem value="premium">{t('client.type.premium')}</SelectItem>
-                            <SelectItem value="starter">Starter</SelectItem>
+                            <SelectItem value="retailer">Retailer</SelectItem>
+                            <SelectItem value="premium">Premium</SelectItem>
                           </SelectContent>
                         </Select>
                       )}

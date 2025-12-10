@@ -17,8 +17,9 @@ import {
 } from '@/components/ui/table';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
-import { Loader2, Search, Download } from 'lucide-react';
+import { Loader2, Search, Download, LayoutDashboard, RefreshCw } from 'lucide-react';
 import { CSVLink } from 'react-csv';
+import Link from 'next/link';
 
 const db = getFirestore(app);
 
@@ -74,11 +75,34 @@ export default function PrivateUsersPage() {
             <Header />
             <main className="container mx-auto flex-grow p-8">
                 <div className="mb-8 flex items-center justify-between">
-                    <h1 className="text-3xl font-bold">{t('privateUsers.title')}</h1>
+                    <h1 className="text-3xl font-bold">Privat User</h1>
                     <div className="flex gap-2">
-                        {/* CSV Export Button - using a simple button for now, requires react-csv or similar logic */}
-                        {/* Note: react-csv might not be installed. I'll skip the actual CSVLink component if not sure, 
-                 but for now I'll just put a placeholder button or use a simple function to download CSV. */}
+                        <Button variant="outline" asChild>
+                            <Link href="/admin/dashboard">
+                                <LayoutDashboard className="mr-2 h-4 w-4" />
+                                {t('businesses.backToDashboard')}
+                            </Link>
+                        </Button>
+                        <Button variant="outline" onClick={async () => {
+                            try {
+                                setIsLoading(true); // Reuse loading or add syncing state
+                                const res = await fetch('/api/admin/sync-private-users', { method: 'POST' });
+                                const data = await res.json();
+                                if (data.success) {
+                                    // Reload page or list
+                                    window.location.reload();
+                                } else {
+                                    alert('Error syncing: ' + (data.error || 'Unknown error'));
+                                }
+                            } catch (e) {
+                                console.error(e);
+                                alert('Error syncing users');
+                            } finally {
+                                setIsLoading(false);
+                            }
+                        }}>
+                            <RefreshCw className="mr-2 h-4 w-4" /> Import from Registrations
+                        </Button>
                         <Button variant="outline" onClick={() => {
                             const headers = ['FirstName,LastName,Email,UniqueCode,Phone,Interests,CreatedAt'];
                             const rows = filteredUsers.map(u => [
@@ -95,7 +119,7 @@ export default function PrivateUsersPage() {
                             a.download = 'private_users.csv';
                             a.click();
                         }}>
-                            <Download className="mr-2 h-4 w-4" /> {t('privateUsers.exportCSV')}
+                            <Download className="mr-2 h-4 w-4" /> CSV Export
                         </Button>
                     </div>
                 </div>
@@ -112,11 +136,11 @@ export default function PrivateUsersPage() {
 
                 <Card>
                     <CardHeader>
-                        <CardTitle>{t('privateUsers.userList')}</CardTitle>
+                        <CardTitle>Liste der Privat User</CardTitle>
                         <div className="flex items-center space-x-2">
                             <Search className="h-4 w-4 text-muted-foreground" />
                             <Input
-                                placeholder={t('privateUsers.searchPlaceholder')}
+                                placeholder="Suche nach Name, E-Mail oder Code..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 className="max-w-sm"
@@ -132,11 +156,11 @@ export default function PrivateUsersPage() {
                             <Table>
                                 <TableHeader>
                                     <TableRow>
-                                        <TableHead>{t('privateUsers.table.code')}</TableHead>
-                                        <TableHead>{t('privateUsers.table.name')}</TableHead>
-                                        <TableHead>{t('privateUsers.table.email')}</TableHead>
-                                        <TableHead>{t('privateUsers.table.interests')}</TableHead>
-                                        <TableHead>{t('privateUsers.table.joined')}</TableHead>
+                                        <TableHead>Code</TableHead>
+                                        <TableHead>Name</TableHead>
+                                        <TableHead>E-Mail</TableHead>
+                                        <TableHead>Interessen</TableHead>
+                                        <TableHead>Beigetreten</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -145,7 +169,9 @@ export default function PrivateUsersPage() {
                                             <TableCell className="font-mono font-medium">{user.uniqueCode}</TableCell>
                                             <TableCell>{user.firstName} {user.lastName}</TableCell>
                                             <TableCell>{user.email}</TableCell>
-                                            <TableCell>{user.interests?.length || 0} {t('privateUsers.table.selected')}</TableCell>
+                                            <TableCell className="max-w-[200px] truncate" title={user.interests?.join(', ')}>
+                                                {user.interests?.length > 0 ? user.interests.join(', ') : '-'}
+                                            </TableCell>
                                             <TableCell>
                                                 {user.createdAt?.seconds
                                                     ? new Date(user.createdAt.seconds * 1000).toLocaleDateString()
@@ -157,10 +183,7 @@ export default function PrivateUsersPage() {
                                         <TableRow>
                                             <TableCell colSpan={5} className="text-center h-24 text-muted-foreground">
                                                 <div className="flex flex-col items-center gap-2">
-                                                    <span>{t('privateUsers.noResults')}</span>
-                                                    <span className="text-xs">
-                                                        (Nota: Si hubo errores en el registro anteriormente, los perfiles no se crearon. Revise "Registros".)
-                                                    </span>
+                                                    <span>Keine Benutzer gefunden.</span>
                                                 </div>
                                             </TableCell>
                                         </TableRow>

@@ -30,7 +30,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import {
   AlertDialog,
@@ -53,6 +53,7 @@ interface Client {
   clientName: string;
   clientTitle: string;
   slug: string;
+  clientType: 'starter' | 'retailer' | 'premium';
 }
 
 const ClientsPageSkeleton = () => (
@@ -113,6 +114,8 @@ export default function ClientsPage() {
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const { toast } = useToast();
+  const searchParams = useSearchParams();
+  const typeFilter = searchParams.get('type');
   const { t } = useTranslation('admin');
 
   const fetchClients = useCallback(async () => {
@@ -141,10 +144,12 @@ export default function ClientsPage() {
   }, [fetchClients]);
 
   const filteredClients = useMemo(() => {
-    return clients.filter((client) =>
-      client.clientName.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-  }, [clients, searchQuery]);
+    return clients.filter((client) => {
+      const matchesSearch = client.clientName.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesType = typeFilter ? client.clientType === typeFilter : true;
+      return matchesSearch && matchesType;
+    });
+  }, [clients, searchQuery, typeFilter]);
 
   const handleDelete = async (clientId: string) => {
     setIsDeleting(clientId);
@@ -174,7 +179,11 @@ export default function ClientsPage() {
   return (
     <div className="p-8">
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-bold">{t('clients.title')}</h1>
+        <h1 className="text-2xl font-bold">
+          {typeFilter
+            ? `${typeFilter.charAt(0).toUpperCase() + typeFilter.slice(1)} ${t('clients.title')}`
+            : t('clients.title')}
+        </h1>
         <div className="flex items-center gap-2">
           <Button variant="outline" asChild>
             <Link href="/admin/dashboard">

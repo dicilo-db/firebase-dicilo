@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { adminDb } from '@/lib/firebase-admin';
-import * as admin from 'firebase-admin';
+import { FieldValue } from 'firebase-admin/firestore';
 
 export async function POST(request: NextRequest) {
     try {
@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
             clientEmail: clientEmail || 'unknown@example.com',
             amount: Number(amount),
             status: 'pending',
-            createdAt: admin.firestore.FieldValue.serverTimestamp(),
+            createdAt: FieldValue.serverTimestamp(),
         });
 
         // 2. Log for debug (Email should be handled by a Cloud Function trigger on 'transaction_requests')

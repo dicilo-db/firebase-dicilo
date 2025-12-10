@@ -1,20 +1,11 @@
 // src/app/api/analytics/log/route.ts
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getFirestore, Timestamp } from 'firebase-admin/firestore';
-import { getApps, initializeApp, cert } from 'firebase-admin/app';
+import { Timestamp } from 'firebase-admin/firestore';
+import { adminDb } from '@/lib/firebase-admin';
 import { z } from 'zod';
 
-// Initialize Firebase Admin SDK
-function initializeFirebaseAdmin() {
-  if (getApps().length > 0) {
-    return;
-  }
-  initializeApp();
-}
-
-initializeFirebaseAdmin();
-const db = getFirestore();
+const db = adminDb;
 
 // Schema for validating incoming events
 const eventSchema = z.object({

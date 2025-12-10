@@ -66,7 +66,7 @@ export interface BodyData {
 export interface ClientData {
     id: string;
     clientName: string;
-    clientType: 'retailer' | 'premium';
+    clientType: 'retailer' | 'premium' | 'starter';
     clientLogoUrl: string;
 
     // Wallet / Ads fields

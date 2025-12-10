@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { adminDb } from '@/lib/firebase-admin';
-import * as admin from 'firebase-admin';
+import { FieldValue } from 'firebase-admin/firestore';
 import { generateUniqueCode } from '@/lib/code-generator';
 
 export async function POST(request: Request) {
@@ -53,8 +53,8 @@ export async function POST(request: Request) {
                 socialGroup: 'none',
             },
             referrals: [],
-            createdAt: admin.firestore.FieldValue.serverTimestamp(),
-            updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+            createdAt: FieldValue.serverTimestamp(),
+            updatedAt: FieldValue.serverTimestamp(),
         };
 
         await profileRef.set(profileData);

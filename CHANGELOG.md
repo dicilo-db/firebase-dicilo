@@ -1,5 +1,128 @@
 # Bitácora de Cambios - Dicilo.net
 
+### **174. FIX: SINCRONIZACIÓN Y CREACIÓN DE PRIVAT USER - CÓDIGO: FIX-PRIV-USER-SYNC-V1**
+
+- **Fecha y Hora:** 10 de Diciembre de 2025, 18:30 (CET)
+- **Módulos Afectados:** `api/register/route.ts`, `api/admin/sync-private-users/route.ts`, `lib/private-user-service.ts`, `admin/private-users/page.tsx`.
+- **Descripción del Cambio:**
+  - **Automatización:** Se actualizó el proceso de registro para crear automáticamente el perfil de "Privat User" (con código único) al registrarse.
+  - **Migración:** Se creó una herramienta de sincronización para importar usuarios privados existentes que estaban en "Registros" pero no tenían perfil activo.
+  - **Interfaz:** Se añadió un botón "Import from Registrations" en la lista de Privat User para ejecutar esta sincronización.
+  - **Fix:** Start-up config updated to explicitly include Project ID to prevent local dev errors.
+- **Resultado:** Los usuarios privados ahora se contabilizan y listan correctamente.
+
+---
+
+### **173. UPDATE: GESTIÓN DE PRIVAT USER - CÓDIGO: UPDATE-PRIV-USER-V1**
+
+- **Fecha y Hora:** 10 de Diciembre de 2025, 18:13 (CET)
+- **Módulos Afectados:** `src/app/admin/private-users/page.tsx`.
+- **Descripción del Cambio:**
+  - **Cambio de Nombre:** Se renombró la sección de "Privatkunden" a "Privat User".
+  - **Navegación:** Se agregó un botón para regresar al Dashboard.
+  - **Vista de Lista:** Se mejoró la tabla para mostrar columnas explícitas: Código, Nombre, E-Mail, Intereses y Fecha de ingreso.
+  - **Contenido:** Ahora se muestran los intereses del usuario en lugar de solo la cantidad.
+- **Resultado:** Mejor usabilidad y claridad en la gestión de usuarios privados.
+
+---
+
+### **172. UPDATE: VISTA DE ADMINISTRADOR DE RECOMENDACIONES - CÓDIGO: UPDATE-REC-ADMIN-VIEW-V1**
+
+- **Fecha y Hora:** 10 de Diciembre de 2025, 18:00 (CET)
+- **Módulos Afectados:** `src/app/admin/recommendations/page.tsx`.
+- **Descripción del Cambio:**
+  - **Nuevas Columnas:** Se actualizó la tabla de administración para mostrar todos los datos capturados: Teléfono, País, Ciudad, Sitio Web y Comentarios.
+  - **Diseño Responsivo:** Se añadió desplazamiento horizontal a la tabla para acomodar las nuevas columnas sin romper el diseño.
+  - **Formato:** Se añadieron enlaces clicables para sitios web y truncamiento de texto para comentarios largos.
+- **Resultado:** El administrador ahora tiene visibilidad completa de todos los detalles de las recomendaciones enviadas.
+
+---
+
+### **171. FIX: TRADUCCIÓN SELECTOR DE UBICACIÓN - CÓDIGO: FIX-LOC-TRANS-V2**
+
+- **Fecha y Hora:** 10 de Diciembre de 2025, 17:50 (CET)
+- **Módulos Afectados:** `locales/de|en|es/common.json`.
+- **Descripción del Cambio:**
+  - **Traducciones Faltantes:** Se agregó la clave `selectOption` dentro del espacio de nombres `form` para corregir el placeholder "form.selectOption" que aparecía en los selectores de País y Ciudad.
+- **Resultado:** Los selectores ahora muestran el texto "Bitte wählen" (DE), "Select an option" (EN) o "Seleccione una opción" (ES) correctamente.
+
+---
+
+### **170. UPDATE: SELECTOR DE PAÍS Y CIUDAD - CÓDIGO: UPDATE-LOCATION-SELECT-V1**
+
+- **Fecha y Hora:** 10 de Diciembre de 2025, 17:40 (CET)
+- **Módulos Afectados:** `src/components/RecommendationForm.tsx`, `package.json`, `locales`.
+- **Descripción del Cambio:**
+  - **Librería de Datos:** Se implementó `country-state-city` para obtener listados fiables de países y ciudades.
+  - **Selectores Dependientes:** El campo "Ciudad" ahora es un menú desplegable que se carga dinámicamente según el "País" seleccionado, evitando errores tipográficos.
+  - **Experiencia de Usuario:** Se bloquea el selector de ciudad hasta que se selecciona un país, guiando al usuario.
+- **Resultado:** La entrada de datos de ubicación es estandarizada y más sencilla para el usuario.
+
+---
+
+### **169. FIX: REC-FORM UI & Z-INDEX - CÓDIGO: FIX-REC-FORM-UI-V1**
+
+- **Fecha y Hora:** 10 de Diciembre de 2025, 17:20 (CET)
+- **Módulos Afectados:** `src/components/ui/select.tsx`, `src/locales/de/common.json`.
+- **Descripción del Cambio:**
+  - **Corrección Dropdown:** Se aumentó el `z-index` del componente `SelectContent` a `1001` para asegurar que se despliegue por encima del diálogo modal del formulario.
+  - **Textos y Etiquetas:** Se actualizó el texto "Name des Unternehmens" a "Name des Unternehmens, das Sie empfehlen möchten" y se añadieron asteriscos (*) visuales a los campos obligatorios en el idioma alemán.
+- **Resultado:** El menú de categorías ahora es accesible y los campos requeridos están claramente marcados.
+
+---
+
+### **168. UPDATE: FORMULARIO DE RECOMENDACIONES (CAMPOS AMPLIADOS) - CÓDIGO: UPDATE-REC-FORM-V2**
+
+- **Fecha y Hora:** 10 de Diciembre de 2025, 17:00 (CET)
+- **Módulos Afectados:** `src/components/RecommendationForm.tsx`, `locales/de/common.json`, `locales/en/common.json`, `locales/es/common.json`.
+- **Descripción del Cambio:**
+  - **Nuevos Campos:** Se amplió el formulario "Unternehmen empfehlen" para incluir: Teléfono, País, Ciudad, Sitio Web y Categoría.
+  - **Selector de Categoría:** Se implementó un menú desplegable (Dropdown) con las categorías predefinidas traducidas.
+  - **Validación:** Se actualizaron las reglas de validación (Zod) para requerir campos esenciales como País y Ciudad, manteniendo opcionales el Teléfono y el Sitio Web.
+  - **Internacionalización:** Se añadieron las claves de traducción correspondientes en Alemán, Inglés y Español.
+- **Resultado:** El formulario ahora recoge información más completa para las recomendaciones de empresas.
+
+---
+
+### **167. FIX: PERMISOS DE RECOMENDACIONES - CÓDIGO: FIX-RECOMMENDATIONS-RULES-V1**
+
+- **Fecha y Hora:** 10 de Diciembre de 2025, 16:30 (CET)
+- **Módulos Afectados:** `firestore.rules`.
+- **Descripción del Cambio:**
+  - **Problema:** Al acceder a `/admin/recommendations`, el sistema devolvía "Missing or insufficient permissions" debido a la falta de una regla específica para la colección `recommendations`.
+  - **Solución:** Se añadió una regla de seguridad en Firestore que permite la lectura y eliminación a administradores, y la creación pública (para el formulario).
+- **Resultado:** El módulo de recomendaciones ahora carga los datos correctamente sin errores de permisos.
+
+---
+
+### **166. UPDATE: LISTA DE REGISTROS (BASIC & LAYOUT) - CÓDIGO: UPDATE-REGISTRATIONS-UX-V1**
+
+- **Fecha y Hora:** 10 de Diciembre de 2025, 16:15 (CET)
+- **Módulos Afectados:** `src/app/admin/registrations/page.tsx`, `src/locales/es/register.json`, `src/locales/en/register.json`, `src/locales/de/register.json`.
+- **Descripción del Cambio:**
+  - **Renombrado de Tipo:** Se cambió el nombre visible de la pestaña "Starter" (tipo interno `donor`) a "Basic" en todos los idiomas para reflejar mejor la jerarquía de cuentas.
+  - **Mejora de Layout:** Se ajustó la cuadrícula de pestañas (`grid-cols-6`) para acomodar todos los filtros en una sola fila sin que se oculten o salten de línea.
+  - **Ordenamiento:** Se reorganizó el orden de las pestañas y se aseguró que el filtro "Starter" (tipo interno `starter`) siga accesible al final de la lista.
+- **Resultado:** La lista de registros ahora muestra "Basic", "Retailer", "Premium" de forma ordenada y limpia.
+
+---
+
+### **165. UPDATE: MÓDULO INHALTSVERWALTUNG (DASHBOARD & CLIENTS) - CÓDIGO: UPDATE-INHALT-DASHBOARD-V1**
+
+- **Fecha y Hora:** 10 de Diciembre de 2025, 14:00 (CET)
+- **Módulos Afectados:** `src/app/admin/dashboard/page.tsx`, `src/app/admin/clients/page.tsx`, `src/app/admin/registrations/page.tsx`, `src/app/admin/clients/[id]/edit/EditClientForm.tsx`, `src/app/admin/recommendations/page.tsx`, `src/types/client.ts`.
+- **Descripción del Cambio:**
+  - **Reestructuración del Dashboard:** Se reemplazó el diseño antiguo por una cuadrícula de tarjetas separadas por tipo de entidad.
+  - **Nuevas Tarjetas:** "Starter Kunden", "Einzelhändler Kunden", "Premium Kunden", "Privat User" (renombrado), "Empfehlungen".
+  - **Contadores de 7 Dígitos:** Implementación de contadores en tiempo real (Live Counters) en cada tarjeta para visualizar la cantidad de registros por tipo.
+  - **Filtros de Clientes:** Actualización de la página `/admin/clients` para filtrar por tipo (`?type=starter`, `?type=retailer`, `?type=premium`) y adaptación del formulario de edición para soportar el nuevo tipo `starter`.
+  - **Registros Centralizados:** Actualización del módulo `Registrierungen` para incluir el tipo `starter` y permitir el filtrado de todos los tipos de registros.
+  - **Nuevo Módulo Empfehlungen:** Creación de la página `/admin/recommendations` para gestionar las recomendaciones enviadas.
+- **Resultado:** El panel "Inhaltsverwaltung" ahora ofrece una vista desglosada y clara de los diferentes segmentos de clientes y usuarios, facilitando la gestión y el seguimiento de métricas.
+
+---
+
+
 Este documento registra los 30 cambios más recientes realizados en el proyecto. Sirve como un historial para rastrear modificaciones, entender la evolución del código y facilitar la depuración de errores.
 
 ---

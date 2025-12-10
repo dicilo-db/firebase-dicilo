@@ -49,6 +49,7 @@
       "registerButton": "Registrieren Sie sich kostenlos",
       "registerSuccessTitle": "Registrierung erfolgreich!",
       "registerSuccessDescription": "Ihre Registrierung wurde erfolgreich übermittelt.",
+      "registerDescription": "Registrieren Sie sich kostenlos und unverbindlich auf unserem Portal Dicilo. Ihre Registrierung – egal ob als „Starter“, „Einzelhändler“ oder „Premium“ – wird zunächst als Basic erstellt. Dies sichert Ihnen einen Platz auf der Landingpage. Nach Ihrer Registrierung werden wir Sie kontaktieren, um Ihnen alle Vorteile der Pakete Starter, Einzelhändler und Premium näherzubringen.",
       "errorTitle": "Fehler",
       "submitError": "Beim Senden Ihrer Registrierung ist ein Fehler aufgetreten."
     },
@@ -65,7 +66,7 @@
     },
     "options": {
       "private": "Privatnutzer",
-      "donor": "Starter",
+      "donor": "Basic",
       "retailer": "Einzelhändler",
       "premium": "Premium",
       "whatsapp": "WhatsApp",

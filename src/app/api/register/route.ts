@@ -8,6 +8,7 @@ import {
 } from 'firebase/firestore';
 import { app } from '@/lib/firebase';
 import { adminAuth } from '@/lib/firebase-admin';
+import { createPrivateUserProfile } from '@/lib/private-user-service';
 
 const db = getFirestore(app);
 
@@ -177,6 +178,22 @@ export async function POST(request: Request) {
       } catch (dbError) {
         console.error('Firestore Error (clients):', dbError);
         // No detenemos el proceso si esto falla, pero lo registramos.
+      }
+    }
+
+    // 3.5 Create Private Profile if type is 'private'
+    if (registrationType === 'private' && ownerUid) {
+      try {
+        await createPrivateUserProfile(ownerUid, {
+          firstName,
+          lastName,
+          email,
+          whatsapp,
+          phone,
+          contactType: contactType as 'whatsapp' | 'telegram' | undefined
+        });
+      } catch (profileError) {
+        console.error('Error creating private profile:', profileError);
       }
     }
 

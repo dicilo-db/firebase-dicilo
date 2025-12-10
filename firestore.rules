@@ -69,6 +69,12 @@ service cloud.firestore {
       allow write: if false; // Writes happen via API (Admin SDK)
     }
 
+    // Recommendations collection
+    match /recommendations/{recommendationId} {
+      allow create: if true; // Public recommendations
+      allow read, delete: if isAdmin();
+    }
+
     // Default deny
     match /{document=**} {
       allow read, write: if false;

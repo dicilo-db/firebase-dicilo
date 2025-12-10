@@ -54,10 +54,12 @@ const TabPanel = ({
   return <div className="tab-content">{children}</div>;
 };
 
-const Tabs = ({ children }: { children: React.ReactNode[] }) => {
-  const [activeTab, setActiveTab] = React.useState(children[0]?.props.label);
+const Tabs = ({ children }: { children: React.ReactNode }) => {
+  const childrenArray = React.Children.toArray(children);
+  const firstChild = childrenArray[0] as React.ReactElement;
+  const [activeTab, setActiveTab] = React.useState(firstChild?.props?.label);
 
-  if (!children || children.length === 0) {
+  if (!childrenArray || childrenArray.length === 0) {
     return null;
   }
 

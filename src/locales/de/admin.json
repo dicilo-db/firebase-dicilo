@@ -47,7 +47,7 @@
   },
   "dashboard": {
     "title": "Dashboard",
-    "welcome": "Willkommen, {email} (Rolle: {role}).",
+    "welcome": "Willkommen, {{email}} (Rolle: {{role}}).",
     "logout": "Abmelden",
     "logoutSuccess": "Erfolgreich abgemeldet.",
     "logoutError": "Abmeldefehler",

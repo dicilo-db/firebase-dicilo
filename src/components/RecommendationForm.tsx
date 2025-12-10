@@ -17,19 +17,30 @@ import {
   DialogFooter,
   DialogClose,
 } from '@/components/ui/dialog';
-import { useState, useEffect } from 'react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { useState, useEffect, useMemo } from 'react';
 import { getFirestore, addDoc, collection } from 'firebase/firestore';
 import { app } from '@/lib/firebase';
 import { useTranslation } from 'react-i18next';
 import { Label } from './ui/label';
+import { Country, City } from 'country-state-city';
 
 // Definir el esquema de validación con Zod
 const formSchema = z.object({
   companyName: z.string().min(2, 'companyNameRequired'),
-  contactName: z.string().optional(),
+  contactName: z.string().min(2, 'required'), // Made required
   email: z.string().email('invalidEmail').optional().or(z.literal('')),
   phone: z.string().optional(),
-  category: z.string().optional(),
+  country: z.string().min(1, 'required'), // Required (ISO Code)
+  city: z.string().min(1, 'required'), // Required (City Name)
+  website: z.string().url('invalid_url').optional().or(z.literal('')),
+  category: z.string().min(1, 'required'), // Required
   comments: z.string().optional(),
 });
 
@@ -42,6 +53,29 @@ interface RecommendationFormProps {
 }
 
 const firestoreDb = getFirestore(app);
+
+const CATEGORIES = [
+  'consulting',
+  'education',
+  'finance',
+  'gastronomy',
+  'health',
+  'hotels',
+  'real_estate',
+  'food',
+  'lifestyle',
+  'music',
+  'travel',
+  'beauty',
+  'social',
+  'sports',
+  'technology',
+  'textile',
+  'animals',
+  'transport',
+  'environment',
+  'entertainment',
+];
 
 export function RecommendationForm({
   isOpen,
@@ -58,10 +92,25 @@ export function RecommendationForm({
       contactName: '',
       email: '',
       phone: '',
+      country: '',
+      city: '',
+      website: '',
       category: '',
       comments: '',
     },
   });
+
+  const selectedCountry = form.watch('country');
+
+  const cities = useMemo(() => {
+    if (!selectedCountry) return [];
+    return City.getCitiesOfCountry(selectedCountry) || [];
+  }, [selectedCountry]);
+
+  // Reset city when country changes
+  useEffect(() => {
+    form.setValue('city', '');
+  }, [selectedCountry, form]);
 
   useEffect(() => {
     if (initialBusinessName) {
@@ -72,8 +121,14 @@ export function RecommendationForm({
   const onSubmit = async (values: RecommendationFormValues) => {
     setIsSubmitting(true);
     try {
+      // Get country name from ISO code
+      const countryData = Country.getCountryByCode(values.country);
+      const countryName = countryData ? countryData.name : values.country;
+
       await addDoc(collection(firestoreDb, 'recommendations'), {
         ...values,
+        country: countryName, // Save full name
+        countryCode: values.country, // Save code reference
         timestamp: new Date(),
         source: 'search_page_recommendation',
       });
@@ -95,14 +150,17 @@ export function RecommendationForm({
     }
   };
 
+  const countries = Country.getAllCountries();
+
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="sm:max-w-[425px] z-[1000]">
+      <DialogContent className="sm:max-w-[500px] z-[1000] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{t('form.title')}</DialogTitle>
           <DialogDescription>{t('form.description')}</DialogDescription>
         </DialogHeader>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-4">
+          {/* Company Name */}
           <div className="space-y-2">
             <Label htmlFor="companyName">
               {t('form.companyNamePlaceholder')}
@@ -121,6 +179,8 @@ export function RecommendationForm({
               </p>
             )}
           </div>
+
+          {/* Contact Name (Your Name) */}
           <div className="space-y-2">
             <Label htmlFor="contactName">
               {t('form.contactNamePlaceholder')}
@@ -128,9 +188,14 @@ export function RecommendationForm({
             <Input
               id="contactName"
               {...form.register('contactName')}
+              className={
+                form.formState.errors.contactName ? 'border-destructive' : ''
+              }
               disabled={isSubmitting}
             />
           </div>
+
+          {/* Email */}
           <div className="space-y-2">
             <Label htmlFor="email">{t('form.emailPlaceholder')}</Label>
             <Input
@@ -145,6 +210,8 @@ export function RecommendationForm({
               </p>
             )}
           </div>
+
+          {/* Phone */}
           <div className="space-y-2">
             <Label htmlFor="phone">{t('form.phonePlaceholder')}</Label>
             <Input
@@ -154,14 +221,114 @@ export function RecommendationForm({
               disabled={isSubmitting}
             />
           </div>
+
+          {/* Country */}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="country">{t('form.countryPlaceholder')}</Label>
+              <Select
+                onValueChange={(value) => form.setValue('country', value)}
+                defaultValue={form.getValues('country')}
+                disabled={isSubmitting}
+              >
+                <SelectTrigger
+                  className={
+                    form.formState.errors.country ? 'border-destructive' : ''
+                  }
+                >
+                  <SelectValue placeholder={t('form.selectOption')} />
+                </SelectTrigger>
+                <SelectContent className="z-[1001]">
+                  {countries.map((country) => (
+                    <SelectItem key={country.isoCode} value={country.isoCode}>
+                      {country.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {form.formState.errors.country && (
+                <p className="text-sm text-destructive">
+                  {t('form.errors.required')}
+                </p>
+              )}
+            </div>
+
+            {/* City */}
+            <div className="space-y-2">
+              <Label htmlFor="city">{t('form.cityPlaceholder')}</Label>
+              <Select
+                onValueChange={(value) => form.setValue('city', value)}
+                disabled={!selectedCountry || isSubmitting}
+              >
+                <SelectTrigger
+                  className={
+                    form.formState.errors.city ? 'border-destructive' : ''
+                  }
+                >
+                  <SelectValue placeholder={!selectedCountry ? t('form.selectCountryFirst') : t('form.selectOption')} />
+                </SelectTrigger>
+                <SelectContent className="z-[1001]">
+                  {cities.map((city) => (
+                    <SelectItem key={`${city.name}-${city.latitude}`} value={city.name}>
+                      {city.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {form.formState.errors.city && (
+                <p className="text-sm text-destructive">
+                  {t('form.errors.required')}
+                </p>
+              )}
+            </div>
+          </div>
+
+          {/* Website */}
           <div className="space-y-2">
-            <Label htmlFor="category">{t('form.categoryPlaceholder')}</Label>
+            <Label htmlFor="website">{t('form.websitePlaceholder')}</Label>
             <Input
-              id="category"
-              {...form.register('category')}
+              id="website"
+              {...form.register('website')}
               disabled={isSubmitting}
             />
+            {form.formState.errors.website && (
+              <p className="text-sm text-destructive">
+                {t(`form.errors.invalid_url`)}
+              </p>
+            )}
           </div>
+
+          {/* Category Dropdown */}
+          <div className="space-y-2">
+            <Label htmlFor="category">{t('form.categoryLabel')}</Label>
+            <Select
+              onValueChange={(value) => form.setValue('category', value)}
+              defaultValue={form.getValues('category')}
+              disabled={isSubmitting}
+            >
+              <SelectTrigger
+                className={
+                  form.formState.errors.category ? 'border-destructive' : ''
+                }
+              >
+                <SelectValue placeholder={t('form.selectCategory')} />
+              </SelectTrigger>
+              <SelectContent className="z-[1001]">
+                {CATEGORIES.map((cat) => (
+                  <SelectItem key={cat} value={cat}>
+                    {t(`form.categories.${cat}`)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {form.formState.errors.category && (
+              <p className="text-sm text-destructive">
+                {t('form.errors.required')}
+              </p>
+            )}
+          </div>
+
+          {/* Comments */}
           <div className="space-y-2">
             <Label htmlFor="comments">{t('form.commentsPlaceholder')}</Label>
             <Textarea
@@ -170,6 +337,7 @@ export function RecommendationForm({
               disabled={isSubmitting}
             />
           </div>
+
           <DialogFooter>
             <DialogClose asChild>
               <Button type="button" variant="secondary" disabled={isSubmitting}>
