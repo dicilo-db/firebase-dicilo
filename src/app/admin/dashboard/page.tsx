@@ -26,6 +26,7 @@ import {
   UserCheck,
   ThumbsUp,
   User,
+  Bot,
 } from 'lucide-react';
 import { useAdminUser, useAuthGuard } from '@/hooks/useAuthGuard';
 import { useServerAction } from '@/hooks/useServerAction';
@@ -583,6 +584,20 @@ const DashboardContent: React.FC = () => {
                 <CardContent>
                   <div className="text-2xl font-bold">{t('dashboard.cards.directory.title')}</div>
                   <p className="text-xs text-muted-foreground mt-1">{t('dashboard.cards.directory.description')}</p>
+                </CardContent>
+              </Card>
+            </Link>
+
+            {/* AI Chat Module (NEW) */}
+            <Link href="/admin/ai-chat" className="group">
+              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">AI Chat</CardTitle>
+                  <Bot className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">AI Chat</div>
+                  <p className="text-xs text-muted-foreground mt-1">Manage AI Knowledge & Settings</p>
                 </CardContent>
               </Card>
             </Link>

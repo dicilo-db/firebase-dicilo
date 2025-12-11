@@ -15,20 +15,39 @@ interface Message {
     content: string;
 }
 
+import { getGreetingAction } from '@/app/actions/greeting';
+
+interface AiChatWidgetProps {
+    // greeting property removed as we fetch it internally now
+}
+
 export function AiChatWidget() {
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState<Message[]>([
         {
             id: 'welcome',
             role: 'assistant',
-            content: 'Hello! I am the Dicilo AI assistant. How can I help you today?',
+            content: '...', // Placeholder until fetched
         },
     ]);
     const [inputValue, setInputValue] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const scrollAreaRef = useRef<HTMLDivElement>(null);
 
-
+    useEffect(() => {
+        // Fetch personalized greeting on mount
+        const fetchGreeting = async () => {
+            const greeting = await getGreetingAction();
+            setMessages(prev => {
+                const newMessages = [...prev];
+                if (newMessages.length > 0 && newMessages[0].id === 'welcome') {
+                    newMessages[0].content = greeting;
+                }
+                return newMessages;
+            });
+        };
+        fetchGreeting();
+    }, []);
 
     useEffect(() => {
         if (scrollAreaRef.current) {

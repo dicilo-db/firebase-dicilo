@@ -1,5 +1,17 @@
 # Bitácora de Cambios - Dicilo.net
 
+### **177. FEAT: AI CHAT MODULE (ADMIN & RAG) - CÓDIGO: FEAT-AICHAT-ADMIN-V1**
+
+- **Fecha y Hora:** 11 de Diciembre de 2025, 08:50 (CET)
+- **Módulos Afectados:** `ai-chat`, `AiChatWidget`, `RootLayout`, `actions/chat`, `actions/ai-admin`.
+- **Descripción del Cambio:**
+  - **Admin AiChat:** Nueva sección `/admin/ai-chat` para subir PDFs y configurar textos de conocimiento.
+  - **RAG System:** Implementado sistema de recuperación que lee archivos subidos, snippets de texto y datos de base de datos (Negocios) para enriquecer el contexto de la IA.
+  - **Detección de Idioma:** El Chat Widget ahora saluda automáticamente en el idioma del usuario (detectado por IP/Headers).
+  - **Soporte PDF:** Integración de `pdf-parse` para lectura automática de documentos subidos.
+
+---
+
 ### **176. FIX: CATEGORY VISIBILITY IN PROFILE - CÓDIGO: FIX-PROFILE-CAT-TEXT-V1**
 
 - **Fecha y Hora:** 11 de Diciembre de 2025, 08:30 (CET)

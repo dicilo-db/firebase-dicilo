@@ -18,25 +18,32 @@ export async function websiteChat(
 }
 
 import { DICILO_KNOWLEDGE } from '@/ai/data/dicilo-knowledge';
+import { getDynamicKnowledgeContext } from '@/ai/data/knowledge-retriever';
+
+// Define a Prompt Input Schema that includes context
+const PromptInputSchema = z.object({
+    question: z.string(),
+    context: z.string(),
+});
 
 const prompt = ai.definePrompt({
     name: 'websiteChatPrompt',
-    input: { schema: WebsiteChatInputSchema },
+    input: { schema: PromptInputSchema },
     output: { schema: WebsiteChatOutputSchema },
     prompt: `
     You are a helpful, friendly, and knowledgeable AI assistant for the Dicilo website.
     
-    Here is the official information about Dicilo. Use this context to answer the user's questions accurately.
+    Here is the official information about Dicilo and its database. Use this context to answer the user's questions accurately.
     If the answer is not in this context, you can use your general knowledge but prioritize the provided information.
     
     <CONTEXT>
-    ${DICILO_KNOWLEDGE}
+    {{context}}
     </CONTEXT>
     
     Your goal is to assist users with their questions about the platform, businesses listed, or general inquiries.
     Be concise, professional, and welcoming.
     
-    User Question: {{{question}}}
+    User Question: {{question}}
   `,
 });
 
@@ -47,7 +54,14 @@ const websiteChatFlow = ai.defineFlow(
         outputSchema: WebsiteChatOutputSchema,
     },
     async (input) => {
-        const { output } = await prompt(input);
+        // 1. Fetch Dynamic Context
+        const dynamicContext = await getDynamicKnowledgeContext();
+
+        // 2. Call Prompt with Question + Context
+        const { output } = await prompt({
+            question: input.question,
+            context: dynamicContext
+        });
         return output!;
     }
 );

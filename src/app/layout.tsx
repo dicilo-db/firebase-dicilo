@@ -7,7 +7,13 @@ import { ptSans } from './fonts';
 import { cn } from '@/lib/utils';
 import { I18nProvider } from '@/context/i18n-provider';
 import { AuthProvider } from '@/context/AuthContext';
-import { AiChatWidget } from '@/components/AiChatWidget';
+// import { AiChatWidget } from '@/components/AiChatWidget';
+import dynamic from 'next/dynamic';
+
+const AiChatWidget = dynamic(
+  () => import('@/components/AiChatWidget').then((mod) => mod.AiChatWidget),
+  { ssr: false }
+);
 
 export const metadata: Metadata = {
   title: 'Dicilo.net',
@@ -23,8 +29,13 @@ interface RootLayoutProps {
   children: React.ReactNode;
 }
 
+// import { detectLanguage, getGreeting } from '@/lib/detection';
+
 export default function RootLayout({ children }: RootLayoutProps) {
-  // The 'lang' attribute is hardcoded to 'de' as we are now handling language on the client side.
+  // const lang = detectLanguage();
+  // const greeting = getGreeting(lang);
+  // const lang = 'de';
+
   return (
     <html lang="de" suppressHydrationWarning>
       <body
@@ -37,7 +48,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <I18nProvider>
           <AuthProvider>
             <div className="flex-grow">{children}</div>
-            {/* <AiChatWidget /> */}
+            <AiChatWidget />
             <Toaster />
           </AuthProvider>
         </I18nProvider>
@@ -45,3 +56,4 @@ export default function RootLayout({ children }: RootLayoutProps) {
     </html>
   );
 }
+
