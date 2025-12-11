@@ -1,5 +1,17 @@
 # Bitácora de Cambios - Dicilo.net
 
+### **176. FIX: CATEGORY VISIBILITY IN PROFILE - CÓDIGO: FIX-PROFILE-CAT-TEXT-V1**
+
+- **Fecha y Hora:** 11 de Diciembre de 2025, 08:30 (CET)
+- **Módulos Afectados:** `src/app/dashboard/profile/page.tsx`.
+- **Descripción del Cambio:**
+  - **Problema:** Los nombres de las categorías en el formulario de perfil no se mostraban (checkboxes sin texto).
+  - **Causa:** Desajuste en la propiedad del objeto JSON (`category.name` vs `category.categoria`).
+  - **Solución:** Se corrigió el acceso a la propiedad para usar `category.categoria` según la estructura de `categories.json`.
+- **Resultado:** Las categorías ahora son visibles y seleccionables correctamente.
+
+---
+
 ### **175. FIX: DASHBOARD RUNTIME ERROR & CHAT WIDGET - CÓDIGO: FIX-DASHBOARD-CHAT-V1**
 
 - **Fecha y Hora:** 10 de Diciembre de 2025, 23:55 (CET)

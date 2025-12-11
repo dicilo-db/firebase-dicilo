@@ -278,31 +278,31 @@ export default function PrivateUserProfilePage() {
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 border p-4 rounded-md max-h-60 overflow-y-auto">
                                         {categoriesData.map((category) => (
                                             <FormField
-                                                key={category.name}
+                                                key={category.categoria}
                                                 control={form.control}
                                                 name="interests"
                                                 render={({ field }) => {
                                                     return (
                                                         <FormItem
-                                                            key={category.name}
+                                                            key={category.categoria}
                                                             className="flex flex-row items-start space-x-3 space-y-0"
                                                         >
                                                             <FormControl>
                                                                 <Checkbox
-                                                                    checked={field.value?.includes(category.name)}
+                                                                    checked={field.value?.includes(category.categoria)}
                                                                     onCheckedChange={(checked) => {
                                                                         return checked
-                                                                            ? field.onChange([...field.value, category.name])
+                                                                            ? field.onChange([...field.value, category.categoria])
                                                                             : field.onChange(
                                                                                 field.value?.filter(
-                                                                                    (value) => value !== category.name
+                                                                                    (value) => value !== category.categoria
                                                                                 )
                                                                             )
                                                                     }}
                                                                 />
                                                             </FormControl>
                                                             <FormLabel className="font-normal text-sm cursor-pointer">
-                                                                {category.name}
+                                                                {category.categoria}
                                                             </FormLabel>
                                                         </FormItem>
                                                     )
