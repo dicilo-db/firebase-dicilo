@@ -268,6 +268,16 @@ export function CouponForm({ isOpen, onClose, onSuccess, category, fixedCompanyI
                             </>
                         )}
 
+                        {fixedCompanyId && (
+                            <div className="p-3 bg-muted/40 rounded border">
+                                <FormLabel className="text-xs text-muted-foreground">{t('contracts.coupons.companyLabel', 'Unternehmen')}</FormLabel>
+                                <div className="font-medium flex items-center gap-2">
+                                    <Building2 className="h-4 w-4 text-primary" />
+                                    {fixedCompanyName || fixedCompanyId}
+                                </div>
+                            </div>
+                        )}
+
 
                         <FormField
                             control={form.control}
@@ -367,6 +377,6 @@ export function CouponForm({ isOpen, onClose, onSuccess, category, fixedCompanyI
                     </div>
                 </Form>
             </DialogContent>
-        </Dialog>
+        </Dialog >
     );
 }

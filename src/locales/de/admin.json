@@ -514,6 +514,7 @@
       "manualIdInfo": "Wenn die Suche nicht funktioniert, geben Sie die ID manuell ein:",
       "manualIdLabel": "Firmen-ID (Erforderlich)",
       "manualIdPlaceholder": "Kunden-ID hier einfügen",
+      "companyLabel": "Unternehmen",
       "noResults": "Keine Ergebnisse gefunden. Versuchen Sie, die ID manuell einzugeben.",
       "titleLabel": "Titel / Vorteil",
       "titlePlaceholder": "z.B. 10% Rabatt",

@@ -68,7 +68,7 @@ export function ClientCouponManager({ companyId, companyName, category }: Client
                         Verwalten Sie hier Ihre Rabattaktionen und Angebote.
                     </p>
                 </div>
-                <Button onClick={() => setIsCreateOpen(true)}>
+                <Button type="button" onClick={() => setIsCreateOpen(true)}>
                     <Plus className="mr-2 h-4 w-4" />
                     Neuen Coupon erstellen
                 </Button>
@@ -86,7 +86,7 @@ export function ClientCouponManager({ companyId, companyName, category }: Client
                         <p className="text-sm text-muted-foreground max-w-sm mt-2 mb-6">
                             Erstellen Sie Ihren ersten Coupon, um Kunden mit attraktiven Angeboten zu gewinnen.
                         </p>
-                        <Button variant="outline" onClick={() => setIsCreateOpen(true)}>
+                        <Button type="button" variant="outline" onClick={() => setIsCreateOpen(true)}>
                             Jetzt erstellen
                         </Button>
                     </CardContent>

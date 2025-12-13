@@ -513,6 +513,7 @@
       "manualIdInfo": "Si la búsqueda no funciona, ingrese el ID manualmente:",
       "manualIdLabel": "ID de Empresa (Requerido)",
       "manualIdPlaceholder": "Pegue aquí el ID del cliente",
+      "companyLabel": "Empresa",
       "noResults": "No se encontraron resultados. Intente escribir el ID manualmente.",
       "titleLabel": "Título / Beneficio",
       "titlePlaceholder": "Ej. 10% de Descuento",
