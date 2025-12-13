@@ -25,8 +25,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useState, useEffect, useMemo } from 'react';
-import { getFirestore, addDoc, collection } from 'firebase/firestore';
-import { app } from '@/lib/firebase';
+import { submitRecommendation } from '@/app/actions/recommendations';
 import { useTranslation } from 'react-i18next';
 import { Label } from './ui/label';
 import { Country, City } from 'country-state-city';
@@ -51,8 +50,6 @@ interface RecommendationFormProps {
   setIsOpen: (isOpen: boolean) => void;
   initialBusinessName?: string;
 }
-
-const firestoreDb = getFirestore(app);
 
 const CATEGORIES = [
   'consulting',
@@ -122,16 +119,15 @@ export function RecommendationForm({
     setIsSubmitting(true);
     try {
       // Get country name from ISO code
-      const countryData = Country.getCountryByCode(values.country);
       const countryName = countryData ? countryData.name : values.country;
 
-      await addDoc(collection(firestoreDb, 'recommendations'), {
+      const result = await submitRecommendation({
         ...values,
         country: countryName, // Save full name
         countryCode: values.country, // Save code reference
-        timestamp: new Date(),
-        source: 'search_page_recommendation',
       });
+
+      if (!result.success) throw new Error(result.error);
       toast({
         title: t('form.successTitle'),
         description: t('form.successDesc'),

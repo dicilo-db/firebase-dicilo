@@ -1,5 +1,48 @@
 # Bitácora de Cambios - Dicilo.net
 
+### **180. FEAT: COUPON AUTOCOMPLETE & FIXES - CÓDIGO: FEAT-COUPON-AUTOCOMPLETE-V1**
+
+- **Fecha y Hora:** 11 de Diciembre de 2025, 23:45 (CET)
+- **Módulos Afectados:** `src/app/admin/coupons/components/CouponForm.tsx`, `src/app/actions/coupons.ts`.
+- **Descripción del Cambio:**
+  - **Autocomplete:** Se implementó búsqueda de empresas con auto-relleno de datos (Nombre, ID, Ciudad, País).
+  - **Mejora de Búsqueda:** Se aumentó el límite de lectura a 2000 registros y se habilitó filtro insensible a mayúsculas para encontrar todas las empresas.
+  - **Manual Override:** Se hizo visible el campo `companyId` para permitir la entrada manual en caso de fallo del buscador, desbloqueando la creación de cupones.
+  - **Bug Fix:** Se corrigió un error `Info is not defined` por falta de importación.
+  - **Build Fix:** Se solucionó "Critical dependency" en `pdf-parse` mediante configuración de Webpack.
+  - **i18n Fix:** Se corrigió la interpolación de variables en traducciones (IDs que no se mostraban).
+- **Resultado:** Formulario de cupones 100% funcional y robusto.
+
+---
+
+
+### **179. FEAT: COUPONS MODULE - CÓDIGO: FEAT-COUPONS-V1**
+
+- **Fecha y Hora:** 11 de Diciembre de 2025, 21:00 (CET)
+- **Módulos Afectados:** `src/app/admin/coupons`, `src/app/admin/dashboard`, `src/app/actions/coupons.ts`, `src/types/coupon.ts`, `locales/de|en|es/common.json`.
+- **Descripción del Cambio:**
+  - **Backend:** Implemented `coupons` and `coupon_assignments` collections.
+  - **API:** Created Server Actions for Coupon CRUD and Assignment.
+  - **UI:** Added Admin Dashboard Card and Sidebar Link through navigation.
+  - **UI:** Implemented Category Grid, filtered Listing, and Create/Assign Modals.
+  - **i18n:** Added translations for ES, EN, DE.
+- **Resultado:** Fully functional coupon management system for administrators.
+
+---
+
+### **178. FEAT: MEJORAS SISTEMA DE TICKETS - CÓDIGO: FEAT-TICKETS-V2**
+
+- **Fecha y Hora:** 11 de Diciembre de 2025, 20:30 (CET)
+- **Módulos Afectados:** `src/app/actions/tickets.ts`, `src/app/dashboard/tickets`, `src/app/admin/dashboard`, `src/app/layout.tsx`.
+- **Descripción del Cambio:**
+  - **Selector de Módulo:** Se añadió un campo desplegable en el formulario de creación de tickets para clasificar el error (AI Chat, Dashboard, etc.).
+  - **Admin Dashboard:** Se añadió la tarjeta "Support Tickets" para acceso rápido al sistema.
+  - **Server Actions:** Se mejoró la lógica de carga de mensajes (`getTicket`) y envío (`addTicketMessage`) para garantizar la persistencia independientemente de los permisos del cliente.
+  - **Correcciones:** Se solucionó error "Could not load default credentials" usando `FIREBASE_SERVICE_ACCOUNT_KEY` y se corrigió JSON inválido en traducciones.
+- **Resultado:** Sistema de tickets robusto, traducido y categorizado.
+
+---
+
 ### **177. FEAT: AI CHAT MODULE (ADMIN & RAG) - CÓDIGO: FEAT-AICHAT-ADMIN-V1**
 
 - **Fecha y Hora:** 11 de Diciembre de 2025, 08:50 (CET)

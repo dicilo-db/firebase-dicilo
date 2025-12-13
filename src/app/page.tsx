@@ -23,6 +23,7 @@ function serializeBusiness(docId: string, data: any): Business {
     }
   }
 
+  // Return only fields defined in Business interface (no timestamps)
   return {
     id: docId,
     name: data.clientName || data.name || 'Unbekanntes Unternehmen',
@@ -38,7 +39,6 @@ function serializeBusiness(docId: string, data: any): Business {
     currentOfferUrl: data.currentOfferUrl || '',
     clientSlug: data.slug || '',
     mapUrl: data.mapUrl || '',
-    // Add other fields if they are simple types and needed
     category_key: data.category_key,
     subcategory_key: data.subcategory_key,
     rating: typeof data.rating === 'number' ? data.rating : undefined,
@@ -78,7 +78,11 @@ async function getBusinesses(): Promise<{ businesses: Business[], clientsRaw: an
     // Merge and deduplicate by ID
     // Merge and deduplicate by ID
     const allBusinesses = [...businesses, ...clients];
-    return { businesses: allBusinesses, clientsRaw: clients };
+    // Deep sanitize businesses to ensure no non-serializable objects (like Timestamps) leak through
+    return {
+      businesses: JSON.parse(JSON.stringify(allBusinesses)),
+      clientsRaw: clients
+    };
   } catch (error) {
     console.error('Error fetching businesses on server:', error);
     return { businesses: [], clientsRaw: [] };
@@ -88,58 +92,55 @@ async function getBusinesses(): Promise<{ businesses: Business[], clientsRaw: an
 async function getAds(clientsRaw: any[]) {
   const db = getFirestore(app);
   try {
-    const adsCol = collection(db, 'ads_banners'); // Updated from 'ads' to 'ads_banners' (Unified)
+    const adsCol = collection(db, 'ads_banners');
     const q = query(adsCol);
     const snapshot = await getDocs(q);
 
-    // Create a map of client budgets for O(1) lookup
+    // Map of client budgets for quick lookup
     const clientBudgets = new Map(clientsRaw.map((c: any) => [c.id, c.budget_remaining || 0]));
 
+    // Build plain objects and filter
     const ads = snapshot.docs.map(doc => {
       const data = doc.data();
-      return {
+      const sanitized = {
         id: doc.id,
-        // Normalize fields if needed
         imageUrl: data.imageUrl,
         linkUrl: data.linkUrl,
         title: data.title,
         active: data.active,
         position: data.position,
         clientId: data.clientId,
-        ...data
       };
-    }).filter((ad: any) => {
-      // Filter: Must be active
+      return sanitized;
+    }).filter(ad => {
+      // Must be active
       if (ad.active === false) return false;
-
-      // Filter: If client budget check is required
-      // AdsManager might create ads without client for internal promos (if clientId is optional in schema, but I made it required).
-      // If clientId exists, check budget.
+      // Budget check if clientId present
       if (ad.clientId) {
         const budget = clientBudgets.get(ad.clientId);
-        // If budget is undefined (client not found) or low, hide?
-        // If client not found in raw list (maybe pagination?), be careful.
-        // For now, strict check:
         if (typeof budget === 'number' && budget <= 0.05) return false;
       }
-
       return true;
     });
 
-    return ads;
+    // Deep sanitize final array
+    return JSON.parse(JSON.stringify(ads));
   } catch (error) {
-    console.error("Error fetching ads:", error);
+    console.error('Error fetching ads:', error);
     return [];
   }
 }
 
 export default async function SearchPage() {
   const { businesses, clientsRaw } = await getBusinesses();
-  const ads = await getAds(clientsRaw); // We need raw clients to check budget
+  const ads = await getAds(clientsRaw);
 
   return (
     <main className="h-screen w-screen overflow-hidden">
-      <DiciloSearchPage initialBusinesses={businesses} initialAds={ads} />
+      <DiciloSearchPage
+        initialBusinesses={JSON.parse(JSON.stringify(businesses))}
+        initialAds={JSON.parse(JSON.stringify(ads))}
+      />
     </main>
   );
 }

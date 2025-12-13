@@ -9,6 +9,7 @@ import {
 import { app } from '@/lib/firebase';
 import { adminAuth } from '@/lib/firebase-admin';
 import { createPrivateUserProfile } from '@/lib/private-user-service';
+import { sendWelcomeEmail } from '@/lib/email';
 
 const db = getFirestore(app);
 
@@ -217,6 +218,11 @@ export async function POST(request: Request) {
       }
     } catch (webhookError) {
       console.error('Webhook fetch error:', webhookError);
+    }
+
+    // 5. Send Welcome Email
+    if (email && firstName) {
+      await sendWelcomeEmail(email, firstName);
     }
 
     return NextResponse.json(

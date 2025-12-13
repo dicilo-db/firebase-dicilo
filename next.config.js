@@ -10,6 +10,10 @@ const nextConfig = {
         aggregateTimeout: 300,
       };
     }
+    // Prevent pdf-parse from being bundled by webpack (it uses fs and dynamic requires)
+    config.externals.push({
+      'pdf-parse': 'commonjs pdf-parse',
+    });
     return config;
   },
   typescript: {

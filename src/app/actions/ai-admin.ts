@@ -3,7 +3,7 @@
 import { getFirestore } from 'firebase-admin/firestore';
 import { getStorage } from 'firebase-admin/storage';
 import { getApps, initializeApp, cert } from 'firebase-admin/app';
-import pdf from 'pdf-parse';
+const pdf = require('pdf-parse');
 
 // Initialize Firebase Admin (Singleton)
 const serviceAccount = process.env.FIREBASE_SERVICE_ACCOUNT_KEY

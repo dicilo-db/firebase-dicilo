@@ -18,6 +18,7 @@ import {
     FormLabel,
     FormMessage,
 } from '@/components/ui/form';
+import { updatePrivateProfile } from '@/app/actions/profile';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
@@ -51,7 +52,7 @@ const profileFormSchema = z.object({
     lastName: z.string().min(2, {
         message: 'Nachname muss mindestens 2 Zeichen lang sein.',
     }),
-    email: z.string().email(),
+    email: z.string().email().optional().or(z.literal('')),
     phone: z.string().optional(),
 
     // Interests (Categories)
@@ -155,16 +156,19 @@ export default function PrivateUserProfilePage() {
 
         setIsSaving(true);
         try {
-            await setDoc(doc(db, 'private_profiles', user.uid), {
+            const result = await updatePrivateProfile(user.uid, {
                 ...data,
-                updatedAt: new Date(),
-                uid: user.uid,
-            }, { merge: true });
-
-            toast({
-                title: 'Erfolg',
-                description: 'Ihr Profil wurde aktualisiert.',
+                email: user.email, // Ensure email is consistent
             });
+
+            if (result.success) {
+                toast({
+                    title: 'Erfolg',
+                    description: 'Ihr Profil wurde aktualisiert.',
+                });
+            } else {
+                throw new Error(result.error);
+            }
         } catch (error) {
             console.error('Error saving profile:', error);
             toast({

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { updatePrivateProfile, ensureUniqueCode } from '@/app/actions/profile';
 import { User } from 'firebase/auth';
 import { doc, getFirestore, updateDoc, onSnapshot } from 'firebase/firestore';
 import { app } from '@/lib/firebase';
@@ -14,6 +15,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Copy, Share2, Gift, Users, Heart, Settings } from 'lucide-react';
 import { CategorySelector } from './CategorySelector';
+import { useTranslation } from 'react-i18next';
 
 const db = getFirestore(app);
 
@@ -24,6 +26,7 @@ interface PrivateDashboardProps {
 
 export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
     const { toast } = useToast();
+    const { t } = useTranslation('common');
     const [activeTab, setActiveTab] = useState('overview');
     const [isLoading, setIsLoading] = useState(false);
     const [formData, setFormData] = useState(profile);
@@ -38,20 +41,37 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
         return () => unsub();
     }, [user.uid]);
 
+    // Ensure Unique Code exists
+    useEffect(() => {
+        if (user && formData) {
+            console.log('Checking unique code for:', user.uid, 'Current code:', formData.uniqueCode);
+            if (!formData.uniqueCode) {
+                console.log('Unique code missing, triggering generation...');
+                ensureUniqueCode(user.uid).then((res) => {
+                    console.log('ensureUniqueCode result:', res);
+                    if (res.success && res.uniqueCode) {
+                        // Optimistically update if snapshot is slow
+                        setFormData((prev: any) => ({ ...prev, uniqueCode: res.uniqueCode }));
+                    }
+                });
+            }
+        }
+    }, [user, formData?.uniqueCode]);
+
     const handleUpdate = async (section: string, data: any) => {
         setIsLoading(true);
         try {
             const userRef = doc(db, 'private_profiles', user.uid);
             await updateDoc(userRef, data);
             toast({
-                title: 'Profile Updated',
-                description: 'Your changes have been saved successfully.',
+                title: t('dashboard.saved', 'Saved'),
+                description: t('dashboard.successDesc', 'Your changes have been saved.'),
             });
         } catch (error) {
             console.error('Error updating profile:', error);
             toast({
-                title: 'Error',
-                description: 'Failed to save changes. Please try again.',
+                title: t('dashboard.errorTitle', 'Error'),
+                description: t('dashboard.errorDesc', 'Failed to save changes.'),
                 variant: 'destructive',
             });
         } finally {
@@ -62,38 +82,75 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
     const copyToClipboard = (text: string) => {
         navigator.clipboard.writeText(text);
         toast({
-            title: 'Copied!',
-            description: 'Code copied to clipboard.',
+            title: t('dashboard.copied', 'Copied!'),
+            description: t('dashboard.codeCopied', 'Code copied to clipboard.'),
         });
     };
+
+    // Safe Date Parsing
+    const memberSinceDate = formData.createdAt?.seconds
+        ? new Date(formData.createdAt.seconds * 1000).toLocaleDateString()
+        : new Date().toLocaleDateString();
+
+    const birthDateValue = formData.birthDate?.seconds
+        ? new Date(formData.birthDate.seconds * 1000).toISOString().split('T')[0]
+        : formData.birthDate
+            ? new Date(formData.birthDate).toISOString().split('T')[0]
+            : '';
 
     return (
         <div className="space-y-6">
             {/* Header Section */}
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Welcome, {formData.firstName}!</h1>
-                    <p className="text-muted-foreground">Manage your personal profile and preferences.</p>
+                    <h1 className="text-3xl font-bold tracking-tight">{t('dashboard.welcome')} {formData.firstName}!</h1>
+                    <p className="text-muted-foreground">{t('dashboard.manageProfile')}</p>
                 </div>
                 <Card className="bg-primary/5 border-primary/20">
                     <CardContent className="flex items-center gap-4 p-4">
                         <div>
-                            <p className="text-xs font-medium text-muted-foreground uppercase">Your Unique Code</p>
-                            <p className="text-2xl font-mono font-bold text-primary">{formData.uniqueCode}</p>
+                            <p className="text-xs font-medium text-muted-foreground uppercase">{t('dashboard.yourUniqueCode')}</p>
+                            {formData.uniqueCode ? (
+                                <p className="text-2xl font-mono font-bold text-primary">{formData.uniqueCode}</p>
+                            ) : (
+                                <div className="flex flex-col items-start gap-1">
+                                    <p className="text-sm text-yellow-600">{t('dashboard.pending')}</p>
+                                    <Button
+                                        size="sm"
+                                        variant="secondary"
+                                        className="h-7 text-xs"
+                                        onClick={() => {
+                                            toast({ title: t('dashboard.generating'), description: 'Please wait a moment.' });
+                                            ensureUniqueCode(user.uid).then((res) => {
+                                                if (res.success && res.uniqueCode) {
+                                                    setFormData((prev: any) => ({ ...prev, uniqueCode: res.uniqueCode }));
+                                                    toast({ title: t('dashboard.saved'), description: 'Code generated!' });
+                                                } else {
+                                                    toast({ title: 'Error', description: 'Failed to generate code.', variant: 'destructive' });
+                                                }
+                                            });
+                                        }}
+                                    >
+                                        {t('dashboard.generateCode')}
+                                    </Button>
+                                </div>
+                            )}
                         </div>
-                        <Button variant="ghost" size="icon" onClick={() => copyToClipboard(formData.uniqueCode)}>
-                            <Copy className="h-4 w-4" />
-                        </Button>
+                        {formData.uniqueCode && (
+                            <Button variant="ghost" size="icon" onClick={() => copyToClipboard(formData.uniqueCode)}>
+                                <Copy className="h-4 w-4" />
+                            </Button>
+                        )}
                     </CardContent>
                 </Card>
             </div>
 
             <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
                 <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4">
-                    <TabsTrigger value="overview">Overview</TabsTrigger>
-                    <TabsTrigger value="personal">Personal Data</TabsTrigger>
-                    <TabsTrigger value="interests">Interests</TabsTrigger>
-                    <TabsTrigger value="social">Social & Rewards</TabsTrigger>
+                    <TabsTrigger value="overview">{t('dashboard.overview')}</TabsTrigger>
+                    <TabsTrigger value="personal">{t('dashboard.personalData')}</TabsTrigger>
+                    <TabsTrigger value="interests">{t('dashboard.interests')}</TabsTrigger>
+                    <TabsTrigger value="social">{t('dashboard.socialRewards')}</TabsTrigger>
                 </TabsList>
 
                 {/* Overview Tab */}
@@ -101,32 +158,32 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                         <Card>
                             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                <CardTitle className="text-sm font-medium">Profile Status</CardTitle>
+                                <CardTitle className="text-sm font-medium">{t('dashboard.profileStatus')}</CardTitle>
                                 <Users className="h-4 w-4 text-muted-foreground" />
                             </CardHeader>
                             <CardContent>
-                                <div className="text-2xl font-bold">Active</div>
-                                <p className="text-xs text-muted-foreground">Member since {new Date(formData.createdAt?.seconds * 1000).toLocaleDateString()}</p>
+                                <div className="text-2xl font-bold">{t('dashboard.active')}</div>
+                                <p className="text-xs text-muted-foreground">{t('dashboard.memberSince', { date: memberSinceDate })}</p>
                             </CardContent>
                         </Card>
                         <Card>
                             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                <CardTitle className="text-sm font-medium">Interests</CardTitle>
+                                <CardTitle className="text-sm font-medium">{t('dashboard.interests')}</CardTitle>
                                 <Heart className="h-4 w-4 text-muted-foreground" />
                             </CardHeader>
                             <CardContent>
                                 <div className="text-2xl font-bold">{formData.interests?.length || 0}</div>
-                                <p className="text-xs text-muted-foreground">Categories selected</p>
+                                <p className="text-xs text-muted-foreground">{t('dashboard.yourInterestsDesc')}</p>
                             </CardContent>
                         </Card>
                         <Card>
                             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                <CardTitle className="text-sm font-medium">Referrals</CardTitle>
+                                <CardTitle className="text-sm font-medium">{t('dashboard.referrals')}</CardTitle>
                                 <Gift className="h-4 w-4 text-muted-foreground" />
                             </CardHeader>
                             <CardContent>
                                 <div className="text-2xl font-bold">{formData.referrals?.length || 0}</div>
-                                <p className="text-xs text-muted-foreground">Friends invited</p>
+                                <p className="text-xs text-muted-foreground">{t('dashboard.friendsInvited')}</p>
                             </CardContent>
                         </Card>
                     </div>
@@ -134,14 +191,14 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
                     <div className="grid gap-4 md:grid-cols-2">
                         <Card>
                             <CardHeader>
-                                <CardTitle>Quick Actions</CardTitle>
+                                <CardTitle>{t('dashboard.quickActions')}</CardTitle>
                             </CardHeader>
                             <CardContent className="grid gap-2">
                                 <Button variant="outline" className="justify-start" onClick={() => setActiveTab('interests')}>
-                                    <Heart className="mr-2 h-4 w-4" /> Update Interests
+                                    <Heart className="mr-2 h-4 w-4" /> {t('dashboard.updateInterests')}
                                 </Button>
                                 <Button variant="outline" className="justify-start" onClick={() => setActiveTab('social')}>
-                                    <Share2 className="mr-2 h-4 w-4" /> Invite Friends
+                                    <Share2 className="mr-2 h-4 w-4" /> {t('dashboard.inviteFriends')}
                                 </Button>
                             </CardContent>
                         </Card>
@@ -152,55 +209,55 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
                 <TabsContent value="personal">
                     <Card>
                         <CardHeader>
-                            <CardTitle>Personal Information</CardTitle>
-                            <CardDescription>Update your personal details and contact preferences.</CardDescription>
+                            <CardTitle>{t('dashboard.personalInfo')}</CardTitle>
+                            <CardDescription>{t('dashboard.personalInfoDesc')}</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-6">
                             <div className="grid gap-4 md:grid-cols-2">
                                 <div className="space-y-2">
-                                    <Label>First Name</Label>
+                                    <Label>{t('dashboard.firstName')}</Label>
                                     <Input value={formData.firstName} disabled />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label>Last Name</Label>
+                                    <Label>{t('dashboard.lastName')}</Label>
                                     <Input value={formData.lastName} disabled />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label>Date of Birth</Label>
+                                    <Label>{t('dashboard.dateOfBirth')}</Label>
                                     <Input
                                         type="date"
-                                        value={formData.birthDate ? new Date(formData.birthDate.seconds * 1000).toISOString().split('T')[0] : ''}
+                                        value={birthDateValue}
                                         onChange={(e) => {
                                             const date = new Date(e.target.value);
                                             handleUpdate('birthDate', { birthDate: date });
                                         }}
                                     />
-                                    <p className="text-xs text-muted-foreground">So we can send you gifts every year!</p>
+                                    <p className="text-xs text-muted-foreground">{t('dashboard.birthdayGift')}</p>
                                 </div>
                                 <div className="space-y-2">
-                                    <Label>Gender</Label>
+                                    <Label>{t('dashboard.gender')}</Label>
                                     <Select
                                         value={formData.gender || ''}
                                         onValueChange={(val) => handleUpdate('gender', { gender: val })}
                                     >
                                         <SelectTrigger>
-                                            <SelectValue placeholder="Select gender" />
+                                            <SelectValue placeholder={t('dashboard.selectGender')} />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="male">Male</SelectItem>
-                                            <SelectItem value="female">Female</SelectItem>
-                                            <SelectItem value="diverse">Diverse</SelectItem>
-                                            <SelectItem value="prefer_not_to_say">Prefer not to say</SelectItem>
+                                            <SelectItem value="male">{t('dashboard.male')}</SelectItem>
+                                            <SelectItem value="female">{t('dashboard.female')}</SelectItem>
+                                            <SelectItem value="diverse">{t('dashboard.diverse')}</SelectItem>
+                                            <SelectItem value="prefer_not_to_say">{t('dashboard.preferNotToSay')}</SelectItem>
                                         </SelectContent>
                                     </Select>
                                 </div>
                             </div>
 
                             <div className="space-y-4 pt-4 border-t">
-                                <h3 className="text-lg font-medium">Location</h3>
+                                <h3 className="text-lg font-medium">{t('dashboard.location')}</h3>
                                 <div className="grid gap-4 md:grid-cols-2">
                                     <div className="space-y-2">
-                                        <Label>Country</Label>
+                                        <Label>{t('dashboard.country')}</Label>
                                         <Input
                                             value={formData.country || ''}
                                             onChange={(e) => setFormData({ ...formData, country: e.target.value })}
@@ -208,7 +265,7 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <Label>City</Label>
+                                        <Label>{t('dashboard.city')}</Label>
                                         <Input
                                             value={formData.city || ''}
                                             onChange={(e) => setFormData({ ...formData, city: e.target.value })}
@@ -219,10 +276,10 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
                             </div>
 
                             <div className="space-y-4 pt-4 border-t">
-                                <h3 className="text-lg font-medium">Communication Preferences</h3>
+                                <h3 className="text-lg font-medium">{t('dashboard.communicationPreferences')}</h3>
                                 <div className="grid gap-4 md:grid-cols-2">
                                     <div className="space-y-2">
-                                        <Label>Preferred Channel</Label>
+                                        <Label>{t('dashboard.channel')}</Label>
                                         <div className="flex gap-4">
                                             <div className="flex items-center space-x-2">
                                                 <RadioGroup
@@ -251,7 +308,7 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
                                         </div>
                                     </div>
                                     <div className="space-y-2">
-                                        <Label>Frequency</Label>
+                                        <Label>{t('dashboard.frequency')}</Label>
                                         <Select
                                             value={formData.contactPreferences?.frequency || 'weekly'}
                                             onValueChange={(val) => handleUpdate('frequency', {
@@ -262,10 +319,10 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
                                                 <SelectValue />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                <SelectItem value="daily">Daily</SelectItem>
-                                                <SelectItem value="weekly">Weekly</SelectItem>
-                                                <SelectItem value="monthly">Monthly</SelectItem>
-                                                <SelectItem value="important_only">Important Only</SelectItem>
+                                                <SelectItem value="daily">{t('dashboard.daily')}</SelectItem>
+                                                <SelectItem value="weekly">{t('dashboard.weekly')}</SelectItem>
+                                                <SelectItem value="monthly">{t('dashboard.monthly')}</SelectItem>
+                                                <SelectItem value="important_only">{t('dashboard.importantOnly')}</SelectItem>
                                             </SelectContent>
                                         </Select>
                                     </div>
@@ -279,8 +336,8 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
                 <TabsContent value="interests">
                     <Card>
                         <CardHeader>
-                            <CardTitle>Your Interests</CardTitle>
-                            <CardDescription>Select the categories you are interested in.</CardDescription>
+                            <CardTitle>{t('dashboard.yourInterests')}</CardTitle>
+                            <CardDescription>{t('dashboard.yourInterestsDesc')}</CardDescription>
                         </CardHeader>
                         <CardContent>
                             <CategorySelector
@@ -296,12 +353,12 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
                     <div className="grid gap-4 md:grid-cols-2">
                         <Card>
                             <CardHeader>
-                                <CardTitle>Social Groups</CardTitle>
-                                <CardDescription>Join our community!</CardDescription>
+                                <CardTitle>{t('dashboard.socialGroups')}</CardTitle>
+                                <CardDescription>{t('dashboard.joinCommunity')}</CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <div className="space-y-2">
-                                    <Label>Would you like to join our social groups?</Label>
+                                    <Label>{t('dashboard.joinQuestion')}</Label>
                                     <RadioGroup
                                         value={formData.profileData?.socialGroup || 'none'}
                                         onValueChange={(val) => handleUpdate('socialGroup', {
@@ -310,15 +367,15 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
                                     >
                                         <div className="flex items-center space-x-2">
                                             <RadioGroupItem value="whatsapp" id="s1" />
-                                            <Label htmlFor="s1">WhatsApp Group</Label>
+                                            <Label htmlFor="s1">{t('dashboard.joinWhatsapp')}</Label>
                                         </div>
                                         <div className="flex items-center space-x-2">
                                             <RadioGroupItem value="telegram" id="s2" />
-                                            <Label htmlFor="s2">Telegram Group</Label>
+                                            <Label htmlFor="s2">{t('dashboard.joinTelegram')}</Label>
                                         </div>
                                         <div className="flex items-center space-x-2">
                                             <RadioGroupItem value="none" id="s3" />
-                                            <Label htmlFor="s3">Prefer not to join</Label>
+                                            <Label htmlFor="s3">{t('dashboard.preferNotJoin')}</Label>
                                         </div>
                                     </RadioGroup>
                                 </div>
@@ -326,7 +383,7 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
                                 {(formData.profileData?.socialGroup === 'whatsapp' || formData.profileData?.socialGroup === 'telegram') && (
                                     <div className="pt-4">
                                         <Button className="w-full" onClick={() => window.open(formData.profileData?.socialGroup === 'whatsapp' ? 'https://chat.whatsapp.com/placeholder' : 'https://t.me/placeholder', '_blank')}>
-                                            Join {formData.profileData?.socialGroup === 'whatsapp' ? 'WhatsApp' : 'Telegram'} Group
+                                            {formData.profileData?.socialGroup === 'whatsapp' ? t('dashboard.joinWhatsapp') : t('dashboard.joinTelegram')}
                                         </Button>
                                     </div>
                                 )}
@@ -335,12 +392,12 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
 
                         <Card>
                             <CardHeader>
-                                <CardTitle>Rewards & Feedback</CardTitle>
-                                <CardDescription>Tell us what you like.</CardDescription>
+                                <CardTitle>{t('dashboard.rewardsFeedback')}</CardTitle>
+                                <CardDescription>{t('dashboard.tellUs')}</CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <div className="space-y-2">
-                                    <Label>What would you like to win?</Label>
+                                    <Label>{t('dashboard.whatToWin')}</Label>
                                     <Select
                                         value={formData.profileData?.rewardPreference || ''}
                                         onValueChange={(val) => handleUpdate('rewardPreference', {
@@ -348,19 +405,19 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
                                         })}
                                     >
                                         <SelectTrigger>
-                                            <SelectValue placeholder="Select reward type" />
+                                            <SelectValue placeholder={t('dashboard.selectOption')} />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="prizes">Prizes</SelectItem>
-                                            <SelectItem value="points">Points</SelectItem>
-                                            <SelectItem value="cash">Cash</SelectItem>
+                                            <SelectItem value="prizes">{t('dashboard.prizes')}</SelectItem>
+                                            <SelectItem value="points">{t('dashboard.points')}</SelectItem>
+                                            <SelectItem value="cash">{t('dashboard.cash')}</SelectItem>
                                         </SelectContent>
                                     </Select>
                                 </div>
                                 <div className="space-y-2">
-                                    <Label>Feedback</Label>
-                                    <Textarea placeholder="Tell us what you think..." />
-                                    <Button variant="outline" size="sm" className="mt-2">Send Feedback</Button>
+                                    <Label>{t('dashboard.feedback')}</Label>
+                                    <Textarea placeholder={t('dashboard.feedbackPlaceholder')} />
+                                    <Button variant="outline" size="sm" className="mt-2">{t('dashboard.sendFeedback')}</Button>
                                 </div>
                             </CardContent>
                         </Card>

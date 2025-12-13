@@ -16,6 +16,8 @@ interface Message {
 }
 
 import { getGreetingAction } from '@/app/actions/greeting';
+import { extractTextFromDocument } from '@/app/actions/upload';
+import { Paperclip, FileText } from 'lucide-react';
 
 interface AiChatWidgetProps {
     // greeting property removed as we fetch it internally now
@@ -32,6 +34,8 @@ export function AiChatWidget() {
     ]);
     const [inputValue, setInputValue] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
     const scrollAreaRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -59,20 +63,43 @@ export function AiChatWidget() {
     }, [messages, isOpen]);
 
     const handleSendMessage = async () => {
-        if (!inputValue.trim() || isLoading) return;
+        if ((!inputValue.trim() && !selectedFile) || isLoading) return;
+
+        let userContent = inputValue;
+        if (selectedFile) {
+            userContent += ` [Anhänge: ${selectedFile.name}]`;
+        }
 
         const userMessage: Message = {
             id: Date.now().toString(),
             role: 'user',
-            content: inputValue,
+            content: userContent,
         };
 
         setMessages((prev) => [...prev, userMessage]);
         setInputValue('');
+        const fileToUpload = selectedFile;
+        setSelectedFile(null); // Clear formatting immediately
         setIsLoading(true);
 
         try {
-            const result = await chatAction({ question: userMessage.content });
+            let context = '';
+            if (fileToUpload) {
+                const formData = new FormData();
+                formData.append('file', fileToUpload);
+                const uploadResult = await extractTextFromDocument(formData);
+                if (uploadResult.success && uploadResult.text) {
+                    context = uploadResult.text;
+                } else {
+                    console.error('File processing failed:', uploadResult.error);
+                    // Optionally notify user
+                }
+            }
+
+            const result = await chatAction({
+                question: userMessage.content,
+                context: context
+            });
 
             if (!result.success || !result.answer) {
                 throw new Error(result.error || 'Unknown error');
@@ -95,6 +122,17 @@ export function AiChatWidget() {
             setMessages((prev) => [...prev, errorMessage]);
         } finally {
             setIsLoading(false);
+        }
+    };
+
+    const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            const file = e.target.files[0];
+            if (file.size > 5 * 1024 * 1024) {
+                alert('File size too large (max 5MB)');
+                return;
+            }
+            setSelectedFile(file);
         }
     };
 
@@ -174,6 +212,21 @@ export function AiChatWidget() {
                                 disabled={isLoading}
                                 className="flex-grow"
                             />
+                            <Input
+                                type="file"
+                                ref={fileInputRef}
+                                className="hidden"
+                                accept=".pdf,.txt"
+                                onChange={handleFileSelect}
+                            />
+                            <Button
+                                variant="outline"
+                                size="icon"
+                                onClick={() => fileInputRef.current?.click()}
+                                className={selectedFile ? "bg-primary/20" : ""}
+                            >
+                                <Paperclip className="w-4 h-4" />
+                            </Button>
                             <Button size="icon" onClick={handleSendMessage} disabled={isLoading || !inputValue.trim()}>
                                 <Send className="w-4 h-4" />
                             </Button>

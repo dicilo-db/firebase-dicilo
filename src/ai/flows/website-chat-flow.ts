@@ -3,6 +3,7 @@ import { z } from 'genkit';
 
 const WebsiteChatInputSchema = z.object({
     question: z.string().describe('The user\'s message or question.'),
+    context: z.string().optional().describe('Relevant context from uploaded documents.'),
 });
 export type WebsiteChatInput = z.infer<typeof WebsiteChatInputSchema>;
 
@@ -55,9 +56,14 @@ const websiteChatFlow = ai.defineFlow(
     },
     async (input) => {
         // 1. Fetch Dynamic Context
-        const dynamicContext = await getDynamicKnowledgeContext();
+        let dynamicContext = await getDynamicKnowledgeContext();
 
-        // 2. Call Prompt with Question + Context
+        // 2. Append Document Context
+        if (input.context) {
+            dynamicContext += "\n\n[UPLOADED DOCUMENT CONTEXT]:\n" + input.context;
+        }
+
+        // 3. Call Prompt with Question + Context
         const { output } = await prompt({
             question: input.question,
             context: dynamicContext

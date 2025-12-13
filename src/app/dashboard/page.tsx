@@ -44,7 +44,7 @@ const DashboardSkeleton = () => (
 
 export default function DashboardPage() {
     const router = useRouter();
-    const { t } = useTranslation(['login', 'admin']); // Load admin for the form
+    const { t } = useTranslation(['login', 'admin', 'common']); // Load admin for the form
     const [user, setUser] = useState<User | null>(null);
     const [clientData, setClientData] = useState<ClientData | null>(null);
     const [privateProfile, setPrivateProfile] = useState<any | null>(null);
@@ -209,12 +209,16 @@ export default function DashboardPage() {
                 <div className="mb-6 flex items-center justify-between">
                     <h1 className="text-2xl font-bold">
                         {/* Title changes based on context */}
-                        {privateProfile ? 'Mein Bereich' : t('successTitle')}
+                        {privateProfile ? t('common:dashboard.myArea') : t('successTitle')}
                     </h1>
                     <div className="flex gap-2">
                         <Button variant="outline" onClick={() => router.push('/dashboard/profile')}>
                             <UserIcon className="mr-2 h-4 w-4" />
                             Profil bearbeiten
+                        </Button>
+                        <Button variant="outline" onClick={() => router.push('/dashboard/tickets')}>
+                            <Loader2 className="mr-2 h-4 w-4" />
+                            {t('tickets.title', 'Tickets')}
                         </Button>
                         {isAdmin && (
                             <Button variant="default" onClick={() => router.push('/admin')}>
@@ -230,10 +234,9 @@ export default function DashboardPage() {
 
                 {error === 'no_client_found' ? (
                     <div className="rounded-lg border p-8 text-center">
-                        <h2 className="text-xl font-semibold">Willkommen!</h2>
+                        <h2 className="text-xl font-semibold">{t('dashboard.welcome')}</h2>
                         <p className="mt-2 text-muted-foreground">
-                            Wir konnten kein Unternehmen finden, das mit Ihrem Konto verknüpft ist.
-                            Bitte kontaktieren Sie den Support, wenn Sie glauben, dass dies ein Fehler ist.
+                            {t('dashboard.noCompanyFound')}
                         </p>
                     </div>
                 ) : error ? (

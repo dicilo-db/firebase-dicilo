@@ -9,11 +9,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Trash2, Upload, FileText, File, Save } from 'lucide-react';
+import { Loader2, Trash2, Upload, FileText, File, Save, ArrowLeft } from 'lucide-react';
 import { getFirestore, collection, query, orderBy, onSnapshot, deleteDoc, doc, addDoc, serverTimestamp } from 'firebase/firestore';
+import Link from 'next/link';
 import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import { app } from '@/lib/firebase';
-// import { uploadKnowledgeFile } from '@/app/actions/ai-admin'; // To be implemented
+import { processUploadedFile } from '@/app/actions/ai-admin';
 
 const db = getFirestore(app);
 const storage = getStorage(app);
@@ -147,8 +148,15 @@ export default function AdminAiChatPage() {
 
     return (
         <div className="container mx-auto p-6 space-y-6">
-            <div className="flex justify-between items-center">
-                <h1 className="text-3xl font-bold">AI Chat Knowledge Base</h1>
+            <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center">
+                <div className="flex items-center gap-4">
+                    <Button variant="outline" size="icon" asChild>
+                        <Link href="/admin">
+                            <ArrowLeft className="h-4 w-4" />
+                        </Link>
+                    </Button>
+                    <h1 className="text-3xl font-bold">AI Chat Knowledge Base</h1>
+                </div>
             </div>
 
             <Tabs defaultValue="text" className="w-full">

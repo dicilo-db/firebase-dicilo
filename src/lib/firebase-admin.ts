@@ -6,9 +6,16 @@ if (!process.env.GCLOUD_PROJECT) {
 }
 
 if (!getApps().length) {
-    admin.initializeApp({
-        projectId: 'geosearch-fq4i9',
-    });
+    if (process.env.FIREBASE_SERVICE_ACCOUNT_KEY) {
+        admin.initializeApp({
+            credential: admin.credential.cert(JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY)),
+            projectId: 'geosearch-fq4i9',
+        });
+    } else {
+        admin.initializeApp({
+            projectId: 'geosearch-fq4i9',
+        });
+    }
 }
 
 export const adminAuth = admin.auth();

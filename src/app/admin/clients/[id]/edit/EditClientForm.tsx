@@ -57,6 +57,14 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
 import { Calendar } from '@/components/ui/calendar';
 import { format, parseISO } from 'date-fns';
 import { Textarea } from '@/components/ui/textarea';
@@ -90,6 +98,7 @@ const LayoutEditor = dynamic(() => import('@/app/dashboard/LayoutEditor'), {
 });
 
 import { WalletCard } from '@/components/dashboard/WalletCard';
+import { ClientCouponManager } from '@/components/dashboard/ClientCouponManager';
 
 
 
@@ -1127,45 +1136,28 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Tabs defaultValue="general">
-              <TabsList className="mb-6 grid w-full grid-cols-4 md:grid-cols-8">
-                <TabsTrigger value="general">
-                  {t('clients.tabs.general')}
+            <Tabs defaultValue="general" className="w-full">
+              <TabsList className="flex w-full justify-start overflow-x-auto overflow-y-hidden text-nowrap">
+                <TabsTrigger value="general">{t('clients.tabs.general')}</TabsTrigger>
+                <TabsTrigger value="marqueeHeader">
+                  {t('clients.tabs.marqueeHeader')}
                 </TabsTrigger>
-                {clientType !== 'retailer' && (
-                  <>
-                    <TabsTrigger value="marqueeHeader">
-                      {t('clients.tabs.marqueeHeader')}
-                    </TabsTrigger>
-                    <TabsTrigger value="body">
-                      {t('clients.tabs.body')}
-                    </TabsTrigger>
-                    <TabsTrigger value="cards">
-                      {t('clients.tabs.infoCards')}
-                    </TabsTrigger>
-                    <TabsTrigger value="products">
-                      {t('clients.tabs.products')}
-                    </TabsTrigger>
-                    <TabsTrigger value="graphics">
-                      {t('clients.tabs.graphics')}
-                    </TabsTrigger>
-                  </>
-                )}
+                <TabsTrigger value="body">{t('clients.tabs.body')}</TabsTrigger>
+                <TabsTrigger value="cards">{t('clients.tabs.infoCards')}</TabsTrigger>
+                <TabsTrigger value="products">{t('clients.tabs.products')}</TabsTrigger>
+                <TabsTrigger value="graphics">{t('clients.tabs.graphics')}</TabsTrigger>
                 <TabsTrigger value="layout">
                   Page Editor
                 </TabsTrigger>
                 <TabsTrigger value="userManagement">
                   User Management
                 </TabsTrigger>
-                <TabsTrigger value="form">
-                  {t('clients.tabs.form')}
-                </TabsTrigger>
+                <TabsTrigger value="form">{t('clients.tabs.form')}</TabsTrigger>
                 <TabsTrigger value="wallet" className="text-blue-600 font-bold">Wallet</TabsTrigger>
-                {clientType !== 'retailer' && (
-                  <TabsTrigger value="translations">
-                    {t('clients.tabs.translations')}
-                  </TabsTrigger>
-                )}
+                <TabsTrigger value="translations">
+                  {t('clients.tabs.translations')}
+                </TabsTrigger>
+                <TabsTrigger value="coupons">{t('clients.tabs.coupons')}</TabsTrigger>
               </TabsList>
 
               {clientType === 'retailer' && (
@@ -2469,31 +2461,42 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
 
               {/* Translations Tab */}
               <TabsContent value="translations">
-                <div className="space-y-2">
-                  <Label htmlFor="translations">
-                    {t('clients.fields.translations')}
-                  </Label>
-                  <Controller
-                    name="translations"
-                    control={control}
-                    render={({ field }) => (
-                      <textarea
-                        id="translations"
-                        {...field}
-                        rows={15}
-                        placeholder={
-                          t(
-                            'clients.fields.jsonPlaceholderObject'
-                          ) as string
-                        }
-                        className="w-full rounded-md border p-2 font-mono text-sm"
-                      />
-                    )}
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    {t('clients.fields.jsonHelpObject')}
-                  </p>
+                <div className="space-y-4">
+                  <div className="rounded-lg border bg-card p-4">
+                    <h3 className="mb-4 text-lg font-medium">
+                      {t('clients.fields.translations')}
+                    </h3>
+                    <FormField
+                      control={control}
+                      name="translations"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <Textarea
+                              {...field}
+                              placeholder={t('clients.fields.jsonPlaceholderObject')}
+                              className="font-mono text-sm"
+                              rows={10}
+                            />
+                          </FormControl>
+                          <p className="text-xs text-muted-foreground">
+                            {t('clients.fields.jsonHelpObject')}
+                          </p>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
                 </div>
+              </TabsContent>
+
+              {/* Coupons Tab */}
+              <TabsContent value="coupons">
+                <ClientCouponManager
+                  companyId={id}
+                  companyName={initialData.clientName}
+                  category={initialData.category || 'Allgemein'}
+                />
               </TabsContent>
             </Tabs>
           </CardContent>
