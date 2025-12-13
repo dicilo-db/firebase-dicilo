@@ -505,6 +505,32 @@
       "popupClick": "Popup-Klick"
     }
   },
+  "contracts": {
+    "coupons": {
+      "createTitle": "Neuen Coupon erstellen",
+      "createDescription": "Registrieren Sie einen neuen Rabatt für die Kategorie: {{category}}",
+      "searchPlaceholder": "Firmenamen suchen...",
+      "searchLabel": "Firma suchen",
+      "manualIdInfo": "Wenn die Suche nicht funktioniert, geben Sie die ID manuell ein:",
+      "manualIdLabel": "Firmen-ID (Erforderlich)",
+      "manualIdPlaceholder": "Kunden-ID hier einfügen",
+      "noResults": "Keine Ergebnisse gefunden. Versuchen Sie, die ID manuell einzugeben.",
+      "titleLabel": "Titel / Vorteil",
+      "titlePlaceholder": "z.B. 10% Rabatt",
+      "descriptionLabel": "Beschreibung",
+      "descriptionPlaceholder": "Details zum Rabatt...",
+      "startDateLabel": "Startdatum",
+      "endDateLabel": "Ablaufdatum",
+      "countryLabel": "Land",
+      "cityLabel": "Stadt",
+      "cancelButton": "Abbrechen",
+      "createButton": "Coupon erstellen",
+      "successTitle": "Coupon erstellt",
+      "successDesc": "Code generiert: {{code}}",
+      "errorTitle": "Fehler",
+      "errorDesc": "Beim Erstellen des Coupons ist ein Fehler aufgetreten."
+    }
+  },
   "formsDashboard": {
     "title": "Formulare Dashboard",
     "managementTitle": "Formularverwaltung",

@@ -13,18 +13,19 @@ import { createCoupon, searchCompanies } from '@/app/actions/coupons'; // Added 
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Search, Building2, MapPin, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useTranslation } from 'react-i18next'; // Import useTranslation
 
 // Schema
 const couponSchema = z.object({
-    companyId: z.string().min(1, 'La Empresa ID es obligatoria'),
-    companyName: z.string().min(1, 'El Nombre de Empresa es obligatorio'),
-    category: z.string().min(1, 'Categoría requerida'),
-    title: z.string().min(3, 'El título debe tener al menos 3 caracteres'),
+    companyId: z.string().min(1, 'ID Required'),
+    companyName: z.string().min(1, 'Name Required'),
+    category: z.string().min(1, 'Category Required'),
+    title: z.string().min(3, 'Title too short'),
     description: z.string().optional(),
     startDate: z.string(),
     endDate: z.string(),
-    country: z.string().min(1, 'País requerido'),
-    city: z.string().min(1, 'Ciudad requerida'),
+    country: z.string().min(1, 'Country Required'),
+    city: z.string().min(1, 'City Required'),
 });
 
 interface CouponFormProps {
@@ -37,6 +38,7 @@ interface CouponFormProps {
 }
 
 export function CouponForm({ isOpen, onClose, onSuccess, category, fixedCompanyId, fixedCompanyName }: CouponFormProps) {
+    const { t } = useTranslation('admin'); // Use translation hook
     const { toast } = useToast();
     const [isLoading, setIsLoading] = useState(false);
 
@@ -103,8 +105,6 @@ export function CouponForm({ isOpen, onClose, onSuccess, category, fixedCompanyI
                     setShowResults(true);
                 } else if (!res.success) {
                     console.error("Search error:", res.error);
-                    // Optional: Show toast if strictly needed, but might be annoying while typing.
-                    // For now, logging is enough, or a subtle message.
                 }
                 setIsSearching(false);
             } else {
@@ -126,48 +126,56 @@ export function CouponForm({ isOpen, onClose, onSuccess, category, fixedCompanyI
         setShowResults(false);
     };
 
-    const onSubmit = async (values: z.infer<typeof couponSchema>) => {
+    const handleManualSubmit = async () => {
+        // Validation check
+        const isValid = await form.trigger();
+        if (!isValid) return;
+
+        const values = form.getValues();
         setIsLoading(true);
         const res = await createCoupon(values);
         setIsLoading(false);
 
         if (res.success) {
             toast({
-                title: 'Cupón creado',
-                description: `Código generado: ${res.code}`,
+                title: t('contracts.coupons.successTitle'),
+                description: t('contracts.coupons.successDesc', { code: res.code }),
             });
             onSuccess();
             onClose();
         } else {
             toast({
-                title: 'Error',
-                description: res.error || 'Ocurrió un error al crear el cupón.',
+                title: t('contracts.coupons.errorTitle'),
+                description: res.error || t('contracts.coupons.errorDesc'),
                 variant: 'destructive',
             });
         }
     };
 
+    // Handle Enter key to simulate submission without form tag
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter') {
+            e.preventDefault(); // Prevent accidental submission of parent forms if any
+            handleManualSubmit();
+        }
+    };
+
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+            <DialogContent
+                className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto"
+                onKeyDown={handleKeyDown} // Listen for Enter key
+            >
                 <DialogHeader>
-                    <DialogTitle>Crear Nuevo Cupón</DialogTitle>
+                    <DialogTitle>{t('contracts.coupons.createTitle', 'Crear Nuevo Cupón')}</DialogTitle>
                     <DialogDescription>
-                        Registra un nuevo descuento para la categoría: {category}
+                        {t('contracts.coupons.createDescription', { category })}
                     </DialogDescription>
                 </DialogHeader>
 
                 <Form {...form}>
-                    <form onSubmit={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        // Also try to stop native propagation just in case
-                        if (e.nativeEvent) {
-                            e.nativeEvent.stopImmediatePropagation();
-                            e.nativeEvent.stopPropagation();
-                        }
-                        form.handleSubmit(onSubmit)(e);
-                    }} className="space-y-4">
+                    {/* NUCLEAR FIX: Replaced <form> with <div> to prevent ANY event bubbling to parent forms */}
+                    <div className="space-y-4">
 
                         {!fixedCompanyId && (
                             <>
@@ -178,12 +186,12 @@ export function CouponForm({ isOpen, onClose, onSuccess, category, fixedCompanyI
                                         name="companyName"
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel>Buscar Empresa</FormLabel>
+                                                <FormLabel>{t('contracts.coupons.searchLabel', 'Buscar Empresa')}</FormLabel>
                                                 <FormControl>
                                                     <div className="relative">
                                                         <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                                                         <Input
-                                                            placeholder="Escribe el nombre de la empresa..."
+                                                            placeholder={t('contracts.coupons.searchPlaceholder', 'Escribe el nombre de la empresa...')}
                                                             {...field}
                                                             value={searchTerm}
                                                             onChange={(e) => {
@@ -229,28 +237,28 @@ export function CouponForm({ isOpen, onClose, onSuccess, category, fixedCompanyI
                                         </div>
                                     )}
 
-                                    {/* Debug Info / Not Found Message */}
+                                    {/* Not Found Message */}
                                     {searchTerm.length >= 2 && !isSearching && searchResults.length === 0 && (
                                         <div className="text-xs text-muted-foreground mt-1">
-                                            No se encontraron resultados. Intente escribir el ID manualmente.
+                                            {t('contracts.coupons.noResults', 'No se encontraron resultados.')}
                                         </div>
                                     )}
                                 </div>
 
-                                {/* Visible ID field to unblock saving if search fails */}
+                                {/* Manual ID Fallback */}
                                 <div className="p-3 bg-muted/30 rounded border border-dashed">
                                     <div className="text-xs text-muted-foreground mb-2 flex items-center gap-1">
                                         <Info className="h-3 w-3" />
-                                        <span>Si la búsqueda no funciona, ingrese el ID manualmente:</span>
+                                        <span>{t('contracts.coupons.manualIdInfo', 'Si la búsqueda no funciona...')}</span>
                                     </div>
                                     <FormField
                                         control={form.control}
                                         name="companyId"
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel className="text-xs">ID de Empresa (Requerido)</FormLabel>
+                                                <FormLabel className="text-xs">{t('contracts.coupons.manualIdLabel', 'ID de Empresa')}</FormLabel>
                                                 <FormControl>
-                                                    <Input {...field} placeholder="Pegue aquí el ID del cliente" />
+                                                    <Input {...field} placeholder={t('contracts.coupons.manualIdPlaceholder')} />
                                                 </FormControl>
                                                 <FormMessage />
                                             </FormItem>
@@ -266,9 +274,9 @@ export function CouponForm({ isOpen, onClose, onSuccess, category, fixedCompanyI
                             name="title"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Título / Beneficio</FormLabel>
+                                    <FormLabel>{t('contracts.coupons.titleLabel', 'Título / Beneficio')}</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="Ej. 10% de Descuento" {...field} />
+                                        <Input placeholder={t('contracts.coupons.titlePlaceholder')} {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -280,9 +288,9 @@ export function CouponForm({ isOpen, onClose, onSuccess, category, fixedCompanyI
                             name="description"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Descripción</FormLabel>
+                                    <FormLabel>{t('contracts.coupons.descriptionLabel', 'Descripción')}</FormLabel>
                                     <FormControl>
-                                        <Textarea placeholder="Detalles del descuento..." {...field} />
+                                        <Textarea placeholder={t('contracts.coupons.descriptionPlaceholder')} {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -295,7 +303,7 @@ export function CouponForm({ isOpen, onClose, onSuccess, category, fixedCompanyI
                                 name="startDate"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Fecha Inicio</FormLabel>
+                                        <FormLabel>{t('contracts.coupons.startDateLabel', 'Fecha Inicio')}</FormLabel>
                                         <FormControl>
                                             <Input type="date" {...field} />
                                         </FormControl>
@@ -308,7 +316,7 @@ export function CouponForm({ isOpen, onClose, onSuccess, category, fixedCompanyI
                                 name="endDate"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Fecha Expiración</FormLabel>
+                                        <FormLabel>{t('contracts.coupons.endDateLabel', 'Fecha Expiración')}</FormLabel>
                                         <FormControl>
                                             <Input type="date" {...field} />
                                         </FormControl>
@@ -324,7 +332,7 @@ export function CouponForm({ isOpen, onClose, onSuccess, category, fixedCompanyI
                                 name="country"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>País</FormLabel>
+                                        <FormLabel>{t('contracts.coupons.countryLabel', 'País')}</FormLabel>
                                         <FormControl>
                                             <Input {...field} />
                                         </FormControl>
@@ -337,7 +345,7 @@ export function CouponForm({ isOpen, onClose, onSuccess, category, fixedCompanyI
                                 name="city"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Ciudad</FormLabel>
+                                        <FormLabel>{t('contracts.coupons.cityLabel', 'Ciudad')}</FormLabel>
                                         <FormControl>
                                             <Input {...field} />
                                         </FormControl>
@@ -348,12 +356,15 @@ export function CouponForm({ isOpen, onClose, onSuccess, category, fixedCompanyI
                         </div>
 
                         <DialogFooter>
-                            <Button type="button" variant="ghost" onClick={onClose}>Cancelar</Button>
-                            <Button type="submit" disabled={isLoading}>
-                                {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 'Crear Cupón'}
+                            <Button type="button" variant="ghost" onClick={onClose}>
+                                {t('contracts.coupons.cancelButton', 'Cancelar')}
+                            </Button>
+                            {/* Explicitly Type Button to avoid form submit behavior */}
+                            <Button type="button" onClick={handleManualSubmit} disabled={isLoading}>
+                                {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : t('contracts.coupons.createButton', 'Crear Cupón')}
                             </Button>
                         </DialogFooter>
-                    </form>
+                    </div>
                 </Form>
             </DialogContent>
         </Dialog>

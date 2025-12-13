@@ -504,6 +504,32 @@
       "popupClick": "Clic en Popup"
     }
   },
+  "contracts": {
+    "coupons": {
+      "createTitle": "Crear Nuevo Cupón",
+      "createDescription": "Registra un nuevo descuento para la categoría: {{category}}",
+      "searchPlaceholder": "Escribe el nombre de la empresa...",
+      "searchLabel": "Buscar Empresa",
+      "manualIdInfo": "Si la búsqueda no funciona, ingrese el ID manualmente:",
+      "manualIdLabel": "ID de Empresa (Requerido)",
+      "manualIdPlaceholder": "Pegue aquí el ID del cliente",
+      "noResults": "No se encontraron resultados. Intente escribir el ID manualmente.",
+      "titleLabel": "Título / Beneficio",
+      "titlePlaceholder": "Ej. 10% de Descuento",
+      "descriptionLabel": "Descripción",
+      "descriptionPlaceholder": "Detalles del descuento...",
+      "startDateLabel": "Fecha Inicio",
+      "endDateLabel": "Fecha Expiración",
+      "countryLabel": "País",
+      "cityLabel": "Ciudad",
+      "cancelButton": "Cancelar",
+      "createButton": "Crear Cupón",
+      "successTitle": "Cupón creado",
+      "successDesc": "Código generado: {{code}}",
+      "errorTitle": "Error",
+      "errorDesc": "Ocurrió un error al crear el cupón."
+    }
+  },
   "formsDashboard": {
     "title": "Dashboard de Formularios",
     "managementTitle": "Gestión de Formularios",
