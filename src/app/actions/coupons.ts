@@ -302,15 +302,17 @@ export async function searchCompanies(term: string) {
  */
 export async function getCouponsByCompany(companyId: string) {
     try {
+        console.log(`[getCouponsByCompany] Fetching for: ${companyId}`);
         if (!companyId) return { success: false, error: 'Company ID is required' };
 
         const snapshot = await adminDb.collection('coupons')
             .where('companyId', '==', companyId)
             .get();
 
+        console.log(`[getCouponsByCompany] Found ${snapshot.size} documents.`);
+
         let coupons = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as any[];
 
-        // Recalculate status dynamically AND serialize all dates
         // Recalculate status dynamically AND serialize all dates
         const now = new Date();
         const serializedCoupons = coupons.map(c => {
@@ -323,22 +325,23 @@ export async function getCouponsByCompany(companyId: string) {
             if (end < now) status = 'expired';
             else if (start > now) status = 'scheduled';
 
-            // Explicitly map fields to avoid serialization errors with hidden non-serializable types
+            // Explicitly map fields.
+            // Using strict checks to ensure no undefined/complex objects leak.
             return {
-                id: c.id,
-                companyId: c.companyId || '',
-                companyName: c.companyName || '',
-                category: c.category || '',
-                title: c.title || '',
-                description: c.description || '',
-                country: c.country || '',
-                city: c.city || '',
-                code: c.code || '',
-                startDate: !isNaN(start.getTime()) ? start.toISOString() : '', // Handle invalid dates safely
+                id: String(c.id || ''),
+                companyId: String(c.companyId || ''),
+                companyName: String(c.companyName || ''),
+                category: String(c.category || ''),
+                title: String(c.title || ''),
+                description: String(c.description || ''),
+                country: String(c.country || ''),
+                city: String(c.city || ''),
+                code: String(c.code || ''),
+                startDate: !isNaN(start.getTime()) ? start.toISOString() : '',
                 endDate: !isNaN(end.getTime()) ? end.toISOString() : '',
                 createdAt: createdAt && !isNaN(createdAt.getTime()) ? createdAt.toISOString() : null,
                 updatedAt: updatedAt && !isNaN(updatedAt.getTime()) ? updatedAt.toISOString() : null,
-                status
+                status: String(status)
             };
         });
 
@@ -349,9 +352,13 @@ export async function getCouponsByCompany(companyId: string) {
             return dateB - dateA;
         });
 
-        return { success: true, coupons: serializedCoupons };
+        // Nuclear option: Ensure strictly valid JSON
+        const cleanCoupons = JSON.parse(JSON.stringify(serializedCoupons));
+
+        return { success: true, coupons: cleanCoupons };
     } catch (error: any) {
         console.error('Error fetching company coupons:', error);
-        return { success: false, error: error.message };
+        // Explicitly return a plain object error
+        return { success: false, error: String(error?.message || 'Unknown error') };
     }
 }
