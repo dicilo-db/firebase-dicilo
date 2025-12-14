@@ -27,6 +27,7 @@ export interface CouponFilter {
     city?: string;
     month?: string; // YYYY-MM
     status?: string; // active, expired, scheduled
+    category?: string;
 }
 
 // Simulated AI Background Generator
@@ -164,6 +165,9 @@ export async function getAllCoupons(filters: CouponFilter) {
         }
         if (filters.city) {
             coupons = coupons.filter(c => c.city === filters.city);
+        }
+        if (filters.category && filters.category !== 'all') {
+            coupons = coupons.filter(c => c.category === filters.category);
         }
 
         const now = new Date();

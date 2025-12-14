@@ -25,6 +25,14 @@
     - **Empresas:** Gestionar Perfil (Editar) o Eliminar Registro.
     - **Privatuser:** Pausar/Activar Cuenta o Eliminar Registro.
 
+### **187. FIX: WEBPACK CACHE & PORT CONFLICT - CÓDIGO: FIX-CACHE-V1**
+- **Fecha y Hora:** 14 de Diciembre de 2025, 20:05 (CET)
+- **Módulos Afectados:** Configuración del Entorno local (`.next/cache`).
+- **Descripción del Cambio:**
+  - **Limpieza de Caché:** Se eliminó la carpeta `.next` para resolver el error `TypeError: Cannot read properties of undefined (reading 'hasStartTime')`.
+  - **Reinicio de Puertos:** Se liberaron los puertos 3000 y 3001 terminando los procesos en conflicto.
+  - **Restauración Dashboard:** Se añadieron los componentes de error faltantes (`error.tsx`, `not-found.tsx`, `loading.tsx`) en la ruta admin.
+
 ### **186. FEAT & FIX: COUPON DOWNLOAD/EMAIL & EDIT FORM - CÓDIGO: FEAT-COUPON-V1**
 - **Fecha y Hora:** 14 de Diciembre de 2025, 19:30 (CET)
 - **Módulos Afectados:** `src/components/dashboard/ClientCouponManager`, `src/app/admin/clients/[id]/edit/EditClientForm`, `src/lib/email`.

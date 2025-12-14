@@ -16,6 +16,8 @@ import { de } from 'date-fns/locale';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from 'react-i18next';
 
+import categoriesData from '@/data/categories.json';
+
 export default function CouponsPage() {
     const { t } = useTranslation('admin');
     const { toast } = useToast();
@@ -31,6 +33,10 @@ export default function CouponsPage() {
     const [statusFilter, setStatusFilter] = useState('all');
     const [monthFilter, setMonthFilter] = useState('');
     const [countryFilter, setCountryFilter] = useState('');
+    const [categoryFilter, setCategoryFilter] = useState('all');
+
+    // Extract categories list
+    const categories = categoriesData.map((c: any) => c.categoria).sort();
 
     // Initial Load
     useEffect(() => {
@@ -44,7 +50,7 @@ export default function CouponsPage() {
             fetchData();
         }, 500);
         return () => clearTimeout(timeout);
-    }, [searchTerm, statusFilter, monthFilter, countryFilter]);
+    }, [searchTerm, statusFilter, monthFilter, countryFilter, categoryFilter]);
 
     const fetchData = async () => {
         setLoading(true);
@@ -53,7 +59,8 @@ export default function CouponsPage() {
                 search: searchTerm,
                 status: statusFilter,
                 month: monthFilter,
-                country: countryFilter
+                country: countryFilter,
+                category: categoryFilter === 'all' ? undefined : categoryFilter
             });
             if (res.success && res.coupons) {
                 setCoupons(res.coupons);
@@ -120,10 +127,10 @@ export default function CouponsPage() {
                                     <ArrowLeft className="h-4 w-4" />
                                 </Button>
                             </Link>
-                            <h1 className="text-3xl font-bold tracking-tight">Gestión Central de Cupones</h1>
+                            <h1 className="text-3xl font-bold tracking-tight">Gestión de Cupones</h1>
                         </div>
                         <p className="text-muted-foreground">
-                            Administra todos los cupones activos, expirados y programados de todas las empresas.
+                            Administra las promociones y descuentos de las empresas.
                         </p>
                     </div>
                     <div className="flex gap-2">
@@ -138,7 +145,35 @@ export default function CouponsPage() {
                     </div>
                 </div>
 
-                {/* Stats Summary */}
+                {/* Categories Grid (RESTORED) */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    {categories.map((cat: string) => {
+                        const catStats = stats[cat] || { active: 0, total: 0 };
+                        return (
+                            <Card key={cat} className="hover:shadow-md transition-all cursor-pointer" onClick={() => setCategoryFilter(cat)}>
+                                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                    <CardTitle className="text-sm font-medium truncate" title={cat}>{cat}</CardTitle>
+                                    <Tag className={`h-4 w-4 ${catStats.active > 0 ? 'text-primary' : 'text-muted-foreground'}`} />
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="text-2xl font-bold flex items-baseline gap-1">
+                                        {catStats.active}
+                                        <span className="text-sm font-normal text-muted-foreground">activos</span>
+                                    </div>
+                                    {/* Simple visual separator/graph placeholder */}
+                                    <div className="mt-2 h-1 w-full bg-slate-100 rounded-full overflow-hidden">
+                                        <div
+                                            className="h-full bg-green-500 rounded-full"
+                                            style={{ width: `${Math.min((catStats.active / (catStats.total || 1)) * 100, 100)}%` }}
+                                        />
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        );
+                    })}
+                </div>
+
+                {/* Overall Stats */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -150,6 +185,7 @@ export default function CouponsPage() {
                             <p className="text-xs text-muted-foreground">Disponibles ahora mismo</p>
                         </CardContent>
                     </Card>
+
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium">Total Histórico</CardTitle>
@@ -160,7 +196,6 @@ export default function CouponsPage() {
                             <p className="text-xs text-muted-foreground">Cupones creados en total</p>
                         </CardContent>
                     </Card>
-                    {/* Placeholder for future stat */}
                     <Card className="bg-primary/5 border-primary/20">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium">Estado del Sistema</CardTitle>
@@ -176,16 +211,28 @@ export default function CouponsPage() {
                 {/* Filters */}
                 <Card>
                     <CardContent className="pt-6">
-                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                            <div className="relative">
+                        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+                            <div className="relative md:col-span-1">
                                 <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                                 <Input
-                                    placeholder="Buscar empresa, código, título..."
+                                    placeholder="Buscar empresa, código..."
                                     className="pl-8"
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                 />
                             </div>
+
+                            <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Categoría" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">Todas las Categorías</SelectItem>
+                                    {categories.map((cat: string) => (
+                                        <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
 
                             <Select value={statusFilter} onValueChange={setStatusFilter}>
                                 <SelectTrigger>
@@ -211,7 +258,7 @@ export default function CouponsPage() {
                                     <SelectValue placeholder="País" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="all">Todos los Países</SelectItem> {/* Handle empty string logic */}
+                                    <SelectItem value="all">Todos los Países</SelectItem>
                                     <SelectItem value="Deutschland">Deutschland</SelectItem>
                                     <SelectItem value="Schweiz">Schweiz</SelectItem>
                                     <SelectItem value="Österreich">Österreich</SelectItem>
@@ -223,6 +270,14 @@ export default function CouponsPage() {
 
                 {/* Data Table */}
                 <Card>
+                    <CardHeader className="flex flex-row items-center justify-between">
+                        <CardTitle>Listado de Cupones</CardTitle>
+                        {categoryFilter !== 'all' && (
+                            <Badge variant="outline" className="cursor-pointer hover:bg-destructive/10 hover:text-destructive" onClick={() => setCategoryFilter('all')}>
+                                Filtro: {categoryFilter} (x)
+                            </Badge>
+                        )}
+                    </CardHeader>
                     <CardContent className="p-0">
                         <Table>
                             <TableHeader>
@@ -253,7 +308,7 @@ export default function CouponsPage() {
                                     </TableRow>
                                 ) : (
                                     coupons.map((coupon) => (
-                                        <TableRow key={coupon.id} className="group">
+                                        <TableRow key={coupon.id} className="group hover:bg-slate-50">
                                             <TableCell>
                                                 <div className="flex flex-col">
                                                     <span className="font-medium flex items-center gap-2">
@@ -266,13 +321,13 @@ export default function CouponsPage() {
                                             <TableCell>
                                                 <div className="flex items-center gap-2">
                                                     {coupon.backgroundImage && (
-                                                        <div className="h-8 w-12 rounded overflow-hidden bg-muted">
+                                                        <div className="h-8 w-12 rounded overflow-hidden bg-muted border">
                                                             <img src={coupon.backgroundImage} alt="" className="h-full w-full object-cover" />
                                                         </div>
                                                     )}
                                                     <div className="flex flex-col">
                                                         <span className="font-medium text-sm truncate max-w-[150px]" title={coupon.title}>{coupon.title}</span>
-                                                        <span className="text-xs font-mono bg-muted px-1 rounded w-fit">{coupon.code}</span>
+                                                        <span className="text-xs font-mono bg-slate-100 px-1 rounded w-fit text-slate-600">{coupon.code}</span>
                                                     </div>
                                                 </div>
                                             </TableCell>
