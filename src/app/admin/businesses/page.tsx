@@ -174,7 +174,7 @@ export default function BusinessesPage() {
   return (
     <div className="p-8">
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-bold">{t('businesses.title')}</h1>
+        <h1 className="text-2xl font-bold">Basic</h1>
         <div className="flex items-center gap-2">
           <Button variant="outline" asChild>
             <Link href="/admin/dashboard">

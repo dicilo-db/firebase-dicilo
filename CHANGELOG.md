@@ -1,5 +1,61 @@
 # Bitácora de Cambios - Dicilo.net
 
+# Bitácora de Cambios - Dicilo.net
+
+### **182. UPGRADE: REGISTRATION CLEANUP & RESTRUCTURE - CÓDIGO: FIX-REGISTRATIONS-CLEANUP-V1**
+
+- **Fecha y Hora:** 14 de Diciembre de 2025, 16:25 (CET)
+- **Módulos Afectados:** `src/app/admin/registrations/page.tsx`, `src/app/actions/registrations.ts`.
+- **Descripción del Cambio:**
+  - **Limpieza de Base de Datos:** Se implementó una lógica de deduplicación automática (Botón "Cleanup DB") que elimina registros duplicados basándose en el email, conservando el más reciente.
+  - **Clasificación Automática:** Todos los registros sin tipo o corruptos se asignan automáticamente a "Basic" (donor), asegurando que ninguna empresa quede en el limbo.
+  - **Reestructuración de UI:** Se reformó el módulo de Registros para obligar el orden de pestañas: `Alle -> Basic -> Starter -> Einzelhändler -> Premium -> Privatuser`.
+  - **Contadores en Tiempo Real:** Ahora cada pestaña muestra el número exacto de registros activos.
+  - **Visibilidad Total:** Se garantiza que la pestaña "Alle" muestre absolutamente todos los registros.
+- **Resultado:** Base de datos sanea y gestión de registros transparente y ordenada.
+
+### **183. UPGRADE: STRICT DATABASE SYNC & REGISTRATION ACCOUNTING - CÓDIGO: FIX-REGISTRATIONS-SYNC-V2**
+- **Fecha y Hora:** 14 de Diciembre de 2025, 16:45 (CET)
+- **Módulos Afectados:** `src/app/actions/registrations.ts`.
+- **Descripción del Cambio:**
+  - **Sincronización Total (Source of Truth):** Se mejoró la lógica de limpieza para leer la colección `clients` (empresas en landing page) y asegurar que cada una tenga su contraparte en `registrations`. Si falta, se crea automáticamente.
+  - **Deduplicación Mejorada:** Algoritmo más agresivo para fusionar registros por Email o Nombre normalizado.
+  - **Contabilidad Exacta:** Garantiza que los contadores del panel "Registrierungen" coincidan exactamente con la cantidad de empresas visibles en la web.
+  - **Acciones Admin:** Se habilitó menú de "Tres Puntos" en cada registro para:
+    - **Empresas:** Gestionar Perfil (Editar) o Eliminar Registro.
+    - **Privatuser:** Pausar/Activar Cuenta o Eliminar Registro.
+
+### **185. REFACTOR: BASIC TIER SYNC & DASHBOARD - CÓDIGO: REF-BASIC-SYNC-V1**
+- **Fecha y Hora:** 14 de Diciembre de 2025, 17:35 (CET)
+- **Módulos Afectados:** `src/app/admin/dashboard`, `src/app/admin/businesses`, `src/app/actions/registrations`.
+- **Descripción del Cambio:**
+  - **Dashboard:** Se ha renombrado el módulo "Businesses" a "Basic" y se ha reordenado para aparecer primero. Se ha añadido el contador real de usuarios "Basic" (donor).
+  - **Sincronización:** Se ha actualizado `runDatabaseCleanup` para tratar la colección `businesses` como fuente de verdad para Basic, fusionándola con `clients` y deduplicando estrictamente.
+
+
+### **184. FIX: REGISTRATIONS IMPORT ERROR - CÓDIGO: FIX-REGISTRATIONS-IMPORTS-V1**
+- **Fecha y Hora:** 14 de Diciembre de 2025, 17:10 (CET)
+- **Módulos Afectados:** `src/app/admin/registrations/page.tsx`.
+- **Descripción del Cambio:** Corrección de `ReferenceError: DropdownMenu is not defined`. Se añadieron las importaciones faltantes de `DropdownMenu` y componentes relacionados, así como los iconos y acciones de servidor necesarios.
+
+
+
+---
+
+### **181. FEAT: PROXY COUPON REFACTOR - CÓDIGO: FEAT-COUPON-REFACTOR-V1**
+
+- **Fecha y Hora:** 14 de Diciembre de 2025, 12:10 (CET)
+- **Módulos Afectados:** `actions/coupons.ts`, `admin/coupons`, `components/dashboard/ClientCouponManager.tsx`.
+- **Descripción del Cambio:**
+  - **Refactorización Completa:** Unificación del sistema de cupones para permitir control total por parte de Admins y autonomía para Empresas.
+  - **Admin Central:** Nuevo panel `/admin/coupons` con tabla de datos unificada, búsqueda global y filtros por estado/mes/país.
+  - **Simulación AI:** Generación automática de imágenes de fondo basadas en la categoría del cupón (ej: Gastronomía -> Comida) mediante mapeo de fuentes Unsplash de alta calidad.
+  - **Nuevos Campos:** Implementación de `discountType` (%, €, Texto) y `backgroundImage` en el modelo de datos.
+  - **UX Empresas:** Tarjetas de cupón mejoradas visualmente y formulario de creación con autocompletado y validación robusta.
+- **Resultado:** Arquitectura de cupones escalable, centralizada y visualmente atractiva.
+
+---
+
 ### **180. FEAT: COUPON AUTOCOMPLETE & FIXES - CÓDIGO: FEAT-COUPON-AUTOCOMPLETE-V1**
 
 - **Fecha y Hora:** 11 de Diciembre de 2025, 23:45 (CET)
@@ -14,7 +70,6 @@
 - **Resultado:** Formulario de cupones 100% funcional y robusto.
 
 ---
-
 
 ### **179. FEAT: COUPONS MODULE - CÓDIGO: FEAT-COUPONS-V1**
 

@@ -1,7 +1,7 @@
 // src/app/admin/registrations/page.tsx
 'use client';
 
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import {
   getFirestore,
@@ -31,7 +31,17 @@ import {
 } from '@/components/ui/table';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
-import { LayoutDashboard, Edit } from 'lucide-react';
+import { LayoutDashboard, Edit, RefreshCw, Trash2, MoreHorizontal, Play, Pause, Trash } from 'lucide-react';
+import { runDatabaseCleanup, deleteRegistration, updateRegistrationStatus } from '@/app/actions/registrations';
+import { useToast } from '@/hooks/use-toast';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 const db = getFirestore(app);
 
@@ -45,6 +55,7 @@ interface Registration {
   whatsapp: string;
   registrationType: RegistrationType;
   createdAt: { seconds: number; nanoseconds: number };
+  status?: 'active' | 'paused' | 'pending';
   clientSlug?: string;
   clientId?: string;
 }
@@ -54,31 +65,71 @@ interface Registration {
 // Botón de acción para gestionar el cliente asociado
 const ActionButton = ({ registration }: { registration: Registration }) => {
   const { t } = useTranslation('admin');
+  const { toast } = useToast();
 
-  if (
-    registration.registrationType !== 'retailer' &&
-    registration.registrationType !== 'premium' &&
-    registration.registrationType !== 'starter'
-  ) {
-    return null; // No mostrar botón para tipos no-cliente
-  }
+  const handleDelete = async () => {
+    if (!confirm(t('Are you sure you want to delete this registration?'))) return;
+    const res = await deleteRegistration(registration.id, registration.registrationType);
+    if (res.success) {
+      toast({ title: 'Deleted', description: 'Registration deleted successfully.' });
+    } else {
+      toast({ title: 'Error', description: res.error, variant: 'destructive' });
+    }
+  };
 
-  if (!registration.clientId) {
-    return (
-      <Button variant="outline" size="sm" disabled>
-        <Edit className="mr-2 h-4 w-4" />
-        {t('registrations.table.noClient')}
-      </Button>
-    );
-  }
+  const handleStatusToggle = async () => {
+    const newStatus = registration.status === 'paused' ? 'active' : 'paused'; // Assuming 'status' field exists or defaults to active
+    const res = await updateRegistrationStatus(registration.id, newStatus);
+    if (res.success) {
+      toast({ title: 'Updated', description: `User ${newStatus === 'active' ? 'activated' : 'paused'}.` });
+    } else {
+      toast({ title: 'Error', description: res.error, variant: 'destructive' });
+    }
+  };
 
   return (
-    <Button asChild variant="default" size="sm">
-      <Link href={`/admin/clients/${registration.clientId}/edit`}>
-        <Edit className="mr-2 h-4 w-4" />
-        {t('registrations.table.manageClient')}
-      </Link>
-    </Button>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" className="h-8 w-8 p-0">
+          <span className="sr-only">Open menu</span>
+          <MoreHorizontal className="h-4 w-4" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuLabel>{t('Actions')}</DropdownMenuLabel>
+
+        {/* EDIT CLIENT (For Companies) */}
+        {registration.clientId && (
+          <DropdownMenuItem asChild>
+            <Link href={`/admin/clients/${registration.clientId}/edit`} className="flex items-center cursor-pointer">
+              <Edit className="mr-2 h-4 w-4" />
+              {t('registrations.table.manageClient')}
+            </Link>
+          </DropdownMenuItem>
+        )}
+
+        {/* PRIVATE USER ACTIONS */}
+        {registration.registrationType === 'private' && (
+          <>
+            <DropdownMenuItem onClick={handleStatusToggle} className="cursor-pointer">
+              {registration.status === 'paused' ? (
+                <><Play className="mr-2 h-4 w-4 text-green-600" /> Activate Account</>
+              ) : (
+                <><Pause className="mr-2 h-4 w-4 text-yellow-600" /> Pause Account</>
+              )}
+            </DropdownMenuItem>
+          </>
+        )}
+
+        <DropdownMenuSeparator />
+
+        {/* DELETE (All Types) */}
+        <DropdownMenuItem onClick={handleDelete} className="text-red-600 cursor-pointer">
+          <Trash className="mr-2 h-4 w-4" />
+          Delete Registration
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
 
@@ -123,8 +174,10 @@ const RegistrationSkeleton = () => (
 export default function RegistrationsPage() {
   // Hooks
   const { t } = useTranslation(['admin', 'register']);
+  const { toast } = useToast();
   const [allRegistrations, setAllRegistrations] = useState<Registration[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isCleaning, setIsCleaning] = useState(false);
   const [activeTab, setActiveTab] = useState('all');
   useAuthGuard(['superadmin']);
 
@@ -138,22 +191,26 @@ export default function RegistrationsPage() {
     const unsubscribe = onSnapshot(
       q,
       async (querySnapshot) => {
-        const regs = querySnapshot.docs.map(
+        // Raw data
+        const rawRegs = querySnapshot.docs.map(
           (doc) => ({ id: doc.id, ...doc.data() }) as Registration
         );
 
-        // Función interna para buscar el cliente asociado a un registro
+        // Client lookup optimization:
+        // Instead of querying one by one, we could try to look up based on email if we had strict linking.
+        // But the existing logic looks up by "FirstName LastName".
+        // Let's keep the logic but optimize parallelism.
+
         const findClientForRegistration = async (
           registration: Registration
         ): Promise<Registration> => {
-          if (
-            registration.registrationType !== 'retailer' &&
-            registration.registrationType !== 'premium' &&
-            registration.registrationType !== 'starter'
-          ) {
-            return registration;
-          }
+          // Skip if private
+          if (registration.registrationType === 'private') return registration;
+
           try {
+            // Fallback logic: check if 'clientId' is already in registration (future proofing)
+            if (registration.clientId) return registration;
+
             const clientNameForQuery = `${registration.firstName} ${registration.lastName}`;
             const clientQuery = query(
               collection(db, 'clients'),
@@ -179,9 +236,8 @@ export default function RegistrationsPage() {
           return registration;
         };
 
-        // Mejora: Procesar las búsquedas de clientes en paralelo
         const enhancedRegs = await Promise.all(
-          regs.map(findClientForRegistration)
+          rawRegs.map(findClientForRegistration)
         );
 
         setAllRegistrations(enhancedRegs);
@@ -189,42 +245,71 @@ export default function RegistrationsPage() {
       },
       (error) => {
         console.error('Error fetching registrations:', error);
+        toast({
+          title: 'Error',
+          description: 'Failed to load registrations.',
+          variant: 'destructive',
+        });
         setIsLoading(false);
       }
     );
 
-    return () => unsubscribe(); // Limpiar la suscripción al desmontar
-  }, [isLoading]); // Dependencia 'isLoading' para evitar re-fetches innecesarios
+    return () => unsubscribe();
+  }, []);
 
-  // Memorizar los registros filtrados para optimizar el rendimiento
+  const handleCleanup = async () => {
+    setIsCleaning(true);
+    toast({ title: 'Cleaning Database...', description: 'Removing duplicates and categorizing entries.' });
+
+    const result = await runDatabaseCleanup();
+
+    setIsCleaning(false);
+
+    if (result.success) {
+      toast({
+        title: 'Cleanup Complete',
+        description: `Removed ${result.stats?.duplicatesRemoved} duplicates. Updated ${result.stats?.updatedToBasic} to Basic.`,
+      });
+      // The snapshot listener will automatically update the UI
+    } else {
+      toast({
+        title: 'Cleanup Failed',
+        description: result.message,
+        variant: 'destructive',
+      });
+    }
+  };
+
+  // Filtrado y Contadores
+  // Ensure types match exactly: 'donor' is Basic
+
+  const counts = useMemo(() => {
+    return {
+      all: allRegistrations.length,
+      donor: allRegistrations.filter(r => r.registrationType === 'donor').length,
+      starter: allRegistrations.filter(r => r.registrationType === 'starter').length,
+      retailer: allRegistrations.filter(r => r.registrationType === 'retailer').length,
+      premium: allRegistrations.filter(r => r.registrationType === 'premium').length,
+      private: allRegistrations.filter(r => r.registrationType === 'private').length,
+    };
+  }, [allRegistrations]);
+
   const filteredRegistrations = useMemo(() => {
     if (activeTab === 'all') return allRegistrations;
     return allRegistrations.filter((reg) => reg.registrationType === activeTab);
   }, [allRegistrations, activeTab]);
 
-  // Memorizar las traducciones para evitar recálculos
-  const registrationTypeMap: Record<RegistrationType, string> = useMemo(
-    () => ({
-      private: t('register.options.private', { ns: 'register' }),
-      donor: t('register.options.donor', { ns: 'register' }),
-      retailer: t('register.options.retailer', { ns: 'register' }),
-      premium: t('register.options.premium', { ns: 'register' }),
-      starter: 'Starter', // Add proper translation key if available, otherwise raw string for now
-    }),
-    [t]
-  );
+  const typeLabels: Record<string, string> = {
+    all: t('registrations.tabs.all', { ns: 'admin' }),
+    donor: 'Basic', // Forced Label per instructions
+    starter: 'Starter',
+    retailer: 'Einzelhändler',
+    premium: 'Premium',
+    private: 'Privatuser'
+  };
 
-  const tabs: { value: string; label: string }[] = useMemo(
-    () => [
-      { value: 'all', label: t('registrations.tabs.all', { ns: 'admin' }) },
-      { value: 'private', label: registrationTypeMap.private },
-      { value: 'donor', label: registrationTypeMap.donor },
-      { value: 'retailer', label: registrationTypeMap.retailer },
-      { value: 'starter', label: registrationTypeMap.starter },
-      { value: 'premium', label: registrationTypeMap.premium },
-    ],
-    [t, registrationTypeMap]
-  );
+  // Order: Alle, Basic, Starter, Einzelhändler, Premium, Privatuser
+  const tabOrder = ['all', 'donor', 'starter', 'retailer', 'premium', 'private'];
 
   if (isLoading) {
     return <RegistrationSkeleton />;
@@ -234,26 +319,34 @@ export default function RegistrationsPage() {
     <div className="flex min-h-screen flex-col bg-gray-50">
       <Header />
       <main className="flex-grow p-4 sm:p-8">
-        <div className="mb-6 flex items-center justify-between">
+        <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <h1 className="text-2xl font-bold">
             {t('registrations.title', { ns: 'admin' })}
           </h1>
-          <Button variant="outline" asChild>
-            <Link href="/admin/dashboard">
-              <LayoutDashboard className="mr-2 h-4 w-4" />
-              {t('businesses.backToDashboard', { ns: 'admin' })}
-            </Link>
-          </Button>
+          <div className="flex gap-2">
+            <Button variant="destructive" onClick={handleCleanup} disabled={isCleaning}>
+              {isCleaning ? <RefreshCw className="mr-2 h-4 w-4 animate-spin" /> : <Trash2 className="mr-2 h-4 w-4" />}
+              {isCleaning ? 'Cleaning...' : 'Cleanup DB Duplicates'}
+            </Button>
+            <Button variant="outline" asChild>
+              <Link href="/admin/dashboard">
+                <LayoutDashboard className="mr-2 h-4 w-4" />
+                {t('businesses.backToDashboard', { ns: 'admin' })}
+              </Link>
+            </Button>
+          </div>
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 md:grid-cols-6">
-            <TabsTrigger value="all">{t('registrations.tabs.all', { ns: 'admin' })}</TabsTrigger>
-            <TabsTrigger value="private">{registrationTypeMap.private}</TabsTrigger>
-            <TabsTrigger value="donor">{registrationTypeMap.donor}</TabsTrigger>
-            <TabsTrigger value="retailer">{registrationTypeMap.retailer}</TabsTrigger>
-            <TabsTrigger value="premium">{registrationTypeMap.premium}</TabsTrigger>
-            <TabsTrigger value="starter">{registrationTypeMap.starter}</TabsTrigger>
+          <TabsList className="grid h-auto w-full grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-6">
+            {tabOrder.map(key => (
+              <TabsTrigger key={key} value={key} className="flex flex-col items-center py-2 sm:flex-row sm:justify-center sm:gap-2">
+                <span>{typeLabels[key]}</span>
+                <Badge variant="secondary" className="ml-0 mt-1 sm:ml-2 sm:mt-0 h-5 px-1.5 text-[10px]">
+                  {counts[key as keyof typeof counts] || 0}
+                </Badge>
+              </TabsTrigger>
+            ))}
           </TabsList>
         </Tabs>
 
@@ -272,7 +365,12 @@ export default function RegistrationsPage() {
               {filteredRegistrations.length > 0 ? (
                 filteredRegistrations.map((reg) => (
                   <TableRow key={reg.id}>
-                    <TableCell className="font-medium">{`${reg.firstName} ${reg.lastName}`}</TableCell>
+                    <TableCell className="font-medium">
+                      {reg.businessName || `${reg.firstName} ${reg.lastName}`}
+                      {reg.businessName && (
+                        <div className="text-xs text-muted-foreground">{reg.firstName} {reg.lastName}</div>
+                      )}
+                    </TableCell>
                     <TableCell>
                       <div>{reg.email}</div>
                       {reg.whatsapp && (
@@ -282,9 +380,11 @@ export default function RegistrationsPage() {
                       )}
                     </TableCell>
                     <TableCell>
-                      <Badge variant="secondary">
-                        {registrationTypeMap[reg.registrationType] ||
-                          reg.registrationType}
+                      <Badge variant={
+                        reg.registrationType === 'premium' ? 'default' :
+                          reg.registrationType === 'retailer' ? 'secondary' : 'outline'
+                      }>
+                        {typeLabels[reg.registrationType] || reg.registrationType}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-sm text-muted-foreground">

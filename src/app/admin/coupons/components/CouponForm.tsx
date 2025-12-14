@@ -9,11 +9,11 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { createCoupon, searchCompanies } from '@/app/actions/coupons'; // Added searchCompanies
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { createCoupon, searchCompanies } from '@/app/actions/coupons';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Search, Building2, MapPin, Info } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { useTranslation } from 'react-i18next'; // Import useTranslation
+import { Loader2, Search, Building2, MapPin, Info, Tag, Euro, Percent, Type } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 // Schema
 const couponSchema = z.object({
@@ -26,6 +26,8 @@ const couponSchema = z.object({
     endDate: z.string(),
     country: z.string().min(1, 'Country Required'),
     city: z.string().min(1, 'City Required'),
+    discountType: z.enum(['euro', 'percent', 'text']),
+    discountValue: z.string().optional(),
 });
 
 interface CouponFormProps {
@@ -38,7 +40,7 @@ interface CouponFormProps {
 }
 
 export function CouponForm({ isOpen, onClose, onSuccess, category, fixedCompanyId, fixedCompanyName }: CouponFormProps) {
-    const { t } = useTranslation('admin'); // Use translation hook
+    const { t } = useTranslation('admin');
     const { toast } = useToast();
     const [isLoading, setIsLoading] = useState(false);
 
@@ -60,9 +62,13 @@ export function CouponForm({ isOpen, onClose, onSuccess, category, fixedCompanyI
             companyId: fixedCompanyId || '',
             companyName: fixedCompanyName || '',
             title: '',
-            description: ''
+            description: '',
+            discountType: 'text',
+            discountValue: ''
         },
     });
+
+    const discountType = form.watch('discountType');
 
     // Reset when opening
     useEffect(() => {
@@ -76,7 +82,9 @@ export function CouponForm({ isOpen, onClose, onSuccess, category, fixedCompanyI
                 companyId: fixedCompanyId || '',
                 companyName: fixedCompanyName || '',
                 title: '',
-                description: ''
+                description: '',
+                discountType: 'text',
+                discountValue: ''
             });
             setSearchTerm('');
             setSearchResults([]);
@@ -133,12 +141,13 @@ export function CouponForm({ isOpen, onClose, onSuccess, category, fixedCompanyI
 
         const values = form.getValues();
         setIsLoading(true);
-        const res = await createCoupon(values);
+        // Cast values to match CouponData strictly if needed, but safe here
+        const res = await createCoupon(values as any);
         setIsLoading(false);
 
         if (res.success) {
             toast({
-                title: t('contracts.coupons.successTitle'),
+                title: t('contracts.coupons.successTitle', 'Muffin Created'),
                 description: t('contracts.coupons.successDesc', { code: res.code }),
             });
             onSuccess();
@@ -152,10 +161,9 @@ export function CouponForm({ isOpen, onClose, onSuccess, category, fixedCompanyI
         }
     };
 
-    // Handle Enter key to simulate submission without form tag
     const handleKeyDown = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter') {
-            e.preventDefault(); // Prevent accidental submission of parent forms if any
+            e.preventDefault();
             handleManualSubmit();
         }
     };
@@ -164,7 +172,7 @@ export function CouponForm({ isOpen, onClose, onSuccess, category, fixedCompanyI
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent
                 className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto"
-                onKeyDown={handleKeyDown} // Listen for Enter key
+                onKeyDown={handleKeyDown}
             >
                 <DialogHeader>
                     <DialogTitle>{t('contracts.coupons.createTitle', 'Crear Nuevo Cupón')}</DialogTitle>
@@ -174,7 +182,6 @@ export function CouponForm({ isOpen, onClose, onSuccess, category, fixedCompanyI
                 </DialogHeader>
 
                 <Form {...form}>
-                    {/* NUCLEAR FIX: Replaced <form> with <div> to prevent ANY event bubbling to parent forms */}
                     <div className="space-y-4">
 
                         {!fixedCompanyId && (
@@ -278,6 +285,52 @@ export function CouponForm({ isOpen, onClose, onSuccess, category, fixedCompanyI
                             </div>
                         )}
 
+                        <div className="grid grid-cols-2 gap-4">
+                            <FormField
+                                control={form.control}
+                                name="discountType"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Tipo de Descuento</FormLabel>
+                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Seleccionar" />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                <SelectItem value="text">
+                                                    <div className="flex items-center gap-2"><Type className="h-4 w-4" /> Texto Libre</div>
+                                                </SelectItem>
+                                                <SelectItem value="percent">
+                                                    <div className="flex items-center gap-2"><Percent className="h-4 w-4" /> Porcentaje (%)</div>
+                                                </SelectItem>
+                                                <SelectItem value="euro">
+                                                    <div className="flex items-center gap-2"><Euro className="h-4 w-4" /> Importe (€)</div>
+                                                </SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            {discountType !== 'text' && (
+                                <FormField
+                                    control={form.control}
+                                    name="discountValue"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Valor ({discountType === 'percent' ? '%' : '€'})</FormLabel>
+                                            <FormControl>
+                                                <Input type="number" placeholder="20" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            )}
+                        </div>
 
                         <FormField
                             control={form.control}
@@ -369,7 +422,6 @@ export function CouponForm({ isOpen, onClose, onSuccess, category, fixedCompanyI
                             <Button type="button" variant="ghost" onClick={onClose}>
                                 {t('contracts.coupons.cancelButton', 'Cancelar')}
                             </Button>
-                            {/* Explicitly Type Button to avoid form submit behavior */}
                             <Button type="button" onClick={handleManualSubmit} disabled={isLoading}>
                                 {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : t('contracts.coupons.createButton', 'Crear Cupón')}
                             </Button>

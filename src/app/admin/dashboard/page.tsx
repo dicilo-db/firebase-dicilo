@@ -110,6 +110,7 @@ const DashboardContent: React.FC = () => {
 
   // Estados para contadores
   const [counts, setCounts] = useState({
+    basic: 0,
     starter: 0,
     retailer: 0,
     premium: 0,
@@ -137,6 +138,7 @@ const DashboardContent: React.FC = () => {
         const recommendationsCol = collection(db, 'recommendations');
 
         const [
+          basicSnap,
           starterSnap,
           retailerSnap,
           premiumSnap,
@@ -144,6 +146,7 @@ const DashboardContent: React.FC = () => {
           registrationsSnap,
           recommendationsSnap,
         ] = await Promise.all([
+          getCountFromServer(query(registrationsCol, where('registrationType', '==', 'donor'))),
           getCountFromServer(query(clientsCol, where('clientType', '==', 'starter'))),
           getCountFromServer(query(clientsCol, where('clientType', '==', 'retailer'))),
           getCountFromServer(query(clientsCol, where('clientType', '==', 'premium'))),
@@ -153,6 +156,7 @@ const DashboardContent: React.FC = () => {
         ]);
 
         setCounts({
+          basic: basicSnap.data().count,
           starter: starterSnap.data().count,
           retailer: retailerSnap.data().count,
           premium: premiumSnap.data().count,
@@ -390,16 +394,19 @@ const DashboardContent: React.FC = () => {
 
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
 
-            {/* Landing Pages / Builder */}
-            <Link href="/admin/clients" className="group">
+            {/* Basic (Formerly Businesses / Verzeichnis) */}
+            <Link href="/admin/businesses" className="group">
               <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Landing Pages</CardTitle>
-                  <LayoutTemplate className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                  <CardTitle className="text-sm font-medium">Basic</CardTitle>
+                  <Building className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{t('dashboard.cards.builder.title')}</div>
-                  <p className="text-xs text-muted-foreground mt-1">{t('dashboard.cards.builder.description')}</p>
+                  <div className="text-2xl font-bold">Basic</div>
+                  <p className="text-xs text-muted-foreground mt-1">Unternehmen verwalten</p>
+                  <div className="absolute bottom-4 right-4 text-sm font-mono text-muted-foreground">
+                    {formatCount(counts.basic)}
+                  </div>
                 </CardContent>
               </Card>
             </Link>
@@ -412,7 +419,7 @@ const DashboardContent: React.FC = () => {
                   <Users className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">Starter Kunden</div>
+                  <div className="text-2xl font-bold">Starter</div>
                   <p className="text-xs text-muted-foreground mt-1">Kundenprofile verwalten</p>
                   <div className="absolute bottom-4 right-4 text-sm font-mono text-muted-foreground">
                     {formatCount(counts.starter)}
@@ -425,11 +432,11 @@ const DashboardContent: React.FC = () => {
             <Link href="/admin/clients?type=retailer" className="group">
               <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Businesses</CardTitle>
+                  <CardTitle className="text-sm font-medium">Einzelhändler</CardTitle>
                   <Building className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">Einzelhändler Kunden</div>
+                  <div className="text-2xl font-bold">Einzelhändler</div>
                   <p className="text-xs text-muted-foreground mt-1">Unternehmen verwalten</p>
                   <div className="absolute bottom-4 right-4 text-sm font-mono text-muted-foreground">
                     {formatCount(counts.retailer)}
@@ -446,11 +453,42 @@ const DashboardContent: React.FC = () => {
                   <Star className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">Premium Kunden</div>
+                  <div className="text-2xl font-bold">Premium</div>
                   <p className="text-xs text-muted-foreground mt-1">Premium Kunden verwalten</p>
                   <div className="absolute bottom-4 right-4 text-sm font-mono text-muted-foreground">
                     {formatCount(counts.premium)}
                   </div>
+                </CardContent>
+              </Card>
+            </Link>
+
+            {/* Privat User (renamed from Privatkunden) */}
+            <Link href="/admin/private-users" className="group">
+              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Privatkunden</CardTitle>
+                  <User className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">Privatuser</div>
+                  <p className="text-xs text-muted-foreground mt-1">Private Profile verwalten</p>
+                  <div className="absolute bottom-4 right-4 text-sm font-mono text-muted-foreground">
+                    {formatCount(counts.private)}
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
+
+            {/* Landing Pages / Builder */}
+            <Link href="/admin/clients" className="group">
+              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Landing Pages</CardTitle>
+                  <LayoutTemplate className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{t('dashboard.cards.builder.title')}</div>
+                  <p className="text-xs text-muted-foreground mt-1">{t('dashboard.cards.builder.description')}</p>
                 </CardContent>
               </Card>
             </Link>
@@ -514,23 +552,6 @@ const DashboardContent: React.FC = () => {
               </Card>
             </Link>
 
-            {/* Privat User (renamed from Privatkunden) */}
-            <Link href="/admin/private-users" className="group">
-              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Privatkunden</CardTitle>
-                  <User className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">Privat User</div>
-                  <p className="text-xs text-muted-foreground mt-1">Private Profile verwalten</p>
-                  <div className="absolute bottom-4 right-4 text-sm font-mono text-muted-foreground">
-                    {formatCount(counts.private)}
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
-
             {/* Ads Manager */}
             <Link href="/admin/ads-manager" className="group">
               <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
@@ -572,19 +593,6 @@ const DashboardContent: React.FC = () => {
                 <CardContent>
                   <div className="text-2xl font-bold">{t('dashboard.cards.feedback.title')}</div>
                   <p className="text-xs text-muted-foreground mt-1">{t('dashboard.cards.feedback.description')}</p>
-                </CardContent>
-              </Card>
-            </Link>
-            {/* Businesses - Verzeichnis */}
-            <Link href="/admin/businesses" className="group">
-              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Businesses</CardTitle>
-                  <Building className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{t('dashboard.cards.directory.title')}</div>
-                  <p className="text-xs text-muted-foreground mt-1">{t('dashboard.cards.directory.description')}</p>
                 </CardContent>
               </Card>
             </Link>
