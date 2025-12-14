@@ -27,17 +27,27 @@ export function ClientCouponManager({ companyId, companyName, category }: Client
 
     const fetchCoupons = async () => {
         setIsLoading(true);
-        const res = await getCouponsByCompany(companyId);
-        if (res.success && res.coupons) {
-            setCoupons(res.coupons);
-        } else {
+        try {
+            const res = await getCouponsByCompany(companyId);
+            if (res.success && res.coupons) {
+                setCoupons(res.coupons);
+            } else {
+                toast({
+                    title: 'Fehler',
+                    description: res.error || 'Fehler beim Laden der Coupons.',
+                    variant: 'destructive',
+                });
+            }
+        } catch (error) {
+            console.error(error);
             toast({
                 title: 'Fehler',
-                description: res.error || 'Fehler beim Laden der Coupons.',
+                description: 'Ein unerwarteter Fehler ist aufgetreten.',
                 variant: 'destructive',
             });
+        } finally {
+            setIsLoading(false);
         }
-        setIsLoading(false);
     };
 
     useEffect(() => {

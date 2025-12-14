@@ -31,11 +31,16 @@ export default function CouponsPage() {
 
     useEffect(() => {
         const fetchStats = async () => {
-            const res = await getCouponStats();
-            if (res.success && res.stats) {
-                setStats(res.stats);
+            try {
+                const res = await getCouponStats();
+                if (res.success && res.stats) {
+                    setStats(res.stats);
+                }
+            } catch (error) {
+                console.error('Failed to fetch stats:', error);
+            } finally {
+                setLoading(false);
             }
-            setLoading(false);
         };
         fetchStats();
     }, []);
@@ -74,7 +79,7 @@ export default function CouponsPage() {
         <div className="container mx-auto py-8">
             <div className="flex flex-col gap-4 mb-8">
                 <Link href="/admin/dashboard" className="w-fit">
-                    <Button variant="ghost" className="gap-2 pl-0 hover:pl-2 transition-all">
+                    <Button variant="outline" className="gap-2 pl-2 pr-4 hover:bg-muted transition-all">
                         <ArrowLeft className="h-4 w-4" />
                         Volver al Dashboard
                     </Button>
