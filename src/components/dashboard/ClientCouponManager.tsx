@@ -83,6 +83,81 @@ export function ClientCouponManager({ companyId, companyName, category }: Client
         return null;
     };
 
+    // --- NEW HELPERS ---
+    const handleDownloadJPG = async (coupon: any) => {
+        try {
+            const html2canvas = (await import('html2canvas')).default;
+            const element = document.getElementById(`coupon-card-${coupon.id}`);
+            if (!element) return;
+
+            // Temporary style adjustment for capture
+            const originalTransform = element.style.transform;
+            element.style.transform = "none";
+
+            const canvas = await html2canvas(element, { scale: 2, useCORS: true });
+
+            // Restore
+            element.style.transform = originalTransform;
+
+            const link = document.createElement('a');
+            link.download = `coupon-${coupon.code}.jpg`;
+            link.href = canvas.toDataURL('image/jpeg', 0.9);
+            link.click();
+            toast({ title: 'Download gestartet', description: 'Das Bild wurde gespeichert.' });
+        } catch (error) {
+            console.error(error);
+            toast({ title: 'Fehler', description: 'Download fehlgeschlagen.', variant: 'destructive' });
+        }
+    };
+
+    const handleDownloadPDF = async (coupon: any) => {
+        try {
+            const html2canvas = (await import('html2canvas')).default;
+            const jsPDF = (await import('jspdf')).default;
+
+            const element = document.getElementById(`coupon-card-${coupon.id}`);
+            if (!element) return;
+
+            const canvas = await html2canvas(element, { scale: 2, useCORS: true });
+            const imgData = canvas.toDataURL('image/jpeg', 1.0);
+
+            const pdf = new jsPDF({
+                orientation: 'landscape',
+                unit: 'mm',
+                format: 'a6' // Postcard size approximately
+            });
+
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = pdf.internal.pageSize.getHeight();
+
+            pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+            pdf.save(`coupon-${coupon.code}.pdf`);
+
+            toast({ title: 'Download gestartet', description: 'Das PDF wurde gespeichert.' });
+        } catch (error) {
+            console.error(error);
+            toast({ title: 'Fehler', description: 'PDF Erstellung fehlgeschlagen.', variant: 'destructive' });
+        }
+    };
+
+    const handleSendEmail = async (coupon: any) => {
+        const email = prompt("An welche Email soll der Coupon gesendet werden?");
+        if (!email) return;
+
+        toast({ title: 'Sende Email...', description: 'Bitte warten.' });
+
+        // Dynamic import to avoid server-side issues if any, though actions are safe
+        const { shareCoupon } = await import('@/app/actions/coupons');
+
+        const res = await shareCoupon(email, coupon);
+        if (res.success) {
+            toast({ title: 'Erfolg', description: `Email an ${email} gesendet.` });
+        } else {
+            toast({ title: 'Fehler', description: res.error || 'Email konnte nicht gesendet werden.', variant: 'destructive' });
+        }
+    };
+
+
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
@@ -118,54 +193,71 @@ export function ClientCouponManager({ companyId, companyName, category }: Client
             ) : (
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                     {coupons.map((coupon) => (
-                        <Card key={coupon.id} className="overflow-hidden flex flex-col h-full group">
-                            {/* Background Image Header */}
-                            <div className="h-32 w-full bg-slate-100 relative overflow-hidden">
-                                {coupon.backgroundImage ? (
-                                    <img
-                                        src={coupon.backgroundImage}
-                                        alt={coupon.category}
-                                        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                                    />
-                                ) : (
-                                    <div className="h-full w-full flex items-center justify-center bg-muted">
-                                        <Tag className="h-8 w-8 text-muted-foreground/50" />
+                        <div key={coupon.id} className="flex flex-col gap-2">
+                            {/* TARGET ELEMENT FOR CAPTURE */}
+                            <Card id={`coupon-card-${coupon.id}`} className="overflow-hidden flex flex-col h-full group border-2 hover:border-primary/20 transition-all bg-white text-slate-900">
+                                {/* Background Image Header */}
+                                <div className="h-32 w-full bg-slate-100 relative overflow-hidden">
+                                    {coupon.backgroundImage ? (
+                                        <img
+                                            src={coupon.backgroundImage}
+                                            alt={coupon.category}
+                                            crossOrigin="anonymous" // Crucial for html2canvas
+                                            className="h-full w-full object-cover"
+                                        />
+                                    ) : (
+                                        <div className="h-full w-full flex items-center justify-center bg-muted">
+                                            <Tag className="h-8 w-8 text-muted-foreground/50" />
+                                        </div>
+                                    )}
+                                    <div className="absolute top-2 right-2 z-10">
+                                        {getStatusBadge(coupon.status)}
                                     </div>
-                                )}
-                                <div className="absolute top-2 right-2">
-                                    {getStatusBadge(coupon.status)}
+                                    <div className="absolute top-2 left-2 z-10">
+                                        {renderDiscountBadge(coupon)}
+                                    </div>
                                 </div>
-                                <div className="absolute top-2 left-2">
-                                    {renderDiscountBadge(coupon)}
-                                </div>
-                            </div>
 
-                            <CardHeader className="pb-2 pt-4">
-                                <div className="flex justify-between items-start">
-                                    <Badge variant="outline" className="text-xs font-mono">{coupon.code}</Badge>
-                                </div>
-                                <CardTitle className="text-lg mt-2 line-clamp-1" title={coupon.title}>{coupon.title}</CardTitle>
-                                <CardDescription className="line-clamp-2 min-h-[40px]">{coupon.description}</CardDescription>
-                            </CardHeader>
-                            <CardContent className="text-sm space-y-2 mt-auto">
-                                <div className="flex items-center text-muted-foreground">
-                                    <Calendar className="mr-2 h-4 w-4" />
-                                    <span>
-                                        {coupon.startDate && !isNaN(new Date(coupon.startDate).getTime())
-                                            ? format(new Date(coupon.startDate), 'dd.MM.yy', { locale: de })
-                                            : 'N/A'}
-                                        -
-                                        {coupon.endDate && !isNaN(new Date(coupon.endDate).getTime())
-                                            ? format(new Date(coupon.endDate), 'dd.MM.yy', { locale: de })
-                                            : 'N/A'}
-                                    </span>
-                                </div>
-                                <div className="flex items-center text-muted-foreground">
-                                    <MapPin className="mr-2 h-4 w-4" />
-                                    <span className="truncate">{coupon.city}, {coupon.country}</span>
-                                </div>
-                            </CardContent>
-                        </Card>
+                                <CardHeader className="pb-2 pt-4">
+                                    <div className="flex justify-between items-start">
+                                        <Badge variant="outline" className="text-xs font-mono bg-slate-100">{coupon.code}</Badge>
+                                    </div>
+                                    <CardTitle className="text-lg mt-2 line-clamp-1" title={coupon.title}>{coupon.title}</CardTitle>
+                                    <CardDescription className="line-clamp-2 min-h-[40px]">{coupon.description}</CardDescription>
+                                </CardHeader>
+                                <CardContent className="text-sm space-y-2 mt-auto">
+                                    <div className="flex items-center text-muted-foreground">
+                                        <Calendar className="mr-2 h-4 w-4" />
+                                        <span>
+                                            {coupon.startDate && !isNaN(new Date(coupon.startDate).getTime())
+                                                ? format(new Date(coupon.startDate), 'dd.MM.yy', { locale: de })
+                                                : 'N/A'}
+                                            -
+                                            {coupon.endDate && !isNaN(new Date(coupon.endDate).getTime())
+                                                ? format(new Date(coupon.endDate), 'dd.MM.yy', { locale: de })
+                                                : 'N/A'}
+                                        </span>
+                                    </div>
+                                    <div className="flex items-center text-muted-foreground">
+                                        <MapPin className="mr-2 h-4 w-4" />
+                                        <span className="truncate">{coupon.city}, {coupon.country}</span>
+                                    </div>
+                                </CardContent>
+                            </Card>
+
+                            {/* ACTION BUTTONS */}
+                            <div className="grid grid-cols-3 gap-1">
+                                <Button variant="secondary" size="sm" onClick={() => handleDownloadJPG(coupon)} title="Als Bild speichern">
+                                    JPG
+                                </Button>
+                                <Button variant="secondary" size="sm" onClick={() => handleDownloadPDF(coupon)} title="Als PDF speichern">
+                                    PDF
+                                </Button>
+                                <Button variant="secondary" size="sm" onClick={() => handleSendEmail(coupon)} title="Per Email senden">
+                                    Email
+                                </Button>
+                            </div>
+                        </div>
                     ))}
                 </div>
             )}

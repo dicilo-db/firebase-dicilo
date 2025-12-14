@@ -473,3 +473,20 @@ export async function getCouponsByCompany(companyId: string) {
         return { success: false, error: String(error?.message || 'Unknown error') };
     }
 }
+/**
+ * Share Coupon via Email
+ */
+import { sendCouponShareEmail } from '@/lib/email';
+
+export async function shareCoupon(email: string, coupon: any) {
+    try {
+        const result = await sendCouponShareEmail(email, coupon);
+        if (!result.success) {
+            return { success: false, error: 'Failed to send email' };
+        }
+        return { success: true };
+    } catch (error: any) {
+        console.error('Error sharing coupon:', error);
+        return { success: false, error: error.message };
+    }
+}

@@ -25,6 +25,14 @@
     - **Empresas:** Gestionar Perfil (Editar) o Eliminar Registro.
     - **Privatuser:** Pausar/Activar Cuenta o Eliminar Registro.
 
+### **186. FEAT & FIX: COUPON DOWNLOAD/EMAIL & EDIT FORM - CÓDIGO: FEAT-COUPON-V1**
+- **Fecha y Hora:** 14 de Diciembre de 2025, 19:30 (CET)
+- **Módulos Afectados:** `src/components/dashboard/ClientCouponManager`, `src/app/admin/clients/[id]/edit/EditClientForm`, `src/lib/email`.
+- **Descripción del Cambio:**
+  - **Cupones:** Se añadieron botones para descargar cupones como **JPG** y **PDF**, y para **Enviar por Email** directamente desde el panel de administración.
+  - **Corrección de Bug:** Se solucionó el error crítico `useFormContext is null` en la página de edición de clientes (`EditClientForm`) envolviendo correctamente el formulario con el proveedor `<Form>`.
+  - **Dependencias:** Se añadieron `html2canvas` y `jspdf`.
+
 ### **185. REFACTOR: BASIC TIER SYNC & DASHBOARD - CÓDIGO: REF-BASIC-SYNC-V1**
 - **Fecha y Hora:** 14 de Diciembre de 2025, 17:35 (CET)
 - **Módulos Afectados:** `src/app/admin/dashboard`, `src/app/admin/businesses`, `src/app/actions/registrations`.
