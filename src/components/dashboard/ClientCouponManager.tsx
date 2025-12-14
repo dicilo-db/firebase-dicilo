@@ -42,7 +42,7 @@ export function ClientCouponManager({ companyId, companyName, category }: Client
             console.error(error);
             toast({
                 title: 'Fehler',
-                description: 'Ein unerwarteter Fehler ist aufgetreten.',
+                description: error instanceof Error ? error.message : 'Ein unerwarteter Fehler ist aufgetreten.',
                 variant: 'destructive',
             });
         } finally {
@@ -117,7 +117,13 @@ export function ClientCouponManager({ companyId, companyName, category }: Client
                                 <div className="flex items-center text-muted-foreground">
                                     <Calendar className="mr-2 h-4 w-4" />
                                     <span>
-                                        {format(new Date(coupon.startDate), 'dd.MM.yy', { locale: de })} - {format(new Date(coupon.endDate), 'dd.MM.yy', { locale: de })}
+                                        {coupon.startDate && !isNaN(new Date(coupon.startDate).getTime())
+                                            ? format(new Date(coupon.startDate), 'dd.MM.yy', { locale: de })
+                                            : 'N/A'}
+                                        -
+                                        {coupon.endDate && !isNaN(new Date(coupon.endDate).getTime())
+                                            ? format(new Date(coupon.endDate), 'dd.MM.yy', { locale: de })
+                                            : 'N/A'}
                                     </span>
                                 </div>
                                 <div className="flex items-center text-muted-foreground">

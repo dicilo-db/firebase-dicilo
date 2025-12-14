@@ -311,8 +311,9 @@ export async function getCouponsByCompany(companyId: string) {
         let coupons = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as any[];
 
         // Recalculate status dynamically AND serialize all dates
+        // Recalculate status dynamically AND serialize all dates
         const now = new Date();
-        coupons = coupons.map(c => {
+        const serializedCoupons = coupons.map(c => {
             const start = c.startDate?.toDate ? c.startDate.toDate() : new Date(c.startDate);
             const end = c.endDate?.toDate ? c.endDate.toDate() : new Date(c.endDate);
             const createdAt = c.createdAt?.toDate ? c.createdAt.toDate() : (c.createdAt ? new Date(c.createdAt) : null);
@@ -322,24 +323,33 @@ export async function getCouponsByCompany(companyId: string) {
             if (end < now) status = 'expired';
             else if (start > now) status = 'scheduled';
 
+            // Explicitly map fields to avoid serialization errors with hidden non-serializable types
             return {
-                ...c,
-                startDate: start.toISOString(),
-                endDate: end.toISOString(),
-                createdAt: createdAt ? createdAt.toISOString() : null,
-                updatedAt: updatedAt ? updatedAt.toISOString() : null,
+                id: c.id,
+                companyId: c.companyId || '',
+                companyName: c.companyName || '',
+                category: c.category || '',
+                title: c.title || '',
+                description: c.description || '',
+                country: c.country || '',
+                city: c.city || '',
+                code: c.code || '',
+                startDate: !isNaN(start.getTime()) ? start.toISOString() : '', // Handle invalid dates safely
+                endDate: !isNaN(end.getTime()) ? end.toISOString() : '',
+                createdAt: createdAt && !isNaN(createdAt.getTime()) ? createdAt.toISOString() : null,
+                updatedAt: updatedAt && !isNaN(updatedAt.getTime()) ? updatedAt.toISOString() : null,
                 status
             };
         });
 
         // Sort by created date desc
-        coupons.sort((a, b) => {
+        serializedCoupons.sort((a, b) => {
             const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
             const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
             return dateB - dateA;
         });
 
-        return { success: true, coupons };
+        return { success: true, coupons: serializedCoupons };
     } catch (error: any) {
         console.error('Error fetching company coupons:', error);
         return { success: false, error: error.message };
