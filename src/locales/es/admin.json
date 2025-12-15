@@ -64,12 +64,24 @@
     },
     "import": {
       "button": "Importar desde Storage",
-      "startTitle": "Importación Iniciada",
-      "startDesc": "Los datos se están importando desde el almacenamiento.",
-      "successTitle": "Importación Exitosa",
-      "errorTitle": "Error de Importación",
-      "errorDesc": "Error al importar desde el almacenamiento.",
-      "permissionError": "Acceso Denegado."
+      "startTitle": "Importación iniciada",
+      "startDesc": "Importando empresas desde Storage...",
+      "successTitle": "Importación completada",
+      "errorTitle": "Error en la importación",
+      "permissionError": "Permiso denegado.",
+      "errorDesc": "Ocurrió un error al importar."
+    },
+    "dicicoin": {
+      "title": "Compradores DiciCoin",
+      "subtitle": "Gestión de compras de monedas",
+      "searchPlaceholder": "Buscar por nombre o email",
+      "allCountries": "Todos los Países",
+      "buyerName": "Nombre Comprador",
+      "email": "Email",
+      "country": "País",
+      "coins": "Monedas",
+      "date": "Fecha",
+      "noResults": "No se encontraron compradores."
     },
     "cards": {
       "databaseSeeding": {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { updatePrivateProfile, ensureUniqueCode } from '@/app/actions/profile';
 import { User } from 'firebase/auth';
-import { doc, getFirestore, updateDoc, onSnapshot } from 'firebase/firestore';
+import { doc, getFirestore, updateDoc, setDoc, onSnapshot } from 'firebase/firestore';
 import { app } from '@/lib/firebase';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
@@ -62,7 +62,7 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
         setIsLoading(true);
         try {
             const userRef = doc(db, 'private_profiles', user.uid);
-            await updateDoc(userRef, data);
+            await setDoc(userRef, data, { merge: true });
             toast({
                 title: t('dashboard.saved', 'Saved'),
                 description: t('dashboard.successDesc', 'Your changes have been saved.'),

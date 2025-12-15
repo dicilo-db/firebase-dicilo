@@ -19,7 +19,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { Header } from '@/components/header';
 import { useTranslation } from 'react-i18next';
-import { Loader2, LogOut, User as UserIcon } from 'lucide-react';
+import { Loader2, LogOut, User as UserIcon, Coins } from 'lucide-react';
 import { checkAdminRole } from '@/lib/auth';
 import { PrivateDashboard } from '@/components/dashboard/PrivateDashboard';
 
@@ -212,6 +212,10 @@ export default function DashboardPage() {
                         {privateProfile ? t('common:dashboard.myArea') : t('successTitle')}
                     </h1>
                     <div className="flex gap-2">
+                        <Button variant="outline" onClick={() => router.push('/dashboard/dicicoin')}>
+                            <Coins className="mr-2 h-4 w-4" />
+                            DiciCoin
+                        </Button>
                         <Button variant="outline" onClick={() => router.push('/dashboard/profile')}>
                             <UserIcon className="mr-2 h-4 w-4" />
                             Profil bearbeiten

@@ -31,13 +31,46 @@ const CATEGORIES = [
     'Lifestyle', // New
 ];
 
+import { useTranslation } from 'react-i18next';
+
+// ... (interface remains same)
+
 export function CategorySelector({ selectedCategories, onChange }: CategorySelectorProps) {
+    const { t } = useTranslation('common');
+
     const toggleCategory = (category: string) => {
         if (selectedCategories.includes(category)) {
             onChange(selectedCategories.filter((c) => c !== category));
         } else {
             onChange([...selectedCategories, category]);
         }
+    };
+
+    const getCategoryLabel = (cat: string) => {
+        const keyMap: Record<string, string> = {
+            'Consulting': 'consulting',
+            'Education': 'education',
+            'Finance': 'finance',
+            'Gastronomy': 'gastronomy',
+            'Health': 'health',
+            'Hospitality': 'hotels',
+            'Real Estate': 'real_estate',
+            'Food': 'food',
+            'Music': 'music',
+            'Social': 'social',
+            'Sports': 'sports',
+            'Travel': 'travel',
+            'Technology': 'technology',
+            'Textile': 'textile',
+            'Animals': 'animals',
+            'Transport': 'transport',
+            'Environment': 'environment',
+            'Entertainment': 'entertainment',
+            'Beauty & Wellness': 'beauty',
+            'Lifestyle': 'lifestyle',
+        };
+        const key = keyMap[cat];
+        return key ? t(`form.categories.${key}`, cat) : cat;
     };
 
     return (
@@ -64,7 +97,7 @@ export function CategorySelector({ selectedCategories, onChange }: CategorySelec
                             >
                                 {isSelected && <Check className="h-4 w-4" />}
                             </div>
-                            <span className="text-sm font-medium">{category}</span>
+                            <span className="text-sm font-medium">{getCategoryLabel(category)}</span>
                         </div>
                     </Card>
                 );

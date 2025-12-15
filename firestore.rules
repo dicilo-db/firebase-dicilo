@@ -53,8 +53,7 @@ service cloud.firestore {
 
     // Private Profiles collection
     match /private_profiles/{userId} {
-      allow read, update: if isAuthenticated() && (request.auth.uid == userId || isAdmin());
-      allow create: if isAuthenticated();
+      allow read, write: if isAuthenticated() && (request.auth.uid == userId || isAdmin());
     }
     
     // Ad Banners (Public read for display, Admin write for management)
