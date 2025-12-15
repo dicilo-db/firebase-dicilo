@@ -7,7 +7,10 @@
       "directory": "Directorio",
       "login": "Iniciar Sesión",
       "register": "Registrarse",
-      "language": "Idioma"
+      "language": "Idioma",
+      "imprint": "Aviso Legal",
+      "privacy": "Privacidad",
+      "faq": "FAQ"
     }
   },
   "footer": {

@@ -24,7 +24,7 @@ import {
 import { cn } from '@/lib/utils';
 import { RecommendationForm } from './RecommendationForm';
 import { useTranslation } from 'react-i18next';
-import { Header } from './header';
+// import { Header } from './header';
 import { AdBanner } from '@/components/AdBanner';
 
 export interface Business {
@@ -401,7 +401,8 @@ export default function DiciloSearchPage({
 
       {/* Columna de Búsqueda y Resultados */}
       <div className="flex h-full w-full flex-col md:w-1/2">
-        <Header />
+        {/* Header removed: It is now in RootLayout */}
+        {/* <Header /> */}
         <div className="flex-shrink-0 px-4 pt-4">
           <Card className="w-full shadow-lg">
             <CardContent className="pt-6">

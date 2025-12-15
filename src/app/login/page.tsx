@@ -6,6 +6,7 @@ import {
     Card,
     CardContent,
     CardDescription,
+    CardFooter,
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
@@ -21,7 +22,8 @@ import {
 } from 'firebase/auth';
 import { app } from '@/lib/firebase';
 import { useTranslation } from 'react-i18next';
-import { Header } from '@/components/header';
+// Remove Header import to avoid duplication with layout
+// import { Header } from '@/components/header';
 import { Loader2, Eye, EyeOff } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
@@ -216,7 +218,8 @@ export default function LoginPage() {
 
     return (
         <div className="flex min-h-screen flex-col bg-background">
-            <Header />
+            {/* Header removed to avoid duplication - it is in RootLayout now */}
+            {/* <Header /> */}
             <main className="flex flex-grow items-center justify-center p-4">
                 {renderContent()}
             </main>
