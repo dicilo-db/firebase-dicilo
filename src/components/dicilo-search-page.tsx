@@ -137,6 +137,41 @@ export default function DiciloSearchPage({
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
 
   const selectedBusinessIdRef = React.useRef(selectedBusinessId);
+  const [isListening, setIsListening] = useState(false);
+
+  const startListening = useCallback(() => {
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      const recognition = new SpeechRecognition();
+      recognition.lang = locale === 'de' ? 'de-DE' : locale === 'es' ? 'es-ES' : 'en-US';
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      recognition.onstart = () => setIsListening(true);
+      recognition.onend = () => setIsListening(false);
+      recognition.onerror = (event: any) => {
+        console.error('Speech recognition error', event.error);
+        setIsListening(false);
+        toast({
+          title: "Error",
+          description: "No se pudo activar el micrófono.",
+          variant: "destructive"
+        });
+      };
+      recognition.onresult = (event: any) => {
+        const transcript = event.results[0][0].transcript;
+        setSearchQuery((prev) => (prev ? `${prev} ${transcript}` : transcript));
+      };
+
+      recognition.start();
+    } else {
+      toast({
+        title: "No soportado",
+        description: "Tu navegador no soporta búsqueda por voz.",
+        variant: "destructive"
+      });
+    }
+  }, [locale, toast]);
 
   useEffect(() => {
     selectedBusinessIdRef.current = selectedBusinessId;
@@ -455,6 +490,8 @@ export default function DiciloSearchPage({
                   size="icon"
                   variant="outline"
                   aria-label="Suche per Sprache"
+                  onClick={startListening}
+                  className={isListening ? "text-red-500 animate-pulse border-red-500" : ""}
                 >
                   <Mic className="h-4 w-4" />
                 </Button>

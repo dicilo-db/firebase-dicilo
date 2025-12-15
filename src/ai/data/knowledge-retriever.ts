@@ -35,20 +35,39 @@ export async function getDynamicKnowledgeContext(): Promise<string> {
             });
         }
 
-        // 3. Fetch Businesses (Directory Data)
-        const businessesSnapshot = await db.collection('businesses')
-            .limit(50) // Reasonable limit for context window
-            .get();
+        // 3. Fetch Businesses (Directory Data) & Clients
+        const [businessesSnapshot, clientsSnapshot] = await Promise.all([
+            db.collection('businesses').limit(50).get(),
+            db.collection('clients').limit(50).get()
+        ]);
 
-        if (!businessesSnapshot.empty) {
-            dynamicContext += "\n\n[DIRECTORY LISTING (PARTIAL)]\n";
-            businessesSnapshot.forEach(doc => {
+        if (!businessesSnapshot.empty || !clientsSnapshot.empty) {
+            dynamicContext += "\n\n[DIRECTORY LISTING - BUSINESSES & CLIENTS]\n";
+
+            const processDoc = (doc: any) => {
                 const data = doc.data();
-                // Format: Name (Category) - City
                 const name = data.name || data.companyName || 'Unknown';
                 const category = data.category?.name || data.category || 'Uncategorized';
                 const city = data.city || data.address?.city || '';
-                dynamicContext += `- ${name} [${category}] ${city ? `(${city})` : ''}\n`;
+                const description = data.description || '';
+                const slogan = data.slogan || ''; // "Hörsysteme und mehr..." might be here
+                const services = Array.isArray(data.services) ? data.services.join(', ') : (data.services || '');
+
+                let entry = `- **${name}** [${category}]`;
+                if (city) entry += ` in ${city}`;
+                if (slogan) entry += `\n  Slogan: "${slogan}"`;
+                if (description) entry += `\n  Description: ${description}`;
+                if (services) entry += `\n  Services: ${services}`;
+                entry += '\n';
+
+                return entry;
+            };
+
+            businessesSnapshot.forEach(doc => {
+                dynamicContext += processDoc(doc);
+            });
+            clientsSnapshot.forEach(doc => {
+                dynamicContext += processDoc(doc);
             });
         }
 
