@@ -17,11 +17,18 @@ import { LanguageSelector } from './LanguageSelector';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 
-const navLinks = [
+// Desktop visible links
+const desktopLinks = [
   { href: '/vorteile', labelKey: 'header.nav.benefits' },
   { href: '/planes', labelKey: 'header.nav.planes' },
   { href: '/ueber-uns', labelKey: 'header.nav.about' },
-  { href: '/verzeichnis', labelKey: 'header.nav.directory' },
+];
+
+// Mobile menu links (Hamburguesa)
+const mobileLinks = [
+  { href: '/impressum', labelKey: 'header.nav.imprint' }, // Aviso Legal
+  { href: '/datenschutz', labelKey: 'header.nav.privacy' }, // Privacidad
+  { href: '/faq', labelKey: 'header.nav.faq' },
 ];
 
 const Header = () => {
@@ -36,19 +43,25 @@ const Header = () => {
     <header className="relative z-10 flex-shrink-0 bg-white shadow-md">
       <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
-          <Link href="/" className="flex items-center">
+          {/* Logo - Responsive logic: Always visible mobile, hidden on desktop if space constrained? 
+              User request: "Responsivo, Solo se ve en la pantalla el movil y en la web si hay espacio."
+              We'll keep it visible but allow shrinking.
+          */}
+          <Link href="/" className="flex items-center flex-shrink-0 mr-4">
             <Image
               src="/logo.png"
               alt="Dicilo"
               width={120}
               height={50}
-              className="h-12 w-auto"
+              className="h-10 w-auto sm:h-12"
               priority
             />
           </Link>
+
+          {/* DESKTOP MENU */}
           <div className="hidden items-center gap-4 md:flex">
             <nav className="flex items-center gap-4">
-              {navLinks.map((link) => (
+              {desktopLinks.map((link) => (
                 <Button
                   variant="link"
                   asChild
@@ -75,17 +88,15 @@ const Header = () => {
                 </Button>
               </div>
             ) : (
-              <>
-                <Button variant="ghost" asChild>
-                  <Link href="/login">{t('header.nav.login')}</Link>
-                </Button>
-                <Button asChild>
-                  <Link href="/registrieren">{t('header.nav.register')}</Link>
-                </Button>
-              </>
+              // Desktop: Solo "Iniciar Sesión" (Login) visible directo según plan
+              <Button variant="ghost" asChild>
+                <Link href="/login">{t('header.nav.login')}</Link>
+              </Button>
             )}
             <LanguageSelector />
           </div>
+
+          {/* MOBILE MENU (HAMBURGER) */}
           <div className="md:hidden">
             <Sheet>
               <SheetTrigger asChild>
@@ -100,63 +111,59 @@ const Header = () => {
                     Dicilo
                   </SheetTitle>
                 </SheetHeader>
-                <div className="flex flex-col space-y-2 pt-6">
-                  {navLinks.map((link) => (
-                    <SheetClose asChild key={link.href}>
-                      <Button
-                        asChild
-                        variant="ghost"
-                        className="w-full justify-start py-3 text-left text-lg"
-                      >
-                        <Link href={link.href}>{t(link.labelKey)}</Link>
+                <div className="flex flex-col space-y-4 pt-6">
+
+                  {/* Registrarse (TOP) - Destacado */}
+                  {!user && (
+                    <SheetClose asChild>
+                      <Button asChild variant="default" className="w-full justify-center py-6 text-lg font-bold shadow-md">
+                        <Link href="/registrieren">
+                          ✨ {t('header.nav.register')}
+                        </Link>
                       </Button>
                     </SheetClose>
-                  ))}
+                  )}
 
-                  {!loading && user ? (
-                    <>
+                  {/* Dashboard / Logout mobile items */}
+                  {!loading && user && (
+                    <div className="space-y-2">
                       <SheetClose asChild>
-                        <Button
-                          asChild
-                          variant="ghost"
-                          className="w-full justify-start py-3 text-left text-lg"
-                        >
-                          <Link href="/dashboard">Dashboard</Link>
+                        <Button asChild variant="outline" className="w-full justify-start">
+                          <Link href="/dashboard"><UserIcon className="mr-2 h-4 w-4" /> Dashboard</Link>
                         </Button>
                       </SheetClose>
                       <SheetClose asChild>
-                        <Button
-                          variant="ghost"
-                          className="w-full justify-start py-3 text-left text-lg text-destructive"
-                          onClick={handleLogout}
-                        >
+                        <Button variant="ghost" className="w-full justify-start text-destructive" onClick={handleLogout}>
                           {t('header.nav.logout', 'Abmelden')}
                         </Button>
                       </SheetClose>
-                    </>
-                  ) : (
-                    <>
-                      <SheetClose asChild>
+                    </div>
+                  )}
+
+                  {/* Menú Links */}
+                  <div className="space-y-1">
+                    {mobileLinks.map((link) => (
+                      <SheetClose asChild key={link.href}>
                         <Button
                           asChild
                           variant="ghost"
-                          className="w-full justify-start py-3 text-left text-lg"
+                          className="w-full justify-start py-3 text-left text-lg pl-2 border-l-4 border-transparent hover:border-primary"
                         >
-                          <Link href="/login">{t('header.nav.login')}</Link>
+                          <Link href={link.href}>{t(link.labelKey)}</Link>
                         </Button>
                       </SheetClose>
-                      <SheetClose asChild>
-                        <Button
-                          asChild
-                          variant="default"
-                          className="w-full justify-start py-3 text-left text-lg"
-                        >
-                          <Link href="/registrieren">
-                            {t('header.nav.register')}
-                          </Link>
-                        </Button>
-                      </SheetClose>
-                    </>
+                    ))}
+                  </div>
+
+                  {/* Registrarse (BOTTOM) - Refuerzo */}
+                  {!user && (
+                    <SheetClose asChild>
+                      <Button asChild variant="outline" className="w-full justify-center mt-4">
+                        <Link href="/registrieren">
+                          {t('header.nav.register')}
+                        </Link>
+                      </Button>
+                    </SheetClose>
                   )}
 
                   <div className="border-t pt-4">
@@ -176,3 +183,4 @@ const Header = () => {
 };
 
 export { Header };
+

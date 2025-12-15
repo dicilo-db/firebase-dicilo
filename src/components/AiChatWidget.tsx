@@ -15,9 +15,17 @@ interface Message {
     content: string;
 }
 
+// Add global declaration for Web Speech API
+declare global {
+    interface Window {
+        webkitSpeechRecognition: any;
+        SpeechRecognition: any;
+    }
+}
+
 import { getGreetingAction } from '@/app/actions/greeting';
 import { extractTextFromDocument } from '@/app/actions/upload';
-import { Paperclip, FileText } from 'lucide-react';
+import { Paperclip, FileText, Mic, MicOff } from 'lucide-react'; // Added Mic icons
 
 interface AiChatWidgetProps {
     // greeting property removed as we fetch it internally now
@@ -35,8 +43,37 @@ export function AiChatWidget() {
     const [inputValue, setInputValue] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [isListening, setIsListening] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const scrollAreaRef = useRef<HTMLDivElement>(null);
+
+    // Speech Recognition Logic
+    const startListening = () => {
+        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'es-ES'; // Default to Spanish or detect from detecting.ts logic ideally, but browser usually handles auto or we can set dynamic.
+            // Let's try to infer from browser or just set to user's likely language. 
+            // Better: use detected language if possible, but for now Auto or ES is safe fallback.
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 1;
+
+            recognition.onstart = () => setIsListening(true);
+            recognition.onend = () => setIsListening(false);
+            recognition.onerror = (event: any) => {
+                console.error('Speech recognition error', event.error);
+                setIsListening(false);
+            };
+            recognition.onresult = (event: any) => {
+                const transcript = event.results[0][0].transcript;
+                setInputValue(prev => prev + (prev ? ' ' : '') + transcript);
+            };
+
+            recognition.start();
+        } else {
+            alert('Speech recognition not supported in this browser.');
+        }
+    };
 
     useEffect(() => {
         // Fetch personalized greeting on mount
@@ -150,9 +187,9 @@ export function AiChatWidget() {
                     <CardHeader className="flex flex-row items-center justify-between p-4 border-b bg-primary/5">
                         <CardTitle className="text-sm font-medium flex items-center gap-2">
                             <div className="relative w-6 h-6 rounded-full overflow-hidden">
-                                <Image src="/dicibot.jpg" alt="Dicilo Bot" fill className="object-cover" />
+                                <Image src="/dicibot.jpg" alt="DiciBot" fill className="object-cover" />
                             </div>
-                            Dicilo AI Assistant
+                            DiciBot
                         </CardTitle>
                         <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setIsOpen(false)}>
                             <X className="h-4 w-4" />
@@ -229,6 +266,16 @@ export function AiChatWidget() {
                             </Button>
                             <Button size="icon" onClick={handleSendMessage} disabled={isLoading || !inputValue.trim()}>
                                 <Send className="w-4 h-4" />
+                            </Button>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={startListening}
+                                className={isListening ? "text-red-500 animate-pulse" : "text-muted-foreground"}
+                                disabled={isLoading}
+                                title="Speak to DiciBot"
+                            >
+                                {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
                             </Button>
                         </div>
                     </CardFooter>

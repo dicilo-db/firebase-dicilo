@@ -150,9 +150,10 @@ export default function AdminAiChatPage() {
         <div className="container mx-auto p-6 space-y-6">
             <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center">
                 <div className="flex items-center gap-4">
-                    <Button variant="outline" size="icon" asChild>
-                        <Link href="/admin">
+                    <Button variant="default" size="sm" asChild className="gap-2">
+                        <Link href="/admin/dashboard">
                             <ArrowLeft className="h-4 w-4" />
+                            Back to Dashboard
                         </Link>
                     </Button>
                     <h1 className="text-3xl font-bold">AI Chat Knowledge Base</h1>
