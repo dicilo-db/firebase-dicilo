@@ -167,6 +167,19 @@ const LoginForm = () => {
                     </Button>
                 </form>
             </CardContent>
+            <CardFooter className="flex justify-center border-t p-4 text-sm text-muted-foreground">
+                <p>
+                    {t('notMember', '¿Aun no eres miembro de Dicilo?')}
+                    {' '}
+                    <a href="/registrieren" className="font-semibold text-primary hover:underline">
+                        {t('registerHere', 'regístrate acá gratis')}
+                    </a>
+                </p>
+            </CardFooter>
+            {/* Fallback hardcoded if translations missing */}
+            {/* <div className="text-center pb-4 text-sm text-muted-foreground">
+                ¿Aun no eres miembro de Dicilo?, <a href="/registrieren" className="text-primary hover:underline font-bold">registrate aca gratis</a>
+            </div> */}
         </Card>
     );
 };

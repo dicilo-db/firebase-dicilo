@@ -31,6 +31,8 @@ interface RootLayoutProps {
 
 // import { detectLanguage, getGreeting } from '@/lib/detection';
 
+import { Header } from '@/components/header';
+
 export default function RootLayout({ children }: RootLayoutProps) {
   // const lang = detectLanguage();
   // const greeting = getGreeting(lang);
@@ -47,6 +49,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
       >
         <I18nProvider>
           <AuthProvider>
+            <Header />
             <div className="flex-grow">{children}</div>
             <AiChatWidget />
             <Toaster />

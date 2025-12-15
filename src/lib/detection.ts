@@ -24,10 +24,10 @@ export function detectLanguage(): string {
 export function getGreeting(lang: string): string {
     switch (lang) {
         case 'de':
-            return 'Hallo! Ich bin DicBot, dein smarter KI-Assistent. Womit kann ich dir heute helfen? Ich lerne noch, aber ich gebe mein Bestes, um dir eine hilfreiche Antwort zu geben.';
+            return 'Hallo! Ich bin DiciBot, dein smarter KI-Assistent. Womit kann ich dir heute helfen? Ich lerne noch, aber ich gebe mein Bestes, um dir eine hilfreiche Antwort zu geben.';
         case 'es':
-            return '¡Hola! Soy DicBot, tu asistente inteligente. ¿En qué puedo ayudarte hoy? Aún estoy aprendiendo, pero haré lo mejor posible para darte una buena respuesta.';
+            return '¡Hola! Soy DiciBot, tu asistente inteligente. ¿En qué puedo ayudarte hoy? Aún estoy aprendiendo, pero haré lo mejor posible para darte una buena respuesta.';
         default:
-            return "Hello! I'm DicBot, your smart AI assistant. How can I help you today? I'm still learning, but I'll do my best to give you a helpful answer.";
+            return "Hello! I'm DiciBot, your smart AI assistant. How can I help you today? I'm still learning, but I'll do my best to give you a helpful answer.";
     }
 }
