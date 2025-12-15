@@ -13,9 +13,16 @@ import {
   SheetTrigger,
   SheetClose,
 } from '@/components/ui/sheet';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { LanguageSelector } from './LanguageSelector';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
+import { MoreVertical } from 'lucide-react';
 
 // Desktop visible links
 const desktopLinks = [
@@ -72,6 +79,24 @@ const Header = () => {
                 </Button>
               ))}
             </nav>
+
+            {/* MORE MENU (Desktop) - Secondary Links */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" aria-label="More links">
+                  <MoreVertical className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {mobileLinks.map((link) => (
+                  <DropdownMenuItem key={link.href} asChild>
+                    <Link href={link.href} className="cursor-pointer">
+                      {t(link.labelKey)}
+                    </Link>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
 
             {loading ? (
               <div className="h-10 w-20 animate-pulse rounded bg-muted" />
