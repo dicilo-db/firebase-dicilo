@@ -74,6 +74,14 @@ service cloud.firestore {
       allow read, delete: if isAdmin();
     }
 
+    // AI Knowledge Base (Admin only)
+    match /ai_knowledge_snippets/{snippetId} {
+      allow read, write: if isAdmin();
+    }
+    match /ai_knowledge_files/{fileId} {
+      allow read, write: if isAdmin();
+    }
+
     // Default deny
     match /{document=**} {
       allow read, write: if false;

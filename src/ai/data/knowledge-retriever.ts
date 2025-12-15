@@ -1,5 +1,6 @@
 import { getFirestore } from 'firebase-admin/firestore';
 import { DICILO_KNOWLEDGE } from '@/ai/data/dicilo-knowledge';
+import { DICICOIN_KNOWLEDGE } from '@/ai/data/dicicoin-knowledge';
 
 export async function getDynamicKnowledgeContext(): Promise<string> {
     try {
@@ -51,12 +52,12 @@ export async function getDynamicKnowledgeContext(): Promise<string> {
             });
         }
 
-        // 3. Combine with Static Knowledge
-        return `${DICILO_KNOWLEDGE}\n${dynamicContext}`;
+        // 4. Combine with Static Knowledge and DiciCoin Data
+        return `${DICILO_KNOWLEDGE}\n\n[DICICOIN INFO]\n${DICICOIN_KNOWLEDGE}\n${dynamicContext}`;
 
     } catch (error) {
         console.error("Error fetching dynamic knowledge:", error);
         // Fallback to static knowledge
-        return DICILO_KNOWLEDGE;
+        return `${DICILO_KNOWLEDGE}\n\n[DICICOIN INFO]\n${DICICOIN_KNOWLEDGE}`;
     }
 }
