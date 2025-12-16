@@ -9,9 +9,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Image as ImageIcon, UploadCloud, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { getStorage, ref, uploadBytes, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { app } from '@/lib/firebase';
 import Image from 'next/image';
+import { uploadAdBannerAction } from '@/app/actions/ad-actions';
 import { Switch } from '@/components/ui/switch';
 import {
     Select,
@@ -102,18 +103,42 @@ export default function AdsForm({
         const file = e.target.files?.[0];
         if (!file) return;
 
+        // Validations
+        if (file.size > 2 * 1024 * 1024) { // 2MB limit
+            alert("Error: File size too large (Max 2MB)");
+            return;
+        }
+
         setUploading(true);
+        // Visual debug helper
+        const debugEl = document.getElementById('upload-debug-info');
+        if (debugEl) debugEl.innerText = 'Starting server-side upload...';
+
         try {
-            const storageRef = ref(storage, `ads/${Date.now()}_${file.name}`);
-            await uploadBytes(storageRef, file);
-            const url = await getDownloadURL(storageRef);
-            setValue('imageUrl', url, { shouldValidate: true, shouldDirty: true });
-            toast({ title: 'Success', description: 'Banner uploaded successfully' });
-        } catch (error) {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            // Import dynamically to avoid server-client boundary issues if needed, 
+            // but standard import should work if 'use server' is at top of action file.
+            const result = await uploadAdBannerAction(formData);
+
+            if (result.success && result.url) {
+                if (debugEl) debugEl.innerText = 'Upload Complete!';
+                console.log("Upload successful:", result.url);
+                setValue('imageUrl', result.url, { shouldValidate: true, shouldDirty: true });
+                toast({ title: 'Success', description: 'Banner uploaded successfully' });
+            } else {
+                throw new Error(result.error || 'Upload failed on server');
+            }
+
+        } catch (error: any) {
             console.error('Upload failed:', error);
+            const errorMsg = error.message || error.code || 'Unknown error';
+            if (debugEl) debugEl.innerText = `Error: ${errorMsg}`;
+            alert(`Upload Error: ${errorMsg}`);
             toast({
                 title: 'Error',
-                description: `Failed to upload banner: ${error instanceof Error ? error.message : 'Unknown error'}`,
+                description: `Failed to upload banner: ${errorMsg}`,
                 variant: 'destructive',
             });
         } finally {
@@ -155,21 +180,35 @@ export default function AdsForm({
                     )}
 
                     {!imageUrl && (
-                        <label className="flex h-40 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 hover:bg-gray-100">
+                        <label className={`flex h-40 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed ${uploading ? 'bg-gray-100 border-gray-400' : 'border-gray-300 bg-gray-50 hover:bg-gray-100'}`}>
                             <div className="flex flex-col items-center justify-center pb-6 pt-5">
-                                <UploadCloud className="mb-3 h-8 w-8 text-gray-400" />
-                                <p className="mb-2 text-sm text-gray-500">
-                                    <span className="font-semibold">Click to upload</span> or drag and drop
-                                </p>
-                                <p className="text-xs text-gray-500">
-                                    SVG, PNG, JPG or GIF (MAX. 800x400px)
-                                </p>
+                                {uploading ? (
+                                    <>
+                                        <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-primary mb-3"></div>
+                                        <p className="mb-2 text-sm text-gray-500">
+                                            <span className="font-semibold">Uploading...</span> please wait
+                                        </p>
+                                    </>
+                                ) : (
+                                    <>
+                                        <UploadCloud className="mb-3 h-8 w-8 text-gray-400" />
+                                        <p className="mb-2 text-sm text-gray-500">
+                                            <span className="font-semibold">Click to upload</span> or drag and drop
+                                        </p>
+                                        <p className="text-xs text-gray-500">
+                                            SVG, PNG, JPG or GIF (MAX. 800x400px, 2MB)
+                                        </p>
+                                    </>
+                                )}
                             </div>
                             <input
                                 type="file"
                                 className="hidden"
                                 accept="image/*"
-                                onChange={handleFileUpload}
+                                onChange={(e) => {
+                                    handleFileUpload(e);
+                                    e.target.value = ''; // Reset input to allow re-uploading same file if failed
+                                }}
                                 disabled={uploading}
                             />
                         </label>
@@ -177,6 +216,7 @@ export default function AdsForm({
                     {errors.imageUrl && (
                         <p className="text-sm text-red-500">{errors.imageUrl.message}</p>
                     )}
+                    <p className="text-xs text-muted-foreground mt-2 text-center" id="upload-debug-info"></p>
                 </div>
             </div>
 

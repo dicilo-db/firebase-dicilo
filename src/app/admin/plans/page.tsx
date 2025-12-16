@@ -37,8 +37,6 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Edit, PlusCircle, Trash2, LayoutDashboard } from 'lucide-react';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { useToast } from '@/hooks/use-toast';
-import { Badge } from '@/components/ui/badge';
-import { Header } from '@/components/header';
 import Footer from '@/components/footer';
 import Link from 'next/link';
 
@@ -55,7 +53,6 @@ interface Plan {
 
 const PlansSkeleton = () => (
   <div className="flex min-h-screen flex-col">
-    <Header />
     <main className="flex-grow p-8">
       <div className="mb-6 flex items-center justify-between">
         <Skeleton className="h-8 w-48" />
@@ -166,7 +163,6 @@ export default function PlansPage() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <Header />
       <main className="flex-grow p-8">
         <div className="mb-6 flex items-center justify-between">
           <h1 className="text-2xl font-bold">{t('plans.title')}</h1>
