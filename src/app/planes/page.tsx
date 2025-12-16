@@ -87,7 +87,14 @@ function PlansClientContent() {
         const q = query(plansCol, orderBy('order'));
         const planSnapshot = await getDocs(q);
         const planList = planSnapshot.docs.map(
-          (doc) => ({ id: doc.id, ...doc.data() }) as Plan
+          (doc) => {
+            const data = doc.data() as Omit<Plan, 'id'>;
+            // Override title for 'Comercio Minorista' to 'Minorista'
+            if (data.title === 'Comercio Minorista') {
+              data.title = 'Minorista';
+            }
+            return { id: doc.id, ...data };
+          }
         );
         setPlans(planList);
       } catch (error) {
