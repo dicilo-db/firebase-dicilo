@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -53,6 +53,7 @@ export default function AdsForm({
     const { toast } = useToast();
     const storage = getStorage(app);
     const [uploading, setUploading] = useState(false);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const {
         register,
@@ -180,7 +181,10 @@ export default function AdsForm({
                     )}
 
                     {!imageUrl && (
-                        <label className={`flex h-40 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed ${uploading ? 'bg-gray-100 border-gray-400' : 'border-gray-300 bg-gray-50 hover:bg-gray-100'}`}>
+                        <div
+                            onClick={() => fileInputRef.current?.click()}
+                            className={`flex h-40 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed ${uploading ? 'bg-gray-100 border-gray-400' : 'border-gray-300 bg-gray-50 hover:bg-gray-100'}`}
+                        >
                             <div className="flex flex-col items-center justify-center pb-6 pt-5">
                                 {uploading ? (
                                     <>
@@ -202,6 +206,7 @@ export default function AdsForm({
                                 )}
                             </div>
                             <input
+                                ref={fileInputRef}
                                 type="file"
                                 className="hidden"
                                 accept="image/*"
@@ -211,7 +216,7 @@ export default function AdsForm({
                                 }}
                                 disabled={uploading}
                             />
-                        </label>
+                        </div>
                     )}
                     {errors.imageUrl && (
                         <p className="text-sm text-red-500">{errors.imageUrl.message}</p>
