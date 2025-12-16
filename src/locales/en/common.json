@@ -7,7 +7,10 @@
       "directory": "Directory",
       "login": "Login",
       "register": "Register",
-      "language": "Language"
+      "language": "Language",
+      "imprint": "Imprint",
+      "privacy": "Privacy",
+      "faq": "FAQ"
     }
   },
   "footer": {

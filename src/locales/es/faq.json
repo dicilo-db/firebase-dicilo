@@ -1,4 +1,3 @@
-
 {
   "pageTitle": "Preguntas Frecuentes",
   "pageSubtitle": "Respuestas a las preguntas más comunes sobre Dicilo.",
@@ -9,15 +8,15 @@
   },
   "q2": {
     "question": "¿Cómo puedo registrarme en Dicilo.net?",
-    "answer": "<p>El registro es rápido y sencillo:</p><ul><li>Visite el sitio web Dicilo.net.</li><li>Elija su perfil: Cliente Particular, Minorista o Mayorista.</li><li>Ingrese su correo electrónico y contraseña y confirme su registro.</li><li>Personalice su perfil; las empresas reciben además una página de destino personalizada para sus productos.</li></ul>"
+    "answer": "<p>El registro es rápido y sencillo:</p><ul><li>Visite el sitio web Dicilo.net.</li><li>Elija su perfil: Cliente Particular, Básico, Minorista o Premium.</li><li>Ingrese su correo electrónico y contraseña y confirme su registro.</li><li>Personalice su perfil; las empresas reciben además una página de destino personalizada para sus productos.</li></ul>"
   },
   "q3": {
     "question": "¿Qué planes de suscripción ofrece Dicilo.net?",
-    "answer": "<p>Dicilo.net ofrece tres planes principales:</p><ul><li><b>Cliente Particular:</b> Para usuarios que desean recibir ofertas personalizadas.</li><li><b>Minorista:</b> Para pequeñas y medianas empresas con un número manejable de productos.</li><li><b>Mayorista:</b> Para empresas más grandes con catálogos extensos.</li></ul><p>Todos los planes ofrecen acceso a herramientas de marketing, estadísticas, soporte profesional y recomendaciones personalizadas.</p>"
+    "answer": "<p>Dicilo.net ofrece cuatro planes principales:</p><ul><li><b>Cliente Particular:</b> Para usuarios que desean recibir ofertas personalizadas.</li><li><b>Básico:</b> Para pequeñas empresas que cuentan con ventas básicas o están en crecimiento.</li><li><b>Minorista:</b> Para pequeñas y medianas empresas con un número manejable de productos.</li><li><b>Premium:</b> Para empresas más grandes con catálogos extensos.</li></ul><p>Todos los planes de pago ofrecen acceso a herramientas de marketing, estadísticas, soporte profesional y recomendaciones personalizadas.</p>"
   },
   "q4": {
     "question": "¿Qué ventajas tienen los vendedores en Dicilo.net?",
-    "answer": "<p>Los vendedores se benefician, entre otras cosas, de:</p><ul><li>Registro de hasta 600 productos en más de 18 categorías principales.</li><li>Herramientas de marketing impulsadas por IA para optimizar la visibilidad.</li><li>Estadísticas mensuales y formación sobre temas relevantes.</li><li>Promoción personalizada a través de boletines y campañas en redes sociales.</li></ul>"
+    "answer": "<p>Los vendedores se benefician, entre otras cosas, de:</p><ul><li>Registro de hasta 600 productos en 20 categorías principales.</li><li>Herramientas de marketing impulsadas por IA para optimizar la visibilidad.</li><li>Estadísticas mensuales y formación sobre temas relevantes.</li><li>Promoción personalizada a través de boletines y campañas en redes sociales.</li></ul>"
   },
   "q5": {
     "question": "¿Cómo recibo ofertas en Dicilo.net?",
@@ -57,7 +56,7 @@
   },
   "q14": {
     "question": "¿Puedo registrar mis productos en varias categorías?",
-    "answer": "<p>Sí, hay hasta 18 categorías principales disponibles, siempre que los productos cumplan con los requisitos respectivos.</p>"
+    "answer": "<p>Sí, Dicilo tiene 20 categorías principales disponibles, siempre que los productos cumplan con los requisitos respectivos.</p>"
   },
   "q15": {
     "question": "¿Cómo funciona el sistema de recomendaciones?",
@@ -81,11 +80,11 @@
   },
   "q20": {
     "question": "¿Qué membresías existen?",
-    "answer": "<p>Hay tres membresías principales:</p><ul><li>Cliente Particular</li><li>Minorista</li><li>Mayorista</li></ul>"
+    "answer": "<p>Hay tres membresías principales:</p><ul><li>Cliente Particular</li><li>Básico</li><li>Minorista</li><li>Premium</li></ul>"
   },
   "q21": {
-    "question": "¿Ofrece Dicilo.net herramientas financieras adicionales para orientación?",
-    "answer": "<p>Sí. Los usuarios fuera de Alemania pueden usar un conversor de divisas gratuito integrado para verificar el precio de su registro en su moneda local, de forma rápida, fácil y transparente.</p>"
+    "question": "¿Ofrece Dicilo.net una calculadora de divisas?",
+    "answer": "<p>Sí. Ofrecemos una calculadora de divisas integrada con la que puede comprobar los tipos de cambio en tiempo real.</p>"
   },
   "q22": {
     "question": "¿Cómo contacto a Dicilo.net para preguntas o asesoramiento?",

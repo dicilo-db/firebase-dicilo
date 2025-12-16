@@ -84,7 +84,7 @@ const Header = () => {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" aria-label="More links">
-                  <MoreVertical className="h-4 w-4" />
+                  <Menu className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
@@ -130,7 +130,7 @@ const Header = () => {
                   <span className="sr-only">Open menu</span>
                 </Button>
               </SheetTrigger>
-              <SheetContent>
+              <SheetContent className="overflow-y-auto">
                 <SheetHeader>
                   <SheetTitle className="text-left text-2xl font-bold text-primary">
                     Dicilo
@@ -138,12 +138,12 @@ const Header = () => {
                 </SheetHeader>
                 <div className="flex flex-col space-y-4 pt-6">
 
-                  {/* Registrarse (TOP) - Destacado */}
-                  {!user && (
+                  {/* Top Action Button: Login if guest, Dashboard if user */}
+                  {!loading && !user && (
                     <SheetClose asChild>
                       <Button asChild variant="default" className="w-full justify-center py-6 text-lg font-bold shadow-md">
-                        <Link href="/registrieren">
-                          ✨ {t('header.nav.register')}
+                        <Link href="/login">
+                          {t('header.nav.login')}
                         </Link>
                       </Button>
                     </SheetClose>
@@ -153,7 +153,7 @@ const Header = () => {
                   {!loading && user && (
                     <div className="space-y-2">
                       <SheetClose asChild>
-                        <Button asChild variant="outline" className="w-full justify-start">
+                        <Button asChild variant="default" className="w-full justify-center py-6 text-lg font-bold shadow-md">
                           <Link href="/dashboard"><UserIcon className="mr-2 h-4 w-4" /> Dashboard</Link>
                         </Button>
                       </SheetClose>
@@ -165,9 +165,11 @@ const Header = () => {
                     </div>
                   )}
 
-                  {/* Menú Links */}
+                  <hr className="my-2" />
+
+                  {/* All Menu Links (Main + Legal) */}
                   <div className="space-y-1">
-                    {mobileLinks.map((link) => (
+                    {[...desktopLinks, ...mobileLinks].map((link) => (
                       <SheetClose asChild key={link.href}>
                         <Button
                           asChild
@@ -180,18 +182,20 @@ const Header = () => {
                     ))}
                   </div>
 
-                  {/* Registrarse (BOTTOM) - Refuerzo */}
-                  {!user && (
+                  <hr className="my-2" />
+
+                  {/* Secondary Action: Register if guest */}
+                  {!loading && !user && (
                     <SheetClose asChild>
-                      <Button asChild variant="outline" className="w-full justify-center mt-4">
+                      <Button asChild variant="outline" className="w-full justify-center mt-2">
                         <Link href="/registrieren">
-                          {t('header.nav.register')}
+                          ✨ {t('header.nav.register')}
                         </Link>
                       </Button>
                     </SheetClose>
                   )}
 
-                  <div className="border-t pt-4">
+                  <div className="pt-4 pb-8">
                     <h3 className="mb-2 text-sm font-semibold uppercase text-muted-foreground">
                       {t('header.nav.language')}
                     </h3>

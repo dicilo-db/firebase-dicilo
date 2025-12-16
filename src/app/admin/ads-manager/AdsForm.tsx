@@ -113,7 +113,7 @@ export default function AdsForm({
             console.error('Upload failed:', error);
             toast({
                 title: 'Error',
-                description: 'Failed to upload banner',
+                description: `Failed to upload banner: ${error instanceof Error ? error.message : 'Unknown error'}`,
                 variant: 'destructive',
             });
         } finally {

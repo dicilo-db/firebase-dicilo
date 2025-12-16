@@ -19,6 +19,7 @@ import {
   CardFooter,
 } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { CurrencyConverter } from '@/components/CurrencyConverter';
 import { Header } from '@/components/header';
 import Footer from '@/components/footer';
 
@@ -116,16 +117,31 @@ function PlansClientContent() {
       <main className="flex-grow">
         <section className="bg-white py-16 sm:py-24">
           <div className="container mx-auto px-4">
-            <div className="mx-auto mb-12 max-w-4xl text-center">
-              <h2 className="text-3xl font-extrabold text-foreground md:text-4xl">
-                {t('plans_title')}
-              </h2>
-              <div className="mt-4 space-y-4 text-muted-foreground">
-                <p>{t('plans_desc_1')}</p>
-                <p>{t('plans_desc_2')}</p>
-                <p>{t('plans_desc_3')}</p>
+
+            {/* Header Section with Split Layout */}
+            <div className="mx-auto mb-12 max-w-6xl">
+              <div className="flex flex-col md:flex-row gap-8 items-start">
+
+                {/* Text Content (60%) */}
+                <div className="w-full md:w-3/5 text-left">
+                  <h2 className="text-3xl font-extrabold text-foreground md:text-4xl text-center md:text-left">
+                    {t('plans_title')}
+                  </h2>
+                  <div className="mt-4 space-y-4 text-muted-foreground text-center md:text-left">
+                    <p>{t('plans_desc_1')}</p>
+                    <p>{t('plans_desc_2')}</p>
+                    <p>{t('plans_desc_3')}</p>
+                  </div>
+                </div>
+
+                {/* Currency Converter Widget (40%) */}
+                <div className="w-full md:w-2/5">
+                  <CurrencyConverter />
+                </div>
+
               </div>
             </div>
+
             <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
               {filteredPlans.length > 0 ? (
                 filteredPlans.map((plan) => (

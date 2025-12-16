@@ -1,4 +1,3 @@
-
 {
   "pageTitle": "Häufig gestellte Fragen",
   "pageSubtitle": "Antworten auf die häufigsten Fragen zu Dicilo.",
@@ -9,15 +8,15 @@
   },
   "q2": {
     "question": "Wie kann ich mich bei Dicilo.net registrieren?",
-    "answer": "<p>Die Registrierung erfolgt schnell und unkompliziert:</p><ul><li>Besuchen Sie die Website Dicilo.net.</li><li>Wählen Sie Ihr Profil: Privatkunde, Einzelhändler oder Großhändler.</li><li>Geben Sie E-Mail und Passwort ein und bestätigen Sie Ihre Anmeldung.</li><li>Passen Sie Ihr Profil an; Unternehmen erhalten zusätzlich eine personalisierte Landingpage für ihre Produkte.</li></ul>"
+    "answer": "<p>Die Registrierung erfolgt schnell und unkompliziert:</p><ul><li>Besuchen Sie die Website Dicilo.net.</li><li>Wählen Sie Ihr Profil: Privatkunde, Basis, Einzelhändler oder Premium.</li><li>Geben Sie E-Mail und Passwort ein und bestätigen Sie Ihre Anmeldung.</li><li>Passen Sie Ihr Profil an; Unternehmen erhalten zusätzlich eine personalisierte Landingpage für ihre Produkte.</li></ul>"
   },
   "q3": {
     "question": "Welche Abonnementpläne bietet Dicilo.net?",
-    "answer": "<p>Dicilo.net stellt drei Haupttarife zur Verfügung:</p><ul><li><b>Privatkunde:</b> Für Nutzer, die personalisierte Angebote erhalten möchten.</li><li><b>Einzelhändler:</b> Für kleine und mittlere Unternehmen mit einer überschaubaren Produktanzahl.</li><li><b>Großhändler:</b> Für größere Unternehmen mit umfangreichen Katalogen.</li></ul><p>Alle Pläne bieten Zugang zu Marketingtools, Statistiken, professioneller Unterstützung und personalisierten Empfehlungen.</p>"
+    "answer": "<p>Dicilo.net stellt vier Haupttarife zur Verfügung:</p><ul><li><b>Privatkunde:</b> Für Nutzer, die personalisierte Angebote erhalten möchten.</li><li><b>Basis:</b> Für Kleinunternehmen mit Basisumsatz oder im Wachstum.</li><li><b>Einzelhändler:</b> Für kleine und mittlere Unternehmen mit einer überschaubaren Produktanzahl.</li><li><b>Premium:</b> Für größere Unternehmen mit umfangreichen Katalogen.</li></ul><p>Alle kostenpflichtigen Pläne bieten Zugang zu Marketingtools, Statistiken, professioneller Unterstützung und personalisierten Empfehlungen.</p>"
   },
   "q4": {
     "question": "Welche Vorteile haben Verkäufer bei Dicilo.net?",
-    "answer": "<p>Verkäufer profitieren unter anderem von:</p><ul><li>Registrierung von bis zu 600 Produkten in über 18 Hauptkategorien.</li><li>KI-gestützten Marketingwerkzeugen zur Optimierung der Sichtbarkeit.</li><li>Monatlichen Statistiken und Schulungen zu relevanten Themen.</li><li>Personalisierter Promotion über Newsletter und Social-Media-Kampagnen.</li></ul>"
+    "answer": "<p>Verkäufer profitieren unter anderem von:</p><ul><li>Registrierung von bis zu 600 Produkten in 20 Hauptkategorien.</li><li>KI-gestützten Marketingwerkzeugen zur Optimierung der Sichtbarkeit.</li><li>Monatlichen Statistiken und Schulungen zu relevanten Themen.</li><li>Personalisierter Promotion über Newsletter und Social-Media-Kampagnen.</li></ul>"
   },
   "q5": {
     "question": "Wie erhalte ich Angebote bei Dicilo.net?",
@@ -57,7 +56,7 @@
   },
   "q14": {
     "question": "Kann ich meine Produkte in mehreren Kategorien registrieren?",
-    "answer": "<p>Ja, es stehen bis zu 18 Hauptkategorien zur Verfügung, sofern die Produkte den jeweiligen Anforderungen entsprechen.</p>"
+    "answer": "<p>Ja, Dicilo bietet 20 Hauptkategorien an, sofern die Produkte den jeweiligen Anforderungen entsprechen.</p>"
   },
   "q15": {
     "question": "Wie funktioniert das Empfehlungssystem?",
@@ -81,11 +80,11 @@
   },
   "q20": {
     "question": "Welche Mitgliedschaften gibt es?",
-    "answer": "<p>Es gibt drei Hauptmitgliedschaften:</p><ul><li>Privatkunde</li><li>Einzelhändler</li><li>Großhändler</li></ul>"
+    "answer": "<p>Es gibt drei Hauptmitgliedschaften:</p><ul><li>Privatkunde</li><li>Basis</li><li>Einzelhändler</li><li>Premium</li></ul>"
   },
   "q21": {
-    "question": "Bietet Dicilo.net zusätzliche Finanztools zur Orientierung?",
-    "answer": "<p>Ja. Nutzer außerhalb Deutschlands können über einen integrierten kostenlosen Währungsrechner den Preis ihrer Registrierung in ihrer Landeswährung prüfen — schnell, einfach und transparent.</p>"
+    "question": "Bietet Dicilo.net einen Währungsrechner an?",
+    "answer": "<p>Ja. Wir stellen einen integrierten Währungsrechner bereit, mit dem Sie Wechselkurse in Echtzeit überprüfen können.</p>"
   },
   "q22": {
     "question": "Wie kontaktiere ich Dicilo.net für Fragen oder Beratung?",

@@ -1,4 +1,3 @@
-
 {
   "pageTitle": "Frequently Asked Questions",
   "pageSubtitle": "Answers to the most common questions about Dicilo.",
@@ -9,15 +8,15 @@
   },
   "q2": {
     "question": "How can I register with Dicilo.net?",
-    "answer": "<p>Registration is quick and easy:</p><ul><li>Visit the Dicilo.net website.</li><li>Choose your profile: Private Customer, Retailer, or Wholesaler.</li><li>Enter your email and password and confirm your registration.</li><li>Customize your profile; businesses also receive a personalized landing page for their products.</li></ul>"
+    "answer": "<p>Registration is quick and easy:</p><ul><li>Visit the Dicilo.net website.</li><li>Choose your profile: Private Customer, Basic, Retailer, or Premium.</li><li>Enter your email and password and confirm your registration.</li><li>Customize your profile; businesses also receive a personalized landing page for their products.</li></ul>"
   },
   "q3": {
     "question": "What subscription plans does Dicilo.net offer?",
-    "answer": "<p>Dicilo.net offers three main plans:</p><ul><li><b>Private Customer:</b> For users who want to receive personalized offers.</li><li><b>Retailer:</b> For small and medium-sized businesses with a manageable number of products.</li><li><b>Wholesaler:</b> For larger companies with extensive catalogs.</li></ul><p>All plans provide access to marketing tools, statistics, professional support, and personalized recommendations.</p>"
+    "answer": "<p>Dicilo.net offers four main plans:</p><ul><li><b>Private Customer:</b> For users who want to receive personalized offers.</li><li><b>Basic:</b> For small businesses with basic sales or that are growing.</li><li><b>Retailer:</b> For small and medium-sized businesses with a manageable number of products.</li><li><b>Premium:</b> For larger companies with extensive catalogs.</li></ul><p>All paid plans provide access to marketing tools, statistics, professional support, and personalized recommendations.</p>"
   },
   "q4": {
     "question": "What are the benefits for sellers on Dicilo.net?",
-    "answer": "<p>Sellers benefit from, among other things:</p><ul><li>Registration of up to 600 products in over 18 main categories.</li><li>AI-powered marketing tools to optimize visibility.</li><li>Monthly statistics and training on relevant topics.</li><li>Personalized promotion via newsletters and social media campaigns.</li></ul>"
+    "answer": "<p>Sellers benefit from, among other things:</p><ul><li>Registration of up to 600 products in 20 main categories.</li><li>AI-powered marketing tools to optimize visibility.</li><li>Monthly statistics and training on relevant topics.</li><li>Personalized promotion via newsletters and social media campaigns.</li></ul>"
   },
   "q5": {
     "question": "How do I receive offers on Dicilo.net?",
@@ -57,7 +56,7 @@
   },
   "q14": {
     "question": "Can I register my products in multiple categories?",
-    "answer": "<p>Yes, up to 18 main categories are available, provided the products meet the respective requirements.</p>"
+    "answer": "<p>Yes, Dicilo has 20 main categories available, provided the products meet the respective requirements.</p>"
   },
   "q15": {
     "question": "How does the recommendation system work?",
@@ -81,11 +80,11 @@
   },
   "q20": {
     "question": "What memberships are there?",
-    "answer": "<p>There are three main memberships:</p><ul><li>Private Customer</li><li>Retailer</li><li>Wholesaler</li></ul>"
+    "answer": "<p>There are three main memberships:</p><ul><li>Private Customer</li><li>Basic</li><li>Retailer</li><li>Premium</li></ul>"
   },
   "q21": {
-    "question": "Does Dicilo.net offer additional financial tools for orientation?",
-    "answer": "<p>Yes. Users outside of Germany can use an integrated free currency converter to check the price of their registration in their local currency — quickly, easily, and transparently.</p>"
+    "question": "Does Dicilo.net offer a currency calculator?",
+    "answer": "<p>Yes. We provide an integrated currency calculator that allows you to check exchange rates in real-time.</p>"
   },
   "q22": {
     "question": "How do I contact Dicilo.net for questions or advice?",

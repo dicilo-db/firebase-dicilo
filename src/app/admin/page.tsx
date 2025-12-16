@@ -243,7 +243,6 @@ export default function AdminLoginPage() {
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <Header />
       <main className="flex flex-grow items-center justify-center p-4">
         {renderContent()}
       </main>
