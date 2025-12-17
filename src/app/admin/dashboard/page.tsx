@@ -38,7 +38,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Header } from '@/components/header';
+
 import Footer from '@/components/footer';
 
 import { getFunctions, httpsCallable } from 'firebase/functions';
@@ -68,7 +68,7 @@ const formatCount = (count: number) => {
 // Esqueleto para la página del dashboard
 const DashboardSkeleton = () => (
   <div className="flex min-h-screen flex-col">
-    <Header />
+
     <main className="flex-grow p-8">
       <div className="mb-6 flex items-center justify-between">
         <Skeleton className="h-8 w-48" />
@@ -284,7 +284,7 @@ const DashboardContent: React.FC = () => {
 
   return (
     <div className="flex min-h-screen flex-col bg-slate-50 dark:bg-slate-900">
-      <Header />
+
       <main className="flex-grow p-8 container mx-auto max-w-7xl">
         <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>

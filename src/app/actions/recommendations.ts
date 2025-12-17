@@ -1,11 +1,11 @@
 'use server';
 
-import { adminDb } from '@/lib/firebase-admin';
+import { getAdminDb } from '@/lib/firebase-admin';
 import * as admin from 'firebase-admin';
 
 export async function submitRecommendation(data: any) {
     try {
-        await adminDb.collection('recommendations').add({
+        await getAdminDb().collection('recommendations').add({
             ...data,
             timestamp: admin.firestore.FieldValue.serverTimestamp(),
             source: 'search_page_recommendation',

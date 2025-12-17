@@ -1,17 +1,9 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
-import {
-  getFirestore,
-  collection,
-  addDoc,
-  serverTimestamp,
-} from 'firebase/firestore';
-import { app } from '@/lib/firebase';
-import { adminAuth } from '@/lib/firebase-admin';
+import { getAdminAuth, getAdminDb } from '@/lib/firebase-admin';
 import { createPrivateUserProfile } from '@/lib/private-user-service';
 import { sendWelcomeEmail } from '@/lib/email';
 
-const db = getFirestore(app);
 
 // ¡REEMPLAZAR CON TU URL REAL DE N8N!
 const N8N_WEBHOOK_URL =
@@ -97,7 +89,7 @@ export async function POST(request: Request) {
     let ownerUid = null;
     if (password) {
       try {
-        const userRecord = await adminAuth.createUser({
+        const userRecord = await getAdminAuth().createUser({
           email,
           password,
           displayName: `${firstName} ${lastName}`,
@@ -146,11 +138,11 @@ export async function POST(request: Request) {
       currentOfferUrl: currentOfferUrl || null,
       mapUrl: mapUrl || null,
       coords: coords || null,
-      createdAt: serverTimestamp(),
+      createdAt: new Date(), // Use native Date for Admin SDK or admin.firestore.FieldValue.serverTimestamp()
       status: 'pending', // Initial status
     };
 
-    const registrationDocRef = await addDoc(collection(db, 'registrations'), registrationData);
+    const registrationDocRef = await getAdminDb().collection('registrations').add(registrationData);
 
     // 3. Crear automáticamente una landing page si es Minorista o Premium
     if (
@@ -175,7 +167,7 @@ export async function POST(request: Request) {
       };
 
       try {
-        await addDoc(collection(db, 'clients'), defaultClientData);
+        await getAdminDb().collection('clients').add(defaultClientData);
       } catch (dbError) {
         console.error('Firestore Error (clients):', dbError);
         // No detenemos el proceso si esto falla, pero lo registramos.

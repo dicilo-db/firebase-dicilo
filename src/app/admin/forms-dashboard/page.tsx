@@ -24,7 +24,7 @@ import {
 } from 'lucide-react';
 import { useAdminUser, useAuthGuard } from '@/hooks/useAuthGuard';
 import { useServerAction } from '@/hooks/useServerAction';
-import { Header } from '@/components/header';
+
 import Footer from '@/components/footer';
 
 import { getFunctions, httpsCallable } from 'firebase/functions';
@@ -43,7 +43,7 @@ const auth = getAuth(app);
 // Esqueleto para la página del dashboard
 const DashboardSkeleton = () => (
   <div className="flex min-h-screen flex-col">
-    <Header />
+
     <main className="flex-grow p-8">
       <div className="mb-6 flex items-center justify-between">
         <Skeleton className="h-8 w-48" />
@@ -171,7 +171,7 @@ export default function FormsDashboardPage() {
 
   return (
     <div className="flex min-h-screen flex-col bg-slate-50 dark:bg-slate-900">
-      <Header />
+
       <main className="flex-grow container mx-auto p-8 max-w-7xl">
         <div className="mb-8 flex items-center justify-between">
           <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100">

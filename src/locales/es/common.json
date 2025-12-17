@@ -170,7 +170,7 @@
       "securityTitle": "Seguridad, Autenticidad y Titularidad",
       "securityDesc": "Las DICICOIN solo pueden ser adquiridas a través de Agentes Autorizados...",
       "purchaseHeader": "Adquiere más DICICOIN a través de los canales oficiales...",
-      "purchaseTitle": "Adquiere más DICICOIN",
+      "purchaseTitle": "Adquiere DICICOIN",
       "purchaseDesc": "Incrementar tu saldo te permite acceder a mayores beneficios estratégicos...",
       "historyTitle": "Historial y Certificados",
       "historyDesc": "Consulta en todo momento el historial completo de tus transacciones...",
@@ -178,7 +178,9 @@
       "learnMore": "Aprende sobre DiciCoin",
       "readGuide": "Leer Guía",
       "commingSoon": "Próximamente",
-      "readMore": "Leer más"
+      "readMore": "Leer más",
+      "yourBalance": "Tu Balance",
+      "limit": "El límite máximo permitido es de 2.000 DICICOIN por usuario. Para montos mayores, se requiere una verificación de identidad adicional (KYC) conforme a las regulaciones vigentes."
     }
   },
   "tickets": {

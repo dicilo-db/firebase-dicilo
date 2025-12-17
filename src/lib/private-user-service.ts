@@ -1,4 +1,4 @@
-import { adminDb } from '@/lib/firebase-admin';
+import { getAdminDb } from '@/lib/firebase-admin';
 import * as admin from 'firebase-admin';
 
 /**
@@ -25,7 +25,7 @@ async function generateUniqueCodeAdmin(firstName: string, lastName: string, phon
         const sequenceStr = sequence.toString().padStart(2, '0');
         uniqueCode = `${baseCode}${sequenceStr}`;
 
-        const snapshot = await adminDb.collection('private_profiles')
+        const snapshot = await getAdminDb().collection('private_profiles')
             .where('uniqueCode', '==', uniqueCode)
             .get();
 
@@ -54,7 +54,7 @@ export async function createPrivateUserProfile(
     const { firstName, lastName, email, whatsapp, phone, contactType } = data;
 
     // Check if exists
-    const docRef = adminDb.collection('private_profiles').doc(uid);
+    const docRef = getAdminDb().collection('private_profiles').doc(uid);
     const existing = await docRef.get();
     if (existing.exists) return { success: false, message: 'Profile already exists', profile: existing.data() };
 

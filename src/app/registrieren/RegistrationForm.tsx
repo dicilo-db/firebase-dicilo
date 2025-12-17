@@ -179,106 +179,18 @@ export function RegistrationForm() {
 
   const handleRegistration = async (data: RegistrationFormData) => {
     try {
-      // 1. Create Authentication User (if password provided)
-      let ownerUid = null;
-      if (data.password) {
-        try {
-          const { getAuth, createUserWithEmailAndPassword, updateProfile } = await import('firebase/auth');
-          const { app } = await import('@/lib/firebase');
-          const auth = getAuth(app);
+      const response = await fetch('/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
 
-          const userCredential = await createUserWithEmailAndPassword(
-            auth,
-            data.email,
-            data.password
-          );
-          ownerUid = userCredential.user.uid;
+      const result = await response.json();
 
-          await updateProfile(userCredential.user, {
-            displayName: `${data.firstName} ${data.lastName}`,
-          });
-        } catch (authError: any) {
-          console.error('Auth Error:', authError);
-          if (authError.code === 'auth/email-already-in-use') {
-            // Suggest logging in or using a different email
-            throw new Error(t('register.errors.emailAlreadyInUse') || 'Email already in use');
-          }
-          throw new Error(authError.message || t('register.form.submitError'));
-        }
+      if (!response.ok) {
+        // Handle specific error codes if needed, or just show the message
+        throw new Error(result.message || result.error || t('register.form.submitError'));
       }
-
-      // 2. Save to Firestore
-      const { getFirestore, collection, addDoc, serverTimestamp } = await import('firebase/firestore');
-      const { app } = await import('@/lib/firebase');
-      const { slugify } = await import('@/lib/utils');
-      const db = getFirestore(app);
-
-      const registrationData = {
-        firstName: data.firstName,
-        lastName: data.lastName,
-        email: data.email,
-        whatsapp: data.whatsapp || null,
-        contactType: data.contactType || 'whatsapp',
-        registrationType: data.registrationType,
-        ownerUid: ownerUid,
-        // Business Fields
-        businessName: data.businessName || null,
-        category: data.category || null,
-        description: data.description || null,
-        location: data.location || null,
-        address: data.address || null,
-        phone: data.phone || null,
-        website: data.website || null,
-        imageUrl: data.imageUrl || null,
-        imageHint: data.imageHint || null,
-        rating: data.rating || null,
-        currentOfferUrl: data.currentOfferUrl || null,
-        mapUrl: data.mapUrl || null,
-        coords: data.coords || null,
-        createdAt: serverTimestamp(),
-        status: 'pending',
-      };
-
-      const registrationDocRef = await addDoc(collection(db, 'registrations'), registrationData);
-
-      // 3. Create Client Document (if Retailer or Premium)
-      if (['retailer', 'premium', 'donor'].includes(data.registrationType)) {
-        const clientName = data.businessName || `${data.firstName} ${data.lastName}`;
-        const defaultClientData = {
-          clientName: clientName,
-          clientLogoUrl: data.imageUrl || '',
-          clientTitle: data.welcomeText || `Bienvenido a ${clientName}`,
-          clientSubtitle: 'Esta es tu página de aterrizaje. ¡Edítala desde el panel de administración!',
-          products: [],
-          slug: slugify(clientName),
-          socialLinks: {
-            instagram: data.instagramUrl || '',
-            facebook: data.facebookUrl || '',
-            linkedin: ''
-          },
-          strengths: [],
-          testimonials: [],
-          translations: {},
-          ownerUid: ownerUid,
-          registrationId: registrationDocRef.id,
-          // Added fields for directory listing
-          category: data.category || '',
-          description: data.description || '',
-          location: data.location || '',
-          address: data.address || '',
-          coords: data.coords || null,
-          phone: data.phone || '',
-          website: data.website || '',
-          currentOfferUrl: data.currentOfferUrl || '',
-          headerData: {
-            headerImageUrl: data.headerImageUrl || '',
-          }
-        };
-        await addDoc(collection(db, 'clients'), defaultClientData);
-      }
-
-      // 4. Optional: Call API for Webhook (if needed, but skipping for now to ensure stability)
-      // If we need the webhook, we can call a simplified API endpoint here.
 
       toast({
         title: t('register.form.registerSuccessTitle'),

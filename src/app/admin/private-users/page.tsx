@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { getFirestore, collection, query, getDocs, orderBy } from 'firebase/firestore';
 import { app } from '@/lib/firebase';
-import { Header } from '@/components/header';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useTranslation } from 'react-i18next';
@@ -72,7 +72,7 @@ export default function PrivateUsersPage() {
 
     return (
         <div className="flex min-h-screen flex-col bg-background">
-            <Header />
+
             <main className="container mx-auto flex-grow p-8">
                 <div className="mb-8 flex items-center justify-between">
                     <h1 className="text-3xl font-bold">Privat User</h1>

@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { getFirestore, collection, query, getDocs, orderBy, deleteDoc, doc } from 'firebase/firestore';
 import { app } from '@/lib/firebase';
-import { Header } from '@/components/header';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useTranslation } from 'react-i18next';
@@ -94,7 +94,7 @@ export default function RecommendationsPage() {
 
     return (
         <div className="flex min-h-screen flex-col bg-background">
-            <Header />
+
             <main className="container mx-auto flex-grow p-8">
                 <div className="mb-6 flex items-center justify-between">
                     <h1 className="text-3xl font-bold">Empfehlungen</h1>

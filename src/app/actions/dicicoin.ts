@@ -1,6 +1,6 @@
 'use server';
 
-import { adminDb } from '@/lib/firebase-admin';
+import { getAdminDb } from '@/lib/firebase-admin';
 import { getSession } from '@/app/actions/auth'; // Assuming this exists or similar auth check
 import { headers } from 'next/headers';
 
@@ -43,7 +43,7 @@ export async function getDiciCoinPurchasers(
         //   return { success: false, purchasers: [], total: 0, error: 'Unauthorized' };
         // }
 
-        let query = adminDb.collection('dicicoin_purchases');
+        let query = getAdminDb().collection('dicicoin_purchases');
 
         // Note: Firestore doesn't support flexible search/filter combinations natively without specific indexes.
         // For a simple admin module, fetching all (or a reasonable limit) and filtering in-memory 

@@ -1,6 +1,6 @@
 'use server';
 
-import { adminDb } from '@/lib/firebase-admin';
+import { getAdminDb } from '@/lib/firebase-admin';
 import * as admin from 'firebase-admin';
 
 export interface Ticket {
@@ -45,7 +45,7 @@ export async function createTicket(data: {
             messages: []
         };
 
-        const docRef = await adminDb.collection('tickets').add(ticketData);
+        const docRef = await getAdminDb().collection('tickets').add(ticketData);
         return { success: true, ticketId: docRef.id };
     } catch (error: any) {
         console.error('Error creating ticket:', error);
@@ -55,7 +55,7 @@ export async function createTicket(data: {
 
 export async function getUserTickets(uid: string) {
     try {
-        const snapshot = await adminDb.collection('tickets')
+        const snapshot = await getAdminDb().collection('tickets')
             .where('uid', '==', uid)
             .orderBy('createdAt', 'desc')
             .get();
@@ -77,7 +77,7 @@ export async function getUserTickets(uid: string) {
 
 export async function getTicket(ticketId: string) {
     try {
-        const docSnap = await adminDb.collection('tickets').doc(ticketId).get();
+        const docSnap = await getAdminDb().collection('tickets').doc(ticketId).get();
 
         if (!docSnap.exists) {
             return { success: false, error: 'Ticket not found' };
@@ -106,7 +106,7 @@ export async function addTicketMessage(ticketId: string, message: {
     message: string;
 }) {
     try {
-        const ticketRef = adminDb.collection('tickets').doc(ticketId);
+        const ticketRef = getAdminDb().collection('tickets').doc(ticketId);
 
         await ticketRef.update({
             messages: admin.firestore.FieldValue.arrayUnion({

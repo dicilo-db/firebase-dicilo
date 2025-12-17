@@ -1,6 +1,6 @@
 'use server';
 
-import { adminDb } from '@/lib/firebase-admin';
+import { getAdminDb } from '@/lib/firebase-admin';
 import * as admin from 'firebase-admin';
 
 export async function updatePrivateProfile(uid: string, data: any) {
@@ -9,7 +9,7 @@ export async function updatePrivateProfile(uid: string, data: any) {
             return { success: false, error: 'Unauthorized' };
         }
 
-        const docRef = adminDb.collection('private_profiles').doc(uid);
+        const docRef = getAdminDb().collection('private_profiles').doc(uid);
         const doc = await docRef.get();
 
         if (!doc.exists) {
@@ -39,7 +39,7 @@ export async function ensureUniqueCode(uid: string) {
     try {
         if (!uid) return { success: false, error: 'Unauthorized' };
 
-        const docRef = adminDb.collection('private_profiles').doc(uid);
+        const docRef = getAdminDb().collection('private_profiles').doc(uid);
         const doc = await docRef.get();
 
         if (!doc.exists) return { success: false, error: 'Profile not found' };
@@ -76,7 +76,7 @@ export async function ensureUniqueCode(uid: string) {
             const sequenceStr = sequence.toString().padStart(2, '0');
             uniqueCode = `${baseCode}${sequenceStr}`;
 
-            const q = adminDb.collection('private_profiles').where('uniqueCode', '==', uniqueCode);
+            const q = getAdminDb().collection('private_profiles').where('uniqueCode', '==', uniqueCode);
             const snapshot = await q.get();
 
             if (snapshot.empty) {

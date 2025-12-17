@@ -1,6 +1,6 @@
 'use server';
 
-import { adminDb } from '@/lib/firebase-admin';
+import { getAdminDb } from '@/lib/firebase-admin';
 import * as admin from 'firebase-admin';
 import { FieldValue } from 'firebase-admin/firestore';
 
@@ -66,12 +66,12 @@ export async function createCoupon(data: CouponData) {
         const code = `DCL-CPN-${codeSuffix}`;
 
         // Ensure Uniqueness (Simple check, could be loop if robust needed)
-        const check = await adminDb.collection('coupons').where('code', '==', code).get();
+        const check = await getAdminDb().collection('coupons').where('code', '==', code).get();
         if (!check.empty) {
             return { success: false, error: 'Code generation collision, please try again.' };
         }
 
-        const couponRef = adminDb.collection('coupons').doc();
+        const couponRef = getAdminDb().collection('coupons').doc();
 
         const now = new Date();
         const start = new Date(data.startDate);
@@ -107,7 +107,7 @@ export async function createCoupon(data: CouponData) {
  */
 export async function getCouponStats() {
     try {
-        const snapshot = await adminDb.collection('coupons').get();
+        const snapshot = await getAdminDb().collection('coupons').get();
         const stats: Record<string, { active: number; total: number }> = {};
 
         const now = new Date();
@@ -137,7 +137,7 @@ export async function getCouponStats() {
  */
 export async function getAllCoupons(filters: CouponFilter) {
     try {
-        let query = adminDb.collection('coupons').orderBy('createdAt', 'desc');
+        let query = getAdminDb().collection('coupons').orderBy('createdAt', 'desc');
 
         // Note: Firestore limitation on multiple inequality filters/where clauses without composite indexes.
         // We will fetch mostly active/recent and filter in memory for complex combinations 
@@ -227,7 +227,7 @@ export async function getAllCoupons(filters: CouponFilter) {
  */
 export async function getCouponsByCategory(category: string, filters: CouponFilter) {
     try {
-        let query = adminDb.collection('coupons').where('category', '==', category);
+        let query = getAdminDb().collection('coupons').where('category', '==', category);
 
         if (filters.country) {
             query = query.where('country', '==', filters.country);
@@ -295,13 +295,13 @@ export async function searchPrivateUsers(term: string) {
         // We'll search primarily by email or firstName.
 
         // 1. Search by exact email
-        const emailQuery = adminDb.collection('private_profiles')
+        const emailQuery = getAdminDb().collection('private_profiles')
             .where('email', '>=', term)
             .where('email', '<=', term + '\uf8ff')
             .limit(5);
 
         // 2. Search by firstName
-        const nameQuery = adminDb.collection('private_profiles')
+        const nameQuery = getAdminDb().collection('private_profiles')
             .where('firstName', '>=', term)
             .where('firstName', '<=', term + '\uf8ff')
             .limit(5);
@@ -335,7 +335,7 @@ export async function searchPrivateUsers(term: string) {
 export async function assignCoupon(couponId: string, companyId: string, userId: string) {
     try {
         // Check if already assigned
-        const exists = await adminDb.collection('coupon_assignments')
+        const exists = await getAdminDb().collection('coupon_assignments')
             .where('couponId', '==', couponId)
             .where('userId', '==', userId)
             .get();
@@ -344,7 +344,7 @@ export async function assignCoupon(couponId: string, companyId: string, userId: 
             return { success: false, error: 'User already has this coupon.' };
         }
 
-        await adminDb.collection('coupon_assignments').add({
+        await getAdminDb().collection('coupon_assignments').add({
             couponId,
             companyId,
             userId,
@@ -376,7 +376,7 @@ export async function searchCompanies(term: string) {
         // For robustness without search indices, we will fetch a larger batch and filter.
         // Ideally: Add a 'searchName' (lowercase) field to database in future.
 
-        const clientsRef = adminDb.collection('clients');
+        const clientsRef = getAdminDb().collection('clients');
         const snapshot = await clientsRef.limit(2000).get(); // Increased limit to ensure we find the company
 
         const termLower = term.toLowerCase();
@@ -417,7 +417,7 @@ export async function getCouponsByCompany(companyId: string) {
         console.log(`[getCouponsByCompany] Fetching for: ${companyId}`);
         if (!companyId) return { success: false, error: 'Company ID is required' };
 
-        const snapshot = await adminDb.collection('coupons')
+        const snapshot = await getAdminDb().collection('coupons')
             .where('companyId', '==', companyId)
             .get();
 

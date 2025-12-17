@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server';
-import { adminDb, adminAuth } from '@/lib/firebase-admin';
+import { getAdminDb, getAdminAuth } from '@/lib/firebase-admin';
 import { createPrivateUserProfile } from '@/lib/private-user-service';
 
 export async function POST(request: Request) {
     try {
         // Query all registrations of type 'private'
-        const snapshot = await adminDb.collection('registrations')
+        const snapshot = await getAdminDb().collection('registrations')
             .where('registrationType', '==', 'private')
             .get();
 
@@ -23,7 +23,7 @@ export async function POST(request: Request) {
             // If no ownerUid, try to find user by email
             if (!uid && data.email) {
                 try {
-                    const userRecord = await adminAuth.getUserByEmail(data.email);
+                    const userRecord = await getAdminAuth().getUserByEmail(data.email);
                     uid = userRecord.uid;
                 } catch (e) {
                     // User not found in Auth, cannot create profile

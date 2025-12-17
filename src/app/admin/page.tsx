@@ -22,7 +22,6 @@ import {
 } from 'firebase/auth';
 import { app } from '@/lib/firebase';
 import { useTranslation } from 'react-i18next';
-import { Header } from '@/components/header';
 import { Loader2, Eye, EyeOff } from 'lucide-react';
 import { checkAdminRole, AdminUser } from '@/lib/auth';
 import { useRouter } from 'next/navigation';

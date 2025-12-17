@@ -2,10 +2,10 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { Timestamp } from 'firebase-admin/firestore';
-import { adminDb } from '@/lib/firebase-admin';
+import { getAdminDb } from '@/lib/firebase-admin';
 import { z } from 'zod';
 
-const db = adminDb;
+const db = getAdminDb();
 
 // Schema for validating incoming events
 const eventSchema = z.object({

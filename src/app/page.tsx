@@ -76,12 +76,17 @@ async function getBusinesses(): Promise<{ businesses: Business[], clientsRaw: an
     }
 
     // Merge and deduplicate by ID
+    // Extract raw client data for budget checking (preserving budget_remaining)
+    const clientsRawData = clientResult.status === 'fulfilled'
+      ? clientResult.value.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
+      : [];
+
     // Merge and deduplicate by ID
     const allBusinesses = [...businesses, ...clients];
     // Deep sanitize businesses to ensure no non-serializable objects (like Timestamps) leak through
     return {
       businesses: JSON.parse(JSON.stringify(allBusinesses)),
-      clientsRaw: clients
+      clientsRaw: clientsRawData
     };
   } catch (error) {
     console.error('Error fetching businesses on server:', error);

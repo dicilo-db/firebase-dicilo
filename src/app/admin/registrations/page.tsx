@@ -17,7 +17,7 @@ import { format } from 'date-fns';
 import { app } from '@/lib/firebase';
 import { useTranslation } from 'react-i18next';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
-import { Header } from '@/components/header';
+
 import Footer from '@/components/footer';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -136,7 +136,7 @@ const ActionButton = ({ registration }: { registration: Registration }) => {
 // Esqueleto de la página mientras carga
 const RegistrationSkeleton = () => (
   <div className="flex min-h-screen flex-col">
-    <Header />
+
     <main className="flex-grow p-8">
       <Skeleton className="mb-4 h-8 w-64" />
       <Skeleton className="mb-6 h-10 w-full" />
@@ -317,7 +317,7 @@ export default function RegistrationsPage() {
 
   return (
     <div className="flex min-h-screen flex-col bg-gray-50">
-      <Header />
+
       <main className="flex-grow p-4 sm:p-8">
         <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <h1 className="text-2xl font-bold">

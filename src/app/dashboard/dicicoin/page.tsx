@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ArrowLeft, Coins, TrendingUp, HelpCircle, ShieldCheck } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { Header } from '@/components/header';
+
 import {
     Dialog,
     DialogContent,
@@ -26,7 +26,7 @@ export default function DiciCoinUserPage() {
 
     return (
         <div className="flex min-h-screen flex-col bg-slate-50 dark:bg-slate-900">
-            <Header />
+
             <main className="container mx-auto py-8 px-4 max-w-5xl">
 
                 {/* Header */}
@@ -56,13 +56,13 @@ export default function DiciCoinUserPage() {
                         <CardHeader>
                             <CardTitle className="text-xl font-bold text-amber-400 flex items-center gap-2">
                                 <ShieldCheck className="h-6 w-6" />
-                                {t('dicicoin.securityTitle', 'Seguridad, Autenticidad y Titularidad')}
+                                {t('dashboard.dicicoin.securityTitle', 'Seguridad, Autenticidad y Titularidad')}
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-6 relative z-10">
                             <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
                                 <div className="bg-white/10 p-4 rounded-xl backdrop-blur-sm border border-white/10 min-w-[200px]">
-                                    <p className="text-sm font-medium text-amber-200 mb-1">Tu Balance</p>
+                                    <p className="text-sm font-medium text-amber-200 mb-1">{t('dashboard.dicicoin.yourBalance', 'Tu Balance')}</p>
                                     <div className="flex items-baseline gap-2">
                                         <span className="text-5xl font-bold text-white">{balance}</span>
                                         <span className="text-xl font-medium text-amber-400">DiciCoins</span>
@@ -136,7 +136,7 @@ export default function DiciCoinUserPage() {
                             <Card className="hover:shadow-md transition-shadow cursor-pointer border-l-4 border-l-emerald-500 h-full">
                                 <CardHeader>
                                     <HelpCircle className="h-8 w-8 text-emerald-500 mb-2" />
-                                    <CardTitle className="text-lg">{t('dashboard.dashboard.dicicoin.howTo', '¿Cómo funciona?')}</CardTitle>
+                                    <CardTitle className="text-lg">{t('dashboard.dicicoin.howTo', '¿Cómo funciona?')}</CardTitle>
                                 </CardHeader>
                                 <CardContent>
                                     <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
@@ -164,7 +164,7 @@ export default function DiciCoinUserPage() {
                 </div>
 
                 <div className="mt-8 text-center text-xs text-muted-foreground max-w-2xl mx-auto">
-                    {t('dicicoin.limit', 'El límite máximo permitido es de 2.000 DICICOIN por usuario...')}
+                    {t('dashboard.dicicoin.limit', 'El límite máximo permitido es de 2.000 DICICOIN por usuario...')}
                 </div>
 
             </main>

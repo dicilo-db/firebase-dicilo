@@ -1,6 +1,6 @@
 'use server';
 
-import { adminStorage } from '@/lib/firebase-admin';
+import { getAdminStorage } from '@/lib/firebase-admin';
 
 export async function uploadAdBannerAction(formData: FormData) {
     try {
@@ -19,7 +19,7 @@ export async function uploadAdBannerAction(formData: FormData) {
         const fileName = `ads/${timestamp}_${sanitizedName}`;
 
         // 3. Upload using Firebase Admin SDK
-        const bucket = adminStorage.bucket('geosearch-fq4i9.appspot.com'); // Explicitly set bucket name from config
+        const bucket = getAdminStorage().bucket(); // Use default bucket
         const fileRef = bucket.file(fileName);
 
         console.log(`[ServerAction] Uploading ${fileName} (${buffer.length} bytes) via Admin SDK`);

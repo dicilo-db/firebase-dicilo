@@ -1,6 +1,6 @@
 
 import { NextRequest, NextResponse } from 'next/server';
-import { adminDb } from '@/lib/firebase-admin';
+import { getAdminDb } from '@/lib/firebase-admin';
 import { FieldValue } from 'firebase-admin/firestore';
 
 export async function POST(request: NextRequest) {
@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
         }
 
         // 0. Get Ad Data to find owner Client
-        const adDoc = await adminDb.collection('ads_banners').doc(adId).get();
+        const adDoc = await getAdminDb().collection('ads_banners').doc(adId).get();
         if (!adDoc.exists) {
             return NextResponse.json({ error: 'Ad not found' }, { status: 404 });
         }
@@ -29,14 +29,14 @@ export async function POST(request: NextRequest) {
             console.warn('Click recorded but no Client ID found to charge.');
         }
 
-        const adRef = adminDb.collection('ads_banners').doc(adId);
+        const adRef = getAdminDb().collection('ads_banners').doc(adId);
 
         // Batch write to ensure consistency
-        const batch = adminDb.batch();
+        const batch = getAdminDb().batch();
 
         // 1. Deduct from Client Wallet (if client exists)
         if (effectiveClientId) {
-            const clientRef = adminDb.collection('clients').doc(effectiveClientId);
+            const clientRef = getAdminDb().collection('clients').doc(effectiveClientId);
             batch.update(clientRef, {
                 budget_remaining: FieldValue.increment(-0.05)
             });
@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
         });
 
         // 3. Log Event
-        const eventRef = adminDb.collection('ad_events').doc();
+        const eventRef = getAdminDb().collection('ad_events').doc();
         batch.set(eventRef, {
             adId,
             clientId: effectiveClientId || null,

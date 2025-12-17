@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { adminDb } from '@/lib/firebase-admin';
+import { getAdminDb } from '@/lib/firebase-admin';
 import { FieldValue } from 'firebase-admin/firestore';
 import { generateUniqueCode } from '@/lib/code-generator';
 
@@ -16,7 +16,7 @@ export async function POST(request: Request) {
         }
 
         // Check if profile already exists
-        const profileRef = adminDb.collection('private_profiles').doc(uid);
+        const profileRef = getAdminDb().collection('private_profiles').doc(uid);
         const profileSnap = await profileRef.get();
 
         if (profileSnap.exists) {

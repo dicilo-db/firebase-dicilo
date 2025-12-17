@@ -29,7 +29,7 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { Header } from '@/components/header';
+
 import Footer from '@/components/footer';
 import {
     Card,
@@ -184,7 +184,6 @@ export default function PrivateUserProfilePage() {
     if (isLoading) {
         return (
             <div className="flex min-h-screen flex-col">
-                <Header />
                 <main className="flex-grow flex items-center justify-center">
                     <Loader2 className="h-8 w-8 animate-spin text-primary" />
                 </main>
@@ -195,7 +194,6 @@ export default function PrivateUserProfilePage() {
 
     return (
         <div className="flex min-h-screen flex-col bg-slate-50 dark:bg-slate-900">
-            <Header />
             <main className="flex-grow container mx-auto p-4 md:p-8 max-w-3xl">
                 <h1 className="text-3xl font-bold mb-6">Mein Profil</h1>
 

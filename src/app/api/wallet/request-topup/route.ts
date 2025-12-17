@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { adminDb } from '@/lib/firebase-admin';
+import { getAdminDb } from '@/lib/firebase-admin';
 import { FieldValue } from 'firebase-admin/firestore';
 
 export async function POST(request: NextRequest) {
@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
         }
 
         // 1. Create Request Record using Admin SDK (bypasses rules)
-        await adminDb.collection('transaction_requests').add({
+        await getAdminDb().collection('transaction_requests').add({
             clientId,
             clientEmail: clientEmail || 'unknown@example.com',
             amount: Number(amount),

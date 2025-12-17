@@ -330,7 +330,7 @@
       "securityTitle": "Sicherheit, Authentizität und Eigentum",
       "securityDesc": "DICICOINs können nur über autorisierte Verkaufsstellen erworben werden...",
       "purchaseHeader": "Erwerben Sie mehr DICICOIN über offizielle Kanäle...",
-      "purchaseTitle": "Mehr DICICOIN erwerben",
+      "purchaseTitle": "DICICOIN erwerben",
       "purchaseDesc": "Eine Erhöhung Ihres Guthabens ermöglicht Ihnen Zugang zu größeren strategischen Vorteilen...",
       "historyTitle": "Verlauf und Zertifikate",
       "historyDesc": "Sehen Sie sich Ihren gesamten Transaktionsverlauf und digitale Eigentumszertifikate an...",
@@ -338,7 +338,9 @@
       "learnMore": "Über DiciCoin lernen",
       "readGuide": "Leitfaden lesen",
       "commingSoon": "Demnächst",
-      "readMore": "Mehr lesen"
+      "readMore": "Mehr lesen",
+      "yourBalance": "Ihr Guthaben",
+      "limit": "Das maximale Limit beträgt 2.000 DICICOIN pro Benutzer. Für höhere Beträge ist eine zusätzliche Identitätsprüfung (KYC) gemäß den geltenden Vorschriften erforderlich."
     }
   },
   "tickets": {

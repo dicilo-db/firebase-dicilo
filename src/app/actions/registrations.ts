@@ -1,6 +1,6 @@
 'use server';
 
-import { adminDb, adminAuth } from '@/lib/firebase-admin';
+import { getAdminDb } from '@/lib/firebase-admin';
 import { FieldValue } from 'firebase-admin/firestore';
 import { revalidatePath } from 'next/cache';
 
@@ -20,13 +20,13 @@ export async function deleteRegistration(id: string, type: string) {
         if (!id) throw new Error('ID Required');
 
         // 1. Get Registration to find linked data
-        const regSnap = await adminDb.collection('registrations').doc(id).get();
+        const regSnap = await getAdminDb().collection('registrations').doc(id).get();
         if (!regSnap.exists) return { success: false, error: 'Registration not found' };
 
         const regData = regSnap.data() as any;
 
         // 2. Delete Registration Document
-        await adminDb.collection('registrations').doc(id).delete();
+        await getAdminDb().collection('registrations').doc(id).delete();
 
         // 3. Optional: Cleanup linked Client or User?
         // User asked to "modify/delete". Deleting the registration usually implies removing the record.
@@ -45,7 +45,7 @@ export async function deleteRegistration(id: string, type: string) {
 
 export async function updateRegistrationStatus(id: string, status: 'active' | 'paused') {
     try {
-        await adminDb.collection('registrations').doc(id).update({
+        await getAdminDb().collection('registrations').doc(id).update({
             status,
             updatedAt: FieldValue.serverTimestamp()
         });
@@ -67,13 +67,13 @@ export async function runDatabaseCleanup(): Promise<CleanupResult> {
         console.log('[Cleanup] Starting database cleanup...');
 
         // 1. Fetch Registrations
-        const regSnapshot = await adminDb.collection('registrations').get();
+        const regSnapshot = await getAdminDb().collection('registrations').get();
         const regs = regSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as any));
 
         // 2. Fetch Clients AND Businesses (Both are sources for Basic if they exist there)
         const [clientSnapshot, businessSnapshot] = await Promise.all([
-            adminDb.collection('clients').get(),
-            adminDb.collection('businesses').get()
+            getAdminDb().collection('clients').get(),
+            getAdminDb().collection('businesses').get()
         ]);
 
         const clients = clientSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data(), _source: 'client' } as any));
@@ -104,7 +104,7 @@ export async function runDatabaseCleanup(): Promise<CleanupResult> {
             }
         });
 
-        const batch = adminDb.batch();
+        const batch = getAdminDb().batch();
         let batchCount = 0;
         let duplicatesRemoved = 0;
         let updatedToBasic = 0;
@@ -121,7 +121,7 @@ export async function runDatabaseCleanup(): Promise<CleanupResult> {
                 });
                 const [keep, ...remove] = records;
                 for (const doc of remove) {
-                    batch.delete(adminDb.collection('registrations').doc(doc.id));
+                    batch.delete(getAdminDb().collection('registrations').doc(doc.id));
                     duplicatesRemoved++;
                     batchCount++;
                 }
@@ -154,7 +154,7 @@ export async function runDatabaseCleanup(): Promise<CleanupResult> {
             if (!matchFound) {
                 // CREATE MISSING REGISTRATION
                 console.log(`[Cleanup] Creating missing registration for: ${companyName}`);
-                const newRegRef = adminDb.collection('registrations').doc();
+                const newRegRef = getAdminDb().collection('registrations').doc();
                 const now = FieldValue.serverTimestamp();
 
                 // Fallback email generator
@@ -212,7 +212,7 @@ export async function runDatabaseCleanup(): Promise<CleanupResult> {
 
             // If type is invalid, Force to Basic
             if (!doc.registrationType || !validTypes.includes(doc.registrationType)) {
-                batch.update(adminDb.collection('registrations').doc(doc.id), { registrationType: 'donor' });
+                batch.update(getAdminDb().collection('registrations').doc(doc.id), { registrationType: 'donor' });
                 updatedToBasic++;
                 batchCount++;
             }

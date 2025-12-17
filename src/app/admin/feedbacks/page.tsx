@@ -23,7 +23,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
-import { Header } from '@/components/header';
+
 import Footer from '@/components/footer';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -53,7 +53,7 @@ interface Feedback {
 // Esqueleto de la página de feedbacks
 const FeedbackPageSkeleton = () => (
   <div className="flex min-h-screen flex-col">
-    <Header />
+
     <main className="flex-grow p-8">
       <div className="mb-6 flex items-center justify-between">
         <Skeleton className="h-8 w-64" />
@@ -166,7 +166,7 @@ export default function FeedbacksPage() {
 
   return (
     <div className="flex min-h-screen flex-col bg-gray-50">
-      <Header />
+
       <main className="flex-grow p-4 sm:p-8">
         <div className="mb-6 flex items-center justify-between">
           <h1 className="text-2xl font-bold">{t('admin.feedbacks.title')}</h1>
@@ -196,9 +196,9 @@ export default function FeedbacksPage() {
                     <TableCell className="whitespace-nowrap text-xs text-muted-foreground">
                       {fb.createdAt
                         ? format(
-                            new Date(fb.createdAt.seconds * 1000),
-                            'dd/MM/yy HH:mm'
-                          )
+                          new Date(fb.createdAt.seconds * 1000),
+                          'dd/MM/yy HH:mm'
+                        )
                         : 'N/A'}
                     </TableCell>
                     <TableCell>

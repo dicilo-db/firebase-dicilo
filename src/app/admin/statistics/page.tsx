@@ -18,7 +18,7 @@ import { format } from 'date-fns';
 import { app } from '@/lib/firebase';
 import { useTranslation } from 'react-i18next';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
-import { Header } from '@/components/header';
+
 import Footer from '@/components/footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -78,7 +78,7 @@ const StatCard = ({
 // Esqueleto de la página de estadísticas
 const StatisticsPageSkeleton = () => (
   <div className="flex min-h-screen flex-col">
-    <Header />
+
     <main className="flex-grow space-y-6 p-8">
       <div className="flex items-center justify-between">
         <Skeleton className="h-8 w-64" />
@@ -195,7 +195,7 @@ export default function StatisticsPage() {
 
   return (
     <div className="flex min-h-screen flex-col bg-gray-50">
-      <Header />
+
       <main className="flex-grow p-4 sm:p-8">
         <div className="mb-6 flex items-center justify-between">
           <h1 className="text-2xl font-bold">{t('statistics.title')}</h1>
@@ -252,9 +252,9 @@ export default function StatisticsPage() {
                       <TableCell className="text-xs text-muted-foreground">
                         {event.timestamp
                           ? format(
-                              event.timestamp.toDate(),
-                              'dd/MM/yy HH:mm:ss'
-                            )
+                            event.timestamp.toDate(),
+                            'dd/MM/yy HH:mm:ss'
+                          )
                           : 'N/A'}
                       </TableCell>
                       <TableCell>
