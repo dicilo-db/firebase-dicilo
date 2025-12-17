@@ -17,7 +17,6 @@ import EditClientForm from '@/app/admin/clients/[id]/edit/EditClientForm';
 import { ClientData } from '@/app/admin/clients/[id]/edit/page';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
-import { Header } from '@/components/header';
 import { useTranslation } from 'react-i18next';
 import { Loader2, LogOut, User as UserIcon, Coins } from 'lucide-react';
 import { checkAdminRole } from '@/lib/auth';

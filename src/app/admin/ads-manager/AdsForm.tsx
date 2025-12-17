@@ -202,8 +202,8 @@ export default function AdsForm({
                                         <p className="mb-2 text-sm text-gray-500">
                                             <span className="font-semibold">Click to upload</span> or drag and drop
                                         </p>
-                                        <div className="mt-2 pointer-events-none">
-                                            <Button type="button" variant="secondary" size="sm">
+                                        <div className="mt-2 pointer-events-none relative z-0">
+                                            <Button type="button" variant="secondary" size="sm" style={{ pointerEvents: 'none' }}>
                                                 Select File
                                             </Button>
                                         </div>
@@ -216,7 +216,7 @@ export default function AdsForm({
                             <input
                                 ref={fileInputRef}
                                 type="file"
-                                className="absolute inset-0 z-50 h-full w-full cursor-pointer opacity-0"
+                                className="absolute inset-0 z-[100] h-full w-full cursor-pointer opacity-0"
                                 accept="image/png, image/jpeg, image/jpg, image/gif"
                                 onChange={(e) => {
                                     console.log('File input changed', e.target.files);
