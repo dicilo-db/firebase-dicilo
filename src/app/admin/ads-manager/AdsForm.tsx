@@ -105,6 +105,12 @@ export default function AdsForm({
         if (!file) return;
 
         // Validations
+        const validTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif'];
+        if (!validTypes.includes(file.type)) {
+            alert("Error: Only PNG, JPG, or GIF files are allowed.");
+            return;
+        }
+
         if (file.size > 2 * 1024 * 1024) { // 2MB limit
             alert("Error: File size too large (Max 2MB)");
             return;
@@ -182,7 +188,17 @@ export default function AdsForm({
 
                     {!imageUrl && (
                         <div
-                            onClick={() => fileInputRef.current?.click()}
+                            onClick={(e) => {
+                                console.log('Upload area clicked');
+                                e.stopPropagation(); // Prevent bubbling issues
+                                if (fileInputRef.current) {
+                                    console.log('Triggering file input click');
+                                    fileInputRef.current.click();
+                                } else {
+                                    console.error('File input ref is null');
+                                    alert('Error: File input not found. Please refresh.');
+                                }
+                            }}
                             className={`flex h-40 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed ${uploading ? 'bg-gray-100 border-gray-400' : 'border-gray-300 bg-gray-50 hover:bg-gray-100'}`}
                         >
                             <div className="flex flex-col items-center justify-center pb-6 pt-5">
@@ -199,8 +215,16 @@ export default function AdsForm({
                                         <p className="mb-2 text-sm text-gray-500">
                                             <span className="font-semibold">Click to upload</span> or drag and drop
                                         </p>
-                                        <p className="text-xs text-gray-500">
-                                            SVG, PNG, JPG or GIF (MAX. 800x400px, 2MB)
+                                        <div className="mt-2">
+                                            <Button type="button" variant="secondary" size="sm" onClick={(e) => {
+                                                e.stopPropagation();
+                                                fileInputRef.current?.click();
+                                            }}>
+                                                Select File
+                                            </Button>
+                                        </div>
+                                        <p className="text-xs text-gray-500 mt-2">
+                                            PNG, JPG or GIF (MAX. 2MB)
                                         </p>
                                     </>
                                 )}
@@ -208,11 +232,12 @@ export default function AdsForm({
                             <input
                                 ref={fileInputRef}
                                 type="file"
-                                className="hidden"
-                                accept="image/*"
+                                style={{ display: 'none' }}
+                                accept="image/png, image/jpeg, image/jpg, image/gif"
                                 onChange={(e) => {
+                                    console.log('File input changed', e.target.files);
                                     handleFileUpload(e);
-                                    e.target.value = ''; // Reset input to allow re-uploading same file if failed
+                                    e.target.value = '';
                                 }}
                                 disabled={uploading}
                             />
