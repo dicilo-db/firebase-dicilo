@@ -187,20 +187,7 @@ export default function AdsForm({
                     )}
 
                     {!imageUrl && (
-                        <div
-                            onClick={(e) => {
-                                console.log('Upload area clicked');
-                                e.stopPropagation(); // Prevent bubbling issues
-                                if (fileInputRef.current) {
-                                    console.log('Triggering file input click');
-                                    fileInputRef.current.click();
-                                } else {
-                                    console.error('File input ref is null');
-                                    alert('Error: File input not found. Please refresh.');
-                                }
-                            }}
-                            className={`flex h-40 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed ${uploading ? 'bg-gray-100 border-gray-400' : 'border-gray-300 bg-gray-50 hover:bg-gray-100'}`}
-                        >
+                        <div className={`relative flex h-40 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed transition-colors ${uploading ? 'bg-gray-100 border-gray-400' : 'border-gray-300 bg-gray-50 hover:bg-gray-100'}`}>
                             <div className="flex flex-col items-center justify-center pb-6 pt-5">
                                 {uploading ? (
                                     <>
@@ -215,11 +202,8 @@ export default function AdsForm({
                                         <p className="mb-2 text-sm text-gray-500">
                                             <span className="font-semibold">Click to upload</span> or drag and drop
                                         </p>
-                                        <div className="mt-2">
-                                            <Button type="button" variant="secondary" size="sm" onClick={(e) => {
-                                                e.stopPropagation();
-                                                fileInputRef.current?.click();
-                                            }}>
+                                        <div className="mt-2 pointer-events-none">
+                                            <Button type="button" variant="secondary" size="sm">
                                                 Select File
                                             </Button>
                                         </div>
@@ -232,7 +216,7 @@ export default function AdsForm({
                             <input
                                 ref={fileInputRef}
                                 type="file"
-                                style={{ display: 'none' }}
+                                className="absolute inset-0 z-50 h-full w-full cursor-pointer opacity-0"
                                 accept="image/png, image/jpeg, image/jpg, image/gif"
                                 onChange={(e) => {
                                     console.log('File input changed', e.target.files);
