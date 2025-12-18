@@ -93,47 +93,54 @@ export const AdBanner = ({ ad, className, showBadge = true }: AdBannerProps) => 
             ref={cardRef}
             onClick={(e) => e.stopPropagation()}
             className={cn(
-                "w-full overflow-hidden rounded-xl bg-card p-4 shadow-md border border-yellow-200/50 relative group select-none transition-all hover:shadow-lg",
+                "group relative w-full overflow-hidden rounded-xl bg-black shadow-md transition-all hover:shadow-lg select-none",
+                // Aspect ratio container for better display of background image
+                "h-48",
                 className
             )}
         >
-            {showBadge && (
-                <div className="absolute top-2 right-2 z-10">
-                    <span className="bg-yellow-100 text-yellow-800 text-[10px] font-bold px-2 py-0.5 rounded border border-yellow-200 uppercase tracking-wide">
-                        {badgeText}
-                    </span>
-                </div>
-            )}
-
-            <div className="flex items-start gap-4">
+            {/* Background Image Layer */}
+            <div className="absolute inset-0 z-0">
                 <Image
-                    className="h-16 w-16 rounded-full border-2 border-yellow-100 object-cover bg-yellow-50 p-1"
-                    src={ad.imageUrl || 'https://placehold.co/64x64.png'}
+                    src={ad.imageUrl || 'https://placehold.co/600x400.png'}
                     alt={ad.title || "Ad"}
-                    width={64}
-                    height={64}
+                    fill
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
                 />
-                <div className="min-w-0 flex-1">
-                    <h3 className="truncate font-bold text-foreground">
-                        {/* Uses translation if available, or fallback */}
-                        {t('ad.sponsored', 'Gesponsert')}
-                    </h3>
-                    <p className="line-clamp-2 text-sm text-muted-foreground">
-                        {ad.shareText || ad.title || t('ad.visitDescription', 'Besuchen Sie unsere Website für mehr Informationen.')}
-                    </p>
-                </div>
+                {/* Gradient Overlay for Text Readability */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
             </div>
 
-            <a
-                href={ad.linkUrl || '#'}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={handleClick}
-                className="mt-3 flex items-center justify-between w-full rounded-md bg-secondary/50 px-3 py-2 text-sm font-medium text-secondary-foreground hover:bg-secondary transition-colors"
-            >
-                <span>{t('ad.visit', 'Webseite besuchen')}</span>
-                <ExternalLink className="h-4 w-4" />
-            </a>
+            {/* Content Layer */}
+            <div className="relative z-10 flex h-full flex-col justify-between p-4 text-white">
+                <div className="flex items-start justify-between">
+                    <div>
+                        <h3 className="font-bold text-sm uppercase tracking-wider text-white/90 shadow-sm">
+                            {t('ad.sponsored', 'Gesponsert')}
+                        </h3>
+                        <p className="mt-1 text-lg font-bold leading-tight shadow-sm text-white">
+                            {ad.title || ad.shareText || "Partner"}
+                        </p>
+                    </div>
+
+                    {showBadge && (
+                        <span className="shrink-0 rounded bg-yellow-400/90 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-black shadow-sm backdrop-blur-sm">
+                            {badgeText}
+                        </span>
+                    )}
+                </div>
+
+                <a
+                    href={ad.linkUrl || '#'}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={handleClick}
+                    className="mt-auto flex w-full items-center justify-between rounded-lg bg-white/20 px-4 py-2.5 text-sm font-medium text-white backdrop-blur-md transition-colors hover:bg-white/30"
+                >
+                    <span>{t('ad.visit', 'Webseite besuchen')}</span>
+                    <ExternalLink className="h-4 w-4" />
+                </a>
+            </div>
         </div>
     );
 };

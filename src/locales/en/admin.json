@@ -508,5 +508,37 @@
     "title": "Forms Dashboard",
     "managementTitle": "Forms Management",
     "managementDescription": "Manage your recommendation forms and statistics here."
+  },
+  "wallet": {
+    "title": "Wallet & Ads Management",
+    "description": "Manage the advertising budget for this client. Changes here are saved immediately.",
+    "manualAdjustment": "Manual Adjustment (Admin)",
+    "availableBudget": "Available Balance (€)",
+    "currentBudgetHelp": "Current ad balance. Reduced by views.",
+    "totalInvested": "Total Invested (€)",
+    "totalInvestedHelp": "Historical sum of all deposits.",
+    "preview": "Client Preview"
+  },
+  "walletCard": {
+    "title": "Ads Budget (Wallet)",
+    "subtitle": "Available Balance",
+    "description": "Control your visibility in the DiciLo network.",
+    "tankFill": "Tank Level",
+    "active": "Active",
+    "low": "Almost empty!",
+    "totalInvested": "Total Invested",
+    "remainingViews": "Remaining Views",
+    "costPerView": "Cost per View",
+    "lowBalanceAlert": "Your balance is low. Ads will be paused soon.",
+    "topUpButton": "Top Up Balance",
+    "dialogTitle": "Top Up Balance",
+    "dialogDesc": "Choose an amount. We will send you an invoice and unlock the balance after payment.",
+    "amountLabel": "Amount (€)",
+    "submitRequest": "Request Top Up",
+    "successTitle": "Request Sent",
+    "successDesc": "We have received your top-up request.",
+    "errorTitle": "Error",
+    "errorDesc": "Could not send request.",
+    "minAmountError": "Minimum amount is {{amount}}€."
   }
 }

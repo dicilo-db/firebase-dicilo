@@ -24,6 +24,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
+import { useTranslation } from 'react-i18next';
+
 interface WalletCardProps {
     clientId: string;
     clientEmail?: string;
@@ -33,6 +35,7 @@ interface WalletCardProps {
 
 export function WalletCard({ clientId, clientEmail, currentBudget, totalInvested }: WalletCardProps) {
     const { toast } = useToast();
+    const { t } = useTranslation('admin');
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [amount, setAmount] = useState<string>("50");
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -50,8 +53,8 @@ export function WalletCard({ clientId, clientEmail, currentBudget, totalInvested
     const handleRequestTopUp = async () => {
         if (Number(amount) < MIN_INVESTMENT) {
             toast({
-                title: "Betrag zu niedrig",
-                description: `Der Mindestbetrag für eine Aufladung beträgt ${MIN_INVESTMENT}€.`,
+                title: t('walletCard.errorTitle'),
+                description: t('walletCard.minAmountError', { amount: MIN_INVESTMENT }),
                 variant: "destructive",
             });
             return;
@@ -73,14 +76,14 @@ export function WalletCard({ clientId, clientEmail, currentBudget, totalInvested
 
             setIsDialogOpen(false);
             toast({
-                title: "Anfrage gesendet",
-                description: "Wir haben Ihre Aufladeanfrage erhalten und melden uns in Kürze.",
+                title: t('walletCard.successTitle'),
+                description: t('walletCard.successDesc'),
             });
         } catch (error) {
             console.error(error);
             toast({
-                title: "Fehler",
-                description: "Die Anfrage konnte nicht gesendet werden.",
+                title: t('walletCard.errorTitle'),
+                description: t('walletCard.errorDesc'),
                 variant: "destructive",
             });
         } finally {
@@ -94,29 +97,29 @@ export function WalletCard({ clientId, clientEmail, currentBudget, totalInvested
                 <div className="flex items-center justify-between">
                     <CardTitle className="text-xl flex items-center gap-2">
                         <Euro className="h-5 w-5 text-blue-500" />
-                        Werbe-Budget (Wallet)
+                        {t('walletCard.title')}
                     </CardTitle>
                     <div className="flex flex-col items-end">
                         <span className="text-2xl font-bold text-blue-600">{currentBudget.toFixed(2)} €</span>
-                        <span className="text-xs text-muted-foreground">Verfügbares Guthaben</span>
+                        <span className="text-xs text-muted-foreground">{t('walletCard.subtitle')}</span>
                     </div>
                 </div>
                 <CardDescription>
-                    Steuern Sie Ihre Sichtbarkeit im Dicilo Netzwerk.
+                    {t('walletCard.description')}
                 </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6 pt-4">
                 {/* Progress Bar "Gas Tank" */}
                 <div className="space-y-2">
                     <div className="flex justify-between text-sm">
-                        <span>Tankfüllung</span>
+                        <span>{t('walletCard.tankFill')}</span>
                         <span className={currentBudget < 10 ? "text-red-500 font-bold" : "text-green-600"}>
-                            {currentBudget < 5 ? "Fast leer!" : "Aktiv"}
+                            {currentBudget < 5 ? t('walletCard.low') : t('walletCard.active')}
                         </span>
                     </div>
                     <Progress value={tankPercentage} className="h-3" color={currentBudget < 10 ? "bg-red-500" : "bg-blue-500"} />
                     <p className="text-xs text-muted-foreground mt-1">
-                        Gesamt investiert: {totalInvested.toFixed(2)} €
+                        {t('walletCard.totalInvested')}: {totalInvested.toFixed(2)} €
                     </p>
                 </div>
 
@@ -124,18 +127,18 @@ export function WalletCard({ clientId, clientEmail, currentBudget, totalInvested
                 <div className="grid grid-cols-2 gap-4 rounded-lg bg-secondary/20 p-4">
                     <div className="flex flex-col items-center justify-center text-center">
                         <span className="text-2xl font-bold text-foreground">{viewsRemaining}</span>
-                        <span className="text-xs text-muted-foreground">Verbleibende Views</span>
+                        <span className="text-xs text-muted-foreground">{t('walletCard.remainingViews')}</span>
                     </div>
                     <div className="flex flex-col items-center justify-center text-center border-l border-border">
                         <span className="text-2xl font-bold text-foreground">{COST_PER_VIEW.toFixed(2)}€</span>
-                        <span className="text-xs text-muted-foreground">Kosten pro View</span>
+                        <span className="text-xs text-muted-foreground">{t('walletCard.costPerView')}</span>
                     </div>
                 </div>
 
                 {currentBudget < 10 && (
                     <div className="flex items-center gap-2 rounded-md bg-yellow-50 p-3 text-sm text-yellow-800 border border-yellow-200">
                         <AlertCircle className="h-4 w-4" />
-                        <p>Ihr Guthaben ist niedrig. Ihre Anzeigen werden bald pausiert.</p>
+                        <p>{t('walletCard.lowBalanceAlert')}</p>
                     </div>
                 )}
             </CardContent>
@@ -144,20 +147,20 @@ export function WalletCard({ clientId, clientEmail, currentBudget, totalInvested
                     <DialogTrigger asChild>
                         <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white shadow-md transition-all hover:scale-[1.01]">
                             <TrendingUp className="mr-2 h-4 w-4" />
-                            Guthaben aufladen
+                            {t('walletCard.topUpButton')}
                         </Button>
                     </DialogTrigger>
                     <DialogContent>
                         <DialogHeader>
-                            <DialogTitle>Guthaben aufladen</DialogTitle>
+                            <DialogTitle>{t('walletCard.dialogTitle')}</DialogTitle>
                             <DialogDescription>
-                                Wählen Sie einen Betrag. Wir senden Ihnen eine Rechnung und schalten das Guthaben nach Zahlungseingang frei.
+                                {t('walletCard.dialogDesc')}
                             </DialogDescription>
                         </DialogHeader>
                         <div className="grid gap-4 py-4">
                             <div className="grid grid-cols-4 items-center gap-4">
                                 <Label htmlFor="amount" className="text-right">
-                                    Betrag (€)
+                                    {t('walletCard.amountLabel')}
                                 </Label>
                                 <Input
                                     id="amount"
@@ -185,7 +188,7 @@ export function WalletCard({ clientId, clientEmail, currentBudget, totalInvested
                         <DialogFooter>
                             <Button onClick={handleRequestTopUp} disabled={isSubmitting}>
                                 {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                                Kostenpflichtig anfragen
+                                {t('walletCard.submitRequest')}
                             </Button>
                         </DialogFooter>
                     </DialogContent>

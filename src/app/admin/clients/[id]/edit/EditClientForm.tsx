@@ -615,7 +615,7 @@ const graphicSchema = z.object({
 const clientSchema = z.object({
   clientName: z.string().min(1, 'Name is required'),
   slug: z.string().min(1, 'Slug is required').regex(/^[a-z0-9-]+$/, 'Slug must be lowercase alphanumeric with dashes'),
-  clientType: z.enum(['retailer', 'premium', 'starter']),
+  clientType: z.enum(['retailer', 'premium', 'starter']).optional().or(z.literal('')),
   clientLogoUrl: z.string().url().optional().or(z.literal('')),
 
   headerData: z
@@ -755,6 +755,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
 
   const form = useForm<ClientFormData>({
     resolver: zodResolver(clientSchema),
+    shouldUnregister: false,
     defaultValues: {
       clientName: '',
       slug: '',
@@ -837,7 +838,12 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
     getValues,
   } = form;
 
+  /*
+   * We already have a state variable `isSubmitting` defined above with useState.
+   * So we only destructure `errors` from formState here to avoid conflict.
+   */
   const { errors } = formState;
+
 
   const preparedData = useMemo(() => {
     const data = initialData || {};
@@ -847,9 +853,9 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
     const socialLinks = headerData.socialLinks || [];
 
     // Ensure clientType is valid
-    const validClientType = (['retailer', 'premium'].includes(initialData.clientType)
+    const validClientType = (['retailer', 'premium', 'starter'].includes(initialData.clientType)
       ? initialData.clientType
-      : 'retailer') as 'retailer' | 'premium';
+      : 'retailer') as 'retailer' | 'premium' | 'starter';
 
     return {
       clientName: initialData.clientName || '',
@@ -1078,6 +1084,11 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
 
       const finalPayload = _.merge({}, originalData, newData);
 
+      // Explicitly set wallet values from form data to ensure they are not lost in merge
+      // especially if they are 0 or if originalData has them as undefined
+      finalPayload.budget_remaining = data.budget_remaining;
+      finalPayload.total_invested = data.total_invested;
+
       // Wrap updateDoc in a timeout to prevent infinite hanging
       const updatePromise = updateDoc(docRef, finalPayload);
       const timeoutPromise = new Promise((_, reject) =>
@@ -1112,14 +1123,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
   return (
     <>
       <Form {...form}>
-        <form onSubmit={handleSubmit(onSubmit, (errors) => {
-          console.error('Validation errors:', errors);
-          toast({
-            title: 'Validation Error',
-            description: 'Please check the form for errors. ' + Object.keys(errors).join(', '),
-            variant: 'destructive',
-          });
-        })}>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
@@ -1295,6 +1299,19 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                           </Select>
                         )}
                       />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="budget_remaining">Budget Remaining (EUR)</Label>
+                      <Input
+                        id="budget_remaining"
+                        type="number"
+                        step="0.01"
+                        {...register('budget_remaining', { valueAsNumber: true })}
+                        placeholder="0.00"
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Use this to manually top-up budget for ads (0.05€ per click).
+                      </p>
                     </div>
                   </div>
                   <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -2417,17 +2434,17 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
 
                 {/* Wallet Tab */}
                 <TabsContent value="wallet" className="space-y-6">
-                  <CardTitle>Wallet & Ads Management</CardTitle>
+                  <CardTitle>{t('wallet.title')}</CardTitle>
                   <CardDescription>
-                    Verwalten Sie das Werbebudget dieses Kunden. Änderungen hier werden sofort gespeichert.
+                    {t('wallet.description')}
                   </CardDescription>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-4 rounded-lg border p-4 bg-slate-50">
-                      <h3 className="font-semibold text-lg">Manuelle Anpassung (Admin)</h3>
+                      <h3 className="font-semibold text-lg">{t('wallet.manualAdjustment')}</h3>
 
                       <div className="space-y-2">
-                        <Label htmlFor="budget_remaining">Verfügbares Guthaben (€)</Label>
+                        <Label htmlFor="budget_remaining">{t('wallet.availableBudget')}</Label>
                         <Input
                           id="budget_remaining"
                           type="number"
@@ -2435,12 +2452,12 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                           {...register('budget_remaining', { valueAsNumber: true })}
                         />
                         <p className="text-xs text-muted-foreground">
-                          Aktuelles Guthaben für Anzeigen. Wird durch Views reduziert.
+                          {t('wallet.currentBudgetHelp')}
                         </p>
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="total_invested">Gesamt Investiert (€)</Label>
+                        <Label htmlFor="total_invested">{t('wallet.totalInvested')}</Label>
                         <Input
                           id="total_invested"
                           type="number"
@@ -2448,13 +2465,13 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                           {...register('total_invested', { valueAsNumber: true })}
                         />
                         <p className="text-xs text-muted-foreground">
-                          Historische Summe aller Einzahlungen.
+                          {t('wallet.totalInvestedHelp')}
                         </p>
                       </div>
                     </div>
 
                     <div className="space-y-4">
-                      <h3 className="font-semibold text-lg">Vorschau für Kunde</h3>
+                      <h3 className="font-semibold text-lg">{t('wallet.preview')}</h3>
                       <WalletCard
                         clientId={id}
                         clientEmail={watch('newEmailForUpdate') || ''}

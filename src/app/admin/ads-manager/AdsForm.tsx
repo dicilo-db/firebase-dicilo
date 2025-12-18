@@ -60,6 +60,7 @@ export default function AdsForm({
         handleSubmit,
         setValue,
         watch,
+        reset,
         formState: { errors },
     } = useForm<AdFormData>({
         resolver: zodResolver(adSchema),
@@ -72,6 +73,29 @@ export default function AdsForm({
             clientId: '',
         },
     });
+
+    React.useEffect(() => {
+        if (initialData) {
+            // Ensure we reset with all fields, providing defaults for missing ones if necessary
+            reset({
+                title: initialData.title || '',
+                imageUrl: initialData.imageUrl || '',
+                linkUrl: initialData.linkUrl || '',
+                active: initialData.active !== undefined ? initialData.active : true,
+                position: initialData.position || 'directory',
+                clientId: initialData.clientId || '',
+            });
+        } else {
+            reset({
+                title: '',
+                imageUrl: '',
+                linkUrl: '',
+                active: true,
+                position: 'directory',
+                clientId: '',
+            });
+        }
+    }, [initialData, reset]);
 
     const [clients, setClients] = useState<ClientOption[]>([]);
     const [loadingClients, setLoadingClients] = useState(false);

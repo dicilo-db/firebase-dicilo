@@ -336,13 +336,36 @@ export default function DiciloSearchPage({
 
       const distanceA = haversineDistance(referencePoint, a.coords as [number, number]);
       const distanceB = haversineDistance(referencePoint, b.coords as [number, number]);
-
       return distanceA - distanceB;
     });
   }, [debouncedQuery, initialBusinesses, searchType, userLocation]);
 
+  const sortedAds = useMemo(() => {
+    // 1. If no user location, return original list (or you could randomize)
+    if (!userLocation) return initialAds;
+
+    // 2. Map ads to their business coordinates if available
+    const localizedAds = initialAds.map((ad) => {
+      const business = initialBusinesses.find((b) => b.id === ad.clientId);
+      return {
+        ...ad,
+        coords: business?.coords,
+      };
+    });
+
+    // 3. Sort by distance to user
+    return localizedAds.sort((a, b) => {
+      if (!a.coords || a.coords.length !== 2) return 1; // No coords -> push to end
+      if (!b.coords || b.coords.length !== 2) return -1;
+
+      const distA = haversineDistance(userLocation, a.coords as [number, number]);
+      const distB = haversineDistance(userLocation, b.coords as [number, number]);
+      return distA - distB;
+    });
+  }, [initialAds, userLocation, initialBusinesses]);
+
   const businessesWithAds = useMemo(() => {
-    if (!initialAds.length || !filteredBusinesses.length) return filteredBusinesses.map(b => ({ type: 'business', data: b }));
+    if (!sortedAds.length || !filteredBusinesses.length) return filteredBusinesses.map(b => ({ type: 'business', data: b }));
 
     const result: any[] = [];
     let adIndex = 0;
@@ -350,21 +373,31 @@ export default function DiciloSearchPage({
     filteredBusinesses.forEach((business, index) => {
       result.push({ type: 'business', data: business });
 
-      // Inject 2 ads every 10 businesses
-      if ((index + 1) % 10 === 0) {
-        if (initialAds[adIndex % initialAds.length]) {
-          result.push({ type: 'ad', data: initialAds[adIndex % initialAds.length] });
+      // Inject 2 ads every 10 businesses (User request: "cada 10 negocios... dos banner")
+      if ((index + 1) % 10 === 0 && sortedAds.length > 0) {
+
+        // First Ad
+        const ad1 = sortedAds[adIndex % sortedAds.length];
+
+        // Ensure we don't crash and add valid ad
+        if (ad1) {
+          result.push({ type: 'ad', data: ad1 });
           adIndex++;
         }
-        if (initialAds[adIndex % initialAds.length]) {
-          result.push({ type: 'ad', data: initialAds[adIndex % initialAds.length] });
-          adIndex++;
+
+        // Second Ad - Try to pick a NEXT one that is different if possible
+        if (sortedAds.length > 1) {
+          const ad2 = sortedAds[adIndex % sortedAds.length];
+          if (ad2) {
+            result.push({ type: 'ad', data: ad2 });
+            adIndex++;
+          }
         }
       }
     });
 
     return result;
-  }, [filteredBusinesses, initialAds]);
+  }, [filteredBusinesses, sortedAds]);
 
   useEffect(() => {
     if (searchType === 'location' && debouncedQuery.length >= 3) {

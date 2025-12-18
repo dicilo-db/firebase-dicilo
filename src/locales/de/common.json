@@ -295,6 +295,19 @@
     "weekly": "Wöchentlich",
     "monthly": "Monatlich",
     "importantOnly": "Nur Wichtiges",
+    "newsletter": {
+      "frequencyLabel": "Newsletter-Häufigkeit",
+      "weekly": "Wöchentlich",
+      "biweekly": "Zweiwöchentlich",
+      "monthly": "Monatlich",
+      "semiannual": "Alle 6 Monate"
+    },
+    "language": {
+      "label": "Bevorzugte Sprache",
+      "english": "Englisch",
+      "spanish": "Spanisch",
+      "german": "Deutsch"
+    },
     "yourInterests": "Ihre Interessen",
     "yourInterestsDesc": "Wählen Sie die Kategorien, die Sie interessieren.",
     "socialGroups": "Soziale Gruppen",

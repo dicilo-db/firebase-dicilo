@@ -536,5 +536,37 @@
     "title": "Formulare Dashboard",
     "managementTitle": "Formularverwaltung",
     "managementDescription": "Verwalten Sie hier die Empfehlungsformulare und Statistiken."
+  },
+  "wallet": {
+    "title": "Wallet & Ads Management",
+    "description": "Verwalten Sie das Werbebudget dieses Kunden. Änderungen hier werden sofort gespeichert.",
+    "manualAdjustment": "Manuelle Anpassung (Admin)",
+    "availableBudget": "Verfügbares Guthaben (€)",
+    "currentBudgetHelp": "Aktuelles Guthaben für Anzeigen. Wird durch Views reduziert.",
+    "totalInvested": "Gesamt Investiert (€)",
+    "totalInvestedHelp": "Historische Summe aller Einzahlungen.",
+    "preview": "Vorschau für Kunde"
+  },
+  "walletCard": {
+    "title": "Werbe-Budget (Wallet)",
+    "subtitle": "Verfügbares Guthaben",
+    "description": "Steuern Sie Ihre Sichtbarkeit im Dicilo Netzwerk.",
+    "tankFill": "Tankfüllung",
+    "active": "Aktiv",
+    "low": "Fast leer!",
+    "totalInvested": "Gesamt investiert",
+    "remainingViews": "Verbleibende Views",
+    "costPerView": "Kosten pro View",
+    "lowBalanceAlert": "Ihr Guthaben ist niedrig. Ihre Anzeigen werden bald pausiert.",
+    "topUpButton": "Guthaben aufladen",
+    "dialogTitle": "Guthaben aufladen",
+    "dialogDesc": "Wählen Sie einen Betrag. Wir senden Ihnen eine Rechnung und schalten das Guthaben nach Zahlungseingang frei.",
+    "amountLabel": "Betrag (€)",
+    "submitRequest": "Kostenpflichtig anfragen",
+    "successTitle": "Anfrage gesendet",
+    "successDesc": "Wir haben Ihre Aufladeanfrage erhalten und melden uns in Kürze.",
+    "errorTitle": "Fehler",
+    "errorDesc": "Die Anfrage konnte nicht gesendet werden.",
+    "minAmountError": "Der Mindestbetrag für eine Aufladung beträgt {{amount}}€."
   }
 }

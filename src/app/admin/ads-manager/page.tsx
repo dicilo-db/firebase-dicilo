@@ -33,7 +33,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
-import { Plus, Trash2, ExternalLink, ArrowLeft } from 'lucide-react';
+import { Plus, Trash2, ExternalLink, ArrowLeft, Pencil } from 'lucide-react';
 import Link from 'next/link';
 import AdsForm from './AdsForm';
 import { useToast } from '@/hooks/use-toast';
@@ -59,36 +59,64 @@ export default function AdsManagerPage() {
     const [ads, setAds] = useState<AdBanner[]>([]);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [editingAd, setEditingAd] = useState<AdBanner | null>(null);
     const { toast } = useToast();
 
     useEffect(() => {
-        const q = query(collection(db, 'ads_banners'), orderBy('createdAt', 'desc'));
+        // Robust fetch: Fetch all and sort client-side to avoid "Index Missing" errors
+        // preventing the list from showing.
+        const q = collection(db, 'ads_banners');
+
         const unsubscribe = onSnapshot(q, (snapshot) => {
             const adsData = snapshot.docs.map((doc) => ({
                 id: doc.id,
                 ...doc.data(),
             })) as AdBanner[];
-            setAds(adsData);
-        });
-        return () => unsubscribe();
-    }, []);
 
-    const handleCreateAd = async (data: any) => {
+            // Sort client-side by createdAt (newest first)
+            adsData.sort((a, b) => {
+                const dateA = a.createdAt?.toMillis ? a.createdAt.toMillis() : 0;
+                const dateB = b.createdAt?.toMillis ? b.createdAt.toMillis() : 0;
+                return dateB - dateA;
+            });
+            setAds(adsData);
+        }, (error) => {
+            console.error("Error fetching ads:", error);
+            toast({
+                title: "Error loading ads",
+                description: "Could not load the banners list.",
+                variant: 'destructive',
+            });
+        });
+
+        return () => unsubscribe();
+    }, [toast]);
+
+    const handleSaveAd = async (data: any) => {
         setIsSubmitting(true);
         try {
-            await addDoc(collection(db, 'ads_banners'), {
-                ...data,
-                createdAt: serverTimestamp(),
-                views: 0,
-                clicks: 0,
-            });
-            toast({ title: 'Success', description: 'Banner created successfully.' });
+            if (editingAd) {
+                await updateDoc(doc(db, 'ads_banners', editingAd.id), {
+                    ...data,
+                    // Don't update createdAt
+                });
+                toast({ title: 'Success', description: 'Banner updated successfully.' });
+            } else {
+                await addDoc(collection(db, 'ads_banners'), {
+                    ...data,
+                    createdAt: serverTimestamp(),
+                    views: 0,
+                    clicks: 0,
+                });
+                toast({ title: 'Success', description: 'Banner created successfully.' });
+            }
             setIsDialogOpen(false);
+            setEditingAd(null);
         } catch (error) {
-            console.error('Error creating ad:', error);
+            console.error('Error saving ad:', error);
             toast({
                 title: 'Error',
-                description: 'Failed to create banner.',
+                description: 'Failed to save banner.',
                 variant: 'destructive',
             });
         } finally {
@@ -108,6 +136,16 @@ export default function AdsManagerPage() {
                 variant: 'destructive',
             });
         }
+    };
+
+    const handleEditClick = (ad: AdBanner) => {
+        setEditingAd(ad);
+        setIsDialogOpen(true);
+    };
+
+    const handleCreateClick = () => {
+        setEditingAd(null);
+        setIsDialogOpen(true);
     };
 
     const toggleActive = async (id: string, currentStatus: boolean) => {
@@ -170,20 +208,27 @@ export default function AdsManagerPage() {
                             <ExternalLink className="mr-2 h-4 w-4" /> Export CSV
                         </Button>
                         <AdsCalculator />
-                        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                        <Dialog open={isDialogOpen} onOpenChange={(open) => {
+                            setIsDialogOpen(open);
+                            if (!open) setEditingAd(null);
+                        }}>
                             <DialogTrigger asChild>
-                                <Button>
+                                <Button onClick={handleCreateClick}>
                                     <Plus className="mr-2 h-4 w-4" /> Add Banner
                                 </Button>
                             </DialogTrigger>
                             <DialogContent className="max-w-xl">
                                 <DialogHeader>
-                                    <DialogTitle>Create New Banner</DialogTitle>
+                                    <DialogTitle>{editingAd ? 'Edit Banner' : 'Create New Banner'}</DialogTitle>
                                     <DialogDescription>
-                                        Upload a banner image, set the target link, and assign a client.
+                                        {editingAd ? 'Update the details of your banner.' : 'Upload a banner image, set the target link, and assign a client.'}
                                     </DialogDescription>
                                 </DialogHeader>
-                                <AdsForm onSubmit={handleCreateAd} isSubmitting={isSubmitting} />
+                                <AdsForm
+                                    onSubmit={handleSaveAd}
+                                    isSubmitting={isSubmitting}
+                                    initialData={editingAd}
+                                />
                             </DialogContent>
                         </Dialog>
                     </div>
@@ -194,12 +239,18 @@ export default function AdsManagerPage() {
                 {ads.map((ad) => (
                     <Card key={ad.id} className="overflow-hidden flex flex-col">
                         <div className="relative h-40 w-full bg-gray-100">
-                            <Image
-                                src={ad.imageUrl}
-                                alt={ad.title}
-                                fill
-                                className="object-cover"
-                            />
+                            {ad.imageUrl ? (
+                                <Image
+                                    src={ad.imageUrl}
+                                    alt={ad.title}
+                                    fill
+                                    className="object-cover"
+                                />
+                            ) : (
+                                <div className="absolute inset-0 flex items-center justify-center text-gray-400">
+                                    No Image
+                                </div>
+                            )}
                             <div className="absolute right-2 top-2 flex gap-2">
                                 <Badge variant={ad.active ? 'default' : 'secondary'}>
                                     {ad.active ? 'Active' : 'Inactive'}
@@ -244,14 +295,23 @@ export default function AdsManagerPage() {
                                     <Switch checked={ad.active} onCheckedChange={() => toggleActive(ad.id, ad.active)} />
                                     <span className="text-xs text-muted-foreground">Visible</span>
                                 </div>
-                                <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    className="text-red-500 hover:text-red-700"
-                                    onClick={() => handleDeleteAd(ad.id)}
-                                >
-                                    <Trash2 className="h-4 w-4" />
-                                </Button>
+                                <div className="flex gap-1">
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => handleEditClick(ad)}
+                                    >
+                                        <Pencil className="h-4 w-4" />
+                                    </Button>
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="text-red-500 hover:text-red-700"
+                                        onClick={() => handleDeleteAd(ad.id)}
+                                    >
+                                        <Trash2 className="h-4 w-4" />
+                                    </Button>
+                                </div>
                             </div>
                         </CardContent>
                     </Card>

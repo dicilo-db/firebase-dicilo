@@ -547,5 +547,37 @@
     "title": "Dashboard de Formularios",
     "managementTitle": "Gestión de Formularios",
     "managementDescription": "Gestiona aquí los formularios de recomendación y las estadísticas."
+  },
+  "wallet": {
+    "title": "Gestión de Cartera y Anuncios",
+    "description": "Gestione el presupuesto publicitario de este cliente. Los cambios aquí se guardan inmediatamente.",
+    "manualAdjustment": "Ajuste Manual (Admin)",
+    "availableBudget": "Saldo Disponible (€)",
+    "currentBudgetHelp": "Saldo actual para anuncios. Se reduce con las vistas.",
+    "totalInvested": "Total Invertido (€)",
+    "totalInvestedHelp": "Suma histórica de todos los depósitos.",
+    "preview": "Vista Previa para el Cliente"
+  },
+  "walletCard": {
+    "title": "Presupuesto de Anuncios (Wallet)",
+    "subtitle": "Saldo disponible",
+    "description": "Controle su visibilidad en la red DiciLo.",
+    "tankFill": "Nivel del Tanque",
+    "active": "Activo",
+    "low": "¡Casi vacío!",
+    "totalInvested": "Total invertido",
+    "remainingViews": "Vistas restantes",
+    "costPerView": "Coste por vista",
+    "lowBalanceAlert": "Su saldo es bajo. Sus anuncios se pausarán pronto.",
+    "topUpButton": "Cargar Saldo",
+    "dialogTitle": "Cargar Saldo",
+    "dialogDesc": "Elija una cantidad. Le enviaremos una factura y desbloquearemos el saldo tras el pago.",
+    "amountLabel": "Cantidad (€)",
+    "submitRequest": "Solicitar con Coste",
+    "successTitle": "Solicitud enviada",
+    "successDesc": "Hemos recibido su solicitud de recarga.",
+    "errorTitle": "Error",
+    "errorDesc": "No se pudo enviar la solicitud.",
+    "minAmountError": "El monto mínimo es {{amount}}€."
   }
 }

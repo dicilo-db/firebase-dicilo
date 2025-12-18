@@ -10,19 +10,19 @@ export async function updatePrivateProfile(uid: string, data: any) {
         }
 
         const docRef = getAdminDb().collection('private_profiles').doc(uid);
-        const doc = await docRef.get();
+        // const doc = await docRef.get();
 
-        if (!doc.exists) {
-            return { success: false, error: 'Profile not found' };
-        }
+        // if (!doc.exists) {
+        //     return { success: false, error: 'Profile not found' };
+        // }
 
         // Sanitize data to ensure it's a plain object and remove undefined
         const safeData = JSON.parse(JSON.stringify(data));
 
-        await docRef.update({
+        await docRef.set({
             ...safeData,
             updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-        });
+        }, { merge: true });
 
         return { success: true };
     } catch (error: any) {

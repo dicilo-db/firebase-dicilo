@@ -61,6 +61,12 @@ const profileFormSchema = z.object({
     // Ad Preferences
     adPreference: z.enum(['all', 'relevant', 'none']).default('relevant'),
 
+    // Newsletter Preferences
+    newsletterFrequency: z.enum(['weekly', 'biweekly', 'monthly', 'semiannual']).default('monthly'),
+
+    // Language Preferences
+    preferredLanguage: z.enum(['english', 'spanish', 'german']).default('german'),
+
     // Contact Channels
     contactChannels: z.object({
         email: z.boolean().default(true),
@@ -87,6 +93,8 @@ export default function PrivateUserProfilePage() {
             phone: '',
             interests: [],
             adPreference: 'relevant',
+            newsletterFrequency: 'monthly',
+            preferredLanguage: 'german',
             contactChannels: {
                 email: true,
                 whatsapp: false,
@@ -117,6 +125,8 @@ export default function PrivateUserProfilePage() {
                         phone: data.phone || '',
                         interests: data.interests || [],
                         adPreference: data.adPreference || 'relevant',
+                        newsletterFrequency: data.newsletterFrequency || 'monthly',
+                        preferredLanguage: data.preferredLanguage || 'german',
                         contactChannels: {
                             email: data.contactChannels?.email ?? true,
                             whatsapp: data.contactChannels?.whatsapp ?? false,
@@ -234,6 +244,57 @@ export default function PrivateUserProfilePage() {
                                                     <FormControl>
                                                         <Input placeholder="Mustermann" {...field} />
                                                     </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                    </div>
+
+
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <FormField
+                                            control={form.control}
+                                            name="newsletterFrequency"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>{t('dashboard.newsletter.frequencyLabel', 'Newsletter Frequenz')}</FormLabel>
+                                                    <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
+                                                        <FormControl>
+                                                            <SelectTrigger>
+                                                                <SelectValue placeholder={t('dashboard.selectOption')} />
+                                                            </SelectTrigger>
+                                                        </FormControl>
+                                                        <SelectContent>
+                                                            <SelectItem value="weekly">{t('dashboard.newsletter.weekly', 'Wöchentlich')}</SelectItem>
+                                                            <SelectItem value="biweekly">{t('dashboard.newsletter.biweekly', 'Zweiwöchentlich')}</SelectItem>
+                                                            <SelectItem value="monthly">{t('dashboard.newsletter.monthly', 'Monatlich')}</SelectItem>
+                                                            <SelectItem value="semiannual">{t('dashboard.newsletter.semiannual', 'Alle 6 Monate')}</SelectItem>
+                                                        </SelectContent>
+                                                    </Select>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+
+                                        <FormField
+                                            control={form.control}
+                                            name="preferredLanguage"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>{t('dashboard.language.label', 'Sprache')}</FormLabel>
+                                                    <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
+                                                        <FormControl>
+                                                            <SelectTrigger>
+                                                                <SelectValue placeholder={t('dashboard.selectOption')} />
+                                                            </SelectTrigger>
+                                                        </FormControl>
+                                                        <SelectContent>
+                                                            <SelectItem value="english">{t('dashboard.language.english', 'Englisch')}</SelectItem>
+                                                            <SelectItem value="spanish">{t('dashboard.language.spanish', 'Spanisch')}</SelectItem>
+                                                            <SelectItem value="german">{t('dashboard.language.german', 'Deutsch')}</SelectItem>
+                                                        </SelectContent>
+                                                    </Select>
                                                     <FormMessage />
                                                 </FormItem>
                                             )}
