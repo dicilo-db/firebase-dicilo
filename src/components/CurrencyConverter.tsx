@@ -12,6 +12,7 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { RefreshCw } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const API_KEY = 'af7890456da818035dfd3068';
 const CURRENCIES = ['USD', 'EUR', 'GBP', 'ARS', 'MXN', 'COP', 'CLP', 'BRL'];
@@ -23,6 +24,8 @@ export function CurrencyConverter() {
     const [result, setResult] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
+
+    const { t } = useTranslation('common');
 
     const convertCurrency = useCallback(async () => {
         if (!amount || isNaN(amount)) {
@@ -44,15 +47,15 @@ export function CurrencyConverter() {
                     `${amount} ${fromCurrency} = ${data.conversion_result.toFixed(2)} ${toCurrency}`
                 );
             } else {
-                setError('Error converting currency.');
+                setError(t('currencyConverter.error'));
             }
         } catch (err) {
             console.error('Currency conversion error:', err);
-            setError('Error connecting to exchange service.');
+            setError(t('currencyConverter.error'));
         } finally {
             setLoading(false);
         }
-    }, [amount, fromCurrency, toCurrency]);
+    }, [amount, fromCurrency, toCurrency, t]);
 
     // Initial conversion and debounce effect could be added, but per user request "real-time" via event listeners
     // React way: useEffect dependent on inputs
@@ -69,13 +72,13 @@ export function CurrencyConverter() {
         <Card className="w-full bg-white shadow-sm border border-gray-200">
             <CardHeader className="pb-4">
                 <CardTitle className="text-lg font-bold text-center">
-                    Calculadora de Divisas DICILO
+                    {t('currencyConverter.title')}
                 </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
                 <div className="grid grid-cols-[1fr,auto] gap-2 items-end">
                     <div className="space-y-2">
-                        <Label htmlFor="amount">Cantidad</Label>
+                        <Label htmlFor="amount">{t('currencyConverter.amount')}</Label>
                         <Input
                             id="amount"
                             type="number"
@@ -86,7 +89,7 @@ export function CurrencyConverter() {
                         />
                     </div>
                     <div className="space-y-2 w-[100px]">
-                        <Label htmlFor="from">De</Label>
+                        <Label htmlFor="from">{t('currencyConverter.from')}</Label>
                         <Select value={fromCurrency} onValueChange={setFromCurrency}>
                             <SelectTrigger id="from">
                                 <SelectValue placeholder="USD" />
@@ -106,10 +109,10 @@ export function CurrencyConverter() {
 
                 <div className="grid grid-cols-[1fr,auto] gap-2 items-end">
                     <div className="space-y-2 flex-1 p-2 bg-muted rounded-md min-h-[40px] flex items-center justify-center font-medium text-sm">
-                        {loading ? 'Cargando...' : error ? <span className="text-red-500">{error}</span> : result || '---'}
+                        {loading ? t('currencyConverter.loading') : error ? <span className="text-red-500">{error}</span> : result || '---'}
                     </div>
                     <div className="space-y-2 w-[100px]">
-                        <Label htmlFor="to">A</Label>
+                        <Label htmlFor="to">{t('currencyConverter.to')}</Label>
                         <Select value={toCurrency} onValueChange={setToCurrency}>
                             <SelectTrigger id="to">
                                 <SelectValue placeholder="EUR" />
@@ -124,7 +127,7 @@ export function CurrencyConverter() {
                 </div>
 
                 <p className="text-xs text-center text-muted-foreground mt-2">
-                    Datos en tiempo real via ExchangeRate-API
+                    {t('currencyConverter.disclaimer')}
                 </p>
             </CardContent>
         </Card>

@@ -396,5 +396,14 @@
       "recommendations": "Empfehlungen",
       "feedback": "Feedback"
     }
+  },
+  "currencyConverter": {
+    "title": "Nutzen Sie unseren DICILO Währungsrechner und erhalten Sie eine Schätzung des aktuellen Wechselkurses.",
+    "amount": "Betrag",
+    "from": "Von",
+    "to": "Nach",
+    "loading": "Laden...",
+    "error": "Fehler bei der Umrechnung",
+    "disclaimer": "Echtzeitdaten über ExchangeRate-API"
   }
 }

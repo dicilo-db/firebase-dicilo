@@ -394,5 +394,14 @@
       "recommendations": "Recommendations",
       "feedback": "Feedback"
     }
+  },
+  "currencyConverter": {
+    "title": "Use our DICILO Currency Calculator and get an estimated exchange rate for your currency.",
+    "amount": "Amount",
+    "from": "From",
+    "to": "To",
+    "loading": "Loading...",
+    "error": "Error converting",
+    "disclaimer": "Real-time data via ExchangeRate-API"
   }
 }

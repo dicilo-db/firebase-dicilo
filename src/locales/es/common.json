@@ -396,5 +396,14 @@
       "week": "Esta Semana",
       "month": "Este Mes"
     }
+  },
+  "currencyConverter": {
+    "title": "Utilice nuestra Calculadora de Divisas DICILO y obtenga un estimado del cambio actual al valor de su moneda.",
+    "amount": "Cantidad",
+    "from": "De",
+    "to": "A",
+    "loading": "Cargando...",
+    "error": "Error al convertir",
+    "disclaimer": "Datos en tiempo real vía ExchangeRate-API"
   }
 }
