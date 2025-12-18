@@ -3,9 +3,12 @@ import * as admin from 'firebase-admin';
 const PROJECT_ID = 'geosearch-fq4i9';
 
 function initFirebaseAdmin() {
-    if (admin.apps.length > 0) {
-        return admin.app();
+    const defaultApp = admin.apps.find(a => a?.name === '[DEFAULT]');
+    if (defaultApp) {
+        console.log("Reusing existing [DEFAULT] Firebase Admin App");
+        return defaultApp;
     }
+    console.log("Initializing new Firebase Admin App");
 
     try {
         if (process.env.FIREBASE_SERVICE_ACCOUNT_KEY) {

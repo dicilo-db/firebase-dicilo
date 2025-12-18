@@ -250,6 +250,7 @@
     "emailSubject": "¡Mira esto!"
   },
   "noPlansAvailable": "Actualmente no hay planes disponibles para este idioma. Se muestran los planes por defecto.",
+  "plans_tax_disclaimer": "Todos los precios son netos. Los impuestos se aplican únicamente si corresponde según el país. (Mira la grafica)",
   "notFound": {
     "title": "Página no encontrada",
     "description": "Lo sentimos, la página que buscabas no se ha podido encontrar.",

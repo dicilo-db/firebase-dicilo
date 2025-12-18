@@ -110,6 +110,7 @@
     "emailSubject": "Check this out!"
   },
   "noPlansAvailable": "No plans are currently available for this language. Displaying default plans.",
+  "plans_tax_disclaimer": "All prices are net. Taxes apply only if applicable by country. (See chart)",
   "notFound": {
     "title": "Page Not Found",
     "description": "Sorry, the page you were looking for could not be found.",

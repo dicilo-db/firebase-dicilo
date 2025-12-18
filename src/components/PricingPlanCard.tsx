@@ -59,7 +59,10 @@ export const PricingPlanCard = ({ plan }: PricingPlanCardProps) => {
           {plan.features.map((feature: any, index: number) => (
             <li key={index} className="flex items-start">
               <Check className="mr-2 mt-0.5 h-5 w-5 flex-shrink-0 text-green-500" />
-              <span className="text-sm text-gray-600">{feature}</span>
+              <span
+                className="text-sm text-gray-600"
+                dangerouslySetInnerHTML={{ __html: feature }}
+              />
             </li>
           ))}
         </ul>

@@ -162,7 +162,7 @@ function PlansClientContent() {
             </div>
 
             <div className="mt-8 text-center text-sm text-muted-foreground">
-              <p>Todos los precios son netos. Los impuestos se aplican únicamente si corresponde según el país. (Mira la grafica)</p>
+              <p>{t('common:plans_tax_disclaimer')}</p>
             </div>
           </div>
         </section>
