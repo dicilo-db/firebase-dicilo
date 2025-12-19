@@ -686,6 +686,11 @@ const clientSchema = z.object({
     lat: z.number(),
     lng: z.number()
   }).optional(),
+  visibility_settings: z.object({
+    active_range: z.enum(['local', 'regional', 'national', 'continental', 'international']).default('national'),
+    geo_coordinates: z.object({ lat: z.number(), lng: z.number() }).optional(),
+    allowed_continents: z.array(z.string()).optional(),
+  }).optional(),
 });
 
 type ClientFormData = z.infer<typeof clientSchema>;
@@ -1089,6 +1094,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
       // especially if they are 0 or if originalData has them as undefined
       finalPayload.budget_remaining = data.budget_remaining;
       finalPayload.total_invested = data.total_invested;
+      finalPayload.clientType = data.clientType;
 
       // Wrap updateDoc in a timeout to prevent infinite hanging
       const updatePromise = updateDoc(docRef, finalPayload);
@@ -1778,10 +1784,69 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                   />
                 </TabsContent>
 
+                {/* Visibility Settings (Geo Segmentation) */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Visibility & Geographic Reach</CardTitle>
+                    <CardDescription>
+                      Control where your business profile is visible to users.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label>Active Range</Label>
+                        <Select
+                          onValueChange={(val) => setValue('visibility_settings.active_range', val as any)}
+                          defaultValue={watch('visibility_settings.active_range') || 'national'}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select Range" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="local">Local (50km)</SelectItem>
+                            <SelectItem value="regional">Regional (City)</SelectItem>
+                            <SelectItem value="national">National (Country)</SelectItem>
+                            <SelectItem value="continental">Continental</SelectItem>
+                            <SelectItem value="international">International / Global</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
 
+                      <div className="space-y-2">
+                        <Label>Allowed Continents (for International Reach)</Label>
+                        <div className="grid grid-cols-2 gap-2 border p-2 rounded max-h-40 overflow-y-auto">
+                          {['Europa', 'Sudamérica', 'Centro América', 'Latinoamérica', 'North America', 'Asia'].map(c => (
+                            <div key={c} className="flex items-center space-x-2">
+                              <Checkbox
+                                checked={watch('visibility_settings.allowed_continents')?.includes(c) || false}
+                                onCheckedChange={(checked) => {
+                                  const current = watch('visibility_settings.allowed_continents') || [];
+                                  if (checked) {
+                                    setValue('visibility_settings.allowed_continents', [...current, c]);
+                                  } else {
+                                    setValue('visibility_settings.allowed_continents', current.filter((x: string) => x !== c));
+                                  }
+                                }}
+                              />
+                              <span className="text-sm">{c}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <LocateFixed className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-xs text-muted-foreground">
+                        Current Base Location: {watch('coordinates.lat')}, {watch('coordinates.lng')}
+                      </span>
+                    </div>
+                  </CardContent>
+                </Card>
 
-                {/* User Management Tab */}
-                <TabsContent value="userManagement" className="space-y-6">
+                {/* --- Section: User Management --- */}
+
+                < TabsContent value="userManagement" className="space-y-6" >
                   <CardTitle>User Management</CardTitle>
                   <CardDescription>
                     Manage the user account associated with this client.
@@ -1906,10 +1971,10 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                       Generate Reset Link
                     </Button>
                   </div>
-                </TabsContent>
+                </TabsContent >
 
                 {/* Marquee Header Tab */}
-                <TabsContent value="marqueeHeader" className="space-y-6">
+                < TabsContent value="marqueeHeader" className="space-y-6" >
                   <CardTitle>{t('clients.tabs.marqueeHeader')}</CardTitle>
                   <CardDescription>
                     {t('clients.fields.marqueeHeader.description')}
@@ -2080,10 +2145,10 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                       </div>
                     </div>
                   </div>
-                </TabsContent>
+                </TabsContent >
 
                 {/* Body Tab */}
-                <TabsContent value="body" className="space-y-6">
+                < TabsContent value="body" className="space-y-6" >
                   <CardTitle>{t('clients.tabs.body')}</CardTitle>
                   <CardDescription>
                     {t('clients.fields.body.description')}
@@ -2180,10 +2245,10 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                       )}
                     />
                   </div>
-                </TabsContent>
+                </TabsContent >
 
                 {/* Info Cards Tab */}
-                <TabsContent value="cards" className="space-y-4">
+                < TabsContent value="cards" className="space-y-4" >
                   <div className="flex items-center justify-between">
                     <h3 className="text-lg font-medium">
                       {t('clients.fields.infoCards.title')}
@@ -2242,10 +2307,10 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                       </fieldset>
                     ))}
                   </div>
-                </TabsContent>
+                </TabsContent >
 
                 {/* Products Tab */}
-                <TabsContent value="products" className="space-y-4">
+                < TabsContent value="products" className="space-y-4" >
                   <div className="flex items-center justify-between">
                     <h3 className="text-lg font-medium">
                       {t('clients.tabs.products')}
@@ -2296,10 +2361,10 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                       </fieldset>
                     ))}
                   </div>
-                </TabsContent>
+                </TabsContent >
 
                 {/* Graphics Tab */}
-                <TabsContent value="graphics" className="space-y-4">
+                < TabsContent value="graphics" className="space-y-4" >
                   <div className="flex items-center justify-between">
                     <h3 className="text-lg font-medium">
                       {t('clients.fields.graphics.title')}
@@ -2377,10 +2442,10 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                       </fieldset>
                     ))}
                   </div>
-                </TabsContent>
+                </TabsContent >
 
                 {/* Form Tab */}
-                <TabsContent value="form">
+                < TabsContent value="form" >
                   <div className="mb-4 flex items-center justify-between">
                     <div>
                       <CardTitle>{t('clients.tabs.form')}</CardTitle>
@@ -2432,15 +2497,15 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                       clientId={id}
                     />
                   </div>
-                </TabsContent>
+                </TabsContent >
 
                 {/* Statistics Tab */}
-                <TabsContent value="stats">
+                < TabsContent value="stats" >
                   <AdStatistics adId={id} />
-                </TabsContent>
+                </TabsContent >
 
                 {/* Wallet Tab */}
-                <TabsContent value="wallet" className="space-y-6">
+                < TabsContent value="wallet" className="space-y-6" >
                   <CardTitle>{t('wallet.title')}</CardTitle>
                   <CardDescription>
                     {t('wallet.description')}
@@ -2487,10 +2552,10 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                       />
                     </div>
                   </div>
-                </TabsContent>
+                </TabsContent >
 
                 {/* Translations Tab */}
-                <TabsContent value="translations">
+                < TabsContent value="translations" >
                   <div className="space-y-4">
                     <div className="rounded-lg border bg-card p-4">
                       <h3 className="mb-4 text-lg font-medium">
@@ -2518,18 +2583,18 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                       />
                     </div>
                   </div>
-                </TabsContent>
+                </TabsContent >
 
                 {/* Coupons Tab */}
-                <TabsContent value="coupons">
+                < TabsContent value="coupons" >
                   <ClientCouponManager
                     companyId={id}
                     companyName={initialData.clientName}
                     category={initialData.category || 'Allgemein'}
                   />
-                </TabsContent>
-              </Tabs>
-            </CardContent>
+                </TabsContent >
+              </Tabs >
+            </CardContent >
             <CardFooter className="flex justify-end">
               <Button type="submit" disabled={isSubmitting}>
                 {isSubmitting && (
@@ -2538,9 +2603,9 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                 {t('clients.edit.save')}
               </Button>
             </CardFooter>
-          </Card>
-        </form>
-      </Form>
+          </Card >
+        </form >
+      </Form >
     </>
   );
 }

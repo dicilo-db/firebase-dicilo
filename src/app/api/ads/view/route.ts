@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
                     adId,
                     date: dateKey,
                     views: FieldValue.increment(1),
-                    cost: FieldValue.increment(price),
+                    // cost: FieldValue.increment(price), // Views are free! Cost is per CLICK.
                     updatedAt: FieldValue.serverTimestamp()
                 }, { merge: true });
 

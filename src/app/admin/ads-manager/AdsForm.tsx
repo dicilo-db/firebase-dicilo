@@ -35,6 +35,17 @@ const adSchema = z.object({
     active: z.boolean().default(true),
     position: z.enum(['directory', 'sidebar', 'home']).default('directory'),
     clientId: z.string().min(1, 'Client is required for billing'),
+    reach_config: z.object({
+        type: z.enum(['local', 'regional', 'national', 'continental', 'international']).default('national'),
+        value: z.object({
+            radius_km: z.number().optional().default(50),
+            city: z.string().optional(),
+            country: z.string().optional(),
+            continents: z.array(z.string()).optional(),
+            is_global: z.boolean().optional(),
+        }).optional(),
+        ip_tracking_enabled: z.boolean().default(true),
+    }).optional(),
 });
 
 type AdFormData = z.infer<typeof adSchema>;
@@ -286,6 +297,53 @@ export default function AdsForm({
                             <SelectItem value="home">Home Page</SelectItem>
                         </SelectContent>
                     </Select>
+                </div>
+
+                <div className="space-y-2">
+                    <Label htmlFor="reachContext">Geo Reach (Segmentation)</Label>
+                    <Select
+                        onValueChange={(val) => setValue('reach_config.type', val as any)}
+                        defaultValue={watch('reach_config.type') || 'national'}
+                    >
+                        <SelectTrigger>
+                            <SelectValue placeholder="Select Reach Type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="local">Local (50km Radius)</SelectItem>
+                            <SelectItem value="regional">Regional (City Match)</SelectItem>
+                            <SelectItem value="national">National (Country Match)</SelectItem>
+                            <SelectItem value="continental">Continental</SelectItem>
+                            <SelectItem value="international">International / Global</SelectItem>
+                        </SelectContent>
+                    </Select>
+                    {watch('reach_config.type') === 'local' && (
+                        <p className="text-xs text-muted-foreground mt-1">
+                            Ads will be shown to users within 50km of the Business location.
+                        </p>
+                    )}
+                    {(watch('reach_config.type') === 'continental' || watch('reach_config.type') === 'international') && (
+                        <div className="mt-2 space-y-2 border p-2 rounded max-h-40 overflow-y-auto">
+                            <Label className="text-xs">Allowed Continents</Label>
+                            {['Europa', 'Sudamérica', 'Centro América', 'Latinoamérica', 'North America', 'Asia'].map(c => (
+                                <div key={c} className="flex items-center space-x-2">
+                                    <input
+                                        type="checkbox"
+                                        checked={watch('reach_config.value.continents')?.includes(c) || false}
+                                        onChange={(e) => {
+                                            const current = watch('reach_config.value.continents') || [];
+                                            if (e.target.checked) {
+                                                setValue('reach_config.value.continents', [...current, c]);
+                                            } else {
+                                                setValue('reach_config.value.continents', current.filter((x: string) => x !== c));
+                                            }
+                                        }}
+                                        className="h-3 w-3"
+                                    />
+                                    <span className="text-xs">{c}</span>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </div>
 

@@ -5,7 +5,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { doc, getDoc, updateDoc, getFirestore, collection, query, where, getDocs } from 'firebase/firestore';
@@ -42,6 +42,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Switch } from '@/components/ui/switch';
 
 const DiciloMap = dynamic(() => import('@/components/dicilo-map'), {
   ssr: false,
@@ -67,6 +68,7 @@ const businessSchema = z.object({
   coords: z.array(z.number()).length(2).optional(),
   currentOfferUrl: z.string().url().optional().or(z.literal('')),
   mapUrl: z.string().url().optional().or(z.literal('')),
+  active: z.boolean().default(true),
 });
 
 type BusinessFormData = z.infer<typeof businessSchema>;
@@ -143,6 +145,7 @@ export default function EditBusinessPage() {
     watch,
     setValue,
     getValues,
+    control,
   } = useForm<BusinessFormData>({
     resolver: zodResolver(businessSchema),
   });
@@ -285,6 +288,7 @@ export default function EditBusinessPage() {
               coords: data.coords || undefined,
               currentOfferUrl: data.currentOfferUrl || '',
               mapUrl: data.mapUrl || '',
+              active: data.active !== undefined ? data.active : true,
             };
             reset(formData as BusinessFormData);
           } else {
@@ -382,11 +386,27 @@ export default function EditBusinessPage() {
 
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
         <Card>
-          <CardHeader>
-            <CardTitle>{t('businesses.edit.cardTitle')}</CardTitle>
-            <CardDescription>
-              {t('businesses.edit.cardDescription', { id })}
-            </CardDescription>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <div>
+              <CardTitle>{t('businesses.edit.cardTitle')}</CardTitle>
+              <CardDescription>
+                {t('businesses.edit.cardDescription', { id })}
+              </CardDescription>
+            </div>
+            <Controller
+              control={control}
+              name="active"
+              render={({ field }) => (
+                <div className="flex flex-row items-center space-x-2 space-y-0">
+                  <Label htmlFor="active-switch" className="text-sm font-medium">Business Active</Label>
+                  <Switch
+                    id="active-switch"
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </div>
+              )}
+            />
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">

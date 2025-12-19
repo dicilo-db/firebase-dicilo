@@ -146,6 +146,13 @@
       "currentOfferUrl": "URL des aktuellen Angebots"
     }
   },
+  "client": {
+    "type": {
+      "retailer": "Einzelhändler",
+      "premium": "Premium",
+      "starter": "Starter"
+    }
+  },
   "clients": {
     "title": "Landingpages verwalten",
     "addClient": "Seite hinzufügen",
