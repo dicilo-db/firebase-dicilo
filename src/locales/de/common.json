@@ -40,7 +40,7 @@
     "locationNotFoundDesc": "Der Ort '{query}' wurde nicht gefunden.",
     "searchErrorTitle": "Suchfehler",
     "searchErrorDesc": "Ein Fehler ist bei der Suche aufgetreten.",
-    "noResults": "Keine Ergebnisse für '{query}' gefunden.",
+    "noResults": "Keine Ergebnisse für '{{query}}' gefunden.",
     "noResultsGeneric": "Keine Ergebnisse gefunden.",
     "recommendBusiness": "Ein Geschäft empfehlen"
   },
@@ -96,7 +96,25 @@
     "successTitle": "Empfehlung gesendet!",
     "successDesc": "Vielen Dank für Ihre Empfehlung. Wir werden uns mit dem Unternehmen in Verbindung setzen.",
     "errorTitle": "Fehler beim Senden!",
-    "errorDesc": "Es gab ein Problem beim Senden Ihrer Empfehlung. Bitte versuchen Sie es später noch einmal."
+    "errorDesc": "Es gab ein Problem beim Senden Ihrer Empfehlung. Bitte versuchen Sie es später noch einmal.",
+    "diciloCodePlaceholder": "DICILO Code (optional)",
+    "sourceLabel": "Wie haben Sie von uns erfahren?*",
+    "sourcePlaceholder": "Bitte auswählen",
+    "sources": {
+      "customer": "Ich bin bereits Kunde",
+      "facebook": "Facebook",
+      "instagram": "Instagram",
+      "telegram": "Telegram",
+      "youtube": "YouTube",
+      "twitter": "Twitter / X",
+      "linkedin": "LinkedIn",
+      "tiktok": "TikTok",
+      "recommendation": "Empfehlung durch Freunde",
+      "googleads": "Google Werbung",
+      "dicilo": "Dicilo Netzwerk",
+      "mhc": "MHC",
+      "other": "Sonstiges"
+    }
   },
   "cancel": "Abbrechen",
   "delete": "Löschen",

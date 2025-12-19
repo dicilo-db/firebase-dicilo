@@ -8,7 +8,7 @@ export async function submitRecommendation(data: any) {
         await getAdminDb().collection('recommendations').add({
             ...data,
             timestamp: admin.firestore.FieldValue.serverTimestamp(),
-            source: 'search_page_recommendation',
+            source: data.source || 'search_page_recommendation',
         });
         return { success: true };
     } catch (error: any) {

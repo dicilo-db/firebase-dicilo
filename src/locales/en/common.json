@@ -40,7 +40,7 @@
     "locationNotFoundDesc": "The location '{query}' was not found.",
     "searchErrorTitle": "Search Error",
     "searchErrorDesc": "An error occurred during the search.",
-    "noResults": "No results found for '{query}'.",
+    "noResults": "No results found for '{{query}}'.",
     "recommendBusiness": "Recommend a Business"
   },
   "businessCard": {

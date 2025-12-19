@@ -40,7 +40,7 @@
     "locationNotFoundDesc": "No se encontró la ubicación '{query}'.",
     "searchErrorTitle": "Error de Búsqueda",
     "searchErrorDesc": "Ocurrió un error durante la búsqueda.",
-    "noResults": "No se encontraron resultados para '{query}'.",
+    "noResults": "No se encontraron resultados para '{{query}}'.",
     "recommendBusiness": "Recomendar un negocio"
   },
   "businessCard": {
