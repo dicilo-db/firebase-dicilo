@@ -94,19 +94,54 @@ async function getBusinesses(): Promise<{ businesses: Business[], clientsRaw: an
   }
 }
 
-async function getAds(clientsRaw: any[]) {
+async function getAds(clientsRaw: any[], businesses: Business[]) {
   const db = getFirestore(app);
   try {
     const adsCol = collection(db, 'ads_banners');
     const q = query(adsCol);
     const snapshot = await getDocs(q);
 
-    // Map of client budgets for quick lookup
-    const clientBudgets = new Map(clientsRaw.map((c: any) => [c.id, c.budget_remaining || 0]));
+    // Map of client budgets and coordinates for quick lookup
+    const clientMap = new Map(clientsRaw.map((c: any) => [c.id, c]));
+    // Map of specialized businesses for fallback coords
+    const businessMap = new Map(businesses.map((b) => [b.id, b]));
 
     // Build plain objects and filter
     const ads = snapshot.docs.map(doc => {
       const data = doc.data();
+      const client = data.clientId ? clientMap.get(data.clientId) : null;
+      const business = data.clientId ? businessMap.get(data.clientId) : null;
+
+      let coords: [number, number] | undefined = undefined;
+
+      // Try getting coords from Client (Raw)
+      if (client && client.coords) {
+        if (Array.isArray(client.coords) && client.coords.length === 2) {
+          coords = [Number(client.coords[0]), Number(client.coords[1])];
+        } else if (client.coords.latitude !== undefined && client.coords.longitude !== undefined) {
+          coords = [Number(client.coords.latitude), Number(client.coords.longitude)];
+        }
+      }
+
+      // Fallback: Try getting coords from Business (Sanitized)
+      if (!coords && business && business.coords) {
+        coords = business.coords;
+      }
+
+      // [NEW] Fallback 2: Match by Name (if ID link is broken/missing)
+      // This rescues ads where title matches business name but clientId is wrong/empty
+      if (!coords && data.title) {
+        const normalizedTitle = data.title.toLowerCase().trim();
+        const matchedBusiness = businesses.find(b =>
+          b.name.toLowerCase().trim() === normalizedTitle ||
+          b.name.toLowerCase().trim().includes(normalizedTitle) && normalizedTitle.length > 5 // Safety check
+        );
+        if (matchedBusiness && matchedBusiness.coords) {
+          coords = matchedBusiness.coords;
+          // console.log(`[AdFallback] Linked '${data.title}' to '${matchedBusiness.name}' by name.`);
+        }
+      }
+
       const sanitized = {
         id: doc.id,
         imageUrl: data.imageUrl,
@@ -115,6 +150,7 @@ async function getAds(clientsRaw: any[]) {
         active: data.active,
         position: data.position,
         clientId: data.clientId,
+        coords: coords, // Inject coords
       };
       return sanitized;
     }).filter(ad => {
@@ -122,8 +158,12 @@ async function getAds(clientsRaw: any[]) {
       if (ad.active === false) return false;
       // Budget check if clientId present
       if (ad.clientId) {
-        const budget = clientBudgets.get(ad.clientId);
-        if (typeof budget === 'number' && budget <= 0.05) return false;
+        const client = clientMap.get(ad.clientId);
+        // If client exists, check budget.
+        if (client) {
+          const budget = client.budget_remaining || 0;
+          if (typeof budget === 'number' && budget <= 0.05) return false;
+        }
       }
       return true;
     });
@@ -138,7 +178,7 @@ async function getAds(clientsRaw: any[]) {
 
 export default async function SearchPage() {
   const { businesses, clientsRaw } = await getBusinesses();
-  const ads = await getAds(clientsRaw);
+  const ads = await getAds(clientsRaw, businesses);
 
   return (
     <main className="h-screen w-screen overflow-hidden">

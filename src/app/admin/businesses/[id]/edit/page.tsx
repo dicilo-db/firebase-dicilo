@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { doc, getDoc, updateDoc, getFirestore } from 'firebase/firestore';
+import { doc, getDoc, updateDoc, getFirestore, collection, query, where, getDocs } from 'firebase/firestore';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { app } from '@/lib/firebase';
 import { isValidUrl } from '@/lib/utils';
@@ -211,6 +211,32 @@ export default function EditBusinessPage() {
   const handlePromote = async (clientType: 'retailer' | 'premium') => {
     setIsPromoting(true);
     try {
+      const businessName = getValues('name');
+      const slug = slugify(businessName);
+
+      // [CHECK] Check if client already exists to avoid duplicates
+      const clientsRef = collection(db, 'clients');
+      const q = query(clientsRef, where('slug', '==', slug));
+      const querySnapshot = await getDocs(q);
+
+      if (!querySnapshot.empty) {
+        // Client exists - Update instead of creating new
+        const existingClient = querySnapshot.docs[0];
+        const clientRef = doc(db, 'clients', existingClient.id);
+
+        await updateDoc(clientRef, {
+          clientType: clientType
+        });
+
+        toast({
+          title: 'Client Updated',
+          description: `Exisiting client updated to ${clientType}. Redirecting...`,
+        });
+        router.push(`/admin/clients/${existingClient.id}/edit`);
+        return;
+      }
+
+      // If not exists, proceed with promotion
       const result: any = await promoteToClientFn({
         businessId: id,
         clientType,
@@ -225,6 +251,7 @@ export default function EditBusinessPage() {
         throw new Error(result.data.message || 'Promotion failed');
       }
     } catch (error: any) {
+      console.error('Promotion error:', error);
       toast({
         title: 'Promotion Failed',
         description: error.message,

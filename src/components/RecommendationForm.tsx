@@ -119,6 +119,7 @@ export function RecommendationForm({
     setIsSubmitting(true);
     try {
       // Get country name from ISO code
+      const countryData = Country.getCountryByCode(values.country);
       const countryName = countryData ? countryData.name : values.country;
 
       const result = await submitRecommendation({

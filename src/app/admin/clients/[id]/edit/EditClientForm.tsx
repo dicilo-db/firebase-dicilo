@@ -98,6 +98,7 @@ const LayoutEditor = dynamic(() => import('@/app/dashboard/LayoutEditor'), {
 });
 
 import { WalletCard } from '@/components/dashboard/WalletCard';
+import { AdStatistics } from '@/components/dashboard/AdStatistics';
 import { ClientCouponManager } from '@/components/dashboard/ClientCouponManager';
 
 
@@ -1163,6 +1164,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                     User Management
                   </TabsTrigger>
                   <TabsTrigger value="form">{t('clients.tabs.form')}</TabsTrigger>
+                  <TabsTrigger value="stats">{t('adStats.title', 'Statistics')}</TabsTrigger>
                   <TabsTrigger value="wallet" className="text-blue-600 font-bold">Wallet</TabsTrigger>
                   <TabsTrigger value="translations">
                     {t('clients.tabs.translations')}
@@ -2430,6 +2432,11 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                       clientId={id}
                     />
                   </div>
+                </TabsContent>
+
+                {/* Statistics Tab */}
+                <TabsContent value="stats">
+                  <AdStatistics adId={id} />
                 </TabsContent>
 
                 {/* Wallet Tab */}

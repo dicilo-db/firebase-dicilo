@@ -539,6 +539,25 @@
     "successDesc": "We have received your top-up request.",
     "errorTitle": "Error",
     "errorDesc": "Could not send request.",
-    "minAmountError": "Minimum amount is {{amount}}€."
+    "minAmountError": "Minimum amount is {{amount}}€.",
+    "payWithStripe": "Pay with Stripe",
+    "requestInvoice": "Request Invoice"
+  },
+  "adStats": {
+    "title": "Ad Statistics",
+    "reportTitle": "Ad Performance Report",
+    "generatedOn": "Generated on",
+    "date": "Date",
+    "views": "Views",
+    "clicks": "Clicks",
+    "ctr": "CTR",
+    "cost": "Cost",
+    "total": "Total",
+    "noData": "No data available for the selected period.",
+    "last7Days": "Last 7 Days",
+    "last30Days": "Last 30 Days",
+    "last90Days": "Last 3 Months",
+    "viewsAndClicks": "Views & Clicks",
+    "costProgression": "Cost Progression"
   }
 }

@@ -32,6 +32,7 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { GeneralAdStatistics } from '@/components/dashboard/GeneralAdStatistics';
 import { LayoutDashboard, MousePointerClick, Search } from 'lucide-react';
 
 // --- TIPOS ---
@@ -205,6 +206,10 @@ export default function StatisticsPage() {
               {t('businesses.backToDashboard')}
             </Link>
           </Button>
+        </div>
+
+        <div className="mb-8">
+          <GeneralAdStatistics />
         </div>
 
         <div className="mb-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">

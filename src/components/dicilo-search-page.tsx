@@ -282,70 +282,63 @@ export default function DiciloSearchPage({
   const filteredBusinesses = useMemo(() => {
     const normalizedQuery = normalizeText(debouncedQuery);
 
-    if (searchType !== 'business' || !normalizedQuery.trim()) {
-      return [...initialBusinesses];
+    // 1. Filter by text (if query exists)
+    let result = [...initialBusinesses];
+
+    if (searchType === 'business' && normalizedQuery.trim()) {
+      result = initialBusinesses.filter((b) => {
+        const searchableText = [
+          b.name,
+          b.description,
+          b.category,
+          b.location,
+          b.address,
+        ]
+          .map(normalizeText)
+          .join(' ');
+        return searchableText.includes(normalizedQuery);
+      });
     }
 
-    const textFiltered = initialBusinesses.filter((b) => {
-      const searchableText = [
-        b.name,
-        b.description,
-        b.category,
-        b.location,
-        b.address,
-      ]
-        .map(normalizeText)
-        .join(' ');
-      return searchableText.includes(normalizedQuery);
-    });
-
-    if (textFiltered.length === 0) return [];
-
-    const primaryResult =
-      textFiltered.find((b) =>
+    // 2. Sort the result
+    if (userLocation) {
+      // Sort by distance if user location is known
+      return result.sort((a, b) => {
+        if (!a.coords || a.coords.length !== 2) return 1;
+        if (!b.coords || b.coords.length !== 2) return -1;
+        const distA = haversineDistance(userLocation, a.coords);
+        const distB = haversineDistance(userLocation, b.coords);
+        return distA - distB;
+      });
+    } else if (searchType === 'business' && normalizedQuery.trim()) {
+      // If sorting by text relevance (primary match)
+      const primaryResult = result.find((b) =>
         normalizeText(b.name).startsWith(normalizedQuery)
-      ) || textFiltered[0];
+      ) || result[0];
 
-    if (
-      !primaryResult ||
-      !primaryResult.coords ||
-      primaryResult.coords.length !== 2
-    ) {
-      // If we have user location, sort by distance to user!
-      if (userLocation) {
-        return textFiltered.sort((a, b) => {
-          if (!a.coords || a.coords.length !== 2) return 1;
-          if (!b.coords || b.coords.length !== 2) return -1;
-          const distA = haversineDistance(userLocation, a.coords);
-          const distB = haversineDistance(userLocation, b.coords);
-          return distA - distB;
+      if (primaryResult) {
+        return result.sort((a, b) => {
+          if (a.id === primaryResult.id) return -1;
+          if (b.id === primaryResult.id) return 1;
+          return a.name.localeCompare(b.name);
         });
       }
-      return textFiltered.sort((a, b) => a.name.localeCompare(b.name));
     }
 
-    return textFiltered.sort((a, b) => {
-      if (a.id === primaryResult.id) return -1;
-      if (b.id === primaryResult.id) return 1;
-
-      if (!a.coords || a.coords.length !== 2) return 1;
-      if (!b.coords || b.coords.length !== 2) return -1;
-
-      // Prioritize sorting by distance to User Location if available, else by Primary Result
-      const referencePoint = userLocation || primaryResult.coords!;
-
-      const distanceA = haversineDistance(referencePoint, a.coords as [number, number]);
-      const distanceB = haversineDistance(referencePoint, b.coords as [number, number]);
-      return distanceA - distanceB;
-    });
+    // Default fallback: Alphabetical or kept as is
+    return result; // Or result.sort((a, b) => a.name.localeCompare(b.name));
   }, [debouncedQuery, initialBusinesses, searchType, userLocation]);
 
   const sortedAds = useMemo(() => {
-    // 1. If no user location, return original list (or you could randomize)
+    // 1. If no user location, return original list
     if (!userLocation) return initialAds;
 
-    // 2. Map ads to their business coordinates if available
+    // 2. Map ads to ensure coords are available (prefer injected, fallback to lookup)
     const localizedAds = initialAds.map((ad) => {
+      // If ad already has coords (from server), use them.
+      if (ad.coords) return ad;
+
+      // Fallback: lookup in business list
       const business = initialBusinesses.find((b) => b.id === ad.clientId);
       return {
         ...ad,
@@ -355,11 +348,17 @@ export default function DiciloSearchPage({
 
     // 3. Sort by distance to user
     return localizedAds.sort((a, b) => {
-      if (!a.coords || a.coords.length !== 2) return 1; // No coords -> push to end
-      if (!b.coords || b.coords.length !== 2) return -1;
+      // If no coords, push to end (distance = infinity)
+      const hasCoordsA = a.coords && a.coords.length === 2;
+      const hasCoordsB = b.coords && b.coords.length === 2;
+
+      if (!hasCoordsA && !hasCoordsB) return 0;
+      if (!hasCoordsA) return 1;
+      if (!hasCoordsB) return -1;
 
       const distA = haversineDistance(userLocation, a.coords as [number, number]);
       const distB = haversineDistance(userLocation, b.coords as [number, number]);
+      // console.log(`Ad Sort debug: UserLoc=${userLocation} | A: ${a.title || a.id} (${distA.toFixed(2)}km) | B: ${b.title || b.id} (${distB.toFixed(2)}km)`);
       return distA - distB;
     });
   }, [initialAds, userLocation, initialBusinesses]);

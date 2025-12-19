@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/context/AuthContext';
-import { getUserTickets, addTicketMessage, Ticket } from '@/app/actions/tickets'; // We might need getSingleTicket but logic can reuse getUserTickets for now or filter
+import { getTicket, addTicketMessage, Ticket } from '@/app/actions/tickets';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -13,7 +13,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { format } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
-import { getFirestore, doc, onSnapshot } from 'firebase/firestore';
+import { getFirestore } from 'firebase/firestore';
 import { app } from '@/lib/firebase';
 
 const db = getFirestore(app);
@@ -23,7 +23,7 @@ export default function TicketDetailPage() {
     const { user } = useAuth();
     const { id } = useParams();
     const { toast } = useToast();
-    const [ticket, setTicket] = useState<any | null>(null); // Use any temporarily or import Ticket type
+    const [ticket, setTicket] = useState<Ticket | null>(null);
     const [loading, setLoading] = useState(true);
     const [newMessage, setNewMessage] = useState('');
     const [sending, setSending] = useState(false);
@@ -32,10 +32,9 @@ export default function TicketDetailPage() {
         if (!id) return;
         setLoading(true);
         try {
-            const { getTicket } = await import('@/app/actions/tickets');
             const result = await getTicket(id as string);
-            if (result.success) {
-                setTicket(result.ticket);
+            if (result.success && result.ticket) {
+                setTicket(result.ticket as Ticket);
             } else {
                 toast({
                     title: 'Error',
@@ -59,7 +58,6 @@ export default function TicketDetailPage() {
 
         setSending(true);
         try {
-            const { addTicketMessage } = await import('@/app/actions/tickets');
             const result = await addTicketMessage(ticket.id, {
                 senderId: user.uid,
                 senderName: user.displayName || 'User',

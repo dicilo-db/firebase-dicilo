@@ -567,6 +567,25 @@
     "successDesc": "Wir haben Ihre Aufladeanfrage erhalten und melden uns in Kürze.",
     "errorTitle": "Fehler",
     "errorDesc": "Die Anfrage konnte nicht gesendet werden.",
-    "minAmountError": "Der Mindestbetrag für eine Aufladung beträgt {{amount}}€."
+    "minAmountError": "Der Mindestbetrag für eine Aufladung beträgt {{amount}}€.",
+    "payWithStripe": "Mit Stripe zahlen",
+    "requestInvoice": "Rechnung anfordern"
+  },
+  "adStats": {
+    "title": "Anzeigen-Statistiken",
+    "reportTitle": "Anzeigen-Leistungsbericht",
+    "generatedOn": "Generiert am",
+    "date": "Datum",
+    "views": "Impressionen",
+    "clicks": "Klicks",
+    "ctr": "Klickrate (CTR)",
+    "cost": "Kosten",
+    "total": "Gesamt",
+    "noData": "Keine Daten für den ausgewählten Zeitraum verfügbar.",
+    "last7Days": "Letzte 7 Tage",
+    "last30Days": "Letzte 30 Tage",
+    "last90Days": "Letzte 3 Monate",
+    "viewsAndClicks": "Impressionen & Klicks",
+    "costProgression": "Kostenentwicklung"
   }
 }

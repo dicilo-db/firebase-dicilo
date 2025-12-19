@@ -146,6 +146,13 @@
       "currentOfferUrl": "URL de la Oferta Actual"
     }
   },
+  "client": {
+    "type": {
+      "retailer": "Comerciante",
+      "premium": "Premium",
+      "starter": "Starter"
+    }
+  },
   "clients": {
     "title": "Gestionar Landing Pages",
     "addClient": "Añadir Página",
@@ -207,7 +214,8 @@
       "jsonPlaceholder": "Introduce un array de objetos JSON aquí...",
       "jsonPlaceholderObject": "Introduce un objeto JSON aquí...",
       "jsonHelp": "Debe ser un array JSON válido. Usa un validador online para comprobarlo.",
-      "jsonHelpObject": "Debe ser un objeto JSON válido. Usa un validador online para comprobarlo."
+      "jsonHelpObject": "Debe ser un objeto JSON válido. Usa un validador online para comprobarlo.",
+      "clientType": "Tipo de Cliente"
     }
   },
   "plans": {

@@ -170,7 +170,7 @@ export async function runDatabaseCleanup(): Promise<CleanupResult> {
                     source: 'auto-sync',
                     createdAt: now,
                     updatedAt: now,
-                    clientId: company._source === 'client' ? company.id : undefined,
+                    clientId: company._source === 'client' ? company.id : null,
                     status: 'active'
                 };
 

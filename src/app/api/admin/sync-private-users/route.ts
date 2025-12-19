@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { getAdminDb, getAdminAuth } from '@/lib/firebase-admin';
 import { createPrivateUserProfile } from '@/lib/private-user-service';
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(request: Request) {
     try {
         // Query all registrations of type 'private'

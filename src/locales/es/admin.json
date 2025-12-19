@@ -578,6 +578,25 @@
     "successDesc": "Hemos recibido su solicitud de recarga.",
     "errorTitle": "Error",
     "errorDesc": "No se pudo enviar la solicitud.",
-    "minAmountError": "El monto mínimo es {{amount}}€."
+    "minAmountError": "El monto mínimo es {{amount}}€.",
+    "payWithStripe": "Pagar con Stripe",
+    "requestInvoice": "Solicitar Factura"
+  },
+  "adStats": {
+    "title": "Estadísticas de Anuncios",
+    "reportTitle": "Reporte de Rendimiento de Anuncios",
+    "generatedOn": "Generado el",
+    "date": "Fecha",
+    "views": "Visualizaciones",
+    "clicks": "Clics",
+    "ctr": "CTR",
+    "cost": "Costo",
+    "total": "Total",
+    "noData": "No hay datos disponibles para el período seleccionado.",
+    "last7Days": "Últimos 7 Días",
+    "last30Days": "Últimos 30 Días",
+    "last90Days": "Últimos 3 Meses",
+    "viewsAndClicks": "Visualizaciones y Clics",
+    "costProgression": "Progresión de Costo"
   }
 }

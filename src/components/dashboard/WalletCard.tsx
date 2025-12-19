@@ -1,3 +1,4 @@
+'use client';
 
 import React, { useState } from 'react';
 import {
@@ -11,7 +12,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, TrendingUp, AlertCircle, Euro } from 'lucide-react';
+import { Loader2, TrendingUp, AlertCircle, Euro, CreditCard } from 'lucide-react';
 import {
     Dialog,
     DialogContent,
@@ -87,6 +88,46 @@ export function WalletCard({ clientId, clientEmail, currentBudget, totalInvested
                 variant: "destructive",
             });
         } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleStripeCheckout = async () => {
+        if (Number(amount) < 5) {
+            toast({
+                title: t('walletCard.errorTitle'),
+                description: t('walletCard.minAmountError', { amount: 5 }),
+                variant: "destructive",
+            });
+            return;
+        }
+
+        setIsSubmitting(true);
+        try {
+            const response = await fetch('/api/wallet/create-checkout', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    clientId,
+                    clientEmail,
+                    amount: Number(amount),
+                    returnUrl: window.location.href
+                }),
+            });
+
+            const data = await response.json();
+            if (data.url) {
+                window.location.href = data.url;
+            } else {
+                throw new Error(data.error || 'Failed to init checkout');
+            }
+        } catch (error: any) {
+            console.error(error);
+            toast({
+                title: t('walletCard.errorTitle'),
+                description: error.message || t('walletCard.errorDesc'),
+                variant: "destructive",
+            });
             setIsSubmitting(false);
         }
     };
@@ -185,10 +226,14 @@ export function WalletCard({ clientId, clientEmail, currentBudget, totalInvested
                                 ))}
                             </div>
                         </div>
-                        <DialogFooter>
-                            <Button onClick={handleRequestTopUp} disabled={isSubmitting}>
+                        <DialogFooter className="flex-col sm:flex-row gap-2">
+                            <Button onClick={handleRequestTopUp} variant="outline" disabled={isSubmitting} className="w-full sm:w-auto">
                                 {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                                {t('walletCard.submitRequest')}
+                                {t('walletCard.requestInvoice', 'Request Invoice')}
+                            </Button>
+                            <Button onClick={handleStripeCheckout} disabled={isSubmitting} className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700">
+                                {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <CreditCard className="mr-2 h-4 w-4" />}
+                                {t('walletCard.payWithStripe', 'Pay with Stripe')}
                             </Button>
                         </DialogFooter>
                     </DialogContent>
