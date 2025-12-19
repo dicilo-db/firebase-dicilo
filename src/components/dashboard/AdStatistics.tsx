@@ -42,6 +42,7 @@ interface DailyStat {
     clicks: number;
     cost: number;
     ctr: number;
+    locations?: any;
 }
 
 interface AdStatisticsProps {
@@ -90,7 +91,8 @@ export function AdStatistics({ adId }: AdStatisticsProps) {
                         views,
                         clicks,
                         cost: d.cost || 0,
-                        ctr: views > 0 ? (clicks / views) * 100 : 0
+                        ctr: views > 0 ? (clicks / views) * 100 : 0,
+                        locations: d.locations // Pass locations for aggregation
                     };
                 });
 
@@ -110,6 +112,27 @@ export function AdStatistics({ adId }: AdStatisticsProps) {
     const totalClicks = stats.reduce((acc, curr) => acc + curr.clicks, 0);
     const totalCost = stats.reduce((acc, curr) => acc + curr.cost, 0);
     const avgCtr = totalViews > 0 ? (totalClicks / totalViews) * 100 : 0;
+
+    // Aggregate Locations
+    const locationStats: Record<string, number> = {};
+    stats.forEach(stat => {
+        if (stat.locations) {
+            Object.entries(stat.locations).forEach(([country, data]: [string, any]) => {
+                locationStats[country] = (locationStats[country] || 0) + (data.clicks || 0);
+                if (data.cities) {
+                    Object.entries(data.cities).forEach(([city, count]: [string, any]) => {
+                        const cityKey = `${city}, ${country}`;
+                        // Optional: Track city specific stats if needed
+                    });
+                }
+            });
+        }
+    });
+
+    const topLocations = Object.entries(locationStats)
+        .sort(([, a], [, b]) => b - a)
+        .slice(0, 5);
+
 
     const downloadReport = () => {
         const doc = new jsPDF();
@@ -265,6 +288,35 @@ export function AdStatistics({ adId }: AdStatisticsProps) {
                     </CardContent>
                 </Card>
             </div>
+
+            {/* Top Locations - NEW */}
+            <Card>
+                <CardHeader>
+                    <CardTitle>Top Locations</CardTitle>
+                    <CardDescription>Where your clicks are coming from</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    {topLocations.length > 0 ? (
+                        <div className="space-y-4">
+                            {topLocations.map(([location, count], index) => (
+                                <div key={location} className="flex items-center justify-between">
+                                    <div className="flex items-center gap-2">
+                                        <div className="flex h-6 w-6 items-center justify-center rounded-full bg-muted text-xs font-bold">
+                                            {index + 1}
+                                        </div>
+                                        <span>{location}</span>
+                                    </div>
+                                    <div className="font-bold">{count} clicks</div>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="text-center text-muted-foreground py-4">
+                            No location data available yet.
+                        </div>
+                    )}
+                </CardContent>
+            </Card>
         </div>
     );
 }

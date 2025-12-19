@@ -598,16 +598,16 @@ const DashboardContent: React.FC = () => {
               </Card>
             </Link>
 
-            {/* Support Tickets (NEW) */}
-            <Link href="/dashboard/tickets" className="group">
+            {/* Support Tickets (Central) */}
+            <Link href="/admin/tickets" className="group">
               <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Support Tickets</CardTitle>
+                  <CardTitle className="text-sm font-medium">Ticket System</CardTitle>
                   <MessageSquare className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">Support Tickets</div>
-                  <p className="text-xs text-muted-foreground mt-1">Manage support tickets</p>
+                  <div className="text-2xl font-bold">Admin Tickets</div>
+                  <p className="text-xs text-muted-foreground mt-1">Manage all support tickets</p>
                 </CardContent>
               </Card>
             </Link>

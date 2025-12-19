@@ -122,3 +122,23 @@ export async function addTicketMessage(ticketId: string, message: {
         return { success: false, error: error.message };
     }
 }
+
+export async function getAllTickets() {
+    try {
+        const snapshot = await getAdminDb().collection('tickets')
+            .orderBy('createdAt', 'desc')
+            .get();
+
+        const tickets = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data(),
+            createdAt: doc.data().createdAt?.toDate().toISOString(),
+            updatedAt: doc.data().updatedAt?.toDate().toISOString(),
+        }));
+
+        return { success: true, tickets };
+    } catch (error: any) {
+        console.error('Error fetching all tickets:', error);
+        return { success: false, error: error.message };
+    }
+}

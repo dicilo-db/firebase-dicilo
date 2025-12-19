@@ -159,7 +159,7 @@ export default function AdsManagerPage() {
     const handleExport = () => {
         const headers = ['ID', 'Title', 'Client', 'Position', 'Views', 'Clicks', 'Total Cost (EUR)', 'Active', 'Link'];
         const rows = ads.map(ad => {
-            const cost = ad.totalCost || ((ad.clicks || 0) * 0.05);
+            const cost = (ad.clicks || 0) * 0.05;
             return [
                 ad.id,
                 `"${ad.title.replace(/"/g, '""')}"`, // Escape quotes
@@ -262,10 +262,29 @@ export default function AdsManagerPage() {
                         </div>
                         <CardHeader className="p-4 pb-2">
                             <CardTitle className="text-lg">{ad.title}</CardTitle>
+                            {ad.clientId && (
+                                <p className="text-xs text-muted-foreground mb-1">ID: {ad.clientId}</p>
+                            )}
                             <CardDescription className="truncate">
                                 <a
                                     href={ad.linkUrl}
                                     target="_blank"
+                                    onClick={async () => {
+                                        try {
+                                            await fetch('/api/ads/click', {
+                                                method: 'POST',
+                                                headers: { 'Content-Type': 'application/json' },
+                                                body: JSON.stringify({
+                                                    adId: ad.id,
+                                                    clientId: ad.clientId,
+                                                    path: '/admin/ads-manager',
+                                                    device: 'desktop'
+                                                }),
+                                            });
+                                        } catch (e) {
+                                            console.error("Tracking error", e);
+                                        }
+                                    }}
                                     className="flex items-center hover:underline"
                                 >
                                     {ad.linkUrl} <ExternalLink className="ml-1 h-3 w-3" />
@@ -284,7 +303,7 @@ export default function AdsManagerPage() {
                                 </div>
                                 <div>
                                     <div className="font-bold text-green-600">
-                                        {(ad.totalCost || ((ad.clicks || 0) * 0.05)).toFixed(2)}€
+                                        {((ad.clicks || 0) * 0.05).toFixed(2)}€
                                     </div>
                                     <div className="text-xs text-muted-foreground">Cost</div>
                                 </div>

@@ -15,40 +15,72 @@ export async function POST(request: NextRequest) {
         const db = getAdminDb();
         const adRef = db.collection('ads_banners').doc(adId);
 
-        // Atomic increment of clicks
+        // Get IP and Client Info
+        const ip = request.headers.get('x-forwarded-for') || 'Unknown';
+        let country = 'Unknown';
+        let city = 'Unknown';
+
+        try {
+            // Simple geolocation using ip-api.com (free for non-commercial)
+            // In production, consider a paid service or a local database
+            const geoRes = await fetch(`http://ip-api.com/json/${ip.split(',')[0].trim()}`);
+            if (geoRes.ok) {
+                const geoData = await geoRes.json();
+                if (geoData.status === 'success') {
+                    country = geoData.country || 'Unknown';
+                    city = geoData.city || 'Unknown';
+                }
+            }
+        } catch (e) {
+            console.error('Geo lookup failed:', e);
+        }
+
+        // Atomic increment of clicks AND Cost
         const batch = db.batch();
         batch.update(adRef, {
             clicks: FieldValue.increment(1),
+            totalCost: FieldValue.increment(0.05) // Ensure atomic cost update
         });
 
-        // 2. [NEW] Log to analyticsEvents (for Real-time Dashboard)
+        // 2. Log to analyticsEvents
         const analyticsRef = db.collection('analyticsEvents').doc();
         batch.set(analyticsRef, {
-            type: 'cardClick', // This maps to "Clicks en Tarjetas"
+            type: 'cardClick',
             businessId: adId,
-            businessName: 'Ad Banner', // Placeholder
+            businessName: 'Ad Banner',
             timestamp: FieldValue.serverTimestamp(),
             clickedElement: 'banner',
-            isAd: true
+            isAd: true,
+            userIp: ip,
+            location: { country, city }
         });
 
-        // 3. [NEW] Log to ad_stats_daily (for Charts/Billing)
+        // 3. Log to ad_stats_daily
         const today = new Date();
-        const dateKey = today.toISOString().split('T')[0]; // YYYY-MM-DD
+        const dateKey = today.toISOString().split('T')[0];
         const statsId = `${adId}_${dateKey}`;
         const statsRef = db.collection('ad_stats_daily').doc(statsId);
 
-        batch.set(statsRef, {
+        // Nested update for location counters is tricky with dot notation in variables
+        // standard Firestore supports "locations.Germany.Berlin": FieldValue.increment(1)
+        const updateData: any = {
             adId,
             date: dateKey,
             clicks: FieldValue.increment(1),
+            cost: FieldValue.increment(0.05),
             updatedAt: FieldValue.serverTimestamp()
-        }, { merge: true });
+        };
+
+        if (country !== 'Unknown') {
+            updateData[`locations.${country}.clicks`] = FieldValue.increment(1);
+            if (city !== 'Unknown') {
+                updateData[`locations.${country}.cities.${city}`] = FieldValue.increment(1);
+            }
+        }
+
+        batch.set(statsRef, updateData, { merge: true });
 
         await batch.commit();
-
-        // Optional: If we want to track clicks per client separately, we could do it here.
-        // But users requested stats in Ads Manager which reads 'ads_banners'.
 
         return NextResponse.json({ success: true });
     } catch (error) {
