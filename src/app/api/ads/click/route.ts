@@ -15,6 +15,11 @@ export async function POST(request: NextRequest) {
         const db = getAdminDb();
         const adRef = db.collection('ads_banners').doc(adId);
 
+        // Fetch Ad Data for Name
+        const adDoc = await adRef.get();
+        const adData = adDoc.data();
+        const businessName = adData?.title || adData?.clientId || 'Unknown Ad';
+
         // Get IP and Client Info
         const ip = request.headers.get('x-forwarded-for') || 'Unknown';
         let country = 'Unknown';
@@ -47,9 +52,9 @@ export async function POST(request: NextRequest) {
         batch.set(analyticsRef, {
             type: 'cardClick',
             businessId: adId,
-            businessName: 'Ad Banner',
+            businessName: businessName, // Real Name
             timestamp: FieldValue.serverTimestamp(),
-            clickedElement: 'banner',
+            clickedElement: 'banner_click', // More specific
             isAd: true,
             userIp: ip,
             location: { country, city }

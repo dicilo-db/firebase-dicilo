@@ -43,7 +43,7 @@ interface Stats {
   totalPopupClicks: number;
 }
 
-type EventType = 'search' | 'cardClick' | 'popupClick';
+type EventType = 'search' | 'cardClick' | 'popupClick' | 'adImpression';
 
 interface AnalyticsEvent {
   id: string;
@@ -177,6 +177,7 @@ export default function StatisticsPage() {
       search: t('statistics.types.search'),
       cardClick: t('statistics.types.cardClick'),
       popupClick: t('statistics.types.popupClick'),
+      adImpression: 'Ad View', // Fallback or add translation key later
     }),
     [t]
   );
@@ -188,6 +189,7 @@ export default function StatisticsPage() {
     search: 'outline',
     cardClick: 'secondary',
     popupClick: 'default',
+    adImpression: 'secondary',
   };
 
   if (isLoading) {
@@ -270,7 +272,7 @@ export default function StatisticsPage() {
                         </Badge>
                       </TableCell>
                       <TableCell>{event.businessName}</TableCell>
-                      <TableCell>{event.clickedElement || 'N/A'}</TableCell>
+                      <TableCell>{(event as any).details || event.clickedElement || 'N/A'}</TableCell>
                     </TableRow>
                   ))
                 ) : (
