@@ -6,9 +6,26 @@ import { generateUniqueCode } from '@/lib/code-generator';
 export async function POST(request: Request) {
     try {
         const body = await request.json();
-        const { uid, email, firstName, lastName, phoneNumber, contactType } = body;
+        // Extract token from Authorization header
+        const authHeader = request.headers.get('Authorization');
+        if (!authHeader?.startsWith('Bearer ')) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+        const idToken = authHeader.split('Bearer ')[1];
 
-        if (!uid || !email || !firstName || !lastName) {
+        // Verify Token
+        let decodedToken;
+        try {
+            decodedToken = await getAdminAuth().verifyIdToken(idToken);
+        } catch (e) {
+            console.error("Token verification failed", e);
+            return NextResponse.json({ error: 'Invalid Token' }, { status: 401 });
+        }
+
+        const uid = decodedToken.uid; // TRUSTED UID
+        const { email, firstName, lastName, phoneNumber, contactType } = body;
+
+        if (!email || !firstName || !lastName) {
             return NextResponse.json(
                 { error: 'Missing required fields' },
                 { status: 400 }

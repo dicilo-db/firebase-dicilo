@@ -87,18 +87,17 @@ export const AdBanner = ({ ad, className, showBadge = true, rank }: AdBannerProp
         const text = ad.shareText || `Check out ${ad.title} on Dicilo!`;
         const title = ad.title || 'Dicilo Recommendation';
 
-        // 1. Log Share Event
+        // 1. Log Share Event (Charges $0.05)
         try {
-            fetch('/api/analytics/log', {
+            fetch('/api/ads/click', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    type: 'socialClick',
-                    businessId: ad.clientId || ad.id,
-                    businessName: ad.title || 'Ad',
-                    clickedElement: `share_${platform}`,
+                    adId: ad.id,
+                    clientId: ad.clientId,
+                    type: 'share',
                     details: platform,
-                    isAd: true
+                    device: /Mobi|Android/i.test(navigator.userAgent) ? 'mobile' : 'desktop'
                 }),
             }).catch(console.error);
         } catch (err) { }

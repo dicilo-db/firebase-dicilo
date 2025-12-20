@@ -51,6 +51,7 @@ interface AdBanner {
     createdAt?: any;
     views?: number;
     clicks?: number;
+    shares?: number;
     totalCost?: number;
     clientId?: string;
 }
@@ -107,6 +108,8 @@ export default function AdsManagerPage() {
                     createdAt: serverTimestamp(),
                     views: 0,
                     clicks: 0,
+                    shares: 0,
+                    totalCost: 0
                 });
                 toast({ title: 'Success', description: 'Banner created successfully.' });
             }
@@ -157,9 +160,11 @@ export default function AdsManagerPage() {
     };
 
     const handleExport = () => {
-        const headers = ['ID', 'Title', 'Client', 'Position', 'Views', 'Clicks', 'Total Cost (EUR)', 'Active', 'Link'];
+        const headers = ['ID', 'Title', 'Client', 'Position', 'Views', 'Clicks', 'Shares', 'Total Cost (EUR)', 'Active', 'Link'];
         const rows = ads.map(ad => {
-            const cost = (ad.clicks || 0) * 0.05;
+            // Always calculate cost from counts to ensure consistency with displayed stats
+            const cost = ((ad.clicks || 0) + (ad.shares || 0)) * 0.05;
+
             return [
                 ad.id,
                 `"${ad.title.replace(/"/g, '""')}"`, // Escape quotes
@@ -167,6 +172,7 @@ export default function AdsManagerPage() {
                 ad.position,
                 ad.views || 0,
                 ad.clicks || 0,
+                ad.shares || 0,
                 cost.toFixed(2),
                 ad.active ? 'Yes' : 'No',
                 ad.linkUrl
@@ -200,7 +206,7 @@ export default function AdsManagerPage() {
                     <div>
                         <h1 className="text-3xl font-bold tracking-tight">Ads Manager</h1>
                         <p className="text-muted-foreground">
-                            Manage your advertising banners and track performance (0.05€ / click).
+                            Manage your advertising banners and track performance (0.05€ / click or share).
                         </p>
                     </div>
                     <div className="flex gap-2">
@@ -236,105 +242,114 @@ export default function AdsManagerPage() {
             </div>
 
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {ads.map((ad) => (
-                    <Card key={ad.id} className="overflow-hidden flex flex-col">
-                        <div className="relative h-40 w-full bg-gray-100">
-                            {ad.imageUrl ? (
-                                <Image
-                                    src={ad.imageUrl}
-                                    alt={ad.title}
-                                    fill
-                                    className="object-cover"
-                                />
-                            ) : (
-                                <div className="absolute inset-0 flex items-center justify-center text-gray-400">
-                                    No Image
-                                </div>
-                            )}
-                            <div className="absolute right-2 top-2 flex gap-2">
-                                <Badge variant={ad.active ? 'default' : 'secondary'}>
-                                    {ad.active ? 'Active' : 'Inactive'}
-                                </Badge>
-                                <Badge variant="outline" className="bg-white">
-                                    {ad.position}
-                                </Badge>
-                            </div>
-                        </div>
-                        <CardHeader className="p-4 pb-2">
-                            <CardTitle className="text-lg">{ad.title}</CardTitle>
-                            {ad.clientId && (
-                                <p className="text-xs text-muted-foreground mb-1">ID: {ad.clientId}</p>
-                            )}
-                            <CardDescription className="truncate">
-                                <a
-                                    href={ad.linkUrl}
-                                    target="_blank"
-                                    onClick={async () => {
-                                        try {
-                                            await fetch('/api/ads/click', {
-                                                method: 'POST',
-                                                headers: { 'Content-Type': 'application/json' },
-                                                body: JSON.stringify({
-                                                    adId: ad.id,
-                                                    clientId: ad.clientId,
-                                                    path: '/admin/ads-manager',
-                                                    device: 'desktop'
-                                                }),
-                                            });
-                                        } catch (e) {
-                                            console.error("Tracking error", e);
-                                        }
-                                    }}
-                                    className="flex items-center hover:underline"
-                                >
-                                    {ad.linkUrl} <ExternalLink className="ml-1 h-3 w-3" />
-                                </a>
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent className="p-4 pt-0 flex-1 flex flex-col justify-end">
-                            <div className="grid grid-cols-3 gap-2 mt-4 text-center text-sm border-t pt-4">
-                                <div>
-                                    <div className="font-bold">{ad.views || 0}</div>
-                                    <div className="text-xs text-muted-foreground">Views</div>
-                                </div>
-                                <div>
-                                    <div className="font-bold">{ad.clicks || 0}</div>
-                                    <div className="text-xs text-muted-foreground">Clicks</div>
-                                </div>
-                                <div>
-                                    <div className="font-bold text-green-600">
-                                        {((ad.clicks || 0) * 0.05).toFixed(2)}€
-                                    </div>
-                                    <div className="text-xs text-muted-foreground">Cost</div>
-                                </div>
-                            </div>
+                {ads.map((ad) => {
+                    // Always calculate cost from counts to ensure consistency with displayed stats
+                    const cost = ((ad.clicks || 0) + (ad.shares || 0)) * 0.05;
 
-                            <div className="mt-4 flex items-center justify-between pt-2 border-t border-dashed">
-                                <div className="flex items-center space-x-2">
-                                    <Switch checked={ad.active} onCheckedChange={() => toggleActive(ad.id, ad.active)} />
-                                    <span className="text-xs text-muted-foreground">Visible</span>
-                                </div>
-                                <div className="flex gap-1">
-                                    <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        onClick={() => handleEditClick(ad)}
-                                    >
-                                        <Pencil className="h-4 w-4" />
-                                    </Button>
-                                    <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        className="text-red-500 hover:text-red-700"
-                                        onClick={() => handleDeleteAd(ad.id)}
-                                    >
-                                        <Trash2 className="h-4 w-4" />
-                                    </Button>
+                    return (
+                        <Card key={ad.id} className="overflow-hidden flex flex-col">
+                            <div className="relative h-40 w-full bg-gray-100">
+                                {ad.imageUrl ? (
+                                    <Image
+                                        src={ad.imageUrl}
+                                        alt={ad.title}
+                                        fill
+                                        className="object-cover"
+                                    />
+                                ) : (
+                                    <div className="absolute inset-0 flex items-center justify-center text-gray-400">
+                                        No Image
+                                    </div>
+                                )}
+                                <div className="absolute right-2 top-2 flex gap-2">
+                                    <Badge variant={ad.active ? 'default' : 'secondary'}>
+                                        {ad.active ? 'Active' : 'Inactive'}
+                                    </Badge>
+                                    <Badge variant="outline" className="bg-white">
+                                        {ad.position}
+                                    </Badge>
                                 </div>
                             </div>
-                        </CardContent>
-                    </Card>
-                ))}
+                            <CardHeader className="p-4 pb-2">
+                                <CardTitle className="text-lg">{ad.title}</CardTitle>
+                                {ad.clientId && (
+                                    <p className="text-xs text-muted-foreground mb-1">ID: {ad.clientId}</p>
+                                )}
+                                <CardDescription className="truncate">
+                                    <a
+                                        href={ad.linkUrl}
+                                        target="_blank"
+                                        onClick={async () => {
+                                            try {
+                                                await fetch('/api/ads/click', {
+                                                    method: 'POST',
+                                                    headers: { 'Content-Type': 'application/json' },
+                                                    body: JSON.stringify({
+                                                        adId: ad.id,
+                                                        clientId: ad.clientId,
+                                                        path: '/admin/ads-manager',
+                                                        device: 'desktop'
+                                                    }),
+                                                });
+                                            } catch (e) {
+                                                console.error("Tracking error", e);
+                                            }
+                                        }}
+                                        className="flex items-center hover:underline"
+                                    >
+                                        {ad.linkUrl} <ExternalLink className="ml-1 h-3 w-3" />
+                                    </a>
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent className="p-4 pt-0 flex-1 flex flex-col justify-end">
+                                <div className="grid grid-cols-4 gap-2 mt-4 text-center text-sm border-t pt-4">
+                                    <div>
+                                        <div className="font-bold">{ad.views || 0}</div>
+                                        <div className="text-xs text-muted-foreground">Views</div>
+                                    </div>
+                                    <div>
+                                        <div className="font-bold">{ad.clicks || 0}</div>
+                                        <div className="text-xs text-muted-foreground">Clicks</div>
+                                    </div>
+                                    <div>
+                                        <div className="font-bold">{ad.shares || 0}</div>
+                                        <div className="text-xs text-muted-foreground">Envio</div>
+                                    </div>
+                                    <div>
+                                        <div className="font-bold text-green-600">
+                                            {cost.toFixed(2)}€
+                                        </div>
+                                        <div className="text-xs text-muted-foreground">Cost</div>
+                                    </div>
+                                </div>
+
+                                <div className="mt-4 flex items-center justify-between pt-2 border-t border-dashed">
+                                    <div className="flex items-center space-x-2">
+                                        <Switch checked={ad.active} onCheckedChange={() => toggleActive(ad.id, ad.active)} />
+                                        <span className="text-xs text-muted-foreground">Visible</span>
+                                    </div>
+                                    <div className="flex gap-1">
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            onClick={() => handleEditClick(ad)}
+                                        >
+                                            <Pencil className="h-4 w-4" />
+                                        </Button>
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            className="text-red-500 hover:text-red-700"
+                                            onClick={() => handleDeleteAd(ad.id)}
+                                        >
+                                            <Trash2 className="h-4 w-4" />
+                                        </Button>
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    );
+                })}
 
                 {ads.length === 0 && (
                     <div className="col-span-full py-12 text-center text-muted-foreground">

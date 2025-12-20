@@ -7,6 +7,7 @@ export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
         const { adId, clientId } = body;
+        const type = body.type || 'click'; // 'click' | 'share'
 
         if (!adId) {
             return NextResponse.json({ error: 'Missing adId' }, { status: 400 });
@@ -26,8 +27,6 @@ export async function POST(request: NextRequest) {
         let city = 'Unknown';
 
         try {
-            // Simple geolocation using ip-api.com (free for non-commercial)
-            // In production, consider a paid service or a local database
             const geoRes = await fetch(`http://ip-api.com/json/${ip.split(',')[0].trim()}`);
             if (geoRes.ok) {
                 const geoData = await geoRes.json();
@@ -40,24 +39,33 @@ export async function POST(request: NextRequest) {
             console.error('Geo lookup failed:', e);
         }
 
-        // Atomic increment of clicks AND Cost
+        // Atomic increment of clicks/shares AND Cost
         const batch = db.batch();
-        batch.update(adRef, {
-            clicks: FieldValue.increment(1),
-            totalCost: FieldValue.increment(0.05) // Ensure atomic cost update
-        });
+
+        if (type === 'share') {
+            batch.update(adRef, {
+                shares: FieldValue.increment(1),
+                totalCost: FieldValue.increment(0.05)
+            });
+        } else {
+            batch.update(adRef, {
+                clicks: FieldValue.increment(1),
+                totalCost: FieldValue.increment(0.05)
+            });
+        }
 
         // 2. Log to analyticsEvents
         const analyticsRef = db.collection('analyticsEvents').doc();
         batch.set(analyticsRef, {
-            type: 'cardClick',
+            type: type === 'share' ? 'socialClick' : 'cardClick',
             businessId: adId,
-            businessName: businessName, // Real Name
+            businessName: businessName,
             timestamp: FieldValue.serverTimestamp(),
-            clickedElement: 'banner_click', // More specific
+            clickedElement: type === 'share' ? 'banner_share' : 'banner_click',
             isAd: true,
             userIp: ip,
-            location: { country, city }
+            location: { country, city },
+            details: body.details || (type === 'share' ? 'share_action' : undefined)
         });
 
         // 3. Log to ad_stats_daily
@@ -66,18 +74,22 @@ export async function POST(request: NextRequest) {
         const statsId = `${adId}_${dateKey}`;
         const statsRef = db.collection('ad_stats_daily').doc(statsId);
 
-        // Nested update for location counters is tricky with dot notation in variables
-        // standard Firestore supports "locations.Germany.Berlin": FieldValue.increment(1)
         const updateData: any = {
             adId,
             date: dateKey,
-            clicks: FieldValue.increment(1),
             cost: FieldValue.increment(0.05),
             updatedAt: FieldValue.serverTimestamp()
         };
 
+        if (type === 'share') {
+            updateData.socialClickCount = FieldValue.increment(1);
+        } else {
+            updateData.clicks = FieldValue.increment(1);
+        }
+
         if (country !== 'Unknown') {
-            updateData[`locations.${country}.clicks`] = FieldValue.increment(1);
+            const metricKey = type === 'share' ? 'shares' : 'clicks';
+            updateData[`locations.${country}.${metricKey}`] = FieldValue.increment(1);
             if (city !== 'Unknown') {
                 updateData[`locations.${country}.cities.${city}`] = FieldValue.increment(1);
             }

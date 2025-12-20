@@ -179,6 +179,68 @@ export function RegistrationForm() {
 
   const handleRegistration = async (data: RegistrationFormData) => {
     try {
+      // Logic for Private Users: Client-Side Auth + Profile Sync
+      if (data.registrationType === 'private') {
+        const { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } = await import('firebase/auth');
+        const auth = getAuth(); // Uses the singleton app from firebase-config implicitly or pass app if needed
+        // Ideally import app from lib/firebase.ts, but let's try implicit first or dynamically import.
+        // Better:
+        const { app } = await import('@/lib/firebase');
+        const clientAuth = getAuth(app);
+
+        // 1. Create User on Client
+        let userCredential;
+        try {
+          if (data.password) {
+            userCredential = await createUserWithEmailAndPassword(clientAuth, data.email, data.password);
+          } else {
+            throw new Error(t('register.errors.passwordRequired'));
+          }
+        } catch (authError: any) {
+          console.error("Auth Error", authError);
+          if (authError.code === 'auth/email-already-in-use') {
+            throw new Error(t('register.errors.emailAlreadyInUse'));
+          }
+          throw authError;
+        }
+
+        const user = userCredential.user;
+        const idToken = await user.getIdToken();
+
+        // 2. Create Profile in Backend
+        const profileResponse = await fetch('/api/private-user/create', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${idToken}`
+          },
+          body: JSON.stringify({
+            uid: user.uid,
+            email: data.email,
+            firstName: data.firstName,
+            lastName: data.lastName,
+            phoneNumber: data.phone || data.whatsapp, // Fallback
+            contactType: data.contactType
+          }),
+        });
+
+        if (!profileResponse.ok) {
+          const errorData = await profileResponse.json();
+          throw new Error(errorData.message || 'Failed to create profile');
+        }
+
+        // Success
+        toast({
+          title: t('register.form.registerSuccessTitle'),
+          description: t('register.form.registerSuccessDescription'),
+        });
+
+        // Redirect to dashboard or home?
+        window.location.href = '/dashboard';
+        return;
+      }
+
+      // Existing Logic for Retailer / Premium / Donor (still uses server-side registration)
       const response = await fetch('/api/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
