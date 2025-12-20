@@ -19,6 +19,7 @@ export interface Ticket {
 }
 
 export interface TicketMessage {
+    id?: string;
     senderId: string;
     senderName: string;
     message: string;
@@ -46,6 +47,16 @@ export async function createTicket(data: {
         };
 
         const docRef = await getAdminDb().collection('tickets').add(ticketData);
+
+        // Send notification email to user
+        try {
+            const { sendTicketCreatedEmail } = await import('@/lib/email');
+            await sendTicketCreatedEmail(data.userEmail, docRef.id, data.title, data.description);
+        } catch (emailError) {
+            console.error('Failed to send ticket email:', emailError);
+            // Don't fail the ticket creation if email fails
+        }
+
         return { success: true, ticketId: docRef.id };
     } catch (error: any) {
         console.error('Error creating ticket:', error);
@@ -108,13 +119,39 @@ export async function addTicketMessage(ticketId: string, message: {
     try {
         const ticketRef = getAdminDb().collection('tickets').doc(ticketId);
 
+        // Get ticket first to find recipient
+        const ticketSnap = await ticketRef.get();
+        if (!ticketSnap.exists) throw new Error('Ticket not found');
+        const ticketData = ticketSnap.data();
+
+        const newMessage = {
+            ...message,
+            id: crypto.randomUUID(),
+            timestamp: new Date().toISOString()
+        };
+
         await ticketRef.update({
-            messages: admin.firestore.FieldValue.arrayUnion({
-                ...message,
-                timestamp: new Date().toISOString()
-            }),
+            messages: admin.firestore.FieldValue.arrayUnion(newMessage),
             updatedAt: admin.firestore.FieldValue.serverTimestamp()
         });
+
+        // Send email notification if the sender is NOT the ticket owner (meaning it's a reply from admin/support)
+        // Or if we implement admin notifications later, we check the inverse.
+        // For now, assume if senderId != ticketData.uid, it is a reply TO the user.
+        if (ticketData?.uid && message.senderId !== ticketData.uid) {
+            try {
+                const { sendTicketReplyEmail } = await import('@/lib/email');
+                await sendTicketReplyEmail(
+                    ticketData.userEmail,
+                    ticketId,
+                    ticketData.title || 'Support Ticket',
+                    message.message,
+                    message.senderName
+                );
+            } catch (emailError) {
+                console.error('Failed to send reply email:', emailError);
+            }
+        }
 
         return { success: true };
     } catch (error: any) {
@@ -139,6 +176,52 @@ export async function getAllTickets() {
         return { success: true, tickets };
     } catch (error: any) {
         console.error('Error fetching all tickets:', error);
+        return { success: false, error: error.message };
+    }
+}
+
+export async function editTicketMessage(ticketId: string, messageId: string, newText: string) {
+    try {
+        const ticketRef = getAdminDb().collection('tickets').doc(ticketId);
+        const ticketSnap = await ticketRef.get();
+        if (!ticketSnap.exists) throw new Error('Ticket not found');
+
+        const data = ticketSnap.data();
+        const messages = data?.messages || [];
+
+        let editedMsg: any = null;
+
+        const updatedMessages = messages.map((msg: any) => {
+            if (msg.id === messageId) {
+                editedMsg = msg;
+                return { ...msg, message: newText };
+            }
+            return msg;
+        });
+
+        if (!editedMsg) return { success: false, error: 'Message not found' };
+
+        await ticketRef.update({ messages: updatedMessages });
+
+        // Notify user of correction if it's admin's message
+        if (data?.uid && editedMsg.senderId !== data.uid) {
+            try {
+                const { sendTicketReplyEmail } = await import('@/lib/email');
+                await sendTicketReplyEmail(
+                    data.userEmail,
+                    ticketId,
+                    data.title || 'Support Ticket Update',
+                    newText,
+                    editedMsg.senderName + ' (Correction)'
+                );
+            } catch (emailError) {
+                console.error('Failed to send correction email:', emailError);
+            }
+        }
+
+        return { success: true };
+    } catch (error: any) {
+        console.error('Error editing message:', error);
         return { success: false, error: error.message };
     }
 }

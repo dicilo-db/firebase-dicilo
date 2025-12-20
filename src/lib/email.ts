@@ -85,3 +85,82 @@ export async function sendCouponShareEmail(email: string, coupon: any) {
         return { success: false, error };
     }
 }
+
+export async function sendTicketCreatedEmail(email: string, ticketId: string, title: string, description: string) {
+    if (!process.env.RESEND_API_KEY) {
+        console.warn('RESEND_API_KEY is not set. Skipping email.');
+        return { success: false, error: 'Missing API Key' };
+    }
+
+    try {
+        const { data, error } = await resend.emails.send({
+            from: 'Dicilo Support <support@dicilo.com>',
+            to: [email],
+            subject: `Ticket Received: ${title} (#${ticketId.slice(0, 8)})`,
+            html: `
+                <div style="font-family: sans-serif; padding: 20px;">
+                    <h2>We received your request</h2>
+                    <p>Thank you for contacting Dicilo Support. We have received your ticket and will get back to you shortly.</p>
+                    
+                    <div style="background: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
+                        <strong>Subject:</strong> ${title}<br/>
+                        <strong>Ticket ID:</strong> ${ticketId}<br/>
+                        <hr style="border: 0; border-top: 1px solid #ddd; margin: 10px 0;"/>
+                        <p style="white-space: pre-wrap;">${description}</p>
+                    </div>
+
+                    <p>You can view the status of your ticket in your dashboard.</p>
+                    <p>Best regards,<br/>Dicilo Team</p>
+                </div>
+            `,
+        });
+
+        if (error) {
+            console.error('Resend Error:', error);
+            return { success: false, error };
+        }
+
+        return { success: true, data };
+    } catch (error) {
+        console.error('Email Sending Error:', error);
+        return { success: false, error };
+    }
+}
+
+export async function sendTicketReplyEmail(email: string, ticketId: string, title: string, replyMessage: string, senderName: string) {
+    if (!process.env.RESEND_API_KEY) {
+        console.warn('RESEND_API_KEY is not set. Skipping email.');
+        return { success: false, error: 'Missing API Key' };
+    }
+
+    try {
+        const { data, error } = await resend.emails.send({
+            from: 'Dicilo Support <support@dicilo.com>',
+            to: [email],
+            subject: `Re: ${title} (#${ticketId.slice(0, 8)})`,
+            html: `
+                <div style="font-family: sans-serif; padding: 20px;">
+                    <h2>New Reply on your Ticket</h2>
+                    <p><strong>${senderName}</strong> has replied to your ticket.</p>
+                    
+                    <div style="background: #f0f9ff; padding: 15px; border-left: 4px solid #0070f3; margin: 20px 0;">
+                        <p style="white-space: pre-wrap; margin: 0;">${replyMessage}</p>
+                    </div>
+
+                    <p>You can reply directly in your dashboard.</p>
+                    <p>Best regards,<br/>Dicilo Team</p>
+                </div>
+            `,
+        });
+
+        if (error) {
+            console.error('Resend Error:', error);
+            return { success: false, error };
+        }
+
+        return { success: true, data };
+    } catch (error) {
+        console.error('Email Sending Error:', error);
+        return { success: false, error };
+    }
+}

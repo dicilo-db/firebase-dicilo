@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
-import { Loader2, ArrowLeft, MessageSquare } from 'lucide-react';
+import { Loader2, ArrowLeft, MessageSquare, LayoutDashboard } from 'lucide-react';
 import { format } from 'date-fns';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
@@ -81,16 +81,17 @@ export default function AdminTicketsPage() {
 
     return (
         <div className="container mx-auto p-6 space-y-6">
-            <div className="flex items-center gap-4">
-                <Button variant="ghost" size="icon" asChild>
-                    <Link href="/admin">
-                        <ArrowLeft className="h-5 w-5" />
-                    </Link>
-                </Button>
+            <div className="flex justify-between items-center">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight">Ticket System (Central)</h1>
                     <p className="text-muted-foreground">Manage support tickets from all users.</p>
                 </div>
+                <Button variant="outline" asChild className="gap-2">
+                    <Link href="/admin">
+                        <LayoutDashboard className="h-4 w-4" />
+                        {t('dashboard.backToDashboard', 'Zurück zum Dashboard')}
+                    </Link>
+                </Button>
             </div>
 
             <div className="grid gap-4">
@@ -129,9 +130,14 @@ export default function AdminTicketsPage() {
                                 </div>
                             </CardHeader>
                             <CardContent>
-                                <p className="text-sm mt-2">{ticket.description}</p>
-                                {/* Link to detail view if exists, or chat */}
-                                {/* For now, basic management */}
+                                <p className="text-sm mt-2 line-clamp-2">{ticket.description}</p>
+                                <div className="mt-4 flex justify-end">
+                                    <Button asChild size="sm" variant="outline">
+                                        <Link href={`/admin/tickets/${ticket.id}`}>
+                                            View Ticket & Reply
+                                        </Link>
+                                    </Button>
+                                </div>
                             </CardContent>
                         </Card>
                     ))
