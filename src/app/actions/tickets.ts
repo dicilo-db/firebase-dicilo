@@ -153,6 +153,12 @@ export async function addTicketMessage(ticketId: string, message: {
             }
         }
 
+        try {
+            const { revalidatePath } = await import('next/cache');
+            revalidatePath(`/dashboard/tickets/${ticketId}`);
+            revalidatePath(`/admin/tickets/${ticketId}`);
+        } catch (e) { console.error('Revalidate failed', e); }
+
         return { success: true };
     } catch (error: any) {
         console.error('Error adding message:', error);

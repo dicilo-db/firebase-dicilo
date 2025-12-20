@@ -381,7 +381,7 @@ export default function ClientLandingPage({ clientData, ad }: LandingPageProps) 
     <div className="min-h-screen bg-white">
       <ClientHeader clientData={clientData} />
       <div className="container mx-auto px-4">
-        <ClientHeaderBody1 headerData={clientData.headerData} />
+        <ClientHeaderBody1 headerData={clientData.headerData} clientId={clientData.id} />
         <ClientBody data={clientData.bodyData} />
 
         <section className="-mx-4 px-4 py-12" style={sectionStyle}>

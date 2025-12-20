@@ -514,6 +514,29 @@
       "search": "Búsqueda",
       "cardClick": "Clic en Tarjeta",
       "popupClick": "Clic en Popup"
+    },
+    "client": {
+      "title": "Estadísticas del Cliente",
+      "views": "Vistas",
+      "clicks": "Clics",
+      "ctr": "CTR (Ratio de Clics)",
+      "topPositions": "Posiciones Top",
+      "topPositionsSub": "Anuncios en Top 3",
+      "driveToStore": "Drive to Store",
+      "driveToStoreSub": "Clics en Mapa/Dirección",
+      "socialViews": "Vistas Sociales",
+      "socialViewsSub": "Clics en Perfil Social",
+      "downloadPdf": "Descargar PDF",
+      "emailReport": "Enviar Reporte",
+      "generating": "Generando...",
+      "trendChart": "Tendencia de Rendimiento",
+      "trendChartSub": "Vistas vs Clics en el tiempo",
+      "tabs": {
+        "overview": "Resumen",
+        "ads": "Anuncios",
+        "geo": "Geografía",
+        "events": "Eventos"
+      }
     }
   },
   "contracts": {

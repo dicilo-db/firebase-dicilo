@@ -26,6 +26,7 @@ import {
   RefreshCw,
   Search,
   LayoutDashboard,
+  BarChart2,
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';

@@ -118,6 +118,7 @@ const DashboardContent: React.FC = () => {
     private: 0,
     registrations: 0,
     recommendations: 0,
+    tickets: 0,
   });
 
   // Hooks para las acciones de servidor
@@ -137,6 +138,7 @@ const DashboardContent: React.FC = () => {
         const privateCol = collection(db, 'private_profiles');
         const registrationsCol = collection(db, 'registrations');
         const recommendationsCol = collection(db, 'recommendations');
+        const ticketsCol = collection(db, 'tickets');
 
         const [
           basicSnap,
@@ -146,6 +148,7 @@ const DashboardContent: React.FC = () => {
           privateSnap,
           registrationsSnap,
           recommendationsSnap,
+          ticketsSnap,
         ] = await Promise.all([
           getCountFromServer(query(registrationsCol, where('registrationType', '==', 'donor'))),
           getCountFromServer(query(clientsCol, where('clientType', '==', 'starter'))),
@@ -154,6 +157,7 @@ const DashboardContent: React.FC = () => {
           getCountFromServer(privateCol),
           getCountFromServer(registrationsCol),
           getCountFromServer(recommendationsCol),
+          getCountFromServer(query(ticketsCol, where('status', 'in', ['open', 'in_progress']))),
         ]);
 
         setCounts({
@@ -164,6 +168,7 @@ const DashboardContent: React.FC = () => {
           private: privateSnap.data().count,
           registrations: registrationsSnap.data().count,
           recommendations: recommendationsSnap.data().count,
+          tickets: ticketsSnap.data().count,
         });
       } catch (error) {
         console.error('Error fetching dashboard counts:', error);
@@ -606,8 +611,23 @@ const DashboardContent: React.FC = () => {
                   <MessageSquare className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">Admin Tickets</div>
-                  <p className="text-xs text-muted-foreground mt-1">Manage all support tickets</p>
+                  <div className="text-2xl font-bold flex items-center gap-2">
+                    Admin Tickets
+                    {counts.tickets > 0 ? (
+                      <span className="flex h-6 min-w-[24px] items-center justify-center rounded-full bg-red-500 px-2 text-xs font-bold text-white shadow-sm animate-pulse">
+                        {counts.tickets}
+                      </span>
+                    ) : (
+                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-green-500/20 text-green-600 shadow-sm">
+                        <ThumbsUp className="h-3 w-3" />
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {counts.tickets > 0
+                      ? `${counts.tickets} open tickets require attention`
+                      : 'All caught up! No open tickets.'}
+                  </p>
                 </CardContent>
               </Card>
             </Link>

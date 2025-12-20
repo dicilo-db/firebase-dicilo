@@ -11,6 +11,7 @@ import {
   limit,
   onSnapshot,
   getCountFromServer,
+  getDocs,
   where,
   Timestamp,
 } from 'firebase/firestore';
@@ -95,6 +96,83 @@ const StatisticsPageSkeleton = () => (
     <Footer />
   </div>
 );
+
+// --- CLIENTS LIST COMPONENT ---
+const ClientsStatisticsList = ({ t }: { t: any }) => {
+  const [clients, setClients] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+
+  useEffect(() => {
+    const fetchClients = async () => {
+      try {
+        const snapshot = await getDocs(collection(db, 'clients'));
+        const list = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setClients(list);
+      } catch (err) {
+        console.error("Failed to fetch clients", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchClients();
+  }, []);
+
+  const filteredClients = clients.filter((c: any) =>
+    c.clientName?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{t('statistics.clientsStatsTitle') || 'Client Statistics'}</CardTitle>
+        <div className="pt-2">
+          <input
+            type="text"
+            placeholder="Search client..."
+            className="w-full max-w-sm rounded border px-3 py-2 text-sm"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="max-h-[400px] overflow-y-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Client Name</TableHead>
+                <TableHead>Type</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {loading ? (
+                <TableRow><TableCell colSpan={3}>Loading...</TableCell></TableRow>
+              ) : filteredClients.length === 0 ? (
+                <TableRow><TableCell colSpan={3}>No clients found.</TableCell></TableRow>
+              ) : (
+                filteredClients.map((client) => (
+                  <TableRow key={client.id}>
+                    <TableCell className="font-medium">{client.clientName}</TableCell>
+                    <TableCell><Badge variant="outline">{client.clientType || 'Standard'}</Badge></TableCell>
+                    <TableCell className="text-right">
+                      <Button size="sm" variant="secondary" asChild>
+                        <Link href={`/admin/statistics/client/${client.id}`}>
+                          View Report
+                        </Link>
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
 
 // --- COMPONENTE PRINCIPAL ---
 
@@ -235,6 +313,11 @@ export default function StatisticsPage() {
             }
           />
         </div>
+
+        {/* Clients Statistics Section */}
+        <ClientsStatisticsList t={t} />
+
+        <div className="mt-8"></div>
 
         <Card>
           <CardHeader>

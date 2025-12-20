@@ -9,12 +9,13 @@ const db = getAdminDb();
 
 // Schema for validating incoming events
 const eventSchema = z.object({
-  type: z.enum(['search', 'cardClick', 'popupClick']),
+  type: z.enum(['search', 'cardClick', 'popupClick', 'driveToStore', 'socialClick']),
   businessId: z.string().optional(),
   businessName: z.string().optional(),
   searchQuery: z.string().optional(),
   resultsCount: z.number().optional(),
   clickedElement: z.string().optional(), // e.g., 'website', 'offer', 'map'
+  details: z.string().optional(), // For social network name etc.
   isAd: z.boolean().optional(), // [NEW] Flag to identify if the card was an Ad
 });
 
@@ -36,25 +37,39 @@ export async function POST(request: NextRequest) {
     // 3. Save the event in the 'analyticsEvents' collection
     const mainLogPromise = db.collection('analyticsEvents').add(eventData);
 
-    // 4. [NEW] If it's an Ad Click, update daily stats
+    // 4. [NEW] Update daily stats for Ads and Client Metrics
     let statsPromise = Promise.resolve();
-    if (validatedData.type === 'cardClick' && validatedData.isAd && validatedData.businessId) {
+
+    // Check if we need to update stats
+    const isAdClick = validatedData.type === 'cardClick' && validatedData.isAd;
+    const isClientMetric = ['driveToStore', 'socialClick'].includes(validatedData.type);
+
+    if ((isAdClick || isClientMetric) && validatedData.businessId) {
       statsPromise = (async () => {
         try {
           const today = new Date();
           const dateKey = today.toISOString().split('T')[0]; // YYYY-MM-DD
-          const adId = validatedData.businessId!;
-          const statsId = `${adId}_${dateKey}`;
+          const businessId = validatedData.businessId!;
+          const statsId = `${businessId}_${dateKey}`;
           const statsRef = db.collection('ad_stats_daily').doc(statsId);
 
-          await statsRef.set({
-            adId,
+          const updateData: any = {
+            adId: businessId, // Keeping field name consistent for now
             date: dateKey,
-            clicks: FieldValue.increment(1),
             updatedAt: FieldValue.serverTimestamp()
-          }, { merge: true });
+          };
+
+          if (isAdClick) {
+            updateData.clicks = FieldValue.increment(1);
+          } else if (validatedData.type === 'driveToStore') {
+            updateData.driveToStoreCount = FieldValue.increment(1);
+          } else if (validatedData.type === 'socialClick') {
+            updateData.socialClickCount = FieldValue.increment(1);
+          }
+
+          await statsRef.set(updateData, { merge: true });
         } catch (err) {
-          console.error('[STATS ERROR] Failed to track ad click:', err);
+          console.error('[STATS ERROR] Failed to track stats:', err);
         }
       })();
     }

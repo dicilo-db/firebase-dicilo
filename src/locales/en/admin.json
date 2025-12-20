@@ -502,6 +502,29 @@
       "search": "Search",
       "cardClick": "Card Click",
       "popupClick": "Popup Click"
+    },
+    "client": {
+      "title": "Client Statistics",
+      "views": "Views",
+      "clicks": "Clicks",
+      "ctr": "CTR",
+      "topPositions": "Top Positions",
+      "topPositionsSub": "Ads in Top 3",
+      "driveToStore": "Drive to Store",
+      "driveToStoreSub": "Map/Address Clicks",
+      "socialViews": "Social Views",
+      "socialViewsSub": "Social Profile Clicks",
+      "downloadPdf": "Download PDF",
+      "emailReport": "Email Report",
+      "generating": "Generating...",
+      "trendChart": "Performance Trend",
+      "trendChartSub": "Views vs Clicks over time",
+      "tabs": {
+        "overview": "Overview",
+        "ads": "Ads",
+        "geo": "Geography",
+        "events": "Events"
+      }
     }
   },
   "formsDashboard": {

@@ -1,16 +1,22 @@
 import { Resend } from 'resend';
 
-const resend = new Resend('re_TfJ5WjR2_7t1v7b8P2p5X8z9X6x4x5x3x'); // Placeholder key, user needs to replace or env var
+// Helper to get Resend instance
+const getResend = () => {
+    const key = process.env.RESEND_API_KEY;
+    if (!key) {
+        console.warn('RESEND_API_KEY is not set.');
+        return null;
+    }
+    return new Resend(key);
+};
 
 export async function sendWelcomeEmail(email: string, firstName: string) {
-    if (!process.env.RESEND_API_KEY) {
-        console.warn('RESEND_API_KEY is not set. Skipping email.');
-        return { success: false, error: 'Missing API Key' };
-    }
+    const resend = getResend();
+    if (!resend) return { success: false, error: 'Missing API Key' };
 
     try {
         const { data, error } = await resend.emails.send({
-            from: 'Dicilo <onboarding@dicilo.com>', // Update with real domain
+            from: 'Dicilo <onboarding@dicilo.com>',
             to: [email],
             subject: 'Willkommen bei Dicilo!',
             html: `
@@ -35,10 +41,8 @@ export async function sendWelcomeEmail(email: string, firstName: string) {
 }
 
 export async function sendCouponShareEmail(email: string, coupon: any) {
-    if (!process.env.RESEND_API_KEY) {
-        console.warn('RESEND_API_KEY is not set. Skipping email.');
-        return { success: false, error: 'Missing API Key' };
-    }
+    const resend = getResend();
+    if (!resend) return { success: false, error: 'Missing API Key' };
 
     try {
         const { data, error } = await resend.emails.send({
@@ -87,10 +91,8 @@ export async function sendCouponShareEmail(email: string, coupon: any) {
 }
 
 export async function sendTicketCreatedEmail(email: string, ticketId: string, title: string, description: string) {
-    if (!process.env.RESEND_API_KEY) {
-        console.warn('RESEND_API_KEY is not set. Skipping email.');
-        return { success: false, error: 'Missing API Key' };
-    }
+    const resend = getResend();
+    if (!resend) return { success: false, error: 'Missing API Key' };
 
     try {
         const { data, error } = await resend.emails.send({
@@ -128,10 +130,8 @@ export async function sendTicketCreatedEmail(email: string, ticketId: string, ti
 }
 
 export async function sendTicketReplyEmail(email: string, ticketId: string, title: string, replyMessage: string, senderName: string) {
-    if (!process.env.RESEND_API_KEY) {
-        console.warn('RESEND_API_KEY is not set. Skipping email.');
-        return { success: false, error: 'Missing API Key' };
-    }
+    const resend = getResend();
+    if (!resend) return { success: false, error: 'Missing API Key' };
 
     try {
         const { data, error } = await resend.emails.send({

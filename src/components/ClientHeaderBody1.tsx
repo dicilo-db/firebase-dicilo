@@ -108,8 +108,10 @@ const ShareDialog = ({ headerData }: { headerData?: HeaderData }) => {
 
 export const ClientHeaderBody1 = ({
   headerData,
+  clientId,
 }: {
   headerData?: HeaderData;
+  clientId?: string;
 }) => {
   const [isMounted, setIsMounted] = useState(false);
 
@@ -120,7 +122,24 @@ export const ClientHeaderBody1 = ({
   const socialLinks =
     headerData?.socialLinks?.filter((link) => link.icon && link.url) || [];
 
-  const handleSocialClick = (url: string) => {
+  const handleSocialClick = async (url: string, iconName: string) => {
+    // Log analytics if clientId is present
+    if (clientId) {
+      try {
+        await fetch('/api/analytics/log', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            type: 'socialClick',
+            businessId: clientId,
+            details: iconName, // e.g. 'facebook', 'instagram'
+            timestamp: new Date().toISOString()
+          }),
+        });
+      } catch (e) {
+        console.error("Failed to log social click", e);
+      }
+    }
     window.open(url, '_blank', 'noopener,noreferrer');
   };
 
@@ -150,7 +169,7 @@ export const ClientHeaderBody1 = ({
               {socialLinks.slice(0, 6).map((link, index) => (
                 <Button
                   key={index}
-                  onClick={() => handleSocialClick(link.url)}
+                  onClick={() => handleSocialClick(link.url, link.icon)}
                   className="h-full w-full bg-green-600 text-lg font-bold text-white hover:bg-green-700"
                 >
                   {link.icon}

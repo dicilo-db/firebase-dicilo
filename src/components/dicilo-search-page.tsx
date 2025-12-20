@@ -556,7 +556,7 @@ export default function DiciloSearchPage({
             {businessesWithAds.length > 0 ? (
               businessesWithAds.map((item, idx) => {
                 if (item.type === 'ad') {
-                  return <AdBanner key={`ad-${idx}`} ad={item.data} />;
+                  return <AdBanner key={`ad-${idx}`} ad={item.data} rank={idx} />
                 }
                 const business = item.data;
                 return (
