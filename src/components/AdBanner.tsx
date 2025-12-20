@@ -3,7 +3,14 @@
 
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import Image from 'next/image';
-import { ExternalLink, Share2 } from 'lucide-react';
+import { ExternalLink, Share2, MessageCircle, Facebook, Mail, Copy } from 'lucide-react';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
@@ -75,45 +82,51 @@ export const AdBanner = ({ ad, className, showBadge = true, rank }: AdBannerProp
     };
 
     // Share Handler
-    const handleShare = async (e: React.MouseEvent) => {
-        e.preventDefault();
-        e.stopPropagation();
+    const handleSocialShare = async (platform: string) => {
+        const url = ad.linkUrl || window.location.href;
+        const text = ad.shareText || `Check out ${ad.title} on Dicilo!`;
+        const title = ad.title || 'Dicilo Recommendation';
 
-        // 1. Log Share Event (counts as socialClick for stats)
+        // 1. Log Share Event
         try {
             fetch('/api/analytics/log', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     type: 'socialClick',
-                    businessId: ad.clientId || ad.id, // Use clientId if available, else adId
+                    businessId: ad.clientId || ad.id,
                     businessName: ad.title || 'Ad',
-                    clickedElement: 'banner_share',
-                    details: 'share_action',
+                    clickedElement: `share_${platform}`,
+                    details: platform,
                     isAd: true
                 }),
             }).catch(console.error);
         } catch (err) { }
 
-        // 2. Trigger Native Share
-        if (navigator.share) {
-            try {
-                await navigator.share({
-                    title: ad.title || 'Dicilo Ad',
-                    text: ad.shareText || 'Check this out on Dicilo!',
-                    url: ad.linkUrl || window.location.href,
-                });
-            } catch (err) {
-                console.log('Share dismissed', err);
-            }
-        } else {
-            // Fallback: Copy to clipboard
-            try {
-                await navigator.clipboard.writeText(ad.linkUrl || window.location.href);
-                alert(t('ad.linkCopied', 'Link copied to clipboard!'));
-            } catch (err) {
-                console.error('Clipboard failed', err);
-            }
+        // 2. Platform Logic
+        switch (platform) {
+            case 'whatsapp':
+                window.open(`https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`, '_blank');
+                break;
+            case 'facebook':
+                window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
+                break;
+            case 'email':
+                window.location.href = `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(text + '\n\n' + url)}`;
+                break;
+            case 'native':
+                if (navigator.share) {
+                    try {
+                        await navigator.share({ title, text, url });
+                    } catch (err) { console.log('Share dismissed'); }
+                }
+                break;
+            case 'copy':
+                try {
+                    await navigator.clipboard.writeText(url);
+                    alert(t('ad.linkCopied', 'Link kopiert!'));
+                } catch (err) { console.error('Clipboard failed'); }
+                break;
         }
     };
 
@@ -165,13 +178,42 @@ export const AdBanner = ({ ad, className, showBadge = true, rank }: AdBannerProp
                                 {badgeText}
                             </span>
                         )}
-                        <button
-                            onClick={handleShare}
-                            className="shrink-0 rounded-full bg-white/20 p-1.5 text-white backdrop-blur-md transition-colors hover:bg-white/40 shadow-sm"
-                            aria-label="Share"
-                        >
-                            <Share2 className="h-4 w-4" />
-                        </button>
+
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <button
+                                    className="shrink-0 rounded-full bg-white/20 p-1.5 text-white backdrop-blur-md transition-colors hover:bg-white/40 shadow-sm outline-none focus:ring-2 focus:ring-white/50"
+                                    aria-label="Share"
+                                >
+                                    <Share2 className="h-4 w-4" />
+                                </button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-48 bg-white/95 backdrop-blur-xl border-white/20">
+                                <DropdownMenuItem onClick={() => handleSocialShare('whatsapp')} className="cursor-pointer gap-2">
+                                    <MessageCircle className="h-4 w-4 text-green-500" />
+                                    <span>WhatsApp</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleSocialShare('facebook')} className="cursor-pointer gap-2">
+                                    <Facebook className="h-4 w-4 text-blue-600" />
+                                    <span>Facebook</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleSocialShare('email')} className="cursor-pointer gap-2">
+                                    <Mail className="h-4 w-4 text-gray-600" />
+                                    <span>Email</span>
+                                </DropdownMenuItem>
+                                {typeof navigator !== 'undefined' && navigator.share && (
+                                    <DropdownMenuItem onClick={() => handleSocialShare('native')} className="cursor-pointer gap-2">
+                                        <Share2 className="h-4 w-4 text-black" />
+                                        <span>{t('ad.moreOptions', 'Mehr Optionen...')}</span>
+                                    </DropdownMenuItem>
+                                )}
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem onClick={() => handleSocialShare('copy')} className="cursor-pointer gap-2">
+                                    <Copy className="h-4 w-4" />
+                                    <span>{t('ad.copyLink', 'Link kopieren')}</span>
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                     </div>
                 </div>
 
