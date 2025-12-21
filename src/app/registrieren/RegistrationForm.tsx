@@ -226,7 +226,7 @@ export function RegistrationForm() {
 
         if (!profileResponse.ok) {
           const errorData = await profileResponse.json();
-          throw new Error(errorData.message || 'Failed to create profile');
+          throw new Error(errorData.message || errorData.error || 'Failed to create profile');
         }
 
         // Success
