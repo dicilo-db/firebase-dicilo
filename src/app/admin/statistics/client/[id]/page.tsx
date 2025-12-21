@@ -97,6 +97,7 @@ export default function ClientStatisticsPage() {
     const [stats, setStats] = useState<DailyStat[]>([]);
     const [client, setClient] = useState<ClientData | null>(null);
     const [loading, setLoading] = useState(true);
+    const [overallTotals, setOverallTotals] = useState<any>(null);
 
     // --- Fetch Data ---
     // --- Fetch Data ---
@@ -120,6 +121,7 @@ export default function ClientStatisticsPage() {
                 const data = await res.json();
 
                 setStats(data.stats || []);
+                setOverallTotals(data.overallTotals || null);
 
                 // Mock Client Info for now if we don't have a dedicated endpoint, 
                 // OR try to fetch it if we know the endpoint.
@@ -152,6 +154,18 @@ export default function ClientStatisticsPage() {
 
     // --- Aggregations ---
     const totals = useMemo(() => {
+        // If API provided overall totals, use them! (Matches Ads Manager)
+        if (overallTotals) {
+            return {
+                views: overallTotals.views,
+                clicks: overallTotals.clicks,
+                driveToStore: 0, // Not tracked in banners yet
+                socialClick: overallTotals.shares, // mapped to social icon in Ads Manager
+                topPosition: 0, // Not tracked
+                cost: overallTotals.cost,
+            };
+        }
+
         return stats.reduce(
             (acc, curr) => ({
                 views: acc.views + (curr.views || 0),
@@ -163,7 +177,7 @@ export default function ClientStatisticsPage() {
             }),
             { views: 0, clicks: 0, driveToStore: 0, socialClick: 0, topPosition: 0, cost: 0 }
         );
-    }, [stats]);
+    }, [stats, overallTotals]);
 
     const ctr = totals.views > 0 ? ((totals.clicks / totals.views) * 100).toFixed(2) : '0.00';
 

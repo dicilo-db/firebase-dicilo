@@ -35,6 +35,17 @@ export async function GET(
             return NextResponse.json({ stats: [] });
         }
 
+        // Calculate Overall Totals from `ads_banners` (Source of Truth for Cards)
+        const overallTotals = adsSnapshot.docs.reduce((acc, doc) => {
+            const data = doc.data();
+            return {
+                views: acc.views + (data.views || 0),
+                clicks: acc.clicks + (data.clicks || 0),
+                shares: acc.shares + (data.shares || 0),
+                cost: acc.cost + (data.totalCost || 0) // Or calculate: ((data.clicks||0) + (data.shares||0)) * 0.05
+            };
+        }, { views: 0, clicks: 0, shares: 0, cost: 0 });
+
         // Step 2: Query stats for these ads
         // Firestore `in` query supports up to 10 items. If client has more, we need to batch or query by adId individually.
         // For simplicity and scalability, let's query ad_stats_daily where `adId` is in the list.
@@ -93,6 +104,7 @@ export async function GET(
 
         return NextResponse.json({
             stats: aggregatedStats,
+            overallTotals, // <--- Added this
             debug: { matchedAds: adIds.length, rawRows: allStats.length }
         });
 
