@@ -503,6 +503,29 @@
       "search": "Suche",
       "cardClick": "Kartenklick",
       "popupClick": "Popup-Klick"
+    },
+    "client": {
+      "title": "Kundenstatistiken",
+      "views": "Ansichten",
+      "clicks": "Klicks",
+      "ctr": "CTR",
+      "topPositions": "Top-Positionen",
+      "topPositionsSub": "Anzeigen in Top 3",
+      "driveToStore": "Drive to Store",
+      "driveToStoreSub": "Klicks auf Karte/Adresse",
+      "socialViews": "Soziale Ansichten",
+      "socialViewsSub": "Klicks auf soziale Profile",
+      "downloadPdf": "PDF Herunterladen",
+      "emailReport": "Bericht Senden",
+      "generating": "Generieren...",
+      "trendChart": "Leistungstrend",
+      "trendChartSub": "Ansichten vs Klicks im Zeitverlauf",
+      "tabs": {
+        "overview": "Übersicht",
+        "ads": "Anzeigen",
+        "geo": "Geografie",
+        "events": "Ereignisse"
+      }
     }
   },
   "contracts": {

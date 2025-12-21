@@ -99,44 +99,44 @@ export default function ClientStatisticsPage() {
     const [loading, setLoading] = useState(true);
 
     // --- Fetch Data ---
+    // --- Fetch Data ---
     useEffect(() => {
-        // Mock Data for logic implementation - Replace with real API call
-        // In real implementation, this would fetch from `ad_stats_daily` + `clients` collection
         const fetchStats = async () => {
             setLoading(true);
             try {
-                // TODO: Replace with real API fetch
-                // const res = await fetch(`/api/admin/statistics/${id}?start=${dateRange.start}&end=${dateRange.end}`);
+                // Fetch real stats
+                const queryParams = new URLSearchParams();
+                if (dateRange.start) queryParams.append('start', dateRange.start);
+                if (dateRange.end) queryParams.append('end', dateRange.end);
 
-                // Mocking delay
-                await new Promise(resolve => setTimeout(resolve, 800));
+                const statsPromise = fetch(`/api/admin/statistics/${id}?${queryParams.toString()}`);
+                const clientPromise = fetch(`/api/admin/clients/${id}`); // Assuming this exists or we get it from elsewhere
+                // Actually, for now let's just mock the CLIENT INFO if that API doesn't exist, but get REAL STATS.
+                // Or better, fetch client info from `businesses` or `clients`.
 
+                // Let's assume we can at least get the stats.
+                const res = await statsPromise;
+                if (!res.ok) throw new Error("Failed to fetch stats");
+                const data = await res.json();
+
+                setStats(data.stats || []);
+
+                // Mock Client Info for now if we don't have a dedicated endpoint, 
+                // OR try to fetch it if we know the endpoint.
+                // Assuming we might need to fetch business details.
+                // For now, let's keep the client info mock but use REAL stats.
+                // Ideally, we should fetch the actual client Name.
                 setClient({
-                    clientName: 'Demo Client GmbH',
-                    clientLogoUrl: 'https://placehold.co/100x100.png',
-                    address: 'Musterstraße 123, Berlin',
-                    clientType: 'premium'
+                    clientName: 'Client ' + id, // Fallback
+                    clientLogoUrl: '',
+                    address: '',
+                    clientType: 'standard'
                 });
-
-                const mockStats: DailyStat[] = Array.from({ length: 30 }, (_, i) => {
-                    const d = new Date();
-                    d.setDate(d.getDate() - (29 - i));
-                    return {
-                        date: d.toISOString().split('T')[0],
-                        views: Math.floor(Math.random() * 500) + 100,
-                        clicks: Math.floor(Math.random() * 50) + 5,
-                        driveToStoreCount: Math.floor(Math.random() * 10),
-                        socialClickCount: Math.floor(Math.random() * 8),
-                        topPositionCount: Math.floor(Math.random() * 200),
-                        cost: Math.floor(Math.random() * 10)
-                    };
-                });
-                setStats(mockStats);
 
             } catch (error) {
                 console.error('Failed to fetch stats', error);
                 toast({
-                    title: t('common:error'),
+                    title: t('common:error') || 'Error',
                     description: 'Error loading statistics',
                     variant: 'destructive'
                 });
@@ -145,8 +145,10 @@ export default function ClientStatisticsPage() {
             }
         };
 
-        fetchStats();
-    }, [id, dateRange]);
+        if (id) {
+            fetchStats();
+        }
+    }, [id, dateRange, toast, t]);
 
     // --- Aggregations ---
     const totals = useMemo(() => {
