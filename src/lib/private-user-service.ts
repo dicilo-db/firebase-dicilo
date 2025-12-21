@@ -4,40 +4,36 @@ import * as admin from 'firebase-admin';
 /**
  * Generates a unique code for a private user using Admin SDK.
  */
-async function generateUniqueCodeAdmin(firstName: string, lastName: string, phoneNumber: string): Promise<string> {
+export async function generateUniqueCodeAdmin(firstName: string, lastName: string, phoneNumber: string): Promise<string> {
     const prefix = 'DHH';
     const year = new Date().getFullYear().toString().slice(-2);
     const firstInitial = firstName.charAt(0).toUpperCase();
     const lastInitial = lastName.charAt(0).toUpperCase();
-    const initials = `${firstInitial}${lastInitial}`; // e.g. NE
+    const initials = `${firstInitial}${lastInitial}`;
 
-    // Last 3 digits of phone
-    const cleanPhone = phoneNumber.replace(/\D/g, '');
-    const last3Phone = cleanPhone.length >= 3 ? cleanPhone.slice(-3) : cleanPhone.padEnd(3, '0');
+    const db = getAdminDb();
+    const counterRef = db.collection('counters').doc('private_users');
 
-    const baseCode = `${prefix}${year}${initials}${last3Phone}`;
+    try {
+        const newCode = await db.runTransaction(async (t) => {
+            const doc = await t.get(counterRef);
+            let currentCount = 0;
+            if (doc.exists) {
+                currentCount = doc.data()?.count || 0;
+            }
 
-    let sequence = 1;
-    let uniqueCode = '';
-    let isUnique = false;
+            const nextCount = currentCount + 1;
+            t.set(counterRef, { count: nextCount }, { merge: true });
 
-    while (!isUnique && sequence <= 99) {
-        const sequenceStr = sequence.toString().padStart(2, '0');
-        uniqueCode = `${baseCode}${sequenceStr}`;
+            const sequenceStr = nextCount.toString().padStart(5, '0');
+            return `${prefix}${year}${initials}${sequenceStr}`;
+        });
 
-        const snapshot = await getAdminDb().collection('private_profiles')
-            .where('uniqueCode', '==', uniqueCode)
-            .get();
-
-        if (snapshot.empty) {
-            isUnique = true;
-        } else {
-            sequence++;
-        }
+        return newCode;
+    } catch (error) {
+        console.error('Error generating unique code:', error);
+        throw new Error('Failed to generate unique code');
     }
-
-    if (!isUnique) throw new Error('Unique code generation failed: limit reached.');
-    return uniqueCode;
 }
 
 export async function createPrivateUserProfile(

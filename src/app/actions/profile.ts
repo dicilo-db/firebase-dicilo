@@ -35,6 +35,8 @@ export async function updatePrivateProfile(uid: string, data: any) {
  * Ensures a unique code exists for the user.
  * Generates one if missing.
  */
+import { generateUniqueCodeAdmin } from '@/lib/private-user-service';
+
 export async function ensureUniqueCode(uid: string) {
     try {
         if (!uid) return { success: false, error: 'Unauthorized' };
@@ -54,39 +56,7 @@ export async function ensureUniqueCode(uid: string) {
         const lastName = data?.lastName || '';
         const phoneNumber = data?.contactPreferences?.whatsapp || data?.contactPreferences?.telegram || data?.phoneNumber || '000';
 
-        const prefix = 'DHH';
-        const year = new Date().getFullYear().toString().slice(-2);
-        const firstInitial = firstName.charAt(0).toUpperCase();
-        const lastInitial = lastName.charAt(0).toUpperCase() || 'X';
-        const initials = `${firstInitial}${lastInitial}`;
-
-        let cleanPhone = phoneNumber.replace(/\D/g, '');
-        if (cleanPhone.length === 0) cleanPhone = '000';
-        const last3Phone = cleanPhone.length >= 3 ? cleanPhone.slice(-3) : cleanPhone.padEnd(3, '0');
-
-        const baseCode = `${prefix}${year}${initials}${last3Phone}`;
-
-        // Find unique sequence
-        let sequence = 1;
-        let uniqueCode = '';
-        let isUnique = false;
-
-        // Loop to find unique sequence
-        while (!isUnique && sequence <= 99) {
-            const sequenceStr = sequence.toString().padStart(2, '0');
-            uniqueCode = `${baseCode}${sequenceStr}`;
-
-            const q = getAdminDb().collection('private_profiles').where('uniqueCode', '==', uniqueCode);
-            const snapshot = await q.get();
-
-            if (snapshot.empty) {
-                isUnique = true;
-            } else {
-                sequence++;
-            }
-        }
-
-        if (!isUnique) throw new Error('Failed to generate unique code');
+        const uniqueCode = await generateUniqueCodeAdmin(firstName, lastName, phoneNumber);
 
         await docRef.update({
             uniqueCode: uniqueCode,

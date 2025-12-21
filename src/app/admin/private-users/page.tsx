@@ -17,15 +17,18 @@ import {
 } from '@/components/ui/table';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
-import { Loader2, Search, Download, LayoutDashboard, RefreshCw } from 'lucide-react';
+import { Loader2, Search, Download, LayoutDashboard, RefreshCw, Trash2, Pause, Play } from 'lucide-react';
 import { CSVLink } from 'react-csv';
 import Link from 'next/link';
+import { togglePrivateUserStatus, deletePrivateUser } from '@/app/actions/private-users';
+import { useToast } from '@/hooks/use-toast';
 
 const db = getFirestore(app);
 
 export default function PrivateUsersPage() {
     useAuthGuard();
-    const { t } = useTranslation('admin');
+    const { t } = useTranslation(['admin', 'common']);
+    const { toast } = useToast();
     const [users, setUsers] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
@@ -34,7 +37,7 @@ export default function PrivateUsersPage() {
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const q = query(collection(db, 'private_profiles'), orderBy('createdAt', 'desc'));
+                const q = query(collection(db, 'private_profiles'), orderBy('uniqueCode', 'asc'));
                 const snapshot = await getDocs(q);
                 const usersData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 setUsers(usersData);
@@ -49,15 +52,14 @@ export default function PrivateUsersPage() {
         fetchUsers();
     }, []);
 
-    // Get error from state if we implemented it properly, for now quick fix to not break types:
-    // Ideally we should add [error, setError] state.
-    // Let's re-do the tool call with a proper state implementation.
-
     const filteredUsers = users.filter(user =>
-        user.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.lastName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.uniqueCode?.toLowerCase().includes(searchTerm.toLowerCase())
+        (user.firstName?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+        (user.lastName?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+        (user.email?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+        (user.uniqueCode?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+        (user.country?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+        (user.city?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+        (Array.isArray(user.interests) && user.interests.some((i: string) => i.toLowerCase().includes(searchTerm.toLowerCase())))
     );
 
     const csvData = filteredUsers.map(user => ({
@@ -66,6 +68,8 @@ export default function PrivateUsersPage() {
         Email: user.email,
         UniqueCode: user.uniqueCode,
         Phone: user.contactPreferences?.whatsapp || user.contactPreferences?.telegram || '',
+        Country: user.country || '',
+        City: user.city || '',
         Interests: user.interests?.join(', '),
         CreatedAt: user.createdAt ? new Date(user.createdAt.seconds * 1000).toLocaleDateString() : '',
     }));
@@ -75,7 +79,7 @@ export default function PrivateUsersPage() {
 
             <main className="container mx-auto flex-grow p-8">
                 <div className="mb-8 flex items-center justify-between">
-                    <h1 className="text-3xl font-bold">Privat User</h1>
+                    <h1 className="text-3xl font-bold">{t('common:privateUsersList')}</h1>
                     <div className="flex gap-2">
                         <Button variant="outline" asChild>
                             <Link href="/admin/dashboard">
@@ -107,10 +111,11 @@ export default function PrivateUsersPage() {
                             <RefreshCw className="mr-2 h-4 w-4" /> Import from Registrations
                         </Button>
                         <Button variant="outline" onClick={() => {
-                            const headers = ['FirstName,LastName,Email,UniqueCode,Phone,Interests,CreatedAt'];
+                            const headers = ['FirstName,LastName,Email,UniqueCode,Phone,Country,City,Interests,CreatedAt'];
                             const rows = filteredUsers.map(u => [
                                 u.firstName, u.lastName, u.email, u.uniqueCode,
-                                u.contactPreferences?.whatsapp || '',
+                                u.contactPreferences?.whatsapp || u.phoneNumber || '',
+                                u.country || '', u.city || '',
                                 `"${u.interests?.join(', ') || ''}"`,
                                 u.createdAt ? new Date(u.createdAt.seconds * 1000).toISOString() : ''
                             ].join(','));
@@ -139,7 +144,7 @@ export default function PrivateUsersPage() {
 
                 <Card>
                     <CardHeader>
-                        <CardTitle>Liste der Privat User</CardTitle>
+                        <CardTitle>{t('common:privateUsersList')}</CardTitle>
                         <div className="flex items-center space-x-2">
                             <Search className="h-4 w-4 text-muted-foreground" />
                             <Input
@@ -162,16 +167,26 @@ export default function PrivateUsersPage() {
                                         <TableHead>Code</TableHead>
                                         <TableHead>Name</TableHead>
                                         <TableHead>E-Mail</TableHead>
+                                        <TableHead>{t('common:dashboard.country') || 'Land'}</TableHead>
+                                        <TableHead>{t('common:dashboard.city') || 'Stadt'}</TableHead>
                                         <TableHead>Interessen</TableHead>
                                         <TableHead>Beigetreten</TableHead>
+                                        <TableHead>Aktionen</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
                                     {filteredUsers.map((user) => (
                                         <TableRow key={user.id}>
                                             <TableCell className="font-mono font-medium">{user.uniqueCode}</TableCell>
-                                            <TableCell>{user.firstName} {user.lastName}</TableCell>
+                                            <TableCell>
+                                                <div className="flex flex-col">
+                                                    <span>{user.firstName} {user.lastName}</span>
+                                                    {user.disabled && <span className="text-xs text-destructive font-bold">[DISABLED]</span>}
+                                                </div>
+                                            </TableCell>
                                             <TableCell>{user.email}</TableCell>
+                                            <TableCell>{user.country || '-'}</TableCell>
+                                            <TableCell>{user.city || '-'}</TableCell>
                                             <TableCell className="max-w-[200px] truncate" title={user.interests?.join(', ')}>
                                                 {user.interests?.length > 0 ? user.interests.join(', ') : '-'}
                                             </TableCell>
@@ -179,6 +194,37 @@ export default function PrivateUsersPage() {
                                                 {user.createdAt?.seconds
                                                     ? new Date(user.createdAt.seconds * 1000).toLocaleDateString()
                                                     : 'N/A'}
+                                            </TableCell>
+                                            <TableCell>
+                                                <div className="flex items-center gap-2">
+                                                    <Button variant="ghost" size="sm" onClick={async () => {
+                                                        const newStatus = !user.disabled;
+                                                        if (confirm(`Sind Sie sicher, dass Sie diesen Benutzer ${newStatus ? 'deaktivieren' : 'aktivieren'} möchten?`)) {
+                                                            const res = await togglePrivateUserStatus(user.id, newStatus);
+                                                            if (res.success) {
+                                                                toast({ title: 'Status aktualisiert', description: res.message });
+                                                                window.location.reload();
+                                                            } else {
+                                                                toast({ title: 'Fehler', description: res.error, variant: 'destructive' });
+                                                            }
+                                                        }
+                                                    }}>
+                                                        {user.disabled ? <Play className="h-4 w-4 text-green-600" /> : <Pause className="h-4 w-4 text-amber-600" />}
+                                                    </Button>
+                                                    <Button variant="ghost" size="sm" onClick={async () => {
+                                                        if (confirm('ACHTUNG: Möchten Sie diesen Benutzer wirklich LÖSCHEN? Diese Aktion kann nicht rückgängig gemacht werden.')) {
+                                                            const res = await deletePrivateUser(user.id);
+                                                            if (res.success) {
+                                                                toast({ title: 'Benutzer gelöscht', description: res.message });
+                                                                window.location.reload();
+                                                            } else {
+                                                                toast({ title: 'Fehler', description: res.error, variant: 'destructive' });
+                                                            }
+                                                        }
+                                                    }}>
+                                                        <Trash2 className="h-4 w-4 text-destructive" />
+                                                    </Button>
+                                                </div>
                                             </TableCell>
                                         </TableRow>
                                     ))}

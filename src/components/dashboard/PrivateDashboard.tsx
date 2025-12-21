@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { updatePrivateProfile, ensureUniqueCode } from '@/app/actions/profile';
 import { User } from 'firebase/auth';
-import { doc, getFirestore, updateDoc, setDoc, onSnapshot } from 'firebase/firestore';
+import { doc, getFirestore, updateDoc, setDoc, onSnapshot, addDoc, collection } from 'firebase/firestore';
 import { app } from '@/lib/firebase';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
@@ -13,7 +13,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Copy, Share2, Gift, Users, Heart, Settings } from 'lucide-react';
+import { Loader2, Copy, Share2, Gift, Users, Heart, Settings, Star } from 'lucide-react';
 import { CategorySelector } from './CategorySelector';
 import { useTranslation } from 'react-i18next';
 
@@ -30,6 +30,43 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
     const [activeTab, setActiveTab] = useState('overview');
     const [isLoading, setIsLoading] = useState(false);
     const [formData, setFormData] = useState(profile);
+    const [feedbackMessage, setFeedbackMessage] = useState('');
+    const [feedbackRating, setFeedbackRating] = useState(0);
+    const [isSubmittingFeedback, setIsSubmittingFeedback] = useState(false);
+
+    const handleSendFeedback = async () => {
+        if (!feedbackMessage.trim()) return;
+        setIsSubmittingFeedback(true);
+        try {
+            await addDoc(collection(db, 'feedbacks'), {
+                name: (formData.firstName || '') + ' ' + (formData.lastName || ''),
+                email: formData.email,
+                rating: feedbackRating,
+                message: feedbackMessage,
+                country: formData.country || 'Unknown',
+                city: formData.city || 'Unknown', // Added city as requested implicitly by having it in form
+                customerType: 'private',
+                createdAt: new Date(),
+                rewardPreference: formData.profileData?.rewardPreference || 'none',
+                uid: user.uid
+            });
+            toast({
+                title: t('benefits.feedback.successTitle'),
+                description: t('benefits.feedback.successDesc')
+            });
+            setFeedbackMessage('');
+            setFeedbackRating(0);
+        } catch (error) {
+            console.error(error);
+            toast({
+                title: t('benefits.feedback.errorTitle'), // "Error"
+                description: t('benefits.feedback.errorDesc'),
+                variant: 'destructive'
+            });
+        } finally {
+            setIsSubmittingFeedback(false);
+        }
+    };
 
     // Real-time updates for the profile
     useEffect(() => {
@@ -257,19 +294,47 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
                                 <h3 className="text-lg font-medium">{t('dashboard.location')}</h3>
                                 <div className="grid gap-4 md:grid-cols-2">
                                     <div className="space-y-2">
-                                        <Label>{t('dashboard.country')}</Label>
+                                        <Label className="flex items-center gap-1">
+                                            {t('dashboard.country')} <span className="text-destructive">*</span>
+                                        </Label>
                                         <Input
                                             value={formData.country || ''}
+                                            required
+                                            placeholder={t('dashboard.enterCountry', 'Enter your country')}
                                             onChange={(e) => setFormData({ ...formData, country: e.target.value })}
-                                            onBlur={() => handleUpdate('country', { country: formData.country })}
+                                            onBlur={() => {
+                                                if (formData.country) {
+                                                    handleUpdate('country', { country: formData.country });
+                                                } else {
+                                                    toast({
+                                                        title: t('dashboard.requiredField'),
+                                                        description: t('dashboard.countryRequired'),
+                                                        variant: 'destructive',
+                                                    });
+                                                }
+                                            }}
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <Label>{t('dashboard.city')}</Label>
+                                        <Label className="flex items-center gap-1">
+                                            {t('dashboard.city')} <span className="text-destructive">*</span>
+                                        </Label>
                                         <Input
                                             value={formData.city || ''}
+                                            required
+                                            placeholder={t('dashboard.enterCity', 'Enter your city')}
                                             onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                                            onBlur={() => handleUpdate('city', { city: formData.city })}
+                                            onBlur={() => {
+                                                if (formData.city) {
+                                                    handleUpdate('city', { city: formData.city });
+                                                } else {
+                                                    toast({
+                                                        title: t('dashboard.requiredField'),
+                                                        description: t('dashboard.cityRequired'),
+                                                        variant: 'destructive',
+                                                    });
+                                                }
+                                            }}
                                         />
                                     </div>
                                 </div>
@@ -381,10 +446,19 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
                                 </div>
 
                                 {(formData.profileData?.socialGroup === 'whatsapp' || formData.profileData?.socialGroup === 'telegram') && (
-                                    <div className="pt-4">
-                                        <Button className="w-full" onClick={() => window.open(formData.profileData?.socialGroup === 'whatsapp' ? 'https://chat.whatsapp.com/placeholder' : 'https://t.me/placeholder', '_blank')}>
+                                    <div className="pt-4 flex flex-col gap-2">
+                                        <Button className="w-full" onClick={() => window.open(formData.profileData?.socialGroup === 'whatsapp' ? 'https://chat.whatsapp.com/IPFpYXlHJTdH0rZosQGws4' : 'https://t.me/+XHaw-Wa4EsBmMjk6', '_blank')}>
                                             {formData.profileData?.socialGroup === 'whatsapp' ? t('dashboard.joinWhatsapp') : t('dashboard.joinTelegram')}
                                         </Button>
+
+                                        {formData.profileData?.socialGroup === 'whatsapp' && (
+                                            <Button variant="outline" className="w-full" onClick={() => {
+                                                const text = t('whatsappInvite');
+                                                window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+                                            }}>
+                                                <Share2 className="mr-2 h-4 w-4" /> Share WhatsApp Group
+                                            </Button>
+                                        )}
                                     </div>
                                 )}
                             </CardContent>
@@ -415,9 +489,33 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
                                     </Select>
                                 </div>
                                 <div className="space-y-2">
+                                    <Label>{t('benefits.feedback.rating')}</Label>
+                                    <div className="flex items-center space-x-1">
+                                        {[1, 2, 3, 4, 5].map((star) => (
+                                            <Star
+                                                key={star}
+                                                className={`cursor-pointer h-5 w-5 ${star <= feedbackRating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
+                                                onClick={() => setFeedbackRating(star)}
+                                            />
+                                        ))}
+                                    </div>
+                                </div>
+                                <div className="space-y-2">
                                     <Label>{t('dashboard.feedback')}</Label>
-                                    <Textarea placeholder={t('dashboard.feedbackPlaceholder')} />
-                                    <Button variant="outline" size="sm" className="mt-2">{t('dashboard.sendFeedback')}</Button>
+                                    <Textarea
+                                        placeholder={t('dashboard.feedbackPlaceholder')}
+                                        value={feedbackMessage}
+                                        onChange={(e) => setFeedbackMessage(e.target.value)}
+                                    />
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        className="mt-2"
+                                        onClick={handleSendFeedback}
+                                        disabled={isSubmittingFeedback}
+                                    >
+                                        {isSubmittingFeedback ? t('dashboard.pending') : t('dashboard.sendFeedback')}
+                                    </Button>
                                 </div>
                             </CardContent>
                         </Card>

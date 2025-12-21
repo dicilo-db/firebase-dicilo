@@ -123,7 +123,7 @@ const RatingStars = ({ rating }: { rating: number }) => (
 // --- COMPONENTE PRINCIPAL ---
 
 export default function FeedbacksPage() {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['admin', 'common']);
   const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -152,10 +152,10 @@ export default function FeedbacksPage() {
 
   const customerTypeMap: Record<CustomerType, string> = useMemo(
     () => ({
-      private: t('benefits.feedback.customerTypeOptions.private'),
-      donor: t('benefits.feedback.customerTypeOptions.donor'),
-      company: t('benefits.feedback.customerTypeOptions.company'),
-      premium: t('benefits.feedback.customerTypeOptions.premium'),
+      private: t('common:benefits.feedback.customerTypeOptions.private'),
+      donor: t('common:benefits.feedback.customerTypeOptions.donor'),
+      company: t('common:benefits.feedback.customerTypeOptions.company'),
+      premium: t('common:benefits.feedback.customerTypeOptions.premium'),
     }),
     [t]
   );
@@ -169,11 +169,11 @@ export default function FeedbacksPage() {
 
       <main className="flex-grow p-4 sm:p-8">
         <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-2xl font-bold">{t('admin.feedbacks.title')}</h1>
+          <h1 className="text-2xl font-bold">{t('admin:feedbacks.title')}</h1>
           <Button variant="outline" asChild>
             <Link href="/admin/dashboard">
               <LayoutDashboard className="mr-2 h-4 w-4" />
-              {t('admin.businesses.backToDashboard')}
+              {t('admin:businesses.backToDashboard')}
             </Link>
           </Button>
         </div>
@@ -182,11 +182,11 @@ export default function FeedbacksPage() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>{t('admin.feedbacks.table.date')}</TableHead>
-                <TableHead>{t('admin.feedbacks.table.name')}</TableHead>
-                <TableHead>{t('admin.feedbacks.table.customerType')}</TableHead>
-                <TableHead>{t('admin.feedbacks.table.rating')}</TableHead>
-                <TableHead>{t('admin.feedbacks.table.message')}</TableHead>
+                <TableHead>{t('admin:feedbacks.table.date')}</TableHead>
+                <TableHead>{t('admin:feedbacks.table.name')}</TableHead>
+                <TableHead>{t('admin:feedbacks.table.customerType')}</TableHead>
+                <TableHead>{t('admin:feedbacks.table.rating')}</TableHead>
+                <TableHead>{t('admin:feedbacks.table.message')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -229,7 +229,7 @@ export default function FeedbacksPage() {
                     colSpan={5}
                     className="h-24 text-center text-muted-foreground"
                   >
-                    {t('admin.feedbacks.noResults')}
+                    {t('admin:feedbacks.noResults')}
                   </TableCell>
                 </TableRow>
               )}

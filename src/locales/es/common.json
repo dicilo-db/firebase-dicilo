@@ -250,7 +250,9 @@
     "emailSubject": "¡Mira esto!"
   },
   "noPlansAvailable": "Actualmente no hay planes disponibles para este idioma. Se muestran los planes por defecto.",
-  "plans_tax_disclaimer": "Todos los precios son netos. Los impuestos se aplican únicamente si corresponde según el país. (Mira la grafica)",
+  "plans_tax_disclaimer": "Todos los planes incluyen 19% IVA.",
+  "privateUsersList": "Lista de Usuarios Privados",
+  "whatsappInvite": "Sigue este enlace para unirte a mi grupo de WhatsApp, aquí también recibirás promociones como cupones, descuentos y nuevas infos: https://chat.whatsapp.com/IPFpYXlHJTdH0rZosQGws4",
   "notFound": {
     "title": "Página no encontrada",
     "description": "Lo sentimos, la página que buscabas no se ha podido encontrar.",

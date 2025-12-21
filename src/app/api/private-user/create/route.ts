@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getAdminDb } from '@/lib/firebase-admin';
 import { FieldValue } from 'firebase-admin/firestore';
-import { generateUniqueCode } from '@/lib/code-generator';
+import { generateUniqueCodeAdmin } from '@/lib/private-user-service';
 
 export async function POST(request: Request) {
     try {
@@ -32,7 +32,7 @@ export async function POST(request: Request) {
         // Generate Unique Code
         // Use provided phone number or empty string if not provided
         const phoneForCode = phoneNumber || '000';
-        const uniqueCode = await generateUniqueCode(firstName, lastName, phoneForCode);
+        const uniqueCode = await generateUniqueCodeAdmin(firstName, lastName, phoneForCode);
 
         // Create Profile Data
         const profileData = {
