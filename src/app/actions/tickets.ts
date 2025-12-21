@@ -135,21 +135,29 @@ export async function addTicketMessage(ticketId: string, message: {
             updatedAt: admin.firestore.FieldValue.serverTimestamp()
         });
 
-        // Send email notification if the sender is NOT the ticket owner (meaning it's a reply from admin/support)
-        // Or if we implement admin notifications later, we check the inverse.
-        // For now, assume if senderId != ticketData.uid, it is a reply TO the user.
+        let emailWarning = '';
+        // Send email notification if the sender is NOT the ticket owner
         if (ticketData?.uid && message.senderId !== ticketData.uid) {
             try {
                 const { sendTicketReplyEmail } = await import('@/lib/email');
-                await sendTicketReplyEmail(
-                    ticketData.userEmail,
-                    ticketId,
-                    ticketData.title || 'Support Ticket',
-                    message.message,
-                    message.senderName
-                );
-            } catch (emailError) {
+                if (!sendTicketReplyEmail) {
+                    emailWarning = 'Email service not found';
+                } else {
+                    const emailResult = await sendTicketReplyEmail(
+                        ticketData.userEmail,
+                        ticketId,
+                        ticketData.title || 'Support Ticket',
+                        message.message,
+                        message.senderName
+                    );
+                    if (!emailResult || !emailResult.success) {
+                        emailWarning = `Email failed: ${emailResult?.error || 'Unknown error'}`;
+                        console.error('Email send failed:', emailResult?.error);
+                    }
+                }
+            } catch (emailError: any) {
                 console.error('Failed to send reply email:', emailError);
+                emailWarning = `Email error: ${emailError.message}`;
             }
         }
 
@@ -159,7 +167,7 @@ export async function addTicketMessage(ticketId: string, message: {
             revalidatePath(`/admin/tickets/${ticketId}`);
         } catch (e) { console.error('Revalidate failed', e); }
 
-        return { success: true };
+        return { success: true, emailWarning };
     } catch (error: any) {
         console.error('Error adding message:', error);
         return { success: false, error: error.message };

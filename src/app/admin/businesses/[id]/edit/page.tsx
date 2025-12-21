@@ -211,7 +211,7 @@ export default function EditBusinessPage() {
     handleGeocode(addressToGeocode);
   }, [getValues, handleGeocode, toast, t]);
 
-  const handlePromote = async (clientType: 'retailer' | 'premium') => {
+  const handlePromote = async (clientType: 'starter' | 'retailer' | 'premium') => {
     setIsPromoting(true);
     try {
       const businessName = getValues('name');
@@ -233,18 +233,41 @@ export default function EditBusinessPage() {
 
         toast({
           title: 'Client Updated',
-          description: `Exisiting client updated to ${clientType}. Redirecting...`,
+          description: `Existing client updated to ${clientType}. Redirecting...`,
         });
+
+        // IMPORTANT: If we strictly follow the rule, the Basic business entry should be removed if it exists.
+        // But since we are only updating an EXISTING client here, the Basic entry might have been deleted already.
+        // Just to be safe, we can try to delete the current business doc if it's still treated as "Basic" (which is this page context).
+        try {
+          await deleteDoc(doc(db, 'businesses', id));
+        } catch (e) {
+          console.warn('Could not delete business doc (maybe already gone):', e);
+        }
+
         router.push(`/admin/clients/${existingClient.id}/edit`);
         return;
       }
 
-      // If not exists, proceed with promotion
+      // If not exists, proceed with promotion (Create new Client)
       const result: any = await promoteToClientFn({
         businessId: id,
         clientType,
       });
       if (result.data.success) {
+        // SUCCESS: Now delete the Basic Business entry to prevent duplicates
+        try {
+          await deleteDoc(doc(db, 'businesses', id));
+          console.log(`Deleted basic business ${id} after promotion.`);
+        } catch (delError) {
+          console.error('Failed to delete basic business after promotion:', delError);
+          toast({
+            title: 'Warning',
+            description: 'Client promoted, but failed to remove Basic entry. Please delete manually.',
+            variant: 'destructive',
+          });
+        }
+
         toast({
           title: 'Promotion Successful',
           description: result.data.message,
@@ -653,6 +676,11 @@ export default function EditBusinessPage() {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
+                      <DropdownMenuItem
+                        onClick={() => handlePromote('starter')}
+                      >
+                        As Starter
+                      </DropdownMenuItem>
                       <DropdownMenuItem
                         onClick={() => handlePromote('retailer')}
                       >

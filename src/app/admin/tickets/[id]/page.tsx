@@ -123,7 +123,16 @@ export default function AdminTicketDetailPage() {
             if (result.success) {
                 setNewMessage('');
                 fetchTicket();
-                toast({ title: 'Reply sent', description: 'User has been notified.' });
+                if (result.emailWarning) {
+                    toast({
+                        title: 'Reply sent',
+                        description: `Note: ${result.emailWarning}`,
+                        variant: 'destructive',
+                        duration: 10000
+                    });
+                } else {
+                    toast({ title: 'Reply sent', description: 'User has been notified.' });
+                }
             } else {
                 toast({ title: 'Error', description: 'Failed to send message', variant: "destructive" });
             }

@@ -85,11 +85,14 @@ export default function PrivateUsersPage() {
                         </Button>
                         <Button variant="outline" onClick={async () => {
                             try {
-                                setIsLoading(true); // Reuse loading or add syncing state
+                                setIsLoading(true);
                                 const res = await fetch('/api/admin/sync-private-users', { method: 'POST' });
                                 const data = await res.json();
                                 if (data.success) {
-                                    // Reload page or list
+                                    const details = data.results.details && data.results.details.length > 0
+                                        ? '\n\nDetails:\n' + data.results.details.join('\n')
+                                        : '';
+                                    alert(`Sync Complete:\nTotal: ${data.results.total}\nCreated: ${data.results.created}\nSkipped: ${data.results.skipped}\nErrors: ${data.results.errors}${details}`);
                                     window.location.reload();
                                 } else {
                                     alert('Error syncing: ' + (data.error || 'Unknown error'));

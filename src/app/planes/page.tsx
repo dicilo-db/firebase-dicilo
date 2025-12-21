@@ -149,8 +149,10 @@ function PlansClientContent() {
               </div>
             </div>
 
-            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 justify-center">
               {filteredPlans.length > 0 ? (
+                // We want to display all plans, but if there are more than 3, they will naturally wrap to the next row.
+                // The grid-cols-3 handles the "3 per row" requirement.
                 filteredPlans.map((plan) => (
                   <PricingPlanCard key={plan.id} plan={plan} />
                 ))
