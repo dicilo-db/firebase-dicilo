@@ -28,14 +28,14 @@ export default function TicketDetailPage() {
     const [newMessage, setNewMessage] = useState('');
     const [sending, setSending] = useState(false);
 
-    const fetchTicket = async () => {
+    const fetchTicket = async (silent = false) => {
         if (!id) return;
-        setLoading(true);
+        if (!silent) setLoading(true);
         try {
             const result = await getTicket(id as string);
             if (result.success && result.ticket) {
                 setTicket(result.ticket as Ticket);
-            } else {
+            } else if (!silent) {
                 toast({
                     title: 'Error',
                     description: result.error || 'Failed to load ticket',
@@ -45,12 +45,15 @@ export default function TicketDetailPage() {
         } catch (error) {
             console.error(error);
         } finally {
-            setLoading(false);
+            if (!silent) setLoading(false);
         }
     };
 
     useEffect(() => {
         fetchTicket();
+        // Auto-refresh every 15 seconds
+        const interval = setInterval(() => fetchTicket(true), 15000);
+        return () => clearInterval(interval);
     }, [id]);
 
     const handleSendMessage = async () => {

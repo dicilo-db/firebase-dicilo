@@ -235,9 +235,9 @@ export default function DashboardPage() {
 
                 {error === 'no_client_found' ? (
                     <div className="rounded-lg border p-8 text-center">
-                        <h2 className="text-xl font-semibold">{t('dashboard.welcome')}</h2>
+                        <h2 className="text-xl font-semibold">{t('common:dashboard.welcome')}</h2>
                         <p className="mt-2 text-muted-foreground">
-                            {t('dashboard.noCompanyFound')}
+                            {t('common:dashboard.noCompanyFound')}
                         </p>
                     </div>
                 ) : error ? (
