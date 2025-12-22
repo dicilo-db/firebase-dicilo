@@ -65,11 +65,3 @@ export async function POST(request: Request) {
     }
 }
 
-    } catch (error: any) {
-    console.error('Error creating private profile:', error);
-    return NextResponse.json(
-        { error: 'Internal Server Error', details: error.message },
-        { status: 500 }
-    );
-}
-}

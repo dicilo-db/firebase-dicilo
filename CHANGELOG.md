@@ -2,6 +2,17 @@
 
 # Bitácora de Cambios - Dicilo.net
 
+### **189. FIX: ADS GEOLOCATION & DASHBOARD SPA - CÓDIGO: FIX-ADS-GEO-SPA-V1**
+- **Fecha y Hora:** 22 de Diciembre de 2025, 12:00 (CET)
+- **Módulos Afectados:** `src/components/dicilo-search-page.tsx`, `src/app/page.tsx`, `Sidebar.tsx`, `PrivateDashboard.tsx`, `TicketsManager.tsx`, `DiciCoinSection.tsx`.
+- **Descripción del Cambio:**
+  - **Correción Geolocalización Ads:** Se implementó un filtrado estricto en el lado del cliente. Ahora, aunque el servidor envíe todos los anuncios (por fallo de IP), el cliente oculta aquellos fuera del radio GPS del usuario, asegurando que solo se vean anuncios relevantes para su ubicación real.
+  - **Dashboard SPA Unificado:** Se consolidaron las secciones "DiciCoin" y "Tickets" dentro del Dashboard principal.
+    - Se eliminaron las recargas de página al navegar.
+    - Se crearon vistas internas (`DiciCoinSection`, `TicketsManager`) para una experiencia fluida.
+    - La Sidebar ahora gestiona estados de vista en lugar de enlaces externos.
+- **Resultado:** Publicidad geolocalizada precisa y una experiencia de usuario (UX) en el dashboard mucho más rápida y consistente.
+
 ### **182. UPGRADE: REGISTRATION CLEANUP & RESTRUCTURE - CÓDIGO: FIX-REGISTRATIONS-CLEANUP-V1**
 
 - **Fecha y Hora:** 14 de Diciembre de 2025, 16:25 (CET)
