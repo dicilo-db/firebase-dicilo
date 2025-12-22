@@ -29,6 +29,7 @@ import {
   Bot,
   Tag,
   Coins,
+  Wallet,
 } from 'lucide-react';
 import { useAdminUser, useAuthGuard } from '@/hooks/useAuthGuard';
 import { useServerAction } from '@/hooks/useServerAction';
@@ -670,6 +671,20 @@ const DashboardContent: React.FC = () => {
                 <CardContent>
                   <div className="text-2xl font-bold">DiciCoins</div>
                   <p className="text-xs text-muted-foreground mt-1">Gestión de Compras</p>
+                </CardContent>
+              </Card>
+            </Link>
+
+            {/* Dicipoints Central Control (NEW) */}
+            <Link href="/admin/dicipoints" className="group">
+              <Card className="h-full transition-all hover:shadow-md hover:border-red-500/50 cursor-pointer relative">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium text-red-600">Economy Control</CardTitle>
+                  <Wallet className="h-4 w-4 text-muted-foreground group-hover:text-red-500 transition-colors" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">Dicipoints</div>
+                  <p className="text-xs text-muted-foreground mt-1">Manage Point Value & Injection</p>
                 </CardContent>
               </Card>
             </Link>

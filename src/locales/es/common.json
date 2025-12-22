@@ -13,6 +13,12 @@
       "faq": "FAQ"
     }
   },
+  "dicipoints": {
+    "whatIs": {
+      "title": "¿Qué son los Dicipoints?",
+      "description": "Contexto en Dicilo.net: Es el motor de nuestro sistema de fidelización basado en la \"economía de la recomendación\".\n\nLos Dicipoints son puntos de recompensa exclusivos que los miembros de la comunidad Dicilo acumulan al interactuar con la plataforma. Puedes ganarlos realizando recomendaciones auténticas, participando en encuestas de productos o invitando a nuevos miembros a través de nuestro sistema de referidos. Estos puntos pueden canjearse por beneficios especiales, descuentos con socios estratégicos o participaciones adicionales en nuestros sorteos trimestrales."
+    }
+  },
   "footer": {
     "imprint": "Aviso Legal",
     "privacy": "Privacidad",
@@ -105,6 +111,9 @@
     "manageProfile": "Gestiona tu perfil personal y preferencias.",
     "yourUniqueCode": "Tu Código Único",
     "overview": "Resumen",
+    "myWallet": "Mi Wallet",
+    "alliesMap": "Mapa de Aliados",
+    "settings": "Ajustes",
     "personalData": "Datos Personales",
     "interests": "Intereses",
     "socialRewards": "Social y Recompensas",

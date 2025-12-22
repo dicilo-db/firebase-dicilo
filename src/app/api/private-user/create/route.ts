@@ -1,15 +1,30 @@
 import { NextResponse } from 'next/server';
-import { getAdminDb } from '@/lib/firebase-admin';
-import { FieldValue } from 'firebase-admin/firestore';
-import { generateUniqueCodeAdmin } from '@/lib/private-user-service';
+import { getAdminAuth } from '@/lib/firebase-admin';
+import { createPrivateUserProfile } from '@/lib/private-user-service';
 
 export async function POST(request: Request) {
     try {
-        const body = await request.json();
-        const { uid, email, firstName, lastName, phoneNumber, contactType } = body;
+        const authHeader = request.headers.get('Authorization');
+        if (!authHeader?.startsWith('Bearer ')) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+        const token = authHeader.split('Bearer ')[0]; // wait, split(' ')[1]
+        // Basic fix:
+        const idToken = authHeader.split(' ')[1];
 
-        // Note: ID Token verification removed temporarily to bypass server permission issues.
-        // We are trusting the client-side UID for now to restore functionality.
+        let decodedToken;
+        try {
+            decodedToken = await getAdminAuth().verifyIdToken(idToken);
+        } catch (e) {
+            return NextResponse.json({ error: 'Invalid Token' }, { status: 401 });
+        }
+
+        const body = await request.json();
+        const { uid, email, firstName, lastName, phoneNumber, contactType, referralCode } = body;
+
+        if (decodedToken.uid !== uid) {
+            return NextResponse.json({ error: 'Forbidden: UID mismatch' }, { status: 403 });
+        }
 
         if (!uid || !email || !firstName || !lastName) {
             return NextResponse.json(
@@ -18,52 +33,26 @@ export async function POST(request: Request) {
             );
         }
 
-        // Check if profile already exists
-        const profileRef = getAdminDb().collection('private_profiles').doc(uid);
-        const profileSnap = await profileRef.get();
-
-        if (profileSnap.exists) {
-            return NextResponse.json(
-                { message: 'Profile already exists', profile: profileSnap.data() },
-                { status: 200 }
-            );
-        }
-
-        // Generate Unique Code
-        // Use provided phone number or empty string if not provided
-        const phoneForCode = phoneNumber || '000';
-        const uniqueCode = await generateUniqueCodeAdmin(firstName, lastName, phoneForCode);
-
-        // Create Profile Data
-        const profileData = {
-            uid,
-            email,
+        const result = await createPrivateUserProfile(uid, {
             firstName,
             lastName,
-            uniqueCode,
-            contactPreferences: {
-                whatsapp: contactType === 'whatsapp' ? phoneNumber : '',
-                telegram: contactType === 'telegram' ? phoneNumber : '',
-                email: true,
-                frequency: 'weekly', // Default
-            },
-            interests: [],
-            profileData: {
-                travelInterest: null,
-                multiplierInterest: false,
-                rewardPreference: null,
-                hobbies: '',
-                socialGroup: 'none',
-            },
-            referrals: [],
-            createdAt: FieldValue.serverTimestamp(),
-            updatedAt: FieldValue.serverTimestamp(),
-        };
+            email,
+            whatsapp: contactType === 'whatsapp' ? phoneNumber : undefined,
+            phone: phoneNumber,
+            contactType,
+            referralCode
+        });
 
-        await profileRef.set(profileData);
+        if (!result.success) {
+            // If it failed because it exists, return 200 with existing profile
+            if (result.message === 'Profile already exists') {
+                return NextResponse.json({ message: result.message, profile: result.profile }, { status: 200 });
+            }
+            return NextResponse.json({ error: result.message }, { status: 500 });
+        }
 
         return NextResponse.json(
-            { message: 'Profile created successfully', profile: profileData },
+            { message: 'Profile created successfully', profile: result.profile },
             { status: 201 }
         );
 
@@ -74,4 +63,13 @@ export async function POST(request: Request) {
             { status: 500 }
         );
     }
+}
+
+    } catch (error: any) {
+    console.error('Error creating private profile:', error);
+    return NextResponse.json(
+        { error: 'Internal Server Error', details: error.message },
+        { status: 500 }
+    );
+}
 }

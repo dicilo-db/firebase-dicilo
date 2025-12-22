@@ -1,12 +1,11 @@
 'use client';
 
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import React, { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { ArrowLeft, Coins, TrendingUp, HelpCircle, ShieldCheck } from 'lucide-react';
+import { Coins, TrendingUp, HelpCircle, ShieldCheck } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-
 import {
     Dialog,
     DialogContent,
@@ -17,32 +16,48 @@ import {
 } from "@/components/ui/dialog";
 import { DiciCoinInfo } from '@/components/dashboard/DiciCoinInfo';
 import { DiciCoinSecurityInfo } from '@/components/dashboard/DiciCoinSecurityInfo';
+import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
+import { useDashboardData } from '@/hooks/useDashboardData';
 
 export default function DiciCoinUserPage() {
     const { t } = useTranslation('common');
+    const { clientData, privateProfile, isLoading } = useDashboardData();
+    const [currentView, setCurrentView] = useState('dicicoin');
+
+    // Determine user data for sidebar
+    const userData = clientData || privateProfile || {};
 
     // MOCK DATA for now - In future retrieve real balance/history
     const balance = 0;
 
+    if (isLoading) {
+        return <div className="flex h-screen items-center justify-center">Loading...</div>; // Simple loader
+    }
+
     return (
-        <div className="flex min-h-screen flex-col bg-slate-50 dark:bg-slate-900">
+        <DashboardLayout
+            userData={userData}
+            currentView={currentView} // Keep 'dicicoin' highlighted
+            onViewChange={(view) => {
+                // Creating a hybrid behavior:
+                // The sidebar expects to switch views in a single page app style.
+                // But here we are on a separate route.
+                // Ideally we should navigate, but for now let's just log or handle basic state.
+                // If the user clicks "overview", the sidebar usually calls onViewChange('overview').
+                // We might need to handle navigation if the sidebar doesn't do it for links.
+                // Luckily, updated sidebar uses next/link for these specific items, so this callback might just update state locally.
+                setCurrentView(view);
+            }}
+        >
+            <div className="flex flex-col space-y-6">
 
-            <main className="container mx-auto py-8 px-4 max-w-5xl">
-
-                {/* Header */}
-                <div className="mb-8 flex items-center gap-4">
-                    <Link href="/dashboard">
-                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                            <ArrowLeft className="h-4 w-4" />
-                        </Button>
-                    </Link>
-                    <div>
-                        <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2 text-slate-900 dark:text-slate-100">
-                            <Coins className="h-8 w-8 text-amber-500" />
-                            DiciCoin Center
-                        </h1>
-                        <p className="text-muted-foreground">{t('dashboard.dicicoin.walletDescription', 'Tu billetera y centro de recompensas.')}</p>
-                    </div>
+                {/* Header Section inside Layout */}
+                <div>
+                    <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2 text-slate-900">
+                        <Coins className="h-8 w-8 text-amber-500" />
+                        DiciCoin Center
+                    </h1>
+                    <p className="text-muted-foreground">{t('dashboard.dicicoin.walletDescription', 'Tu billetera y centro de recompensas.')}</p>
                 </div>
 
                 {/* Main Content Grid */}
@@ -167,7 +182,7 @@ export default function DiciCoinUserPage() {
                     {t('dashboard.dicicoin.limit', 'El límite máximo permitido es de 2.000 DICICOIN por usuario...')}
                 </div>
 
-            </main>
-        </div>
+            </div>
+        </DashboardLayout>
     );
 }

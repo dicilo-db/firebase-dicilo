@@ -13,6 +13,12 @@
       "faq": "FAQ"
     }
   },
+  "dicipoints": {
+    "whatIs": {
+      "title": "Was sind Dicipoints?",
+      "description": "Zusammenhang mit Dicilo.net: Dies ist der Kern unseres Belohnungssystems, um die Interaktion zwischen Käufern und Verkäufern zu fördern.\n\nDicipoints sind exklusive Bonuspunkte für Mitglieder der Dicilo-Community. Sie sammeln diese Punkte durch aktive Teilnahme, wie z. B. durch das Verfassen von Produktbewertungen, echte Empfehlungen oder das Werben von Freunden und Familie. Dicipoints können gegen exklusive Partner-Rabatte, frühen Zugang zu Beta-Produkten oder die Teilnahme an unseren vier jährlichen Preisverlosungen eingelöst werden."
+    }
+  },
   "footer": {
     "imprint": "Impressum",
     "privacy": "Datenschutz",
@@ -286,6 +292,9 @@
     "manageProfile": "Verwalten Sie Ihr persönliches Profil und Ihre Einstellungen.",
     "yourUniqueCode": "Ihr einzigartiger Code",
     "overview": "Übersicht",
+    "myWallet": "Mein Wallet",
+    "alliesMap": "Partnerkarte",
+    "settings": "Einstellungen",
     "personalData": "Persönliche Daten",
     "interests": "Interessen",
     "socialRewards": "Soziales & Belohnungen",

@@ -11,11 +11,15 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Textarea } from '@/components/ui/textarea';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Copy, Share2, Gift, Users, Heart, Settings, Star } from 'lucide-react';
 import { CategorySelector } from './CategorySelector';
 import { useTranslation } from 'react-i18next';
+import { DashboardLayout } from './DashboardLayout';
+import { WalletSection } from './WalletSection';
+import { InviteFriendSection } from './InviteFriendSection';
+import { DiciCoinSection } from './DiciCoinSection';
+import { TicketsManager } from './tickets/TicketsManager';
 
 const db = getFirestore(app);
 
@@ -27,7 +31,7 @@ interface PrivateDashboardProps {
 export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
     const { toast } = useToast();
     const { t } = useTranslation('common');
-    const [activeTab, setActiveTab] = useState('overview');
+    const [activeView, setActiveView] = useState('overview'); // overview, wallet, invite, map, settings, dicicoin, tickets
     const [isLoading, setIsLoading] = useState(false);
     const [formData, setFormData] = useState(profile);
     const [feedbackMessage, setFeedbackMessage] = useState('');
@@ -44,7 +48,7 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
                 rating: feedbackRating,
                 message: feedbackMessage,
                 country: formData.country || 'Unknown',
-                city: formData.city || 'Unknown', // Added city as requested implicitly by having it in form
+                city: formData.city || 'Unknown',
                 customerType: 'private',
                 createdAt: new Date(),
                 rewardPreference: formData.profileData?.rewardPreference || 'none',
@@ -59,7 +63,7 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
         } catch (error) {
             console.error(error);
             toast({
-                title: t('benefits.feedback.errorTitle'), // "Error"
+                title: t('benefits.feedback.errorTitle'),
                 description: t('benefits.feedback.errorDesc'),
                 variant: 'destructive'
             });
@@ -81,13 +85,9 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
     // Ensure Unique Code exists
     useEffect(() => {
         if (user && formData) {
-            console.log('Checking unique code for:', user.uid, 'Current code:', formData.uniqueCode);
             if (!formData.uniqueCode) {
-                console.log('Unique code missing, triggering generation...');
                 ensureUniqueCode(user.uid).then((res) => {
-                    console.log('ensureUniqueCode result:', res);
                     if (res.success && res.uniqueCode) {
-                        // Optimistically update if snapshot is slow
                         setFormData((prev: any) => ({ ...prev, uniqueCode: res.uniqueCode }));
                     }
                 });
@@ -135,393 +135,301 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
             ? new Date(formData.birthDate).toISOString().split('T')[0]
             : '';
 
-    return (
-        <div className="space-y-6">
-            {/* Header Section */}
-            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                <div>
-                    <h1 className="text-3xl font-bold tracking-tight">{t('dashboard.welcome')} {formData.firstName}!</h1>
-                    <p className="text-muted-foreground">{t('dashboard.manageProfile')}</p>
-                </div>
-                <Card className="bg-primary/5 border-primary/20">
-                    <CardContent className="flex items-center gap-4 p-4">
+    const renderView = () => {
+        switch (activeView) {
+            case 'overview':
+                return (
+                    <div className="space-y-6 animate-in fade-in duration-500">
                         <div>
-                            <p className="text-xs font-medium text-muted-foreground uppercase">{t('dashboard.yourUniqueCode')}</p>
-                            {formData.uniqueCode ? (
-                                <p className="text-2xl font-mono font-bold text-primary">{formData.uniqueCode}</p>
-                            ) : (
-                                <div className="flex flex-col items-start gap-1">
-                                    <p className="text-sm text-yellow-600">{t('dashboard.pending')}</p>
-                                    <Button
-                                        size="sm"
-                                        variant="secondary"
-                                        className="h-7 text-xs"
-                                        onClick={() => {
-                                            toast({ title: t('dashboard.generating'), description: 'Please wait a moment.' });
-                                            ensureUniqueCode(user.uid).then((res) => {
-                                                if (res.success && res.uniqueCode) {
-                                                    setFormData((prev: any) => ({ ...prev, uniqueCode: res.uniqueCode }));
-                                                    toast({ title: t('dashboard.saved'), description: 'Code generated!' });
-                                                } else {
-                                                    toast({ title: 'Error', description: 'Failed to generate code.', variant: 'destructive' });
-                                                }
-                                            });
-                                        }}
-                                    >
-                                        {t('dashboard.generateCode')}
-                                    </Button>
-                                </div>
-                            )}
+                            <h1 className="text-3xl font-bold tracking-tight">{t('dashboard.welcome')} {formData.firstName}!</h1>
+                            <p className="text-muted-foreground">{t('dashboard.manageProfile')}</p>
                         </div>
-                        {formData.uniqueCode && (
-                            <Button variant="ghost" size="icon" onClick={() => copyToClipboard(formData.uniqueCode)}>
-                                <Copy className="h-4 w-4" />
-                            </Button>
-                        )}
-                    </CardContent>
-                </Card>
-            </div>
+                        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                            <Card>
+                                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                    <CardTitle className="text-sm font-medium">{t('dashboard.profileStatus')}</CardTitle>
+                                    <Users className="h-4 w-4 text-muted-foreground" />
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="text-2xl font-bold">{t('dashboard.active')}</div>
+                                    <p className="text-xs text-muted-foreground">{t('dashboard.memberSince', { date: memberSinceDate })}</p>
+                                </CardContent>
+                            </Card>
+                            <Card className="cursor-pointer hover:bg-secondary/5 transition-colors" onClick={() => setActiveView('settings')}>
+                                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                    <CardTitle className="text-sm font-medium">{t('dashboard.interests')}</CardTitle>
+                                    <Heart className="h-4 w-4 text-muted-foreground" />
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="text-2xl font-bold">{formData.interests?.length || 0}</div>
+                                    <p className="text-xs text-muted-foreground">{t('dashboard.yourInterestsDesc')}</p>
+                                </CardContent>
+                            </Card>
+                            <Card className="cursor-pointer hover:bg-secondary/5 transition-colors" onClick={() => setActiveView('invite')}>
+                                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                    <CardTitle className="text-sm font-medium">{t('dashboard.referrals')}</CardTitle>
+                                    <Gift className="h-4 w-4 text-muted-foreground" />
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="text-2xl font-bold">{formData.referrals?.length || 0}</div>
+                                    <p className="text-xs text-muted-foreground">{t('dashboard.friendsInvited')}</p>
+                                </CardContent>
+                            </Card>
+                        </div>
 
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-                <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4">
-                    <TabsTrigger value="overview">{t('dashboard.overview')}</TabsTrigger>
-                    <TabsTrigger value="personal">{t('dashboard.personalData')}</TabsTrigger>
-                    <TabsTrigger value="interests">{t('dashboard.interests')}</TabsTrigger>
-                    <TabsTrigger value="social">{t('dashboard.socialRewards')}</TabsTrigger>
-                </TabsList>
-
-                {/* Overview Tab */}
-                <TabsContent value="overview" className="space-y-4">
-                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                        <Card>
-                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                <CardTitle className="text-sm font-medium">{t('dashboard.profileStatus')}</CardTitle>
-                                <Users className="h-4 w-4 text-muted-foreground" />
-                            </CardHeader>
-                            <CardContent>
-                                <div className="text-2xl font-bold">{t('dashboard.active')}</div>
-                                <p className="text-xs text-muted-foreground">{t('dashboard.memberSince', { date: memberSinceDate })}</p>
-                            </CardContent>
-                        </Card>
-                        <Card>
-                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                <CardTitle className="text-sm font-medium">{t('dashboard.interests')}</CardTitle>
-                                <Heart className="h-4 w-4 text-muted-foreground" />
-                            </CardHeader>
-                            <CardContent>
-                                <div className="text-2xl font-bold">{formData.interests?.length || 0}</div>
-                                <p className="text-xs text-muted-foreground">{t('dashboard.yourInterestsDesc')}</p>
-                            </CardContent>
-                        </Card>
-                        <Card>
-                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                <CardTitle className="text-sm font-medium">{t('dashboard.referrals')}</CardTitle>
-                                <Gift className="h-4 w-4 text-muted-foreground" />
-                            </CardHeader>
-                            <CardContent>
-                                <div className="text-2xl font-bold">{formData.referrals?.length || 0}</div>
-                                <p className="text-xs text-muted-foreground">{t('dashboard.friendsInvited')}</p>
-                            </CardContent>
-                        </Card>
+                        {/* Quick Prompts */}
+                        <div className="grid gap-4 md:grid-cols-2">
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle>{t('dashboard.quickActions')}</CardTitle>
+                                </CardHeader>
+                                <CardContent className="grid gap-2">
+                                    <Button variant="outline" className="justify-start" onClick={() => setActiveView('wallet')}>
+                                        <Users className="mr-2 h-4 w-4" /> Go to Wallet
+                                    </Button>
+                                    <Button variant="outline" className="justify-start" onClick={() => setActiveView('invite')}>
+                                        <Share2 className="mr-2 h-4 w-4" /> {t('dashboard.inviteFriends')}
+                                    </Button>
+                                </CardContent>
+                            </Card>
+                        </div>
                     </div>
-
-                    <div className="grid gap-4 md:grid-cols-2">
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>{t('dashboard.quickActions')}</CardTitle>
-                            </CardHeader>
-                            <CardContent className="grid gap-2">
-                                <Button variant="outline" className="justify-start" onClick={() => setActiveTab('interests')}>
-                                    <Heart className="mr-2 h-4 w-4" /> {t('dashboard.updateInterests')}
-                                </Button>
-                                <Button variant="outline" className="justify-start" onClick={() => setActiveTab('social')}>
-                                    <Share2 className="mr-2 h-4 w-4" /> {t('dashboard.inviteFriends')}
-                                </Button>
-                            </CardContent>
-                        </Card>
+                );
+            case 'wallet':
+                return <WalletSection uid={user.uid} uniqueCode={formData.uniqueCode} />;
+            case 'invite':
+                return <InviteFriendSection uniqueCode={formData.uniqueCode} referrals={formData.referrals} />;
+            case 'dicicoin':
+                return <DiciCoinSection userData={formData} onViewHistory={() => setActiveView('tickets')} />;
+            case 'tickets':
+                return <TicketsManager />;
+            case 'map':
+                return (
+                    <div className="flex flex-col items-center justify-center h-[400px] text-center space-y-4">
+                        <div className="p-6 bg-secondary/20 rounded-full">
+                            <Users className="h-12 w-12 text-muted-foreground" />
+                        </div>
+                        <h2 className="text-2xl font-bold">Map Coming Soon</h2>
+                        <p className="text-muted-foreground max-w-sm">
+                            We are working on visualizing all our allied partners on an interactive map. Stay tuned!
+                        </p>
                     </div>
-                </TabsContent>
+                );
+            case 'settings':
+                return (
+                    <Tabs defaultValue="personal" className="space-y-4">
+                        <h2 className="text-2xl font-bold tracking-tight">{t('dashboard.settings')}</h2>
+                        <TabsList>
+                            <TabsTrigger value="personal">{t('dashboard.personalData')}</TabsTrigger>
+                            <TabsTrigger value="interests">{t('dashboard.interests')}</TabsTrigger>
+                            <TabsTrigger value="social">{t('dashboard.socialRewards')}</TabsTrigger>
+                        </TabsList>
 
-                {/* Personal Data Tab */}
-                <TabsContent value="personal">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>{t('dashboard.personalInfo')}</CardTitle>
-                            <CardDescription>{t('dashboard.personalInfoDesc')}</CardDescription>
-                        </CardHeader>
-                        <CardContent className="space-y-6">
-                            <div className="grid gap-4 md:grid-cols-2">
-                                <div className="space-y-2">
-                                    <Label>{t('dashboard.firstName')}</Label>
-                                    <Input value={formData.firstName} disabled />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label>{t('dashboard.lastName')}</Label>
-                                    <Input value={formData.lastName} disabled />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label>{t('dashboard.dateOfBirth')}</Label>
-                                    <Input
-                                        type="date"
-                                        value={birthDateValue}
-                                        onChange={(e) => {
-                                            const date = new Date(e.target.value);
-                                            handleUpdate('birthDate', { birthDate: date });
-                                        }}
-                                    />
-                                    <p className="text-xs text-muted-foreground">{t('dashboard.birthdayGift')}</p>
-                                </div>
-                                <div className="space-y-2">
-                                    <Label>{t('dashboard.gender')}</Label>
-                                    <Select
-                                        value={formData.gender || ''}
-                                        onValueChange={(val) => handleUpdate('gender', { gender: val })}
-                                    >
-                                        <SelectTrigger>
-                                            <SelectValue placeholder={t('dashboard.selectGender')} />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="male">{t('dashboard.male')}</SelectItem>
-                                            <SelectItem value="female">{t('dashboard.female')}</SelectItem>
-                                            <SelectItem value="diverse">{t('dashboard.diverse')}</SelectItem>
-                                            <SelectItem value="prefer_not_to_say">{t('dashboard.preferNotToSay')}</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                            </div>
-
-                            <div className="space-y-4 pt-4 border-t">
-                                <h3 className="text-lg font-medium">{t('dashboard.location')}</h3>
-                                <div className="grid gap-4 md:grid-cols-2">
-                                    <div className="space-y-2">
-                                        <Label className="flex items-center gap-1">
-                                            {t('dashboard.country')} <span className="text-destructive">*</span>
-                                        </Label>
-                                        <Input
-                                            value={formData.country || ''}
-                                            required
-                                            placeholder={t('dashboard.enterCountry', 'Enter your country')}
-                                            onChange={(e) => setFormData({ ...formData, country: e.target.value })}
-                                            onBlur={() => {
-                                                if (formData.country) {
-                                                    handleUpdate('country', { country: formData.country });
-                                                } else {
-                                                    toast({
-                                                        title: t('dashboard.requiredField'),
-                                                        description: t('dashboard.countryRequired'),
-                                                        variant: 'destructive',
-                                                    });
-                                                }
-                                            }}
-                                        />
+                        {/* Re-using existing content logic for settings sub-tabs */}
+                        <TabsContent value="personal">
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle>{t('dashboard.personalInfo')}</CardTitle>
+                                    <CardDescription>{t('dashboard.personalInfoDesc')}</CardDescription>
+                                </CardHeader>
+                                <CardContent className="space-y-6">
+                                    <div className="grid gap-4 md:grid-cols-2">
+                                        <div className="space-y-2">
+                                            <Label>{t('dashboard.firstName')}</Label>
+                                            <Input value={formData.firstName} disabled />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label>{t('dashboard.lastName')}</Label>
+                                            <Input value={formData.lastName} disabled />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label>{t('dashboard.dateOfBirth')}</Label>
+                                            <Input
+                                                type="date"
+                                                value={birthDateValue}
+                                                onChange={(e) => {
+                                                    const date = new Date(e.target.value);
+                                                    handleUpdate('birthDate', { birthDate: date });
+                                                }}
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label>{t('dashboard.gender')}</Label>
+                                            <Select
+                                                value={formData.gender || ''}
+                                                onValueChange={(val) => handleUpdate('gender', { gender: val })}
+                                            >
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder={t('dashboard.selectGender')} />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="male">{t('dashboard.male')}</SelectItem>
+                                                    <SelectItem value="female">{t('dashboard.female')}</SelectItem>
+                                                    <SelectItem value="diverse">{t('dashboard.diverse')}</SelectItem>
+                                                    <SelectItem value="prefer_not_to_say">{t('dashboard.preferNotToSay')}</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
                                     </div>
-                                    <div className="space-y-2">
-                                        <Label className="flex items-center gap-1">
-                                            {t('dashboard.city')} <span className="text-destructive">*</span>
-                                        </Label>
-                                        <Input
-                                            value={formData.city || ''}
-                                            required
-                                            placeholder={t('dashboard.enterCity', 'Enter your city')}
-                                            onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                                            onBlur={() => {
-                                                if (formData.city) {
-                                                    handleUpdate('city', { city: formData.city });
-                                                } else {
-                                                    toast({
-                                                        title: t('dashboard.requiredField'),
-                                                        description: t('dashboard.cityRequired'),
-                                                        variant: 'destructive',
-                                                    });
-                                                }
-                                            }}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="space-y-4 pt-4 border-t">
-                                <h3 className="text-lg font-medium">{t('dashboard.communicationPreferences')}</h3>
-                                <div className="grid gap-4 md:grid-cols-2">
-                                    <div className="space-y-2">
-                                        <Label>{t('dashboard.channel')}</Label>
-                                        <div className="flex gap-4">
-                                            <div className="flex items-center space-x-2">
-                                                <RadioGroup
-                                                    value={formData.contactPreferences?.whatsapp ? 'whatsapp' : formData.contactPreferences?.telegram ? 'telegram' : 'email'}
-                                                    onValueChange={(val) => {
-                                                        const prefs = { ...formData.contactPreferences };
-                                                        if (val === 'whatsapp') { prefs.whatsapp = formData.contactPreferences?.whatsapp || 'yes'; prefs.telegram = ''; }
-                                                        if (val === 'telegram') { prefs.telegram = formData.contactPreferences?.telegram || 'yes'; prefs.whatsapp = ''; }
-                                                        handleUpdate('contactPreferences', { contactPreferences: prefs });
-                                                    }}
-                                                >
-                                                    <div className="flex items-center space-x-2">
-                                                        <RadioGroupItem value="whatsapp" id="r1" />
-                                                        <Label htmlFor="r1">WhatsApp</Label>
-                                                    </div>
-                                                    <div className="flex items-center space-x-2">
-                                                        <RadioGroupItem value="telegram" id="r2" />
-                                                        <Label htmlFor="r2">Telegram</Label>
-                                                    </div>
-                                                    <div className="flex items-center space-x-2">
-                                                        <RadioGroupItem value="email" id="r3" />
-                                                        <Label htmlFor="r3">Email</Label>
-                                                    </div>
-                                                </RadioGroup>
+                                    <div className="space-y-4 pt-4 border-t">
+                                        <h3 className="text-lg font-medium">{t('dashboard.location')}</h3>
+                                        <div className="grid gap-4 md:grid-cols-2">
+                                            <div className="space-y-2">
+                                                <Label>{t('dashboard.country')}</Label>
+                                                <Input
+                                                    value={formData.country || ''}
+                                                    onChange={(e) => setFormData({ ...formData, country: e.target.value })}
+                                                    onBlur={() => handleUpdate('country', { country: formData.country })}
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label>{t('dashboard.city')}</Label>
+                                                <Input
+                                                    value={formData.city || ''}
+                                                    onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                                                    onBlur={() => handleUpdate('city', { city: formData.city })}
+                                                />
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="space-y-2">
-                                        <Label>{t('dashboard.frequency')}</Label>
-                                        <Select
-                                            value={formData.contactPreferences?.frequency || 'weekly'}
-                                            onValueChange={(val) => handleUpdate('frequency', {
-                                                contactPreferences: { ...formData.contactPreferences, frequency: val }
-                                            })}
-                                        >
-                                            <SelectTrigger>
-                                                <SelectValue />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="daily">{t('dashboard.daily')}</SelectItem>
-                                                <SelectItem value="weekly">{t('dashboard.weekly')}</SelectItem>
-                                                <SelectItem value="monthly">{t('dashboard.monthly')}</SelectItem>
-                                                <SelectItem value="important_only">{t('dashboard.importantOnly')}</SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                    </div>
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
-                </TabsContent>
+                                </CardContent>
+                            </Card>
+                        </TabsContent>
 
-                {/* Interests Tab */}
-                <TabsContent value="interests">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>{t('dashboard.yourInterests')}</CardTitle>
-                            <CardDescription>{t('dashboard.yourInterestsDesc')}</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <CategorySelector
-                                selectedCategories={formData.interests || []}
-                                onChange={(newInterests) => handleUpdate('interests', { interests: newInterests })}
-                            />
-                        </CardContent>
-                    </Card>
-                </TabsContent>
-
-                {/* Social Tab */}
-                <TabsContent value="social">
-                    <div className="grid gap-4 md:grid-cols-2">
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>{t('dashboard.socialGroups')}</CardTitle>
-                                <CardDescription>{t('dashboard.joinCommunity')}</CardDescription>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                <div className="space-y-2">
-                                    <Label>{t('dashboard.joinQuestion')}</Label>
-                                    <RadioGroup
-                                        value={formData.profileData?.socialGroup || 'none'}
-                                        onValueChange={(val) => handleUpdate('socialGroup', {
-                                            profileData: { ...formData.profileData, socialGroup: val }
-                                        })}
-                                    >
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="whatsapp" id="s1" />
-                                            <Label htmlFor="s1">{t('dashboard.joinWhatsapp')}</Label>
-                                        </div>
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="telegram" id="s2" />
-                                            <Label htmlFor="s2">{t('dashboard.joinTelegram')}</Label>
-                                        </div>
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="none" id="s3" />
-                                            <Label htmlFor="s3">{t('dashboard.preferNotJoin')}</Label>
-                                        </div>
-                                    </RadioGroup>
-                                </div>
-
-                                {(formData.profileData?.socialGroup === 'whatsapp' || formData.profileData?.socialGroup === 'telegram') && (
-                                    <div className="pt-4 flex flex-col gap-2">
-                                        <Button className="w-full" onClick={() => window.open(formData.profileData?.socialGroup === 'whatsapp' ? 'https://chat.whatsapp.com/IPFpYXlHJTdH0rZosQGws4' : 'https://t.me/+XHaw-Wa4EsBmMjk6', '_blank')}>
-                                            {formData.profileData?.socialGroup === 'whatsapp' ? t('dashboard.joinWhatsapp') : t('dashboard.joinTelegram')}
-                                        </Button>
-
-                                        {formData.profileData?.socialGroup === 'whatsapp' && (
-                                            <Button variant="outline" className="w-full" onClick={() => {
-                                                const text = t('whatsappInvite');
-                                                window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
-                                            }}>
-                                                <Share2 className="mr-2 h-4 w-4" /> Share WhatsApp Group
-                                            </Button>
-                                        )}
-                                    </div>
-                                )}
-                            </CardContent>
-                        </Card>
-
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>{t('dashboard.rewardsFeedback')}</CardTitle>
-                                <CardDescription>{t('dashboard.tellUs')}</CardDescription>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                <div className="space-y-2">
-                                    <Label>{t('dashboard.whatToWin')}</Label>
-                                    <Select
-                                        value={formData.profileData?.rewardPreference || ''}
-                                        onValueChange={(val) => handleUpdate('rewardPreference', {
-                                            profileData: { ...formData.profileData, rewardPreference: val }
-                                        })}
-                                    >
-                                        <SelectTrigger>
-                                            <SelectValue placeholder={t('dashboard.selectOption')} />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="prizes">{t('dashboard.prizes')}</SelectItem>
-                                            <SelectItem value="points">{t('dashboard.points')}</SelectItem>
-                                            <SelectItem value="cash">{t('dashboard.cash')}</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                                <div className="space-y-2">
-                                    <Label>{t('benefits.feedback.rating')}</Label>
-                                    <div className="flex items-center space-x-1">
-                                        {[1, 2, 3, 4, 5].map((star) => (
-                                            <Star
-                                                key={star}
-                                                className={`cursor-pointer h-5 w-5 ${star <= feedbackRating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
-                                                onClick={() => setFeedbackRating(star)}
-                                            />
-                                        ))}
-                                    </div>
-                                </div>
-                                <div className="space-y-2">
-                                    <Label>{t('dashboard.feedback')}</Label>
-                                    <Textarea
-                                        placeholder={t('dashboard.feedbackPlaceholder')}
-                                        value={feedbackMessage}
-                                        onChange={(e) => setFeedbackMessage(e.target.value)}
+                        <TabsContent value="interests">
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle>{t('dashboard.yourInterests')}</CardTitle>
+                                    <CardDescription>{t('dashboard.yourInterestsDesc')}</CardDescription>
+                                </CardHeader>
+                                <CardContent>
+                                    <CategorySelector
+                                        selectedCategories={formData.interests || []}
+                                        onChange={(newInterests) => handleUpdate('interests', { interests: newInterests })}
                                     />
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        className="mt-2"
-                                        onClick={handleSendFeedback}
-                                        disabled={isSubmittingFeedback}
-                                    >
-                                        {isSubmittingFeedback ? t('dashboard.pending') : t('dashboard.sendFeedback')}
-                                    </Button>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    </div>
-                </TabsContent>
-            </Tabs>
-        </div>
+                                </CardContent>
+                            </Card>
+                        </TabsContent>
+
+                        <TabsContent value="social">
+                            <div className="grid gap-4 md:grid-cols-2">
+                                <Card>
+                                    <CardHeader>
+                                        <CardTitle>{t('dashboard.socialGroups')}</CardTitle>
+                                        <CardDescription>{t('dashboard.joinCommunity')}</CardDescription>
+                                    </CardHeader>
+                                    <CardContent className="space-y-4">
+                                        <div className="space-y-2">
+                                            <Label>{t('dashboard.joinQuestion')}</Label>
+                                            <RadioGroup
+                                                value={formData.profileData?.socialGroup || 'none'}
+                                                onValueChange={(val) => handleUpdate('socialGroup', {
+                                                    profileData: { ...formData.profileData, socialGroup: val }
+                                                })}
+                                            >
+                                                <div className="flex items-center space-x-2">
+                                                    <RadioGroupItem value="whatsapp" id="s1" />
+                                                    <Label htmlFor="s1">{t('dashboard.joinWhatsapp')}</Label>
+                                                </div>
+                                                <div className="flex items-center space-x-2">
+                                                    <RadioGroupItem value="telegram" id="s2" />
+                                                    <Label htmlFor="s2">{t('dashboard.joinTelegram')}</Label>
+                                                </div>
+                                                <div className="flex items-center space-x-2">
+                                                    <RadioGroupItem value="none" id="s3" />
+                                                    <Label htmlFor="s3">{t('dashboard.preferNotJoin')}</Label>
+                                                </div>
+                                            </RadioGroup>
+                                        </div>
+                                        {(formData.profileData?.socialGroup === 'whatsapp' || formData.profileData?.socialGroup === 'telegram') && (
+                                            <div className="pt-4 flex flex-col gap-2">
+                                                <Button className="w-full" onClick={() => window.open(formData.profileData?.socialGroup === 'whatsapp' ? 'https://chat.whatsapp.com/IPFpYXlHJTdH0rZosQGws4' : 'https://t.me/+XHaw-Wa4EsBmMjk6', '_blank')}>
+                                                    {formData.profileData?.socialGroup === 'whatsapp' ? t('dashboard.joinWhatsapp') : t('dashboard.joinTelegram')}
+                                                </Button>
+                                                {formData.profileData?.socialGroup === 'whatsapp' && (
+                                                    <Button variant="outline" className="w-full" onClick={() => {
+                                                        const text = t('whatsappInvite');
+                                                        window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+                                                    }}>
+                                                        <Share2 className="mr-2 h-4 w-4" /> Share WhatsApp Group
+                                                    </Button>
+                                                )}
+                                            </div>
+                                        )}
+                                    </CardContent>
+                                </Card>
+
+                                <Card>
+                                    <CardHeader>
+                                        <CardTitle>{t('dashboard.rewardsFeedback')}</CardTitle>
+                                        <CardDescription>{t('dashboard.tellUs')}</CardDescription>
+                                    </CardHeader>
+                                    <CardContent className="space-y-4">
+                                        <div className="space-y-2">
+                                            <Label>{t('dashboard.whatToWin')}</Label>
+                                            <Select
+                                                value={formData.profileData?.rewardPreference || ''}
+                                                onValueChange={(val) => handleUpdate('rewardPreference', {
+                                                    profileData: { ...formData.profileData, rewardPreference: val }
+                                                })}
+                                            >
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder={t('dashboard.selectOption')} />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="prizes">{t('dashboard.prizes')}</SelectItem>
+                                                    <SelectItem value="points">{t('dashboard.points')}</SelectItem>
+                                                    <SelectItem value="cash">{t('dashboard.cash')}</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label>{t('benefits.feedback.rating')}</Label>
+                                            <div className="flex items-center space-x-1">
+                                                {[1, 2, 3, 4, 5].map((star) => (
+                                                    <Star
+                                                        key={star}
+                                                        className={`cursor-pointer h-5 w-5 ${star <= feedbackRating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
+                                                        onClick={() => setFeedbackRating(star)}
+                                                    />
+                                                ))}
+                                            </div>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label>{t('dashboard.feedback')}</Label>
+                                            <Textarea
+                                                placeholder={t('dashboard.feedbackPlaceholder')}
+                                                value={feedbackMessage}
+                                                onChange={(e) => setFeedbackMessage(e.target.value)}
+                                            />
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                className="mt-2"
+                                                onClick={handleSendFeedback}
+                                                disabled={isSubmittingFeedback}
+                                            >
+                                                {isSubmittingFeedback ? t('dashboard.pending') : t('dashboard.sendFeedback')}
+                                            </Button>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            </div>
+                        </TabsContent>
+                    </Tabs>
+                );
+            default:
+                return <div>View Not Found</div>;
+        }
+    };
+
+    return (
+        <DashboardLayout
+            userData={formData}
+            currentView={activeView}
+            onViewChange={setActiveView}
+        >
+            {renderView()}
+        </DashboardLayout>
     );
 }

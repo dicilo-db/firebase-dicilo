@@ -13,6 +13,12 @@
       "faq": "FAQ"
     }
   },
+  "dicipoints": {
+    "whatIs": {
+      "title": "What are Dicipoints?",
+      "description": "Context on Dicilo.net: The digital currency of our trust-based ecosystem designed to enhance user engagement.\n\nDicipoints are the official reward points of the Dicilo ecosystem. Members earn them by engaging with the platform: sharing authentic recommendations, participating in product presentations, or referring new users to the club. Your Dicipoints grant you access to 'Fairbrowcam' benefits, including special discounts with trusted partners, early access to innovations, and entries into our exclusive seasonal prize draws."
+    }
+  },
   "footer": {
     "imprint": "Imprint",
     "privacy": "Privacy",
@@ -267,6 +273,9 @@
     "manageProfile": "Manage your personal profile and preferences.",
     "yourUniqueCode": "Your Unique Code",
     "overview": "Overview",
+    "myWallet": "My Wallet",
+    "alliesMap": "Allies Map",
+    "settings": "Settings",
     "personalData": "Personal Data",
     "interests": "Interests",
     "socialRewards": "Social & Rewards",

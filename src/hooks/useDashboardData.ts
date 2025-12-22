@@ -1,49 +1,16 @@
-'use client';
-
-import React, { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import {
-    getFirestore,
-    collection,
-    query,
-    where,
-    getDocs,
-    doc,
-    getDoc,
-} from 'firebase/firestore';
 import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
+import { getFirestore, collection, query, where, getDocs, doc, getDoc } from 'firebase/firestore';
 import { app } from '@/lib/firebase';
-import EditClientForm from '@/app/admin/clients/[id]/edit/EditClientForm';
-import { ClientData } from '@/app/admin/clients/[id]/edit/page';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Button } from '@/components/ui/button';
-import { useTranslation } from 'react-i18next';
-import { Loader2, LogOut, User as UserIcon, Coins } from 'lucide-react';
 import { checkAdminRole } from '@/lib/auth';
-import { PrivateDashboard } from '@/components/dashboard/PrivateDashboard';
+import { ClientData } from '@/app/admin/clients/[id]/edit/page';
 
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-const DashboardSkeleton = () => (
-    <div className="space-y-6 p-8">
-        <div className="flex items-center justify-between">
-            <Skeleton className="h-8 w-48" />
-            <Skeleton className="h-10 w-24" />
-        </div>
-        <div className="rounded-lg border p-6">
-            <Skeleton className="mb-6 h-10 w-full" />
-            <div className="space-y-4">
-                <Skeleton className="h-10 w-full" />
-                <Skeleton className="h-20 w-full" />
-            </div>
-        </div>
-    </div>
-);
-
-export default function DashboardPage() {
+export function useDashboardData() {
     const router = useRouter();
-    const { t } = useTranslation(['login', 'admin', 'common']); // Load admin for the form
     const [user, setUser] = useState<User | null>(null);
     const [clientData, setClientData] = useState<ClientData | null>(null);
     const [privateProfile, setPrivateProfile] = useState<any | null>(null);
@@ -185,73 +152,5 @@ export default function DashboardPage() {
         }
     };
 
-    const handleLogout = async () => {
-        await auth.signOut();
-        router.push('/');
-    };
-
-    if (isLoading) {
-        return (
-            <div className="flex min-h-screen flex-col bg-background">
-                <main className="container mx-auto flex-grow p-4">
-                    <DashboardSkeleton />
-                </main>
-            </div>
-        );
-    }
-
-    return (
-        <div className="flex min-h-screen flex-col bg-background">
-            <main className="container mx-auto flex-grow p-4">
-                {!privateProfile && (
-                    <div className="mb-6 flex items-center justify-between">
-                        <h1 className="text-2xl font-bold">
-                            {/* Title changes based on context */}
-                            {t('successTitle')}
-                        </h1>
-                        <div className="flex gap-2">
-                            <Button variant="outline" onClick={() => router.push('/dashboard/dicicoin')}>
-                                <Coins className="mr-2 h-4 w-4" />
-                                DiciCoin
-                            </Button>
-                            <Button variant="outline" onClick={() => router.push('/dashboard/profile')}>
-                                <UserIcon className="mr-2 h-4 w-4" />
-                                Profil bearbeiten
-                            </Button>
-                            <Button variant="outline" onClick={() => router.push('/dashboard/tickets')}>
-                                <Loader2 className="mr-2 h-4 w-4" />
-                                {t('tickets.title', 'Tickets')}
-                            </Button>
-                            {isAdmin && (
-                                <Button variant="default" onClick={() => router.push('/admin')}>
-                                    {t('adminPanel')}
-                                </Button>
-                            )}
-                            <Button variant="outline" onClick={handleLogout}>
-                                <LogOut className="mr-2 h-4 w-4" />
-                                {t('logout')}
-                            </Button>
-                        </div>
-                    </div>
-                )}
-
-                {error === 'no_client_found' ? (
-                    <div className="rounded-lg border p-8 text-center">
-                        <h2 className="text-xl font-semibold">{t('common:dashboard.welcome')}</h2>
-                        <p className="mt-2 text-muted-foreground">
-                            {t('common:dashboard.noCompanyFound')}
-                        </p>
-                    </div>
-                ) : error ? (
-                    <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-destructive">
-                        Error: {error}
-                    </div>
-                ) : clientData ? (
-                    <EditClientForm initialData={clientData} />
-                ) : privateProfile && user ? (
-                    <PrivateDashboard user={user} profile={privateProfile} />
-                ) : null}
-            </main>
-        </div>
-    );
+    return { user, clientData, privateProfile, isLoading, error, isAdmin };
 }

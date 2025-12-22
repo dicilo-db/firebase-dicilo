@@ -45,18 +45,35 @@ export async function createPrivateUserProfile(
         whatsapp?: string;
         phone?: string;
         contactType?: 'whatsapp' | 'telegram';
+        referralCode?: string;
     }
 ) {
-    const { firstName, lastName, email, whatsapp, phone, contactType } = data;
+    const { firstName, lastName, email, whatsapp, phone, contactType, referralCode } = data;
+
+    const db = getAdminDb();
 
     // Check if exists
-    const docRef = getAdminDb().collection('private_profiles').doc(uid);
+    const docRef = db.collection('private_profiles').doc(uid);
     const existing = await docRef.get();
     if (existing.exists) return { success: false, message: 'Profile already exists', profile: existing.data() };
 
     const phoneForCode = whatsapp || phone || '000';
     const uniqueCode = await generateUniqueCodeAdmin(firstName, lastName, phoneForCode);
 
+    // Referral Logic
+    let referrerUid: string | null = null;
+    let initialBalance = 0;
+
+    if (referralCode) {
+        referrerUid = await validateReferralCode(referralCode);
+        if (referrerUid) {
+            initialBalance = 50; // Welcome Bonus
+        }
+    }
+
+    const batch = db.batch();
+
+    // 1. Create Profile
     const profileData = {
         uid,
         email,
@@ -78,10 +95,80 @@ export async function createPrivateUserProfile(
             socialGroup: 'none',
         },
         referrals: [],
+        referredBy: referrerUid || null,
         createdAt: admin.firestore.FieldValue.serverTimestamp(),
         updatedAt: admin.firestore.FieldValue.serverTimestamp(),
     };
+    batch.set(docRef, profileData);
 
-    await docRef.set(profileData);
+    // 2. Create Wallet for New User
+    const walletRef = db.collection('wallets').doc(uid);
+    batch.set(walletRef, {
+        balance: initialBalance,
+        totalEarned: initialBalance,
+        totalSpent: 0,
+        updatedAt: admin.firestore.FieldValue.serverTimestamp()
+    });
+
+    // 3. Transactions & Referrer Rewards
+    if (initialBalance > 0) {
+        // Log Welcome Bonus
+        const trxRef = db.collection('wallet_transactions').doc();
+        batch.set(trxRef, {
+            userId: uid,
+            amount: 50,
+            type: 'WELCOME_BONUS',
+            description: 'Welcome Bonus (Referred by ' + referralCode + ')',
+            timestamp: admin.firestore.FieldValue.serverTimestamp()
+        });
+    }
+
+    if (referrerUid) {
+        // Reward Referrer (+20)
+        const referrerWalletRef = db.collection('wallets').doc(referrerUid);
+        batch.set(referrerWalletRef, {
+            balance: admin.firestore.FieldValue.increment(20),
+            totalEarned: admin.firestore.FieldValue.increment(20),
+            updatedAt: admin.firestore.FieldValue.serverTimestamp()
+        }, { merge: true });
+
+        // Log Referrer Reward
+        const refTrxRef = db.collection('wallet_transactions').doc();
+        batch.set(refTrxRef, {
+            userId: referrerUid,
+            amount: 20,
+            type: 'REFERRAL_REWARD',
+            description: 'Referral Reward (User: ' + uniqueCode + ')',
+            timestamp: admin.firestore.FieldValue.serverTimestamp()
+        });
+
+        // Update Referrer Profile (add to referrals list)
+        // We need to read existing referrals or just arrayUnion. batch supports arrayUnion.
+        const referrerProfileRef = db.collection('private_profiles').doc(referrerUid);
+        batch.update(referrerProfileRef, {
+            referrals: admin.firestore.FieldValue.arrayUnion({
+                uid: uid,
+                code: uniqueCode,
+                joinedAt: new Date().toISOString() // Approximate time, okay for list
+            })
+        });
+    }
+
+    await batch.commit();
     return { success: true, profile: profileData };
+}
+
+/**
+ * Validates a referral code and returns the referrer's UID if valid.
+ */
+async function validateReferralCode(code: string): Promise<string | null> {
+    if (!code) return null;
+    const db = getAdminDb();
+    const snapshot = await db.collection('private_profiles')
+        .where('uniqueCode', '==', code)
+        .limit(1)
+        .get();
+
+    if (snapshot.empty) return null;
+    return snapshot.docs[0].id;
 }
