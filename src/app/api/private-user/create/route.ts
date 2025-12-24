@@ -20,7 +20,7 @@ export async function POST(request: Request) {
         }
 
         const body = await request.json();
-        const { uid, email, firstName, lastName, phoneNumber, contactType, referralCode } = body;
+        const { uid, email, firstName, lastName, phoneNumber, contactType, referralCode, inviteId } = body;
 
         if (decodedToken.uid !== uid) {
             return NextResponse.json({ error: 'Forbidden: UID mismatch' }, { status: 403 });
@@ -40,7 +40,8 @@ export async function POST(request: Request) {
             whatsapp: contactType === 'whatsapp' ? phoneNumber : undefined,
             phone: phoneNumber,
             contactType,
-            referralCode
+            referralCode,
+            inviteId
         });
 
         if (!result.success) {

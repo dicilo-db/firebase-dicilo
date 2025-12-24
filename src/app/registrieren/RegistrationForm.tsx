@@ -15,6 +15,7 @@ import { useTranslation } from 'react-i18next';
 import { Loader2, LocateFixed, Eye, EyeOff } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import dynamic from 'next/dynamic';
+import { useSearchParams } from 'next/navigation';
 
 import { Textarea } from '@/components/ui/textarea';
 
@@ -53,6 +54,8 @@ const registrationSchema = z.object({
   headerImageUrl: z.string().url('register.errors.invalid_url').optional().or(z.literal('')),
   instagramUrl: z.string().url('register.errors.invalid_url').optional().or(z.literal('')),
   facebookUrl: z.string().url('register.errors.invalid_url').optional().or(z.literal('')),
+  inviteId: z.string().optional(),
+  referralCode: z.string().optional(),
 }).refine((data) => {
   if (data.password && data.password !== data.confirmPassword) {
     return false;
@@ -88,6 +91,7 @@ export function RegistrationForm() {
   const { toast } = useToast();
   const { t, i18n } = useTranslation('register');
   const locale = i18n.language;
+  const searchParams = useSearchParams();
   const [isGeocoding, setIsGeocoding] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
@@ -114,6 +118,13 @@ export function RegistrationForm() {
   const showBusinessFields = ['retailer', 'premium', 'donor'].includes(registrationType);
   const showPremiumFields = registrationType === 'premium';
   const coords = watch('coords');
+
+  React.useEffect(() => {
+    const ref = searchParams.get('ref');
+    const invite = searchParams.get('invite');
+    if (ref) setValue('referralCode', ref);
+    if (invite) setValue('inviteId', invite);
+  }, [searchParams, setValue]);
 
   const handleGeocode = React.useCallback(
     async (addressToGeocode: string) => {
@@ -220,7 +231,9 @@ export function RegistrationForm() {
             firstName: data.firstName,
             lastName: data.lastName,
             phoneNumber: data.phone || data.whatsapp, // Fallback
-            contactType: data.contactType
+            contactType: data.contactType,
+            referralCode: data.referralCode,
+            inviteId: data.inviteId
           }),
         });
 

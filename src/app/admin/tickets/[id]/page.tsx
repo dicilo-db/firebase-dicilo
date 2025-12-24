@@ -182,20 +182,6 @@ export default function AdminTicketDetailPage() {
                         Back to Tickets
                     </Link>
                 </Button>
-
-                <div className="flex items-center gap-2 bg-muted/30 p-2 rounded-lg border">
-                    <span className="text-xs font-medium px-2">Reading Language:</span>
-                    <Select value={myLanguage} onValueChange={setMyLanguage}>
-                        <SelectTrigger className="w-[140px] h-8 text-xs">
-                            <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {SUPPORTED_LANGUAGES.map(lang => (
-                                <SelectItem key={lang.value} value={lang.value}>{lang.label}</SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
-                </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -213,14 +199,31 @@ export default function AdminTicketDetailPage() {
                             <div className="bg-white dark:bg-slate-900 p-5 rounded-xl border shadow-sm relative group">
                                 <div className="flex justify-between items-start mb-3">
                                     <span className="font-semibold text-primary">{ticket.userName} <span className="text-xs font-normal text-muted-foreground">(Original Request)</span></span>
-                                    <button
-                                        onClick={() => handleTranslate('original', ticket.description)}
-                                        className="text-xs text-blue-600 hover:text-blue-700 flex items-center gap-1 bg-blue-50 hover:bg-blue-100 px-2 py-1 rounded-full transition-colors"
-                                        disabled={translating['original']}
-                                    >
-                                        <Languages className="h-3 w-3" />
-                                        {translating['original'] ? 'Translating...' : `Translate to ${myLanguage}`}
-                                    </button>
+
+                                    <div className="flex items-center gap-2">
+                                        <div className="flex items-center gap-1 bg-muted/20 border rounded px-2 py-0.5">
+                                            <span className="text-[10px] text-muted-foreground uppercase font-bold whitespace-nowrap">Read in:</span>
+                                            <Select value={myLanguage} onValueChange={setMyLanguage}>
+                                                <SelectTrigger className="w-[100px] h-6 text-xs border-none bg-transparent focus:ring-0 p-0 shadow-none">
+                                                    <SelectValue />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {SUPPORTED_LANGUAGES.map(lang => (
+                                                        <SelectItem key={lang.value} value={lang.value}>{lang.label}</SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+
+                                        <button
+                                            onClick={() => handleTranslate('original', ticket.description)}
+                                            className="text-xs text-blue-600 hover:text-blue-700 flex items-center gap-1 bg-blue-50 hover:bg-blue-100 px-2 py-1 rounded-full transition-colors h-7"
+                                            disabled={translating['original']}
+                                        >
+                                            <Languages className="h-3 w-3" />
+                                            {translating['original'] ? 'Translating...' : 'Translate'}
+                                        </button>
+                                    </div>
                                 </div>
                                 <p className="whitespace-pre-wrap text-sm leading-relaxed">{ticket.description}</p>
                                 {translations['original'] && (

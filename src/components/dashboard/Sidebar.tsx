@@ -16,7 +16,9 @@ import {
     Coins,
     LifeBuoy,
     Shield,
-    Info
+    Info,
+    Briefcase,
+    Megaphone
 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -33,6 +35,14 @@ interface SidebarProps {
     onViewChange: (view: string) => void;
     currentView: string;
 }
+
+type NavItem = {
+    id: string;
+    label: string;
+    icon: React.ElementType;
+    type: 'view' | 'link' | 'dialog';
+    href?: string;
+};
 
 export function Sidebar({ userData, onViewChange, currentView }: SidebarProps) {
     const { t } = useTranslation('common');
@@ -80,8 +90,12 @@ export function Sidebar({ userData, onViewChange, currentView }: SidebarProps) {
     // For now, mocking or using safe default.
     const userLevel = "Member";
 
-    const navItems = [
+
+    // Explicitly type the array to avoid discriminated union inference issues
+    const navItems: NavItem[] = [
         { id: 'overview', label: t('dashboard.overview'), icon: Home, type: 'view' },
+        { id: 'freelancer', label: 'Freelancer / Representante', icon: Briefcase, type: 'link', href: '/dashboard/freelancer' },
+        { id: 'ads-manager', label: 'Ads Manager', icon: Megaphone, type: 'link', href: '/dashboard/ads-manager' },
         { id: 'wallet', label: t('dashboard.myWallet'), icon: Wallet, type: 'view' },
         { id: 'invite', label: t('dashboard.inviteFriends'), icon: Users, type: 'view' },
         { id: 'map', label: t('dashboard.alliesMap'), icon: MapIcon, type: 'view' },

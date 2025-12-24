@@ -71,7 +71,7 @@ const Tabs = ({ children }: { children: React.ReactNode }) => {
     <div className="w-full">
       <div className="flex overflow-x-auto border-b border-gray-200">
         {React.Children.map(children, (child) => {
-          if (!child) return null;
+          if (!React.isValidElement(child)) return null;
           return (
             <Tab
               key={child.props.label}
@@ -84,7 +84,7 @@ const Tabs = ({ children }: { children: React.ReactNode }) => {
       </div>
       <div className="rounded-b-lg bg-white p-6 shadow-sm">
         {React.Children.map(children, (child) => {
-          if (!child) return null;
+          if (!React.isValidElement(child)) return null;
           if (child.props.label === activeTab) {
             return child;
           }

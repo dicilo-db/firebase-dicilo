@@ -618,3 +618,5 @@ exports.cleanupDuplicates = (0, https_1.onRequest)({ timeoutSeconds: 540, memory
 // --- Telegram Bot ---
 __exportStar(require("./telegram"), exports);
 __exportStar(require("./userManagement"), exports);
+// --- Pioneer Referrals System ---
+__exportStar(require("./pioneer-referrals"), exports);

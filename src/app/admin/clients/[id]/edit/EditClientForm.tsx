@@ -854,7 +854,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
   const preparedData = useMemo(() => {
     const data = initialData || {};
     const headerData = data.headerData || {};
-    const marqueeData = data.marqueeHeaderData || {};
+    const marqueeData = data.marqueeHeaderData || { enabled: true };
     const bodyData = data.bodyData || {};
     const socialLinks = headerData.socialLinks || [];
 

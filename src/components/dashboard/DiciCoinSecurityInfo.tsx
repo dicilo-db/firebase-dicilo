@@ -8,10 +8,11 @@ export const DiciCoinSecurityInfo = () => {
     if (lang === 'en') {
         return (
             <div className="space-y-4 text-justify">
-                <p>DICICOINs can only be acquired through Authorized Sales Agents duly accredited by Dicilo.</p>
-                <p>In order to protect the community and guarantee the authenticity of each coin, purchases made from unauthorized or fake agents are not recognized.</p>
-                <p>Each DICICOIN is delivered with a Sealed License, a Unique Serial Number, and is registered in the name of the beneficiary, who receives a digital property title within the Dicilo ecosystem.</p>
-                <p>DICICOINs are transferable between users; however, they can only be redeemed or enabled for future conversion processes by the holder officially registered in the authorized buyers list.</p>
+                <p>DICICOINs can be acquired exclusively through sales points duly accredited and authorized by Dicilo.</p>
+                <p>To protect the community, maintain transparency, and ensure the authenticity of every single coin, purchases via unauthorized or misleading providers will not be recognized.</p>
+                <p>Each DICICOIN is issued with a sealed license, a unique serial number, and a personal registration. This registration establishes a digital, system-internal proof of assignment within the Dicilo ecosystem and does not constitute a transferable financial or property title in the legal sense.</p>
+                <p>DICICOINs can be transferred between users. However, eligibility to participate in potential future conversion, unlocking, or access processes is reserved exclusively for the person who is listed at that time as the officially registered holder within the Dicilo system.</p>
+                <p>Participation in such future processes takes place exclusively under consideration of the respective applicable legal, corporate, and structural frameworks.</p>
             </div>
         );
     }
@@ -19,10 +20,11 @@ export const DiciCoinSecurityInfo = () => {
     if (lang === 'de') {
         return (
             <div className="space-y-4 text-justify">
-                <p>DICICOINs können nur über von Dicilo ordnungsgemäß akkreditierte autorisierte Verkaufsagenten erworben werden.</p>
-                <p>Zum Schutz der Gemeinschaft und zur Gewährleistung der Echtheit jeder Münze werden Käufe bei nicht autorisierten oder falschen Agenten nicht anerkannt.</p>
-                <p>Jede DICICOIN wird mit einer versiegelten Lizenz und einer eindeutigen Seriennummer geliefert und auf den Namen des Begünstigten registriert, der einen digitalen Eigentumstitel innerhalb des Dicilo-Ökosystems erhält.</p>
-                <p>DICICOINs sind zwischen Benutzern übertragbar, können jedoch nur von dem offiziell in der Liste der autorisierten Käufer registrierten Inhaber für zukünftige Umwandlungsprozesse eingelöst oder freigeschaltet werden.</p>
+                <p>DICICOINs können ausschließlich über von Dicilo ordnungsgemäß akkreditierte und autorisierte Verkaufsstellen erworben werden.</p>
+                <p>Zum Schutz der Gemeinschaft, zur Wahrung der Transparenz und zur Sicherstellung der Echtheit jeder einzelnen Münze werden Erwerbe über nicht autorisierte oder irreführende Anbieter nicht anerkannt.</p>
+                <p>Jede DICICOIN wird mit einer versiegelten Lizenz, einer eindeutigen Seriennummer sowie einer personengebundenen Registrierung ausgegeben. Diese Registrierung begründet einen digitalen, systeminternen Zuordnungsnachweis innerhalb des Dicilo-Ökosystems und stellt keinen übertragbaren Finanz- oder Eigentumstitel im rechtlichen Sinne dar.</p>
+                <p>DICICOINs können zwischen Nutzern übertragen werden. Für die Teilnahme an möglichen zukünftigen Umwandlungs-, Freischaltungs- oder Zugangsvorgängen ist jedoch ausschließlich die Person berechtigt, die zum jeweiligen Zeitpunkt als offiziell registrierter Inhaber innerhalb des Dicilo-Systems geführt wird.</p>
+                <p>Die Teilnahme an solchen zukünftigen Prozessen erfolgt ausschließlich unter Berücksichtigung der jeweils geltenden rechtlichen, unternehmerischen und strukturellen Rahmenbedingungen.</p>
             </div>
         );
     }
@@ -30,10 +32,11 @@ export const DiciCoinSecurityInfo = () => {
     // Default to ES
     return (
         <div className="space-y-4 text-justify">
-            <p>Las DICICOIN solo pueden ser adquiridas a través de Agentes Autorizados de Venta debidamente acreditados por Dicilo.</p>
-            <p>Con el fin de proteger a la comunidad y garantizar la autenticidad de cada moneda, no se reconoce la compra realizada a agentes no autorizados o falsos.</p>
-            <p>Cada DICICOIN se entrega con una Licencia Sellada, un Número de Serie Único y queda registrada a nombre del beneficiario, quien recibe un título de propiedad digital dentro del ecosistema Dicilo.</p>
-            <p>Las DICICOIN son transferibles entre usuarios, sin embargo, solo podrán ser canjeadas o habilitadas para procesos futuros de conversión por el titular oficialmente registrado en la lista de compradores autorizados.</p>
+            <p>Las DICICOIN solo pueden adquirirse exclusivamente a través de puntos de venta debidamente acreditados y autorizados por Dicilo.</p>
+            <p>Para proteger a la comunidad, mantener la transparencia y asegurar la autenticidad de cada moneda, no se reconocerán las adquisiciones realizadas a través de proveedores no autorizados o engañosos.</p>
+            <p>Cada DICICOIN se emite con una licencia sellada, un número de serie único y un registro personal vinculado. Este registro constituye una prueba de asignación digital interna dentro del ecosistema Dicilo y no representa un título financiero o de propiedad transferible en el sentido legal.</p>
+            <p>Las DICICOIN pueden transferirse entre usuarios. Sin embargo, para participar en posibles procesos futuros de conversión, desbloqueo o acceso, únicamente tendrá derecho la persona que figure en ese momento como titular oficialmente registrado dentro del sistema Dicilo.</p>
+            <p>La participación en dichos procesos futuros se realizará exclusivamente teniendo en cuenta el marco legal, corporativo y estructural aplicable en cada momento.</p>
         </div>
     );
 };

@@ -416,5 +416,57 @@
     "loading": "Cargando...",
     "error": "Error al convertir",
     "disclaimer": "Datos en tiempo real vía ExchangeRate-API"
+  },
+  "pioneer": {
+    "stats": {
+      "availableSlots": "Espacios Disponibles",
+      "totalSlots": "de {{max}} invitaciones Pioneras",
+      "viewingProposal": "Ojeando Propuesta",
+      "emailsOpened": "Emails Abiertos",
+      "referralsClosed": "Pioneros Cerrados",
+      "bonusPerUser": "+50 DP por c/u"
+    },
+    "form": {
+      "title": "Invitar Futuros Pioneros",
+      "description": "Añade a tus candidatos. El sistema enviará invitaciones personalizadas.",
+      "name": "Nombre",
+      "email": "Email",
+      "emailPlaceholder": "email@ejemplo.com",
+      "language": "Idioma",
+      "addRow": "Añadir otra fila",
+      "submitButton": "Confirmar y Enviar a Brevo"
+    },
+    "tracking": {
+      "title": "Seguimiento de Invitaciones",
+      "description": "Monitoriza el estado de tu red en tiempo real.",
+      "emptyState": "Aún no has enviado invitaciones.",
+      "emptyStateSub": "Usa el formulario de arriba para comenzar."
+    },
+    "status": {
+      "registered": "Inversor Confirmado",
+      "seenInterest": "Visto (Interesado)",
+      "sent": "Enviado",
+      "reminder1": "Recordatorio 1",
+      "reminder2": "Recordatorio 2",
+      "manualAction": "Acción Manual",
+      "pending": "Pendiente",
+      "seen": "Visto",
+      "recent": "Reciente"
+    },
+    "actions": {
+      "contact": "Contactar"
+    },
+    "toasts": {
+      "limitReached": "Límite alcanzado",
+      "limitReachedDesc": "Solo puedes invitar a {{max}} pioneros en total.",
+      "incompleteData": "Datos incompletos",
+      "incompleteDataDesc": "Por favor completa al menos un nombre y email válidos.",
+      "excessInvites": "Exceso de invitaciones",
+      "excessInvitesDesc": "Superas el límite de {{max}}.",
+      "sentSuccess": "¡Invitaciones Enviadas!",
+      "sentSuccessDesc": "{{count}} correos están en camino.",
+      "sendError": "Error al enviar",
+      "sendErrorDesc": "Inténtalo de nuevo."
+    }
   }
 }

@@ -713,3 +713,6 @@ export const cleanupDuplicates = onRequest({ timeoutSeconds: 540, memory: '512Mi
 export * from './telegram';
 export * from './userManagement';
 
+// --- Pioneer Referrals System ---
+export * from './pioneer-referrals';
+

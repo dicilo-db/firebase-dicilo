@@ -55,3 +55,19 @@ export async function deletePrivateUser(uid: string) {
         return { success: false, error: error.message };
     }
 }
+
+/**
+ * Updates a private user's profile data.
+ */
+export async function updatePrivateProfile(uid: string, data: any) {
+    try {
+        await getAdminDb().collection('private_profiles').doc(uid).set({
+            ...data,
+            updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        }, { merge: true });
+        return { success: true };
+    } catch (error: any) {
+        console.error('Error updating profile:', error);
+        throw new Error(error.message);
+    }
+}

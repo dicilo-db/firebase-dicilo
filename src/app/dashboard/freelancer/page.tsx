@@ -1,0 +1,325 @@
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import { useToast } from "@/components/ui/use-toast";
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
+import {
+    Instagram,
+    Send,
+    Copy,
+    Clock,
+    MessageCircle,
+    Share2,
+    CheckCircle2
+} from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import Image from 'next/image';
+import { useSearchParams } from 'next/navigation';
+import { getCampaignById, createPromotion } from '@/app/actions/freelancer';
+import { Campaign } from '@/types/freelancer';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Loader2 } from 'lucide-react';
+
+export default function FreelancerPromoComposerPage() {
+    const searchParams = useSearchParams();
+    const campaignId = searchParams.get('campaignId');
+
+    const [activeCampaign, setActiveCampaign] = useState<Campaign | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [isSharing, setIsSharing] = useState(false);
+
+    const [customText, setCustomText] = useState('');
+    const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+
+    useEffect(() => {
+        async function loadCampaign() {
+            if (!campaignId) return;
+            setIsLoading(true);
+            const campaign = await getCampaignById(campaignId);
+            if (campaign) {
+                setActiveCampaign(campaign);
+                // Reset form state when campaign changes
+                setCustomText(campaign.description || ''); // Default to description or empty
+                setSelectedImageIndex(0);
+            }
+            setIsLoading(false);
+        }
+        loadCampaign();
+    }, [campaignId]);
+
+    const handleWhatsAppShare = async () => {
+        if (!activeCampaign) return;
+
+        setIsSharing(true);
+        try {
+            // 1. Create Promotion Record in Firestore
+            const selectedImg = activeCampaign.images && activeCampaign.images.length > 0
+                ? activeCampaign.images[selectedImageIndex]
+                : '/placeholder-product-1.jpg';
+
+            const result = await createPromotion({
+                campaignId: activeCampaign.id!,
+                freelancerId: 'current_user_id', // TODO: Get real user ID from auth context
+                customText: customText,
+                selectedImage: selectedImg,
+                platform: 'whatsapp',
+                status: 'published',
+                trackingLink: '' // It's generated on server
+            } as any);
+
+            if (result.success && result.promotion) {
+                // 2. Construct WhatsApp Message
+                const trackingLink = result.promotion.trackingLink;
+                const message = `${customText}\n\n${trackingLink} #${activeCampaign.companyName.replace(/[^a-zA-Z0-9]/g, '')}`;
+                const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+
+                // 3. Open WhatsApp
+                window.open(whatsappUrl, '_blank');
+
+                toast({
+                    title: "¡Enlace generado!",
+                    description: "Abriendo WhatsApp con tu promoción...",
+                });
+            } else {
+                throw new Error(result.error);
+            }
+
+        } catch (error: any) {
+            toast({
+                title: "Error al compartir",
+                description: error.message || "No se pudo generar el enlace.",
+                variant: 'destructive'
+            });
+        } finally {
+            setIsSharing(false);
+        }
+    };
+
+    // Initial loading or changing selected campaign
+    if (isLoading) {
+        return (
+            <div className="flex flex-col xl:flex-row h-screen">
+                <div className="flex-1 p-8 space-y-4">
+                    <Skeleton className="h-12 w-1/3" />
+                    <Skeleton className="h-24 w-full" />
+                    <Skeleton className="h-64 w-full" />
+                </div>
+            </div>
+        );
+    }
+
+    if (!activeCampaign) {
+        return (
+            <div className="flex flex-col h-screen items-center justify-center text-center p-8 text-muted-foreground">
+                <div className="max-w-md space-y-2">
+                    <h2 className="text-xl font-semibold text-foreground">Selecciona una Campaña</h2>
+                    <p>Elige una empresa del menú lateral para comenzar a crear tu promoción personalizada.</p>
+                </div>
+            </div>
+        );
+    }
+
+    const selectedImageUrl = activeCampaign.images && activeCampaign.images.length > 0
+        ? activeCampaign.images[selectedImageIndex]
+        : '/placeholder-product-1.jpg'; // Fallback if no images found in real data
+
+    return (
+        <div className="flex flex-col xl:flex-row h-screen overflow-hidden">
+            {/* CENTRAL AREA: EDITOR */}
+            <div className="flex-1 p-6 md:p-8 overflow-y-auto space-y-6 pb-32 bg-slate-50 dark:bg-black/20">
+                <div>
+                    <h1 className="text-3xl font-bold tracking-tight">Crear Nueva Promoción</h1>
+                    <p className="text-muted-foreground mt-2">Personaliza tu mensaje para <span className="font-semibold">{activeCampaign.companyName}</span> y compártelo.</p>
+                </div>
+
+                {/* Campaign Selector / Active Campaign Header */}
+                <div className="flex items-center gap-4 bg-card border p-4 rounded-xl shadow-sm">
+                    {activeCampaign.companyLogo && activeCampaign.companyLogo !== '/placeholder-logo.png' ? (
+                        <div className="h-12 w-12 rounded-full overflow-hidden border shrink-0 relative">
+                            <Image src={activeCampaign.companyLogo} alt="Logo" fill className="object-cover" />
+                        </div>
+                    ) : (
+                        <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center font-bold text-primary text-xl shrink-0">
+                            {activeCampaign.companyName.substring(0, 2).toUpperCase()}
+                        </div>
+                    )}
+
+                    <div>
+                        <h2 className="font-semibold text-lg">{activeCampaign.companyName}</h2>
+                        <div className="flex flex-wrap gap-2 mt-1">
+                            <Badge variant="outline" className={activeCampaign.status === 'active' ? "text-xs bg-green-50 text-green-700 border-green-200" : "text-xs"}>
+                                {activeCampaign.status === 'active' ? 'Campaña Activa' : 'Modo Gris'}
+                            </Badge>
+                            {activeCampaign.categories.map(c => (
+                                <Badge key={c} variant="secondary" className="text-[10px]">{c}</Badge>
+                            ))}
+                        </div>
+                    </div>
+                    <div className="ml-auto text-right hidden sm:block">
+                        <p className="text-xs text-muted-foreground">Pago por Clic</p>
+                        <p className="font-bold text-green-600 text-lg">${activeCampaign.rate_per_click.toFixed(2)}</p>
+                    </div>
+                </div>
+
+                {/* Image Gallery Selector */}
+                <div className="space-y-3">
+                    <label className="text-sm font-medium">1. Selecciona la imagen oficial</label>
+                    {activeCampaign.images && activeCampaign.images.length > 0 ? (
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                            {activeCampaign.images.map((img, i) => (
+                                <div
+                                    key={i}
+                                    onClick={() => setSelectedImageIndex(i)}
+                                    className={`relative aspect-square rounded-lg overflow-hidden border-2 cursor-pointer transition-all ${i === selectedImageIndex ? 'border-primary ring-2 ring-primary/20' : 'border-transparent hover:border-gray-300'}`}
+                                >
+                                    <Image
+                                        src={img}
+                                        alt={`Asset ${i}`}
+                                        fill
+                                        className="object-cover bg-muted"
+                                    />
+                                    {i === selectedImageIndex && <div className="absolute top-2 right-2 h-6 w-6 bg-primary rounded-full flex items-center justify-center text-white"><CheckCircle2 className="h-4 w-4" /></div>}
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <p className="text-sm text-muted-foreground italic">Esta campaña no tiene imágenes disponibles.</p>
+                    )}
+                </div>
+
+                {/* Text Editor */}
+                <div className="space-y-3">
+                    <label className="text-sm font-medium">2. Tu Recomendación Personalizada</label>
+                    <Card className="border-dashed border-2 shadow-none bg-muted/20">
+                        <CardContent className="p-4">
+                            <Textarea
+                                value={customText}
+                                onChange={(e) => setCustomText(e.target.value)}
+                                className="min-h-[120px] bg-transparent border-none resize-none focus-visible:ring-0 text-base"
+                                placeholder={`Escribe por qué recomiendas a ${activeCampaign.companyName}...`}
+                            />
+                            <div className="flex justify-between items-center mt-2 border-t pt-2">
+                                <div className="flex gap-2">
+                                    <Badge variant="secondary" className="text-xs cursor-pointer hover:bg-muted">Generar con IA ✨</Badge>
+                                </div>
+                                <span className="text-xs text-muted-foreground">{customText.length}/280</span>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+
+                {/* Link Generator */}
+                <div className="space-y-3">
+                    <label className="text-sm font-medium">3. Link de Seguimiento Único</label>
+                    <div className="flex gap-2">
+                        <Input value={`dicilo.net/r/${activeCampaign.id.substring(0, 6)}...`} readOnly className="bg-muted font-mono text-sm" />
+                        <Button variant="outline" size="icon">
+                            <Copy className="h-4 w-4" />
+                        </Button>
+                    </div>
+                </div>
+
+                {/* Social Share & Schedule */}
+                <div className="space-y-3 py-4 border-t">
+                    <label className="text-sm font-medium block mb-3">4. Conectar y Programar</label>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <Button
+                            onClick={handleWhatsAppShare}
+                            disabled={isSharing}
+                            className="w-full bg-[#25D366] hover:bg-[#25D366]/90 text-white gap-2 h-12 text-lg font-semibold"
+                        >
+                            {isSharing ? <Loader2 className="h-5 w-5 animate-spin" /> : <MessageCircle className="h-5 w-5" />}
+                            Compartir en WhatsApp
+                        </Button>
+                        <div className="flex gap-2">
+                            <Button className="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white gap-2">
+                                <Instagram className="h-4 w-4" /> Instagram
+                            </Button>
+                            <Button className="flex-1 bg-[#0088cc] text-white gap-2">
+                                <Send className="h-4 w-4" /> Telegram
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* RIGHT AREA: MOBILE PREVIEW */}
+            <div className="hidden xl:flex w-[400px] bg-slate-100 dark:bg-black/40 border-l p-8 flex-col items-center justify-center shrink-0 relative overflow-y-auto">
+                <div className="absolute top-6 left-1/2 -translate-x-1/2">
+                    <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-widest bg-background/50 px-3 py-1 rounded-full backdrop-blur-sm">Vista Previa Móvil</h3>
+                </div>
+
+                {/* Phone Mockup */}
+                <div className="relative w-[320px] h-[650px] bg-black rounded-[40px] shadow-2xl border-8 border-slate-900 mt-8 overflow-hidden">
+                    {/* Notch */}
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-40 h-6 bg-slate-900 rounded-b-xl z-20"></div>
+
+                    {/* Screen Content */}
+                    <div className="w-full h-full bg-white dark:bg-black text-foreground pt-12 relative overflow-hidden flex flex-col">
+
+                        {/* App Header Mock */}
+                        <div className="px-4 py-2 flex justify-between items-center border-b border-white/10">
+                            <span className="font-bold flex items-center gap-1"><span className="text-primary">Dicilo</span>.net</span>
+                        </div>
+
+                        {/* Post Header */}
+                        <div className="p-3 flex items-center gap-2">
+                            {activeCampaign.companyLogo && activeCampaign.companyLogo !== '/placeholder-logo.png' ? (
+                                <div className="h-8 w-8 rounded-full overflow-hidden border shrink-0 relative">
+                                    <Image src={activeCampaign.companyLogo} alt="Logo" fill className="object-cover" />
+                                </div>
+                            ) : (
+                                <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center text-xs font-bold shrink-0 text-black">
+                                    {activeCampaign.companyName.substring(0, 1)}
+                                </div>
+                            )}
+                            <div className="flex-1">
+                                <p className="text-xs font-semibold">{activeCampaign.companyName}</p>
+                                <p className="text-[10px] text-muted-foreground">Patrocinado</p>
+                            </div>
+                            <div className="text-muted-foreground">•••</div>
+                        </div>
+
+                        {/* Post Image */}
+                        <div className="aspect-square bg-muted relative">
+                            <Image
+                                src={selectedImageUrl}
+                                alt="Preview"
+                                fill
+                                className="object-cover"
+                            />
+                        </div>
+
+                        {/* Actions */}
+                        <div className="px-3 py-2 flex gap-4">
+                            <Share2 className="h-5 w-5" />
+                            <MessageCircle className="h-5 w-5" />
+                            <Send className="h-5 w-5 ml-auto" />
+                        </div>
+
+                        {/* Caption */}
+                        <div className="px-3 pb-4">
+                            <p className="text-xs leading-relaxed">
+                                <span className="font-semibold mr-1">Tú</span>
+                                {customText || activeCampaign.description}
+                            </p>
+                            <p className="text-[10px] text-blue-500 mt-1">dicilo.net/r/LZ378... #{activeCampaign.companyName.replace(/[^a-zA-Z0-9]/g, '')}</p>
+                        </div>
+
+                    </div>
+                </div>
+
+                {/* Estimated Earnings Card */}
+                <div className="mt-8 bg-green-600 text-white p-4 rounded-xl shadow-lg w-full max-w-[300px] text-center animate-in slide-in-from-bottom-4 fade-in">
+                    <p className="text-xs font-medium opacity-90 mb-1">Tu Ganancia Estimada</p>
+                    <p className="text-sm opacity-90">por Clic Efectivo:</p>
+                    <p className="text-3xl font-bold mt-1">${activeCampaign.rate_per_click.toFixed(2)} <span className="text-sm font-normal opacity-75">/ clic</span></p>
+                </div>
+            </div>
+        </div>
+    );
+}

@@ -2,6 +2,32 @@
 
 # Bitácora de Cambios - Dicilo.net
 
+### **191. I18N FIX: PIONEER INVITE TRANSLATIONS - CÓDIGO: FIX-PIONEER-I18N-V1**
+- **Fecha y Hora:** 23 de Diciembre de 2025, 23:30 (CET)
+- **Módulos Afectados:** `src/components/dashboard/InviteFriendSection.tsx`, `src/locales/{es,en,de}/common.json`.
+- **Descripción del Cambio:**
+  - **Internacionalización Completa:** Se reemplazaron todos los textos hardcoded en español dentro del módulo de invitación de pioneros (`InviteFriendSection.tsx`) por claves de traducción (`t('pioneer...')`).
+  - **Soporte Multi-idioma:** Se añadieron las traducciones correspondientes en Español, Inglés y Alemán para garantizar que la interfaz se muestre correctamente en el idioma seleccionado por el usuario.
+  - **Elementos Traducidos:** Títulos, descripciones, etiquetas de formulario, estados de invitación, tooltips y mensajes de confirmación/error (toasts).
+- **Resultado:** El módulo de invitaciones ahora es totalmente compatible con ES, EN y DE.
+
+### **190. FEAT & FIX: PIONEER REFERRALS, DICICOIN TEXTS & CLEANUP - CÓDIGO: FEAT-PIONEER-CLEANUP-V1**
+- **Fecha y Hora:** 23 de Diciembre de 2025, 12:30 (CET)
+- **Módulos Afectados:** `src/app/registrieren/RegistrationForm.tsx`, `functions/src/pioneer-referrals.ts`, `src/lib/private-user-service.ts`, `src/components/dashboard/DiciCoin*.tsx`, `src/components/dashboard/Sidebar.tsx`, `src/app/admin/*`.
+- **Descripción del Cambio:**
+  - **Sistema de Invitación Pioneer:** Integración completa en el flujo de registro. Ahora se capturan `inviteId` y `referralCode` de la URL, permitiendo actualizar el estado de la invitación y asignar bonificaciones (50 DiciPoints) automáticamente al crear el perfil privado.
+  - **Textos Legales DiciCoin:** Actualización masiva de los textos informativos y de seguridad de DiciCoin en Alemán, Español e Inglés, alineándolos con la nueva terminología legal (activo tangible simbólico, valor de referencia interno).
+  - **Limpieza de Código:**
+    - Se eliminó la carpeta de respaldo obsoleta `backup_inhaltsverwaltung`.
+    - Se eliminaron archivos duplicados en funciones (`package-lock 2.json`).
+  - **Correcciones de Sintaxis y Tipado:**
+    - Solución a errores de tipado en `Sidebar.tsx` (definición explícita de `navItems`).
+    - Corrección de valores por defecto en `EditClientForm.tsx` para evitar errores con `marqueeHeaderData`.
+    - Corrección de iteración de `React.Children` en `ClientLandingPage.tsx` para asegurar validación de elementos.
+    - Se añadió la función faltante `updatePrivateProfile` en las acciones de servidor.
+    - Corrección crítica en Cloud Functions para el acceso seguro a `BREVO_API_KEY` usando `process.env`.
+- **Resultado:** Sistema de referidos funcional, textos legales actualizados y base de código más limpia y estable.
+
 ### **189. FIX: ADS GEOLOCATION & DASHBOARD SPA - CÓDIGO: FIX-ADS-GEO-SPA-V1**
 - **Fecha y Hora:** 22 de Diciembre de 2025, 12:00 (CET)
 - **Módulos Afectados:** `src/components/dicilo-search-page.tsx`, `src/app/page.tsx`, `Sidebar.tsx`, `PrivateDashboard.tsx`, `TicketsManager.tsx`, `DiciCoinSection.tsx`.

@@ -46,9 +46,10 @@ export async function createPrivateUserProfile(
         phone?: string;
         contactType?: 'whatsapp' | 'telegram';
         referralCode?: string;
+        inviteId?: string;
     }
 ) {
-    const { firstName, lastName, email, whatsapp, phone, contactType, referralCode } = data;
+    const { firstName, lastName, email, whatsapp, phone, contactType, referralCode, inviteId } = data;
 
     const db = getAdminDb();
 
@@ -64,10 +65,29 @@ export async function createPrivateUserProfile(
     let referrerUid: string | null = null;
     let initialBalance = 0;
 
-    if (referralCode) {
+    let inviteDocRef: admin.firestore.DocumentReference | null = null;
+
+    if (inviteId) {
+        // 1. Priority: Validate via Pioneer Invite ID
+        const inviteSnapshot = await db.collection('referrals_pioneers').doc(inviteId).get();
+        if (inviteSnapshot.exists) {
+            const inviteData = inviteSnapshot.data();
+            // Verify email matches? Optional but good practice.
+            // if (inviteData?.friendEmail === email) ... 
+
+            referrerUid = inviteData?.referrerId || null;
+            if (referrerUid) {
+                initialBalance = 50; // Welcome Bonus for Pioneer
+                inviteDocRef = inviteSnapshot.ref;
+            }
+        }
+    }
+
+    if (!referrerUid && referralCode) {
+        // 2. Fallback: Validate via Standard Referral Code
         referrerUid = await validateReferralCode(referralCode);
         if (referrerUid) {
-            initialBalance = 50; // Welcome Bonus
+            initialBalance = 50; // Welcome Bonus standard
         }
     }
 
@@ -118,7 +138,7 @@ export async function createPrivateUserProfile(
             userId: uid,
             amount: 50,
             type: 'WELCOME_BONUS',
-            description: 'Welcome Bonus (Referred by ' + referralCode + ')',
+            description: 'Welcome Bonus (Referred by ' + (referralCode || 'Friend') + ')',
             timestamp: admin.firestore.FieldValue.serverTimestamp()
         });
     }
@@ -151,6 +171,15 @@ export async function createPrivateUserProfile(
                 code: uniqueCode,
                 joinedAt: new Date().toISOString() // Approximate time, okay for list
             })
+        });
+    }
+
+    // 4. Update Pioneer Invite Status (if applicable)
+    if (inviteDocRef) {
+        batch.update(inviteDocRef, {
+            status: 'registered',
+            registeredUid: uid,
+            registeredAt: admin.firestore.FieldValue.serverTimestamp()
         });
     }
 

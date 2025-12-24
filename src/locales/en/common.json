@@ -414,5 +414,57 @@
     "loading": "Loading...",
     "error": "Error converting",
     "disclaimer": "Real-time data via ExchangeRate-API"
+  },
+  "pioneer": {
+    "stats": {
+      "availableSlots": "Available Slots",
+      "totalSlots": "of {{max}} Pioneer invitations",
+      "viewingProposal": "Viewing Proposal",
+      "emailsOpened": "Emails Opened",
+      "referralsClosed": "Closed Pioneers",
+      "bonusPerUser": "+50 DP each"
+    },
+    "form": {
+      "title": "Invite Future Pioneers",
+      "description": "Add your candidates. The system will send personalized invitations.",
+      "name": "Name",
+      "email": "Email",
+      "emailPlaceholder": "email@example.com",
+      "language": "Language",
+      "addRow": "Add another row",
+      "submitButton": "Confirm and Send to Brevo"
+    },
+    "tracking": {
+      "title": "Invitation Tracking",
+      "description": "Monitor the status of your network in real time.",
+      "emptyState": "You haven't sent any invitations yet.",
+      "emptyStateSub": "Use the form above to get started."
+    },
+    "status": {
+      "registered": "Confirmed Investor",
+      "seenInterest": "Seen (Interested)",
+      "sent": "Sent",
+      "reminder1": "Reminder 1",
+      "reminder2": "Reminder 2",
+      "manualAction": "Manual Action",
+      "pending": "Pending",
+      "seen": "Seen",
+      "recent": "Recent"
+    },
+    "actions": {
+      "contact": "Contact"
+    },
+    "toasts": {
+      "limitReached": "Limit reached",
+      "limitReachedDesc": "You can only invite {{max}} pioneers in total.",
+      "incompleteData": "Incomplete data",
+      "incompleteDataDesc": "Please complete at least one valid name and email.",
+      "excessInvites": "Excess invitations",
+      "excessInvitesDesc": "You exceed the limit of {{max}}.",
+      "sentSuccess": "Invitations Sent!",
+      "sentSuccessDesc": "{{count}} emails are on their way.",
+      "sendError": "Error sending",
+      "sendErrorDesc": "Please try again."
+    }
   }
 }

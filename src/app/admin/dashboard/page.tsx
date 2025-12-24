@@ -30,6 +30,8 @@ import {
   Tag,
   Coins,
   Wallet,
+  Briefcase,
+  Megaphone
 } from 'lucide-react';
 import { useAdminUser, useAuthGuard } from '@/hooks/useAuthGuard';
 import { useServerAction } from '@/hooks/useServerAction';
@@ -58,6 +60,8 @@ const syncExistingCustomersToErp = httpsCallable(
 );
 const auth = getAuth(app);
 const db = getFirestore(app);
+
+import { seedCampaignsAction } from '@/app/actions/seed-freelancer';
 
 // --- COMPONENTES AUXILIARES ---
 
@@ -282,6 +286,23 @@ const DashboardContent: React.FC = () => {
     }
   };
 
+  const [isFreelancerSeeding, setIsFreelancerSeeding] = useState(false);
+  const handleSeedFreelancer = async () => {
+    setIsFreelancerSeeding(true);
+    try {
+      const res = await seedCampaignsAction();
+      if (res.success) {
+        toast({ title: "Success", description: res.message });
+      } else {
+        toast({ title: "Error", description: res.error, variant: 'destructive' });
+      }
+    } catch (e: any) {
+      toast({ title: "Error", description: e.message, variant: 'destructive' });
+    } finally {
+      setIsFreelancerSeeding(false);
+    }
+  };
+
   // --- RENDERIZADO ---
 
   if (isUserLoading || !adminUser) {
@@ -382,7 +403,29 @@ const DashboardContent: React.FC = () => {
                     ) : (
                       <DownloadCloud className="mr-2 h-4 w-4" />
                     )}
-                    {t('dashboard.import.button')}
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-slate-100/50 dark:bg-slate-800/50 border-dashed border-slate-300 dark:border-slate-700">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">
+                    Freelancer Module
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Button
+                    onClick={handleSeedFreelancer}
+                    disabled={isFreelancerSeeding}
+                    className="w-full"
+                    variant="secondary"
+                  >
+                    {isFreelancerSeeding ? (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    ) : (
+                      <Briefcase className="mr-2 h-4 w-4" />
+                    )}
+                    Initial Seed Data
                   </Button>
                 </CardContent>
               </Card>
@@ -685,6 +728,34 @@ const DashboardContent: React.FC = () => {
                 <CardContent>
                   <div className="text-2xl font-bold">Dicipoints</div>
                   <p className="text-xs text-muted-foreground mt-1">Manage Point Value & Injection</p>
+                </CardContent>
+              </Card>
+            </Link>
+
+            {/* Freelancer Module (NEW) */}
+            <Link href="/dashboard/freelancer" className="group">
+              <Card className="h-full transition-all hover:shadow-md hover:border-blue-500/50 cursor-pointer relative">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Gig Economy</CardTitle>
+                  <Briefcase className="h-4 w-4 text-muted-foreground group-hover:text-blue-500 transition-colors" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">Freelancer</div>
+                  <p className="text-xs text-muted-foreground mt-1">Gestión de Promovendedores</p>
+                </CardContent>
+              </Card>
+            </Link>
+
+            {/* Ads Manager (NEW MODULE) */}
+            <Link href="/dashboard/ads-manager" className="group">
+              <Card className="h-full transition-all hover:shadow-md hover:border-purple-500/50 cursor-pointer relative">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Marketing Tools</CardTitle>
+                  <Megaphone className="h-4 w-4 text-muted-foreground group-hover:text-purple-500 transition-colors" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">Ads Manager</div>
+                  <p className="text-xs text-muted-foreground mt-1">QRs Dinámicos & Campañas</p>
                 </CardContent>
               </Card>
             </Link>

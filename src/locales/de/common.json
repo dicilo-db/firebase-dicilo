@@ -435,5 +435,57 @@
     "loading": "Laden...",
     "error": "Fehler bei der Umrechnung",
     "disclaimer": "Echtzeitdaten über ExchangeRate-API"
+  },
+  "pioneer": {
+    "stats": {
+      "availableSlots": "Verfügbare Plätze",
+      "totalSlots": "von {{max}} Pionier-Einladungen",
+      "viewingProposal": "Vorschlag ansehen",
+      "emailsOpened": "Geöffnete E-Mails",
+      "referralsClosed": "Bestätigte Pioniere",
+      "bonusPerUser": "+50 DP pro Person"
+    },
+    "form": {
+      "title": "Zukünftige Pioniere einladen",
+      "description": "Füge deine Kandidaten hinzu. Das System sendet personalisierte Einladungen.",
+      "name": "Name",
+      "email": "E-Mail",
+      "emailPlaceholder": "email@beispiel.com",
+      "language": "Sprache",
+      "addRow": "Weitere Zeile hinzufügen",
+      "submitButton": "Bestätigen und an Brevo senden"
+    },
+    "tracking": {
+      "title": "Einladungsverfolgung",
+      "description": "Überwache den Status deines Netzwerks in Echtzeit.",
+      "emptyState": "Du hast noch keine Einladungen versendet.",
+      "emptyStateSub": "Nutze das Formular oben, um zu beginnen."
+    },
+    "status": {
+      "registered": "Bestätigter Investor",
+      "seenInterest": "Gesehen (Interessiert)",
+      "sent": "Gesendet",
+      "reminder1": "Erinnerung 1",
+      "reminder2": "Erinnerung 2",
+      "manualAction": "Manuelle Aktion",
+      "pending": "Ausstehend",
+      "seen": "Gesehen",
+      "recent": "Kürzlich"
+    },
+    "actions": {
+      "contact": "Kontaktieren"
+    },
+    "toasts": {
+      "limitReached": "Limit erreicht",
+      "limitReachedDesc": "Du kannst insgesamt nur {{max}} Pioniere einladen.",
+      "incompleteData": "Unvollständige Daten",
+      "incompleteDataDesc": "Bitte fülle mindestens einen gültigen Namen und eine E-Mail-Adresse aus.",
+      "excessInvites": "Zu viele Einladungen",
+      "excessInvitesDesc": "Du überschreitest das Limit von {{max}}.",
+      "sentSuccess": "Einladungen gesendet!",
+      "sentSuccessDesc": "{{count}} E-Mails sind unterwegs.",
+      "sendError": "Fehler beim Senden",
+      "sendErrorDesc": "Bitte versuche es erneut."
+    }
   }
 }
