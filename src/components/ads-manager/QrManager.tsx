@@ -1,18 +1,17 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
-import { QRCodeCanvas } from 'qrcode.react';
+import React, { useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
 import {
     getQrCampaigns,
     createQrCampaign,
-    updateQrTargetUrl,
     deleteQrCampaign,
     QrCampaign
 } from '@/app/actions/ads-manager';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import {
     Dialog,
     DialogContent,
@@ -23,10 +22,20 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Plus, Download, Edit2, Trash2, ExternalLink, QrCode } from 'lucide-react';
-import Link from 'next/link';
+import { Loader2, Plus, Download, Trash2, QrCode, ArrowLeft, ExternalLink, Edit2 } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 
-export default function QrManagerPage() {
+// Dynamic import to avoid SSR issues with Canvas (fix for blank page on localhost)
+const QRCodeCanvas = dynamic(
+    () => import('qrcode.react').then((mod) => mod.QRCodeCanvas),
+    { ssr: false }
+);
+
+interface QrManagerProps {
+    onBack: () => void;
+}
+
+export function QrManager({ onBack }: QrManagerProps) {
     const { toast } = useToast();
     const [campaigns, setCampaigns] = useState<QrCampaign[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -39,13 +48,26 @@ export default function QrManagerPage() {
     // Fetch Data
     const loadCampaigns = async () => {
         setIsLoading(true);
-        const res = await getQrCampaigns();
-        if (res.success && res.campaigns) {
-            setCampaigns(res.campaigns);
-        } else {
+        try {
+            console.log("Fetching campaigns...");
+            const res = await getQrCampaigns();
+            console.log("Campaigns result:", res);
+
+            if (res.success && res.campaigns) {
+                setCampaigns(res.campaigns);
+            } else {
+                console.error("Failed to load campaigns:", res.error);
+                toast({
+                    title: "Error de Carga",
+                    description: res.error || "No se pudieron cargar las campañas. Revisa la consola.",
+                    variant: 'destructive'
+                });
+            }
+        } catch (err: any) {
+            console.error("Critical fetch error:", err);
             toast({
-                title: "Error",
-                description: res.error || "No se pudieron cargar las campañas.",
+                title: "Error Crítico",
+                description: `Error de conexión: ${err.message || 'Desconocido'}`,
                 variant: 'destructive'
             });
         }
@@ -58,22 +80,50 @@ export default function QrManagerPage() {
 
     // Create Handler
     const handleCreate = async () => {
-        if (!formData.name || !formData.targetUrl) return; // Basic validation
+        if (!formData.name || !formData.targetUrl) {
+            toast({ title: "Faltan datos", description: "Nombre y URL son obligatorios.", variant: 'destructive' });
+            return;
+        }
+
         setIsCreating(true);
-        const res = await createQrCampaign(formData);
-        if (res.success) {
-            toast({ title: "Creado", description: "Campaña QR creada exitosamente." });
-            setFormData({ name: '', targetUrl: '', description: '' });
-            setIsDialogOpen(false);
-            loadCampaigns();
-        } else {
-            toast({ title: "Error", description: res.error, variant: 'destructive' });
+        try {
+            const res = await createQrCampaign(formData);
+            if (res.success) {
+                toast({ title: "Creado", description: "Campaña QR creada exitosamente." });
+                setFormData({ name: '', targetUrl: '', description: '' });
+                setIsDialogOpen(false);
+                loadCampaigns();
+            } else {
+                toast({ title: "Error", description: res.error || "No se pudo crear.", variant: 'destructive' });
+            }
+        } catch (err: any) {
+            console.error(err);
+            toast({ title: "Error Fatal", description: `Error inesperado: ${err.message}`, variant: 'destructive' });
         }
         setIsCreating(false);
     };
 
+    const handleDelete = async (id: string) => {
+        if (!confirm("¿Estás seguro de eliminar este QR?")) return;
+
+        try {
+            const res = await deleteQrCampaign(id);
+            if (res.success) {
+                toast({ title: "Eliminado", description: "QR eliminado correctamente." });
+                loadCampaigns();
+            } else {
+                toast({ title: "Error", description: res.error, variant: 'destructive' });
+            }
+        } catch (err) {
+            toast({ title: "Error", description: "Error al eliminar.", variant: 'destructive' });
+        }
+    };
+
     // Download QR Handler
     const downloadQR = (id: string, name: string) => {
+        // Prevent execution on server just in case
+        if (typeof document === 'undefined') return;
+
         const canvas = document.getElementById(`qr-canvas-${id}`) as HTMLCanvasElement;
         if (canvas) {
             const pngUrl = canvas.toDataURL("image/png");
@@ -89,16 +139,13 @@ export default function QrManagerPage() {
     const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://dicilo.net';
 
     return (
-        <div className="p-6 md:p-8 space-y-6">
+        <div className="space-y-6">
             <div className="flex flex-col md:flex-row justify-between md:items-center gap-4">
                 <div>
-                    <div className="flex items-center gap-2 mb-1">
-                        <Link href="/dashboard/ads-manager" className="text-muted-foreground hover:text-foreground text-sm uppercase tracking-wider font-semibold">
-                            Ads Manager /
-                        </Link>
-                        <span className="text-sm uppercase tracking-wider font-semibold">QRs</span>
-                    </div>
-                    <h1 className="text-3xl font-bold tracking-tight">Gestor de QRs Dinámicos</h1>
+                    <Button variant="ghost" size="sm" className="mb-2 pl-0 hover:pl-2 transition-all" onClick={onBack}>
+                        <ArrowLeft className="mr-2 h-4 w-4" /> Volver al Manager
+                    </Button>
+                    <h2 className="text-2xl font-bold tracking-tight">Gestor de QRs Dinámicos</h2>
                     <p className="text-muted-foreground">Crea códigos QR una vez, cambia su destino cuando quieras.</p>
                 </div>
 
@@ -159,8 +206,9 @@ export default function QrManagerPage() {
             ) : (
                 <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
                     {campaigns.map((camp) => {
-                        // The actual URL stored in the QR Code
-                        const redirectUrl = `${baseUrl}/qr/${camp.id || 'error'}`;
+                        const redirectUrl = `${baseUrl}/qr/${camp.id}`;
+                        // Fallback dates if serialization fails or is missing
+                        const dateStr = camp.createdAt ? new Date(camp.createdAt).toLocaleDateString() : 'N/A';
 
                         return (
                             <Card key={camp.id} className="overflow-hidden flex flex-col">
@@ -176,7 +224,6 @@ export default function QrManagerPage() {
                                     </div>
                                 </CardHeader>
                                 <CardContent className="flex-1 p-6 flex flex-col items-center gap-6">
-                                    {/* The QR Visualization */}
                                     <div className="bg-white p-4 rounded-xl shadow-sm border">
                                         <QRCodeCanvas
                                             value={redirectUrl}
@@ -194,16 +241,13 @@ export default function QrManagerPage() {
                                                 <Input
                                                     defaultValue={camp.targetUrl}
                                                     className="h-8 text-xs font-mono bg-muted/50"
-                                                    readOnly // TODO: Make editable in place
+                                                    readOnly
                                                 />
-                                                <Button size="icon" variant="outline" className="h-8 w-8 shrink-0">
-                                                    <Edit2 className="h-3 w-3" />
-                                                </Button>
                                             </div>
                                         </div>
 
                                         <div className="flex justify-between items-center text-xs text-muted-foreground pt-2 border-t">
-                                            <span>Creado: {new Date(camp.createdAt).toLocaleDateString()}</span>
+                                            <span>Creado: {dateStr}</span>
                                             <div className="flex items-center gap-1 font-semibold text-foreground">
                                                 <QrCode className="h-3 w-3" /> {camp.clicks || 0} Scans
                                             </div>
@@ -219,7 +263,9 @@ export default function QrManagerPage() {
                                     >
                                         <Download className="mr-2 h-3 w-3" /> PNG
                                     </Button>
-                                    <Button variant="ghost" size="sm" className="w-8 px-0 text-red-500 hover:text-red-600 hover:bg-red-50">
+                                    <Button variant="ghost" size="sm"
+                                        onClick={() => handleDelete(camp.id)}
+                                        className="w-8 px-0 text-red-500 hover:text-red-600 hover:bg-red-50">
                                         <Trash2 className="h-4 w-4" />
                                     </Button>
                                 </CardFooter>
@@ -230,11 +276,4 @@ export default function QrManagerPage() {
             )}
         </div>
     );
-}
-
-// Helper badge component because I forgot to import it in the top block properly in the thought process? 
-// Actually I imported it. Good.
-function Badge({ variant, className, children }: any) {
-    const bg = variant === 'default' ? 'bg-green-100 text-green-700 border-green-200' : 'bg-gray-100 text-gray-700 border-gray-200';
-    return <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium border ${bg} ${className}`}>{children}</span>
 }

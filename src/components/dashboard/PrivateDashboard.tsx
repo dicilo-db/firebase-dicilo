@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
+import AdsDashboard from '@/components/ads-manager/AdsDashboard';
 import { updatePrivateProfile, ensureUniqueCode } from '@/app/actions/profile';
 import { User } from 'firebase/auth';
 import { doc, getFirestore, updateDoc, setDoc, onSnapshot, addDoc, collection } from 'firebase/firestore';
@@ -31,12 +33,23 @@ interface PrivateDashboardProps {
 export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
     const { toast } = useToast();
     const { t } = useTranslation('common');
-    const [activeView, setActiveView] = useState('overview'); // overview, wallet, invite, map, settings, dicicoin, tickets
+    const searchParams = useSearchParams();
+
+    // Initialize activeView from URL param if available, otherwise default to 'overview'
+    const [activeView, setActiveView] = useState(searchParams.get('view') || 'overview'); // overview, wallet, invite, map, settings, dicicoin, tickets
     const [isLoading, setIsLoading] = useState(false);
     const [formData, setFormData] = useState(profile);
     const [feedbackMessage, setFeedbackMessage] = useState('');
     const [feedbackRating, setFeedbackRating] = useState(0);
     const [isSubmittingFeedback, setIsSubmittingFeedback] = useState(false);
+
+    // Sync state with URL changes if user navigates back/forward
+    useEffect(() => {
+        const viewParam = searchParams.get('view');
+        if (viewParam && viewParam !== activeView) {
+            setActiveView(viewParam);
+        }
+    }, [searchParams]);
 
     const handleSendFeedback = async () => {
         if (!feedbackMessage.trim()) return;
@@ -203,6 +216,8 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
                 return <DiciCoinSection userData={formData} onViewHistory={() => setActiveView('tickets')} />;
             case 'tickets':
                 return <TicketsManager />;
+            case 'ads-manager':
+                return <AdsDashboard />;
             case 'map':
                 return (
                     <div className="flex flex-col items-center justify-center h-[400px] text-center space-y-4">

@@ -1,6 +1,14 @@
 # Bitácora de Cambios - Dicilo.net
 
-# Bitácora de Cambios - Dicilo.net
+### **192. FIX: ADS MANAGER INTEGRATION & QR SERIALIZATION - CÓDIGO: FIX-ADS-MGR-V1**
+- **Fecha y Hora:** 25 de Diciembre de 2025, 01:00 (CET)
+- **Módulos Afectados:** `src/actions/ads-manager.ts`, `src/components/ads-manager/QrManager.tsx`, `src/app/dashboard/ads-manager/*`, `PrivateDashboard.tsx`.
+- **Descripción del Cambio:**
+  - **Correción de Error Crítico (Only plain objects):** Se modificó la acción `getQrCampaigns` para devolver fechas como cadenas ISO, evitando el error de serialización de Next.js al pasar objetos `Date` o `Timestamp` desde el servidor.
+  - **Integración SPA:** Se eliminó la página heredada `/dashboard/ads-manager/qr-codes` y se configuró una redirección a `/dashboard?view=ads-manager`, centralizando la experiencia en la Single Page Application (SPA) del Dashboard Privado.
+  - **Mejora de Navegación:** Se dotó a `PrivateDashboard` de la capacidad de leer parámetros de URL (`?view=...`), permitiendo enlaces directos a sub-secciones como el Ads Manager.
+  - **Corrección SSR:** Se implementó carga dinámica (`dynamic import` con `ssr: false`) para el componente de generación de QRs, solucionando pantallas blancas en entornos locales.
+- **Resultado:** El Gestor de QRs ahora carga instantáneamente, sin errores de consola y está perfectamente integrado en la navegación del usuario.
 
 ### **191. I18N FIX: PIONEER INVITE TRANSLATIONS - CÓDIGO: FIX-PIONEER-I18N-V1**
 - **Fecha y Hora:** 23 de Diciembre de 2025, 23:30 (CET)

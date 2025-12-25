@@ -1,0 +1,122 @@
+'use client';
+
+import React, { useState } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { QrCode, Mail, MonitorPlay, ArrowRight, BarChart, Database } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { seedCampaignsAction } from '@/app/actions/seed-freelancer';
+import { useToast } from "@/hooks/use-toast";
+import { QrManager } from './QrManager';
+
+type View = 'overview' | 'qr-codes';
+
+export default function AdsDashboard() {
+    const { toast } = useToast();
+    const [isSeeding, setIsSeeding] = useState(false);
+    const [currentView, setCurrentView] = useState<View>('overview');
+
+    const handleSeedData = async () => {
+        setIsSeeding(true);
+        try {
+            const result = await seedCampaignsAction();
+            if (result.success) {
+                toast({ title: "Datos cargados", description: "Las campañas de ejemplo se han creado correctamente." });
+            } else {
+                toast({ title: "Error", description: result.error, variant: "destructive" });
+            }
+        } catch (error) {
+            toast({ title: "Error", description: "Error al ejecutar el seed.", variant: "destructive" });
+        } finally {
+            setIsSeeding(false);
+        }
+    };
+
+    if (currentView === 'qr-codes') {
+        return <QrManager onBack={() => setCurrentView('overview')} />;
+    }
+
+    return (
+        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-5 duration-500">
+            <div className="flex justify-between items-start">
+                <div>
+                    <h1 className="text-3xl font-bold tracking-tight">Ads Campañas Manager</h1>
+                    <p className="text-muted-foreground mt-2">Centraliza y optimiza tus estrategias de marketing digital y físico.</p>
+                </div>
+                <Button variant="outline" size="sm" onClick={handleSeedData} disabled={isSeeding}>
+                    <Database className="mr-2 h-4 w-4" />
+                    {isSeeding ? 'Cargando...' : 'Cargar Datos Demo'}
+                </Button>
+            </div>
+
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {/* Module: Dynamic QR */}
+                <Card className="border-l-4 border-l-primary shadow-md hover:shadow-lg transition-all">
+                    <CardHeader>
+                        <div className="flex items-start justify-between">
+                            <QrCode className="h-8 w-8 text-primary mb-2" />
+                            <Badge>Activo</Badge>
+                        </div>
+                        <CardTitle>QRs Dinámicos</CardTitle>
+                        <CardDescription>Crea códigos QR editables para tus campañas impresas y digitales. Rastrea scans y cambia destinos.</CardDescription>
+                    </CardHeader>
+                    <CardFooter>
+                        <Button className="w-full group" onClick={() => setCurrentView('qr-codes')}>
+                            Gestionar QRs
+                            <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                        </Button>
+                    </CardFooter>
+                </Card>
+
+                {/* Module: Email Marketing */}
+                <Card className="opacity-75 border-dashed">
+                    <CardHeader>
+                        <div className="flex items-start justify-between">
+                            <Mail className="h-8 w-8 text-muted-foreground mb-2" />
+                            <Badge variant="outline">Próximamente</Badge>
+                        </div>
+                        <CardTitle>Email Marketing</CardTitle>
+                        <CardDescription>Envía newsletters y promociones automatizadas a tus listas de clientes segmentadas.</CardDescription>
+                    </CardHeader>
+                    <CardFooter>
+                        <Button variant="secondary" disabled className="w-full">
+                            En desarrollo
+                        </Button>
+                    </CardFooter>
+                </Card>
+
+                {/* Module: Display Ads */}
+                <Card className="opacity-75 border-dashed">
+                    <CardHeader>
+                        <div className="flex items-start justify-between">
+                            <MonitorPlay className="h-8 w-8 text-muted-foreground mb-2" />
+                            <Badge variant="outline">Próximamente</Badge>
+                        </div>
+                        <CardTitle>Display Ads</CardTitle>
+                        <CardDescription>Gestiona banners publicitarios dentro de la red Dicilo y sitios asociados.</CardDescription>
+                    </CardHeader>
+                    <CardFooter>
+                        <Button variant="secondary" disabled className="w-full">
+                            En desarrollo
+                        </Button>
+                    </CardFooter>
+                </Card>
+            </div>
+
+            {/* Global Stats Preview */}
+            <Card className="bg-slate-50 dark:bg-slate-900 border-none">
+                <CardHeader>
+                    <div className="flex items-center gap-2">
+                        <BarChart className="h-5 w-5" />
+                        <CardTitle>Resumen Global de Rendimiento</CardTitle>
+                    </div>
+                </CardHeader>
+                <CardContent>
+                    <div className="h-32 flex items-center justify-center text-muted-foreground text-sm border-2 border-dashed rounded-lg border-slate-200 dark:border-slate-800">
+                        Las estadísticas agregadas de todos tus módulos aparecerán aquí.
+                    </div>
+                </CardContent>
+            </Card>
+        </div>
+    );
+}

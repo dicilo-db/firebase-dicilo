@@ -95,7 +95,7 @@ export function Sidebar({ userData, onViewChange, currentView }: SidebarProps) {
     const navItems: NavItem[] = [
         { id: 'overview', label: t('dashboard.overview'), icon: Home, type: 'view' },
         { id: 'freelancer', label: 'Freelancer / Representante', icon: Briefcase, type: 'link', href: '/dashboard/freelancer' },
-        { id: 'ads-manager', label: 'Ads Manager', icon: Megaphone, type: 'link', href: '/dashboard/ads-manager' },
+        { id: 'ads-manager', label: 'Ads Manager', icon: Megaphone, type: 'view' },
         { id: 'wallet', label: t('dashboard.myWallet'), icon: Wallet, type: 'view' },
         { id: 'invite', label: t('dashboard.inviteFriends'), icon: Users, type: 'view' },
         { id: 'map', label: t('dashboard.alliesMap'), icon: MapIcon, type: 'view' },
