@@ -1,5 +1,15 @@
 # Bitácora de Cambios - Dicilo.net
 
+### **194. FEAT: DICICOIN LANDING PAGE - CÓDIGO: FEAT-DICICOIN-PAGE-V1**
+- **Fecha y Hora:** 26 de Diciembre de 2025, 13:15 (CET)
+- **Módulos Afectados:** `src/app/dicicoin/page.tsx`, `src/components/header.tsx`, `src/locales/{es,en,de}/common.json`.
+- **Descripción del Cambio:**
+  - **Nueva Página:** Se creó `/dicicoin`, una landing page informativa y promocional sobre la moneda física DiciCoin.
+  - **Contenido Visual:** Integración de imágenes de alta calidad (moneda detalle y holding) y diseño en secciones con storytelling.
+  - **Navegación:** Se añadió el enlace "DiciCoin" al menú hamburguesa (móvil/tablet) justo antes de la sección legal, como se solicitó.
+  - **Multilingüe:** Textos completamente traducidos (Español, Inglés, Alemán) explicando la visión, exclusividad y cómo adquirir la moneda.
+- **Resultado:** Nueva sección pública accesible para promover la adquisición de DiciCoins y el registro de usuarios.
+
 ### **193. I18N FIX & CSV REPORT: ADS MANAGER & FREELANCER - CÓDIGO: FIX-ADS-I18N-CSV-V1**
 - **Fecha y Hora:** 26 de Diciembre de 2025, 12:00 (CET)
 - **Módulos Afectados:** `src/components/ads-manager/AdsDashboard.tsx`, `src/components/ads-manager/QrManager.tsx`, `src/app/dashboard/freelancer/page.tsx`, `src/locales/{es,en,de}/common.json`.

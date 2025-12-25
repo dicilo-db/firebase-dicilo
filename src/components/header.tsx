@@ -33,6 +33,7 @@ const desktopLinks = [
 
 // Mobile menu links (Hamburguesa)
 const mobileLinks = [
+  { href: '/dicicoin', labelKey: 'header.nav.dicicoin' }, // DiciCoin (Physical)
   { href: '/impressum', labelKey: 'header.nav.imprint' }, // Aviso Legal
   { href: '/datenschutz', labelKey: 'header.nav.privacy' }, // Privacidad
   { href: '/faq', labelKey: 'header.nav.faq' },

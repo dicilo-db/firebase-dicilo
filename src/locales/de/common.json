@@ -10,7 +10,8 @@
       "language": "Sprache",
       "imprint": "Impressum",
       "privacy": "Datenschutz",
-      "faq": "FAQ"
+      "faq": "FAQ",
+      "dicicoin": "DiciCoin"
     }
   },
   "dicipoints": {
@@ -617,5 +618,17 @@
         "shareErrorDesc": "Link konnte nicht generiert werden."
       }
     }
+  },
+  "dicicoinPage": {
+    "title": "Was ist DICICOIN?",
+    "intro": "DICICOIN ist eine physische Gedenk- und Sammlermünze, die die Geburt und Vision des Dicilo-Ökosystems repräsentiert.\nEs ist keine Kryptowährung und kein traditionelles Finanzprodukt, sondern ein greifbares Symbol der Zugehörigkeit zu einer Gemeinschaft, die neue Wege der Verbindung, Empfehlung und des Wachstums zwischen Menschen und Unternehmen aufbaut.",
+    "unique": "Jede DICICOIN ist ein einzigartiges, nummeriertes und limitiertes Stück, das für diejenigen geschaffen wurde, die sich entscheiden, von den ersten Phasen an Teil des Projekts zu sein.",
+    "specialTitle": "Warum ist DICICOIN besonders?",
+    "specialDesc": "DICICOIN verbindet die physische Welt mit einer langfristigen digitalen Vision.\nEine Münze zu besitzen bedeutet, von Anfang an dabei zu sein, eine Idee zu unterstützen, bevor sie zum Standard wird, und am Aufbau eines Ökosystems teilzunehmen, das auf Vertrauen, Ausdauer und gemeinsames Wachstum basiert.\n\nDie Münze wird nicht nur als Sammlerstück aufbewahrt, sondern repräsentiert auch eine strategische Position innerhalb von Dicilo, die mit ihrer zukünftigen Entwicklung verbunden ist.",
+    "howToTitle": "Was brauche ich, um eine DICICOIN zu erhalten?",
+    "howToDesc": "Der erste Schritt ist die kostenlose Registrierung bei Dicilo.\nDie Registrierung ermöglicht die Identifizierung des Inhabers, garantiert die Echtheit der Münze und macht Sie offiziell zum Teil der Gemeinschaft.\n\nSobald Sie registriert sind, können Sie über die offiziellen Kanäle innerhalb von Dicilo auf den Erwerb von DICICOIN zugreifen.",
+    "messageTitle": "Eine Botschaft für diejenigen, die nach vorne schauen",
+    "messageDesc": "DICICOIN ist nicht für jeden.\nEs ist für diejenigen, die an Ideen glauben, die Schritt für Schritt aufgebaut werden, für diejenigen, die den Wert verstehen, früher da zu sein, und für diejenigen, die Teil von etwas sein wollen, das mit Sinn und Zweck wächst.\n\nSich bei Dicilo zu registrieren und eine DICICOIN zu erwerben, ist ein einfacher Weg zu sagen:\n„Ich war von Anfang an dabei.“",
+    "cta": "Registrieren und DiciCoin sichern"
   }
 }

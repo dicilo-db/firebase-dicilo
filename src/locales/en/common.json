@@ -10,7 +10,8 @@
       "language": "Language",
       "imprint": "Imprint",
       "privacy": "Privacy",
-      "faq": "FAQ"
+      "faq": "FAQ",
+      "dicicoin": "DiciCoin"
     }
   },
   "dicipoints": {
@@ -596,5 +597,17 @@
         "shareErrorDesc": "Could not generate link."
       }
     }
+  },
+  "dicicoinPage": {
+    "title": "What is DICICOIN?",
+    "intro": "DICICOIN is a physical, commemorative, and collectible coin representing the birth and vision of the Dicilo ecosystem.\nIt is not a cryptocurrency or a traditional financial product, but a tangible symbol of belonging to a community that is building new ways of connection, recommendation, and growth between people and businesses.",
+    "unique": "Each DICICOIN is a unique, numbered, limited piece, created for those who decide to be part of the project from its early stages.",
+    "specialTitle": "Why is DICICOIN special?",
+    "specialDesc": "DICICOIN unites the physical world with a long-term digital vision.\nOwning a coin means being present from the start, supporting an idea before it becomes a standard, and participating in the construction of an ecosystem based on trust, perseverance, and collective growth.\n\nThe coin is not only kept as a collector's item but also represents a strategic position within Dicilo, linked to its future evolution.",
+    "howToTitle": "What do I need to get a DICICOIN?",
+    "howToDesc": "The first step is to register for free on Dicilo.\nRegistration allows identifying the holder, guaranteeing the authenticity of the coin, and officially becoming part of the community.\n\nOnce registered, you will be able to access the acquisition of DICICOIN through official channels within Dicilo.",
+    "messageTitle": "A message for those who look ahead",
+    "messageDesc": "DICICOIN is not for everyone.\nIt is for those who believe in ideas built step by step, for those who understand the value of being there first, and for those who wish to be part of something that grows with meaning and purpose.\n\nRegistering on Dicilo and acquiring a DICICOIN is a simple way to say:\n“I was there from the beginning.”",
+    "cta": "Register and get your DiciCoin"
   }
 }

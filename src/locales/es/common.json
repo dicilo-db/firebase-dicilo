@@ -10,7 +10,8 @@
       "language": "Idioma",
       "imprint": "Aviso Legal",
       "privacy": "Privacidad",
-      "faq": "FAQ"
+      "faq": "FAQ",
+      "dicicoin": "DiciCoin"
     }
   },
   "dicipoints": {
@@ -598,5 +599,17 @@
         "shareErrorDesc": "No se pudo generar el enlace."
       }
     }
+  },
+  "dicicoinPage": {
+    "title": "¿Qué es DICICOIN?",
+    "intro": "DICICOIN es una moneda física, conmemorativa y coleccionable que representa el nacimiento y la visión del ecosistema Dicilo.\nNo es una criptomoneda ni un producto financiero tradicional, sino un símbolo tangible de pertenencia a una comunidad que está construyendo nuevas formas de conexión, recomendación y crecimiento entre personas y empresas.",
+    "unique": "Cada DICICOIN es una pieza única, numerada y limitada, creada para quienes deciden formar parte del proyecto desde sus primeras etapas.",
+    "specialTitle": "¿Por qué DICICOIN es especial?",
+    "specialDesc": "DICICOIN une el mundo físico con una visión digital de largo plazo.\nPoseer una moneda significa estar presente desde el inicio, apoyar una idea antes de que se convierta en estándar y participar en la construcción de un ecosistema basado en confianza, perseverancia y crecimiento colectivo.\n\nLa moneda no solo se conserva como objeto de colección, sino que también representa una posición estratégica dentro de Dicilo, vinculada a su evolución futura.",
+    "howToTitle": "¿Qué necesito para obtener una DICICOIN?",
+    "howToDesc": "El primer paso es registrarte gratuitamente en Dicilo.\nEl registro permite identificar al titular, garantizar la autenticidad de la moneda y formar parte oficialmente de la comunidad.\n\nUna vez registrado, podrás acceder a la adquisición de DICICOIN a través de los canales oficiales dentro de Dicilo.",
+    "messageTitle": "Un mensaje para quienes miran hacia adelante",
+    "messageDesc": "DICICOIN no es para todos.\nEs para quienes creen en las ideas que se construyen paso a paso, para quienes entienden el valor de estar antes, y para quienes desean formar parte de algo que crece con sentido y propósito.\n\nRegistrarte en Dicilo y adquirir una DICICOIN es una forma sencilla de decir:\n“Yo estuve ahí desde el comienzo.”",
+    "cta": "Regístrate y adquiere tu DiciCoin"
   }
 }
