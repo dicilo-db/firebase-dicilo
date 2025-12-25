@@ -33,9 +33,11 @@ const desktopLinks = [
 
 // Mobile menu links (Hamburguesa)
 const mobileLinks = [
-  { href: '/dicicoin', labelKey: 'header.nav.dicicoin' }, // DiciCoin (Physical)
-  { href: '/impressum', labelKey: 'header.nav.imprint' }, // Aviso Legal
-  { href: '/datenschutz', labelKey: 'header.nav.privacy' }, // Privacidad
+  { href: '/dicicoin', labelKey: 'header.nav.dicicoin' },
+  { href: '/registrieren', labelKey: 'header.nav.register' }, // Registrieren
+  { href: '/verzeichnis', labelKey: 'header.nav.directory' }, // Kategorie/Verzeichnis
+  { href: '/impressum', labelKey: 'header.nav.imprint' },
+  { href: '/datenschutz', labelKey: 'header.nav.privacy' },
   { href: '/faq', labelKey: 'header.nav.faq' },
 ];
 
