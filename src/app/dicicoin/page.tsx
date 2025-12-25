@@ -31,7 +31,7 @@ export default function DiciCoinPage() {
                     <div className="order-1 md:order-2 flex justify-center animate-in zoom-in duration-700">
                         <div className="relative w-64 h-64 md:w-80 md:h-80 shadow-2xl rounded-full overflow-hidden border-[6px] border-amber-500/30 ring-4 ring-white">
                             <Image
-                                src="/images/dicicoin/coin.jpg"
+                                src="/images/dicicoin/coin.jpg?v=2"
                                 alt="DiciCoin Coin"
                                 fill
                                 className="object-cover hover:scale-110 transition-transform duration-700"
@@ -46,7 +46,7 @@ export default function DiciCoinPage() {
                     <div className="order-1 flex justify-center">
                         <div className="relative w-full max-w-sm aspect-[4/5] md:aspect-[4/3] shadow-lg rounded-2xl overflow-hidden group">
                             <Image
-                                src="/images/dicicoin/holding.jpg"
+                                src="/images/dicicoin/holding.jpg?v=2"
                                 alt="Holding DiciCoin"
                                 fill
                                 className="object-cover group-hover:scale-105 transition-transform duration-700"
