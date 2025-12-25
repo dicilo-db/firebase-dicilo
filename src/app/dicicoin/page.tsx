@@ -46,7 +46,7 @@ export default function DiciCoinPage() {
                     <div className="order-1 flex justify-center">
                         <div className="relative w-full max-w-sm aspect-[4/5] md:aspect-[4/3] shadow-lg rounded-2xl overflow-hidden group">
                             <Image
-                                src="/images/dicicoin/holding.jpg?v=2"
+                                src="/images/dicicoin/holding.jpg?v=3"
                                 alt="Holding DiciCoin"
                                 fill
                                 className="object-cover group-hover:scale-105 transition-transform duration-700"

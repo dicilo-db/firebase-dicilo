@@ -16,7 +16,7 @@ export async function sendWelcomeEmail(email: string, firstName: string) {
 
     try {
         const { data, error } = await resend.emails.send({
-            from: 'Dicilo <onboarding@dicilo.com>',
+            from: 'Dicilo <onboarding@dicilo.net>',
             to: [email],
             subject: 'Willkommen bei Dicilo!',
             html: `
@@ -46,7 +46,7 @@ export async function sendCouponShareEmail(email: string, coupon: any) {
 
     try {
         const { data, error } = await resend.emails.send({
-            from: 'Dicilo <info@dicilo.com>',
+            from: 'Dicilo <info@dicilo.net>',
             to: [email],
             subject: `Holen Sie sich diesen Coupon: ${coupon.title}`,
             html: `
@@ -96,7 +96,7 @@ export async function sendTicketCreatedEmail(email: string, ticketId: string, ti
 
     try {
         const { data, error } = await resend.emails.send({
-            from: 'Dicilo Support <support@dicilo.com>',
+            from: 'Dicilo Support <support@dicilo.net>',
             to: [email],
             subject: `Ticket Received: ${title} (#${ticketId.slice(0, 8)})`,
             html: `
@@ -135,7 +135,7 @@ export async function sendTicketReplyEmail(email: string, ticketId: string, titl
 
     try {
         const { data, error } = await resend.emails.send({
-            from: 'Dicilo Support <support@dicilo.com>',
+            from: 'Dicilo Support <support@dicilo.net>',
             to: [email],
             subject: `Re: ${title} (#${ticketId.slice(0, 8)})`,
             html: `

@@ -68,7 +68,6 @@ export async function getUserTickets(uid: string) {
     try {
         const snapshot = await getAdminDb().collection('tickets')
             .where('uid', '==', uid)
-            .orderBy('createdAt', 'desc')
             .get();
 
         const tickets = snapshot.docs.map(doc => ({
@@ -77,7 +76,7 @@ export async function getUserTickets(uid: string) {
             // Serialize timestamps for client
             createdAt: doc.data().createdAt?.toDate().toISOString(),
             updatedAt: doc.data().updatedAt?.toDate().toISOString(),
-        }));
+        })).sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
         return { success: true, tickets };
     } catch (error: any) {
