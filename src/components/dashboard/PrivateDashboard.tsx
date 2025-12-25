@@ -22,6 +22,8 @@ import { WalletSection } from './WalletSection';
 import { InviteFriendSection } from './InviteFriendSection';
 import { DiciCoinSection } from './DiciCoinSection';
 import { TicketsManager } from './tickets/TicketsManager';
+import { FreelancerLanding } from './freelancer/FreelancerLanding';
+import FreelancerPromoComposerPage from '@/app/dashboard/freelancer/page';
 
 const db = getFirestore(app);
 
@@ -218,6 +220,12 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
                 return <TicketsManager />;
             case 'ads-manager':
                 return <AdsDashboard />;
+            case 'freelancer':
+                if (formData.isFreelancer) {
+                    return <FreelancerPromoComposerPage />;
+                } else {
+                    return <FreelancerLanding />;
+                }
             case 'map':
                 return (
                     <div className="flex flex-col items-center justify-center h-[400px] text-center space-y-4">

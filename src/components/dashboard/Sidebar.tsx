@@ -46,8 +46,9 @@ type NavItem = {
 
 export function Sidebar({ userData, onViewChange, currentView }: SidebarProps) {
     const { t } = useTranslation('common');
-    const { user, signOut } = useAuth();
+    const { user, logout } = useAuth();
     const [isUploading, setIsUploading] = React.useState(false);
+
 
     const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -91,10 +92,21 @@ export function Sidebar({ userData, onViewChange, currentView }: SidebarProps) {
     const userLevel = "Member";
 
 
+    // Determine role (fallback to isFreelancer legacy)
+    const role = userData?.role || (userData?.isFreelancer ? 'freelancer' : 'user');
+    const permissions = userData?.permissions || [];
+
+    // Permission Helpers
+    const hasPermission = (perm: string) => permissions.includes(perm);
+
+    const canSeeAdmin = ['team_office', 'admin', 'superadmin'].includes(role) || hasPermission('access_admin_panel');
+    const canSeeAdsManager = ['admin', 'superadmin'].includes(role) || hasPermission('access_ads_manager');
+    const isFreelancerOrHigher = ['freelancer', 'team_office', 'admin', 'superadmin'].includes(role) || hasPermission('freelancer_tool');
+
     // Explicitly type the array to avoid discriminated union inference issues
     const navItems: NavItem[] = [
         { id: 'overview', label: t('dashboard.overview'), icon: Home, type: 'view' },
-        { id: 'freelancer', label: 'Freelancer / Representante', icon: Briefcase, type: 'link', href: '/dashboard/freelancer' },
+        { id: 'freelancer', label: 'Freelancer / Representante', icon: Briefcase, type: 'view' },
         { id: 'ads-manager', label: 'Ads Manager', icon: Megaphone, type: 'view' },
         { id: 'wallet', label: t('dashboard.myWallet'), icon: Wallet, type: 'view' },
         { id: 'invite', label: t('dashboard.inviteFriends'), icon: Users, type: 'view' },
@@ -107,8 +119,7 @@ export function Sidebar({ userData, onViewChange, currentView }: SidebarProps) {
     ];
 
     // Add Admin conditionally
-    const isAdmin = userData?.role === 'admin' || userData?.role === 'superadmin' || user?.email?.includes('dicilo.net');
-    if (isAdmin) {
+    if (canSeeAdmin) {
         navItems.push({ id: 'admin', label: 'Admin Panel', icon: Shield, type: 'link', href: '/admin' });
     }
 
@@ -197,13 +208,22 @@ export function Sidebar({ userData, onViewChange, currentView }: SidebarProps) {
                             </Button>
                         );
                     }
+
+                    if (item.id === 'ads-manager' && !canSeeAdsManager) {
+                        return null;
+                    }
+
+                    const isFreelancerItem = item.id === 'freelancer';
+                    const isInactiveFreelancer = isFreelancerItem && !isFreelancerOrHigher;
+
                     return (
                         <Button
                             key={item.id}
                             variant={currentView === item.id ? "secondary" : "ghost"}
                             className={cn(
                                 "w-full justify-start gap-3",
-                                currentView === item.id && "bg-primary/10 text-primary hover:bg-primary/20"
+                                currentView === item.id && "bg-primary/10 text-primary hover:bg-primary/20",
+                                isInactiveFreelancer && "text-muted-foreground opacity-70"
                             )}
                             onClick={() => onViewChange(item.id)}
                         >
@@ -219,7 +239,7 @@ export function Sidebar({ userData, onViewChange, currentView }: SidebarProps) {
                 <Button
                     variant="ghost"
                     className="w-full justify-start gap-3 text-red-500 hover:bg-red-50 hover:text-red-600"
-                    onClick={() => signOut()}
+                    onClick={() => logout()}
                 >
                     <LogOut size={18} />
                     {t('auth.logout', 'Logout')}

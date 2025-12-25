@@ -16,22 +16,65 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useAuth } from '@/context/AuthContext';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
-import { Loader2, Search, Download, LayoutDashboard, RefreshCw, Trash2, Pause, Play } from 'lucide-react';
-import { CSVLink } from 'react-csv';
-import Link from 'next/link';
-import { togglePrivateUserStatus, deletePrivateUser } from '@/app/actions/private-users';
+import { togglePrivateUserStatus, deletePrivateUser, setPrivateUserRole, updateUserPermissions } from '@/app/actions/private-users';
 import { useToast } from '@/hooks/use-toast';
+import Link from 'next/link';
+import { CSVLink } from 'react-csv';
+import { Loader2, Search, Download, LayoutDashboard, RefreshCw, Trash2, Pause, Play, Briefcase, ShieldCheck } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 
 const db = getFirestore(app);
 
 export default function PrivateUsersPage() {
     useAuthGuard();
     const { t } = useTranslation(['admin', 'common']);
+    const { user: currentUser } = useAuth(); // Get logged in admin
     const { toast } = useToast();
     const [users, setUsers] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
+
+    // Permissions Management State
+    const [permissionDialogUser, setPermissionDialogUser] = useState<any>(null);
+    const [selectedPermissions, setSelectedPermissions] = useState<string[]>([]);
+    const AVAILABLE_PERMISSIONS = [
+        { id: 'create_qr', label: 'Crear Códigos QR' },
+        { id: 'manage_campaigns', label: 'Crear Campañas' },
+        { id: 'manage_products', label: 'Gestionar Productos' },
+        { id: 'access_admin_panel', label: 'Acceso Panel Admin' },
+        { id: 'access_ads_manager', label: 'Acceso Ads Manager' },
+        { id: 'freelancer_tool', label: 'Acceso Freelancer Tool' },
+    ];
+
+    const handleOpenPermissions = (user: any) => {
+        setPermissionDialogUser(user);
+        setSelectedPermissions(user.permissions || []);
+    };
+
+    const handleSavePermissions = async () => {
+        if (!permissionDialogUser) return;
+        const res = await updateUserPermissions(permissionDialogUser.id, selectedPermissions);
+        if (res.success) {
+            toast({ title: 'Permisos actualizados' });
+            setUsers(users.map(u => u.id === permissionDialogUser.id ? { ...u, permissions: selectedPermissions } : u));
+            setPermissionDialogUser(null);
+        } else {
+            toast({ title: 'Error', variant: 'destructive', description: res.error });
+        }
+    };
+
+    const togglePermission = (permId: string) => {
+        if (selectedPermissions.includes(permId)) {
+            setSelectedPermissions(selectedPermissions.filter(p => p !== permId));
+        } else {
+            setSelectedPermissions([...selectedPermissions, permId]);
+        }
+    };
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
@@ -170,6 +213,7 @@ export default function PrivateUsersPage() {
                                         <TableHead>{t('common:dashboard.country') || 'Land'}</TableHead>
                                         <TableHead>{t('common:dashboard.city') || 'Stadt'}</TableHead>
                                         <TableHead>Interessen</TableHead>
+                                        <TableHead>Rollen</TableHead>
                                         <TableHead>Beigetreten</TableHead>
                                         <TableHead>Aktionen</TableHead>
                                     </TableRow>
@@ -187,8 +231,53 @@ export default function PrivateUsersPage() {
                                             <TableCell>{user.email}</TableCell>
                                             <TableCell>{user.country || '-'}</TableCell>
                                             <TableCell>{user.city || '-'}</TableCell>
-                                            <TableCell className="max-w-[200px] truncate" title={user.interests?.join(', ')}>
-                                                {user.interests?.length > 0 ? user.interests.join(', ') : '-'}
+                                            <TableCell>
+                                                <div className="flex items-center gap-2">
+                                                    {currentUser?.role === 'superadmin' || currentUser?.email?.includes('dicilo.net') ? (
+                                                        <Select
+                                                            defaultValue={user.role || (user.isFreelancer ? 'freelancer' : 'user')}
+                                                            onValueChange={async (newRole) => {
+                                                                if (confirm(`¿Cambiar rol de ${user.firstName} a ${newRole}?`)) {
+                                                                    const res = await setPrivateUserRole(user.id, newRole);
+                                                                    if (res.success) {
+                                                                        toast({ title: 'Rol actualizado', description: res.message });
+                                                                        // Optimistic update
+                                                                        setUsers(users.map(u => u.id === user.id ? { ...u, role: newRole, isFreelancer: ['freelancer', 'team_office', 'admin', 'superadmin'].includes(newRole) } : u));
+                                                                    } else {
+                                                                        toast({ title: 'Fehler', description: res.error, variant: 'destructive' });
+                                                                    }
+                                                                }
+                                                            }}
+                                                        >
+                                                            <SelectTrigger className={`h-8 w-[130px] ${(user.role === 'superadmin') ? 'border-red-500 bg-red-50' :
+                                                                (user.role === 'admin') ? 'border-purple-500 bg-purple-50' :
+                                                                    (user.role === 'team_office') ? 'border-orange-500 bg-orange-50' :
+                                                                        (user.role === 'freelancer' || user.isFreelancer) ? 'border-blue-500 bg-blue-50' : ''
+                                                                }`}>
+                                                                <SelectValue />
+                                                            </SelectTrigger>
+                                                            <SelectContent>
+                                                                <SelectItem value="user">Usuario</SelectItem>
+                                                                <SelectItem value="freelancer">Freelancer</SelectItem>
+                                                                <SelectItem value="team_office">Team Office</SelectItem>
+                                                                <SelectItem value="admin">Admin</SelectItem>
+                                                                <SelectItem value="superadmin">Superadmin</SelectItem>
+                                                            </SelectContent>
+                                                        </Select>
+                                                    ) : (
+                                                        <span className={`px-2 py-1 rounded text-xs font-medium border ${(user.role === 'superadmin') ? 'border-red-200 bg-red-100 text-red-800' :
+                                                            (user.role === 'admin') ? 'border-purple-200 bg-purple-100 text-purple-800' :
+                                                                (user.role === 'team_office') ? 'border-orange-200 bg-orange-100 text-orange-800' :
+                                                                    (user.role === 'freelancer' || user.isFreelancer) ? 'border-blue-200 bg-blue-100 text-blue-800' :
+                                                                        'border-gray-200 bg-gray-100 text-gray-800'
+                                                            }`}>
+                                                            {user.role === 'team_office' ? 'Team Office' :
+                                                                user.role === 'superadmin' ? 'Superadmin' :
+                                                                    user.role === 'admin' ? 'Admin' :
+                                                                        (user.role === 'freelancer' || user.isFreelancer) ? 'Freelancer' : 'Usuario'}
+                                                        </span>
+                                                    )}
+                                                </div>
                                             </TableCell>
                                             <TableCell>
                                                 {user.createdAt?.seconds
@@ -203,7 +292,7 @@ export default function PrivateUsersPage() {
                                                             const res = await togglePrivateUserStatus(user.id, newStatus);
                                                             if (res.success) {
                                                                 toast({ title: 'Status aktualisiert', description: res.message });
-                                                                window.location.reload();
+                                                                setUsers(users.map(u => u.id === user.id ? { ...u, disabled: newStatus } : u));
                                                             } else {
                                                                 toast({ title: 'Fehler', description: res.error, variant: 'destructive' });
                                                             }
@@ -211,6 +300,11 @@ export default function PrivateUsersPage() {
                                                     }}>
                                                         {user.disabled ? <Play className="h-4 w-4 text-green-600" /> : <Pause className="h-4 w-4 text-amber-600" />}
                                                     </Button>
+                                                    {(currentUser?.role === 'superadmin' || currentUser?.email?.includes('dicilo.net')) && (
+                                                        <Button variant="ghost" size="sm" onClick={() => handleOpenPermissions(user)} title="Gestión de Permisos">
+                                                            <ShieldCheck className="h-4 w-4 text-purple-600" />
+                                                        </Button>
+                                                    )}
                                                     <Button variant="ghost" size="sm" onClick={async () => {
                                                         if (confirm('ACHTUNG: Möchten Sie diesen Benutzer wirklich LÖSCHEN? Diese Aktion kann nicht rückgängig gemacht werden.')) {
                                                             const res = await deletePrivateUser(user.id);
@@ -243,6 +337,37 @@ export default function PrivateUsersPage() {
                     </CardContent>
                 </Card>
             </main>
+
+            {/* Permissions Dialog */}
+            <Dialog open={!!permissionDialogUser} onOpenChange={(open) => !open && setPermissionDialogUser(null)}>
+                <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                        <DialogTitle>Permisos Extras: {permissionDialogUser?.firstName}</DialogTitle>
+                    </DialogHeader>
+                    <div className="flex flex-col gap-4 py-4">
+                        <p className="text-sm text-muted-foreground">
+                            Estos permisos se suman (o quitan) a los privilegios base del Rol.
+                            (Esta es una implementación básica, la lógica granular debe estar soportada en cada módulo).
+                        </p>
+                        <div className="grid grid-cols-1 gap-2">
+                            {AVAILABLE_PERMISSIONS.map((perm) => (
+                                <div key={perm.id} className="flex items-center space-x-2">
+                                    <Checkbox
+                                        id={perm.id}
+                                        checked={selectedPermissions.includes(perm.id)}
+                                        onCheckedChange={() => togglePermission(perm.id)}
+                                    />
+                                    <Label htmlFor={perm.id}>{perm.label}</Label>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setPermissionDialogUser(null)}>Cancelar</Button>
+                        <Button onClick={handleSavePermissions}>Guardar Permisos</Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }

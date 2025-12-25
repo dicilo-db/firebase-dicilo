@@ -113,6 +113,8 @@ const DashboardContent: React.FC = () => {
   const { toast } = useToast();
   const { t } = useTranslation('admin');
   const { user: adminUser, isLoading: isUserLoading } = useAdminUser();
+  const isSuperAdmin = adminUser?.role === 'superadmin';
+  const isAdminOrSuper = ['admin', 'superadmin'].includes(adminUser?.role || '');
 
   // Estados para contadores
   const [counts, setCounts] = useState({
@@ -513,21 +515,23 @@ const DashboardContent: React.FC = () => {
             </Link>
 
             {/* Privat User (renamed from Privatkunden) */}
-            <Link href="/admin/private-users" className="group">
-              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Privatkunden</CardTitle>
-                  <User className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">Privatuser</div>
-                  <p className="text-xs text-muted-foreground mt-1">Private Profile verwalten</p>
-                  <div className="absolute bottom-4 right-4 text-sm font-mono text-muted-foreground">
-                    {formatCount(counts.private)}
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
+            {isAdminOrSuper && (
+              <Link href="/admin/private-users" className="group">
+                <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Privatkunden</CardTitle>
+                    <User className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">Privatuser</div>
+                    <p className="text-xs text-muted-foreground mt-1">Private Profile verwalten</p>
+                    <div className="absolute bottom-4 right-4 text-sm font-mono text-muted-foreground">
+                      {formatCount(counts.private)}
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+            )}
 
             {/* Landing Pages / Builder */}
             <Link href="/admin/clients" className="group">
@@ -544,18 +548,20 @@ const DashboardContent: React.FC = () => {
             </Link>
 
             {/* Pläne */}
-            <Link href="/admin/plans" className="group">
-              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">{t('plans.title', { ns: 'admin' })}</CardTitle>
-                  <DollarSign className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{t('dashboard.cards.plans.title')}</div>
-                  <p className="text-xs text-muted-foreground mt-1">{t('dashboard.cards.plans.description')}</p>
-                </CardContent>
-              </Card>
-            </Link>
+            {isAdminOrSuper && (
+              <Link href="/admin/plans" className="group">
+                <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">{t('plans.title', { ns: 'admin' })}</CardTitle>
+                    <DollarSign className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">{t('dashboard.cards.plans.title')}</div>
+                    <p className="text-xs text-muted-foreground mt-1">{t('dashboard.cards.plans.description')}</p>
+                  </CardContent>
+                </Card>
+              </Link>
+            )}
 
             {/* Statistiken */}
             <Link href="/admin/statistics" className="group">
@@ -677,18 +683,20 @@ const DashboardContent: React.FC = () => {
             </Link>
 
             {/* AI Chat Module (NEW) */}
-            <Link href="/admin/ai-chat" className="group">
-              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">AI Chat</CardTitle>
-                  <Bot className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">AI Chat</div>
-                  <p className="text-xs text-muted-foreground mt-1">Manage AI Knowledge & Settings</p>
-                </CardContent>
-              </Card>
-            </Link>
+            {isAdminOrSuper && (
+              <Link href="/admin/ai-chat" className="group">
+                <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">AI Chat</CardTitle>
+                    <Bot className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">AI Chat</div>
+                    <p className="text-xs text-muted-foreground mt-1">Manage AI Knowledge & Settings</p>
+                  </CardContent>
+                </Card>
+              </Link>
+            )}
 
             {/* Coupons Module (NEW) */}
             <Link href="/admin/coupons" className="group">
@@ -705,32 +713,36 @@ const DashboardContent: React.FC = () => {
             </Link>
 
             {/* DiciCoin Purchasers (NEW) */}
-            <Link href="/admin/dicicoin-purchasers" className="group">
-              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">DiciCoin Orders</CardTitle>
-                  <Coins className="h-4 w-4 text-muted-foreground group-hover:text-amber-500 transition-colors" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">DiciCoins</div>
-                  <p className="text-xs text-muted-foreground mt-1">Gestión de Compras</p>
-                </CardContent>
-              </Card>
-            </Link>
+            {isSuperAdmin && (
+              <Link href="/admin/dicicoin-purchasers" className="group">
+                <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">DiciCoin Orders</CardTitle>
+                    <Coins className="h-4 w-4 text-muted-foreground group-hover:text-amber-500 transition-colors" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">DiciCoins</div>
+                    <p className="text-xs text-muted-foreground mt-1">Gestión de Compras</p>
+                  </CardContent>
+                </Card>
+              </Link>
+            )}
 
             {/* Dicipoints Central Control (NEW) */}
-            <Link href="/admin/dicipoints" className="group">
-              <Card className="h-full transition-all hover:shadow-md hover:border-red-500/50 cursor-pointer relative">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium text-red-600">Economy Control</CardTitle>
-                  <Wallet className="h-4 w-4 text-muted-foreground group-hover:text-red-500 transition-colors" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">Dicipoints</div>
-                  <p className="text-xs text-muted-foreground mt-1">Manage Point Value & Injection</p>
-                </CardContent>
-              </Card>
-            </Link>
+            {isSuperAdmin && (
+              <Link href="/admin/dicipoints" className="group">
+                <Card className="h-full transition-all hover:shadow-md hover:border-red-500/50 cursor-pointer relative">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium text-red-600">Economy Control</CardTitle>
+                    <Wallet className="h-4 w-4 text-muted-foreground group-hover:text-red-500 transition-colors" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">Dicipoints</div>
+                    <p className="text-xs text-muted-foreground mt-1">Manage Point Value & Injection</p>
+                  </CardContent>
+                </Card>
+              </Link>
+            )}
 
             {/* Freelancer Module (NEW) */}
             <Link href="/dashboard/freelancer" className="group">
