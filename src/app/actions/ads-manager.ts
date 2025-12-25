@@ -81,14 +81,94 @@ export async function getQrCampaigns() {
     }
 }
 
-// Update Target URL (The "Dynamic" part)
+// Update Target URL (The "Dynamic" part) with History Tracking
 export async function updateQrTargetUrl(id: string, newUrl: string) {
     try {
         const db = getAdminDb();
-        await db.collection('qr_campaigns').doc(id).update({
-            targetUrl: newUrl
+        const docRef = db.collection('qr_campaigns').doc(id);
+        const docSnap = await docRef.get();
+
+        if (!docSnap.exists) {
+            return { success: false, error: 'Campaign not found' };
+        }
+
+        const data = docSnap.data() as any;
+
+        // Archive current stats if there are any clicks
+        if (data.clicks > 0) {
+            await db.collection('qr_history').add({
+                campaignId: id,
+                campaignName: data.name,
+                targetUrl: data.targetUrl, // Old URL
+                clicks: data.clicks,
+                startDate: data.activeSince || data.createdAt,
+                endDate: new Date(),
+                archivedAt: new Date()
+            });
+        }
+
+        // Update with new URL and reset stats
+        await docRef.update({
+            targetUrl: newUrl,
+            clicks: 0,
+            activeSince: new Date()
         });
+
         return { success: true };
+    } catch (error: any) {
+        return { success: false, error: error.message };
+    }
+}
+
+// Generate CSV Report
+export async function generateQrReportConfig() {
+    try {
+        const db = getAdminDb();
+
+        // 1. Fetch History
+        const historySnap = await db.collection('qr_history').orderBy('archivedAt', 'desc').get();
+        const history = historySnap.docs.map(doc => {
+            const d = doc.data();
+            return {
+                type: 'Historico',
+                name: d.campaignName,
+                url: d.targetUrl,
+                clicks: d.clicks,
+                start: d.startDate?.toDate ? d.startDate.toDate().toLocaleDateString() : '',
+                end: d.endDate?.toDate ? d.endDate.toDate().toLocaleDateString() : '',
+                id: d.campaignId
+            };
+        });
+
+        // 2. Fetch Active
+        const activeSnap = await db.collection('qr_campaigns').get();
+        const active = activeSnap.docs.map(doc => {
+            const d = doc.data();
+            const start = d.activeSince?.toDate ? d.activeSince.toDate() : d.createdAt?.toDate ? d.createdAt.toDate() : new Date();
+            return {
+                type: 'Activo',
+                name: d.name,
+                url: d.targetUrl,
+                clicks: d.clicks,
+                start: start.toLocaleDateString(),
+                end: 'Presente',
+                id: doc.id
+            };
+        });
+
+        const allRecords = [...active, ...history];
+
+        // 3. Convert to CSV
+        // Simple manual conversion to avoid dependencies
+        const header = ['Tipo', 'Nombre de Campaña', 'URL Destino', 'Clics', 'Inicio', 'Fin', 'ID QR'];
+        const rows = allRecords.map(r =>
+            `"${r.type}","${r.name}","${r.url}",${r.clicks},"${r.start}","${r.end}","${r.id}"`
+        );
+
+        const csvContent = [header.join(','), ...rows].join('\n');
+
+        return { success: true, csv: csvContent };
+
     } catch (error: any) {
         return { success: false, error: error.message };
     }

@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useToast } from "@/components/ui/use-toast";
+import { useTranslation } from 'react-i18next';
+import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -24,6 +25,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Loader2 } from 'lucide-react';
 
 export default function FreelancerPromoComposerPage() {
+    const { t } = useTranslation('common');
+    const { toast } = useToast();
     const searchParams = useSearchParams();
     const campaignId = searchParams.get('campaignId');
 
@@ -80,8 +83,8 @@ export default function FreelancerPromoComposerPage() {
                 window.open(whatsappUrl, '_blank');
 
                 toast({
-                    title: "¡Enlace generado!",
-                    description: "Abriendo WhatsApp con tu promoción...",
+                    title: t('freelancer.composer.toasts.linkGenerated'),
+                    description: t('freelancer.composer.toasts.openingWhatsapp'),
                 });
             } else {
                 throw new Error(result.error);
@@ -89,8 +92,8 @@ export default function FreelancerPromoComposerPage() {
 
         } catch (error: any) {
             toast({
-                title: "Error al compartir",
-                description: error.message || "No se pudo generar el enlace.",
+                title: t('freelancer.composer.toasts.shareError'),
+                description: error.message || t('freelancer.composer.toasts.shareErrorDesc'),
                 variant: 'destructive'
             });
         } finally {
@@ -115,8 +118,8 @@ export default function FreelancerPromoComposerPage() {
         return (
             <div className="flex flex-col h-screen items-center justify-center text-center p-8 text-muted-foreground">
                 <div className="max-w-md space-y-2">
-                    <h2 className="text-xl font-semibold text-foreground">Selecciona una Campaña</h2>
-                    <p>Elige una empresa del menú lateral para comenzar a crear tu promoción personalizada.</p>
+                    <h2 className="text-xl font-semibold text-foreground">{t('freelancer.composer.selectCampaign.title')}</h2>
+                    <p>{t('freelancer.composer.selectCampaign.description')}</p>
                 </div>
             </div>
         );
@@ -131,8 +134,10 @@ export default function FreelancerPromoComposerPage() {
             {/* CENTRAL AREA: EDITOR */}
             <div className="flex-1 p-6 md:p-8 overflow-y-auto space-y-6 pb-32 bg-slate-50 dark:bg-black/20">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Crear Nueva Promoción</h1>
-                    <p className="text-muted-foreground mt-2">Personaliza tu mensaje para <span className="font-semibold">{activeCampaign.companyName}</span> y compártelo.</p>
+                    <h1 className="text-3xl font-bold tracking-tight">{t('freelancer.composer.title')}</h1>
+                    <p className="text-muted-foreground mt-2">
+                        {t('freelancer.composer.subtitle', { company: activeCampaign.companyName })}
+                    </p>
                 </div>
 
                 {/* Campaign Selector / Active Campaign Header */}
@@ -151,7 +156,7 @@ export default function FreelancerPromoComposerPage() {
                         <h2 className="font-semibold text-lg">{activeCampaign.companyName}</h2>
                         <div className="flex flex-wrap gap-2 mt-1">
                             <Badge variant="outline" className={activeCampaign.status === 'active' ? "text-xs bg-green-50 text-green-700 border-green-200" : "text-xs"}>
-                                {activeCampaign.status === 'active' ? 'Campaña Activa' : 'Modo Gris'}
+                                {activeCampaign.status === 'active' ? t('freelancer.composer.activeCampaign') : t('freelancer.composer.grayMode')}
                             </Badge>
                             {activeCampaign.categories.map(c => (
                                 <Badge key={c} variant="secondary" className="text-[10px]">{c}</Badge>
@@ -159,14 +164,14 @@ export default function FreelancerPromoComposerPage() {
                         </div>
                     </div>
                     <div className="ml-auto text-right hidden sm:block">
-                        <p className="text-xs text-muted-foreground">Pago por Clic</p>
+                        <p className="text-xs text-muted-foreground">{t('freelancer.composer.payPerClick')}</p>
                         <p className="font-bold text-green-600 text-lg">${activeCampaign.rate_per_click.toFixed(2)}</p>
                     </div>
                 </div>
 
                 {/* Image Gallery Selector */}
                 <div className="space-y-3">
-                    <label className="text-sm font-medium">1. Selecciona la imagen oficial</label>
+                    <label className="text-sm font-medium">{t('freelancer.composer.selectImage')}</label>
                     {activeCampaign.images && activeCampaign.images.length > 0 ? (
                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                             {activeCampaign.images.map((img, i) => (
@@ -186,24 +191,24 @@ export default function FreelancerPromoComposerPage() {
                             ))}
                         </div>
                     ) : (
-                        <p className="text-sm text-muted-foreground italic">Esta campaña no tiene imágenes disponibles.</p>
+                        <p className="text-sm text-muted-foreground italic">{t('freelancer.composer.noImages')}</p>
                     )}
                 </div>
 
                 {/* Text Editor */}
                 <div className="space-y-3">
-                    <label className="text-sm font-medium">2. Tu Recomendación Personalizada</label>
+                    <label className="text-sm font-medium">{t('freelancer.composer.customRecommendation')}</label>
                     <Card className="border-dashed border-2 shadow-none bg-muted/20">
                         <CardContent className="p-4">
                             <Textarea
                                 value={customText}
                                 onChange={(e) => setCustomText(e.target.value)}
                                 className="min-h-[120px] bg-transparent border-none resize-none focus-visible:ring-0 text-base"
-                                placeholder={`Escribe por qué recomiendas a ${activeCampaign.companyName}...`}
+                                placeholder={t('freelancer.composer.placeholder', { company: activeCampaign.companyName })}
                             />
                             <div className="flex justify-between items-center mt-2 border-t pt-2">
                                 <div className="flex gap-2">
-                                    <Badge variant="secondary" className="text-xs cursor-pointer hover:bg-muted">Generar con IA ✨</Badge>
+                                    <Badge variant="secondary" className="text-xs cursor-pointer hover:bg-muted">{t('freelancer.composer.generateAI')}</Badge>
                                 </div>
                                 <span className="text-xs text-muted-foreground">{customText.length}/280</span>
                             </div>
@@ -213,7 +218,7 @@ export default function FreelancerPromoComposerPage() {
 
                 {/* Link Generator */}
                 <div className="space-y-3">
-                    <label className="text-sm font-medium">3. Link de Seguimiento Único</label>
+                    <label className="text-sm font-medium">{t('freelancer.composer.trackingLink')}</label>
                     <div className="flex gap-2">
                         <Input value={`dicilo.net/r/${activeCampaign.id.substring(0, 6)}...`} readOnly className="bg-muted font-mono text-sm" />
                         <Button variant="outline" size="icon">
@@ -224,7 +229,7 @@ export default function FreelancerPromoComposerPage() {
 
                 {/* Social Share & Schedule */}
                 <div className="space-y-3 py-4 border-t">
-                    <label className="text-sm font-medium block mb-3">4. Conectar y Programar</label>
+                    <label className="text-sm font-medium block mb-3">{t('freelancer.composer.connectSchedule')}</label>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <Button
@@ -233,7 +238,7 @@ export default function FreelancerPromoComposerPage() {
                             className="w-full bg-[#25D366] hover:bg-[#25D366]/90 text-white gap-2 h-12 text-lg font-semibold"
                         >
                             {isSharing ? <Loader2 className="h-5 w-5 animate-spin" /> : <MessageCircle className="h-5 w-5" />}
-                            Compartir en WhatsApp
+                            {t('freelancer.composer.shareWhatsapp')}
                         </Button>
                         <div className="flex gap-2">
                             <Button className="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white gap-2">
@@ -250,7 +255,7 @@ export default function FreelancerPromoComposerPage() {
             {/* RIGHT AREA: MOBILE PREVIEW */}
             <div className="hidden xl:flex w-[400px] bg-slate-100 dark:bg-black/40 border-l p-8 flex-col items-center justify-center shrink-0 relative overflow-y-auto">
                 <div className="absolute top-6 left-1/2 -translate-x-1/2">
-                    <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-widest bg-background/50 px-3 py-1 rounded-full backdrop-blur-sm">Vista Previa Móvil</h3>
+                    <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-widest bg-background/50 px-3 py-1 rounded-full backdrop-blur-sm">{t('freelancer.composer.preview.title')}</h3>
                 </div>
 
                 {/* Phone Mockup */}
@@ -279,7 +284,7 @@ export default function FreelancerPromoComposerPage() {
                             )}
                             <div className="flex-1">
                                 <p className="text-xs font-semibold">{activeCampaign.companyName}</p>
-                                <p className="text-[10px] text-muted-foreground">Patrocinado</p>
+                                <p className="text-[10px] text-muted-foreground">{t('freelancer.composer.preview.sponsored')}</p>
                             </div>
                             <div className="text-muted-foreground">•••</div>
                         </div>
@@ -304,7 +309,7 @@ export default function FreelancerPromoComposerPage() {
                         {/* Caption */}
                         <div className="px-3 pb-4">
                             <p className="text-xs leading-relaxed">
-                                <span className="font-semibold mr-1">Tú</span>
+                                <span className="font-semibold mr-1">{t('freelancer.composer.preview.you')}</span>
                                 {customText || activeCampaign.description}
                             </p>
                             <p className="text-[10px] text-blue-500 mt-1">dicilo.net/r/LZ378... #{activeCampaign.companyName.replace(/[^a-zA-Z0-9]/g, '')}</p>
@@ -315,9 +320,9 @@ export default function FreelancerPromoComposerPage() {
 
                 {/* Estimated Earnings Card */}
                 <div className="mt-8 bg-green-600 text-white p-4 rounded-xl shadow-lg w-full max-w-[300px] text-center animate-in slide-in-from-bottom-4 fade-in">
-                    <p className="text-xs font-medium opacity-90 mb-1">Tu Ganancia Estimada</p>
-                    <p className="text-sm opacity-90">por Clic Efectivo:</p>
-                    <p className="text-3xl font-bold mt-1">${activeCampaign.rate_per_click.toFixed(2)} <span className="text-sm font-normal opacity-75">/ clic</span></p>
+                    <p className="text-xs font-medium opacity-90 mb-1">{t('freelancer.composer.earnings.title')}</p>
+                    <p className="text-sm opacity-90">{t('freelancer.composer.earnings.subtitle')}</p>
+                    <p className="text-3xl font-bold mt-1">${activeCampaign.rate_per_click.toFixed(2)} <span className="text-sm font-normal opacity-75">{t('freelancer.composer.earnings.perClick')}</span></p>
                 </div>
             </div>
         </div>

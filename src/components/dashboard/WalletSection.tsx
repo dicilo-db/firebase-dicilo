@@ -41,7 +41,7 @@ export function WalletSection({ uid, uniqueCode }: WalletSectionProps) {
         return <div className="flex justify-center p-12"><Loader2 className="animate-spin text-primary" size={32} /></div>;
     }
 
-    if (!data) return <div>Failed to load wallet</div>;
+    if (!data) return <div>{t('dashboard.wallet.error')}</div>;
 
     // QR Data: simple JSON string or just UID
     const qrValue = JSON.stringify({ uid, code: uniqueCode });
@@ -56,7 +56,7 @@ export function WalletSection({ uid, uniqueCode }: WalletSectionProps) {
                         <div className="flex justify-between items-start">
                             <div>
                                 <CardTitle className="text-sm font-medium text-gray-400 uppercase tracking-wider flex items-center gap-2">
-                                    Dicilo Wallet
+                                    {t('dashboard.wallet.title')}
                                     <Dialog>
                                         <DialogTrigger asChild>
                                             <Button variant="ghost" size="icon" className="h-4 w-4 text-gray-400 hover:text-white ml-1">
@@ -74,7 +74,7 @@ export function WalletSection({ uid, uniqueCode }: WalletSectionProps) {
                                     </Dialog>
                                 </CardTitle>
                                 <div className="mt-1 flex items-center gap-2">
-                                    <Badge variant="outline" className="border-white/20 text-white hover:bg-white/10">Personal</Badge>
+                                    <Badge variant="outline" className="border-white/20 text-white hover:bg-white/10">{t('dashboard.wallet.personal')}</Badge>
                                 </div>
                             </div>
                             <CreditCard className="text-gray-400" />
@@ -91,13 +91,13 @@ export function WalletSection({ uid, uniqueCode }: WalletSectionProps) {
                                 <DialogTrigger asChild>
                                     <Button variant="secondary" className="w-full gap-2">
                                         <QrCode size={16} />
-                                        Show QR for Pay
+                                        {t('dashboard.wallet.showQr')}
                                     </Button>
                                 </DialogTrigger>
                                 <DialogContent className="sm:max-w-md">
                                     <DialogHeader>
-                                        <DialogTitle>Scan to Pay</DialogTitle>
-                                        <DialogDescription>Show this code to a partner merchant to redeem your points.</DialogDescription>
+                                        <DialogTitle>{t('dashboard.wallet.scanToPay')}</DialogTitle>
+                                        <DialogDescription>{t('dashboard.wallet.scanDesc')}</DialogDescription>
                                     </DialogHeader>
                                     <div className="flex flex-col items-center justify-center p-6 bg-white rounded-lg border">
                                         {/* Using a public API for QR generation to avoid new deps for now. Secure for display. */}
@@ -122,13 +122,13 @@ export function WalletSection({ uid, uniqueCode }: WalletSectionProps) {
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                         <History size={18} />
-                        Recent Transactions
+                        {t('dashboard.wallet.recentTransactions')}
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
                     <div className="space-y-4">
                         {data.history.length === 0 ? (
-                            <p className="text-center text-sm text-muted-foreground py-4">No transactions yet.</p>
+                            <p className="text-center text-sm text-muted-foreground py-4">{t('dashboard.wallet.noTransactions')}</p>
                         ) : (
                             data.history.map((tx: any) => (
                                 <div key={tx.id} className="flex items-center justify-between border-b pb-4 last:border-0 last:pb-0">

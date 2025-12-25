@@ -36,7 +36,7 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
     const searchParams = useSearchParams();
 
     // Initialize activeView from URL param if available, otherwise default to 'overview'
-    const [activeView, setActiveView] = useState(searchParams.get('view') || 'overview'); // overview, wallet, invite, map, settings, dicicoin, tickets
+    const [activeView, setActiveView] = useState(searchParams?.get('view') || 'overview'); // overview, wallet, invite, map, settings, dicicoin, tickets
     const [isLoading, setIsLoading] = useState(false);
     const [formData, setFormData] = useState(profile);
     const [feedbackMessage, setFeedbackMessage] = useState('');
@@ -45,7 +45,7 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
 
     // Sync state with URL changes if user navigates back/forward
     useEffect(() => {
-        const viewParam = searchParams.get('view');
+        const viewParam = searchParams?.get('view');
         if (viewParam && viewParam !== activeView) {
             setActiveView(viewParam);
         }

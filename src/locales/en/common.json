@@ -350,6 +350,17 @@
     "country": "Country",
     "city": "City",
     "communicationPreferences": "Communication Preferences",
+    "wallet": {
+      "title": "Dicilo Wallet",
+      "personal": "Personal",
+      "showQr": "Show QR for Pay",
+      "scanToPay": "Scan to Pay",
+      "scanDesc": "Show this code to a partner merchant to redeem your points.",
+      "recentTransactions": "Recent Transactions",
+      "noTransactions": "No transactions yet.",
+      "loading": "Loading wallet...",
+      "error": "Failed to load wallet"
+    },
     "dicicoin": {
       "securityTitle": "Security, Authenticity, and Ownership",
       "securityDesc": "DICICOINs can only be acquired through Authorized Sales Agents...",
@@ -465,6 +476,125 @@
       "sentSuccessDesc": "{{count}} emails are on their way.",
       "sendError": "Error sending",
       "sendErrorDesc": "Please try again."
+    }
+  },
+  "adsManager": {
+    "dashboard": {
+      "title": "Ads Campaign Manager",
+      "subtitle": "Centralize and optimize your digital and physical marketing strategies.",
+      "seedData": "Load Demo Data",
+      "globalStats": "Global Performance Summary",
+      "globalStatsDesc": "Aggregated statistics from all your modules will appear here.",
+      "loading": "Loading..."
+    },
+    "cards": {
+      "active": "Active",
+      "paused": "Paused",
+      "comingSoon": "Coming Soon",
+      "inDevelopment": "In Development",
+      "programs": {
+        "dynamicQr": {
+          "title": "Dynamic QRs",
+          "description": "Create editable QR codes for your print and digital campaigns. Track scans and change destinations.",
+          "button": "Manage QRs"
+        },
+        "emailMarketing": {
+          "title": "Email Marketing",
+          "description": "Send automated newsletters and promotions to your segmented customer lists."
+        },
+        "displayAds": {
+          "title": "Display Ads",
+          "description": "Manage banner ads within the Dicilo network and partner sites."
+        }
+      }
+    },
+    "qrManager": {
+      "title": "Dynamic QR Manager",
+      "subtitle": "Create QR codes once, change their destination whenever you want.",
+      "back": "Back to Manager",
+      "downloadHistory": "Download History (CSV)",
+      "newQr": "New QR",
+      "noCampaigns": "You don't have any active QR campaigns.",
+      "noCampaignsSub": "Create your first one to start tracking.",
+      "loading": "Loading...",
+      "createDialog": {
+        "title": "Create New Dynamic QR",
+        "description": "This QR will point to an internal address that will redirect the user to wherever you say.",
+        "nameLabel": "Campaign Name",
+        "namePlaceholder": "Ex: Summer Menu 2025",
+        "targetUrlLabel": "Target URL",
+        "targetUrlPlaceholder": "https://yoursite.com/special-offer",
+        "targetUrlHelp": "You can change this URL later without reprinting the QR.",
+        "submit": "Create QR"
+      },
+      "card": {
+        "active": "Active",
+        "paused": "Paused",
+        "pointsTo": "Points to (Dynamic)",
+        "created": "Created:",
+        "scans": "Scans",
+        "downloadPng": "PNG"
+      },
+      "toasts": {
+        "loadError": "Load Error",
+        "loadErrorDesc": "Could not load campaigns. Check console.",
+        "fetchError": "Critical Error",
+        "reportError": "Error",
+        "reportErrorDesc": "Could not generate report.",
+        "downloadError": "Error downloading report.",
+        "missingData": "Missing Data",
+        "missingDataDesc": "Name and URL are required.",
+        "created": "Created",
+        "createdDesc": "QR Campaign created successfully.",
+        "createError": "Error",
+        "createErrorDesc": "Could not create.",
+        "deleteConfirm": "Are you sure you want to delete this QR?",
+        "deleted": "Deleted",
+        "deletedDesc": "QR deleted successfully.",
+        "deleteError": "Error deleting.",
+        "updated": "Updated",
+        "updatedDesc": "Target URL updated successfully.",
+        "updateError": "Could not update.",
+        "fatalError": "Fatal Error",
+        "error": "Error"
+      }
+    }
+  },
+  "freelancer": {
+    "composer": {
+      "title": "Create New Promotion",
+      "subtitle": "Customize your message for <1>{{company}}</1> and share it.",
+      "activeCampaign": "Active Campaign",
+      "grayMode": "Gray Mode",
+      "payPerClick": "Pay Per Click",
+      "selectImage": "1. Select Official Image",
+      "noImages": "This campaign has no available images.",
+      "customRecommendation": "2. Your Personalized Recommendation",
+      "placeholder": "Write why you recommend {{company}}...",
+      "generateAI": "Generate with AI ✨",
+      "trackingLink": "3. Unique Tracking Link",
+      "connectSchedule": "4. Connect & Schedule",
+      "shareWhatsapp": "Share on WhatsApp",
+      "preview": {
+        "title": "Mobile Preview",
+        "sponsored": "Sponsored",
+        "you": "You"
+      },
+      "earnings": {
+        "title": "Your Estimated Earnings",
+        "subtitle": "per Effective Click:",
+        "perClick": "/ click"
+      },
+      "selectCampaign": {
+        "title": "Select a Campaign",
+        "description": "Choose a company from the sidebar menu to start creating your personalized promotion."
+      },
+      "toasts": {
+        "linkGenerated": "Link Generated!",
+        "openingWhatsapp": "Opening WhatsApp with your promotion...",
+        "shareError": "Share Error",
+        "shareErrorDesc": "Could not generate link."
+      }
     }
   }
 }

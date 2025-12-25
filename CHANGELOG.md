@@ -1,5 +1,17 @@
 # Bitácora de Cambios - Dicilo.net
 
+### **193. I18N FIX & CSV REPORT: ADS MANAGER & FREELANCER - CÓDIGO: FIX-ADS-I18N-CSV-V1**
+- **Fecha y Hora:** 26 de Diciembre de 2025, 12:00 (CET)
+- **Módulos Afectados:** `src/components/ads-manager/AdsDashboard.tsx`, `src/components/ads-manager/QrManager.tsx`, `src/app/dashboard/freelancer/page.tsx`, `src/locales/{es,en,de}/common.json`.
+- **Descripción del Cambio:**
+  - **Traducción Completa:** Se implementó `react-i18next` en los módulos `AdsDashboard` y `QrManager`, así como en el `FreelancerPromoComposer`.
+  - **Nuevas Claves:** Se añadieron bloques completos de traducción (`adsManager` y `freelancer`) en los archivos `common.json` para Español, Inglés y Alemán.
+  - **Correcciones UI:** Se aseguraron los textos de estados (Activo, Pausado) y descripciones de diálogos.
+  - **Reporte CSV:** Se mejoró la descarga del historial de QRs con textos traducidos y manejo de errores localizados.
+  - **Fix Traducciones Wallet:** Se corrigió el problema de textos en inglés (hardcoded) en la tarjeta "Mi Wallet" del dashboard, añadiendo soporte para ES, EN y DE.
+- **Resultado:** Interfaz de Ads Manager y Freelancer totalmente localizada y lista para usuarios internacionales.
+
+
 ### **192. FIX: ADS MANAGER INTEGRATION & QR SERIALIZATION - CÓDIGO: FIX-ADS-MGR-V1**
 - **Fecha y Hora:** 25 de Diciembre de 2025, 01:00 (CET)
 - **Módulos Afectados:** `src/actions/ads-manager.ts`, `src/components/ads-manager/QrManager.tsx`, `src/app/dashboard/ads-manager/*`, `PrivateDashboard.tsx`.

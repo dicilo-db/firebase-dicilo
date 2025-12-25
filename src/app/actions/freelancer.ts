@@ -5,6 +5,16 @@ import { Campaign, Promotion } from '@/types/freelancer';
 
 const db = getAdminDb();
 
+const serializeFirestoreData = (data: any) => {
+    if (!data) return null;
+    const serialized = { ...data };
+    if (serialized.createdAt && typeof serialized.createdAt.toDate === 'function') {
+        serialized.createdAt = serialized.createdAt.toDate().toISOString();
+    }
+    // Handle other potential timestamps if any
+    return serialized;
+};
+
 /**
  * Fetches active campaigns suitable for a freelancer based on filters.
  */
@@ -25,7 +35,7 @@ export async function getFreelancerCampaigns(
 
         const campaigns: Campaign[] = snapshot.docs.map(doc => ({
             id: doc.id,
-            ...doc.data()
+            ...serializeFirestoreData(doc.data())
         } as Campaign));
 
         // Filter by gray mode budget rule explicitly if needed, though 'status' should reflect it via trigger
@@ -50,15 +60,23 @@ export async function getFreelancerCampaigns(
 export async function createPromotion(promo: Omit<Promotion, 'id' | 'createdAt'>) {
     try {
         const ref = db.collection('promotions').doc();
+        // Use a plain Date/string for return, but Firestore might need Date/Timestamp for storage
+        // But here we are sending JSON back to client.
+        const now = new Date();
         const newPromo = {
             ...promo,
             id: ref.id,
-            createdAt: new Date(),
+            createdAt: now.toISOString(), // Send ISO string to client
             // Generate a unique short link hash here in real logic
             trackingLink: `https://dicilo.net/r/${ref.id.substring(0, 6)}`
         };
 
-        await ref.set(newPromo);
+        // Save with actual Date object to Firestore
+        await ref.set({
+            ...newPromo,
+            createdAt: now
+        });
+
         return { success: true, promotion: newPromo };
     } catch (error: any) {
         return { success: false, error: error.message };
@@ -71,7 +89,10 @@ export async function createPromotion(promo: Omit<Promotion, 'id' | 'createdAt'>
 export async function getCampaignById(id: string): Promise<Campaign | null> {
     const doc = await db.collection('campaigns').doc(id).get();
     if (doc.exists) {
-        return { id: doc.id, ...doc.data() } as Campaign;
+        return {
+            id: doc.id,
+            ...serializeFirestoreData(doc.data())
+        } as Campaign;
     }
     return null;
 }
