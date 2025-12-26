@@ -6,6 +6,7 @@ import { Settings, LifeBuoy, LogOut, Coins, Shield, Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Sidebar } from './Sidebar';
+import { cn } from '@/lib/utils';
 
 export function DashboardLayout({ userData, currentView, onViewChange, children }: DashboardLayoutProps) {
     const [isMobileOpen, setIsMobileOpen] = useState(false);
@@ -30,7 +31,7 @@ export function DashboardLayout({ userData, currentView, onViewChange, children 
             <div className="flex flex-1 flex-col overflow-hidden">
 
                 {/* Header (Visible on Desktop & Mobile) */}
-                <header className="flex h-16 items-center justify-between border-b bg-white px-4">
+                <header className="flex h-16 items-center justify-between border-b bg-white px-4 md:hidden">
 
                     {/* Mobile Toggle & Logo */}
                     <div className="flex items-center gap-2 md:hidden">
@@ -60,8 +61,14 @@ export function DashboardLayout({ userData, currentView, onViewChange, children 
                     </div>
                 </header>
 
-                <main className="flex-1 overflow-auto p-4 md:p-8">
-                    <div className="mx-auto max-w-5xl">
+                <main className={cn(
+                    "flex-1 overflow-auto",
+                    currentView === 'freelancer' ? "p-0" : "p-4 md:p-8"
+                )}>
+                    <div className={cn(
+                        "mx-auto",
+                        currentView === 'freelancer' ? "h-full max-w-none" : "max-w-5xl"
+                    )}>
                         {children}
                     </div>
                 </main>

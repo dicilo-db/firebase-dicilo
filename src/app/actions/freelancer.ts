@@ -24,12 +24,8 @@ export async function getFreelancerCampaigns(
     try {
         let q = db.collection('campaigns').where('status', 'in', ['active', 'gray_mode']);
 
-        // Note: Firestore array-contains-any allows filtering by language match
-        if (filters.languages && filters.languages.length > 0) {
-            q = q.where('languages', 'array-contains-any', filters.languages);
-        }
-        // Location filtering might need more complex logic or client-side filtering 
-        // depending on how specific "target_locations" data structure is.
+        // REMOVED: .where('languages', 'array-contains-any', filters.languages) to avoid missing index errors during MVP.
+        // We will filter in-memory instead.
 
         const snapshot = await q.get();
 
@@ -38,9 +34,14 @@ export async function getFreelancerCampaigns(
             ...serializeFirestoreData(doc.data())
         } as Campaign));
 
-        // Filter by gray mode budget rule explicitly if needed, though 'status' should reflect it via trigger
-        // Also apply location filter in memory if "Global" vs specific city logic is complex
         const filtered = campaigns.filter(c => {
+            // 1. In-memory Language Filter
+            if (filters.languages && filters.languages.length > 0) {
+                const hasMatchingLang = c.languages?.some(lang => filters.languages!.includes(lang));
+                if (!hasMatchingLang) return false;
+            }
+
+            // 2. In-memory Location Filter
             if (filters.location && c.target_locations.length > 0 && !c.target_locations.includes('Global')) {
                 return c.target_locations.some(loc => loc.toLowerCase().includes(filters.location!.toLowerCase()));
             }

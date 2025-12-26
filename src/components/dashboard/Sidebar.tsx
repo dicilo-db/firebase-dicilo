@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import {
     Wallet,
@@ -18,7 +18,9 @@ import {
     Shield,
     Info,
     Briefcase,
-    Megaphone
+    Megaphone,
+    ChevronDown,
+    ChevronRight
 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -47,6 +49,7 @@ type NavItem = {
 export function Sidebar({ userData, onViewChange, currentView }: SidebarProps) {
     const { t } = useTranslation('common');
     const { user, logout } = useAuth();
+    const router = useRouter();
     const [isUploading, setIsUploading] = React.useState(false);
 
 
@@ -213,8 +216,61 @@ export function Sidebar({ userData, onViewChange, currentView }: SidebarProps) {
                         return null;
                     }
 
-                    const isFreelancerItem = item.id === 'freelancer';
-                    const isInactiveFreelancer = isFreelancerItem && !isFreelancerOrHigher;
+                    // Special handling for Freelancer accordion
+                    if (item.id === 'freelancer') {
+                        if (!isFreelancerOrHigher) return null; // Hide if no permission
+
+                        const isExpanded = currentView === 'freelancer'; // Auto-expand if active
+                        const currentTab = useSearchParams().get('tab') || 'explore';
+
+                        return (
+                            <div key={item.id} className="space-y-1">
+                                <Button
+                                    variant={currentView === item.id ? "secondary" : "ghost"}
+                                    className={cn(
+                                        "w-full justify-between",
+                                        currentView === item.id && "bg-primary/5 text-primary"
+                                    )}
+                                    onClick={() => onViewChange('freelancer')}
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <item.icon size={18} />
+                                        <span>{item.label}</span>
+                                    </div>
+                                    {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+                                </Button>
+
+                                {isExpanded && (
+                                    <div className="ml-9 border-l pl-2 space-y-1 animate-in slide-in-from-top-2 duration-200">
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            className={cn("w-full justify-start h-8 text-xs font-normal", currentTab === 'explore' && "bg-muted font-medium text-primary")}
+                                            onClick={() => router.push('?view=freelancer&tab=explore')}
+                                        >
+                                            Explorar Campañas
+                                        </Button>
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            className={cn("w-full justify-start h-8 text-xs font-normal", currentTab === 'stats' && "bg-muted font-medium text-primary")}
+                                            onClick={() => router.push('?view=freelancer&tab=stats')}
+                                        >
+                                            Mis Estadísticas
+                                        </Button>
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            className={cn("w-full justify-start h-8 text-xs font-normal", currentTab === 'payments' && "bg-muted font-medium text-primary")}
+                                            onClick={() => router.push('?view=freelancer&tab=payments')}
+                                        >
+                                            Pagos
+                                        </Button>
+                                    </div>
+                                )}
+                            </div>
+                        );
+                    }
 
                     return (
                         <Button
@@ -223,7 +279,6 @@ export function Sidebar({ userData, onViewChange, currentView }: SidebarProps) {
                             className={cn(
                                 "w-full justify-start gap-3",
                                 currentView === item.id && "bg-primary/10 text-primary hover:bg-primary/20",
-                                isInactiveFreelancer && "text-muted-foreground opacity-70"
                             )}
                             onClick={() => onViewChange(item.id)}
                         >

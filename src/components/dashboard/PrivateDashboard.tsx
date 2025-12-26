@@ -23,9 +23,13 @@ import { InviteFriendSection } from './InviteFriendSection';
 import { DiciCoinSection } from './DiciCoinSection';
 import { TicketsManager } from './tickets/TicketsManager';
 import { FreelancerLanding } from './freelancer/FreelancerLanding';
+import { FreelancerCampaignList } from './freelancer/FreelancerCampaignList';
 import FreelancerPromoComposerPage from '@/app/dashboard/freelancer/page';
+import { useRouter } from 'next/navigation';
+import { cn } from '@/lib/utils';
 
 const db = getFirestore(app);
+// Private Dashboard Component
 
 interface PrivateDashboardProps {
     user: User;
@@ -35,6 +39,7 @@ interface PrivateDashboardProps {
 export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
     const { toast } = useToast();
     const { t } = useTranslation('common');
+    const router = useRouter();
     const searchParams = useSearchParams();
 
     // Initialize activeView from URL param if available, otherwise default to 'overview'
@@ -222,7 +227,48 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
                 return <AdsDashboard />;
             case 'freelancer':
                 if (formData.isFreelancer) {
-                    return <FreelancerPromoComposerPage />;
+                    const tab = searchParams?.get('tab') || 'explore';
+                    const campaignId = searchParams?.get('campaignId');
+
+                    if (tab === 'explore') {
+                        if (campaignId) {
+                            // If a campaign is selected, show the composer
+                            return (
+                                <div className="h-full overflow-hidden flex flex-col bg-zinc-50 dark:bg-zinc-950/50">
+                                    <div className="p-4 border-b flex items-center justify-between bg-white dark:bg-zinc-900 shrink-0">
+                                        <Button variant="ghost" size="sm" onClick={() => router.push('?view=freelancer&tab=explore')}>
+                                            &larr; Volver a campañas
+                                        </Button>
+                                    </div>
+                                    <div className="flex-1 overflow-hidden relative">
+                                        <FreelancerPromoComposerPage />
+                                    </div>
+                                </div>
+                            );
+                        } else {
+                            // Show full list of campaigns in a nice container
+                            return (
+                                <div className="h-full overflow-hidden flex flex-col p-6 animate-in fade-in duration-300">
+                                    <div className="mb-6">
+                                        <h1 className="text-2xl font-bold tracking-tight">Campañas Disponibles</h1>
+                                        <p className="text-muted-foreground">Selecciona una campaña para comenzar a trabajar.</p>
+                                    </div>
+                                    <div className="flex-1 overflow-hidden border rounded-xl shadow-sm bg-white dark:bg-zinc-900">
+                                        <FreelancerCampaignList
+                                            className="h-full border-0"
+                                            onSelect={(id) => router.push(`?view=freelancer&tab=explore&campaignId=${id}`)}
+                                            selectedId={null}
+                                        />
+                                    </div>
+                                </div>
+                            );
+                        }
+                    } else if (tab === 'stats') {
+                        return <div className="flex items-center justify-center h-full text-muted-foreground">Estadísticas próximamente...</div>;
+                    } else if (tab === 'payments') {
+                        return <div className="flex items-center justify-center h-full text-muted-foreground">Pagos próximamente...</div>;
+                    }
+                    return null;
                 } else {
                     return <FreelancerLanding />;
                 }

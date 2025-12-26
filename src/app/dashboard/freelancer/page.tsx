@@ -130,7 +130,7 @@ export default function FreelancerPromoComposerPage() {
         : '/placeholder-product-1.jpg'; // Fallback if no images found in real data
 
     return (
-        <div className="flex flex-col xl:flex-row h-screen overflow-hidden">
+        <div className="flex flex-col xl:flex-row h-full overflow-hidden">
             {/* CENTRAL AREA: EDITOR */}
             <div className="flex-1 p-6 md:p-8 overflow-y-auto space-y-6 pb-32 bg-slate-50 dark:bg-black/20">
                 <div>
@@ -253,18 +253,18 @@ export default function FreelancerPromoComposerPage() {
             </div>
 
             {/* RIGHT AREA: MOBILE PREVIEW */}
-            <div className="hidden xl:flex w-[400px] bg-slate-100 dark:bg-black/40 border-l p-8 flex-col items-center justify-center shrink-0 relative overflow-y-auto">
+            <div className="hidden xl:flex w-[400px] bg-slate-100 dark:bg-black/40 border-l p-8 flex-col items-center shrink-0 relative overflow-y-auto py-12">
                 <div className="absolute top-6 left-1/2 -translate-x-1/2">
                     <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-widest bg-background/50 px-3 py-1 rounded-full backdrop-blur-sm">{t('freelancer.composer.preview.title')}</h3>
                 </div>
 
                 {/* Phone Mockup */}
-                <div className="relative w-[320px] h-[650px] bg-black rounded-[40px] shadow-2xl border-8 border-slate-900 mt-8 overflow-hidden">
+                <div className="relative w-[360px] h-[800px] bg-black rounded-[50px] shadow-2xl border-[8px] border-slate-900 mt-8 overflow-hidden shrink-0">
                     {/* Notch */}
-                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-40 h-6 bg-slate-900 rounded-b-xl z-20"></div>
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-40 h-8 bg-slate-900 rounded-b-xl z-20"></div>
 
                     {/* Screen Content */}
-                    <div className="w-full h-full bg-white dark:bg-black text-foreground pt-12 relative overflow-hidden flex flex-col">
+                    <div className="w-full h-full bg-white dark:bg-black text-foreground pt-14 relative overflow-hidden flex flex-col">
 
                         {/* App Header Mock */}
                         <div className="px-4 py-2 flex justify-between items-center border-b border-white/10">
