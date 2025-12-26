@@ -12,9 +12,12 @@ import {
     Send,
     Copy,
     Clock,
+    CheckCircle2,
+    Plus,
+    Check,
+    Loader2,
     MessageCircle,
-    Share2,
-    CheckCircle2
+    Share2
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import Image from 'next/image';
@@ -22,7 +25,7 @@ import { useSearchParams } from 'next/navigation';
 import { getCampaignById, createPromotion } from '@/app/actions/freelancer';
 import { Campaign } from '@/types/freelancer';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Loader2 } from 'lucide-react';
+
 
 export default function FreelancerPromoComposerPage() {
     const { t } = useTranslation('common');
@@ -36,6 +39,20 @@ export default function FreelancerPromoComposerPage() {
 
     const [customText, setCustomText] = useState('');
     const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+    const [visibleImagesCount, setVisibleImagesCount] = useState(4);
+    const [generatedLink, setGeneratedLink] = useState('');
+    const [isCopying, setIsCopying] = useState(false);
+
+    // Pricing Tiers Configuration
+    const PRICING_TIERS = [
+        { chars: 600, rate: 0.16 },
+        { chars: 1200, rate: 0.30 },
+        { chars: 2000, rate: 0.50 }
+    ];
+
+    const currentTier = PRICING_TIERS.reduce((prev, curr) => {
+        return customText.length >= curr.chars ? curr : prev;
+    }, { chars: 0, rate: activeCampaign?.rate_per_click || 0.10 }); // Default base rate
 
     useEffect(() => {
         async function loadCampaign() {
@@ -43,15 +60,75 @@ export default function FreelancerPromoComposerPage() {
             setIsLoading(true);
             const campaign = await getCampaignById(campaignId);
             if (campaign) {
+                // DEMO: Simulate more images to demonstrate the 'Load More' feature
+                if (campaign.images && campaign.images.length > 0) {
+                    // Repeat images to fill at least 12 items for demo purposes if there are few
+                    const rawImages = campaign.images;
+                    let expandedImages = [...rawImages];
+                    while (expandedImages.length < 12) {
+                        expandedImages = [...expandedImages, ...rawImages];
+                    }
+                    campaign.images = expandedImages.slice(0, 24);
+                }
+
                 setActiveCampaign(campaign);
                 // Reset form state when campaign changes
                 setCustomText(campaign.description || ''); // Default to description or empty
                 setSelectedImageIndex(0);
+                setVisibleImagesCount(4);
+                setGeneratedLink(''); // Reset link
             }
             setIsLoading(false);
         }
         loadCampaign();
     }, [campaignId]);
+
+    const handleCopyLink = async () => {
+        if (!activeCampaign) return;
+        setIsCopying(true);
+
+        try {
+            let linkToCopy = generatedLink;
+
+            if (!linkToCopy) {
+                const selectedImg = activeCampaign.images && activeCampaign.images.length > 0
+                    ? activeCampaign.images[selectedImageIndex]
+                    : '/placeholder-product-1.jpg';
+
+                const result = await createPromotion({
+                    campaignId: activeCampaign.id!,
+                    freelancerId: 'current_user_id',
+                    customText: customText,
+                    selectedImage: selectedImg,
+                    platform: 'clipboard', // internal flag
+                    status: 'published',
+                    trackingLink: '',
+                } as any);
+
+                if (result.success && result.promotion) {
+                    linkToCopy = result.promotion.trackingLink;
+                    setGeneratedLink(linkToCopy);
+                } else {
+                    throw new Error(result.error || "Failed to generate link");
+                }
+            }
+
+            await navigator.clipboard.writeText(linkToCopy);
+            toast({
+                title: t('common:copied') || "Copiado",
+                description: "Enlace de seguimiento copiado al portapapeles.",
+            });
+
+        } catch (error) {
+            toast({
+                title: "Error",
+                description: "No se pudo copiar el enlace.",
+                variant: "destructive"
+            });
+        } finally {
+            setIsCopying(false);
+        }
+    };
 
     const handleWhatsAppShare = async () => {
         if (!activeCampaign) return;
@@ -70,12 +147,16 @@ export default function FreelancerPromoComposerPage() {
                 selectedImage: selectedImg,
                 platform: 'whatsapp',
                 status: 'published',
-                trackingLink: '' // It's generated on server
+                trackingLink: '', // It's generated on server
+                // Save the calculated rate/tier as well if backend supports it
             } as any);
 
             if (result.success && result.promotion) {
                 // 2. Construct WhatsApp Message
                 const trackingLink = result.promotion.trackingLink;
+                // Update UI state with this new link too
+                setGeneratedLink(trackingLink);
+
                 const message = `${customText}\n\n${trackingLink} #${activeCampaign.companyName.replace(/[^a-zA-Z0-9]/g, '')}`;
                 const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
 
@@ -165,16 +246,29 @@ export default function FreelancerPromoComposerPage() {
                     </div>
                     <div className="ml-auto text-right hidden sm:block">
                         <p className="text-xs text-muted-foreground">{t('freelancer.composer.payPerClick')}</p>
-                        <p className="font-bold text-green-600 text-lg">${activeCampaign.rate_per_click.toFixed(2)}</p>
+                        <p className="font-bold text-green-600 text-lg">${currentTier.rate.toFixed(2)}</p>
                     </div>
                 </div>
 
                 {/* Image Gallery Selector */}
                 <div className="space-y-3">
-                    <label className="text-sm font-medium">{t('freelancer.composer.selectImage')}</label>
+                    <div className="flex items-center justify-between">
+                        <label className="text-sm font-medium">{t('freelancer.composer.selectImage')}</label>
+                        {activeCampaign.images && activeCampaign.images.length > visibleImagesCount && (
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-8 w-8 rounded-full p-0"
+                                onClick={() => setVisibleImagesCount(prev => Math.min(prev + 4, 24))}
+                            >
+                                <Plus className="h-4 w-4" />
+                            </Button>
+                        )}
+                    </div>
+
                     {activeCampaign.images && activeCampaign.images.length > 0 ? (
-                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                            {activeCampaign.images.map((img, i) => (
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 animate-in fade-in duration-500">
+                            {activeCampaign.images.slice(0, visibleImagesCount).map((img, i) => (
                                 <div
                                     key={i}
                                     onClick={() => setSelectedImageIndex(i)}
@@ -197,7 +291,30 @@ export default function FreelancerPromoComposerPage() {
 
                 {/* Text Editor */}
                 <div className="space-y-3">
-                    <label className="text-sm font-medium">{t('freelancer.composer.customRecommendation')}</label>
+                    <div className="flex items-center justify-between">
+                        <label className="text-sm font-medium">{t('freelancer.composer.customRecommendation')}</label>
+                    </div>
+
+                    {/* Pricing Tiers Visualization */}
+                    <div className="grid grid-cols-3 gap-2 mb-2">
+                        {PRICING_TIERS.map((tier) => {
+                            const isActive = customText.length >= tier.chars;
+                            return (
+                                <div
+                                    key={tier.chars}
+                                    className={`
+                                        flex flex-col items-center justify-center p-2 rounded-lg border text-center transition-all duration-300
+                                        ${isActive ? 'bg-green-50 border-green-200 shadow-sm' : 'bg-gray-50 border-gray-100 opacity-70'}
+                                    `}
+                                >
+                                    <span className={`text-xs font-semibold ${isActive ? 'text-green-700' : 'text-gray-500'}`}>$ C= {tier.chars}</span>
+                                    <div className={`mt-1 h-3 w-3 rounded-full border ${isActive ? 'bg-green-500 border-green-600' : 'bg-white border-gray-300'}`}></div>
+                                    <span className="text-[10px] text-muted-foreground mt-1 font-mono">${tier.rate.toFixed(2)}</span>
+                                </div>
+                            )
+                        })}
+                    </div>
+
                     <Card className="border-dashed border-2 shadow-none bg-muted/20">
                         <CardContent className="p-4">
                             <Textarea
@@ -210,7 +327,9 @@ export default function FreelancerPromoComposerPage() {
                                 <div className="flex gap-2">
                                     <Badge variant="secondary" className="text-xs cursor-pointer hover:bg-muted">{t('freelancer.composer.generateAI')}</Badge>
                                 </div>
-                                <span className="text-xs text-muted-foreground">{customText.length}/280</span>
+                                <div className="text-right">
+                                    <span className="text-xs text-muted-foreground font-mono">{customText.length} chars</span>
+                                </div>
                             </div>
                         </CardContent>
                     </Card>
@@ -220,9 +339,25 @@ export default function FreelancerPromoComposerPage() {
                 <div className="space-y-3">
                     <label className="text-sm font-medium">{t('freelancer.composer.trackingLink')}</label>
                     <div className="flex gap-2">
-                        <Input value={`dicilo.net/r/${activeCampaign.id.substring(0, 6)}...`} readOnly className="bg-muted font-mono text-sm" />
-                        <Button variant="outline" size="icon">
-                            <Copy className="h-4 w-4" />
+                        <Input
+                            value={generatedLink || `dicilo.net/r/${activeCampaign.id.substring(0, 6)}...`}
+                            readOnly
+                            className={`font-mono text-sm ${generatedLink ? 'bg-green-50 border-green-200 text-green-800' : 'bg-muted'}`}
+                        />
+                        <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={handleCopyLink}
+                            disabled={isCopying}
+                            className={generatedLink ? "border-green-200 hover:bg-green-50 hover:text-green-700" : ""}
+                        >
+                            {isCopying ? (
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                            ) : generatedLink ? (
+                                <CheckCircle2 className="h-4 w-4 text-green-600" />
+                            ) : (
+                                <Copy className="h-4 w-4" />
+                            )}
                         </Button>
                     </div>
                 </div>
@@ -322,7 +457,7 @@ export default function FreelancerPromoComposerPage() {
                 <div className="mt-8 bg-green-600 text-white p-4 rounded-xl shadow-lg w-full max-w-[300px] text-center animate-in slide-in-from-bottom-4 fade-in">
                     <p className="text-xs font-medium opacity-90 mb-1">{t('freelancer.composer.earnings.title')}</p>
                     <p className="text-sm opacity-90">{t('freelancer.composer.earnings.subtitle')}</p>
-                    <p className="text-3xl font-bold mt-1">${activeCampaign.rate_per_click.toFixed(2)} <span className="text-sm font-normal opacity-75">{t('freelancer.composer.earnings.perClick')}</span></p>
+                    <p className="text-3xl font-bold mt-1">${currentTier.rate.toFixed(2)} <span className="text-sm font-normal opacity-75">{t('freelancer.composer.earnings.perClick')}</span></p>
                 </div>
             </div>
         </div>

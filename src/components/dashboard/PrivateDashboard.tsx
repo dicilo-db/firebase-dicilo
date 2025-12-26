@@ -270,7 +270,7 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
                     }
                     return null;
                 } else {
-                    return <FreelancerLanding />;
+                    return <FreelancerLanding user={user} />;
                 }
             case 'map':
                 return (
