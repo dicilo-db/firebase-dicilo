@@ -600,6 +600,34 @@
       }
     }
   },
+  "rules": {
+    "title": "Tu Oficina es el Mundo: Gana dinero desde casa con Dicilo",
+    "subtitle": "Libertad, Sin Inversión y Sin Riesgos.",
+    "howToEarn": {
+      "title": "¿Cuánto puedo ganar?",
+      "desc": "En Dicilo, tú pones el talento y nosotros la infraestructura. Olvídate de buscar clientes o negociar precios. Nosotros nos encargamos de todo.",
+      "points": {
+        "p1": "Cada campaña es diferente. Tienes la posibilidad de ganar entre <1>0,16 € y 0,50 €</1> por cada post validado.",
+        "p2": "El dinero se acumula directamente en tu cuenta y lo que ves en la campaña es lo que recibes."
+      }
+    },
+    "fairPlay": {
+      "title": "Sistema \"Fair Play\" (Límites)",
+      "desc": "Nuestras campañas tienen fondos limitados (\"Pools\") asignados por los clientes. Para asegurar que todos ganen y evitar monopolios:",
+      "points": {
+        "p1": "Límite de 10 Posts por Campaña/Día: Puedes realizar un máximo de 10 envíos diarios por cada campaña.",
+        "p2": "El presupuesto se asigna en tiempo real. ¡El que llega primero, gana!"
+      }
+    },
+    "strategy": {
+      "title": "Estrategia para Ganar Más",
+      "points": {
+        "p1": "¡Diversifica! Si activas 10 campañas diferentes, puedes realizar hasta 100 posts al día.",
+        "p2": "Tu Actividad Importa: Cuanto más exitosas sean tus campañas, más invertirán los clientes y mejores tarifas podremos ofrecerte.",
+        "p3": "Entra, selecciona tus campañas y asegura tu cupo diario hoy."
+      }
+    }
+  },
   "dicicoinPage": {
     "title": "¿Qué es DICICOIN?",
     "intro": "DICICOIN es una moneda física, conmemorativa y coleccionable que representa el nacimiento y la visión del ecosistema Dicilo.\nNo es una criptomoneda ni un producto financiero tradicional, sino un símbolo tangible de pertenencia a una comunidad que está construyendo nuevas formas de conexión, recomendación y crecimiento entre personas y empresas.",

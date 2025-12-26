@@ -1,22 +1,51 @@
-export type CampaignStatus = 'active' | 'gray_mode' | 'paused' | 'ended';
+export type CampaignStatus = 'active' | 'gray_mode' | 'paused' | 'ended' | 'draft';
+
+export interface CampaignTranslation {
+    title: string;
+    description: string;
+    promo_text?: string;
+}
 
 export interface Campaign {
     id: string;
+    clientId: string; // Reference to business/user
     companyId: string;
     companyName: string;
     companyLogo?: string;
+
+    // Internal & Financials
+    status: CampaignStatus;
+    budget_total: number;
+    budget_remaining: number;
+    cost_per_action: number;   // Charged to client
+    reward_per_action: number; // Paid to freelancer (replaces rate_per_click)
+    rate_per_click: number;    // Keeping for backward compat, same as reward_per_action
+    daily_cap_per_user: number;
+
+    // Content & I18n
+    default_language: string;
+    translations: { [langCode: string]: CampaignTranslation };
+
+    // Legacy/Display fields (can be populated from default translation)
     title: string;
     description: string;
+
     images: string[];
-    budget_marketing: number; // For freelancers
-    budget_banners: number;   // For ads
-    rate_per_click: number;
     categories: string[];
-    languages: ('es' | 'en' | 'de')[];
-    target_locations: string[]; // e.g. ["Madrid", "Berlin", "Global"]
-    status: CampaignStatus;
-    gray_mode_trigger: boolean; // true if budget <= 0
-    createdAt: any; // Firestore Timestamp
+    languages: string[]; // Supported languages codes
+    target_locations: string[];
+    gray_mode_trigger: boolean;
+    createdAt: any;
+}
+
+export interface CampaignAction {
+    id?: string;
+    campaignId: string;
+    freelancerId: string;
+    languageCode: string;
+    status: 'pending' | 'approved' | 'rejected';
+    rewardAmount: number;
+    createdAt: any;
 }
 
 export interface Promotion {
@@ -26,7 +55,7 @@ export interface Promotion {
     customText: string;
     selectedImage: string;
     trackingLink: string;
-    platform: 'whatsapp' | 'instagram' | 'telegram' | 'facebook' | 'twitter' | 'linkedin';
+    platform: 'whatsapp' | 'instagram' | 'telegram' | 'facebook' | 'twitter' | 'linkedin' | 'clipboard';
     status: 'draft' | 'scheduled' | 'published';
     scheduledDate?: any;
     createdAt: any;
@@ -35,7 +64,7 @@ export interface Promotion {
 export interface FreelancerProfile {
     userId: string;
     categories: string[];
-    languages: ('es' | 'en' | 'de')[];
+    languages: string[];
     location: {
         city?: string;
         country?: string;
@@ -48,4 +77,6 @@ export interface FreelancerProfile {
         diciPoints: number;
     };
     isActive: boolean;
+    walletStatus?: 'active' | 'pending_setup';
+    revolutTag?: string;
 }

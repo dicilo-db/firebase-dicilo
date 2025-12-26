@@ -619,6 +619,34 @@
       }
     }
   },
+  "rules": {
+    "title": "Ihr Büro ist die Welt: Verdienen Sie Geld von zu Hause aus mit Dicilo",
+    "subtitle": "Freiheit, ohne Investition und ohne Risiken.",
+    "howToEarn": {
+      "title": "Wie viel kann ich verdienen?",
+      "desc": "Bei Dicilo bringen Sie das Talent mit und wir stellen die Infrastruktur. Vergessen Sie die Kundensuche oder Preisverhandlungen. Wir kümmern uns um alles.",
+      "points": {
+        "p1": "Jede Kampagne ist anders. Sie haben die Möglichkeit, zwischen <1>0,16 € und 0,50 €</1> pro validiertem Post zu verdienen.",
+        "p2": "Das Geld wird direkt auf Ihrem Konto gesammelt und was Sie in der Kampagne sehen, ist das, was Sie erhalten."
+      }
+    },
+    "fairPlay": {
+      "title": "Fair Play System (Limits)",
+      "desc": "Unsere Kampagnen haben begrenzte Budgets (\"Pools\"), die von den Kunden zugewiesen werden. Um sicherzustellen, dass jeder gewinnt und Monopole vermieden werden:",
+      "points": {
+        "p1": "Limit von 10 Posts pro Kampagne/Tag: Sie können maximal 10 Einsendungen pro Tag und Kampagne vornehmen.",
+        "p2": "Das Budget wird in Echtzeit zugewiesen. Wer zuerst kommt, mahlt zuerst!"
+      }
+    },
+    "strategy": {
+      "title": "Strategie um mehr zu verdienen",
+      "points": {
+        "p1": "Diversifizieren Sie! Wenn Sie 10 verschiedene Kampagnen aktivieren, können Sie bis zu 100 Posts pro Tag erstellen.",
+        "p2": "Ihre Aktivität zählt: Je erfolgreicher Ihre Kampagnen sind, desto mehr investieren die Kunden und desto bessere Tarife können wir Ihnen in Zukunft anbieten.",
+        "p3": "Treten Sie ein, wählen Sie Ihre Kampagnen aus und sichern Sie sich noch heute Ihren täglichen Platz."
+      }
+    }
+  },
   "dicicoinPage": {
     "title": "Was ist DICICOIN?",
     "intro": "DICICOIN ist eine physische Gedenk- und Sammlermünze, die die Geburt und Vision des Dicilo-Ökosystems repräsentiert.\nEs ist keine Kryptowährung und kein traditionelles Finanzprodukt, sondern ein greifbares Symbol der Zugehörigkeit zu einer Gemeinschaft, die neue Wege der Verbindung, Empfehlung und des Wachstums zwischen Menschen und Unternehmen aufbaut.",

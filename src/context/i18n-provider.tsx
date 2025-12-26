@@ -16,16 +16,43 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
-    // La inicialización de i18next es asíncrona.
-    // Usamos un estado para asegurarnos de que la UI no se renderice
-    // hasta que las traducciones estén listas en el cliente.
-    if (!i18n.isInitialized) {
-      i18n.init().then(() => {
-        setIsInitialized(true);
-      });
-    } else {
+    const initI18n = async () => {
+      // --- Lógica de Detección Automática (Script del Usuario) ---
+      const configurarIdiomaUsuario = async () => {
+        const idiomasSoportados = ['es', 'de', 'en', 'fr']; // Ampliable
+
+        // 1. ¿Tiene preferencia guardada?
+        let idioma = localStorage.getItem('dicilo_lang');
+
+        // 2. Si no, ¿qué dice su navegador?
+        if (!idioma) {
+          const navLang = (navigator.language || 'es').split('-')[0];
+          idioma = idiomasSoportados.includes(navLang) ? navLang : 'es';
+        }
+
+        // 3. Guardar y Aplicar
+        localStorage.setItem('dicilo_lang', idioma);
+        document.documentElement.lang = idioma;
+
+        console.log("Idioma configurado: " + idioma);
+
+        // Sincronizar con i18next
+        if (i18n.language !== idioma) {
+          await i18n.changeLanguage(idioma);
+        }
+      };
+
+      await configurarIdiomaUsuario();
+
+      // Inicializar i18next si aún no lo está
+      if (!i18n.isInitialized) {
+        await i18n.init();
+      }
+
       setIsInitialized(true);
-    }
+    };
+
+    initI18n();
   }, []);
 
   // Mientras i18next se está inicializando, mostramos un esqueleto simple
