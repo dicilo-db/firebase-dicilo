@@ -18,7 +18,8 @@ import {
     Loader2,
     MessageCircle,
     Share2,
-    Languages
+    Languages,
+    Info
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import Image from 'next/image';
