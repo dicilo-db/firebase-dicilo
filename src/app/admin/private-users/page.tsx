@@ -19,11 +19,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth } from '@/context/AuthContext';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
-import { togglePrivateUserStatus, deletePrivateUser, setPrivateUserRole, updateUserPermissions } from '@/app/actions/private-users';
+import { togglePrivateUserStatus, deletePrivateUser, setPrivateUserRole, updateUserPermissions, setReferrer } from '@/app/actions/private-users';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
 import { CSVLink } from 'react-csv';
-import { Loader2, Search, Download, LayoutDashboard, RefreshCw, Trash2, Pause, Play, Briefcase, ShieldCheck } from 'lucide-react';
+import { Loader2, Search, Download, LayoutDashboard, RefreshCw, Trash2, Pause, Play, Briefcase, ShieldCheck, UserPlus, Edit, Save, X } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -40,7 +40,10 @@ export default function PrivateUsersPage() {
     const [searchTerm, setSearchTerm] = useState('');
 
     // Permissions Management State
+    // Permissions & Referrer State
     const [permissionDialogUser, setPermissionDialogUser] = useState<any>(null);
+    const [referrerDialogUser, setReferrerDialogUser] = useState<any>(null);
+    const [referrerCodeInput, setReferrerCodeInput] = useState('');
     const [selectedPermissions, setSelectedPermissions] = useState<string[]>([]);
     const AVAILABLE_PERMISSIONS = [
         { id: 'create_qr', label: 'Crear Códigos QR' },
@@ -75,6 +78,20 @@ export default function PrivateUsersPage() {
             setSelectedPermissions([...selectedPermissions, permId]);
         }
     };
+
+    const handleSaveReferrer = async () => {
+        if (!referrerDialogUser || !referrerCodeInput) return;
+        const res = await setReferrer(referrerDialogUser.id, referrerCodeInput);
+        if (res.success) {
+            toast({ title: 'Referrer Linked', description: res.message });
+            setReferrerDialogUser(null);
+            setReferrerCodeInput('');
+            // Reload to reflect changes (simplest way to update graph)
+            window.location.reload();
+        } else {
+            toast({ title: 'Error', description: res.error, variant: 'destructive' });
+        }
+    };
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
@@ -83,7 +100,18 @@ export default function PrivateUsersPage() {
                 const q = query(collection(db, 'private_profiles'), orderBy('uniqueCode', 'asc'));
                 const snapshot = await getDocs(q);
                 const usersData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                setUsers(usersData);
+
+                // Resolve Referrers In-Memory
+                const userMap = new Map();
+                usersData.forEach((u: any) => userMap.set(u.id, u));
+
+                const enrichedUsers = usersData.map((u: any) => ({
+                    ...u,
+                    referrerCode: u.referredBy ? userMap.get(u.referredBy)?.uniqueCode : null,
+                    referrerName: u.referredBy ? userMap.get(u.referredBy)?.firstName : null
+                }));
+
+                setUsers(enrichedUsers);
             } catch (error: any) {
                 console.error('Error fetching users:', error);
                 setError(error.message || 'Unknown error fetching users.');
@@ -212,8 +240,9 @@ export default function PrivateUsersPage() {
                                         <TableHead>E-Mail</TableHead>
                                         <TableHead>{t('common:dashboard.country') || 'Land'}</TableHead>
                                         <TableHead>{t('common:dashboard.city') || 'Stadt'}</TableHead>
+                                        <TableHead>Rol (Rollen)</TableHead>
                                         <TableHead>Interessen</TableHead>
-                                        <TableHead>Rollen</TableHead>
+                                        <TableHead>Invitado Por</TableHead>
                                         <TableHead>Beigetreten</TableHead>
                                         <TableHead>Aktionen</TableHead>
                                     </TableRow>
@@ -278,6 +307,23 @@ export default function PrivateUsersPage() {
                                                         </span>
                                                     )}
                                                 </div>
+                                            </TableCell>
+                                            <TableCell className="max-w-[200px]">
+                                                <span className="text-xs text-muted-foreground truncate block" title={user.interests?.join(', ')}>
+                                                    {user.interests?.length > 0 ? user.interests.join(', ') : '-'}
+                                                </span>
+                                            </TableCell>
+                                            <TableCell>
+                                                {user.referrerCode ? (
+                                                    <div className="flex flex-col">
+                                                        <span className="font-mono font-bold text-xs">{user.referrerCode}</span>
+                                                        <span className="text-[10px] text-muted-foreground">{user.referrerName}</span>
+                                                    </div>
+                                                ) : (
+                                                    <Button variant="ghost" size="sm" className="h-6 text-xs text-blue-600 px-2" onClick={() => setReferrerDialogUser(user)}>
+                                                        <UserPlus className="h-3 w-3 mr-1" /> Add
+                                                    </Button>
+                                                )}
                                             </TableCell>
                                             <TableCell>
                                                 {user.createdAt?.seconds
@@ -365,6 +411,31 @@ export default function PrivateUsersPage() {
                     <DialogFooter>
                         <Button variant="outline" onClick={() => setPermissionDialogUser(null)}>Cancelar</Button>
                         <Button onClick={handleSavePermissions}>Guardar Permisos</Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            {/* Referrer Dialog */}
+            <Dialog open={!!referrerDialogUser} onOpenChange={(open) => !open && setReferrerDialogUser(null)}>
+                <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                        <DialogTitle>Vincular Referidor para {referrerDialogUser?.firstName}</DialogTitle>
+                    </DialogHeader>
+                    <div className="flex flex-col gap-4 py-4">
+                        <Label htmlFor="refCode">Código Único del Referidor</Label>
+                        <Input
+                            id="refCode"
+                            placeholder="Ej: DHH25NM00001"
+                            value={referrerCodeInput}
+                            onChange={(e) => setReferrerCodeInput(e.target.value)}
+                        />
+                        <p className="text-xs text-muted-foreground">
+                            Ingresa el código único de la persona que invitó a este usuario.
+                        </p>
+                    </div>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setReferrerDialogUser(null)}>Cancelar</Button>
+                        <Button onClick={handleSaveReferrer}>Guardar</Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>

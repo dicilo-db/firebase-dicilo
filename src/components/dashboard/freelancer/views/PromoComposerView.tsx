@@ -50,15 +50,15 @@ export function PromoComposerView() {
     const [isCopying, setIsCopying] = useState(false);
 
     // Pricing Tiers Configuration (Should come from backend/config)
+    // Pricing Tiers Configuration
     const PRICING_TIERS = [
-        { chars: 600, rate: 0.16 },
-        { chars: 1200, rate: 0.30 },
-        { chars: 2000, rate: 0.50 }
+        { chars: 600, rate: 0.20 },
+        { chars: 800, rate: 0.40 }
     ];
 
     const currentTier = PRICING_TIERS.reduce((prev, curr) => {
         return customText.length >= curr.chars ? curr : prev;
-    }, { chars: 0, rate: activeCampaign?.rate_per_click || 0.10 });
+    }, { chars: 0, rate: 0.00 });
 
     useEffect(() => {
         async function loadCampaign() {
@@ -155,7 +155,7 @@ export function PromoComposerView() {
         setIsSharing(true);
         try {
             const postLang = (navigator.language || 'es').split('-')[0];
-            const result = await processCampaignPost('demo_user_id', activeCampaign.id!, postLang);
+            const result = await processCampaignPost('demo_user_id', activeCampaign.id!, postLang, customText.length);
 
             if (!result.success) {
                 if (result.error?.includes('10 posts')) {
@@ -226,7 +226,7 @@ export function PromoComposerView() {
                     </div>
                     <div className="ml-auto text-right">
                         <div className="text-green-600 font-bold text-xl">${currentTier.rate.toFixed(2)}</div>
-                        <div className="text-xs text-muted-foreground">per valid click</div>
+                        <div className="text-xs text-muted-foreground">por post enviado</div>
                     </div>
                 </div>
 
@@ -393,7 +393,11 @@ export function PromoComposerView() {
                 <div className="bg-white dark:bg-card p-4 rounded-xl shadow mt-8 w-full border">
                     <p className="text-sm font-semibold mb-1">Ganancia Estimada</p>
                     <p className="text-2xl font-bold text-green-600">€{currentTier.rate.toFixed(2)}</p>
-                    <p className="text-xs text-muted-foreground mt-1">Si obtienes un click válido.</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                        {customText.length < 600 ? `Escribe ${(600 - customText.length)} más car. para ganar 0,20€` :
+                            customText.length < 800 ? `Escribe ${(800 - customText.length)} más car. para ganar 0,40€` :
+                                "¡Máxima tarifa básica alcanzada!"}
+                    </p>
                 </div>
             </div>
         </div>

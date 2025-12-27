@@ -9,7 +9,12 @@ import { revalidatePath } from 'next/cache';
  * Valida límites diarios (Fair Play) y presupuesto de la campaña.
  * Ejecuta la transacción monetaria ocultando los márgenes de beneficio.
  */
-export async function processCampaignPost(userId: string, campaignId: string, postLanguage: string) {
+/**
+ * Procesa un intento de post por parte de un usuario en una campaña.
+ * Valida límites diarios (Fair Play) y presupuesto de la campaña.
+ * Ejecuta la transacción monetaria ocultando los márgenes de beneficio.
+ */
+export async function processCampaignPost(userId: string, campaignId: string, postLanguage: string, textLength: number = 0) {
     if (!userId || !campaignId) {
         return { success: false, error: 'Faltan datos obligatorios.' };
     }
@@ -44,9 +49,27 @@ export async function processCampaignPost(userId: string, campaignId: string, po
 
             const campaignData = campaignDoc.data();
             const budgetRemaining = campaignData?.budget_remaining || 0;
-            const costPerAction = campaignData?.cost_per_action || 0.50; // Costo para el anunciante (ej. 0.50)
-            const rewardPerAction = campaignData?.reward_per_action || 0.30; // Pago al usuario (ej. 0.30)
+            const costPerAction = campaignData?.cost_per_action || 0.60; // Costo base para anunciante
 
+            // C. Calcular Recompensa Dinámica
+            let rewardPerAction = 0;
+            if (textLength >= 800) {
+                rewardPerAction = 0.40;
+            } else if (textLength >= 600) {
+                rewardPerAction = 0.20;
+            } else {
+                // Si el texto es muy corto, tal vez no damos recompensa o damos una mínima
+                // Por ahora asumimos 0 o bloqueamos en frontend.
+                // Pero el usuario dijo "por 600 caracteres gana 0,20".
+                // Dejaremos 0 si es menor.
+                rewardPerAction = 0;
+            }
+
+            if (rewardPerAction === 0) {
+                throw new Error("El texto es demasiado corto para generar ganancias (min 600 caracteres).");
+            }
+
+            // Validar si hay presupuesto para pagar esta acción (usando el costo, no el reward)
             if (budgetRemaining < costPerAction) {
                 throw new Error("El presupuesto de esta campaña se ha agotado.");
             }
@@ -65,7 +88,9 @@ export async function processCampaignPost(userId: string, campaignId: string, po
                 userId,
                 campaignId,
                 language: postLanguage,
+                textLength,
                 rewardAmount: rewardPerAction,
+                hasCommentsBonus: false, // Default false, will be updated via async job or reviews view logic
                 createdAt: admin.firestore.FieldValue.serverTimestamp()
             });
 
@@ -83,7 +108,7 @@ export async function processCampaignPost(userId: string, campaignId: string, po
                 userId,
                 amount: rewardPerAction,
                 type: 'CAMPAIGN_REWARD',
-                description: `Recompensa por post en campaña: ${campaignData?.name || 'Desconocida'}`,
+                description: `Post Campaign: ${campaignData?.name || 'Campaign'} (${textLength} chars)`,
                 campaignId,
                 timestamp: admin.firestore.FieldValue.serverTimestamp()
             });

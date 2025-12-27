@@ -607,8 +607,8 @@
       "title": "¿Cuánto puedo ganar?",
       "desc": "En Dicilo, tú pones el talento y nosotros la infraestructura. Olvídate de buscar clientes o negociar precios. Nosotros nos encargamos de todo.",
       "points": {
-        "p1": "Cada campaña es diferente. Tienes la posibilidad de ganar entre <1>0,16 € y 0,50 €</1> por cada post validado.",
-        "p2": "El dinero se acumula directamente en tu cuenta y lo que ves en la campaña es lo que recibes."
+        "p1": "Cada campaña es diferente. Tienes la posibilidad de ganar entre <1>0,20 € y 0,50 €</1> por cada post enviado.",
+        "p2": "El dinero se acumula directamente en tu cuenta y lo que ves en la campaña es lo que recibes. Los pagos se realizan al finalizar cada campaña y se reflejan en el Wallet a partir de 50 €."
       }
     },
     "fairPlay": {

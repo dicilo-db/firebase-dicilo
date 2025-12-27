@@ -126,3 +126,61 @@ export async function updateUserPermissions(uid: string, permissions: string[]) 
     }
 }
 
+/**
+ * Manually sets the referrer for a user.
+ * This links the user to the referrer defined by the unique code.
+ * NOTE: This does NOT trigger strict welcome bonuses or transaction logs retroactively to avoid duplication,
+ * but validates the code and updates the relationship in both profiles.
+ */
+export async function setReferrer(uid: string, referrerCode: string) {
+    if (!referrerCode) return { success: false, error: 'Referrer code is required.' };
+
+    const db = getAdminDb();
+
+    try {
+        // 1. Find Referrer by Code
+        const referrerSnapshot = await db.collection('private_profiles')
+            .where('uniqueCode', '==', referrerCode)
+            .limit(1)
+            .get();
+
+        if (referrerSnapshot.empty) {
+            return { success: false, error: 'Referrer code not found.' };
+        }
+
+        const referrerDoc = referrerSnapshot.docs[0];
+        const referrerId = referrerDoc.id;
+
+        if (referrerId === uid) {
+            return { success: false, error: 'User cannot refer themselves.' };
+        }
+
+        // 2. Update User Profile (referredBy)
+        await db.collection('private_profiles').doc(uid).update({
+            referredBy: referrerId,
+            updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        });
+
+        // 3. Update Referrer Profile (add to referrals list)
+        // We need the user's data to add meaningful info to the array
+        const userSnapshot = await db.collection('private_profiles').doc(uid).get();
+        const userData = userSnapshot.data();
+        const userCode = userData?.uniqueCode || 'UNKNOWN';
+
+        await db.collection('private_profiles').doc(referrerId).update({
+            referrals: admin.firestore.FieldValue.arrayUnion({
+                uid: uid,
+                code: userCode,
+                joinedAt: new Date().toISOString(),
+                manualLink: true
+            })
+        });
+
+        return { success: true, message: `Referrer linked to ${referrerCode}` };
+
+    } catch (error: any) {
+        console.error('Error setting referrer:', error);
+        return { success: false, error: error.message };
+    }
+}
+
