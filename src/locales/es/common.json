@@ -639,5 +639,104 @@
     "messageTitle": "Un mensaje para quienes miran hacia adelante",
     "messageDesc": "DICICOIN no es para todos.\nEs para quienes creen en las ideas que se construyen paso a paso, para quienes entienden el valor de estar antes, y para quienes desean formar parte de algo que crece con sentido y propósito.\n\nRegistrarte en Dicilo y adquirir una DICICOIN es una forma sencilla de decir:\n“Yo estuve ahí desde el comienzo.”",
     "cta": "Regístrate y adquiere tu DiciCoin"
+  },
+  "marketing_plan": {
+    "title": "Tu Calendario de Éxito",
+    "drag_instruction": "Arrastra una campaña al día que quieras publicar",
+    "daily_limit_error": "¡Alto! Máximo 10 posts por día para esta campaña.",
+    "scheduled_status": "Programado",
+    "published_status": "Publicado",
+    "total_posts": "Total Posts",
+    "est_earnings": "Ganancia Est.",
+    "active_campaigns": "Campañas Activas"
+  },
+  "campaign_explorer": {
+    "search_placeholder": "Buscar campañas...",
+    "pool_status_high": "¡Date prisa! Queda poco presupuesto",
+    "copy_text": "Copiar Texto",
+    "translate_btn": "Traducir a...",
+    "grammar_check_btn": "Corregir Ortografía",
+    "view_details": "Ver Detalles",
+    "tabs": {
+      "info": "Información",
+      "rules": "Reglas",
+      "templates": "Plantillas (Vorlagen)"
+    }
+  },
+  "freelancer_menu": {
+    "dashboard": "Inicio",
+    "my_campaigns": "Mis Campañas",
+    "marketing_plan": "Plan de Marketing",
+    "all_campaigns": "Campañas",
+    "templates": "Plantillas",
+    "my_postings": "Mis Publicaciones",
+    "statistics": "Mis Estadísticas",
+    "online_reviews": "Reseña Online",
+    "connections": "Conexiones",
+    "faqs": "Preguntas Frecuentes"
+  },
+  "freelancer_dashboard": {
+    "welcome": "Hola de nuevo,",
+    "overview": "Aquí tienes un resumen de tu actividad hoy.",
+    "total_earnings": "Ganancias Totales",
+    "active_campaigns": "Campañas Activas",
+    "total_reach": "Alcance Total",
+    "your_campaigns": "Tus Campañas Verificadas",
+    "no_campaigns": "Aún no tienes campañas activas.",
+    "explore_btn": "Explorar Campañas",
+    "recent_activity": "Actividad Reciente",
+    "quick_actions": "Acciones Rápidas",
+    "write_post": "Crear Contenido",
+    "marketing_plan": "Plan de Marketing",
+    "connect_socials": "Conectar Canales",
+    "view_all_stats": "Ver Estadísticas",
+    "up_next": "Próximas Tareas"
+  },
+  "freelancer_views": {
+    "my_postings": {
+      "title": "Mis Redes",
+      "subtitle": "Conéctate, comparte y gana. Gestiona todas tus redes sociales desde un solo lugar y visualiza el rendimiento detallado de tus publicaciones por canal.",
+      "breakdown_title": "Desglose por Canal",
+      "breakdown_desc": "Expande cada red para ver tus publicaciones y estadísticas específicas.",
+      "kpi_posts": "Publicaciones Totales",
+      "kpi_views": "Vistas Totales",
+      "kpi_reach": "Alcance Estimado",
+      "kpi_interactions": "Interacciones",
+      "table_post": "Publicación",
+      "table_date": "Fecha",
+      "table_format": "Formato",
+      "table_views": "Vistas",
+      "table_interactions": "Interacciones",
+      "no_posts": "No hay publicaciones en este canal.",
+      "no_activity": "Sin actividad reciente"
+    },
+    "statistics": {
+      "title": "Follower Insights",
+      "subtitle": "Aquí tienes un resumen de tus SEGUIDORES y rendimiento. Con nuestro Content Pool no volverás a preocuparte por tu próximo post.",
+      "accordion_title": "Resumen de Seguidores",
+      "accordion_desc": "Mantén el control sobre el crecimiento de tu audiencia.",
+      "followers": "Seguidores",
+      "since": "desde",
+      "filter_total": "Total",
+      "filter_last_month": "Último Mes",
+      "filter_last_3_months": "Últimos 3 Meses",
+      "published_posts": "Publicaciones",
+      "planned": "Programado",
+      "contacts": "Contactos Visuales",
+      "reach": "Alcance"
+    },
+    "online_reviews": {
+      "title": "Reseñas Online",
+      "subtitle": "Analiza el feedback de tu audiencia y los comentarios en tus publicaciones.",
+      "tab_published": "Publicados",
+      "tab_scheduled": "Programados",
+      "tab_comments": "Comentarios",
+      "active_badge": "Activos",
+      "no_scheduled": "No hay publicaciones programadas actualmente.",
+      "recent_comments": "Comentarios Recientes",
+      "new_comment": "Nuevo comentario en",
+      "reply_btn": "Responder",
+      "view_comments_btn": "Ver Comentarios"
+    }
   }
 }

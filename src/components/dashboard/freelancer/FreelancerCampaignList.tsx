@@ -50,7 +50,7 @@ export function FreelancerCampaignList({ className, onSelect, selectedId }: Free
                 <div className="relative">
                     <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                     <Input
-                        placeholder={t('search', 'Search...')}
+                        placeholder={t('campaign_explorer.search_placeholder', 'Search...')}
                         className="pl-8 h-9 bg-secondary/50 border-0 focus-visible:ring-1"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}

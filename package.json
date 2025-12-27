@@ -15,6 +15,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@dnd-kit/core": "^6.3.1",
     "@firebase/auth": "^1.11.0",
     "@firebase/firestore": "^4.9.2",
     "@firebase/functions": "^0.13.1",

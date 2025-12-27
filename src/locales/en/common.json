@@ -609,5 +609,104 @@
     "messageTitle": "A message for those who look ahead",
     "messageDesc": "DICICOIN is not for everyone.\nIt is for those who believe in ideas built step by step, for those who understand the value of being there first, and for those who wish to be part of something that grows with meaning and purpose.\n\nRegistering on Dicilo and acquiring a DICICOIN is a simple way to say:\n“I was there from the beginning.”",
     "cta": "Register and get your DiciCoin"
+  },
+  "marketing_plan": {
+    "title": "Your Success Calendar",
+    "drag_instruction": "Drag a campaign to the day you want to post",
+    "daily_limit_error": "Stop! Max 10 posts per day for this campaign.",
+    "scheduled_status": "Scheduled",
+    "published_status": "Published",
+    "total_posts": "Total Posts",
+    "est_earnings": "Est. Earnings",
+    "active_campaigns": "Active Campaigns"
+  },
+  "campaign_explorer": {
+    "search_placeholder": "Search campaigns...",
+    "pool_status_high": "Hurry! Budget running low",
+    "copy_text": "Copy Text",
+    "translate_btn": "Translate to...",
+    "grammar_check_btn": "Check Grammar",
+    "view_details": "View Details",
+    "tabs": {
+      "info": "Information",
+      "rules": "Rules",
+      "templates": "Templates (Vorlagen)"
+    }
+  },
+  "freelancer_menu": {
+    "dashboard": "Dashboard",
+    "my_campaigns": "My Campaigns",
+    "marketing_plan": "Marketing Plan",
+    "all_campaigns": "Campaigns",
+    "templates": "Templates",
+    "my_postings": "My Posts",
+    "statistics": "My Stats",
+    "online_reviews": "Online Reviews",
+    "connections": "Connections",
+    "faqs": "FAQs"
+  },
+  "freelancer_dashboard": {
+    "welcome": "Welcome back,",
+    "overview": "Here's what's happening with your campaigns today.",
+    "total_earnings": "Total Earnings",
+    "active_campaigns": "Active Campaigns",
+    "total_reach": "Total Reach",
+    "your_campaigns": "Your Verified Campaigns",
+    "no_campaigns": "No active campaigns yet.",
+    "explore_btn": "Explore Campaigns",
+    "recent_activity": "Recent Activity",
+    "quick_actions": "Quick Actions",
+    "write_post": "Create Content",
+    "marketing_plan": "Marketing Plan",
+    "connect_socials": "Connect Channels",
+    "view_all_stats": "View All Stats",
+    "up_next": "Up Next"
+  },
+  "freelancer_views": {
+    "my_postings": {
+      "title": "My Networks",
+      "subtitle": "Connect, share, and earn. Manage all your social networks from one place and view detailed performance of your posts by channel.",
+      "breakdown_title": "Channel Breakdown",
+      "breakdown_desc": "Expand each network to see your specific posts and statistics.",
+      "kpi_posts": "Total Posts",
+      "kpi_views": "Total Views",
+      "kpi_reach": "Estimated Reach",
+      "kpi_interactions": "Interactions",
+      "table_post": "Post",
+      "table_date": "Date",
+      "table_format": "Format",
+      "table_views": "Views",
+      "table_interactions": "Interactions",
+      "no_posts": "No posts in this channel.",
+      "no_activity": "No recent activity"
+    },
+    "statistics": {
+      "title": "Follower Insights",
+      "subtitle": "Here is a summary of your FOLLOWERS and performance. With our Content Pool, you'll never worry about your next post again.",
+      "accordion_title": "Follower Overview",
+      "accordion_desc": "Keep track of your audience growth.",
+      "followers": "Followers",
+      "since": "since",
+      "filter_total": "Total",
+      "filter_last_month": "Last Month",
+      "filter_last_3_months": "Last 3 Months",
+      "published_posts": "Published Posts",
+      "planned": "Scheduled",
+      "contacts": "Visual Contacts",
+      "reach": "Reach"
+    },
+    "online_reviews": {
+      "title": "Online Reviews",
+      "subtitle": "Analyze your audience feedback and comments on your posts.",
+      "tab_published": "Published",
+      "tab_scheduled": "Scheduled",
+      "tab_comments": "Comments",
+      "active_badge": "Active",
+      "no_scheduled": "No scheduled posts currently.",
+      "recent_comments": "Recent Comments",
+      "new_comment": "New comment on",
+      "reply_btn": "Reply",
+      "view_comments_btn": "View Comments"
+    }
   }
 }

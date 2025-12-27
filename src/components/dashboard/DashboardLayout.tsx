@@ -6,6 +6,7 @@ import { Settings, LifeBuoy, LogOut, Coins, Shield, Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Sidebar } from './Sidebar';
+import { FreelancerSidebar } from './freelancer/FreelancerSidebar';
 import { cn } from '@/lib/utils';
 
 export function DashboardLayout({ userData, currentView, onViewChange, children }: DashboardLayoutProps) {
@@ -20,11 +21,18 @@ export function DashboardLayout({ userData, currentView, onViewChange, children 
         <div className="flex h-screen bg-gray-50">
             {/* Desktop Sidebar */}
             <div className="hidden border-r bg-white md:block">
-                <Sidebar
-                    userData={userData}
-                    currentView={currentView}
-                    onViewChange={onViewChange}
-                />
+                {currentView === 'freelancer' ? (
+                    <FreelancerSidebar
+                        currentView={currentView}
+                        onViewChange={onViewChange}
+                    />
+                ) : (
+                    <Sidebar
+                        userData={userData}
+                        currentView={currentView}
+                        onViewChange={onViewChange}
+                    />
+                )}
             </div>
 
             {/* Main Content Area */}
@@ -42,14 +50,24 @@ export function DashboardLayout({ userData, currentView, onViewChange, children 
                                 </Button>
                             </SheetTrigger>
                             <SheetContent side="left" className="p-0 w-64">
-                                <Sidebar
-                                    userData={userData}
-                                    currentView={currentView}
-                                    onViewChange={(view) => {
-                                        onViewChange(view);
-                                        setIsMobileOpen(false);
-                                    }}
-                                />
+                                {currentView === 'freelancer' ? (
+                                    <FreelancerSidebar
+                                        currentView={currentView}
+                                        onViewChange={(view) => {
+                                            onViewChange(view);
+                                            setIsMobileOpen(false);
+                                        }}
+                                    />
+                                ) : (
+                                    <Sidebar
+                                        userData={userData}
+                                        currentView={currentView}
+                                        onViewChange={(view) => {
+                                            onViewChange(view);
+                                            setIsMobileOpen(false);
+                                        }}
+                                    />
+                                )}
                             </SheetContent>
                         </Sheet>
                         <span className="font-bold text-lg">Dicilo</span>

@@ -658,5 +658,104 @@
     "messageTitle": "Eine Botschaft für diejenigen, die nach vorne schauen",
     "messageDesc": "DICICOIN ist nicht für jeden.\nEs ist für diejenigen, die an Ideen glauben, die Schritt für Schritt aufgebaut werden, für diejenigen, die den Wert verstehen, früher da zu sein, und für diejenigen, die Teil von etwas sein wollen, das mit Sinn und Zweck wächst.\n\nSich bei Dicilo zu registrieren und eine DICICOIN zu erwerben, ist ein einfacher Weg zu sagen:\n„Ich war von Anfang an dabei.“",
     "cta": "Registrieren und DiciCoin sichern"
+  },
+  "marketing_plan": {
+    "title": "Ihr Erfolgskalender",
+    "drag_instruction": "Ziehen Sie eine Kampagne auf den gewünschten Tag",
+    "daily_limit_error": "Stopp! Maximal 10 Beiträge pro Tag für diese Kampagne.",
+    "scheduled_status": "Geplant",
+    "published_status": "Veröffentlicht",
+    "total_posts": "Gesamtbeiträge",
+    "est_earnings": "Geschätzter Gewinn",
+    "active_campaigns": "Aktive Kampagnen"
+  },
+  "campaign_explorer": {
+    "search_placeholder": "Kampagnen suchen...",
+    "pool_status_high": "Beeilung! Budget fast aufgebraucht",
+    "copy_text": "Text kopieren",
+    "translate_btn": "Übersetzen in...",
+    "grammar_check_btn": "Rechtschreibung prüfen",
+    "view_details": "Details ansehen",
+    "tabs": {
+      "info": "Information",
+      "rules": "Regeln",
+      "templates": "Vorlagen (Templates)"
+    }
+  },
+  "freelancer_menu": {
+    "dashboard": "Startseite",
+    "my_campaigns": "Meine Kampagnen",
+    "marketing_plan": "Marketingplan",
+    "all_campaigns": "Kampagnen",
+    "templates": "Vorlagen",
+    "my_postings": "Meine Postings",
+    "statistics": "Meine Statistiken",
+    "online_reviews": "Online-Bewertungen",
+    "connections": "Verbindungen",
+    "faqs": "Häufige Fragen"
+  },
+  "freelancer_dashboard": {
+    "welcome": "Willkommen zurück,",
+    "overview": "Hier ist ein Überblick über Ihre heutigen Kampagnen.",
+    "total_earnings": "Gesamteinnahmen",
+    "active_campaigns": "Aktive Kampagnen",
+    "total_reach": "Gesamtreichweite",
+    "your_campaigns": "Ihre verifizierten Kampagnen",
+    "no_campaigns": "Noch keine aktiven Kampagnen.",
+    "explore_btn": "Kampagnen entdecken",
+    "recent_activity": "Letzte Aktivität",
+    "quick_actions": "Schnellzugriff",
+    "write_post": "Inhalt erstellen",
+    "marketing_plan": "Marketingplan",
+    "connect_socials": "Kanäle verbinden",
+    "view_all_stats": "Alle Statistiken ansehen",
+    "up_next": "Demnächst"
+  },
+  "freelancer_views": {
+    "my_postings": {
+      "title": "Meine Netzwerke",
+      "subtitle": "Verbinden, teilen und verdienen. Verwalten Sie alle Ihre sozialen Netzwerke an einem Ort und sehen Sie detaillierte Leistung Ihrer Beiträge nach Kanal.",
+      "breakdown_title": "Kanalaufschlüsselung",
+      "breakdown_desc": "Erweitern Sie jedes Netzwerk, um Ihre spezifischen Beiträge und Statistiken zu sehen.",
+      "kpi_posts": "Veröffentlichte Postings",
+      "kpi_views": "Sichtkontakte",
+      "kpi_reach": "Reichweite",
+      "kpi_interactions": "Interaktionen",
+      "table_post": "Social Media Beitrag",
+      "table_date": "Datum",
+      "table_format": "Format",
+      "table_views": "Sichtkontakte",
+      "table_interactions": "Interaktionen",
+      "no_posts": "Keine Beiträge in diesem Kanal.",
+      "no_activity": "Keine kürzliche Aktivität"
+    },
+    "statistics": {
+      "title": "Follower Insights",
+      "subtitle": "Hier ist eine Zusammenfassung Ihrer FOLLOWER und Leistung. Mit unserem Content Pool müssen Sie sich nie wieder Gedanken über Ihren nächsten Beitrag machen.",
+      "accordion_title": "Follower Übersicht",
+      "accordion_desc": "Behalten Sie den Überblick über Ihre Follower.",
+      "followers": "Follower",
+      "since": "seit",
+      "filter_total": "Gesamt",
+      "filter_last_month": "Letzter Monat",
+      "filter_last_3_months": "Letzte 3 Monate",
+      "published_posts": "Veröffentlichte Postings",
+      "planned": "Geplant",
+      "contacts": "Sichtkontakte",
+      "reach": "Reichweite"
+    },
+    "online_reviews": {
+      "title": "Online-Bewertungen",
+      "subtitle": "Analysieren Sie das Feedback Ihrer Zielgruppe und Kommentare zu Ihren Beiträgen.",
+      "tab_published": "Veröffentlicht",
+      "tab_scheduled": "Geplant",
+      "tab_comments": "Kommentare",
+      "active_badge": "Aktiv",
+      "no_scheduled": "Derzeit keine geplanten Beiträge.",
+      "recent_comments": "Neueste Kommentare",
+      "new_comment": "Neuer Kommentar zu",
+      "reply_btn": "Antworten",
+      "view_comments_btn": "Kommentare ansehen"
+    }
   }
 }

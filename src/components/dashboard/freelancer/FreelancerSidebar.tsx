@@ -1,208 +1,192 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { useTranslation } from 'react-i18next';
 import {
     LayoutDashboard,
-    BarChart3,
-    CreditCard,
+    Megaphone,
+    Calendar,
     Globe,
-    MapPin,
+    FileText,
+    PieChart,
+    Star,
+    Link2,
+    HelpCircle,
     ChevronRight,
-    Search,
-    CheckCircle2,
-    Circle
+    ChevronDown,
+    LayoutTemplate,
+    ArrowLeft
 } from 'lucide-react';
-import { Switch } from '@/components/ui/switch';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Input } from '@/components/ui/input';
-
-import { getFreelancerCampaigns } from '@/app/actions/freelancer';
-import { Campaign } from '@/types/freelancer';
+import { Button } from '@/components/ui/button';
 
 interface FreelancerSidebarProps {
     className?: string;
+    currentView?: string;
+    onViewChange?: (view: string) => void;
 }
 
-export function FreelancerSidebar({ className }: FreelancerSidebarProps) {
+export function FreelancerSidebar({ className, onViewChange }: FreelancerSidebarProps) {
+    const { t } = useTranslation('common');
     const pathname = usePathname();
     const router = useRouter();
     const searchParams = useSearchParams();
+
+    // Helper to get current tab (default to 'dashboard')
+    const currentTab = searchParams.get('tab') || 'dashboard';
     const selectedCampaignId = searchParams.get('campaignId');
 
-    const [langFilters, setLangFilters] = useState({
-        es: true,
-        en: false,
-        de: false
-    });
-
-    const [campaigns, setCampaigns] = useState<Campaign[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-
-    // Fetch campaigns on mount and when filters change
-    React.useEffect(() => {
-        async function loadCampaigns() {
-            setIsLoading(true);
-            const activeLangs = Object.entries(langFilters).filter(([_, v]) => v).map(([k]) => k);
-            const res = await getFreelancerCampaigns({ languages: activeLangs });
-            if (res.success && res.campaigns) {
-                setCampaigns(res.campaigns);
-                // If no campaign selected in URL, select the first one automatically
-                if (!selectedCampaignId && res.campaigns.length > 0) {
-                    router.replace(`${pathname}?campaignId=${res.campaigns[0].id}`);
+    // Navigation Structure
+    const navItems = [
+        {
+            id: 'dashboard',
+            label: t('freelancer_menu.dashboard', 'Startseite'),
+            icon: LayoutDashboard
+        },
+        {
+            id: 'my_campaigns',
+            label: t('freelancer_menu.my_campaigns', 'Meine Kampagnen'),
+            icon: Megaphone
+        },
+        {
+            id: 'marketing_plan',
+            label: t('freelancer_menu.marketing_plan', 'Marketingplan'),
+            icon: Calendar
+        },
+        {
+            id: 'all_campaigns',
+            label: t('freelancer_menu.all_campaigns', 'Campaign'),
+            icon: Globe,
+            children: [
+                {
+                    id: 'templates',
+                    label: t('freelancer_menu.templates', 'Vorlagen'),
+                    icon: LayoutTemplate,
+                    needsCampaign: true
                 }
-            }
-            setIsLoading(false);
-        }
-        loadCampaigns();
-    }, [langFilters]); // Re-fetch when filters change
-
-    const menuItems = [
-        { title: 'Dashboard', icon: LayoutDashboard, href: '/dashboard/freelancer' },
-        { title: 'Estadísticas', icon: BarChart3, href: '/dashboard/freelancer/stats' },
-        { title: 'Pagos', icon: CreditCard, href: '/dashboard/freelancer/payments' },
+            ]
+        },
+        {
+            id: 'my_postings',
+            label: t('freelancer_menu.my_postings', 'Meine Postings'),
+            icon: FileText
+        },
+        {
+            id: 'statistics',
+            label: t('freelancer_menu.statistics', 'Meine Statistiken'),
+            icon: PieChart
+        },
+        {
+            id: 'online_reviews',
+            label: t('freelancer_menu.online_reviews', 'Reseña Online'),
+            icon: Star
+        },
+        {
+            id: 'connections',
+            label: t('freelancer_menu.connections', 'Conexiones'),
+            icon: Link2
+        },
+        {
+            id: 'faqs',
+            label: t('freelancer_menu.faqs', 'FAQs'),
+            icon: HelpCircle
+        },
     ];
 
-    return (
-        <div className={cn("pb-12 w-64 flex-shrink-0 bg-card border-r h-screen overflow-y-auto", className)}>
-            <div className="space-y-4 py-4">
+    const handleNavigation = (tabId: string) => {
+        const params = new URLSearchParams(searchParams.toString());
+        params.set('tab', tabId);
+        // If navigating to something else than campaigns/templates, maybe clear campaignId?
+        if (tabId !== 'templates') {
+            params.delete('campaignId');
+        }
+        router.push(`${pathname}?${params.toString()}`);
+    };
 
-                {/* Header Profile */}
-                <div className="px-3 py-2">
-                    <div className="flex items-center justify-between mb-2 px-2">
-                        <div className="flex items-center gap-2">
-                            <Avatar className="h-8 w-8">
-                                <AvatarImage src="/avatars/01.png" alt="@user" />
-                                <AvatarFallback>FR</AvatarFallback>
-                            </Avatar>
-                            <div className="flex flex-col">
-                                <span className="text-sm font-semibold">Representante</span>
-                                <span className="text-[10px] text-muted-foreground">ID: 8723...</span>
-                            </div>
-                        </div>
-                        <Link href="/dashboard" className="text-muted-foreground hover:text-primary transition-colors">
-                            <div className="h-6 w-6 rounded-full border border-muted-foreground/30 flex items-center justify-center">
-                                <ChevronRight className="h-3 w-3" />
-                            </div>
-                        </Link>
-                    </div>
+    return (
+        <div className={cn("pb-12 w-64 flex-shrink-0 bg-card border-r h-screen overflow-y-auto flex flex-col", className)}>
+
+            {/* Context Switcher / Back */}
+            <div className="p-4 border-b">
+                <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => onViewChange?.('overview')}
+                    className="w-full justify-start text-muted-foreground hover:text-foreground -ml-2"
+                >
+                    <ArrowLeft className="mr-2 h-4 w-4" />
+                    {t('dashboard.overview', 'Back to Dashboard')}
+                </Button>
+            </div>
+
+            <div className="space-y-4 py-4 flex-1">
+                <div className="px-6 py-2">
+                    <h2 className="text-lg font-bold tracking-tight mb-1">Freelancer</h2>
+                    <p className="text-xs text-muted-foreground">{t('adsManager.dashboard.title', 'Herramientas de Campaña')}</p>
                 </div>
 
-                {/* Main Nav */}
                 <div className="px-3 py-2">
                     <div className="space-y-1">
-                        {menuItems.map((item) => (
-                            <Link
-                                key={item.href}
-                                href={item.href}
-                                className={cn(
-                                    "flex items-center rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors",
-                                    pathname === item.href ? "bg-accent text-accent-foreground" : "transparent"
-                                )}
-                            >
-                                <item.icon className="mr-2 h-4 w-4" />
-                                <span>{item.title}</span>
-                                <ChevronRight className={cn("ml-auto h-4 w-4 opacity-0 transition-opacity", pathname === item.href && "opacity-100")} />
-                            </Link>
-                        ))}
-                    </div>
-                </div>
+                        {navItems.map((item) => {
+                            const isActive = currentTab === item.id;
+                            const hasChildren = item.children && item.children.length > 0;
+                            const isExpanded = isActive || (item.id === 'all_campaigns' && !!selectedCampaignId);
 
-                {/* Segmentation Filters */}
-                <div className="px-4 py-2 mt-4">
-                    <h3 className="mb-4 text-xs font-semibold uppercase text-muted-foreground tracking-wider">
-                        Filtros de Segmentación
-                    </h3>
-
-                    <div className="space-y-4">
-                        {/* Language Toggles */}
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                                <Globe className="h-4 w-4 text-muted-foreground" />
-                                <span className="text-sm">Idioma ES</span>
-                            </div>
-                            <Switch
-                                checked={langFilters.es}
-                                onCheckedChange={(c) => setLangFilters(prev => ({ ...prev, es: c }))}
-                            />
-                        </div>
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                                <Globe className="h-4 w-4 text-muted-foreground" />
-                                <span className="text-sm">Idioma EN</span>
-                            </div>
-                            <Switch
-                                checked={langFilters.en}
-                                onCheckedChange={(c) => setLangFilters(prev => ({ ...prev, en: c }))}
-                            />
-                        </div>
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                                <Globe className="h-4 w-4 text-muted-foreground" />
-                                <span className="text-sm">Idioma DE</span>
-                            </div>
-                            <Switch
-                                checked={langFilters.de}
-                                onCheckedChange={(c) => setLangFilters(prev => ({ ...prev, de: c }))}
-                            />
-                        </div>
-
-                        {/* Location Filter */}
-                        <div className="space-y-2 pt-2">
-                            <div className="flex items-center gap-2 mb-1">
-                                <MapPin className="h-4 w-4 text-muted-foreground" />
-                                <span className="text-sm">Ciudad / Alcance</span>
-                            </div>
-                            <div className="relative">
-                                <Search className="absolute left-2 top-2.5 h-3 w-3 text-muted-foreground" />
-                                <Input placeholder="Ciudad..." className="h-8 text-xs pl-7 bg-muted/50" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Companies List */}
-                <div className="px-4 py-2 mt-4">
-                    <h3 className="mb-4 text-xs font-semibold uppercase text-muted-foreground tracking-wider">
-                        Empresas para Promoción
-                    </h3>
-                    <ScrollArea className="h-[300px] pr-2">
-                        <div className="space-y-3">
-                            {isLoading ? (
-                                <div className="text-center py-4 text-muted-foreground text-xs">Cargando campañas...</div>
-                            ) : campaigns.length === 0 ? (
-                                <div className="text-center py-4 text-muted-foreground text-xs">No hay campañas disponibles para estos filtros.</div>
-                            ) : campaigns.map((campaign) => (
-                                <div
-                                    key={campaign.id}
-                                    onClick={() => router.push(`${pathname}?campaignId=${campaign.id}`)}
-                                    className={cn(
-                                        "flex items-center justify-between group cursor-pointer hover:bg-muted/50 p-2 rounded-lg transition-colors",
-                                        selectedCampaignId === campaign.id ? "bg-muted" : ""
-                                    )}
-                                >
-                                    <div className="flex items-center gap-3">
-                                        <div className="h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary shrink-0">
-                                            {campaign.companyName.substring(0, 2).toUpperCase()}
+                            return (
+                                <div key={item.id} className="space-y-1">
+                                    <button
+                                        onClick={() => handleNavigation(item.id)}
+                                        className={cn(
+                                            "w-full flex items-center justify-between rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors",
+                                            isActive ? "bg-accent text-accent-foreground" : "transparent"
+                                        )}
+                                    >
+                                        <div className="flex items-center">
+                                            <item.icon className="mr-2 h-4 w-4" />
+                                            <span>{item.label}</span>
                                         </div>
-                                        <span className={cn("text-sm line-clamp-1", selectedCampaignId === campaign.id ? "font-medium text-foreground" : "text-muted-foreground")}>
-                                            {campaign.companyName}
-                                        </span>
-                                    </div>
-                                    {selectedCampaignId === campaign.id ? (
-                                        <Switch checked={true} className="scale-75 data-[state=checked]:bg-primary shrink-0" />
-                                    ) : (
-                                        <Circle className="h-3 w-3 text-muted-foreground/30 shrink-0" />
+                                        {hasChildren && (
+                                            isExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />
+                                        )}
+                                    </button>
+
+                                    {/* Children (Sub-menu) */}
+                                    {hasChildren && isExpanded && (
+                                        <div className="ml-4 pl-2 border-l border-muted space-y-1 animate-in slide-in-from-top-1 duration-200">
+                                            {item.children?.map(child => {
+                                                const isChildActive = currentTab === child.id;
+                                                const isDisabled = child.needsCampaign && !selectedCampaignId;
+
+                                                return (
+                                                    <button
+                                                        key={child.id}
+                                                        disabled={isDisabled}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleNavigation(child.id);
+                                                        }}
+                                                        className={cn(
+                                                            "w-full flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                                                            isChildActive ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-foreground",
+                                                            isDisabled && "opacity-50 cursor-not-allowed"
+                                                        )}
+                                                    >
+                                                        <child.icon className="mr-2 h-3.5 w-3.5" />
+                                                        <span>{child.label}</span>
+                                                    </button>
+                                                )
+                                            })}
+                                        </div>
                                     )}
                                 </div>
-                            ))}
-                        </div>
-                    </ScrollArea>
+                            );
+                        })}
+                    </div>
                 </div>
             </div>
         </div>
     );
 }
+

@@ -5,14 +5,26 @@ import { Campaign, Promotion } from '@/types/freelancer';
 
 const db = getAdminDb();
 
-const serializeFirestoreData = (data: any) => {
-    if (!data) return null;
-    const serialized = { ...data };
-    if (serialized.createdAt && typeof serialized.createdAt.toDate === 'function') {
-        serialized.createdAt = serialized.createdAt.toDate().toISOString();
+const serializeFirestoreData = (data: any): any => {
+    if (data === null || data === undefined) return data;
+
+    if (typeof data.toDate === 'function') {
+        return data.toDate().toISOString();
     }
-    // Handle other potential timestamps if any
-    return serialized;
+
+    if (Array.isArray(data)) {
+        return data.map(item => serializeFirestoreData(item));
+    }
+
+    if (typeof data === 'object') {
+        const serialized: any = {};
+        for (const key in data) {
+            serialized[key] = serializeFirestoreData(data[key]);
+        }
+        return serialized;
+    }
+
+    return data;
 };
 
 /**
@@ -85,6 +97,103 @@ export async function createPromotion(promo: Omit<Promotion, 'id' | 'createdAt'>
 }
 
 /**
+ * Joins a campaign (Fav/Accept).
+ */
+export async function joinCampaign(userId: string, campaignId: string) {
+    try {
+        if (!userId) throw new Error('Unauthorized');
+        const db = getAdminDb();
+
+        // Check if already joined
+        const query = await db.collection('freelancer_campaigns')
+            .where('userId', '==', userId)
+            .where('campaignId', '==', campaignId)
+            .get();
+
+        if (!query.empty) {
+            return { success: true, message: 'Already joined' };
+        }
+
+        await db.collection('freelancer_campaigns').add({
+            userId,
+            campaignId,
+            joinedAt: admin.firestore.FieldValue.serverTimestamp(),
+            status: 'active'
+        });
+
+        return { success: true };
+    } catch (error: any) {
+        return { success: false, error: error.message };
+    }
+}
+
+/**
+ * Leaves a campaign.
+ */
+export async function leaveCampaign(userId: string, campaignId: string) {
+    try {
+        if (!userId) throw new Error('Unauthorized');
+        const db = getAdminDb();
+
+        const query = await db.collection('freelancer_campaigns')
+            .where('userId', '==', userId)
+            .where('campaignId', '==', campaignId)
+            .get();
+
+        const batch = db.batch();
+        query.docs.forEach(doc => batch.delete(doc.ref));
+        await batch.commit();
+
+        return { success: true };
+    } catch (error: any) {
+        return { success: false, error: error.message };
+    }
+}
+
+/**
+ * Gets campaigns the freelancer has joined/accepted.
+ */
+export async function getJoinedCampaigns(userId: string): Promise<{ success: boolean; campaigns?: Campaign[]; error?: string }> {
+    try {
+        if (!userId) throw new Error('Unauthorized');
+        const db = getAdminDb();
+
+        // 1. Get joined IDs
+        const joinedSnap = await db.collection('freelancer_campaigns')
+            .where('userId', '==', userId)
+            .get();
+
+        if (joinedSnap.empty) return { success: true, campaigns: [] };
+
+        const campaignIds = joinedSnap.docs.map(d => d.data().campaignId);
+
+        // 2. Fetch campaign details (batch get is limited to 10 in 'in', but getAll is better for ID list)
+        // Firestore getAll supports array of refs
+        const refs = campaignIds.map(id => db.collection('campaigns').doc(id));
+        const campaignsSnap = await db.getAll(...refs);
+
+        const campaigns: Campaign[] = [];
+        campaignsSnap.forEach(doc => {
+            if (doc.exists) {
+                const data = doc.data();
+                // Check if still active/valid
+                if (data && (data.status === 'active' || data.status === 'gray_mode')) {
+                    campaigns.push({
+                        id: doc.id,
+                        ...serializeFirestoreData(data)
+                    } as Campaign);
+                }
+            }
+        });
+
+        return { success: true, campaigns };
+    } catch (error: any) {
+        console.error('Error getting joined campaigns:', error);
+        return { success: false, error: error.message };
+    }
+}
+
+/**
  * Gets a specific campaign details
  */
 export async function getCampaignById(id: string): Promise<Campaign | null> {
@@ -96,4 +205,30 @@ export async function getCampaignById(id: string): Promise<Campaign | null> {
         } as Campaign;
     }
     return null;
+}
+
+/**
+ * Gets historical postings/actions for the freelancer.
+ */
+export async function getFreelancerPostings(userId: string): Promise<{ success: boolean; postings?: CampaignAction[]; error?: string }> {
+    try {
+        if (!userId) throw new Error('Unauthorized');
+        const db = getAdminDb();
+
+        const snap = await db.collection('user_campaign_actions')
+            .where('userId', '==', userId)
+            .orderBy('created_at', 'desc')
+            .limit(50) // Limit for MVP
+            .get();
+
+        const postings: CampaignAction[] = snap.docs.map(doc => ({
+            id: doc.id,
+            ...serializeFirestoreData(doc.data())
+        } as CampaignAction));
+
+        return { success: true, postings };
+    } catch (error: any) {
+        console.error('Error fetching postings:', error);
+        return { success: false, error: error.message };
+    }
 }

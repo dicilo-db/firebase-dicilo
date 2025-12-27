@@ -134,13 +134,25 @@ export async function addTicketMessage(ticketId: string, message: {
             updatedAt: admin.firestore.FieldValue.serverTimestamp()
         });
 
-        let emailWarning = '';
+        // Debug: Log the logic for email sending
+        console.log(`[TicketSystem] Processing message from ${message.senderId} for ticket ${ticketId}. Ticket Owner: ${ticketData?.uid}`);
+
         // Send email notification if the sender is NOT the ticket owner
         if (ticketData?.uid && message.senderId !== ticketData.uid) {
+            console.log(`[TicketSystem] Sender is different from Owner. Attempting to send email to ${ticketData.userEmail}`);
             try {
                 const { sendTicketReplyEmail } = await import('@/lib/email');
+
+                // Debug Env availability
+                if (!process.env.RESEND_API_KEY) {
+                    console.error('[TicketSystem] CRITICAL: RESEND_API_KEY is missing in process.env');
+                } else {
+                    console.log('[TicketSystem] RESEND_API_KEY is present.');
+                }
+
                 if (!sendTicketReplyEmail) {
                     emailWarning = 'Email service not found';
+                    console.error('[TicketSystem] sendTicketReplyEmail import failed');
                 } else {
                     const emailResult = await sendTicketReplyEmail(
                         ticketData.userEmail,
@@ -149,15 +161,22 @@ export async function addTicketMessage(ticketId: string, message: {
                         message.message,
                         message.senderName
                     );
+
+                    console.log('[TicketSystem] Email Result:', JSON.stringify(emailResult));
+
                     if (!emailResult || !emailResult.success) {
                         emailWarning = `Email failed: ${emailResult?.error || 'Unknown error'}`;
                         console.error('Email send failed:', emailResult?.error);
+                    } else {
+                        console.log(`[TicketSystem] Email successfully sent to ${ticketData.userEmail}`);
                     }
                 }
             } catch (emailError: any) {
                 console.error('Failed to send reply email:', emailError);
                 emailWarning = `Email error: ${emailError.message}`;
             }
+        } else {
+            console.log('[TicketSystem] Skipping email: Sender is Ticket Owner or Ticket UID missing.');
         }
 
         try {

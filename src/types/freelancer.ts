@@ -43,9 +43,17 @@ export interface CampaignAction {
     campaignId: string;
     freelancerId: string;
     languageCode: string;
-    status: 'pending' | 'approved' | 'rejected';
+    status: 'pending' | 'approved' | 'rejected' | 'scheduled' | 'published'; // Expanded status
     rewardAmount: number;
     createdAt: any;
+
+    // Display / Expanded fields
+    companyName?: string;
+    actionType?: string; // 'share', 'click', 'post'
+    platform?: string; // 'facebook', 'instagram', etc.
+    topic?: string;
+    views?: number;
+    clicks?: number;
 }
 
 export interface Promotion {
