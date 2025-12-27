@@ -444,7 +444,12 @@
       "name": "Nombre",
       "email": "Email",
       "emailPlaceholder": "email@ejemplo.com",
-      "language": "Idioma",
+      "languages": "Idiomas Disponibles",
+      "imagesLabel": "Gráficas de Campaña",
+      "addImage": "Agregar Gráfica",
+      "maxImages": "Máx 24 imágenes",
+      "noImages": "Aún no hay imágenes.",
+      "uploadHelp": "Sube las gráficas que los freelancers compartirán (hasta 24).",
       "addRow": "Añadir otra fila",
       "submitButton": "Confirmar y Enviar a Brevo"
     },

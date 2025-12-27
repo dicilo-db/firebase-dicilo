@@ -12,7 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { Loader2, ArrowLeft, Plus, Upload, Image as ImageIcon } from 'lucide-react';
+import { Loader2, ArrowLeft, Plus, Upload, Image as ImageIcon, X } from 'lucide-react';
 import { createCampaign, getClientsForSelect, ClientOption } from '@/app/actions/campaigns';
 import { uploadImage } from '@/app/actions/upload';
 import Image from 'next/image';
@@ -33,7 +33,7 @@ export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
     const { t } = useTranslation('common');
     const { user } = useAuth();
     const { toast } = useToast();
-    const [view, setView] = useState<'list' | 'create'>('list'); // Start with list (placeholder) or create immediate
+    const [view, setView] = useState<'list' | 'create'>('list');
 
     // Form State
     const [clients, setClients] = useState<ClientOption[]>([]);
@@ -46,7 +46,7 @@ export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
         rewardPerAction: 0.20,
         dailyLimit: 10,
         allowedLanguages: ['es'] as string[],
-        imageUrl: '',
+        images: [] as string[],
     });
 
     const [content, setContent] = useState<Record<string, ContentBlock>>({
@@ -84,7 +84,6 @@ export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
         setFormData(prev => {
             const current = prev.allowedLanguages;
             if (current.includes(langCode)) {
-                // Prevent removing the last one? No, valid to clear but valid form needs 1
                 return { ...prev, allowedLanguages: current.filter(c => c !== langCode) };
             } else {
                 return { ...prev, allowedLanguages: [...current, langCode] };
@@ -103,6 +102,11 @@ export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
         const file = e.target.files?.[0];
         if (!file) return;
 
+        if (formData.images.length >= 24) {
+            toast({ title: 'Limit Reached', description: t('networkCampaigns.form.maxImages'), variant: 'destructive' });
+            return;
+        }
+
         setUploading(true);
         const data = new FormData();
         data.append('file', file);
@@ -111,7 +115,7 @@ export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
         try {
             const res = await uploadImage(data);
             if (res.success && res.url) {
-                setFormData(prev => ({ ...prev, imageUrl: res.url as string }));
+                setFormData(prev => ({ ...prev, images: [...prev.images, res.url as string] }));
                 toast({ title: 'Success', description: 'Image uploaded' });
             } else {
                 toast({ title: 'Error', description: res.error, variant: 'destructive' });
@@ -120,7 +124,16 @@ export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
             toast({ title: 'Error', description: t('networkCampaigns.form.uploading'), variant: 'destructive' });
         } finally {
             setUploading(false);
+            // Reset input
+            e.target.value = '';
         }
+    };
+
+    const handleRemoveImage = (indexToRemove: number) => {
+        setFormData(prev => ({
+            ...prev,
+            images: prev.images.filter((_, idx) => idx !== indexToRemove)
+        }));
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -131,7 +144,7 @@ export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
             toast({ title: 'Validation', description: t('networkCampaigns.form.validation.lang'), variant: 'destructive' });
             return;
         }
-        if (!formData.imageUrl) {
+        if (formData.images.length === 0) {
             toast({ title: 'Validation', description: t('networkCampaigns.form.validation.image'), variant: 'destructive' });
             return;
         }
@@ -139,7 +152,6 @@ export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
         setSubmitting(true);
         try {
             const token = await user.getIdToken();
-            // Filter content to only include allowed languages
             const relevantContent: any = {};
             formData.allowedLanguages.forEach(lang => {
                 relevantContent[lang] = content[lang];
@@ -153,7 +165,7 @@ export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
             const res = await createCampaign(token, payload);
             if (res.success) {
                 toast({ title: 'Success', description: t('networkCampaigns.form.success'), className: 'bg-green-600 text-white' });
-                setView('list'); // Go back to list
+                setView('list');
             } else {
                 toast({ title: 'Error', description: res.error, variant: 'destructive' });
             }
@@ -263,21 +275,55 @@ export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
                             </div>
                         </div>
 
-                        {/* 3. Visuals */}
+                        {/* 3. Visuals (Multiple Images) */}
                         <div className="space-y-2">
-                            <Label>{t('networkCampaigns.form.mainImage')}</Label>
-                            <div className="flex items-center gap-4">
-                                <div className="relative h-32 w-32 border rounded-lg overflow-hidden bg-slate-100 flex items-center justify-center">
-                                    {formData.imageUrl ? (
-                                        <Image src={formData.imageUrl} alt="Campaign" fill className="object-cover" />
-                                    ) : (
-                                        <ImageIcon className="h-8 w-8 opacity-20" />
-                                    )}
-                                </div>
-                                <div className="flex-1">
-                                    <Input type="file" onChange={handleImageUpload} disabled={uploading} className="max-w-xs mb-2" accept="image/*" />
-                                    <p className="text-xs text-muted-foreground">{t('networkCampaigns.form.uploadHelp')}</p>
-                                    {uploading && <div className="text-xs text-blue-600 flex items-center mt-1"><Loader2 className="h-3 w-3 animate-spin mr-1" /> {t('networkCampaigns.form.uploading')}</div>}
+                            <div className="flex justify-between items-center">
+                                <Label>{t('networkCampaigns.form.imagesLabel')}</Label>
+                                <span className="text-xs text-muted-foreground">{formData.images.length} / 24</span>
+                            </div>
+
+                            <div className="border rounded-lg p-4 bg-slate-50">
+                                {formData.images.length === 0 ? (
+                                    <div className="text-center py-8 text-muted-foreground">
+                                        <ImageIcon className="h-10 w-10 mx-auto opacity-20 mb-2" />
+                                        <p>{t('networkCampaigns.form.noImages')}</p>
+                                    </div>
+                                ) : (
+                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                                        {formData.images.map((url, idx) => (
+                                            <div key={idx} className="relative aspect-video bg-white rounded-md border overflow-hidden group">
+                                                <Image src={url} alt={`Campaign ${idx}`} fill className="object-cover" />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleRemoveImage(idx)}
+                                                    className="absolute top-1 right-1 bg-black/50 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                                                >
+                                                    <X className="h-3 w-3" />
+                                                </button>
+                                                {idx === 0 && (
+                                                    <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-[10px] py-1 text-center">
+                                                        Main
+                                                    </div>
+                                                )}
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+
+                                <div className="mt-4">
+                                    <Label htmlFor="image-upload" className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground hover:bg-primary/90 rounded-md text-sm font-medium transition-colors">
+                                        {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
+                                        {t('networkCampaigns.form.addImage')}
+                                    </Label>
+                                    <Input
+                                        id="image-upload"
+                                        type="file"
+                                        onChange={handleImageUpload}
+                                        disabled={uploading || formData.images.length >= 24}
+                                        className="hidden"
+                                        accept="image/*"
+                                    />
+                                    <p className="text-xs text-muted-foreground mt-2">{t('networkCampaigns.form.uploadHelp')}</p>
                                 </div>
                             </div>
                         </div>

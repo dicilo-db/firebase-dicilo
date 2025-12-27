@@ -13,7 +13,7 @@ export interface CreateCampaignData {
     rewardPerAction: number;
     dailyLimit: number;
     allowedLanguages: string[];
-    imageUrl: string;
+    images: string[];
     content: {
         [lang: string]: {
             title: string;
@@ -60,7 +60,7 @@ export async function createCampaign(idToken: string, data: CreateCampaignData) 
         const user = await verifyAdminRole(idToken);
 
         // 2. Validate Data (Add Zod here if needed, manual for now)
-        if (!data.clientId || !data.imageUrl || data.allowedLanguages.length === 0) {
+        if (!data.clientId || !data.images || data.images.length === 0 || data.allowedLanguages.length === 0) {
             return { success: false, error: 'Missing required fields' };
         }
 
@@ -97,7 +97,8 @@ export async function createCampaign(idToken: string, data: CreateCampaignData) 
             languages: data.allowedLanguages,
 
             // Visuals
-            image: data.imageUrl,
+            image: data.images[0], // Main image (first one)
+            images: data.images, // Full array
 
             // Text (Denormalized default for simple queries)
             title: defaultContent.title,
