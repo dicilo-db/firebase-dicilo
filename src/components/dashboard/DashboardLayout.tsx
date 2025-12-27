@@ -57,6 +57,7 @@ export function DashboardLayout({ userData, currentView, onViewChange, children 
                                             onViewChange(view);
                                             setIsMobileOpen(false);
                                         }}
+                                        onMobileClose={() => setIsMobileOpen(false)}
                                     />
                                 ) : (
                                     <Sidebar

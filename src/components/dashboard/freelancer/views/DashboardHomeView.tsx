@@ -19,6 +19,11 @@ import { getFreelancerStats, FreelancerStats } from '@/app/actions/freelancer-st
 import { getJoinedCampaigns } from '@/app/actions/freelancer';
 import { Campaign } from '@/types/freelancer';
 
+import { doc, getDoc, getFirestore } from 'firebase/firestore';
+import { app } from '@/lib/firebase';
+
+const db = getFirestore(app);
+
 export function DashboardHomeView() {
     const { t } = useTranslation('common');
     const { user } = useAuth();
@@ -27,6 +32,7 @@ export function DashboardHomeView() {
     const [isLoading, setIsLoading] = useState(true);
     const [stats, setStats] = useState<FreelancerStats | null>(null);
     const [activeCampaigns, setActiveCampaigns] = useState<Campaign[]>([]);
+    const [userName, setUserName] = useState<string>('');
 
     useEffect(() => {
         if (!user) return;
@@ -46,6 +52,13 @@ export function DashboardHomeView() {
 
                 if (campaignsRes.success && campaignsRes.campaigns) {
                     setActiveCampaigns(campaignsRes.campaigns);
+                }
+
+                // Fetch Name
+                const profileRef = doc(db, 'private_profiles', user!.uid);
+                const profileSnap = await getDoc(profileRef);
+                if (profileSnap.exists()) {
+                    setUserName(profileSnap.data().firstName || '');
                 }
 
             } catch (err) {
@@ -76,7 +89,7 @@ export function DashboardHomeView() {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
-                        {t('freelancer_dashboard.welcome')} <span className="text-primary">{user?.displayName?.split(' ')[0] || 'Freelancer'}</span>! 👋
+                        {t('freelancer_dashboard.welcome')} <span className="text-primary">{userName || user?.displayName?.split(' ')[0] || 'Freelancer'}</span>! 👋
                     </h1>
                     <p className="text-muted-foreground mt-1">
                         {t('freelancer_dashboard.overview')}

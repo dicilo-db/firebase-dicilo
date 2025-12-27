@@ -26,9 +26,10 @@ interface FreelancerSidebarProps {
     className?: string;
     currentView?: string;
     onViewChange?: (view: string) => void;
+    onMobileClose?: () => void;
 }
 
-export function FreelancerSidebar({ className, onViewChange }: FreelancerSidebarProps) {
+export function FreelancerSidebar({ className, onViewChange, onMobileClose }: FreelancerSidebarProps) {
     const { t } = useTranslation('common');
     const pathname = usePathname();
     const router = useRouter();
@@ -103,6 +104,7 @@ export function FreelancerSidebar({ className, onViewChange }: FreelancerSidebar
             params.delete('campaignId');
         }
         router.push(`${pathname}?${params.toString()}`);
+        if (onMobileClose) onMobileClose();
     };
 
     return (

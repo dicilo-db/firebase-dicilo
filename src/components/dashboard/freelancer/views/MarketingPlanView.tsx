@@ -260,10 +260,10 @@ export function MarketingPlanView() {
 
     return (
         <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-            <div className="flex flex-col lg:flex-row h-[calc(100vh-64px)] overflow-hidden">
+            <div className="flex flex-col lg:flex-row lg:h-[calc(100vh-64px)] h-auto min-h-[calc(100vh-64px)] overflow-y-auto lg:overflow-hidden bg-slate-50 dark:bg-black/20">
 
                 {/* CALENDAR AREA */}
-                <div className="flex-1 flex flex-col h-full bg-slate-50 dark:bg-black/20 p-4 overflow-y-auto">
+                <div className="flex-1 flex flex-col min-h-[600px] lg:h-full p-4 lg:overflow-y-auto order-2 lg:order-1">
                     {/* Header */}
                     <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
                         <div>
@@ -316,7 +316,7 @@ export function MarketingPlanView() {
                 </div>
 
                 {/* SIDEBAR: CAMPAIGNS & STATS */}
-                <div className="w-full lg:w-80 bg-white dark:bg-card border-l p-6 overflow-y-auto h-full shadow-xl">
+                <div className="w-full lg:w-80 bg-white dark:bg-card border-l p-6 h-auto lg:h-full lg:overflow-y-auto shadow-xl order-1 lg:order-2 shrink-0">
                     <div className="mb-6">
                         <h2 className="font-bold text-lg mb-2">{t('marketing_plan.active_campaigns')}</h2>
                         <div className="space-y-4 text-sm text-muted-foreground mb-4">
