@@ -35,7 +35,7 @@ export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
     const { toast } = useToast();
     const [view, setView] = useState<'list' | 'create'>('list');
 
-    // Form State
+    // Form State - v2.0 Refactor
     const [clients, setClients] = useState<ClientOption[]>([]);
     const [loadingClients, setLoadingClients] = useState(false);
 
@@ -227,7 +227,8 @@ export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
                     <CardContent className="space-y-8">
 
                         {/* 1. Global Settings */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* 1. Global Settings & Dates */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div className="space-y-2">
                                 <Label>{t('networkCampaigns.form.clientLabel')}</Label>
                                 <Select
@@ -247,23 +248,39 @@ export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
                             </div>
 
                             <div className="space-y-2">
-                                <Label>{t('networkCampaigns.form.dailyLimit')}</Label>
-                                <Input type="number" value={formData.dailyLimit} onChange={e => setFormData(p => ({ ...p, dailyLimit: parseInt(e.target.value) }))} min={1} />
+                                <Label>{t('networkCampaigns.form.startDate')}</Label>
+                                <Input
+                                    type="date"
+                                    value={formData.startDate}
+                                    onChange={e => setFormData(p => ({ ...p, startDate: e.target.value }))}
+                                    required
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label>{t('networkCampaigns.form.endDate')}</Label>
+                                <Input
+                                    type="date"
+                                    value={formData.endDate}
+                                    onChange={e => setFormData(p => ({ ...p, endDate: e.target.value }))}
+                                    required
+                                />
                             </div>
                         </div>
 
+                        {/* Financials & Limits */}
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div className="space-y-2">
                                 <Label>{t('networkCampaigns.form.totalBudget')}</Label>
-                                <Input type="number" value={formData.budgetTotal} onChange={e => setFormData(p => ({ ...p, budgetTotal: parseFloat(e.target.value) }))} step="0.01" />
-                            </div>
-                            <div className="space-y-2">
-                                <Label>{t('networkCampaigns.form.costPerAction')}</Label>
-                                <Input type="number" value={formData.costPerAction} onChange={e => setFormData(p => ({ ...p, costPerAction: parseFloat(e.target.value) }))} step="0.01" />
+                                <Input type="number" value={formData.budgetTotal} onChange={e => setFormData(p => ({ ...p, budgetTotal: parseFloat(e.target.value) }))} step="0.01" min="0" />
                             </div>
                             <div className="space-y-2">
                                 <Label>{t('networkCampaigns.form.freelancerReward')}</Label>
-                                <Input type="number" value={formData.rewardPerAction} onChange={e => setFormData(p => ({ ...p, rewardPerAction: parseFloat(e.target.value) }))} step="0.01" />
+                                <Input type="number" value={formData.rewardPerAction} onChange={e => setFormData(p => ({ ...p, rewardPerAction: parseFloat(e.target.value) }))} step="0.01" min="0" />
+                            </div>
+                            <div className="space-y-2">
+                                <Label>{t('networkCampaigns.form.dailyLimit')}</Label>
+                                <Input type="number" value={formData.dailyLimit} onChange={e => setFormData(p => ({ ...p, dailyLimit: parseInt(e.target.value) }))} min={1} />
                             </div>
                         </div>
 
