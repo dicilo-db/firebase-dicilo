@@ -1,7 +1,8 @@
 'use server';
 
 import { getAdminDb } from '@/lib/firebase-admin';
-import { Campaign, Promotion } from '@/types/freelancer';
+import * as admin from 'firebase-admin';
+import { Campaign, Promotion, CampaignAction } from '@/types/freelancer';
 
 const db = getAdminDb();
 
@@ -217,7 +218,7 @@ export async function getFreelancerPostings(userId: string): Promise<{ success: 
 
         const snap = await db.collection('user_campaign_actions')
             .where('userId', '==', userId)
-            .orderBy('created_at', 'desc')
+            .orderBy('createdAt', 'desc')
             .limit(50) // Limit for MVP
             .get();
 
