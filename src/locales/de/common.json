@@ -631,9 +631,9 @@
     "back": "Zurück zur Liste",
     "list": {
       "title": "Netzwerk-Kampagnen",
-      "subtitle": "Verwalten Sie Ihre Social-Product-Kampagnen.",
+      "subtitle": "Verwalten Sie Ihre Netzwerk-Kampagnen.",
       "create": "Kampagne erstellen",
-      "empty": "Wählen Sie \"Kampagne erstellen\", um eine neue Social-Product-Kampagne zu starten.",
+      "empty": "Wählen Sie \"Kampagne erstellen\", um eine neue Netzwerk-Kampagne zu starten.",
       "pending": "(Listenansicht noch ausstehend)"
     },
     "form": {

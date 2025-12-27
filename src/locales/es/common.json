@@ -240,6 +240,13 @@
     "successCreated": "Ticket creado con éxito.",
     "module": "Módulo",
     "selectModule": "Selecciona un módulo",
+    "list": {
+      "title": "Campañas de Red",
+      "subtitle": "Gestiona tus campañas de red.",
+      "create": "Crear Campaña",
+      "empty": "Selecciona \"Crear Campaña\" para iniciar una nueva Campaña de Red.",
+      "pending": "(Implementación de vista de lista pendiente)"
+    },
     "modules": {
       "general": "General",
       "dashboard": "Panel de Control",

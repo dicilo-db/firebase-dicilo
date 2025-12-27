@@ -579,6 +579,13 @@
     }
   },
   "freelancer": {
+    "list": {
+      "title": "Network Campaigns",
+      "subtitle": "Manage your network campaigns.",
+      "create": "Create Campaign",
+      "empty": "Select \"Create Campaign\" to start a new Network Campaign.",
+      "pending": "(List view implementation pending)"
+    },
     "composer": {
       "title": "Create New Promotion",
       "subtitle": "Customize your message for <1>{{company}}</1> and share it.",
