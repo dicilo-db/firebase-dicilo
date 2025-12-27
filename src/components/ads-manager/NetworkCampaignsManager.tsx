@@ -357,7 +357,11 @@ export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
                         {/* 4. Content (Tabs) */}
                         <div className="space-y-2">
                             <Label>{t('networkCampaigns.form.content')}</Label>
-                            <Tabs defaultValue={formData.allowedLanguages[0] || 'es'} className="w-full">
+                            <Tabs
+                                key={formData.allowedLanguages.join(',')}
+                                defaultValue={formData.allowedLanguages[0] || 'es'}
+                                className="w-full"
+                            >
                                 <TabsList>
                                     {formData.allowedLanguages.map(lang => (
                                         <TabsTrigger key={lang} value={lang}>{lang.toUpperCase()}</TabsTrigger>
