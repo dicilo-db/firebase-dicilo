@@ -157,7 +157,7 @@ export function PromoComposerView() {
             const result = await processCampaignPost('demo_user_id', activeCampaign.id!, postLang, customText.length);
 
             if (!result.success) {
-                if (result.error?.includes('10 posts')) {
+                if ((result as any).error?.includes('10 posts')) {
                     toast({
                         title: "Límite Diario Alcanzado",
                         description: "Has completado tus 10 posts de hoy para esta campaña.",
@@ -165,16 +165,17 @@ export function PromoComposerView() {
                     });
                     return;
                 }
-                throw new Error(result.error);
+                throw new Error((result as any).error);
             }
 
-            const trackingLink = `https://dicilo.net/s/${result.reward ? 'paid' : 'ref'}`;
+            const reward = (result as any).reward;
+            const trackingLink = `https://dicilo.net/s/${reward ? 'paid' : 'ref'}`;
             const message = `${customText}\n\n${trackingLink} #${activeCampaign.companyName.replace(/[^a-zA-Z0-9]/g, '')}`;
             window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
 
             toast({
                 title: "¡Publicando!",
-                description: `Has ganado $${result.reward} por esta conexión.`,
+                description: `Has ganado $${reward} por esta conexión.`,
                 className: "bg-green-600 text-white"
             });
         } catch (error: any) {
@@ -192,7 +193,7 @@ export function PromoComposerView() {
                 <Search className="h-12 w-12 mb-4 opacity-20" />
                 <h2 className="text-xl font-semibold text-foreground">{t('freelancer.composer.selectCampaign.title')}</h2>
                 <p>{t('freelancer.composer.selectCampaign.description')}</p>
-                <p className="text-xs mt-4 opacity-50">Explora la pestaña "Campañas" para elegir una.</p>
+                <p className="text-xs mt-4 opacity-50">Explora la pestaña &quot;Campañas&quot; para elegir una.</p>
             </div>
         );
     }

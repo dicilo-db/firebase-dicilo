@@ -60,6 +60,7 @@ interface Registration {
   status?: 'active' | 'paused' | 'pending';
   clientSlug?: string;
   clientId?: string;
+  businessName?: string;
 }
 
 // --- COMPONENTES AUXILIARES ---

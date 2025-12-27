@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/context/AuthContext';
 import { getUserTickets, createTicket, getTicket, addTicketMessage, Ticket } from '@/app/actions/tickets';
@@ -185,19 +185,19 @@ const TicketDetail = ({ ticketId, onBack }: { ticketId: string, onBack: () => vo
     const [newMessage, setNewMessage] = useState('');
     const [sending, setSending] = useState(false);
 
-    const fetchTicket = async (silent = false) => {
+    const fetchTicket = useCallback(async (silent = false) => {
         if (!silent) setLoading(true);
         const res = await getTicket(ticketId);
         if (res.success && res.ticket) setTicket(res.ticket as Ticket);
         else if (!silent) toast({ title: 'Error', description: res.error, variant: 'destructive' });
         if (!silent) setLoading(false);
-    };
+    }, [ticketId, toast]);
 
     useEffect(() => {
         fetchTicket();
         const interval = setInterval(() => fetchTicket(true), 15000);
         return () => clearInterval(interval);
-    }, [ticketId]);
+    }, [ticketId, fetchTicket]);
 
     const handleSend = async () => {
         if (!newMessage.trim() || !user || !ticket) return;

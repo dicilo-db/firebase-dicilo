@@ -117,6 +117,7 @@ export async function addTicketMessage(ticketId: string, message: {
 }) {
     try {
         const ticketRef = getAdminDb().collection('tickets').doc(ticketId);
+        let emailWarning: string | undefined;
 
         // Get ticket first to find recipient
         const ticketSnap = await ticketRef.get();
