@@ -49,9 +49,8 @@ export function PromoComposerView() {
     const [generatedLink, setGeneratedLink] = useState('');
     const [isCopying, setIsCopying] = useState(false);
 
-    // Pricing Tiers Configuration (Should come from backend/config)
     // Pricing Tiers Configuration
-    const PRICING_TIERS = [
+    const PRICING_TIERS: { chars: number; rate: number }[] = [
         { chars: 600, rate: 0.20 },
         { chars: 800, rate: 0.40 }
     ];

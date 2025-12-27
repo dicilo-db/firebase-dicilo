@@ -70,19 +70,21 @@ export async function runDatabaseCleanup(): Promise<CleanupResult> {
         const regSnapshot = await getAdminDb().collection('registrations').get();
         const regs = regSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as any));
 
-        // 2. Fetch Clients AND Businesses (Both are sources for Basic if they exist there)
-        const [clientSnapshot, businessSnapshot] = await Promise.all([
+        // 2. Fetch Clients, Businesses, AND Private Profiles
+        const [clientSnapshot, businessSnapshot, privateSnapshot] = await Promise.all([
             getAdminDb().collection('clients').get(),
-            getAdminDb().collection('businesses').get()
+            getAdminDb().collection('businesses').get(),
+            getAdminDb().collection('private_profiles').get()
         ]);
 
         const clients = clientSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data(), _source: 'client' } as any));
         const businesses = businessSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data(), _source: 'business' } as any));
+        const privateUsers = privateSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data(), _source: 'private' } as any));
 
-        // Merge lists (Prefer 'clients' data if overlap, though 'businesses' might be simpler Basic ones)
-        const allCompanies = [...clients, ...businesses];
+        // Merge lists
+        const allSources = [...clients, ...businesses, ...privateUsers];
 
-        console.log(`[Cleanup] Found ${regs.length} registrations, ${clients.length} clients, and ${businesses.length} businesses.`);
+        console.log(`[Cleanup] Found ${regs.length} registrations, ${clients.length} clients, ${businesses.length} businesses, and ${privateUsers.length} private users.`);
 
         const emailMap = new Map<string, any[]>();
         // Helper to normalize strings for comparison
@@ -133,44 +135,55 @@ export async function runDatabaseCleanup(): Promise<CleanupResult> {
         const processedEmails = new Set<string>();
         const processedNames = new Set<string>();
 
-        // --- PHASE 2: SYNC COMPANIES TO REGISTRATIONS ---
-        // Ensure every client/business exists in registrations
-        for (const company of allCompanies) {
+        // --- PHASE 2: SYNC SOURCES TO REGISTRATIONS ---
+        // Ensure every client/business/private user exists in registrations
+        for (const item of allSources) {
             // Determine best email/name
-            const companyEmail = company.email ? company.email.toLowerCase().trim() : null;
-            const companyName = company.clientName || company.name || 'Empresa Sin Nombre';
-            const companyNameKey = normalize(companyName);
+            const itemEmail = item.email ? item.email.toLowerCase().trim() : null;
+
+            let itemName = '';
+            let regType = 'donor'; // Default Basic
+
+            if (item._source === 'private') {
+                itemName = `${item.firstName} ${item.lastName}`;
+                regType = 'private';
+            } else {
+                itemName = item.clientName || item.name || 'Empresa Sin Nombre';
+            }
+
+            const itemNameKey = normalize(itemName);
 
             let matchFound = false;
 
             // Check against existing registrations
-            if (companyEmail && emailMap.has(companyEmail)) matchFound = true;
-            else if (companyNameKey && nameMap.has(companyNameKey)) matchFound = true;
+            if (itemEmail && emailMap.has(itemEmail)) matchFound = true;
+            else if (itemNameKey && nameMap.has(itemNameKey)) matchFound = true;
 
             // CHECK AGAINST ALREADY PROCESSED IN THIS LOOP
-            if (companyEmail && processedEmails.has(companyEmail)) matchFound = true;
-            if (companyNameKey && processedNames.has(companyNameKey)) matchFound = true;
+            if (itemEmail && processedEmails.has(itemEmail)) matchFound = true;
+            if (itemNameKey && processedNames.has(itemNameKey)) matchFound = true;
 
             if (!matchFound) {
                 // CREATE MISSING REGISTRATION
-                console.log(`[Cleanup] Creating missing registration for: ${companyName}`);
+                console.log(`[Cleanup] Creating missing registration for: ${itemName} (${regType})`);
                 const newRegRef = getAdminDb().collection('registrations').doc();
                 const now = FieldValue.serverTimestamp();
 
                 // Fallback email generator
-                const fallbackEmail = `missing-email-${normalize(companyName).substring(0, 10)}-${Math.random().toString(36).substring(7)}@dicilo.placeholder`;
-                const finalEmail = companyEmail || fallbackEmail;
+                const fallbackEmail = `missing-email-${normalize(itemName).substring(0, 10)}-${Math.random().toString(36).substring(7)}@dicilo.placeholder`;
+                const finalEmail = itemEmail || fallbackEmail;
 
                 const newRegData = {
-                    firstName: companyName, // Fallback
-                    lastName: '(Empresa)',
+                    firstName: item._source === 'private' ? item.firstName : itemName,
+                    lastName: item._source === 'private' ? item.lastName : '(Empresa)',
                     email: finalEmail,
-                    businessName: companyName,
-                    registrationType: 'donor', // Default to Basic
+                    businessName: item._source === 'private' ? '' : itemName,
+                    registrationType: regType,
                     source: 'auto-sync',
                     createdAt: now,
                     updatedAt: now,
-                    clientId: company._source === 'client' ? company.id : null,
+                    clientId: item._source === 'client' ? item.id : null,
+                    uid: item._source === 'private' ? item.id : null,
                     status: 'active'
                 };
 
@@ -179,8 +192,8 @@ export async function runDatabaseCleanup(): Promise<CleanupResult> {
                 batchCount++;
 
                 // Mark as processed
-                if (companyEmail) processedEmails.add(companyEmail);
-                if (companyNameKey) processedNames.add(companyNameKey);
+                if (itemEmail) processedEmails.add(itemEmail);
+                if (itemNameKey) processedNames.add(itemNameKey);
             }
         }
 

@@ -9,11 +9,7 @@ import { revalidatePath } from 'next/cache';
  * Valida límites diarios (Fair Play) y presupuesto de la campaña.
  * Ejecuta la transacción monetaria ocultando los márgenes de beneficio.
  */
-/**
- * Procesa un intento de post por parte de un usuario en una campaña.
- * Valida límites diarios (Fair Play) y presupuesto de la campaña.
- * Ejecuta la transacción monetaria ocultando los márgenes de beneficio.
- */
+
 export async function processCampaignPost(userId: string, campaignId: string, postLanguage: string, textLength: number = 0) {
     if (!userId || !campaignId) {
         return { success: false, error: 'Faltan datos obligatorios.' };

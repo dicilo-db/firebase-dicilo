@@ -183,6 +183,22 @@ export async function createPrivateUserProfile(
         });
     }
 
+    // 5. Create Registration Entry (for Admin 'Registros' visibility)
+    // This ensures the new user appears in the general admin inbox
+    const registrationRef = db.collection('registrations').doc();
+    batch.set(registrationRef, {
+        firstName,
+        lastName,
+        email,
+        whatsapp: whatsapp || phone || '',
+        registrationType: 'private',
+        status: 'active',
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        // optional source tracking
+        source: 'private-signup',
+        uid: uid
+    });
+
     await batch.commit();
     return { success: true, profile: profileData };
 }

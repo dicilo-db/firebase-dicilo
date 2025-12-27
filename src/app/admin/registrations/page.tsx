@@ -20,7 +20,9 @@ import { useAuthGuard } from '@/hooks/useAuthGuard';
 
 import Footer from '@/components/footer';
 import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
 import {
   Table,
   TableBody,
@@ -31,7 +33,7 @@ import {
 } from '@/components/ui/table';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
-import { LayoutDashboard, Edit, RefreshCw, Trash2, MoreHorizontal, Play, Pause, Trash } from 'lucide-react';
+import { LayoutDashboard, Edit, RefreshCw, Trash2, MoreHorizontal, Play, Pause, Trash, Search } from 'lucide-react';
 import { runDatabaseCleanup, deleteRegistration, updateRegistrationStatus } from '@/app/actions/registrations';
 import { useToast } from '@/hooks/use-toast';
 import {
@@ -179,6 +181,7 @@ export default function RegistrationsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isCleaning, setIsCleaning] = useState(false);
   const [activeTab, setActiveTab] = useState('all');
+  const [searchTerm, setSearchTerm] = useState('');
   useAuthGuard(['superadmin']);
 
   // Efecto para suscribirse a los registros en tiempo real
@@ -197,10 +200,6 @@ export default function RegistrationsPage() {
         );
 
         // Client lookup optimization:
-        // Instead of querying one by one, we could try to look up based on email if we had strict linking.
-        // But the existing logic looks up by "FirstName LastName".
-        // Let's keep the logic but optimize parallelism.
-
         const findClientForRegistration = async (
           registration: Registration
         ): Promise<Registration> => {
@@ -295,9 +294,21 @@ export default function RegistrationsPage() {
   }, [allRegistrations]);
 
   const filteredRegistrations = useMemo(() => {
-    if (activeTab === 'all') return allRegistrations;
-    return allRegistrations.filter((reg) => reg.registrationType === activeTab);
-  }, [allRegistrations, activeTab]);
+    let regs = allRegistrations;
+    if (activeTab !== 'all') {
+      regs = regs.filter((reg) => reg.registrationType === activeTab);
+    }
+    if (searchTerm) {
+      const lower = searchTerm.toLowerCase();
+      regs = regs.filter(reg =>
+        (reg.firstName && reg.firstName.toLowerCase().includes(lower)) ||
+        (reg.lastName && reg.lastName.toLowerCase().includes(lower)) ||
+        (reg.email && reg.email.toLowerCase().includes(lower)) ||
+        (reg.businessName && reg.businessName.toLowerCase().includes(lower))
+      );
+    }
+    return regs;
+  }, [allRegistrations, activeTab, searchTerm]);
 
   const typeLabels: Record<string, string> = {
     all: t('registrations.tabs.all', { ns: 'admin' }),
@@ -335,6 +346,16 @@ export default function RegistrationsPage() {
               </Link>
             </Button>
           </div>
+        </div>
+
+        <div className="mb-6 relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder={t('registrations.searchPlaceholder', { ns: 'admin', defaultValue: 'Search registrations...' })}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-9 max-w-md bg-white"
+          />
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab}>
