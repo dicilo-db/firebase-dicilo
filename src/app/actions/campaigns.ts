@@ -35,16 +35,20 @@ async function verifyAdminRole(idToken: string) {
     if (!idToken) throw new Error('Unauthorized: No token provided');
     try {
         const decodedToken = await admin.auth().verifyIdToken(idToken);
-        const role = decodedToken.role;
-        const allowedRoles = ['superadmin', 'admin', 'team_office', 'super_admin']; // handle variations
+        const role = decodedToken.role as string | undefined;
+        const hasAdminClaim = decodedToken.admin === true;
 
-        if (!role || !allowedRoles.includes(role as string)) {
-            throw new Error(`Forbidden: Role '${role}' not authorized.`);
+        const allowedRoles = ['superadmin', 'admin', 'team_office', 'super_admin'];
+
+        // Allow if explicit admin boolean is true OR if role is in allowed list
+        if (!hasAdminClaim && (!role || !allowedRoles.includes(role))) {
+            throw new Error(`Forbidden: Role '${role}' not authorized. (admin claim: ${decodedToken.admin})`);
         }
         return decodedToken;
     } catch (error: any) {
         console.error('RBAC Verification Failed:', error.message);
-        throw new Error('Unauthorized or Forbidden');
+        // Pass the specific error message for debugging in the UI
+        throw new Error(error.message || 'Unauthorized or Forbidden');
     }
 }
 
