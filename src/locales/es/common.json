@@ -508,6 +508,18 @@
         "displayAds": {
           "title": "Display Ads",
           "description": "Gestiona banners publicitarios dentro de la red Dicilo y sitios asociados."
+        },
+        "socialProduct": {
+          "title": "Campañas de Producto Social",
+          "description": "Promociona tus productos específicos a través de nuestra red de freelancers en redes sociales para maximizar su visibilidad."
+        },
+        "bannerRedirect": {
+          "title": "Banners de Redirección",
+          "description": "Crea banners estratégicos dentro de Dicilo.net que redirijan tráfico cualificado directamente a tus ofertas."
+        },
+        "sampling": {
+          "title": "Campañas de Muestras \"Pruébalo\"",
+          "description": "Ofrece artículos de prueba o muestras gratuitas a la comunidad para obtener reseñas y feedback genuino."
         }
       }
     },

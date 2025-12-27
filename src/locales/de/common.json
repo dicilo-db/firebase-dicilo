@@ -527,6 +527,18 @@
         "displayAds": {
           "title": "Display-Anzeigen",
           "description": "Verwalten Sie Banneranzeigen im Dicilo-Netzwerk und auf Partnerseiten."
+        },
+        "socialProduct": {
+          "title": "Social-Product-Kampagnen",
+          "description": "Bewerben Sie spezifische Produkte über unser Freelancer-Netzwerk in sozialen Medien für maximale Sichtbarkeit."
+        },
+        "bannerRedirect": {
+          "title": "Weiterleitungs-Banner",
+          "description": "Erstellen Sie strategische Banner auf Dicilo.net, um qualifizierten Traffic direkt zu Ihren Angeboten zu leiten."
+        },
+        "sampling": {
+          "title": "\"Probier's mal\"-Kampagnen",
+          "description": "Bieten Sie der Community Probeartikel an, um authentische Bewertungen und Feedback zu erhalten."
         }
       }
     },

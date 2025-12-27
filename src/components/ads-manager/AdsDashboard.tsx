@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { QrCode, Mail, MonitorPlay, ArrowRight, BarChart, Database } from 'lucide-react';
+import { QrCode, Mail, MonitorPlay, ArrowRight, BarChart, Database, ShoppingBag, Layout, Gift } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { seedCampaignsAction } from '@/app/actions/seed-freelancer';
 import { useToast } from "@/hooks/use-toast";
@@ -96,6 +96,56 @@ export default function AdsDashboard() {
                         </div>
                         <CardTitle>{t('adsManager.cards.programs.displayAds.title')}</CardTitle>
                         <CardDescription>{t('adsManager.cards.programs.displayAds.description')}</CardDescription>
+                    </CardHeader>
+                    <CardFooter>
+                        <Button variant="secondary" disabled className="w-full">
+                            {t('adsManager.cards.inDevelopment')}
+                        </Button>
+                    </CardFooter>
+                </Card>
+                {/* Module: Social Product Campaigns */}
+                <Card className="opacity-75 border-dashed">
+                    <CardHeader>
+                        <div className="flex items-start justify-between">
+                            <ShoppingBag className="h-8 w-8 text-muted-foreground mb-2" />
+                            <Badge variant="outline">{t('adsManager.cards.comingSoon')}</Badge>
+                        </div>
+                        <CardTitle>{t('adsManager.cards.programs.socialProduct.title')}</CardTitle>
+                        <CardDescription>{t('adsManager.cards.programs.socialProduct.description')}</CardDescription>
+                    </CardHeader>
+                    <CardFooter>
+                        <Button variant="secondary" disabled className="w-full">
+                            {t('adsManager.cards.inDevelopment')}
+                        </Button>
+                    </CardFooter>
+                </Card>
+
+                {/* Module: Banner Redirect Campaigns */}
+                <Card className="opacity-75 border-dashed">
+                    <CardHeader>
+                        <div className="flex items-start justify-between">
+                            <Layout className="h-8 w-8 text-muted-foreground mb-2" />
+                            <Badge variant="outline">{t('adsManager.cards.comingSoon')}</Badge>
+                        </div>
+                        <CardTitle>{t('adsManager.cards.programs.bannerRedirect.title')}</CardTitle>
+                        <CardDescription>{t('adsManager.cards.programs.bannerRedirect.description')}</CardDescription>
+                    </CardHeader>
+                    <CardFooter>
+                        <Button variant="secondary" disabled className="w-full">
+                            {t('adsManager.cards.inDevelopment')}
+                        </Button>
+                    </CardFooter>
+                </Card>
+
+                {/* Module: Sampling "Try It" Campaigns */}
+                <Card className="opacity-75 border-dashed">
+                    <CardHeader>
+                        <div className="flex items-start justify-between">
+                            <Gift className="h-8 w-8 text-muted-foreground mb-2" />
+                            <Badge variant="outline">{t('adsManager.cards.comingSoon')}</Badge>
+                        </div>
+                        <CardTitle>{t('adsManager.cards.programs.sampling.title')}</CardTitle>
+                        <CardDescription>{t('adsManager.cards.programs.sampling.description')}</CardDescription>
                     </CardHeader>
                     <CardFooter>
                         <Button variant="secondary" disabled className="w-full">
