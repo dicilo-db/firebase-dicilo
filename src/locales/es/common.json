@@ -624,6 +624,50 @@
       }
     }
   },
+  "networkCampaigns": {
+    "title": "Campañas de Red",
+    "subtitle": "Configura una nueva campaña para la red de freelancers.",
+    "back": "Volver a la Lista",
+    "list": {
+      "title": "Campañas de Red",
+      "subtitle": "Gestiona tus campañas de red.",
+      "create": "Crear Campaña",
+      "empty": "Selecciona \"Crear Campaña\" para iniciar una nueva Campaña de Red.",
+      "pending": "(Implementación de vista de lista pendiente)"
+    },
+    "form": {
+      "cardTitle": "Crear Campaña de Red",
+      "cardDesc": "Configura los detalles, presupuesto y creatividades.",
+      "clientLabel": "Cliente / Empresa",
+      "selectClient": "Seleccionar Cliente",
+      "loading": "Cargando...",
+      "dailyLimit": "Límite Diario (por usuario)",
+      "totalBudget": "Presupuesto Total (€)",
+      "costPerAction": "Costo para Cliente (€/acción)",
+      "freelancerReward": "Recompensa Freelancer (€/acción)",
+      "languages": "Idiomas Disponibles",
+      "imagesLabel": "Gráficas de Campaña",
+      "addImage": "Agregar Gráfica",
+      "maxImages": "Máx 24 imágenes",
+      "noImages": "Aún no hay imágenes.",
+      "uploadHelp": "Sube las gráficas que los freelancers compartirán (hasta 24).",
+      "uploading": "Subiendo...",
+      "content": "Contenido de la Campaña",
+      "tabTitle": "Título",
+      "tabDesc": "Descripción",
+      "tabSuggest": "Texto Sugerido (Copy)",
+      "placeholderTitle": "Ej: Oferta de Verano 2025",
+      "placeholderDesc": "Descripción interna para freelancers...",
+      "placeholderSuggest": "El texto que los freelancers copiarán y pegarán...",
+      "cancel": "Cancelar",
+      "submit": "Crear Campaña",
+      "success": "Campaña creada exitosamente.",
+      "validation": {
+        "lang": "Selecciona al menos un idioma.",
+        "image": "La imagen principal es obligatoria."
+      }
+    }
+  },
   "rules": {
     "title": "Tu Oficina es el Mundo: Gana dinero desde casa con Dicilo",
     "subtitle": "Libertad, Sin Inversión y Sin Riesgos.",
