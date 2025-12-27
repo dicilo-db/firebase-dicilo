@@ -220,7 +220,7 @@ export function PromoComposerView() {
                         <h1 className="text-2xl font-bold">{activeCampaign.companyName}</h1>
                         <div className="flex gap-2 mt-1">
                             <Badge variant="secondary" className="text-xs">{activeCampaign.status}</Badge>
-                            {activeCampaign.categories.map(c => <Badge key={c} variant="outline" className="text-[10px]">{c}</Badge>)}
+                            {activeCampaign.categories?.map(c => <Badge key={c} variant="outline" className="text-[10px]">{c}</Badge>)}
                         </div>
                     </div>
                     <div className="ml-auto text-right">
