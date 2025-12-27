@@ -666,6 +666,13 @@
       "validation": {
         "lang": "Select at least one language.",
         "image": "Main image is required."
+      },
+      "ai": {
+        "improve": "Improve (AI)",
+        "translateFrom": "Translate from",
+        "translating": "Translating...",
+        "correcting": "Improving...",
+        "apply": "Apply"
       }
     }
   },

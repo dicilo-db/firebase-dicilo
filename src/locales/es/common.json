@@ -668,6 +668,13 @@
       "validation": {
         "lang": "Selecciona al menos un idioma.",
         "image": "La imagen principal es obligatoria."
+      },
+      "ai": {
+        "improve": "Mejorar (IA)",
+        "translateFrom": "Traducir de",
+        "translating": "Traduciendo...",
+        "correcting": "Mejorando...",
+        "apply": "Aplicar"
       }
     }
   },

@@ -669,6 +669,13 @@
       "validation": {
         "lang": "Wählen Sie mindestens eine Sprache aus.",
         "image": "Hauptbild ist erforderlich."
+      },
+      "ai": {
+        "improve": "Optimieren (AI)",
+        "translateFrom": "Übersetzen aus",
+        "translating": "Übersetzen...",
+        "correcting": "Optimieren...",
+        "apply": "Anwenden"
       }
     }
   },

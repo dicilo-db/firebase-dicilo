@@ -15,13 +15,28 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Loader2, ArrowLeft, Plus, Upload, Image as ImageIcon, X } from 'lucide-react';
 import { createCampaign, getClientsForSelect, ClientOption } from '@/app/actions/campaigns';
 import { uploadImage } from '@/app/actions/upload';
+import { translateText } from '@/app/actions/translate';
+import { correctText } from '@/app/actions/grammar';
 import Image from 'next/image';
+import { Sparkles, Languages, ChevronDown } from 'lucide-react';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const AVAILABLE_LANGUAGES = [
     { code: 'es', label: 'Español' },
     { code: 'en', label: 'English' },
     { code: 'de', label: 'Deutsch' }
 ];
+
+const LANG_MAP: Record<string, string> = {
+    'es': 'Spanish',
+    'en': 'English',
+    'de': 'German'
+};
 
 interface ContentBlock {
     title: string;
@@ -58,6 +73,9 @@ export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
 
     const [uploading, setUploading] = useState(false);
     const [submitting, setSubmitting] = useState(false);
+
+    // AI State
+    const [aiLoading, setAiLoading] = useState<string | null>(null); // 'lang-field' identifier
 
     // Initial Load
     useEffect(() => {
@@ -106,6 +124,57 @@ export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
             [lang]: { ...prev[lang], [field]: value }
         }));
     };
+
+    // AI Actions
+    const handleAITranslate = async (targetLang: string, field: keyof ContentBlock, sourceLang: string) => {
+        const sourceText = content[sourceLang]?.[field];
+        if (!sourceText) {
+            toast({ title: "Source Empty", description: "No text to translate in source language.", variant: "destructive" });
+            return;
+        }
+
+        const loaderKey = `${targetLang}-${field}`;
+        setAiLoading(loaderKey);
+
+        try {
+            const res = await translateText(sourceText, LANG_MAP[targetLang] || targetLang);
+            if (res.success && res.translation) {
+                handleContentChange(targetLang, field, res.translation);
+                toast({ title: t('networkCampaigns.form.ai.apply'), description: t('networkCampaigns.form.ai.translated', { lang: sourceLang.toUpperCase() }) });
+            } else {
+                toast({ title: "Error", description: res.error || "Translation failed", variant: "destructive" });
+            }
+        } catch (e) {
+            console.error(e);
+            toast({ title: "Error", description: "Translation failed", variant: "destructive" });
+        } finally {
+            setAiLoading(null);
+        }
+    };
+
+    const handleAICorrect = async (lang: string, field: keyof ContentBlock) => {
+        const currentText = content[lang]?.[field];
+        if (!currentText) return;
+
+        const loaderKey = `${lang}-${field}`;
+        setAiLoading(loaderKey);
+
+        try {
+            const res = await correctText(currentText, LANG_MAP[lang] || lang);
+            if (res.success && res.correctedText) {
+                handleContentChange(lang, field, res.correctedText);
+                toast({ title: t('networkCampaigns.form.ai.apply'), description: t('networkCampaigns.form.ai.autoFixed') });
+            } else {
+                toast({ title: "Error", description: "Correction failed", variant: "destructive" });
+            }
+        } catch (e) {
+            console.error(e);
+            toast({ title: "Error", description: "Correction failed", variant: "destructive" });
+        } finally {
+            setAiLoading(null);
+        }
+    };
+
 
     const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -184,6 +253,79 @@ export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
         } finally {
             setSubmitting(false);
         }
+    };
+
+    // Helper to render AI-enhanced text area
+    const renderContentField = (lang: string, field: keyof ContentBlock, label: string, placeholder: string, isTextarea = false) => {
+        const textValue = content[lang]?.[field] || '';
+        const isLoading = aiLoading === `${lang}-${field}`;
+        const hasText = textValue.length > 0;
+
+        // Other active languages to translate FROM
+        const otherLangs = formData.allowedLanguages.filter(l => l !== lang);
+
+        return (
+            <div className="space-y-2 relative group">
+                <div className="flex justify-between items-end">
+                    <Label>{label} ({lang.toUpperCase()})</Label>
+
+                    {/* AI Toolbar */}
+                    <div className="flex gap-2">
+                        {/* Translate Option (visible if we have other languages) */}
+                        {otherLangs.length > 0 && !hasText && (
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost" size="sm" className="h-6 px-2 text-xs text-blue-600 hover:text-blue-800 bg-blue-50/50" disabled={isLoading}>
+                                        {isLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : <Languages className="h-3 w-3 mr-1" />}
+                                        {t('networkCampaigns.form.ai.translateFrom')} <ChevronDown className="h-3 w-3 ml-1 opacity-50" />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                    {otherLangs.map(srcLang => (
+                                        <DropdownMenuItem key={srcLang} onClick={() => handleAITranslate(lang, field, srcLang)}>
+                                            {srcLang.toUpperCase()}
+                                            {(content[srcLang]?.[field]?.substring(0, 10)) && <span className="ml-2 text-xs text-muted-foreground">"{content[srcLang][field].substring(0, 10)}..."</span>}
+                                        </DropdownMenuItem>
+                                    ))}
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        )}
+
+                        {/* Grammar Correction (visible if text exists) */}
+                        {hasText && (
+                            <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                className="h-6 px-2 text-xs text-purple-600 hover:text-purple-800 bg-purple-50/50"
+                                onClick={() => handleAICorrect(lang, field)}
+                                disabled={isLoading}
+                            >
+                                {isLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : <Sparkles className="h-3 w-3 mr-1" />}
+                                {t('networkCampaigns.form.ai.improve')}
+                            </Button>
+                        )}
+                    </div>
+                </div>
+
+                {isTextarea ? (
+                    <Textarea
+                        value={textValue}
+                        onChange={e => handleContentChange(lang, field, e.target.value)}
+                        placeholder={placeholder}
+                        className={field === 'suggestedText' ? "h-24 bg-blue-50/50" : ""}
+                        disabled={isLoading}
+                    />
+                ) : (
+                    <Input
+                        value={textValue}
+                        onChange={e => handleContentChange(lang, field, e.target.value)}
+                        placeholder={placeholder}
+                        disabled={isLoading}
+                    />
+                )}
+            </div>
+        );
     };
 
     if (view === 'list') {
@@ -369,31 +511,9 @@ export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
                                 </TabsList>
                                 {formData.allowedLanguages.map(lang => (
                                     <TabsContent key={lang} value={lang} className="space-y-4 border p-4 rounded-lg mt-2">
-                                        <div className="space-y-2">
-                                            <Label>{t('networkCampaigns.form.tabTitle')} ({lang.toUpperCase()})</Label>
-                                            <Input
-                                                value={content[lang].title}
-                                                onChange={e => handleContentChange(lang, 'title', e.target.value)}
-                                                placeholder={t('networkCampaigns.form.placeholderTitle')}
-                                            />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Label>{t('networkCampaigns.form.tabDesc')} ({lang.toUpperCase()})</Label>
-                                            <Textarea
-                                                value={content[lang].description}
-                                                onChange={e => handleContentChange(lang, 'description', e.target.value)}
-                                                placeholder={t('networkCampaigns.form.placeholderDesc')}
-                                            />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Label>{t('networkCampaigns.form.tabSuggest')} ({lang.toUpperCase()})</Label>
-                                            <Textarea
-                                                value={content[lang].suggestedText}
-                                                onChange={e => handleContentChange(lang, 'suggestedText', e.target.value)}
-                                                placeholder={t('networkCampaigns.form.placeholderSuggest')}
-                                                className="h-24 bg-blue-50/50"
-                                            />
-                                        </div>
+                                        {renderContentField(lang, 'title', t('networkCampaigns.form.tabTitle'), t('networkCampaigns.form.placeholderTitle'))}
+                                        {renderContentField(lang, 'description', t('networkCampaigns.form.tabDesc'), t('networkCampaigns.form.placeholderDesc'), true)}
+                                        {renderContentField(lang, 'suggestedText', t('networkCampaigns.form.tabSuggest'), t('networkCampaigns.form.placeholderSuggest'), true)}
                                     </TabsContent>
                                 ))}
                             </Tabs>
