@@ -670,9 +670,12 @@
       "ai": {
         "improve": "Improve (AI)",
         "translateFrom": "Translate from",
+        "translateTo": "Translate to",
         "translating": "Translating...",
         "correcting": "Improving...",
-        "apply": "Apply"
+        "apply": "Apply",
+        "autoFixed": "Text improved automatically.",
+        "translated": "Translated to {{lang}}"
       }
     }
   },

@@ -672,9 +672,12 @@
       "ai": {
         "improve": "Mejorar (IA)",
         "translateFrom": "Traducir de",
+        "translateTo": "Traducir a",
         "translating": "Traduciendo...",
         "correcting": "Mejorando...",
-        "apply": "Aplicar"
+        "apply": "Aplicar",
+        "autoFixed": "Texto mejorado automáticamente.",
+        "translated": "Traducido a {{lang}}"
       }
     }
   },

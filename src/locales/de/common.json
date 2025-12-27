@@ -673,9 +673,12 @@
       "ai": {
         "improve": "Optimieren (AI)",
         "translateFrom": "Übersetzen aus",
+        "translateTo": "Übersetzen in",
         "translating": "Übersetzen...",
         "correcting": "Optimieren...",
-        "apply": "Anwenden"
+        "apply": "Anwenden",
+        "autoFixed": "Text automatisch optimiert.",
+        "translated": "Übersetzt nach {{lang}}"
       }
     }
   },

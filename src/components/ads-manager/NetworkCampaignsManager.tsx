@@ -261,8 +261,9 @@ export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
         const isLoading = aiLoading === `${lang}-${field}`;
         const hasText = textValue.length > 0;
 
-        // Other active languages to translate FROM
-        const otherLangs = formData.allowedLanguages.filter(l => l !== lang);
+        // Target languages (Active ones)
+        // If I am in 'es', I can translate to 'es', 'en', 'de'
+        const targetLangs = formData.allowedLanguages;
 
         return (
             <div className="space-y-2 relative group">
@@ -271,25 +272,22 @@ export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
 
                     {/* AI Toolbar */}
                     <div className="flex gap-2">
-                        {/* Translate Option (visible if we have other languages) */}
-                        {otherLangs.length > 0 && !hasText && (
-                            <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <Button variant="ghost" size="sm" className="h-6 px-2 text-xs text-blue-600 hover:text-blue-800 bg-blue-50/50" disabled={isLoading}>
-                                        {isLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : <Languages className="h-3 w-3 mr-1" />}
-                                        {t('networkCampaigns.form.ai.translateFrom')} <ChevronDown className="h-3 w-3 ml-1 opacity-50" />
-                                    </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end">
-                                    {otherLangs.map(srcLang => (
-                                        <DropdownMenuItem key={srcLang} onClick={() => handleAITranslate(lang, field, srcLang)}>
-                                            {srcLang.toUpperCase()}
-                                            {(content[srcLang]?.[field]?.substring(0, 10)) && <span className="ml-2 text-xs text-muted-foreground">"{content[srcLang][field].substring(0, 10)}..."</span>}
-                                        </DropdownMenuItem>
-                                    ))}
-                                </DropdownMenuContent>
-                            </DropdownMenu>
-                        )}
+                        {/* Translate TO ... */}
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="sm" className="h-6 px-2 text-xs text-blue-600 hover:text-blue-800 bg-blue-50/50" disabled={isLoading}>
+                                    {isLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : <Languages className="h-3 w-3 mr-1" />}
+                                    {t('networkCampaigns.form.ai.translateTo')} <ChevronDown className="h-3 w-3 ml-1 opacity-50" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                                {targetLangs.map(targetLang => (
+                                    <DropdownMenuItem key={targetLang} onClick={() => handleAITranslate(targetLang, field, lang)}>
+                                        {targetLang.toUpperCase()} {targetLang === lang ? '(Current)' : ''}
+                                    </DropdownMenuItem>
+                                ))}
+                            </DropdownMenuContent>
+                        </DropdownMenu>
 
                         {/* Grammar Correction (visible if text exists) */}
                         {hasText && (
