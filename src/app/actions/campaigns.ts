@@ -1,6 +1,6 @@
 'use server';
 
-import { getAdminDb } from '@/lib/firebase-admin';
+import { getAdminDb, getAdminAuth } from '@/lib/firebase-admin';
 import * as admin from 'firebase-admin';
 import { revalidatePath } from 'next/cache';
 
@@ -34,7 +34,7 @@ export interface ClientOption {
 async function verifyAdminRole(idToken: string) {
     if (!idToken) throw new Error('Unauthorized: No token provided');
     try {
-        const decodedToken = await admin.auth().verifyIdToken(idToken);
+        const decodedToken = await getAdminAuth().verifyIdToken(idToken);
         const role = decodedToken.role as string | undefined;
         const hasAdminClaim = decodedToken.admin === true;
 
