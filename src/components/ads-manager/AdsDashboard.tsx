@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { QrCode, Mail, MonitorPlay, ArrowRight, BarChart, Database, ShoppingBag, Layout, Gift } from 'lucide-react';
+import { QrCode, Mail, MonitorPlay, ArrowRight, BarChart, Database, ShoppingBag, Layout, Gift, Users, Store, Megaphone } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { seedCampaignsAction } from '@/app/actions/seed-freelancer';
 import { useToast } from "@/hooks/use-toast";
@@ -155,6 +155,57 @@ export default function AdsDashboard() {
                     </CardHeader>
                     <CardFooter>
                         <Button variant="secondary" disabled className="w-full">
+                            {t('adsManager.cards.inDevelopment')}
+                        </Button>
+                    </CardFooter>
+                </Card>
+
+                {/* Module: Recommend Friends */}
+                <Card className="opacity-75 border-dashed bg-blue-50/50 dark:bg-blue-900/10">
+                    <CardHeader>
+                        <div className="flex items-start justify-between">
+                            <Users className="h-8 w-8 text-blue-400 mb-2" />
+                            <Badge variant="outline" className="bg-blue-100 text-blue-700 border-blue-200">{t('adsManager.cards.comingSoon')}</Badge>
+                        </div>
+                        <CardTitle>{t('adsManager.cards.programs.recommendFriends.title')}</CardTitle>
+                        <CardDescription>{t('adsManager.cards.programs.recommendFriends.description')}</CardDescription>
+                    </CardHeader>
+                    <CardFooter>
+                        <Button variant="secondary" disabled className="w-full bg-blue-100/50 text-blue-700">
+                            {t('adsManager.cards.inDevelopment')}
+                        </Button>
+                    </CardFooter>
+                </Card>
+
+                {/* Module: Your Prospects */}
+                <Card className="opacity-75 border-dashed bg-blue-50/50 dark:bg-blue-900/10">
+                    <CardHeader>
+                        <div className="flex items-start justify-between">
+                            <Store className="h-8 w-8 text-blue-400 mb-2" />
+                            <Badge variant="outline" className="bg-blue-100 text-blue-700 border-blue-200">{t('adsManager.cards.comingSoon')}</Badge>
+                        </div>
+                        <CardTitle>{t('adsManager.cards.programs.prospects.title')}</CardTitle>
+                        <CardDescription>{t('adsManager.cards.programs.prospects.description')}</CardDescription>
+                    </CardHeader>
+                    <CardFooter>
+                        <Button variant="secondary" disabled className="w-full bg-blue-100/50 text-blue-700">
+                            {t('adsManager.cards.inDevelopment')}
+                        </Button>
+                    </CardFooter>
+                </Card>
+
+                {/* Module: Hostesses */}
+                <Card className="opacity-75 border-dashed bg-blue-50/50 dark:bg-blue-900/10">
+                    <CardHeader>
+                        <div className="flex items-start justify-between">
+                            <Megaphone className="h-8 w-8 text-blue-400 mb-2" />
+                            <Badge variant="outline" className="bg-blue-100 text-blue-700 border-blue-200">{t('adsManager.cards.comingSoon')}</Badge>
+                        </div>
+                        <CardTitle>{t('adsManager.cards.programs.hostess.title')}</CardTitle>
+                        <CardDescription>{t('adsManager.cards.programs.hostess.description')}</CardDescription>
+                    </CardHeader>
+                    <CardFooter>
+                        <Button variant="secondary" disabled className="w-full bg-blue-100/50 text-blue-700">
                             {t('adsManager.cards.inDevelopment')}
                         </Button>
                     </CardFooter>

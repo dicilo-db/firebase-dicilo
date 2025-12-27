@@ -532,6 +532,18 @@
         "sampling": {
           "title": "Campañas de Muestras \"Pruébalo\"",
           "description": "Ofrece artículos de prueba o muestras gratuitas a la comunidad para obtener reseñas y feedback genuino."
+        },
+        "recommendFriends": {
+          "title": "Recomendienda",
+          "description": "Recomienda amigos y gana 50 DiciPoints con cada amigo tuyo que se registre en dicilo.net con tu enlace unico de afiliado"
+        },
+        "prospects": {
+          "title": "Tus Prospectos",
+          "description": "Recomienda empresas que estan en tu zona o empresas donde te gusta comprar y gana DiciPoints o dinero en efectivo como freelenace."
+        },
+        "hostess": {
+          "title": "Hostesen",
+          "description": "Conviertete en un Hostesen y gana en efectivo en nuestros eventos presenciales en mercados locales ofreciendo productos o dicilo.net"
         }
       }
     },

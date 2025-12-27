@@ -539,6 +539,18 @@
         "sampling": {
           "title": "\"Probier's mal\"-Kampagnen",
           "description": "Bieten Sie der Community Probeartikel an, um authentische Bewertungen und Feedback zu erhalten."
+        },
+        "recommendFriends": {
+          "title": "Empfehlen Sie Freunde",
+          "description": "Empfehlen Sie Freunde und verdienen Sie 50 DiciPoints für jeden Freund, der sich über Ihren einzigartigen Affiliate-Link bei dicilo.net registriert."
+        },
+        "prospects": {
+          "title": "Ihre Interessenten",
+          "description": "Empfehlen Sie Unternehmen in Ihrer Nähe oder Geschäfte, in denen Sie gerne einkaufen, und verdienen Sie DiciPoints oder Bargeld als Freelancer."
+        },
+        "hostess": {
+          "title": "Hostessen",
+          "description": "Werden Sie Hostess und verdienen Sie Bargeld bei unseren persönlichen Veranstaltungen auf lokalen Märkten, indem Sie Produkte oder dicilo.net anbieten."
         }
       }
     },
@@ -622,6 +634,12 @@
       "selectCampaign": {
         "title": "Kampagne auswählen",
         "description": "Suchen Sie eine aktive Kampagne im Tab 'Kampagnen', um mit der Werbung zu beginnen."
+      },
+      "toasts": {
+        "linkGenerated": "Link generiert!",
+        "openingWhatsapp": "WhatsApp wird mit Ihrer Promotion geöffnet...",
+        "shareError": "Fehler beim Teilen",
+        "shareErrorDesc": "Link konnte nicht generiert werden."
       }
     }
   },
@@ -679,16 +697,6 @@
         "apply": "Anwenden",
         "autoFixed": "Text automatisch optimiert.",
         "translated": "Übersetzt nach {{lang}}"
-      }
-    }
-  },
-  "freelancer": {
-    "composer": {
-      "toasts": {
-        "linkGenerated": "Link generiert!",
-        "openingWhatsapp": "WhatsApp wird mit Ihrer Promotion geöffnet...",
-        "shareError": "Fehler beim Teilen",
-        "shareErrorDesc": "Link konnte nicht generiert werden."
       }
     }
   },

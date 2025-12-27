@@ -523,6 +523,18 @@
         "sampling": {
           "title": "\"Try It\" Sampling Campaigns",
           "description": "Offer trial items or free samples to the community to gain authentic reviews and feedback."
+        },
+        "recommendFriends": {
+          "title": "Recommend Friends",
+          "description": "Recommend friends and earn 50 DiciPoints for each friend who registers on dicilo.net with your unique affiliate link."
+        },
+        "prospects": {
+          "title": "Your Prospects",
+          "description": "Recommend businesses in your area or where you like to shop and earn DiciPoints or cash as a freelancer."
+        },
+        "hostess": {
+          "title": "Hostesses",
+          "description": "Become a Hostess and earn cash at our in-person events in local markets offering products or dicilo.net"
         }
       }
     },
