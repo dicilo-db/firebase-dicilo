@@ -209,7 +209,7 @@ export function PromoComposerView() {
                 <div className="flex items-center gap-4 mb-6">
                     {activeCampaign.companyLogo && activeCampaign.companyLogo !== '/placeholder-logo.png' ? (
                         <div className="h-16 w-16 rounded-full overflow-hidden border shrink-0 relative shadow-sm">
-                            <Image src={activeCampaign.companyLogo} alt="Logo" fill className="object-cover" />
+                            <Image src={activeCampaign.companyLogo} alt="Logo" fill className="object-cover" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" />
                         </div>
                     ) : (
                         <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center font-bold text-primary text-2xl shadow-sm">
