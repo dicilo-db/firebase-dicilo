@@ -642,6 +642,7 @@
       "clientLabel": "Kunde / Unternehmen",
       "selectClient": "Kunde auswählen",
       "loading": "Lädt...",
+      "loadError": "Fehler beim Laden der Kunden.",
       "dailyLimit": "Tageslimit (pro Benutzer)",
       "totalBudget": "Gesamtbudget (€)",
       "costPerAction": "Kosten für Kunde (€/Aktion)",

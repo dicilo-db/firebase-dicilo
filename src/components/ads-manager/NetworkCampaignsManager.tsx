@@ -71,8 +71,16 @@ export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
         try {
             const token = await user.getIdToken();
             const res = await getClientsForSelect(token);
-            if (res.success && res.clients) setClients(res.clients);
-            else toast({ title: 'Error', description: t('networkCampaigns.form.loading'), variant: 'destructive' });
+            if (res.success && res.clients) {
+                setClients(res.clients);
+            } else {
+                console.error("Load Clients Error:", res.error);
+                toast({
+                    title: 'Error',
+                    description: res.error || t('networkCampaigns.form.loadError'),
+                    variant: 'destructive'
+                });
+            }
         } catch (e) {
             console.error(e);
         } finally {

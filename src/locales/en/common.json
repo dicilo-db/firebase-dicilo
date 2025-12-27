@@ -622,6 +622,51 @@
       }
     }
   },
+  "networkCampaigns": {
+    "title": "Network Campaigns",
+    "subtitle": "Configure a new campaign for the freelancer network.",
+    "back": "Back to List",
+    "list": {
+      "title": "Network Campaigns",
+      "subtitle": "Manage your network campaigns.",
+      "create": "Create Campaign",
+      "empty": "Select \"Create Campaign\" to start a new Network Campaign.",
+      "pending": "(List view implementation pending)"
+    },
+    "form": {
+      "cardTitle": "Create Network Campaign",
+      "cardDesc": "Configure details, budget, and creative assets.",
+      "clientLabel": "Client / Company",
+      "selectClient": "Select Client",
+      "loading": "Loading...",
+      "loadError": "Error loading clients.",
+      "dailyLimit": "Daily Limit (per user)",
+      "totalBudget": "Total Budget (€)",
+      "costPerAction": "Cost to Client (€/action)",
+      "freelancerReward": "Freelancer Reward (€/action)",
+      "languages": "Available Languages",
+      "imagesLabel": "Campaign Graphics",
+      "addImage": "Add Graphic",
+      "maxImages": "Max 24 images",
+      "noImages": "No images yet.",
+      "uploadHelp": "Upload the graphics freelancers will share (up to 24).",
+      "uploading": "Uploading...",
+      "content": "Campaign Content",
+      "tabTitle": "Title",
+      "tabDesc": "Description",
+      "tabSuggest": "Suggested Text (Copy)",
+      "placeholderTitle": "e.g. Summer Sale 2025",
+      "placeholderDesc": "Internal description for freelancers...",
+      "placeholderSuggest": "The text that freelancers will copy-paste...",
+      "cancel": "Cancel",
+      "submit": "Create Campaign",
+      "success": "Campaign created successfully.",
+      "validation": {
+        "lang": "Select at least one language.",
+        "image": "Main image is required."
+      }
+    }
+  },
   "dicicoinPage": {
     "title": "What is DICICOIN?",
     "intro": "DICICOIN is a physical, commemorative, and collectible coin representing the birth and vision of the Dicilo ecosystem.\nIt is not a cryptocurrency or a traditional financial product, but a tangible symbol of belonging to a community that is building new ways of connection, recommendation, and growth between people and businesses.",
