@@ -42,9 +42,10 @@ export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
     const [formData, setFormData] = useState({
         clientId: '',
         budgetTotal: 1000,
-        costPerAction: 0.60,
         rewardPerAction: 0.20,
         dailyLimit: 10,
+        startDate: '',
+        endDate: '',
         allowedLanguages: ['es'] as string[],
         images: [] as string[],
     });

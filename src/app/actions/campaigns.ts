@@ -9,9 +9,12 @@ import { revalidatePath } from 'next/cache';
 export interface CreateCampaignData {
     clientId: string;
     budgetTotal: number;
-    costPerAction: number;
+    // costPerAction removed from required inputs, calculated backend
+    manualCostPerAction?: number;
     rewardPerAction: number;
     dailyLimit: number;
+    startDate: string;
+    endDate: string;
     allowedLanguages: string[];
     images: string[];
     content: {
@@ -63,8 +66,8 @@ export async function createCampaign(idToken: string, data: CreateCampaignData) 
         // 1. Strict RBAC Check
         const user = await verifyAdminRole(idToken);
 
-        // 2. Validate Data (Add Zod here if needed, manual for now)
-        if (!data.clientId || !data.images || data.images.length === 0 || data.allowedLanguages.length === 0) {
+        // 2. Validate Data
+        if (!data.clientId || !data.images || data.images.length === 0 || data.allowedLanguages.length === 0 || !data.startDate || !data.endDate) {
             return { success: false, error: 'Missing required fields' };
         }
 
@@ -72,13 +75,27 @@ export async function createCampaign(idToken: string, data: CreateCampaignData) 
         const batch = db.batch();
         const campaignRef = db.collection('campaigns').doc();
 
-        // 3. fetch client info for denormalization
+        // 3. fetch client info
         const clientSnap = await db.collection('clients').doc(data.clientId).get();
         const clientData = clientSnap.data() || {};
         const companyName = clientData.clientName || clientData.name || 'Unknown Client';
         const companyLogo = clientData.logo || '';
 
-        // 4. Construct Campaign Document
+        // 4. Calculate Financials
+        // Margin logic: 40% margin. Price = Cost / (1 - Margin) => Price = Reward / 0.6
+        const MARGIN = 0.4;
+        let finalCostPerAction = data.manualCostPerAction;
+
+        if (finalCostPerAction === undefined || finalCostPerAction === null) { // Check for undefined or null explicitly
+            // Avoid division by zero
+            if (data.rewardPerAction > 0) {
+                finalCostPerAction = Number((data.rewardPerAction / (1 - MARGIN)).toFixed(2));
+            } else {
+                finalCostPerAction = 0;
+            }
+        }
+
+        // 5. Construct Campaign Document
         // We use the default language content for the main fields, or 'en'/'es' fallback
         const defaultLang = data.allowedLanguages[0] || 'es';
         const defaultContent = data.content[defaultLang] || { title: 'No Title', description: 'No Description' };
@@ -91,9 +108,13 @@ export async function createCampaign(idToken: string, data: CreateCampaignData) 
             // Financials
             budget_total: Number(data.budgetTotal),
             budget_remaining: Number(data.budgetTotal), // Start full
-            cost_per_action: Number(data.costPerAction),
+            cost_per_action: Number(finalCostPerAction),
             reward_per_action: Number(data.rewardPerAction),
             daily_limit_per_user: Number(data.dailyLimit) || 10,
+
+            // Dates
+            start_date: data.startDate,
+            end_date: data.endDate,
 
             // Configuration
             type: 'social_product', // Fixed type for this module
