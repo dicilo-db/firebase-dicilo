@@ -8,9 +8,9 @@ import { QrCode, Mail, MonitorPlay, ArrowRight, BarChart, Database, ShoppingBag,
 import { Badge } from '@/components/ui/badge';
 import { seedCampaignsAction } from '@/app/actions/seed-freelancer';
 import { useToast } from "@/hooks/use-toast";
-import { QrManager } from './QrManager';
+import { NetworkCampaignsManager } from './NetworkCampaignsManager';
 
-type View = 'overview' | 'qr-codes';
+type View = 'overview' | 'qr-codes' | 'network-campaigns';
 
 export default function AdsDashboard() {
     const { toast } = useToast();
@@ -36,6 +36,10 @@ export default function AdsDashboard() {
 
     if (currentView === 'qr-codes') {
         return <QrManager onBack={() => setCurrentView('overview')} />;
+    }
+
+    if (currentView === 'network-campaigns') {
+        return <NetworkCampaignsManager onBack={() => setCurrentView('overview')} />;
     }
 
     return (
@@ -70,6 +74,24 @@ export default function AdsDashboard() {
                     </CardFooter>
                 </Card>
 
+                {/* Module: Network Campaigns (Active) */}
+                <Card className="border-l-4 border-l-blue-500 shadow-md hover:shadow-lg transition-all">
+                    <CardHeader>
+                        <div className="flex items-start justify-between">
+                            <ShoppingBag className="h-8 w-8 text-blue-500 mb-2" />
+                            <Badge className="bg-blue-500 hover:bg-blue-600">New</Badge>
+                        </div>
+                        <CardTitle>{t('adsManager.cards.programs.socialProduct.title')}</CardTitle>
+                        <CardDescription>{t('adsManager.cards.programs.socialProduct.description')}</CardDescription>
+                    </CardHeader>
+                    <CardFooter>
+                        <Button className="w-full group" onClick={() => setCurrentView('network-campaigns')}>
+                            Manage Campaigns
+                            <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                        </Button>
+                    </CardFooter>
+                </Card>
+
                 {/* Module: Email Marketing */}
                 <Card className="opacity-75 border-dashed">
                     <CardHeader>
@@ -96,22 +118,6 @@ export default function AdsDashboard() {
                         </div>
                         <CardTitle>{t('adsManager.cards.programs.displayAds.title')}</CardTitle>
                         <CardDescription>{t('adsManager.cards.programs.displayAds.description')}</CardDescription>
-                    </CardHeader>
-                    <CardFooter>
-                        <Button variant="secondary" disabled className="w-full">
-                            {t('adsManager.cards.inDevelopment')}
-                        </Button>
-                    </CardFooter>
-                </Card>
-                {/* Module: Social Product Campaigns */}
-                <Card className="opacity-75 border-dashed">
-                    <CardHeader>
-                        <div className="flex items-start justify-between">
-                            <ShoppingBag className="h-8 w-8 text-muted-foreground mb-2" />
-                            <Badge variant="outline">{t('adsManager.cards.comingSoon')}</Badge>
-                        </div>
-                        <CardTitle>{t('adsManager.cards.programs.socialProduct.title')}</CardTitle>
-                        <CardDescription>{t('adsManager.cards.programs.socialProduct.description')}</CardDescription>
                     </CardHeader>
                     <CardFooter>
                         <Button variant="secondary" disabled className="w-full">

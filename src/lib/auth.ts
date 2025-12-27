@@ -7,7 +7,7 @@ const db = getFirestore(app);
 export interface AdminUser {
   uid: string;
   email: string | null;
-  role: 'admin' | 'superadmin';
+  role: 'admin' | 'superadmin' | 'team_office';
 }
 
 /**
@@ -22,14 +22,15 @@ export async function checkAdminRole(user: User): Promise<AdminUser | null> {
     const idTokenResult = await user.getIdTokenResult(true);
     const claims = idTokenResult.claims;
 
+    // Check custom claim 'admin' or explicit allowed roles
     if (
-      claims.admin === true &&
-      (claims.role === 'admin' || claims.role === 'superadmin')
+      claims.admin === true ||
+      ['admin', 'superadmin', 'team_office'].includes(claims.role as string)
     ) {
       return {
         uid: user.uid,
         email: user.email,
-        role: claims.role as 'admin' | 'superadmin',
+        role: claims.role as 'admin' | 'superadmin' | 'team_office',
       };
     }
     return null;

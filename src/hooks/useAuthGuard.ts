@@ -44,7 +44,7 @@ export const useAdminUser = () => {
 };
 
 export const useAuthGuard = (
-  allowedRoles: ('admin' | 'superadmin')[] = ['admin', 'superadmin']
+  allowedRoles: ('admin' | 'superadmin' | 'team_office')[] = ['admin', 'superadmin', 'team_office']
 ) => {
   const router = useRouter();
   const { toast } = useToast();
