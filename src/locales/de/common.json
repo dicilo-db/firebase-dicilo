@@ -616,13 +616,58 @@
       },
       "earnings": {
         "title": "Ihre geschätzten Einnahmen",
-        "subtitle": "pro effektivem Klick:",
-        "perClick": "/ Klick"
+        "subtitle": "pro qualifiziertem Klick:",
+        "rate": "$0,05 / Klick"
       },
       "selectCampaign": {
-        "title": "Wählen Sie eine Kampagne",
-        "description": "Wählen Sie ein Unternehmen aus dem Seitenmenü, um Ihre personalisierte Promotion zu erstellen."
-      },
+        "title": "Kampagne auswählen",
+        "description": "Suchen Sie eine aktive Kampagne im Tab 'Kampagnen', um mit der Werbung zu beginnen."
+      }
+    }
+  },
+  "networkCampaigns": {
+    "title": "Netzwerk-Kampagne erstellen",
+    "subtitle": "Konfigurieren Sie eine neue Kampagne für das Freelancer-Netzwerk.",
+    "back": "Zurück zur Liste",
+    "list": {
+      "title": "Netzwerk-Kampagnen",
+      "subtitle": "Verwalten Sie Ihre Social-Product-Kampagnen.",
+      "create": "Kampagne erstellen",
+      "empty": "Wählen Sie \"Kampagne erstellen\", um eine neue Social-Product-Kampagne zu starten.",
+      "pending": "(Listenansicht noch ausstehend)"
+    },
+    "form": {
+      "cardTitle": "Netzwerk-Kampagne erstellen",
+      "cardDesc": "Konfigurieren Sie Details, Budget und kreative Assets.",
+      "clientLabel": "Kunde / Unternehmen",
+      "selectClient": "Kunde auswählen",
+      "loading": "Lädt...",
+      "dailyLimit": "Tageslimit (pro Benutzer)",
+      "totalBudget": "Gesamtbudget (€)",
+      "costPerAction": "Kosten für Kunde (€/Aktion)",
+      "freelancerReward": "Freelancer-Belohnung (€/Aktion)",
+      "languages": "Verfügbare Sprachen",
+      "mainImage": "Haupt-Kampagnenbild",
+      "uploadHelp": "Laden Sie die Hauptgrafik hoch, die Freelancer teilen werden.",
+      "uploading": "Lädt hoch...",
+      "content": "Kampagneninhalt",
+      "tabTitle": "Titel",
+      "tabDesc": "Beschreibung",
+      "tabSuggest": "Vorgeschlagener Text (Copy)",
+      "placeholderTitle": "z.B. Sommerverkauf 2025",
+      "placeholderDesc": "Interne Beschreibung für Freelancer...",
+      "placeholderSuggest": "Der Text, den Freelancer kopieren und einfügen...",
+      "cancel": "Abbrechen",
+      "submit": "Kampagne erstellen",
+      "success": "Kampagne erfolgreich erstellt.",
+      "validation": {
+        "lang": "Wählen Sie mindestens eine Sprache aus.",
+        "image": "Hauptbild ist erforderlich."
+      }
+    }
+  },
+  "freelancer": {
+    "composer": {
       "toasts": {
         "linkGenerated": "Link generiert!",
         "openingWhatsapp": "WhatsApp wird mit Ihrer Promotion geöffnet...",

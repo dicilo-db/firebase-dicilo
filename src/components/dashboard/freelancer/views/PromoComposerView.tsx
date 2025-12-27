@@ -193,14 +193,13 @@ export function PromoComposerView() {
                 <Search className="h-12 w-12 mb-4 opacity-20" />
                 <h2 className="text-xl font-semibold text-foreground">{t('freelancer.composer.selectCampaign.title')}</h2>
                 <p>{t('freelancer.composer.selectCampaign.description')}</p>
-                <p className="text-xs mt-4 opacity-50">Explora la pestaña &quot;Campañas&quot; para elegir una.</p>
             </div>
         );
     }
 
     const selectedImageUrl = activeCampaign.images && activeCampaign.images.length > 0
         ? activeCampaign.images[selectedImageIndex]
-        : '/placeholder-product-1.jpg';
+        : 'https://placehold.co/600x400/png';
 
     return (
         <div className="flex flex-col xl:flex-row h-full overflow-hidden">
@@ -400,6 +399,6 @@ export function PromoComposerView() {
                     </p>
                 </div>
             </div>
-        </div>
+        </div >
     );
 }

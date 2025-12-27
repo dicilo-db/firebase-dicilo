@@ -11,12 +11,12 @@ export async function seedCampaignsAction() {
             {
                 companyId: 'vasen_keramik_gmbh_id',
                 companyName: 'VasenKeramik GmbH',
-                companyLogo: '/placeholder-logo.png', // Using local placeholder path
+                companyLogo: '/logo.png', // Using local placeholder path
                 title: 'Nueva Colección Cerámica 2025',
                 description: 'Promociona nuestros vasos artesanales de alta calidad.',
                 images: [
-                    '/placeholder-product-1.jpg',
-                    '/placeholder-product-2.jpg'
+                    'https://placehold.co/600x400/png?text=Product+1',
+                    'https://placehold.co/600x400/png?text=Product+2'
                 ],
                 budget_marketing: 500.00,
                 budget_banners: 1000.00,

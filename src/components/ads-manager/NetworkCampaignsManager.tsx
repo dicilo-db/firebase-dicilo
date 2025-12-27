@@ -30,6 +30,7 @@ interface ContentBlock {
 }
 
 export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
+    const { t } = useTranslation('common');
     const { user } = useAuth();
     const { toast } = useToast();
     const [view, setView] = useState<'list' | 'create'>('list'); // Start with list (placeholder) or create immediate
@@ -71,7 +72,7 @@ export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
             const token = await user.getIdToken();
             const res = await getClientsForSelect(token);
             if (res.success && res.clients) setClients(res.clients);
-            else toast({ title: 'Error', description: 'Failed to load clients', variant: 'destructive' });
+            else toast({ title: 'Error', description: t('networkCampaigns.form.loading'), variant: 'destructive' });
         } catch (e) {
             console.error(e);
         } finally {
@@ -116,7 +117,7 @@ export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
                 toast({ title: 'Error', description: res.error, variant: 'destructive' });
             }
         } catch (e) {
-            toast({ title: 'Error', description: 'Upload failed', variant: 'destructive' });
+            toast({ title: 'Error', description: t('networkCampaigns.form.uploading'), variant: 'destructive' });
         } finally {
             setUploading(false);
         }
@@ -127,11 +128,11 @@ export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
         if (!user) return;
 
         if (formData.allowedLanguages.length === 0) {
-            toast({ title: 'Validation', description: 'Select at least one language.', variant: 'destructive' });
+            toast({ title: 'Validation', description: t('networkCampaigns.form.validation.lang'), variant: 'destructive' });
             return;
         }
         if (!formData.imageUrl) {
-            toast({ title: 'Validation', description: 'Main image is required.', variant: 'destructive' });
+            toast({ title: 'Validation', description: t('networkCampaigns.form.validation.image'), variant: 'destructive' });
             return;
         }
 
@@ -151,7 +152,7 @@ export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
 
             const res = await createCampaign(token, payload);
             if (res.success) {
-                toast({ title: 'Success', description: 'Campaign created successfully.', className: 'bg-green-600 text-white' });
+                toast({ title: 'Success', description: t('networkCampaigns.form.success'), className: 'bg-green-600 text-white' });
                 setView('list'); // Go back to list
             } else {
                 toast({ title: 'Error', description: res.error, variant: 'destructive' });
@@ -169,21 +170,21 @@ export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
             <div className="space-y-6">
                 <div className="flex justify-between items-center">
                     <div>
-                        <h2 className="text-2xl font-bold tracking-tight">Network Campaigns</h2>
-                        <p className="text-muted-foreground">Manage your social product campaigns.</p>
+                        <h2 className="text-2xl font-bold tracking-tight">{t('networkCampaigns.list.title')}</h2>
+                        <p className="text-muted-foreground">{t('networkCampaigns.list.subtitle')}</p>
                     </div>
                     <div className="flex gap-2">
-                        {onBack && <Button variant="outline" onClick={onBack}>Back to Dashboard</Button>}
+                        {onBack && <Button variant="outline" onClick={onBack}>{t('networkCampaigns.back')}</Button>}
                         <Button onClick={() => setView('create')}>
-                            <Plus className="mr-2 h-4 w-4" /> Create Campaign
+                            <Plus className="mr-2 h-4 w-4" /> {t('networkCampaigns.list.create')}
                         </Button>
                     </div>
                 </div>
 
                 <Card>
                     <CardContent className="p-8 text-center text-muted-foreground">
-                        <p>Select "Create Campaign" to start a new Social Product Campaign.</p>
-                        <p className="text-sm mt-2 opacity-70">(Campaign list view implementation pending)</p>
+                        <p>{t('networkCampaigns.list.empty')}</p>
+                        <p className="text-sm mt-2 opacity-70">{t('networkCampaigns.list.pending')}</p>
                     </CardContent>
                 </Card>
             </div>
@@ -193,28 +194,28 @@ export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
     return (
         <div className="max-w-4xl mx-auto animate-in fade-in slide-in-from-right-4">
             <Button variant="ghost" onClick={() => setView('list')} className="mb-4">
-                <ArrowLeft className="mr-2 h-4 w-4" /> Back to List
+                <ArrowLeft className="mr-2 h-4 w-4" /> {t('networkCampaigns.back')}
             </Button>
 
             <form onSubmit={handleSubmit}>
                 <Card className="mb-8">
                     <CardHeader>
-                        <CardTitle>Create Network Campaign</CardTitle>
-                        <CardDescription>Configure a new campaign for the freelancer network.</CardDescription>
+                        <CardTitle>{t('networkCampaigns.form.cardTitle')}</CardTitle>
+                        <CardDescription>{t('networkCampaigns.form.cardDesc')}</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-8">
 
                         {/* 1. Global Settings */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-2">
-                                <Label>Client / Company</Label>
+                                <Label>{t('networkCampaigns.form.clientLabel')}</Label>
                                 <Select
                                     value={formData.clientId}
                                     onValueChange={(val) => setFormData(p => ({ ...p, clientId: val }))}
                                     disabled={loadingClients}
                                 >
                                     <SelectTrigger>
-                                        <SelectValue placeholder={loadingClients ? "Loading..." : "Select Client"} />
+                                        <SelectValue placeholder={loadingClients ? t('networkCampaigns.form.loading') : t('networkCampaigns.form.selectClient')} />
                                     </SelectTrigger>
                                     <SelectContent>
                                         {clients.map(c => (
@@ -225,29 +226,29 @@ export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
                             </div>
 
                             <div className="space-y-2">
-                                <Label>Daily Limit (per user)</Label>
+                                <Label>{t('networkCampaigns.form.dailyLimit')}</Label>
                                 <Input type="number" value={formData.dailyLimit} onChange={e => setFormData(p => ({ ...p, dailyLimit: parseInt(e.target.value) }))} min={1} />
                             </div>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div className="space-y-2">
-                                <Label>Total Budget (€)</Label>
+                                <Label>{t('networkCampaigns.form.totalBudget')}</Label>
                                 <Input type="number" value={formData.budgetTotal} onChange={e => setFormData(p => ({ ...p, budgetTotal: parseFloat(e.target.value) }))} step="0.01" />
                             </div>
                             <div className="space-y-2">
-                                <Label>Cost to Client (€/action)</Label>
+                                <Label>{t('networkCampaigns.form.costPerAction')}</Label>
                                 <Input type="number" value={formData.costPerAction} onChange={e => setFormData(p => ({ ...p, costPerAction: parseFloat(e.target.value) }))} step="0.01" />
                             </div>
                             <div className="space-y-2">
-                                <Label>Freelancer Reward (€/action)</Label>
+                                <Label>{t('networkCampaigns.form.freelancerReward')}</Label>
                                 <Input type="number" value={formData.rewardPerAction} onChange={e => setFormData(p => ({ ...p, rewardPerAction: parseFloat(e.target.value) }))} step="0.01" />
                             </div>
                         </div>
 
                         {/* 2. Languages */}
                         <div className="space-y-3">
-                            <Label>Available Languages</Label>
+                            <Label>{t('networkCampaigns.form.languages')}</Label>
                             <div className="flex gap-4 p-4 border rounded-lg bg-slate-50">
                                 {AVAILABLE_LANGUAGES.map(lang => (
                                     <div key={lang.code} className="flex items-center space-x-2">
@@ -264,7 +265,7 @@ export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
 
                         {/* 3. Visuals */}
                         <div className="space-y-2">
-                            <Label>Main Campaign Image</Label>
+                            <Label>{t('networkCampaigns.form.mainImage')}</Label>
                             <div className="flex items-center gap-4">
                                 <div className="relative h-32 w-32 border rounded-lg overflow-hidden bg-slate-100 flex items-center justify-center">
                                     {formData.imageUrl ? (
@@ -275,15 +276,15 @@ export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
                                 </div>
                                 <div className="flex-1">
                                     <Input type="file" onChange={handleImageUpload} disabled={uploading} className="max-w-xs mb-2" accept="image/*" />
-                                    <p className="text-xs text-muted-foreground">Upload the main graphic that freelancers will share.</p>
-                                    {uploading && <div className="text-xs text-blue-600 flex items-center mt-1"><Loader2 className="h-3 w-3 animate-spin mr-1" /> Uploading...</div>}
+                                    <p className="text-xs text-muted-foreground">{t('networkCampaigns.form.uploadHelp')}</p>
+                                    {uploading && <div className="text-xs text-blue-600 flex items-center mt-1"><Loader2 className="h-3 w-3 animate-spin mr-1" /> {t('networkCampaigns.form.uploading')}</div>}
                                 </div>
                             </div>
                         </div>
 
                         {/* 4. Content (Tabs) */}
                         <div className="space-y-2">
-                            <Label>Campaign Content</Label>
+                            <Label>{t('networkCampaigns.form.content')}</Label>
                             <Tabs defaultValue={formData.allowedLanguages[0] || 'es'} className="w-full">
                                 <TabsList>
                                     {formData.allowedLanguages.map(lang => (
@@ -293,27 +294,27 @@ export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
                                 {formData.allowedLanguages.map(lang => (
                                     <TabsContent key={lang} value={lang} className="space-y-4 border p-4 rounded-lg mt-2">
                                         <div className="space-y-2">
-                                            <Label>Title ({lang.toUpperCase()})</Label>
+                                            <Label>{t('networkCampaigns.form.tabTitle')} ({lang.toUpperCase()})</Label>
                                             <Input
                                                 value={content[lang].title}
                                                 onChange={e => handleContentChange(lang, 'title', e.target.value)}
-                                                placeholder="e.g. Summer Sale 2025"
+                                                placeholder={t('networkCampaigns.form.placeholderTitle')}
                                             />
                                         </div>
                                         <div className="space-y-2">
-                                            <Label>Description ({lang.toUpperCase()})</Label>
+                                            <Label>{t('networkCampaigns.form.tabDesc')} ({lang.toUpperCase()})</Label>
                                             <Textarea
                                                 value={content[lang].description}
                                                 onChange={e => handleContentChange(lang, 'description', e.target.value)}
-                                                placeholder="Internal description for freelancers..."
+                                                placeholder={t('networkCampaigns.form.placeholderDesc')}
                                             />
                                         </div>
                                         <div className="space-y-2">
-                                            <Label>Suggested Post Text (Copy) ({lang.toUpperCase()})</Label>
+                                            <Label>{t('networkCampaigns.form.tabSuggest')} ({lang.toUpperCase()})</Label>
                                             <Textarea
                                                 value={content[lang].suggestedText}
                                                 onChange={e => handleContentChange(lang, 'suggestedText', e.target.value)}
-                                                placeholder="The text that freelancers will copy-paste..."
+                                                placeholder={t('networkCampaigns.form.placeholderSuggest')}
                                                 className="h-24 bg-blue-50/50"
                                             />
                                         </div>
@@ -323,10 +324,10 @@ export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
                         </div>
                     </CardContent>
                     <CardFooter className="flex justify-between border-t p-6 bg-slate-50/50 rounded-b-xl">
-                        <Button type="button" variant="outline" onClick={() => setView('list')}>Cancel</Button>
+                        <Button type="button" variant="outline" onClick={() => setView('list')}>{t('networkCampaigns.form.cancel')}</Button>
                         <Button type="submit" disabled={submitting || uploading}>
                             {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                            Create Campaign
+                            {t('networkCampaigns.form.submit')}
                         </Button>
                     </CardFooter>
                 </Card>

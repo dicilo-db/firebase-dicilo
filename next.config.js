@@ -44,6 +44,11 @@ const nextConfig = {
       },
     ],
   },
+  serverComponentsExternalPackages: [
+    'require-in-the-middle',
+    '@opentelemetry/instrumentation',
+    '@genkit-ai/core'
+  ]
 };
 
 module.exports = nextConfig;

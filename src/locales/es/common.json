@@ -598,11 +598,11 @@
       "earnings": {
         "title": "Tu Ganancia Estimada",
         "subtitle": "por Clic Efectivo:",
-        "perClick": "/ clic"
+        "rate": "$0.05 / clic"
       },
       "selectCampaign": {
         "title": "Selecciona una Campaña",
-        "description": "Elige una empresa del menú lateral para comenzar a crear tu promoción personalizada."
+        "description": "Comienza buscando una campaña activa en la pestaña 'Campañas' para empezar a promocionar."
       },
       "toasts": {
         "linkGenerated": "¡Enlace generado!",
