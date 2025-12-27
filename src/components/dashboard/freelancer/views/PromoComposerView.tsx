@@ -51,8 +51,8 @@ export function PromoComposerView() {
 
     // Pricing Tiers Configuration
     const PRICING_TIERS: { chars: number; rate: number }[] = [
-        { chars: 600, rate: 0.20 },
-        { chars: 800, rate: 0.40 }
+        { chars: 300, rate: 0.20 },
+        { chars: 600, rate: 0.40 }
     ];
 
     const currentTier = PRICING_TIERS.reduce((prev, curr) => {
@@ -68,20 +68,10 @@ export function PromoComposerView() {
                 // Generate mocked link on load
                 setGeneratedLink(`https://dicilo.net/r/${campaign.id?.substring(0, 8)}`);
 
-                // DEMO: Simulate more images
-                if (campaign.images && campaign.images.length > 0) {
-                    const rawImages = campaign.images;
-                    let expandedImages = [...rawImages];
-                    while (expandedImages.length < 12) {
-                        expandedImages = [...expandedImages, ...rawImages];
-                    }
-                    campaign.images = expandedImages.slice(0, 24);
-                }
-
                 setActiveCampaign(campaign);
                 setCustomText(campaign.description || '');
                 setSelectedImageIndex(0);
-                setVisibleImagesCount(4);
+                setVisibleImagesCount(8);
             }
             setIsLoading(false);
         }
@@ -149,12 +139,24 @@ export function PromoComposerView() {
         // Track intent?
     };
 
+    const selectedImageUrl = activeCampaign?.images && activeCampaign.images.length > 0
+        ? activeCampaign.images[selectedImageIndex]
+        : 'https://placehold.co/600x400/png';
+
     const handleWhatsAppShare = async () => {
         if (!activeCampaign) return;
         setIsSharing(true);
         try {
             const postLang = (navigator.language || 'es').split('-')[0];
-            const result = await processCampaignPost('demo_user_id', activeCampaign.id!, postLang, customText.length);
+
+            // Pass the selected image URL to backend
+            const result = await processCampaignPost(
+                'demo_user_id',
+                activeCampaign.id!,
+                postLang,
+                customText.length,
+                selectedImageUrl // New parameter
+            );
 
             if (!result.success) {
                 if ((result as any).error?.includes('10 posts')) {
@@ -169,13 +171,16 @@ export function PromoComposerView() {
             }
 
             const reward = (result as any).reward;
-            const trackingLink = `https://dicilo.net/s/${reward ? 'paid' : 'ref'}`;
+            // Use the real link ID if returned, otherwise fallback
+            const linkId = (result as any).linkId || 'ref';
+            const trackingLink = `https://dicilo.net/r/${linkId}`;
+
             const message = `${customText}\n\n${trackingLink} #${activeCampaign.companyName.replace(/[^a-zA-Z0-9]/g, '')}`;
             window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
 
             toast({
                 title: "¡Publicando!",
-                description: `Has ganado $${reward} por esta conexión.`,
+                description: `Has asegurado $${reward} por creación. ¡Consigue 5 clics para el bono extra de $0.10!`,
                 className: "bg-green-600 text-white"
             });
         } catch (error: any) {
@@ -196,10 +201,6 @@ export function PromoComposerView() {
             </div>
         );
     }
-
-    const selectedImageUrl = activeCampaign.images && activeCampaign.images.length > 0
-        ? activeCampaign.images[selectedImageIndex]
-        : 'https://placehold.co/600x400/png';
 
     return (
         <div className="flex flex-col xl:flex-row h-full overflow-hidden">
@@ -267,7 +268,7 @@ export function PromoComposerView() {
                             <div className="flex items-center justify-between">
                                 <label className="text-sm font-medium">{t('freelancer.composer.selectImage')}</label>
                                 {activeCampaign.images && activeCampaign.images.length > visibleImagesCount && (
-                                    <Button variant="ghost" size="sm" onClick={() => setVisibleImagesCount(prev => Math.min(prev + 4, 24))}>
+                                    <Button variant="ghost" size="sm" onClick={() => setVisibleImagesCount(prev => Math.min(prev + 4, 32))}>
                                         <Plus className="h-4 w-4" />
                                     </Button>
                                 )}
@@ -391,11 +392,15 @@ export function PromoComposerView() {
 
                 <div className="bg-white dark:bg-card p-4 rounded-xl shadow mt-8 w-full border">
                     <p className="text-sm font-semibold mb-1">Ganancia Estimada</p>
-                    <p className="text-2xl font-bold text-green-600">€{currentTier.rate.toFixed(2)}</p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                        {customText.length < 600 ? `Escribe ${(600 - customText.length)} más car. para ganar 0,20€` :
-                            customText.length < 800 ? `Escribe ${(800 - customText.length)} más car. para ganar 0,40€` :
-                                "¡Máxima tarifa básica alcanzada!"}
+                    <div className="flex items-baseline gap-2">
+                        <p className="text-2xl font-bold text-green-600">€{currentTier.rate.toFixed(2)}</p>
+                        <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">+ €0.10 Bono Tráfico</span>
+                    </div>
+
+                    <p className="text-xs text-muted-foreground mt-2 border-t pt-2">
+                        {customText.length < 300 ? `Escribe ${(300 - customText.length)} más car. para ganar 0,20€` :
+                            customText.length < 600 ? `Escribe ${(600 - customText.length)} más car. para maximizar a 0,40€` :
+                                "¡Máxima tarifa base alcanzada! Comparte para el bono."}
                     </p>
                 </div>
             </div>

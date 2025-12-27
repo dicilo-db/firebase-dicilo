@@ -6,11 +6,15 @@ import { revalidatePath } from 'next/cache';
 
 /**
  * Procesa un intento de post por parte de un usuario en una campaña.
- * Valida límites diarios (Fair Play) y presupuesto de la campaña.
- * Ejecuta la transacción monetaria ocultando los márgenes de beneficio.
+ * Implementa el "Momento 1": Pago por Creación + Generación de Link.
  */
-
-export async function processCampaignPost(userId: string, campaignId: string, postLanguage: string, textLength: number = 0) {
+export async function processCampaignPost(
+    userId: string,
+    campaignId: string,
+    postLanguage: string,
+    textLength: number = 0,
+    selectedImageUrl: string = ''
+) {
     if (!userId || !campaignId) {
         return { success: false, error: 'Faltan datos obligatorios.' };
     }
@@ -25,13 +29,13 @@ export async function processCampaignPost(userId: string, campaignId: string, po
             const todayStart = new Date();
             todayStart.setHours(0, 0, 0, 0);
 
-            const actionsQuery = db.collection('user_campaign_actions')
-                .where('userId', '==', userId)
+            const linksQuery = db.collection('freelancer_links')
+                .where('freelancerId', '==', userId)
                 .where('campaignId', '==', campaignId)
                 .where('createdAt', '>=', admin.firestore.Timestamp.fromDate(todayStart));
 
-            const dailyActions = await t.get(actionsQuery);
-            if (dailyActions.size >= 10) {
+            const dailyLinks = await t.get(linksQuery);
+            if (dailyLinks.size >= 10) {
                 throw new Error("Has alcanzado tu límite diario de 10 posts para esta campaña.");
             }
 
@@ -45,74 +49,92 @@ export async function processCampaignPost(userId: string, campaignId: string, po
 
             const campaignData = campaignDoc.data();
             const budgetRemaining = campaignData?.budget_remaining || 0;
-            const costPerAction = campaignData?.cost_per_action || 0.60; // Costo base para anunciante
 
-            // C. Calcular Recompensa Dinámica
-            let rewardPerAction = 0;
-            if (textLength >= 800) {
-                rewardPerAction = 0.40;
-            } else if (textLength >= 600) {
-                rewardPerAction = 0.20;
+            // Cost Model: 
+            // Max potential cost = $0.40 (max text) + $0.10 (max bonus) = $0.50
+            // We reserve strict $0.50 to ensure we can always pay the bonus if it happens.
+            const costPerStart = 0.50;
+
+            // C. Calcular Recompensa por CREACIÓN (Texto)
+            let textReward = 0.00;
+            if (textLength >= 600) {
+                textReward = 0.40;
+            } else if (textLength >= 300) {
+                textReward = 0.20;
             } else {
-                // Si el texto es muy corto, tal vez no damos recompensa o damos una mínima
-                // Por ahora asumimos 0 o bloqueamos en frontend.
-                // Pero el usuario dijo "por 600 caracteres gana 0,20".
-                // Dejaremos 0 si es menor.
-                rewardPerAction = 0;
+                throw new Error("El texto es demasiado corto (mínimo 300 caracteres).");
             }
 
-            if (rewardPerAction === 0) {
-                throw new Error("El texto es demasiado corto para generar ganancias (min 600 caracteres).");
-            }
-
-            // Validar si hay presupuesto para pagar esta acción (usando el costo, no el reward)
-            if (budgetRemaining < costPerAction) {
+            // Validar si hay presupuesto
+            if (budgetRemaining < costPerStart) {
                 throw new Error("El presupuesto de esta campaña se ha agotado.");
             }
 
             // 2. Ejecución (Escrituras)
 
-            // A. Descontar Presupuesto de la Campaña (Costo Total)
+            // A. Descontar Presupuesto de la Campaña (Reservamos el máximo posible: 0.50)
             t.update(campaignRef, {
-                budget_remaining: admin.firestore.FieldValue.increment(-costPerAction),
+                budget_remaining: admin.firestore.FieldValue.increment(-costPerStart),
                 updatedAt: admin.firestore.FieldValue.serverTimestamp()
             });
 
-            // B. Registrar Acción del Usuario (Solo mostramos lo que gana)
-            const actionRef = db.collection('user_campaign_actions').doc();
-            t.set(actionRef, {
-                userId,
-                campaignId,
+            // B. Generar ID de Enlace único
+            // Simple random string for ID (safer than external libs in server actions sometimes)
+            const linkId = Math.random().toString(36).substring(2, 10); // 8 chars
+            const linkRef = db.collection('freelancer_links').doc(linkId);
+
+            // C. Crear registro "Freelancer Link" (La fuente de verdad)
+            t.set(linkRef, {
+                linkId: linkId,
+                freelancerId: userId,
+                campaignId: campaignId,
+
+                // Datos de Contenido
+                selectedImageUrl: selectedImageUrl,
+                messageTextLength: textLength,
                 language: postLanguage,
-                textLength,
-                rewardAmount: rewardPerAction,
-                hasCommentsBonus: false, // Default false, will be updated via async job or reviews view logic
+
+                // Pago 1: Esfuerzo (Texto)
+                textRewardAmount: textReward,
+                textPaidStatus: true, // Pagado inmediatamente en estapso paso
+
+                // Pago 2: Resultado (Tráfico)
+                clickBonusAmount: 0.10,
+                bonusPaidStatus: false,
+                monetizationActive: true,
+
+                // Analytics
+                clickCount: 0,
+                targetUrl: campaignData?.targetUrl || 'https://dicilo.net', // Fallback
+
                 createdAt: admin.firestore.FieldValue.serverTimestamp()
             });
 
-            // C. Actualizar Billetera del Usuario
+            // D. Actualizar Billetera del Usuario (Solo pagamos el Text Reward ahora)
             const walletRef = db.collection('wallets').doc(userId);
             t.set(walletRef, {
-                balance: admin.firestore.FieldValue.increment(rewardPerAction),
-                totalEarned: admin.firestore.FieldValue.increment(rewardPerAction),
+                balance: admin.firestore.FieldValue.increment(textReward),
+                totalEarned: admin.firestore.FieldValue.increment(textReward),
                 updatedAt: admin.firestore.FieldValue.serverTimestamp()
             }, { merge: true });
 
-            // D. Registrar Transacción en Historial
+            // E. Registrar Transacción en Historial
             const trxRef = db.collection('wallet_transactions').doc();
             t.set(trxRef, {
                 userId,
-                amount: rewardPerAction,
-                type: 'CAMPAIGN_REWARD',
-                description: `Post Campaign: ${campaignData?.name || 'Campaign'} (${textLength} chars)`,
+                amount: textReward,
+                type: 'CAMPAIGN_REWARD_TEXT',
+                description: `Creación Contenido: ${campaignData?.name || 'Campaign'} (${textLength} chars)`,
                 campaignId,
+                linkId,
                 timestamp: admin.firestore.FieldValue.serverTimestamp()
             });
 
             return {
                 success: true,
-                reward: rewardPerAction,
-                message: "Post procesado con éxito."
+                reward: textReward,
+                linkId: linkId,
+                message: "Post registrado y pagado por creación."
             };
         });
 
@@ -124,3 +146,4 @@ export async function processCampaignPost(userId: string, campaignId: string, po
         return { success: false, error: error.message || 'Error al procesar el post.' };
     }
 }
+
