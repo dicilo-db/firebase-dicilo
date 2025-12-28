@@ -244,6 +244,23 @@
       "newKeyLabel": "Nueva Llave Maestra",
       "newKeyPlaceholder": "Introduce nueva llave...",
       "buttonSet": "Establecer Nueva Llave"
+    },
+    "report": {
+      "title": "Historial de Pagos y Auditoría",
+      "description": "Busca el historial financiero completo y exporta reportes PDF.",
+      "codeLabel": "Código Único (Doble Verificación)",
+      "emailLabel": "Email del Freelancer",
+      "buttonSearch": "Buscar Transacciones",
+      "balance": "Saldo Actual",
+      "buttonPDF": "Descargar Reporte Oficial (PDF)",
+      "table": {
+        "date": "Fecha",
+        "type": "Tipo",
+        "desc": "Descripción",
+        "amount": "Puntos"
+      },
+      "noTransactions": "No se encontraron transacciones.",
+      "error": "Error al cargar el reporte."
     }
   },
   "privateUsers": {

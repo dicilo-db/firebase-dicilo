@@ -232,6 +232,23 @@
       "newKeyLabel": "New Master Key",
       "newKeyPlaceholder": "Enter new key...",
       "buttonSet": "Set New Key"
+    },
+    "report": {
+      "title": "Payment History & Audit",
+      "description": "Search financial history and export official PDF reports.",
+      "codeLabel": "Unique Code (Double Check)",
+      "emailLabel": "Freelancer Email",
+      "buttonSearch": "Search Transactions",
+      "balance": "Current Balance",
+      "buttonPDF": "Download Official Report (PDF)",
+      "table": {
+        "date": "Date",
+        "type": "Type",
+        "desc": "Description",
+        "amount": "Points"
+      },
+      "noTransactions": "No transactions found.",
+      "error": "Error loading report."
     }
   },
   "privateUsers": {

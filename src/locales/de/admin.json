@@ -245,6 +245,23 @@
       "newKeyLabel": "Neuer Hauptschlüssel",
       "newKeyPlaceholder": "Neuen Schlüssel eingeben...",
       "buttonSet": "Neuen Schlüssel setzen"
+    },
+    "report": {
+      "title": "Zahlungshistorie & Audit",
+      "description": "Durchsuchen Sie die gesamte Finanzhistorie und exportieren Sie offizielle PDF-Berichte.",
+      "codeLabel": "Eindeutiger Code (Doppelprüfung)",
+      "emailLabel": "Freelancer E-Mail",
+      "buttonSearch": "Transaktionen suchen",
+      "balance": "Aktuelles Guthaben",
+      "buttonPDF": "Offiziellen Bericht herunterladen (PDF)",
+      "table": {
+        "date": "Datum",
+        "type": "Typ",
+        "desc": "Beschreibung",
+        "amount": "Punkte"
+      },
+      "noTransactions": "Keine Transaktionen gefunden.",
+      "error": "Fehler beim Laden des Berichts."
     }
   },
   "businesses": {

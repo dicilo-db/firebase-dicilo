@@ -8,8 +8,10 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { ShieldAlert, RefreshCw, Save, Lock, Wallet, Search, UserPlus } from 'lucide-react';
 import { adminAdjustBalance, adminUpdatePointValue, isMasterPasswordSet, setMasterPassword, verifyMasterPassword } from '@/app/actions/wallet';
-import { auditRetroactivePoints, reassignProspect } from '@/app/actions/dicipoints';
+import { auditRetroactivePoints, reassignProspect, getFreelancerReportData } from '@/app/actions/dicipoints';
 import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { FileText, Download } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 export default function DicipointsControlCenter() {
@@ -58,6 +60,12 @@ export default function DicipointsControlCenter() {
     const [reassignEmail, setReassignEmail] = useState('');
     const [reassignPoints, setReassignPoints] = useState(10);
     const [loadingReassign, setLoadingReassign] = useState(false);
+
+    // Report State
+    const [reportCode, setReportCode] = useState('');
+    const [reportEmail, setReportEmail] = useState('');
+    const [reportData, setReportData] = useState<any>(null);
+    const [loadingReport, setLoadingReport] = useState(false);
 
     const handleLogin = async () => {
         if (!inputPassword) return;
@@ -195,6 +203,95 @@ export default function DicipointsControlCenter() {
         }
     };
 
+    const handleSearchReport = async () => {
+        if (!reportCode || !reportEmail) {
+            toast({ title: t('dicipoints.missingFields'), description: t('dicipoints.missingFieldsDesc'), variant: "destructive" });
+            return;
+        }
+        setLoadingReport(true);
+        setReportData(null);
+        try {
+            const res = await getFreelancerReportData(reportCode, reportEmail, masterPassword);
+            if (res.success) {
+                setReportData(res.data);
+                toast({ title: t('dicipoints.success'), description: "Report Data Loaded" });
+            } else {
+                toast({ title: t('dicipoints.report.error'), description: res.message, variant: "destructive" });
+            }
+        } catch (e: any) {
+            console.error(e);
+            toast({ title: t('dicipoints.errorTitle'), description: e.message, variant: "destructive" });
+        } finally {
+            setLoadingReport(false);
+        }
+    };
+
+    const handleDownloadPDF = async () => {
+        if (!reportData) return;
+
+        try {
+            const jsPDF = (await import('jspdf')).default;
+            const autoTable = (await import('jspdf-autotable')).default;
+
+            const doc = new jsPDF();
+
+            // Header
+            doc.setFontSize(20);
+            doc.setTextColor(40, 40, 40);
+            doc.text("Dicilo.net - Official Report", 14, 22);
+
+            doc.setFontSize(10);
+            doc.text(`Generated: ${new Date(reportData.generatedAt).toLocaleString()}`, 14, 30);
+
+            // Freelancer Info
+            doc.setFontSize(12);
+            doc.setFont("helvetica", "bold");
+            doc.text("Freelancer Details:", 14, 45);
+            doc.setFont("helvetica", "normal");
+            doc.text(`Name: ${reportData.user.name}`, 14, 52);
+            doc.text(`Code: ${reportData.user.uniqueCode}`, 14, 59);
+            doc.text(`Email: ${reportData.user.email}`, 14, 66);
+
+            // Wallet Summary
+            doc.setFont("helvetica", "bold");
+            doc.text("Wallet Summary:", 120, 45);
+            doc.setFont("helvetica", "normal");
+            doc.text(`Current Balance: ${reportData.wallet.balance} DP`, 120, 52);
+            doc.text(`Lifetime Earned: ${reportData.wallet.totalEarned} DP`, 120, 59);
+
+            // Table
+            const tableColumn = ["Date", "Type", "Description", "Amount (DP)"];
+            const tableRows = reportData.transactions.map((trx: any) => [
+                new Date(trx.timestamp).toLocaleDateString(),
+                trx.type,
+                trx.description,
+                trx.amount > 0 ? `+${trx.amount}` : `${trx.amount}`
+            ]);
+
+            // @ts-ignore
+            autoTable(doc, {
+                head: [tableColumn],
+                body: tableRows,
+                startY: 75,
+                theme: 'grid',
+                styles: { fontSize: 8 },
+                headStyles: { fillColor: [66, 66, 66] }
+            });
+
+            // Footer
+            const finalY = (doc as any).lastAutoTable.finalY + 10;
+            doc.setFontSize(8);
+            doc.setTextColor(100);
+            doc.text("This document is an official record from the Dicilo Dicipoints Central System.", 14, finalY);
+
+            doc.save(`Transaction_Report_${reportData.user.uniqueCode}.pdf`);
+
+        } catch (e) {
+            console.error(e);
+            toast({ title: "Error generating PDF", variant: "destructive" });
+        }
+    };
+
     if (!isAuthenticated) {
         if (isSetupMode) {
             return (
@@ -301,6 +398,7 @@ export default function DicipointsControlCenter() {
         );
     }
 
+    // Main Dashboard Render
     return (
         <div className="container mx-auto py-10 space-y-8">
             <h1 className="text-3xl font-bold flex items-center gap-2">
@@ -500,6 +598,93 @@ export default function DicipointsControlCenter() {
                                 </DialogFooter>
                             </DialogContent>
                         </Dialog>
+                    </CardContent>
+                </Card>
+
+                {/* History & Report (New) */}
+                <Card className="border-cyan-200 shadow-sm col-span-1 md:col-span-2">
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                            <FileText className="h-5 w-5 text-cyan-600" /> {t('dicipoints.report.title')}
+                        </CardTitle>
+                        <CardDescription>{t('dicipoints.report.description')}</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                        <div className="flex flex-col md:flex-row gap-4 items-end">
+                            <div className="grid gap-2 flex-grow">
+                                <Label>{t('dicipoints.report.codeLabel')}</Label>
+                                <Input
+                                    placeholder="DHH25..."
+                                    value={reportCode}
+                                    onChange={(e) => setReportCode(e.target.value)}
+                                />
+                            </div>
+                            <div className="grid gap-2 flex-grow">
+                                <Label>{t('dicipoints.report.emailLabel')}</Label>
+                                <Input
+                                    placeholder="email@dicilo.net"
+                                    value={reportEmail}
+                                    onChange={(e) => setReportEmail(e.target.value)}
+                                />
+                            </div>
+                            <Button
+                                onClick={handleSearchReport}
+                                disabled={loadingReport || !reportCode || !reportEmail}
+                                className="bg-cyan-600 hover:bg-cyan-700"
+                            >
+                                {loadingReport ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4 mr-2" />}
+                                {t('dicipoints.report.buttonSearch')}
+                            </Button>
+                        </div>
+
+                        {reportData && (
+                            <div className="space-y-4 border rounded-md p-4 bg-gray-50/50">
+                                <div className="flex justify-between items-center border-b pb-4">
+                                    <div>
+                                        <h3 className="font-bold text-lg">{reportData.user.name}</h3>
+                                        <p className="text-sm text-muted-foreground">
+                                            {t('dicipoints.report.balance')}: <span className="text-green-600 font-bold">{reportData.wallet.balance} DP</span>
+                                        </p>
+                                    </div>
+                                    <Button variant="outline" onClick={handleDownloadPDF}>
+                                        <Download className="h-4 w-4 mr-2" />
+                                        {t('dicipoints.report.buttonPDF')}
+                                    </Button>
+                                </div>
+
+                                <div className="max-h-[300px] overflow-auto">
+                                    <Table>
+                                        <TableHeader>
+                                            <TableRow>
+                                                <TableHead>{t('dicipoints.report.table.date')}</TableHead>
+                                                <TableHead>{t('dicipoints.report.table.type')}</TableHead>
+                                                <TableHead>{t('dicipoints.report.table.desc')}</TableHead>
+                                                <TableHead className="text-right">{t('dicipoints.report.table.amount')}</TableHead>
+                                            </TableRow>
+                                        </TableHeader>
+                                        <TableBody>
+                                            {reportData.transactions.map((trx: any) => (
+                                                <TableRow key={trx.id}>
+                                                    <TableCell className="text-xs">{new Date(trx.timestamp).toLocaleDateString()}</TableCell>
+                                                    <TableCell className="text-xs font-medium">{trx.type}</TableCell>
+                                                    <TableCell className="text-xs max-w-[200px] truncate" title={trx.description}>{trx.description}</TableCell>
+                                                    <TableCell className={`text-right font-bold ${trx.amount >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                                                        {trx.amount > 0 ? '+' : ''}{trx.amount}
+                                                    </TableCell>
+                                                </TableRow>
+                                            ))}
+                                            {reportData.transactions.length === 0 && (
+                                                <TableRow>
+                                                    <TableCell colSpan={4} className="text-center text-muted-foreground">
+                                                        {t('dicipoints.report.noTransactions')}
+                                                    </TableCell>
+                                                </TableRow>
+                                            )}
+                                        </TableBody>
+                                    </Table>
+                                </div>
+                            </div>
+                        )}
                     </CardContent>
                 </Card>
             </div>

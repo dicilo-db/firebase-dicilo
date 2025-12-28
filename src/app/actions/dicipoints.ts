@@ -278,8 +278,88 @@ export async function reassignProspect(
             message: `Asignado correctamente a ${newOwnerName}. Se acreditaron ${pointsAmount} Dicipoints.`
         };
 
+
     } catch (error: any) {
         console.error('Reassignment Error:', error);
         return { success: false, message: `Error técnico: ${error.message}` };
     }
 }
+
+/**
+ * Get Freelancer Report Data (For PDF Generation)
+ * 
+ * Inputs: uniqueCode, email, masterPass
+ * Returns: { success, data: { user, wallet, transactions }, message }
+ */
+export async function getFreelancerReportData(uniqueCode: string, email: string, masterPass: string) {
+    const isValid = await verifyMasterPassword(masterPass);
+    if (!isValid) return { success: false, message: 'Invalid Master Password' };
+
+    const db = getAdminDb();
+
+    try {
+        // 1. Authenticate Freelancer (Double Check)
+        const profilesSnap = await db.collection('private_profiles')
+            .where('email', '==', email)
+            .get();
+
+        let freelancerDoc = null;
+        if (!profilesSnap.empty) {
+            freelancerDoc = profilesSnap.docs.find(d => d.data().uniqueCode === uniqueCode);
+        }
+
+        if (!freelancerDoc) {
+            return { success: false, message: 'Freelancer not found. Verify Code and Email.' };
+        }
+
+        const userId = freelancerDoc.id;
+        const userData = freelancerDoc.data();
+
+        // 2. Get Wallet Info (Balance)
+        const walletSnap = await db.collection('wallets').doc(userId).get();
+        const walletData = walletSnap.exists ? walletSnap.data() : { balance: 0, totalEarned: 0 };
+
+        // 3. Get Transactions
+        const trxSnap = await db.collection('wallet_transactions')
+            .where('userId', '==', userId)
+            .get();
+
+        const transactions = trxSnap.docs
+            .map(doc => {
+                const data = doc.data();
+                return {
+                    id: doc.id,
+                    ...data,
+                    // Serialize timestamp for client
+                    timestamp: data.timestamp?.toDate ? data.timestamp.toDate().toISOString() : new Date().toISOString()
+                };
+            })
+            // Sort by timestamp desc in memory to avoid index requirement
+            .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+
+        // 4. Prepare Response Data
+        return {
+            success: true,
+            data: {
+                user: {
+                    id: userId,
+                    name: `${userData.firstName || ''} ${userData.lastName || ''}`.trim(),
+                    email: userData.email,
+                    uniqueCode: userData.uniqueCode,
+                    phone: userData.phoneNumber || 'N/A'
+                },
+                wallet: {
+                    balance: walletData?.balance || 0,
+                    totalEarned: walletData?.totalEarned || 0
+                },
+                transactions: transactions,
+                generatedAt: new Date().toISOString()
+            }
+        };
+
+    } catch (error: any) {
+        console.error('Report Generation Error:', error);
+        return { success: false, message: `System Error: ${error.message}` };
+    }
+}
+
