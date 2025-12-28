@@ -188,54 +188,99 @@ export default function DiciloSearchPage({
   }, [selectedBusinessId]);
 
   const handleGeolocation = useCallback(
-    (isInitialLoad = false) => {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (pos) => {
-            // If it's the initial auto-load and the user has already selected a business,
-            // do NOT override their selection with the user's location.
-            if (isInitialLoad && selectedBusinessIdRef.current) {
-              console.log('Geolocation skipped because a business is selected.');
-              return;
-            }
+    async (isInitialLoad = false) => {
 
-            const { latitude, longitude } = pos.coords;
-            setMapCenter([latitude, longitude]);
-            setUserLocation([latitude, longitude]);
-            setMapZoom(14);
-            setSelectedBusinessId(null);
-          },
-          (error) => {
-            console.error('Geolocation error:', error);
-            // Show toast even on initial load if it's a PERMISSION_DENIED
-            // Use translation keys with fallback
-            if (error.code === error.PERMISSION_DENIED) {
+      const updateLocationState = (lat: number, lng: number) => {
+        setMapCenter([lat, lng]);
+        setUserLocation([lat, lng]);
+        setMapZoom(14);
+        setSelectedBusinessId(null);
+      };
+
+      const handleGeoError = async (error: any) => {
+        console.warn("Geo/GPS Limit:", error.message);
+
+        let errorMsg = t('search.geoGenericError', "Standort konnte nicht ermittelt werden.");
+        let showToast = !isInitialLoad;
+
+        if (error.code === error.PERMISSION_DENIED) {
+          errorMsg = t('search.geoPermissionDeniedDesc', "Standortzugriff verweigert. Bitte erlauben Sie diesen in Ihrem Browser.");
+          showToast = true;
+        } else if (error.code === error.POSITION_UNAVAILABLE) {
+          errorMsg = t('search.geoUnavailableDesc', "Standort derzeit nicht verfügbar.");
+        } else if (error.code === error.TIMEOUT) {
+          errorMsg = t('search.geoTimeoutDesc', "Zeitüberschreitung bei der Standortbestimmung.");
+        }
+
+        if (showToast) {
+          toast({
+            title: t('search.geoErrorTitle', "Standortfehler"),
+            description: errorMsg,
+            variant: 'destructive',
+          });
+        }
+
+        // FALLBACK STRATEGY (Plan B - API IP)
+        try {
+          console.log("Attempting IP Fallback...");
+          const response = await fetch('https://ipapi.co/json/');
+          if (!response.ok) throw new Error("IP API failed");
+
+          const data = await response.json();
+          if (data.latitude && data.longitude) {
+            updateLocationState(data.latitude, data.longitude);
+            if (showToast) {
               toast({
-                title: t('search.geoPermissionDeniedTitle', 'Standortzugriff verweigert'),
-                description: t('search.geoPermissionDeniedDesc', 'Bitte erlauben Sie den Standortzugriff, um lokale Ergebnisse zu sehen.'),
-                variant: 'destructive',
-              });
-            } else if (!isInitialLoad) {
-              toast({
-                title: t('search.geoErrorTitle'),
-                description: t('search.geoErrorDesc'),
-                variant: 'destructive',
+                title: t('search.geoFallbackTitle', "Ungefährer Standort"),
+                description: t('search.geoFallbackDesc', "Verwende Standort basierend auf IP."),
               });
             }
-          },
-          {
-            enableHighAccuracy: true,
-            timeout: 10000,
-            maximumAge: 0,
           }
-        );
-      } else if (!isInitialLoad) {
-        toast({
-          title: t('search.geolocationNotSupportedTitle'),
-          description: t('search.geolocationNotSupportedDesc'),
-          variant: 'destructive',
-        });
+        } catch (fallbackError) {
+          console.error("Fallback IP Geo failed:", fallbackError);
+        }
+      };
+
+      // 1. HTTPS CHECK
+      if (typeof window !== 'undefined' && window.location.protocol !== 'https:' && window.location.hostname !== 'localhost') {
+        const msg = t('search.geoHttpsRequired', "Die Ortung erfordert eine sichere Verbindung (HTTPS).");
+        if (!isInitialLoad) {
+          toast({
+            title: "Sicherheit",
+            description: msg,
+            variant: 'destructive',
+          });
+        }
+        console.warn(msg);
+        return;
       }
+
+      // 2. High Accuracy Options
+      const options = {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0
+      };
+
+      if (!navigator.geolocation) {
+        handleGeoError(new Error("Geolocation not supported"));
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          if (isInitialLoad && selectedBusinessIdRef.current) {
+            console.log('Geolocation skipped because a business is selected.');
+            return;
+          }
+          const { latitude, longitude } = pos.coords;
+          updateLocationState(latitude, longitude);
+        },
+        async (error) => {
+          await handleGeoError(error);
+        },
+        options
+      );
     },
     [toast, t]
   );
