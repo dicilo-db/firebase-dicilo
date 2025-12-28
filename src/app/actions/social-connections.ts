@@ -5,12 +5,10 @@ import * as admin from 'firebase-admin';
 
 // Firestore Schema equivalent to the requested SQL:
 // Collection: 'user_social_connections'
-// Document ID: auto-generated or composite
 // Fields:
-//   userId: string (Reference to users)
-//   provider: 'facebook' | 'instagram' | 'linkedin' | 'twitter' | 'tiktok'
+//   userId: string
+//   provider: string
 //   profileUrl: string
-//   accessToken: string | null
 //   isActive: boolean
 //   createdAt: Timestamp
 //   updatedAt: Timestamp
@@ -33,7 +31,7 @@ export interface SocialConnection {
  */
 export async function saveSocialConnection(userId: string, provider: SocialProvider, profileUrl: string) {
     try {
-        if (!userId) throw new Error('Unauthorized');
+        if (!userId) throw new Error('Unauthorized: User ID is missing');
 
         const db = getAdminDb();
         const connectionsRef = db.collection('user_social_connections');
@@ -53,6 +51,7 @@ export async function saveSocialConnection(userId: string, provider: SocialProvi
                 updatedAt: admin.firestore.FieldValue.serverTimestamp(),
                 isActive: true
             });
+            console.log(`[SocialConnection] Updated connection for user ${userId} provider ${provider}`);
             return { success: true, id: docId, action: 'updated' };
         } else {
             // Create new
@@ -60,16 +59,17 @@ export async function saveSocialConnection(userId: string, provider: SocialProvi
                 userId,
                 provider,
                 profileUrl,
-                accessToken: null, // Prepared for Phase 2
+                accessToken: null,
                 isActive: true,
                 createdAt: admin.firestore.FieldValue.serverTimestamp(),
                 updatedAt: admin.firestore.FieldValue.serverTimestamp()
             });
+            console.log(`[SocialConnection] Created connection for user ${userId} provider ${provider}`);
             return { success: true, id: newDoc.id, action: 'created' };
         }
     } catch (error: any) {
         console.error('Error saving social connection:', error);
-        return { success: false, error: error.message };
+        return { success: false, error: error.message || 'Failed to save connection' };
     }
 }
 
@@ -85,12 +85,23 @@ export async function getUserSocialConnections(userId: string) {
             .where('isActive', '==', true)
             .get();
 
-        const connections: SocialConnection[] = snapshot.docs.map(doc => ({
-            id: doc.id,
-            ...(doc.data() as Omit<SocialConnection, 'id'>),
-            createdAt: doc.data().createdAt?.toDate().toISOString(),
-            updatedAt: doc.data().updatedAt?.toDate().toISOString(),
-        }));
+        const connections: SocialConnection[] = snapshot.docs.map(doc => {
+            const data = doc.data();
+            // Safely handle timestamps
+            const createdAt = data.createdAt ? (data.createdAt.toDate ? data.createdAt.toDate().toISOString() : new Date().toISOString()) : new Date().toISOString();
+            const updatedAt = data.updatedAt ? (data.updatedAt.toDate ? data.updatedAt.toDate().toISOString() : new Date().toISOString()) : new Date().toISOString();
+
+            return {
+                id: doc.id,
+                userId: data.userId,
+                provider: data.provider,
+                profileUrl: data.profileUrl,
+                accessToken: data.accessToken,
+                isActive: data.isActive,
+                createdAt,
+                updatedAt,
+            } as SocialConnection;
+        });
 
         return { success: true, connections };
     } catch (error: any) {
@@ -117,6 +128,7 @@ export async function deleteSocialConnection(connectionId: string, userId: strin
 
         return { success: true };
     } catch (error: any) {
+        // console.error('Error deleting social connection:', error);
         return { success: false, error: error.message };
     }
 }

@@ -9,6 +9,13 @@ import { Sidebar } from './Sidebar';
 import { FreelancerSidebar } from './freelancer/FreelancerSidebar';
 import { cn } from '@/lib/utils';
 
+interface DashboardLayoutProps {
+    userData: any;
+    currentView: string;
+    onViewChange: (view: string) => void;
+    children: React.ReactNode;
+}
+
 export function DashboardLayout({ userData, currentView, onViewChange, children }: DashboardLayoutProps) {
     const [isMobileOpen, setIsMobileOpen] = useState(false);
     const { signOut, user } = useAuth();

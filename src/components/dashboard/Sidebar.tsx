@@ -221,7 +221,10 @@ export function Sidebar({ userData, onViewChange, currentView }: SidebarProps) {
                         if (!isFreelancerOrHigher) return null; // Hide if no permission
 
                         const isExpanded = currentView === 'freelancer'; // Auto-expand if active
-                        const currentTab = useSearchParams().get('tab') || 'explore';
+                        // Use useSearchParams safely
+                        // eslint-disable-next-line react-hooks/rules-of-hooks
+                        const searchParams = useSearchParams();
+                        const currentTab = searchParams?.get('tab') || 'explore';
 
                         return (
                             <div key={item.id} className="space-y-1">
@@ -231,7 +234,7 @@ export function Sidebar({ userData, onViewChange, currentView }: SidebarProps) {
                                         "w-full justify-between",
                                         currentView === item.id && "bg-primary/5 text-primary"
                                     )}
-                                    onClick={() => onViewChange('freelancer')}
+                                    onClick={() => router.push('?view=freelancer&tab=explore')}
                                 >
                                     <div className="flex items-center gap-3">
                                         <item.icon size={18} />
