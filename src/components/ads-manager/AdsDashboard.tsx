@@ -9,8 +9,10 @@ import { Badge } from '@/components/ui/badge';
 import { seedCampaignsAction } from '@/app/actions/seed-freelancer';
 import { useToast } from "@/hooks/use-toast";
 import { NetworkCampaignsManager } from './NetworkCampaignsManager';
+import { QrManager } from './QrManager';
+import { ProspectsManager } from './ProspectsManager';
 
-type View = 'overview' | 'qr-codes' | 'network-campaigns';
+type View = 'overview' | 'qr-codes' | 'network-campaigns' | 'prospects';
 
 export default function AdsDashboard() {
     const { toast } = useToast();
@@ -40,6 +42,10 @@ export default function AdsDashboard() {
 
     if (currentView === 'network-campaigns') {
         return <NetworkCampaignsManager onBack={() => setCurrentView('overview')} />;
+    }
+
+    if (currentView === 'prospects') {
+        return <ProspectsManager onBack={() => setCurrentView('overview')} />;
     }
 
     return (
@@ -177,19 +183,20 @@ export default function AdsDashboard() {
                     </CardFooter>
                 </Card>
 
-                {/* Module: Your Prospects */}
-                <Card className="opacity-75 border-dashed bg-blue-50/50 dark:bg-blue-900/10">
+                {/* Module: Your Prospects (ACTIVE NOW) */}
+                <Card className="bg-blue-50 dark:bg-blue-900/10 border-blue-200">
                     <CardHeader>
                         <div className="flex items-start justify-between">
-                            <Store className="h-8 w-8 text-blue-400 mb-2" />
-                            <Badge variant="outline" className="bg-blue-100 text-blue-700 border-blue-200">{t('adsManager.cards.comingSoon')}</Badge>
+                            <Store className="h-8 w-8 text-blue-600 mb-2" />
+                            <Badge className="bg-blue-600 text-white hover:bg-blue-700">{t('adsManager.cards.active')}</Badge>
                         </div>
                         <CardTitle>{t('adsManager.cards.programs.prospects.title')}</CardTitle>
                         <CardDescription>{t('adsManager.cards.programs.prospects.description')}</CardDescription>
                     </CardHeader>
                     <CardFooter>
-                        <Button variant="secondary" disabled className="w-full bg-blue-100/50 text-blue-700">
-                            {t('adsManager.cards.inDevelopment')}
+                        <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white group" onClick={() => setCurrentView('prospects')}>
+                            Gestionar Prospectos
+                            <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                         </Button>
                     </CardFooter>
                 </Card>

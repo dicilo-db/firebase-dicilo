@@ -219,7 +219,7 @@ export default function RecommendationsPage() {
         <div className="flex min-h-screen flex-col bg-background">
             <main className="container mx-auto flex-grow p-8">
                 <div className="mb-6 flex items-center justify-between">
-                    <h1 className="text-3xl font-bold">Empfehlungen / Recommendations</h1>
+                    <h1 className="text-3xl font-bold">{t('recommendations.title')}</h1>
                     <div className="flex gap-2">
                         <Button variant="outline" asChild>
                             <Link href="/admin/dashboard">
@@ -236,11 +236,11 @@ export default function RecommendationsPage() {
 
                 <Card>
                     <CardHeader>
-                        <CardTitle>List of Recommendations</CardTitle>
+                        <CardTitle>{t('recommendations.listTitle')}</CardTitle>
                         <div className="flex items-center space-x-2">
                             <Search className="h-4 w-4 text-muted-foreground" />
                             <Input
-                                placeholder="Search by company or email..."
+                                placeholder={t('recommendations.searchPlaceholder')}
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 className="max-w-sm"
@@ -257,14 +257,15 @@ export default function RecommendationsPage() {
                                 <Table>
                                     <TableHeader>
                                         <TableRow>
-                                            <TableHead>Company</TableHead>
-                                            <TableHead>Contact</TableHead>
-                                            <TableHead>Email</TableHead>
-                                            <TableHead>Category</TableHead>
-                                            <TableHead>Location</TableHead>
-                                            <TableHead>Details</TableHead>
-                                            <TableHead>Status</TableHead>
-                                            <TableHead className="text-right">Actions</TableHead>
+                                            <TableHead>{t('recommendations.table.company')}</TableHead>
+                                            <TableHead>{t('recommendations.table.contact')}</TableHead>
+                                            <TableHead>{t('recommendations.table.email')}</TableHead>
+                                            <TableHead>{t('recommendations.table.category')}</TableHead>
+                                            <TableHead>{t('recommendations.table.location')}</TableHead>
+                                            <TableHead>{t('recommendations.table.details')}</TableHead>
+                                            <TableHead>{t('recommendations.table.status')}</TableHead>
+                                            <TableHead>{t('recommendations.table.paymentStatus')}</TableHead>
+                                            <TableHead className="text-right">{t('recommendations.table.actions')}</TableHead>
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
@@ -285,14 +286,25 @@ export default function RecommendationsPage() {
                                                     {rec.website && <a href={rec.website} target="_blank" className="text-blue-500 text-xs hover:underline block truncate">{rec.website}</a>}
                                                 </TableCell>
                                                 <TableCell>
-                                                    {rec.converted && <span className="inline-flex items-center text-xs text-green-600 font-medium"><CheckCircle className="w-3 h-3 mr-1" /> Converted</span>}
+                                                    {rec.converted && <span className="inline-flex items-center text-xs text-green-600 font-medium"><CheckCircle className="w-3 h-3 mr-1" /> {t('recommendations.status.converted')}</span>}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {rec.pointsPaid ? (
+                                                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                            {t('recommendations.status.paid')}
+                                                        </span>
+                                                    ) : (
+                                                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                                            {t('recommendations.status.pending')}
+                                                        </span>
+                                                    )}
                                                 </TableCell>
                                                 <TableCell className="text-right">
                                                     <div className="flex justify-end gap-2">
-                                                        <Button size="icon" variant="ghost" onClick={() => handleConvertClick(rec)} title="Convert to Client">
+                                                        <Button size="icon" variant="ghost" onClick={() => handleConvertClick(rec)} title={t('recommendations.actions.convert')}>
                                                             <UserPlus className="h-4 w-4 text-blue-600" />
                                                         </Button>
-                                                        <Button size="icon" variant="ghost" onClick={() => handleEditClick(rec)} title="Edit">
+                                                        <Button size="icon" variant="ghost" onClick={() => handleEditClick(rec)} title={t('recommendations.actions.edit')}>
                                                             <Pen className="h-4 w-4" />
                                                         </Button>
 
@@ -304,14 +316,14 @@ export default function RecommendationsPage() {
                                                             </AlertDialogTrigger>
                                                             <AlertDialogContent>
                                                                 <AlertDialogHeader>
-                                                                    <AlertDialogTitle>Delete Recommendation?</AlertDialogTitle>
+                                                                    <AlertDialogTitle>{t('recommendations.delete.title')}</AlertDialogTitle>
                                                                     <AlertDialogDescription>
-                                                                        This action cannot be undone.
+                                                                        {t('recommendations.delete.description')}
                                                                     </AlertDialogDescription>
                                                                 </AlertDialogHeader>
                                                                 <AlertDialogFooter>
-                                                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                                                    <AlertDialogAction className="bg-destructive hover:bg-destructive/90" onClick={() => handleDelete(rec.id)}>Delete</AlertDialogAction>
+                                                                    <AlertDialogCancel>{t('common:cancel', { ns: 'common' }) || 'Cancel'}</AlertDialogCancel>
+                                                                    <AlertDialogAction className="bg-destructive hover:bg-destructive/90" onClick={() => handleDelete(rec.id)}>{t('common:delete', { ns: 'common' }) || 'Delete'}</AlertDialogAction>
                                                                 </AlertDialogFooter>
                                                             </AlertDialogContent>
                                                         </AlertDialog>
@@ -412,10 +424,10 @@ export default function RecommendationsPage() {
                             </SelectContent>
                         </Select>
                         <div className="text-sm text-muted-foreground">
-                            {targetType === 'business' && "Creates a basic business entry. Not valid as a paid client."}
-                            {targetType === 'starter' && "Creates Business + Starter Client entry."}
-                            {targetType === 'retailer' && "Creates Business + Retailer Client entry."}
-                            {targetType === 'premium' && "Creates Business + Premium Client entry."}
+                            {targetType === 'business' && t('recommendations.convert.businessHelp')}
+                            {targetType === 'starter' && t('recommendations.convert.starterHelp')}
+                            {targetType === 'retailer' && t('recommendations.convert.retailerHelp')}
+                            {targetType === 'premium' && t('recommendations.convert.premiumHelp')}
                         </div>
                     </div>
                     <DialogFooter>

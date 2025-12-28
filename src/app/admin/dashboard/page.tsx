@@ -336,9 +336,37 @@ const DashboardContent: React.FC = () => {
           <div className="mb-10 space-y-4">
             <h2 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-slate-100 flex items-center gap-2">
               <DatabaseZap className="h-5 w-5 text-primary" />
-              {t('dashboard.superAdminArea')}
+              Admin Tools & System
             </h2>
             <div className="grid gap-4 md:grid-cols-3">
+              {/* Dicipoints Central Control - Economy */}
+              <Link href="/admin/dicipoints" className="group">
+                <Card className="h-full bg-red-50/50 dark:bg-red-900/10 border-red-200 transition-all hover:shadow-md hover:border-red-500 cursor-pointer relative">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium text-red-700 dark:text-red-400">Economy Control</CardTitle>
+                    <Wallet className="h-4 w-4 text-red-500 group-hover:scale-110 transition-transform" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-xl font-bold">Dicipoints</div>
+                    <p className="text-xs text-muted-foreground mt-1">Manage Point Value & Injection</p>
+                  </CardContent>
+                </Card>
+              </Link>
+
+              {/* DiciCoin Purchasers */}
+              <Link href="/admin/dicicoin-purchasers" className="group">
+                <Card className="h-full bg-amber-50/50 dark:bg-amber-900/10 border-amber-200 transition-all hover:shadow-md hover:border-amber-500 cursor-pointer relative">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium text-amber-700 dark:text-amber-400">DiciCoin Orders</CardTitle>
+                    <Coins className="h-4 w-4 text-amber-500 group-hover:scale-110 transition-transform" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-xl font-bold">DiciCoins</div>
+                    <p className="text-xs text-muted-foreground mt-1">Gestión de Compras</p>
+                  </CardContent>
+                </Card>
+              </Link>
+
               <Card className="bg-slate-100/50 dark:bg-slate-800/50 border-dashed border-slate-300 dark:border-slate-700">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm font-medium text-muted-foreground">

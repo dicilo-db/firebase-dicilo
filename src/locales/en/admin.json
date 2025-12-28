@@ -42,6 +42,7 @@
     "contentManagementDescription": "Manage the website's content.",
     "manageBusinesses": "Manage Businesses",
     "superAdminArea": "Superadmin Area",
+    "superAdminAreaRenamed": "Admin Tools & System",
     "superAdminDescription": "Actions available only to superadmins.",
     "seedDatabase": "Seed Database",
     "seedingInProgress": "Seeding database...",
@@ -117,6 +118,120 @@
         "title": "Private Users",
         "description": "Manage private profiles"
       }
+    }
+  },
+  "dicipoints": {
+    "title": "Dicipoints Central",
+    "accessDenied": "Access Denied",
+    "accessDeniedDesc": "Invalid session for this view.",
+    "invalidPassword": "Invalid Password",
+    "invalidPasswordDesc": "Master key is incorrect.",
+    "weakPassword": "Weak Password",
+    "weakPasswordDesc": "Minimum 6 characters.",
+    "setupComplete": "Setup Complete",
+    "setupCompleteDesc": "Master Key secured.",
+    "errorTitle": "Error",
+    "setupFailed": "Setup failed.",
+    "updated": "Updated",
+    "globalValueUpdated": "Global point value updated.",
+    "failedUpdate": "Failed to update.",
+    "success": "Success",
+    "balanceAdjusted": "Balance adjusted successfully.",
+    "transactionFailed": "Transaction failed.",
+    "missingFields": "Missing Fields",
+    "missingFieldsDesc": "Email and Code are required.",
+    "auditComplete": "Audit Complete",
+    "auditFailed": "Audit Failed",
+    "auditFailedEx": "Audit failed exception.",
+    "reassignSuccess": "Reassignment Successful",
+    "reassignError": "Reassignment Error",
+    "masterKeyUpdated": "Master Key updated successfully.",
+    "failedSetKey": "Failed to set master key.",
+    "firstTimeSetup": {
+      "title": "First Time Security Setup",
+      "description": "Create a Master Key to secure the DiciPoints Economy.",
+      "label": "Define Master Key",
+      "placeholder": "Create strong password...",
+      "hint": "You will need this key for every manual adjustment.",
+      "button": "Secure & Initialize"
+    },
+    "unlock": {
+      "title": "Dicipoints Control Center",
+      "description": "Restricted Access. Superadmin Only.",
+      "label": "Master Password",
+      "placeholder": "Enter Master Key",
+      "button": "Unlock",
+      "resetLink": "First time setup or forgot key? Reset here.",
+      "resetDialogTitle": "Setup / Reset Master Key",
+      "resetDialogDesc": "As a Superadmin, you can set or override the Master Security Key here. This will invalidate the old key immediately.",
+      "newKeyLabel": "New Master Key",
+      "newKeyPlaceholder": "Enter new key...",
+      "setUnlockButton": "Set & Unlock"
+    },
+    "economy": {
+      "title": "Economy Engine",
+      "description": "Manage global point values. Affects ALL users immediately.",
+      "warning": "Warning: Changing the Point Value changes the displayed EUR equivalent for all users instantly.",
+      "label": "Value per 1 Dicipoint (€)",
+      "buttonSaving": "Saving...",
+      "buttonUpdate": "Update Rate",
+      "currentText": "Current: 100 DP ="
+    },
+    "audit": {
+      "title": "Retroactive Audit",
+      "description": "Scan old recommendations and pay retroactively.",
+      "emailLabel": "Freelancer Email (Filter)",
+      "emailPlaceholder": "freelancer@example.com",
+      "codeLabel": "Personal Unique Code (Filter)",
+      "codePlaceholder": "e.g. A1B2C3",
+      "buttonScanning": "Scanning...",
+      "buttonRun": "Run Audit & Pay",
+      "hint": "Calculates and pays debts. (10 DP fixed per prospect)"
+    },
+    "reassign": {
+      "title": "Manual Prospect Reassignment",
+      "description": "Reassign a prospect to a new Freelancer and adjust points.",
+      "cudLabel": "Prospect CUD (Prospect ID)",
+      "cudPlaceholder": "Document ID in Firestore",
+      "cudHint": "The ID of the prospect to transfer.",
+      "newCodeLabel": "New Freelancer Code",
+      "newCodePlaceholder": "e.g. X9Y8Z7",
+      "newEmailLabel": "New Freelancer Email",
+      "newEmailPlaceholder": "new@email.com",
+      "pointsLabel": "Points to Assign (Flexible)",
+      "pointsHint": "Amount the NEW owner will receive. (Default 10, changeable for events)",
+      "buttonProcessing": "Processing...",
+      "buttonExecute": "Reassign & Adjust Points"
+    },
+    "injection": {
+      "title": "Manual Injection",
+      "description": "Load or deduct points for a specific user ID.",
+      "uidLabel": "Target User UID",
+      "uidPlaceholder": "User UID",
+      "amountLabel": "Amount (DP)",
+      "amountPlaceholder": "50",
+      "amountHint": "Use negative for deduction.",
+      "reasonLabel": "Reason / Ref",
+      "reasonPlaceholder": "e.g. Christmas Gift",
+      "buttonProcess": "Process Transaction",
+      "dialogTitle": "Confirm Transaction",
+      "dialogDescPart1": "Are you sure you want to",
+      "dialogDescSend": "send",
+      "dialogDescDeduct": "deduct",
+      "dialogDescPart2": "DP to user",
+      "dialogDescVal": "Value: approx. €",
+      "buttonConfirming": "Processing...",
+      "buttonConfirm": "Confirm & Execute"
+    },
+    "security": {
+      "title": "Security Management",
+      "description": "Update your Master Access Key.",
+      "buttonChange": "Change Master Key",
+      "dialogTitle": "Change Master Key",
+      "dialogDesc": "Set a new Master Key. You will need this key to authorize all sensitive transactions.",
+      "newKeyLabel": "New Master Key",
+      "newKeyPlaceholder": "Enter new key...",
+      "buttonSet": "Set New Key"
     }
   },
   "privateUsers": {
@@ -574,7 +689,7 @@
     "views": "Views",
     "clicks": "Clicks",
     "ctr": "CTR",
-    "cost": "Cost",
+    "cost": "Costo",
     "total": "Total",
     "noData": "No data available for the selected period.",
     "last7Days": "Last 7 Days",
@@ -582,5 +697,40 @@
     "last90Days": "Last 3 Months",
     "viewsAndClicks": "Views & Clicks",
     "costProgression": "Cost Progression"
+  },
+  "recommendations": {
+    "title": "Recommendations (Prospects)",
+    "listTitle": "List of Recommendations",
+    "searchPlaceholder": "Search by company or email...",
+    "table": {
+      "company": "Company",
+      "contact": "Contact",
+      "email": "Email",
+      "category": "Category",
+      "location": "Location",
+      "details": "Details",
+      "status": "Status",
+      "paymentStatus": "Payment Status",
+      "actions": "Actions"
+    },
+    "status": {
+      "converted": "Converted",
+      "paid": "Paid",
+      "pending": "Pending"
+    },
+    "actions": {
+      "convert": "Convert to Client",
+      "edit": "Edit"
+    },
+    "delete": {
+      "title": "Delete Recommendation?",
+      "description": "This action cannot be undone."
+    },
+    "convert": {
+      "businessHelp": "Creates a basic business entry. Not valid as a paid client.",
+      "starterHelp": "Creates Business + Starter Client entry.",
+      "retailerHelp": "Creates Business + Retailer Client entry.",
+      "premiumHelp": "Creates Business + Premium Client entry."
+    }
   }
 }

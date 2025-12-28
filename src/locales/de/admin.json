@@ -133,6 +133,120 @@
       }
     }
   },
+  "dicipoints": {
+    "title": "Dicipoints-Zentrale",
+    "accessDenied": "Zugriff verweigert",
+    "accessDeniedDesc": "Ungültige Sitzung für diese Ansicht.",
+    "invalidPassword": "Ungültiges Passwort",
+    "invalidPasswordDesc": "Der Hauptschlüssel ist falsch.",
+    "weakPassword": "Schwaches Passwort",
+    "weakPasswordDesc": "Mindestens 6 Zeichen.",
+    "setupComplete": "Einrichtung abgeschlossen",
+    "setupCompleteDesc": "Hauptschlüssel gesichert.",
+    "errorTitle": "Fehler",
+    "setupFailed": "Einrichtung fehlgeschlagen.",
+    "updated": "Aktualisiert",
+    "globalValueUpdated": "Globaler Punktwert aktualisiert.",
+    "failedUpdate": "Aktualisierung fehlgeschlagen.",
+    "success": "Erfolg",
+    "balanceAdjusted": "Guthaben erfolgreich angepasst.",
+    "transactionFailed": "Transaktion fehlgeschlagen.",
+    "missingFields": "Fehlende Felder",
+    "missingFieldsDesc": "E-Mail und Code sind erforderlich.",
+    "auditComplete": "Prüfung abgeschlossen",
+    "auditFailed": "Prüfung fehlgeschlagen",
+    "auditFailedEx": "Prüfung fehlgeschlagen (Ausnahme).",
+    "reassignSuccess": "Neuzuweisung erfolgreich",
+    "reassignError": "Fehler bei der Neuzuweisung",
+    "masterKeyUpdated": "Hauptschlüssel erfolgreich aktualisiert.",
+    "failedSetKey": "Fehler beim Festlegen des Schlüssels.",
+    "firstTimeSetup": {
+      "title": "Ersteinrichtung Sicherheit",
+      "description": "Erstellen Sie einen Hauptschlüssel, um die DiciPoints-Wirtschaft zu sichern.",
+      "label": "Hauptschlüssel definieren",
+      "placeholder": "Starkes Passwort erstellen...",
+      "hint": "Sie benötigen diesen Schlüssel für jede manuelle Anpassung.",
+      "button": "Sichern & Initialisieren"
+    },
+    "unlock": {
+      "title": "Dicipoints-Kontrollzentrum",
+      "description": "Eingeschränkter Zugriff. Nur Superadmin.",
+      "label": "Hauptpasswort",
+      "placeholder": "Hauptschlüssel eingeben",
+      "button": "Entsperren",
+      "resetLink": "Erste Einrichtung oder Schlüssel vergessen? Hier zurücksetzen.",
+      "resetDialogTitle": "Hauptschlüssel einrichten / zurücksetzen",
+      "resetDialogDesc": "Als Superadmin können Sie hier den Hauptsicherheitsschlüssel festlegen oder überschreiben. Dies macht den alten Schlüssel sofort ungültig.",
+      "newKeyLabel": "Neuer Hauptschlüssel",
+      "newKeyPlaceholder": "Neuen Schlüssel eingeben...",
+      "setUnlockButton": "Festlegen & Entsperren"
+    },
+    "economy": {
+      "title": "Wirtschafts-Engine",
+      "description": "Verwalten Sie globale Punktwerte. Betrifft ALLE Benutzer sofort.",
+      "warning": "Warnung: Das Ändern des Punktwerts ändert sofort den angezeigten EUR-Gegenwert für alle Benutzer.",
+      "label": "Wert pro 1 Dicipoint (€)",
+      "buttonSaving": "Speichern...",
+      "buttonUpdate": "Rate aktualisieren",
+      "currentText": "Aktuell: 100 DP ="
+    },
+    "audit": {
+      "title": "Rückwirkendes Audit",
+      "description": "Alte Empfehlungen scannen und rückwirkend bezahlen.",
+      "emailLabel": "Freelancer E-Mail (Filter)",
+      "emailPlaceholder": "freelancer@beispiel.de",
+      "codeLabel": "Persönlicher eindeutiger Code (Filter)",
+      "codePlaceholder": "z.B. A1B2C3",
+      "buttonScanning": "Scannen...",
+      "buttonRun": "Audit durchführen & Bezahlen",
+      "hint": "Berechnet und bezahlt Schulden. (10 DP fest pro Interessent)"
+    },
+    "reassign": {
+      "title": "Manuelle Interessenten-Neuzuweisung",
+      "description": "Interessenten einem neuen Freelancer zuweisen und Punkte anpassen.",
+      "cudLabel": "Interessenten-CUD (Interessenten-ID)",
+      "cudPlaceholder": "Dokument-ID in Firestore",
+      "cudHint": "Die ID des zu übertragenden Interessenten.",
+      "newCodeLabel": "Code des neuen Freelancers",
+      "newCodePlaceholder": "z.B. X9Y8Z7",
+      "newEmailLabel": "E-Mail des neuen Freelancers",
+      "newEmailPlaceholder": "neu@email.com",
+      "pointsLabel": "Zuzuweisende Punkte (Flexibel)",
+      "pointsHint": "Menge, die der NEUE Eigentümer erhält. (Standard 10, änderbar für Events)",
+      "buttonProcessing": "Verarbeitung...",
+      "buttonExecute": "Neu zuweisen & Punkte anpassen"
+    },
+    "injection": {
+      "title": "Manuelle Injektion",
+      "description": "Punkte für eine bestimmte Benutzer-ID laden oder abziehen.",
+      "uidLabel": "Ziel-Benutzer-UID",
+      "uidPlaceholder": "Benutzer-UID",
+      "amountLabel": "Menge (DP)",
+      "amountPlaceholder": "50",
+      "amountHint": "Negativ für Abzug verwenden.",
+      "reasonLabel": "Grund / Ref",
+      "reasonPlaceholder": "z.B. Weihnachtsgeschenk",
+      "buttonProcess": "Transaktion verarbeiten",
+      "dialogTitle": "Transaktion bestätigen",
+      "dialogDescPart1": "Sind Sie sicher, dass Sie",
+      "dialogDescSend": "senden",
+      "dialogDescDeduct": "abziehen",
+      "dialogDescPart2": "DP an Benutzer",
+      "dialogDescVal": "Wert: ca. €",
+      "buttonConfirming": "Verarbeitung...",
+      "buttonConfirm": "Bestätigen & Ausführen"
+    },
+    "security": {
+      "title": "Sicherheitsverwaltung",
+      "description": "Aktualisieren Sie Ihren Hauptzugangsschlüssel.",
+      "buttonChange": "Hauptschlüssel ändern",
+      "dialogTitle": "Hauptschlüssel ändern",
+      "dialogDesc": "Legen Sie einen neuen Hauptschlüssel fest. Sie benötigen diesen Schlüssel, um alle sensitiven Transaktionen zu autorisieren.",
+      "newKeyLabel": "Neuer Hauptschlüssel",
+      "newKeyPlaceholder": "Neuen Schlüssel eingeben...",
+      "buttonSet": "Neuen Schlüssel setzen"
+    }
+  },
   "businesses": {
     "title": "Unternehmen",
     "addBusiness": "Unternehmen hinzufügen",
@@ -610,5 +724,40 @@
     "last90Days": "Letzte 3 Monate",
     "viewsAndClicks": "Impressionen & Klicks",
     "costProgression": "Kostenentwicklung"
+  },
+  "recommendations": {
+    "title": "Empfehlungen (Interessenten)",
+    "listTitle": "Liste der Empfehlungen",
+    "searchPlaceholder": "Suche nach Firma oder E-Mail...",
+    "table": {
+      "company": "Firma",
+      "contact": "Kontakt",
+      "email": "E-Mail",
+      "category": "Kategorie",
+      "location": "Standort",
+      "details": "Details",
+      "status": "Status",
+      "paymentStatus": "Zahlungsstatus",
+      "actions": "Aktionen"
+    },
+    "status": {
+      "converted": "Konvertiert",
+      "paid": "Bezahlt",
+      "pending": "Ausstehend"
+    },
+    "actions": {
+      "convert": "In Kunden umwandeln",
+      "edit": "Bearbeiten"
+    },
+    "delete": {
+      "title": "Empfehlung löschen?",
+      "description": "Diese Aktion kann nicht rückgängig gemacht werden."
+    },
+    "convert": {
+      "businessHelp": "Erstellt einen Basis-Firmeneintrag. Gilt nicht als zahlender Kunde.",
+      "starterHelp": "Erstellt Firma + Starter-Kunde.",
+      "retailerHelp": "Erstellt Firma + Einzelhändler-Kunde.",
+      "premiumHelp": "Erstellt Firma + Premium-Kunde."
+    }
   }
 }

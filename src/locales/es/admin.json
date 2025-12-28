@@ -42,6 +42,7 @@
     "contentManagementDescription": "Gestiona el contenido del sitio web.",
     "manageBusinesses": "Gestionar Negocios",
     "superAdminArea": "Área de Superadministrador",
+    "superAdminAreaRenamed": "Herramientas de Admin y Sistema",
     "superAdminDescription": "Acciones disponibles solo para superadministradores.",
     "seedDatabase": "Poblar Base de Datos",
     "seedingInProgress": "Poblando base de datos...",
@@ -129,6 +130,120 @@
         "title": "Usuarios Privados",
         "description": "Gestionar perfiles privados"
       }
+    }
+  },
+  "dicipoints": {
+    "title": "Central de Dicipoints",
+    "accessDenied": "Acceso Denegado",
+    "accessDeniedDesc": "Sesión inválida para esta vista.",
+    "invalidPassword": "Contraseña Inválida",
+    "invalidPasswordDesc": "La clave maestra es incorrecta.",
+    "weakPassword": "Contraseña Débil",
+    "weakPasswordDesc": "Mínimo 6 caracteres.",
+    "setupComplete": "Configuración Completa",
+    "setupCompleteDesc": "Llave Maestra asegurada.",
+    "errorTitle": "Error",
+    "setupFailed": "Configuración fallida.",
+    "updated": "Actualizado",
+    "globalValueUpdated": "Valor de punto global actualizado.",
+    "failedUpdate": "Error al actualizar.",
+    "success": "Éxito",
+    "balanceAdjusted": "Balance ajustado correctamente.",
+    "transactionFailed": "Transacción fallida.",
+    "missingFields": "Campos Faltantes",
+    "missingFieldsDesc": "Email y Código son requeridos.",
+    "auditComplete": "Auditoría Completa",
+    "auditFailed": "Auditoría Fallida.",
+    "auditFailedEx": "Excepción al auditar.",
+    "reassignSuccess": "Reasignación Exitosa",
+    "reassignError": "Error Reasignación",
+    "masterKeyUpdated": "Llave Maestra actualizada correctamente.",
+    "failedSetKey": "Error al establecer llave maestra.",
+    "firstTimeSetup": {
+      "title": "Configuración de Seguridad Inicial",
+      "description": "Crea una Llave Maestra para asegurar la Economía DiciPoints.",
+      "label": "Definir Llave Maestra",
+      "placeholder": "Crea una contraseña fuerte...",
+      "hint": "Necesitarás esta llave para cada ajuste manual.",
+      "button": "Asegurar e Inicializar"
+    },
+    "unlock": {
+      "title": "Centro de Control Dicipoints",
+      "description": "Acceso Restringido. Solo Superadmin.",
+      "label": "Contraseña Maestra",
+      "placeholder": "Introduce Llave Maestra",
+      "button": "Desbloquear",
+      "resetLink": "¿Primera vez o olvidaste la llave? Restablece aquí.",
+      "resetDialogTitle": "Configurar / Restablecer Llave Maestra",
+      "resetDialogDesc": "Como Superadmin, puedes establecer o sobrescribir la Llave de Seguridad Maestra aquí. Esta acción invalidará la llave anterior inmediatamente.",
+      "newKeyLabel": "Nueva Llave Maestra",
+      "newKeyPlaceholder": "Introduce nueva llave...",
+      "setUnlockButton": "Establecer y Desbloquear"
+    },
+    "economy": {
+      "title": "Motor Económico",
+      "description": "Gestionar valores globales de puntos. Afecta a TODOS los usuarios inmediatamente.",
+      "warning": "Advertencia: Cambiar el Valor del Punto cambia el equivalente en EUR mostrado para todos los usuarios al instante.",
+      "label": "Valor por 1 Dicipoint (€)",
+      "buttonSaving": "Guardando...",
+      "buttonUpdate": "Actualizar Tasa",
+      "currentText": "Actual: 100 DP ="
+    },
+    "audit": {
+      "title": "Rastreo Histórico",
+      "description": "Escanear recomendaciones antiguas y pagar retroactivamente.",
+      "emailLabel": "Email Freelancer (Filtro)",
+      "emailPlaceholder": "freelancer@ejemplo.com",
+      "codeLabel": "Código Único Personal (Filtro)",
+      "codePlaceholder": "ej. A1B2C3",
+      "buttonScanning": "Escaneando...",
+      "buttonRun": "Ejecutar Auditoría y Pagar",
+      "hint": "Calcula y paga deudas. (10 DP fijos por prospecto)"
+    },
+    "reassign": {
+      "title": "Gestión Manual de Prospectos",
+      "description": "Reasignar un prospecto a un nuevo Freelancer y ajustar puntos.",
+      "cudLabel": "CUD del Prospecto (Prospect ID)",
+      "cudPlaceholder": "ID del documento en Firestore",
+      "cudHint": "El ID del prospecto a transferir.",
+      "newCodeLabel": "Nuevo Código Freelancer",
+      "newCodePlaceholder": "ej. X9Y8Z7",
+      "newEmailLabel": "Email Nuevo Freelancer",
+      "newEmailPlaceholder": "nuevo@email.com",
+      "pointsLabel": "Puntos a Asignar (Flexible)",
+      "pointsHint": "Cantidad que recibirá el NUEVO dueño. (Por defecto 10, cambiable para eventos)",
+      "buttonProcessing": "Procesando...",
+      "buttonExecute": "Reasignar & Ajustar Puntos"
+    },
+    "injection": {
+      "title": "Inyección Manual",
+      "description": "Cargar o deducir puntos para un ID de usuario específico.",
+      "uidLabel": "UID del Usuario Objetivo",
+      "uidPlaceholder": "User UID",
+      "amountLabel": "Cantidad (DP)",
+      "amountPlaceholder": "50",
+      "amountHint": "Usa negativo para deducción.",
+      "reasonLabel": "Razón / Ref",
+      "reasonPlaceholder": "ej. Regalo Navidad",
+      "buttonProcess": "Procesar Transacción",
+      "dialogTitle": "Confirmar Transacción",
+      "dialogDescPart1": "¿Estás seguro de que quieres",
+      "dialogDescSend": "enviar",
+      "dialogDescDeduct": "deducir",
+      "dialogDescPart2": "DP al usuario",
+      "dialogDescVal": "Valor: aprox. €",
+      "buttonConfirming": "Procesando...",
+      "buttonConfirm": "Confirmar y Ejecutar"
+    },
+    "security": {
+      "title": "Gestión de Seguridad",
+      "description": "Actualiza tu Llave de Acceso Maestra.",
+      "buttonChange": "Cambiar Llave Maestra",
+      "dialogTitle": "Cambiar Llave Maestra",
+      "dialogDesc": "Establece una nueva Llave Maestra. Necesitarás esta llave para autorizar todas las transacciones sensibles.",
+      "newKeyLabel": "Nueva Llave Maestra",
+      "newKeyPlaceholder": "Introduce nueva llave...",
+      "buttonSet": "Establecer Nueva Llave"
     }
   },
   "privateUsers": {
@@ -621,5 +736,40 @@
     "last90Days": "Últimos 3 Meses",
     "viewsAndClicks": "Visualizaciones y Clics",
     "costProgression": "Progresión de Costo"
+  },
+  "recommendations": {
+    "title": "Recomendaciones (Prospectos)",
+    "listTitle": "Lista de Recomendaciones",
+    "searchPlaceholder": "Buscar por empresa o email...",
+    "table": {
+      "company": "Empresa",
+      "contact": "Contacto",
+      "email": "Email",
+      "category": "Categoría",
+      "location": "Ubicación",
+      "details": "Detalles",
+      "status": "Estado",
+      "paymentStatus": "Estado del Pago",
+      "actions": "Acciones"
+    },
+    "status": {
+      "converted": "Convertido",
+      "paid": "Pagado",
+      "pending": "Pendiente"
+    },
+    "actions": {
+      "convert": "Convertir a Cliente",
+      "edit": "Editar"
+    },
+    "delete": {
+      "title": "¿Eliminar Recomendación?",
+      "description": "Esta acción no se puede deshacer."
+    },
+    "convert": {
+      "businessHelp": "Crea una entrada de negocio básica. No válida como cliente de pago.",
+      "starterHelp": "Crea Negocio + Cliente Starter.",
+      "retailerHelp": "Crea Negocio + Cliente Minorista.",
+      "premiumHelp": "Crea Negocio + Cliente Premium."
+    }
   }
 }
