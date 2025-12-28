@@ -78,7 +78,10 @@ export function PromoComposerView() {
     const [texts, setTexts] = useState<{ [key: string]: string }>({
         es: '',
         en: '',
-        de: ''
+        de: '',
+        fr: '',
+        pt: '',
+        it: ''
     });
     const [activeLangTab, setActiveLangTab] = useState('es');
     const [targetLanguage, setTargetLanguage] = useState('en');
@@ -357,6 +360,9 @@ export function PromoComposerView() {
                                                 <option value="es">Español</option>
                                                 <option value="en">English</option>
                                                 <option value="de">Deutsch</option>
+                                                <option value="fr">Français</option>
+                                                <option value="pt">Português</option>
+                                                <option value="it">Italiano</option>
                                             </select>
                                         </div>
                                         <Button size="sm" onClick={handleTranslate} disabled={isTranslating} className="h-7 text-xs px-3">
@@ -367,27 +373,27 @@ export function PromoComposerView() {
                                 </div>
 
                                 <Tabs value={activeLangTab} onValueChange={setActiveLangTab} className="w-full">
-                                    <TabsList className="mb-0 w-full justify-start h-8 bg-transparent p-0 border-b rounded-none gap-4">
-                                        {['es', 'en', 'de'].map(lang => (
+                                    <TabsList className="mb-0 w-full justify-start h-8 bg-transparent p-0 border-b rounded-none gap-4 overflow-x-auto no-scrollbar">
+                                        {['es', 'en', 'de', 'fr', 'pt', 'it'].map(lang => (
                                             <TabsTrigger
                                                 key={lang}
                                                 value={lang}
-                                                className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none h-8 px-1 text-xs font-medium text-muted-foreground data-[state=active]:text-foreground"
+                                                className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none h-8 px-1 text-xs font-medium text-muted-foreground data-[state=active]:text-foreground shrink-0"
                                             >
-                                                {lang === 'es' ? 'Español' : lang === 'en' ? 'English' : 'Deutsch'}
+                                                {lang === 'es' ? 'Español' : lang === 'en' ? 'English' : lang === 'de' ? 'Deutsch' : lang === 'fr' ? 'Français' : lang === 'pt' ? 'Português' : 'Italiano'}
                                                 {texts[lang] && <div className="h-1.5 w-1.5 rounded-full bg-green-500 ml-1.5" />}
                                             </TabsTrigger>
                                         ))}
                                     </TabsList>
 
-                                    {['es', 'en', 'de'].map(lang => (
+                                    {['es', 'en', 'de', 'fr', 'pt', 'it'].map(lang => (
                                         <TabsContent key={lang} value={lang} className="mt-3">
                                             <div className="relative">
                                                 <Textarea
                                                     value={texts[lang] || ''}
                                                     onChange={(e) => setTexts(prev => ({ ...prev, [lang]: e.target.value }))}
                                                     className="min-h-[200px] resize-none focus-visible:ring-1 focus-visible:ring-primary/50 text-sm leading-relaxed p-3"
-                                                    placeholder={`Escribe el copy en ${lang}...`}
+                                                    placeholder={`Escribe el copy en ${lang.toUpperCase()}...`}
                                                 />
                                                 <div className="absolute bottom-2 right-2 flex gap-1">
                                                     <Button
@@ -409,37 +415,22 @@ export function PromoComposerView() {
                                     ))}
                                 </Tabs>
 
-                                {/* Profit Box Compact */}
-                                <div className="bg-green-50/50 dark:bg-green-900/10 border border-green-100 dark:border-green-900/30 p-4 rounded-xl mt-4">
-                                    <div className="flex justify-between items-baseline mb-2">
-                                        <span className="text-xs font-semibold text-green-800 dark:text-green-400 uppercase tracking-wide">Ganancia Estimada</span>
-                                        <div className="flex items-baseline gap-1">
-                                            <span className="text-2xl font-bold text-green-700 dark:text-green-400">${currentTier.rate.toFixed(2)}</span>
-                                            <span className="text-[10px] text-green-600">/post</span>
-                                        </div>
-                                    </div>
-                                    <div className="w-full bg-green-200/50 h-1.5 rounded-full overflow-hidden mb-2">
-                                        <div className="h-full bg-green-500 transition-all duration-500" style={{ width: `${Math.min((currentText.length / 600) * 100, 100)}%` }}></div>
-                                    </div>
-                                    <p className="text-[10px] text-green-700/80 leading-tight">
-                                        {currentText.length < 300 ? `Faltan ${(300 - currentText.length)} chars para nivel base.` :
-                                            currentText.length < 600 ? `¡Bien! Llega a 600 para duplicar tarifa.` : "¡Máxima tarifa base alcanzada!"}
-                                    </p>
-                                </div>
+                                <div className="mt-auto pt-4 border-t">
 
-                                <div className="pt-4 border-t space-y-3">
-                                    <Button onClick={handleWhatsAppShare} disabled={isSharing} className="w-full h-11 bg-[#25D366] hover:bg-[#25D366]/90 text-white font-bold shadow-sm">
-                                        {isSharing ? <Loader2 className="animate-spin mr-2 h-4 w-4" /> : <MessageCircle className="mr-2 h-4 w-4" />}
-                                        Compartir en WhatsApp
-                                    </Button>
-
-                                    <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-900 rounded-md border p-1 pr-2">
-                                        <div className="bg-white dark:bg-black px-2 py-1 rounded text-[10px] font-mono border text-muted-foreground select-all truncate flex-1">
-                                            {generatedLink}
-                                        </div>
-                                        <Button variant="ghost" size="icon" className="h-6 w-6 shrink-0" onClick={() => { navigator.clipboard.writeText(generatedLink); toast({ description: "Link copiado" }); }}>
-                                            <Copy className="h-3 w-3" />
+                                    <div className="grid grid-cols-[auto_1fr] gap-3 items-center">
+                                        <Button onClick={handleWhatsAppShare} disabled={isSharing} className="h-10 bg-[#25D366] hover:bg-[#25D366]/90 text-white font-bold shadow-sm px-6 whitespace-nowrap">
+                                            {isSharing ? <Loader2 className="animate-spin mr-2 h-4 w-4" /> : <MessageCircle className="mr-2 h-4 w-4" />}
+                                            Compartir en WhatsApp
                                         </Button>
+
+                                        <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-900 rounded-md border p-1 h-10 w-full overflow-hidden">
+                                            <div className="bg-transparent px-3 py-1 text-xs font-mono text-muted-foreground select-all truncate flex-1 leading-8">
+                                                {generatedLink}
+                                            </div>
+                                            <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0 hover:bg-slate-200" onClick={() => { navigator.clipboard.writeText(generatedLink); toast({ description: "Link copiado" }); }}>
+                                                <Copy className="h-4 w-4" />
+                                            </Button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -704,6 +695,25 @@ export function PromoComposerView() {
                             {/* Home Indicator */}
                             <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-32 h-1 bg-black/20 dark:bg-white/20 rounded-full z-30 pointer-events-none"></div>
                         </div>
+                    </div>
+
+                    {/* NEW PROFIT DISPLAY BELOW PHONE */}
+                    <div className="mt-8 w-full max-w-[320px] bg-white dark:bg-slate-900 rounded-xl p-5 shadow-lg border border-slate-100 dark:border-slate-800 animate-in slide-in-from-bottom-4 duration-700 delay-200 shrink-0 mb-8 relative overflow-hidden">
+                        <div className="font-semibold text-slate-800 dark:text-slate-200 mb-2">Ganancia Estimada</div>
+                        <div className="flex items-center gap-3 mb-4">
+                            <span className="text-4xl font-bold text-[#16a34a] tracking-tight">€{currentTier.rate.toFixed(2)}</span>
+                            <Badge variant="secondary" className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100 border-yellow-200 px-2 py-0.5 text-xs font-bold shadow-sm">
+                                + €0.10 Bono Tráfico
+                            </Badge>
+                        </div>
+
+                        <div className="h-1.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden mb-2">
+                            <div className="h-full bg-[#16a34a] transition-all duration-500" style={{ width: `${Math.min((currentText.length / 600) * 100, 100)}%` }}></div>
+                        </div>
+                        <p className="text-xs text-slate-500 font-medium">
+                            {currentText.length < 300 ? `Escribe ${(300 - currentText.length)} más car. para desbloquear el pago base.` :
+                                currentText.length < 600 ? `¡Buen trabajo! Escribe ${(600 - currentText.length)} más para maximizar a €0.40.` : "¡Excelente! Has maximizado tu tarifa base."}
+                        </p>
                     </div>
                 </div>
             </ResizablePanel>

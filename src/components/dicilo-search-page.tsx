@@ -207,7 +207,15 @@ export default function DiciloSearchPage({
           },
           (error) => {
             console.error('Geolocation error:', error);
-            if (!isInitialLoad) {
+            // Show toast even on initial load if it's a PERMISSION_DENIED
+            // Use translation keys with fallback
+            if (error.code === error.PERMISSION_DENIED) {
+              toast({
+                title: t('search.geoPermissionDeniedTitle', 'Standortzugriff verweigert'),
+                description: t('search.geoPermissionDeniedDesc', 'Bitte erlauben Sie den Standortzugriff, um lokale Ergebnisse zu sehen.'),
+                variant: 'destructive',
+              });
+            } else if (!isInitialLoad) {
               toast({
                 title: t('search.geoErrorTitle'),
                 description: t('search.geoErrorDesc'),

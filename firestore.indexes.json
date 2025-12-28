@@ -1,0 +1,23 @@
+{
+    "indexes": [
+        {
+            "collectionGroup": "freelancer_links",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
+                    "fieldPath": "freelancerId",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "campaignId",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "createdAt",
+                    "order": "ASCENDING"
+                }
+            ]
+        }
+    ],
+    "fieldOverrides": []
+}

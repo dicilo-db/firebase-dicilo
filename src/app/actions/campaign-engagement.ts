@@ -105,7 +105,8 @@ export async function processCampaignPost(
 
                 // Analytics
                 clickCount: 0,
-                targetUrl: campaignData?.targetUrl || 'https://dicilo.net', // Fallback
+                // Select language-specific URL if available, otherwise fallback to main URL
+                targetUrl: (campaignData?.[`url_${postLanguage}`] as string) || campaignData?.targetUrl || 'https://dicilo.net',
 
                 createdAt: admin.firestore.FieldValue.serverTimestamp()
             });

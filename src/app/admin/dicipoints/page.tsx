@@ -601,6 +601,50 @@ export default function DicipointsControlCenter() {
                     </CardContent>
                 </Card>
 
+                {/* System Maintenance (Migration) */}
+                <Card className="border-orange-200 shadow-sm">
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                            <RefreshCw className="h-5 w-5 text-orange-600" /> Maintenance & Migration
+                        </CardTitle>
+                        <CardDescription>System-wide data patching and normalization tools.</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <div className="p-3 bg-orange-50 border border-orange-100 rounded text-xs text-orange-800">
+                            <strong>Warning:</strong> These operations affect thousands of records. Use with caution.
+                        </div>
+                        <div className="space-y-2">
+                            <Label>Legacy Users Data Patch</Label>
+                            <p className="text-xs text-muted-foreground">
+                                Assigns unique codes (EMDC/DCL) and system referrers to orphaned legacy users.
+                            </p>
+                            <Button
+                                className="w-full bg-orange-600 hover:bg-orange-700"
+                                onClick={async () => {
+                                    const confirm = window.confirm("Are you sure you want to run the Legacy Migration? This will update ALL users without codes.");
+                                    if (!confirm) return;
+
+                                    try {
+                                        toast({ title: "Migration Started", description: "Processing batches in background..." });
+                                        const res = await fetch('/api/admin/migration/legacy-users', { method: 'POST' });
+                                        const data = await res.json();
+
+                                        if (data.success) {
+                                            toast({ title: "Migration Complete", description: data.message, duration: 5000 });
+                                        } else {
+                                            toast({ title: "Migration Failed", description: data.error, variant: "destructive" });
+                                        }
+                                    } catch (e: any) {
+                                        toast({ title: "Error", description: e.message || "Failed to trigger migration", variant: "destructive" });
+                                    }
+                                }}
+                            >
+                                <RefreshCw className="mr-2 h-4 w-4" /> Run Legacy Migration (Data Patching)
+                            </Button>
+                        </div>
+                    </CardContent>
+                </Card>
+
                 {/* History & Report (New) */}
                 <Card className="border-cyan-200 shadow-sm col-span-1 md:col-span-2">
                     <CardHeader>

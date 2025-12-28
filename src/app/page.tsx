@@ -1,26 +1,42 @@
 // src/app/page.tsx
-import { getFirestore, collection, getDocs, query } from 'firebase/firestore';
-import { app } from '@/lib/firebase';
+import { getAdminDb } from '@/lib/firebase-admin';
 import type { Business } from '@/components/dicilo-search-page';
 import DiciloSearchPage from '@/components/dicilo-search-page';
+import { headers } from 'next/headers';
 
 export const dynamic = 'force-dynamic';
+
+// Helper to reliably extract coordinates from mixed Firestore data types
+function extractCoords(data: any): [number, number] | undefined {
+  if (!data?.coords) return undefined;
+
+  const c = data.coords;
+
+  // 1. Array [lat, lng]
+  if (Array.isArray(c) && c.length === 2) {
+    const lat = Number(c[0]);
+    const lng = Number(c[1]);
+    if (!isNaN(lat) && !isNaN(lng)) return [lat, lng];
+  }
+
+  // 2. Object with latitude/longitude (Standard GeoPoint or Plain Object)
+  // Admin SDK sometimes exposes _latitude/_longitude internal props
+  const lat = c.latitude ?? c._latitude;
+  const lng = c.longitude ?? c._longitude;
+
+  if (lat !== undefined && lng !== undefined) {
+    const nLat = Number(lat);
+    const nLng = Number(lng);
+    if (!isNaN(nLat) && !isNaN(nLng)) return [nLat, nLng];
+  }
+
+  return undefined;
+}
 
 function serializeBusiness(docId: string, data: any): Business {
   let imageUrl = data.clientLogoUrl || data.imageUrl;
   if (!imageUrl || imageUrl.includes('1024terabox.com')) {
     imageUrl = `https://placehold.co/128x128.png`;
-  }
-
-  // Ensure coords is a simple array of numbers or undefined
-  let coords: [number, number] | undefined = undefined;
-  if (data.coords) {
-    if (Array.isArray(data.coords) && data.coords.length === 2) {
-      coords = [Number(data.coords[0]), Number(data.coords[1])];
-    } else if (typeof data.coords === 'object' && 'latitude' in data.coords && 'longitude' in data.coords) {
-      // Handle Firestore GeoPoint if it comes back as an object
-      coords = [data.coords.latitude, data.coords.longitude];
-    }
   }
 
   // Return only fields defined in Business interface (no timestamps)
@@ -32,7 +48,7 @@ function serializeBusiness(docId: string, data: any): Business {
     location: data.location || '',
     imageUrl: imageUrl,
     imageHint: data.imageHint || '',
-    coords: coords,
+    coords: extractCoords(data),
     address: data.address || '',
     phone: data.phone || '',
     website: data.website || '',
@@ -44,9 +60,6 @@ function serializeBusiness(docId: string, data: any): Business {
     rating: typeof data.rating === 'number' ? data.rating : undefined,
   };
 }
-
-
-import { headers } from 'next/headers';
 
 // Types for Geolocation
 interface UserGeo {
@@ -63,17 +76,8 @@ async function getUserGeo(): Promise<UserGeo | null> {
   const xForwardedFor = headersList.get('x-forwarded-for');
   const ip = xForwardedFor ? xForwardedFor.split(',')[0] : '127.0.0.1';
 
-  // Check for mock parameter in development
-  // Note: manipulating headers for dev testing or just rely on default 127.0.0.1
-  // Real implementation calls ip-api.com
-
   if (ip === '127.0.0.1' || ip === '::1') {
-    // Default Localhost Fallback (Hamburg for testing purposes, or empty)
-    // To test "Berlin User", we would need to manually mock this return here during verification.
-    // For now, let's look for a specialized header or just return a default safety.
-
-    // [VERIFICATION HOOK] Uncomment to mock locations
-    // return { ip, city: 'Berlin', country: 'Germany', lat: 52.52, lon: 13.405, continent: 'Europa' };
+    // Default Localhost Fallback
     return null;
   }
 
@@ -82,9 +86,6 @@ async function getUserGeo(): Promise<UserGeo | null> {
     const response = await fetch(`http://ip-api.com/json/${ip}?fields=status,message,country,city,lat,lon,timezone`, { cache: 'no-store' });
     const data = await response.json();
     if (data.status === 'success') {
-      // Infer continent from timezone roughly or map countries. 
-      // For now, we will just use Country/City.
-      // A robust system would map country codes to Continents.
       let continent = 'Europa'; // Defaulting to Europa for this context as it's a German app.
       if (data.timezone.startsWith('America/')) continent = 'North America'; // Simplified
       if (data.timezone.startsWith('Asia/')) continent = 'Asia';
@@ -120,64 +121,44 @@ function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: numbe
 
 
 async function getBusinesses(): Promise<{ businesses: Business[], clientsRaw: any[] }> {
-  const db = getFirestore(app);
-  // console.log('Fetching businesses on server...');
   try {
+    const db = getAdminDb();
 
-    // Fetch from both collections in parallel with error handling
-    const businessesCol = collection(db, 'businesses');
-    const clientsCol = collection(db, 'clients');
-
-    const [businessResult, clientResult] = await Promise.allSettled([
-      getDocs(query(businessesCol)),
-      getDocs(query(clientsCol))
+    // Fetch from both collections in parallel
+    const [businessSnap, clientSnap] = await Promise.all([
+      db.collection('businesses').get(),
+      db.collection('clients').get()
     ]);
 
-    const businesses = businessResult.status === 'fulfilled'
-      ? businessResult.value.docs
-        .filter((doc) => doc.data().active !== false)
-        .map((doc) => serializeBusiness(doc.id, doc.data()))
-      : [];
+    const businesses = businessSnap.docs
+      .filter((doc) => doc.data().active !== false)
+      .map((doc) => serializeBusiness(doc.id, doc.data()));
 
-    if (businessResult.status === 'rejected') {
-      console.error('Error fetching businesses:', businessResult.reason);
-    }
+    const clients = clientSnap.docs
+      .filter((doc) => doc.data().active !== false)
+      .map((doc) => serializeBusiness(doc.id, doc.data()));
 
-    const clients = clientResult.status === 'fulfilled'
-      ? clientResult.value.docs
-        .filter((doc) => doc.data().active !== false)
-        .map((doc) => serializeBusiness(doc.id, doc.data()))
-      : [];
-
-    if (clientResult.status === 'rejected') {
-      console.error('Error fetching clients:', clientResult.reason);
-    }
-
-    // Merge and deduplicate by ID
-    // Extract raw client data for budget checking (preserving budget_remaining)
-    const clientsRawData = clientResult.status === 'fulfilled'
-      ? clientResult.value.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
-      : [];
+    // Extract raw client data for budget checking
+    const clientsRawData = clientSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 
     // Merge and deduplicate by ID
     const allBusinesses = [...businesses, ...clients];
-    // Deep sanitize businesses to ensure no non-serializable objects (like Timestamps) leak through
+
+    // Deep sanitize to ensure no non-serializable objects leak
     return {
       businesses: JSON.parse(JSON.stringify(allBusinesses)),
       clientsRaw: clientsRawData
     };
   } catch (error) {
-    console.error('Error fetching businesses on server:', error);
+    console.error('Error fetching businesses on server (Admin SDK):', error);
     return { businesses: [], clientsRaw: [] };
   }
 }
 
 async function getAds(clientsRaw: any[], businesses: Business[], userGeo: UserGeo | null) {
-  const db = getFirestore(app);
   try {
-    const adsCol = collection(db, 'ads_banners');
-    const q = query(adsCol);
-    const snapshot = await getDocs(q);
+    const db = getAdminDb();
+    const snapshot = await db.collection('ads_banners').get();
 
     const clientMap = new Map(clientsRaw.map((c: any) => [c.id, c]));
     const businessMap = new Map(businesses.map((b) => [b.id, b]));
@@ -189,26 +170,22 @@ async function getAds(clientsRaw: any[], businesses: Business[], userGeo: UserGe
 
       let coords: [number, number] | undefined = undefined;
 
-      // Try getting coords from Client (Raw)
-      if (client && client.coords) {
-        if (Array.isArray(client.coords) && client.coords.length === 2) {
-          coords = [Number(client.coords[0]), Number(client.coords[1])];
-        } else if (client.coords.latitude !== undefined && client.coords.longitude !== undefined) {
-          coords = [Number(client.coords.latitude), Number(client.coords.longitude)];
-        }
+      // 1. Try getting coords from Client (Raw)
+      if (client) {
+        coords = extractCoords(client);
       }
 
-      // Fallback: Try getting coords from Business (Sanitized)
-      if (!coords && business && business.coords) {
-        coords = business.coords;
+      // 2. Fallback: Try getting coords from Business (Sanitized)
+      if (!coords && business) {
+        coords = business.coords; // Business is already sanitized with extractCoords
       }
 
-      // Fallback 2: Match by Name
+      // 3. Fallback: Match by Name in Businesses
       if (!coords && data.title) {
         const normalizedTitle = data.title.toLowerCase().trim();
         const matchedBusiness = businesses.find(b =>
           b.name.toLowerCase().trim() === normalizedTitle ||
-          b.name.toLowerCase().trim().includes(normalizedTitle) && normalizedTitle.length > 5
+          (b.name.toLowerCase().trim().includes(normalizedTitle) && normalizedTitle.length > 5)
         );
         if (matchedBusiness && matchedBusiness.coords) {
           coords = matchedBusiness.coords;
@@ -240,12 +217,12 @@ async function getAds(clientsRaw: any[], businesses: Business[], userGeo: UserGe
         }
       }
 
-      // [3] Geographic Filtering (New)
+      // [3] Geographic Filtering
       if (userGeo && ad.reach_config) {
         const { type, value } = ad.reach_config;
         const radius = value?.radius_km || 50;
 
-        // Safety: if tracking enabled but user IP failed, we default to SHOW (per request)
+        // If User Geo failed, show all ads (Fail Open) to ensure visibility
         if (!userGeo.lat && !userGeo.city) return true;
 
         if (type === 'local' && ad.coords && userGeo.lat && userGeo.lon) {
@@ -254,17 +231,10 @@ async function getAds(clientsRaw: any[], businesses: Business[], userGeo: UserGe
         }
 
         if (type === 'regional' && userGeo.city) {
-          // If ad has specific city target, use it. Otherwise imply Business City.
-          // NOTE: Logic here assumes if type is regional, the business only wants to show to THEIR city.
-          // We'd ideally take the business city from the map, but it's not always in 'city' field. 
-          // We can approximate by checking if User City is contained in Business Address or Location string if available.
-          // For this implementation, we will trust the `city` field in reach_config if it exists, otherwise skip (show).
           if (value?.city && value.city.toLowerCase() !== userGeo.city.toLowerCase()) return false;
         }
 
         if (type === 'national' && userGeo.country) {
-          // Default to business country if ad config missing? 
-          // Assuming Ads Manager saves the country in `value.country`
           if (value?.country && value.country.toLowerCase() !== userGeo.country.toLowerCase()) return false;
         }
 
@@ -279,7 +249,7 @@ async function getAds(clientsRaw: any[], businesses: Business[], userGeo: UserGe
 
     return JSON.parse(JSON.stringify(ads));
   } catch (error) {
-    console.error('Error fetching ads:', error);
+    console.error('Error fetching ads (Admin SDK):', error);
     return [];
   }
 }
@@ -317,4 +287,3 @@ export default async function SearchPage({ searchParams }: { searchParams: { [ke
     </main>
   );
 }
-
