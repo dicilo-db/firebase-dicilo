@@ -10,6 +10,13 @@
       "language": "Sprache"
     }
   },
+  "dashboard": {
+    "promo": {
+      "estimatedEarnings": "Geschätzter Gewinn",
+      "trafficBonus": "Traffic-Bonus",
+      "unlockBasePay": "Schreiben Sie noch {{chars}} Zeichen, um die Grundvergütung freizuschalten."
+    }
+  },
   "footer": {
     "imprint": "Impressum",
     "privacy": "Datenschutz",

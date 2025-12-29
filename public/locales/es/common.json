@@ -10,6 +10,13 @@
       "language": "Idioma"
     }
   },
+  "dashboard": {
+    "promo": {
+      "estimatedEarnings": "Ganancia Estimada",
+      "trafficBonus": "Bono Tráfico",
+      "unlockBasePay": "Escribe {{chars}} más caracteres para desbloquear el pago base."
+    }
+  },
   "footer": {
     "imprint": "Aviso legal",
     "privacy": "Privacidad",

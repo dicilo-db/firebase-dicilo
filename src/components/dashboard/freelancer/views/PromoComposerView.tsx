@@ -699,11 +699,11 @@ export function PromoComposerView() {
 
                     {/* NEW PROFIT DISPLAY BELOW PHONE */}
                     <div className="mt-8 w-full max-w-[320px] bg-white dark:bg-slate-900 rounded-xl p-5 shadow-lg border border-slate-100 dark:border-slate-800 animate-in slide-in-from-bottom-4 duration-700 delay-200 shrink-0 mb-8 relative overflow-hidden">
-                        <div className="font-semibold text-slate-800 dark:text-slate-200 mb-2">Ganancia Estimada</div>
+                        <div className="font-semibold text-slate-800 dark:text-slate-200 mb-2">{t('dashboard.promo.estimatedEarnings', 'Ganancia Estimada')}</div>
                         <div className="flex items-center gap-3 mb-4">
                             <span className="text-4xl font-bold text-[#16a34a] tracking-tight">€{currentTier.rate.toFixed(2)}</span>
                             <Badge variant="secondary" className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100 border-yellow-200 px-2 py-0.5 text-xs font-bold shadow-sm">
-                                + €0.10 Bono Tráfico
+                                + €0.10 {t('dashboard.promo.trafficBonus', 'Bono Tráfico')}
                             </Badge>
                         </div>
 
@@ -711,8 +711,11 @@ export function PromoComposerView() {
                             <div className="h-full bg-[#16a34a] transition-all duration-500" style={{ width: `${Math.min((currentText.length / 600) * 100, 100)}%` }}></div>
                         </div>
                         <p className="text-xs text-slate-500 font-medium">
-                            {currentText.length < 300 ? `Escribe ${(300 - currentText.length)} más car. para desbloquear el pago base.` :
-                                currentText.length < 600 ? `¡Buen trabajo! Escribe ${(600 - currentText.length)} más para maximizar a €0.40.` : "¡Excelente! Has maximizado tu tarifa base."}
+                            {currentText.length < 300
+                                ? t('dashboard.promo.unlockBasePay', { chars: (300 - currentText.length), defaultValue: `Escribe ${(300 - currentText.length)} más car. para desbloquear el pago base.` })
+                                : currentText.length < 600
+                                    ? `¡Buen trabajo! Escribe ${(600 - currentText.length)} más para maximizar a €0.40.`
+                                    : "¡Excelente! Has maximizado tu tarifa base."}
                         </p>
                     </div>
                 </div>

@@ -10,6 +10,13 @@
       "language": "Language"
     }
   },
+  "dashboard": {
+    "promo": {
+      "estimatedEarnings": "Estimated Earnings",
+      "trafficBonus": "Traffic Bonus",
+      "unlockBasePay": "Write {{chars}} more characters to unlock base pay."
+    }
+  },
   "footer": {
     "imprint": "Imprint",
     "privacy": "Privacy Policy",
