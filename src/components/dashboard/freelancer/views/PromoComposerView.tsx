@@ -714,8 +714,8 @@ export function PromoComposerView() {
                             {currentText.length < 300
                                 ? t('dashboard.promo.unlockBasePay', { chars: (300 - currentText.length), defaultValue: `Escribe ${(300 - currentText.length)} más car. para desbloquear el pago base.` })
                                 : currentText.length < 600
-                                    ? `¡Buen trabajo! Escribe ${(600 - currentText.length)} más para maximizar a €0.40.`
-                                    : "¡Excelente! Has maximizado tu tarifa base."}
+                                    ? t('dashboard.promo.maximizeEarnings', { chars: (600 - currentText.length), defaultValue: `¡Buen trabajo! Escribe ${(600 - currentText.length)} más para maximizar a €0.40.` })
+                                    : t('dashboard.promo.earningsMaximized', { defaultValue: "¡Excelente! Has maximizado tu tarifa base." })}
                         </p>
                     </div>
                 </div>

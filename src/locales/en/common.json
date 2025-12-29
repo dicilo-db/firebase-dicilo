@@ -275,7 +275,9 @@
     "promo": {
       "estimatedEarnings": "Estimated Earnings",
       "trafficBonus": "Traffic Bonus",
-      "unlockBasePay": "Write {{chars}} more characters to unlock base pay."
+      "unlockBasePay": "Write {{chars}} more characters to unlock base pay.",
+      "maximizeEarnings": "Good job! Write {{chars}} more to maximize to €0.40.",
+      "earningsMaximized": "Excellent! You have maximized your base rate."
     },
     "myArea": "My Area",
     "welcome": "Welcome!",

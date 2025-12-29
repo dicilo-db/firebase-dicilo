@@ -108,7 +108,9 @@
     "promo": {
       "estimatedEarnings": "Ganancia Estimada",
       "trafficBonus": "Bono Tráfico",
-      "unlockBasePay": "Escribe {{chars}} más caracteres para desbloquear el pago base."
+      "unlockBasePay": "Escribe {{chars}} más caracteres para desbloquear el pago base.",
+      "maximizeEarnings": "¡Buen trabajo! Escribe {{chars}} más para maximizar a €0.40.",
+      "earningsMaximized": "¡Excelente! Has maximizado tu tarifa base."
     },
     "myArea": "Mi Área",
     "welcome": "¡Bienvenido!",

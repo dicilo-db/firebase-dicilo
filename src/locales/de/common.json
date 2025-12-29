@@ -289,7 +289,9 @@
     "promo": {
       "estimatedEarnings": "Geschätzter Gewinn",
       "trafficBonus": "Traffic-Bonus",
-      "unlockBasePay": "Schreiben Sie noch {{chars}} Zeichen, um die Grundvergütung freizuschalten."
+      "unlockBasePay": "Schreiben Sie noch {{chars}} Zeichen, um die Grundvergütung freizuschalten.",
+      "maximizeEarnings": "Gut gemacht! Schreiben Sie noch {{chars}}, um auf 0,40 € zu erhöhen.",
+      "earningsMaximized": "Ausgezeichnet! Sie haben Ihren Basistarif maximiert."
     },
     "myArea": "Mein Bereich",
     "welcome": "Willkommen!",
