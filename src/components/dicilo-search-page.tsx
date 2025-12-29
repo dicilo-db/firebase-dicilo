@@ -670,7 +670,7 @@ export default function DiciloSearchPage({
 
                 const DebugBadge = () => (
                   <div className="absolute top-0 right-0 z-50 bg-red-600 text-white text-[10px] px-1 font-mono opacity-90 pointer-events-none rounded-bl-md flex flex-col items-end">
-                    <span>{distDisplay || 'N/A'} | #{idx}</span>
+                    <span>{distDisplay || 'N/A'}</span>
                     {debugInfo && <span className="text-[9px] bg-black px-1">{debugInfo}</span>}
                   </div>
                 );
