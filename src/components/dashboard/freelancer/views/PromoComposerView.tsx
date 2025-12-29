@@ -118,7 +118,8 @@ export function PromoComposerView() {
             if (campaign) {
                 setGeneratedLink(`https://dicilo.net/r/${campaign.id?.substring(0, 8)}`);
                 setActiveCampaign(campaign);
-                setTexts(prev => ({ ...prev, es: campaign.description || '' }));
+                // BLANK CANVAS RULE: Do not pre-fill text. Start empty.
+                // setTexts(prev => ({ ...prev, es: campaign.description || '' }));
                 setSelectedImageIndex(0);
                 setVisibleImagesCount(8);
             }
@@ -138,6 +139,24 @@ export function PromoComposerView() {
         }
         loadData();
     }, [campaignId, user]);
+
+    // POLYMORPHIC TRACKING: Update link when language changes
+    useEffect(() => {
+        if (!activeCampaign) return;
+
+        // Strategy:
+        // 1. Check if campaign has explicit tracking ID for this language.
+        // 2. If not, AUTO-GENERATE one by appending the language code to the legacy ID.
+        // This ensures the user ALWAYS sees a language-specifc link (e.g. ..._ES)
+
+        const legacyId = activeCampaign.id?.substring(0, 8) || 'campaign';
+        const specificTrackingId = activeCampaign.tracking_ids?.[activeLangTab];
+
+        // Fallback: Generate one like "xc90_es"
+        const generatedId = specificTrackingId || `${legacyId}_${activeLangTab.toUpperCase()}`;
+
+        setGeneratedLink(`https://dicilo.net/r/${generatedId}`);
+    }, [activeCampaign, activeLangTab]);
 
     const handleCorrectGrammar = async () => {
         const textToCorrect = texts[activeLangTab];
@@ -234,8 +253,8 @@ export function PromoComposerView() {
             }
 
             const reward = (result as any).reward;
-            const linkId = (result as any).linkId || 'ref';
-            const trackingLink = `https://dicilo.net/r/${linkId}`;
+            // Use generatedLink (Polymorphic) instead of backend returned linkId
+            const trackingLink = generatedLink;
 
             const message = `${currentText}\n\n${trackingLink} #${activeCampaign.companyName.replace(/[^a-zA-Z0-9]/g, '')}`;
             window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
@@ -418,7 +437,11 @@ export function PromoComposerView() {
                                 <div className="mt-auto pt-4 border-t">
 
                                     <div className="grid grid-cols-[auto_1fr] gap-3 items-center">
-                                        <Button onClick={handleWhatsAppShare} disabled={isSharing} className="h-10 bg-[#25D366] hover:bg-[#25D366]/90 text-white font-bold shadow-sm px-6 whitespace-nowrap">
+                                        <Button
+                                            onClick={handleWhatsAppShare}
+                                            disabled={isSharing || currentText.length < 10}
+                                            className="h-10 bg-[#25D366] hover:bg-[#25D366]/90 text-white font-bold shadow-sm px-6 whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
+                                        >
                                             {isSharing ? <Loader2 className="animate-spin mr-2 h-4 w-4" /> : <MessageCircle className="mr-2 h-4 w-4" />}
                                             Compartir en WhatsApp
                                         </Button>

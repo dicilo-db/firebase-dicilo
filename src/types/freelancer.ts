@@ -25,6 +25,7 @@ export interface Campaign {
     // Content & I18n
     default_language: string;
     translations: { [langCode: string]: CampaignTranslation };
+    tracking_ids?: { [langCode: string]: string };
 
     // Legacy/Display fields (can be populated from default translation)
     title: string;

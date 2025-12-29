@@ -31,16 +31,23 @@ export async function getFreelancerStats(userId: string): Promise<{ success: boo
         const actionsSnap = await db.collection('user_campaign_actions')
             .where('userId', '==', userId)
             // .where('isPublished', '==', true) // assuming we only count published/valid actions
-            .orderBy('created_at', 'desc')
+            // .orderBy('created_at', 'desc') // Removed to avoid composite index requirement
             .get();
+
+        // Sorting in memory
+        const docs = actionsSnap.docs.sort((a, b) => {
+            const dateA = a.data().created_at?.toDate()?.getTime() || 0;
+            const dateB = b.data().created_at?.toDate()?.getTime() || 0;
+            return dateB - dateA; // Descending
+        });
 
         let totalEarnings = 0;
         let totalPosts = 0;
         const totalClicks = 0; // If we track clicks separately, query them here. For now 0 or derived.
-        const campaignMap = new Map<string, { earnings: number, posts: number, name: string }>();
+        const campaignMap = new Map<string, { earnings: number, posts: number, campaignName: string }>();
         const recentTransactions: Transaction[] = [];
 
-        actionsSnap.forEach(doc => {
+        docs.forEach(doc => {
             const data = doc.data();
             const amount = data.rewardAmount || 0; // Use the stored user reward, NOT campaign total
 
@@ -50,13 +57,13 @@ export async function getFreelancerStats(userId: string): Promise<{ success: boo
             // Group by Campaign
             const cId = data.campaignId;
             if (!campaignMap.has(cId)) {
-                campaignMap.set(cId, { earnings: 0, posts: 0, name: data.companyName || 'Unknown' });
+                campaignMap.set(cId, { earnings: 0, posts: 0, campaignName: data.companyName || 'Unknown' });
             }
             const current = campaignMap.get(cId)!;
             current.earnings += amount;
             current.posts += 1;
             // Update name just in case
-            if (data.companyName) current.name = data.companyName;
+            if (data.companyName) current.campaignName = data.companyName;
 
             // Mock Transactions from actions (Active earning history)
             if (recentTransactions.length < 10) {

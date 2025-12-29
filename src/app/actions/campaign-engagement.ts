@@ -31,11 +31,20 @@ export async function processCampaignPost(
 
             const linksQuery = db.collection('freelancer_links')
                 .where('freelancerId', '==', userId)
-                .where('campaignId', '==', campaignId)
-                .where('createdAt', '>=', admin.firestore.Timestamp.fromDate(todayStart));
+                .where('campaignId', '==', campaignId);
 
-            const dailyLinks = await t.get(linksQuery);
-            if (dailyLinks.size >= 10) {
+            // OPTIMIZATION: Filter by date in memory to avoid "FAILED_PRECONDITION" (Composite Index Requirement)
+            // Since max posts is 10/day, fetching all campaign links for this user is manageable, 
+            // or we could limit to last 50 and check date. 
+            // For now, fetching all for this campaign-user pair is safe given the scale (1user-1campaign).
+            const allLinksSnapshot = await t.get(linksQuery);
+
+            const dailyLinksCount = allLinksSnapshot.docs.filter(doc => {
+                const data = doc.data();
+                return data.createdAt && data.createdAt.toDate() >= todayStart;
+            }).length;
+
+            if (dailyLinksCount >= 10) {
                 throw new Error("Has alcanzado tu límite diario de 10 posts para esta campaña.");
             }
 
