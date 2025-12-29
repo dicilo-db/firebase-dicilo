@@ -13,6 +13,7 @@ export interface Ticket {
     module: string; // Added module
     status: 'open' | 'in_progress' | 'closed';
     priority: 'low' | 'medium' | 'high';
+    attachments?: string[]; // Added attachments
     createdAt: any;
     updatedAt: any;
     messages?: TicketMessage[];
@@ -34,6 +35,7 @@ export async function createTicket(data: {
     description: string;
     module: string; // Added module
     priority: 'low' | 'medium' | 'high';
+    attachments?: string[]; // Added attachments
 }) {
     try {
         if (!data.uid) return { success: false, error: 'Unauthorized' };
@@ -41,6 +43,7 @@ export async function createTicket(data: {
         const ticketData = {
             ...data,
             status: 'open',
+            attachments: data.attachments || [],
             createdAt: admin.firestore.FieldValue.serverTimestamp(),
             updatedAt: admin.firestore.FieldValue.serverTimestamp(),
             messages: []

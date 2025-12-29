@@ -25,6 +25,7 @@ export default function CreateTicketPage() {
     const [module, setModule] = useState('general'); // Default to general
     const [description, setDescription] = useState('');
     const [priority, setPriority] = useState<'low' | 'medium' | 'high'>('medium');
+    const [attachment, setAttachment] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -40,7 +41,8 @@ export default function CreateTicketPage() {
                 title,
                 module, // Pass module
                 description,
-                priority
+                priority,
+                attachments: attachment ? [attachment] : []
             });
 
             if (result.success) {
@@ -134,7 +136,6 @@ export default function CreateTicketPage() {
                                 </SelectContent>
                             </Select>
                         </div>
-
                         <div className="space-y-2">
                             <Label htmlFor="description">{t('tickets.description')}</Label>
                             <Textarea
@@ -145,6 +146,62 @@ export default function CreateTicketPage() {
                                 rows={5}
                                 placeholder="Describe the issue in detail..."
                             />
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="attachment">{t('tickets.attachment', 'Anhang (Optional)')}</Label>
+                            <div className="flex items-center gap-4">
+                                <Input
+                                    id="attachment"
+                                    type="file"
+                                    accept=".jpg,.jpeg,.png"
+                                    onChange={async (e) => {
+                                        const file = e.target.files?.[0];
+                                        if (!file) return;
+
+                                        // Max 5MB
+                                        if (file.size > 5 * 1024 * 1024) {
+                                            toast({
+                                                title: t('common:error'),
+                                                description: t('tickets.fileTooLarge', 'Datei ist zu groß (Max 5MB)'),
+                                                variant: "destructive"
+                                            });
+                                            return;
+                                        }
+
+                                        setIsSubmitting(true);
+                                        try {
+                                            const formData = new FormData();
+                                            formData.append('file', file);
+                                            formData.append('path', `tickets/${user?.uid}/${Date.now()}_${file.name}`);
+
+                                            // Dynamic import to avoid server action issues in client component if not handled well, 
+                                            // though standard import works for server actions usually.
+                                            // Using standard import as per Next.js App Router patterns.
+                                            const { uploadImage } = await import('@/app/actions/upload');
+
+                                            const res = await uploadImage(formData);
+                                            if (res.success && res.url) {
+                                                setAttachment(res.url);
+                                                toast({ title: t('common:success'), description: t('tickets.uploadSuccess', 'Datei hochgeladen') });
+                                            } else {
+                                                toast({ title: t('common:error'), description: res.error, variant: "destructive" });
+                                            }
+                                        } catch (error) {
+                                            console.error(error);
+                                            toast({ title: t('common:error'), description: t('tickets.uploadError', 'Fehler beim Hochladen'), variant: "destructive" });
+                                        } finally {
+                                            setIsSubmitting(false);
+                                        }
+                                    }}
+                                />
+                                {attachment && (
+                                    <span className="text-xs text-green-600 font-medium overflow-hidden max-w-[200px] truncate">
+                                        {t('tickets.fileAttached', 'Angehängt')}
+                                    </span>
+                                )}
+                            </div>
+                            <p className="text-[10px] text-muted-foreground">Supported: JPG, PNG (Max 5MB)</p>
                         </div>
 
                         <Button type="submit" className="w-full" disabled={isSubmitting}>
@@ -160,6 +217,6 @@ export default function CreateTicketPage() {
                     </form>
                 </CardContent>
             </Card>
-        </div>
+        </div >
     );
 }

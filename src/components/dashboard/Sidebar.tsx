@@ -89,15 +89,19 @@ export function Sidebar({ userData, onViewChange, currentView }: SidebarProps) {
         return "Bronze";
     };
 
-    // Calculate approximate level based on totalEarned if available, else 0
-    // We will need to pass this data down. Assuming userData has wallet info or we fetch it.
-    // For now, mocking or using safe default.
-    const userLevel = "Member";
-
-
     // Determine role (fallback to isFreelancer legacy)
     const role = userData?.role || (userData?.isFreelancer ? 'freelancer' : 'user');
     const permissions = userData?.permissions || [];
+
+    // Map role to display string
+    const roleDisplayMap: Record<string, string> = {
+        'superadmin': 'SuperAdmin',
+        'admin': 'Admin',
+        'team_office': 'Team Office',
+        'freelancer': 'Freelancer',
+        'user': 'Member'
+    };
+    const userLevel = roleDisplayMap[role] || 'Member';
 
     // Permission Helpers
     const hasPermission = (perm: string) => permissions.includes(perm);
