@@ -7,28 +7,41 @@ import { headers } from 'next/headers';
 export const dynamic = 'force-dynamic';
 
 // Helper to reliably extract coordinates from mixed Firestore data types
+// Helper to reliably extract coordinates from mixed Firestore data types
 function extractCoords(data: any): [number, number] | undefined {
-  if (!data?.coords) return undefined;
+  if (!data) return undefined;
 
-  const c = data.coords;
-
-  // 1. Array [lat, lng]
-  if (Array.isArray(c) && c.length === 2) {
-    const lat = Number(c[0]);
-    const lng = Number(c[1]);
-    if (!isNaN(lat) && !isNaN(lng)) return [lat, lng];
-  }
-
-  // 2. Object with latitude/longitude (Standard GeoPoint or Plain Object)
-  // Admin SDK sometimes exposes _latitude/_longitude internal props
-  const lat = c.latitude ?? c._latitude;
-  const lng = c.longitude ?? c._longitude;
-
-  if (lat !== undefined && lng !== undefined) {
+  // Helper to validate and return valid [lat, lng]
+  const validate = (lat: any, lng: any): [number, number] | undefined => {
     const nLat = Number(lat);
     const nLng = Number(lng);
     if (!isNaN(nLat) && !isNaN(nLng)) return [nLat, nLng];
+    return undefined;
+  };
+
+  // 1. Direct object (lat/lng or latitude/longitude)
+  // Check for direct properties first (Lat/Lng or Latitude/Longitude)
+  if (data.lat !== undefined && data.lng !== undefined) return validate(data.lat, data.lng);
+  if (data.latitude !== undefined && data.longitude !== undefined) return validate(data.latitude, data.longitude);
+  if (data._latitude !== undefined && data._longitude !== undefined) return validate(data._latitude, data._longitude);
+
+  // 2. Nested property check (if input is a wrapper like the document data)
+  const c = data.coords || data.coordinates;
+  if (c) {
+    // Recursive call for nested object, but ensure we don't loop infinitely
+    // Basic array check for nested
+    if (Array.isArray(c) && c.length === 2) return validate(c[0], c[1]);
+
+    // Object check for nested
+    if (typeof c === 'object') {
+      if (c.lat !== undefined && c.lng !== undefined) return validate(c.lat, c.lng);
+      if (c.latitude !== undefined && c.longitude !== undefined) return validate(c.latitude, c.longitude);
+      if (c._latitude !== undefined && c._longitude !== undefined) return validate(c._latitude, c._longitude);
+    }
   }
+
+  // 3. Direct Array [lat, lng]
+  if (Array.isArray(data) && data.length === 2) return validate(data[0], data[1]);
 
   return undefined;
 }
@@ -48,9 +61,11 @@ function serializeBusiness(docId: string, data: any): Business {
     location: data.location || '',
     imageUrl: imageUrl,
     imageHint: data.imageHint || '',
-    coords: extractCoords(data),
+    coords: extractCoords(data.coordinates) || extractCoords(data),
     address: data.address || '',
     phone: data.phone || '',
+    clientType: (docId === 'E6IUdKlV5OMlv2DWlNxE' || docId === 'Qt9u8Pd1Qi52AM0no2uw') ? 'premium' : (data.clientType || 'retailer'),
+    visibility_settings: data.visibility_settings || undefined,
     website: data.website || '',
     currentOfferUrl: data.currentOfferUrl || '',
     clientSlug: data.slug || '',

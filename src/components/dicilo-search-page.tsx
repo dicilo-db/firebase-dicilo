@@ -45,6 +45,12 @@ export interface Business {
   currentOfferUrl?: string;
   clientSlug?: string;
   mapUrl?: string;
+  clientType?: 'retailer' | 'premium' | 'starter';
+  visibility_settings?: {
+    active_range: 'local' | 'regional' | 'national' | 'continental' | 'international';
+    geo_coordinates?: { lat: number; lng: number };
+    allowed_continents?: string[];
+  };
 }
 
 export interface Ad {
@@ -449,28 +455,32 @@ export default function DiciloSearchPage({
     const result: any[] = [];
     let adIndex = 0;
 
+    // 1. Start with 2 Nearest Ads (Priority)
+    // Always inject the first 1 or 2 ads at the very top if available
+    if (adIndex < sortedAds.length) {
+      result.push({ type: 'ad', data: sortedAds[adIndex] });
+      adIndex++;
+    }
+    if (adIndex < sortedAds.length) {
+      result.push({ type: 'ad', data: sortedAds[adIndex] });
+      adIndex++;
+    }
+
+    // 2. Interleave Businesses and remaining Ads
     filteredBusinesses.forEach((business, index) => {
       result.push({ type: 'business', data: business });
 
-      // Inject 2 ads every 10 businesses
-      if ((index + 1) % 10 === 0 && sortedAds.length > 0) {
-
-        // First Ad
-        const ad1 = sortedAds[adIndex % sortedAds.length];
-
-        // Ensure we don't crash and add valid ad
-        if (ad1) {
-          result.push({ type: 'ad', data: ad1 });
+      // After every 10 businesses, inject the next 2 ads
+      if ((index + 1) % 10 === 0) {
+        // First Ad of the block
+        if (adIndex < sortedAds.length) {
+          result.push({ type: 'ad', data: sortedAds[adIndex] });
           adIndex++;
         }
-
-        // Second Ad - Try to pick a NEXT one that is different if possible
-        if (sortedAds.length > 1) {
-          const ad2 = sortedAds[adIndex % sortedAds.length];
-          if (ad2) {
-            result.push({ type: 'ad', data: ad2 });
-            adIndex++;
-          }
+        // Second Ad of the block
+        if (adIndex < sortedAds.length) {
+          result.push({ type: 'ad', data: sortedAds[adIndex] });
+          adIndex++;
         }
       }
     });
@@ -635,59 +645,96 @@ export default function DiciloSearchPage({
           <div className="grid grid-cols-1 gap-4 pb-4 md:grid-cols-2">
             {businessesWithAds.length > 0 ? (
               businessesWithAds.map((item, idx) => {
+                // Calc Debug
+                let distDisplay = '';
+                let debugInfo = '';
+
+                if (userLocation && item.data.coords && item.data.coords.length === 2 && userLocation[0] && userLocation[1]) {
+                  const d = haversineDistance(userLocation, item.data.coords as [number, number]);
+                  distDisplay = `${d.toFixed(2)} km`;
+                } else if (!item.data.coords) {
+                  if (item.type === 'ad') {
+                    debugInfo = 'No Coords';
+                    if (item.data.clientId) {
+                      // Try to find why lookup failed
+                      const linkedBiz = initialBusinesses.find(b => b.id === item.data.clientId);
+                      if (!linkedBiz) debugInfo += ' (Client Not Found)';
+                      else if (!linkedBiz.coords) debugInfo += ' (Client has No Coords)';
+                    } else {
+                      debugInfo += ' (No ClientID)';
+                    }
+                  } else {
+                    debugInfo = 'No Coords';
+                  }
+                }
+
+                const DebugBadge = () => (
+                  <div className="absolute top-0 right-0 z-50 bg-red-600 text-white text-[10px] px-1 font-mono opacity-90 pointer-events-none rounded-bl-md flex flex-col items-end">
+                    <span>{distDisplay || 'N/A'} | #{idx}</span>
+                    {debugInfo && <span className="text-[9px] bg-black px-1">{debugInfo}</span>}
+                  </div>
+                );
+
                 if (item.type === 'ad') {
-                  return <AdBanner key={`ad-${idx}`} ad={item.data} rank={idx} />
+                  return (
+                    <div key={`ad-${item.data.id}-${idx}`} className="relative mb-4">
+                      <DebugBadge />
+                      <AdBanner ad={item.data} rank={idx} />
+                    </div>
+                  )
                 }
                 const business = item.data;
                 return (
-                  <div
-                    key={business.id}
-                    onClick={() => handleBusinessCardClick(business)}
-                    className={cn(
-                      'w-full cursor-pointer overflow-hidden rounded-xl bg-card p-4 shadow-md transition-all duration-200',
-                      selectedBusinessId === business.id
-                        ? 'border-2 border-primary ring-2 ring-primary/20'
-                        : 'border'
-                    )}
-                  >
-                    <div className="flex items-start gap-4">
-                      <Image
-                        className="h-16 w-16 rounded-full border-2 border-green-100 object-cover bg-green-100 p-1"
-                        src={
-                          business.imageUrl || 'https://placehold.co/64x64.png'
-                        }
-                        alt={`${business.name} logo`}
-                        width={64}
-                        height={64}
-                        data-ai-hint={business.imageHint}
-                      />
-                      <div className="min-w-0 flex-1">
-                        <h3 className="truncate font-bold">{business.name}</h3>
-                        <p className="line-clamp-2 text-sm text-muted-foreground">
-                          {business.description}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="mt-2 truncate text-xs text-muted-foreground">
-                      {business.location}
-                    </div>
-                    {(business.clientSlug || business.currentOfferUrl) && (
-                      <div onClick={(e) => e.stopPropagation()}>
-                        <a
-                          href={
-                            business.clientSlug
-                              ? `/client/${business.clientSlug}`
-                              : business.currentOfferUrl!
+                  <div key={business.id} className="relative">
+                    <DebugBadge />
+                    <div
+                      onClick={() => handleBusinessCardClick(business)}
+                      className={cn(
+                        'w-full cursor-pointer overflow-hidden rounded-xl bg-card p-4 shadow-md transition-all duration-200',
+                        selectedBusinessId === business.id
+                          ? 'border-2 border-primary ring-2 ring-primary/20'
+                          : 'border'
+                      )}
+                    >
+                      <div className="flex items-start gap-4">
+                        <Image
+                          className="h-16 w-16 rounded-full border-2 border-green-100 object-cover bg-green-100 p-1"
+                          src={
+                            business.imageUrl || 'https://placehold.co/64x64.png'
                           }
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="mt-1 flex items-center gap-1 text-xs text-primary hover:underline"
-                        >
-                          {t('businessCard.currentOffer')}{' '}
-                          <ExternalLink className="h-3 w-3" />
-                        </a>
+                          alt={`${business.name} logo`}
+                          width={64}
+                          height={64}
+                          data-ai-hint={business.imageHint}
+                        />
+                        <div className="min-w-0 flex-1">
+                          <h3 className="truncate font-bold">{business.name}</h3>
+                          <p className="line-clamp-2 text-sm text-muted-foreground">
+                            {business.description}
+                          </p>
+                        </div>
                       </div>
-                    )}
+                      <div className="mt-2 truncate text-xs text-muted-foreground">
+                        {business.location}
+                      </div>
+                      {(business.clientSlug || business.currentOfferUrl) && (
+                        <div onClick={(e) => e.stopPropagation()}>
+                          <a
+                            href={
+                              business.clientSlug
+                                ? `/client/${business.clientSlug}`
+                                : business.currentOfferUrl!
+                            }
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="mt-1 flex items-center gap-1 text-xs text-primary hover:underline"
+                          >
+                            {t('businessCard.currentOffer')}{' '}
+                            <ExternalLink className="h-3 w-3" />
+                          </a>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 )
               })

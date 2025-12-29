@@ -687,10 +687,13 @@ const clientSchema = z.object({
     lng: z.number()
   }).optional(),
   visibility_settings: z.object({
-    active_range: z.enum(['local', 'regional', 'national', 'continental', 'international']).default('national'),
-    geo_coordinates: z.object({ lat: z.number(), lng: z.number() }).optional(),
-    allowed_continents: z.array(z.string()).optional(),
-  }).optional(),
+    active_range: z.preprocess(
+      (val) => (val === '' ? undefined : val),
+      z.enum(['local', 'regional', 'national', 'continental', 'international']).default('national')
+    ),
+    geo_coordinates: z.object({ lat: z.number(), lng: z.number() }).nullish(), // Allow null or undefined
+    allowed_continents: z.array(z.string()).nullish(), // Allow null or undefined
+  }).nullish(),
 });
 
 type ClientFormData = z.infer<typeof clientSchema>;
@@ -700,7 +703,7 @@ interface EditClientFormProps {
 }
 
 export default function EditClientForm({ initialData }: EditClientFormProps) {
-  const { t } = useTranslation(['admin', 'form', 'legal', 'register']);
+  const { t } = useTranslation(['admin', 'form', 'legal', 'register', 'client', 'common']);
   const db = getFirestore(app);
   const storage = getStorage(app);
   const router = useRouter();
@@ -850,6 +853,11 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
    */
   const { errors } = formState;
 
+  // Debug: Log validation errors to console
+  if (Object.keys(errors).length > 0) {
+    console.error('Form Validation Errors:', errors);
+  }
+
 
   const preparedData = useMemo(() => {
     const data = initialData || {};
@@ -954,6 +962,11 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
       website: data.website || '',
       email: data.email || '',
       coordinates: data.coordinates || { lat: 40.4168, lng: -3.7038 },
+      visibility_settings: {
+        active_range: data.visibility_settings?.active_range || 'national',
+        geo_coordinates: data.visibility_settings?.geo_coordinates,
+        allowed_continents: data.visibility_settings?.allowed_continents || [],
+      },
     };
   }, [initialData]);
 
@@ -1088,6 +1101,20 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
           ) || [];
       }
 
+      // Sanitize visibility_settings to avoid undefined values (Firestore error)
+      if (newData.visibility_settings) {
+        if (newData.visibility_settings.geo_coordinates === undefined) {
+          // Default to null if not present, so Firestore doesn't reject it
+          // Or if coordinates exist, try to sync?
+          // For now, null to be safe.
+          newData.visibility_settings.geo_coordinates = null;
+        }
+        // Also allowed_continents
+        if (newData.visibility_settings.allowed_continents === undefined) {
+          newData.visibility_settings.allowed_continents = [];
+        }
+      }
+
       const finalPayload = _.merge({}, originalData, newData);
 
       // Explicitly set wallet values from form data to ensure they are not lost in merge
@@ -1130,7 +1157,14 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
   return (
     <>
       <Form {...form}>
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(onSubmit, (errors) => {
+          console.error("DEBUG: handleSubmit Validation Errors:", errors);
+          toast({
+            title: "Error de Validación",
+            description: "Por favor revisa los campos en rojo. Ver consola para más detalles.",
+            variant: "destructive"
+          });
+        })}>
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
@@ -1192,6 +1226,31 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                         <Link href="/planes">Jetzt Upgraden</Link>
                       </Button>
                     </div>
+                  </div>
+                )}
+
+                {/* Global Error Display */}
+                {Object.keys(errors).length > 0 && (
+                  <div className="mb-6 rounded-lg border border-red-500 bg-red-50 p-4 text-red-900 shadow-sm animate-pulse">
+                    <h3 className="font-bold text-lg mb-2 flex items-center gap-2">
+                      ❌ Errores de Validación Detectados
+                    </h3>
+                    <ul className="list-disc pl-5 space-y-1 text-sm">
+                      {Object.entries(errors).map(([key, error]) => (
+                        <li key={key}>
+                          <span className="font-semibold">{key}:</span> {error?.message?.toString() || 'Campo inválido'}
+                          {/* Try to show nested errors for arrays/objects */}
+                          {typeof error === 'object' && error !== null && (
+                            <pre className="mt-1 text-xs bg-red-100 p-1 rounded overflow-x-auto max-w-full">
+                              {JSON.stringify(error, null, 2)}
+                            </pre>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                    <p className="mt-3 text-sm font-semibold">
+                      Por favor corrige estos campos antes de guardar. Revisa todas las pestañas.
+                    </p>
                   </div>
                 )}
 
@@ -1300,8 +1359,8 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="retailer">{t('client.type.retailer')}</SelectItem>
-                              <SelectItem value="premium">{t('client.type.premium')}</SelectItem>
+                              <SelectItem value="retailer">{t('client:type.retailer', 'Retailer')}</SelectItem>
+                              <SelectItem value="premium">{t('client:type.premium', 'Premium')}</SelectItem>
                               <SelectItem value="starter">Starter</SelectItem>
                             </SelectContent>
                           </Select>
@@ -1787,34 +1846,41 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                 {/* Visibility Settings (Geo Segmentation) */}
                 <Card>
                   <CardHeader>
-                    <CardTitle>Visibility & Geographic Reach</CardTitle>
+                    <CardTitle>{t('clients.fields.visibility_settings.title', 'Visibilidad y Alcance Geográfico')}</CardTitle>
                     <CardDescription>
-                      Control where your business profile is visible to users.
+                      {t('clients.fields.visibility_settings.subtitle', 'Controla dónde es visible tu perfil de negocio.')}
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label>Active Range</Label>
-                        <Select
-                          onValueChange={(val) => setValue('visibility_settings.active_range', val as any)}
-                          defaultValue={watch('visibility_settings.active_range') || 'national'}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select Range" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="local">Local (50km)</SelectItem>
-                            <SelectItem value="regional">Regional (City)</SelectItem>
-                            <SelectItem value="national">National (Country)</SelectItem>
-                            <SelectItem value="continental">Continental</SelectItem>
-                            <SelectItem value="international">International / Global</SelectItem>
-                          </SelectContent>
-                        </Select>
+                        <Label>{t('clients.fields.visibility_settings.active_range', 'Rango Activo')}</Label>
+                        <Controller
+                          control={control}
+                          name="visibility_settings.active_range"
+                          defaultValue="national"
+                          render={({ field }) => (
+                            <Select
+                              onValueChange={field.onChange}
+                              value={field.value || 'national'}
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder={t('clients.fields.visibility_settings.active_range', 'Rango Activo')} />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="local">{t('clients.fields.visibility_settings.ranges.local', 'Local (50km)')}</SelectItem>
+                                <SelectItem value="regional">{t('clients.fields.visibility_settings.ranges.regional', 'Regional (Ciudad)')}</SelectItem>
+                                <SelectItem value="national">{t('clients.fields.visibility_settings.ranges.national', 'Nacional (País)')}</SelectItem>
+                                <SelectItem value="continental">{t('clients.fields.visibility_settings.ranges.continental', 'Continental')}</SelectItem>
+                                <SelectItem value="international">{t('clients.fields.visibility_settings.ranges.international', 'Internacional / Global')}</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          )}
+                        />
                       </div>
 
                       <div className="space-y-2">
-                        <Label>Allowed Continents (for International Reach)</Label>
+                        <Label>{t('clients.fields.visibility_settings.allowed_continents', 'Continentes Permitidos')}</Label>
                         <div className="grid grid-cols-2 gap-2 border p-2 rounded max-h-40 overflow-y-auto">
                           {['Europa', 'Sudamérica', 'Centro América', 'Latinoamérica', 'North America', 'Asia'].map(c => (
                             <div key={c} className="flex items-center space-x-2">

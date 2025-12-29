@@ -69,7 +69,7 @@ const Header = () => {
           </Link>
 
           {/* DESKTOP MENU */}
-          <div className="hidden items-center gap-4 md:flex">
+          <div className="hidden items-center gap-4 lg:flex">
             <nav className="flex items-center gap-4">
               {desktopLinks.map((link) => (
                 <Button
@@ -87,7 +87,7 @@ const Header = () => {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" aria-label="More links">
-                  <Menu className="h-4 w-4" />
+                  <MoreVertical className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
@@ -125,7 +125,7 @@ const Header = () => {
           </div>
 
           {/* MOBILE MENU (HAMBURGER) */}
-          <div className="md:hidden">
+          <div className="lg:hidden">
             <Sheet>
               <SheetTrigger asChild>
                 <Button variant="outline" size="icon">

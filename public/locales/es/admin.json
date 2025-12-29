@@ -215,7 +215,26 @@
       "jsonPlaceholderObject": "Introduce un objeto JSON aquí...",
       "jsonHelp": "Debe ser un array JSON válido. Usa un validador online para comprobarlo.",
       "jsonHelpObject": "Debe ser un objeto JSON válido. Usa un validador online para comprobarlo.",
-      "clientType": "Tipo de Cliente"
+      "clientType": "Tipo de Cliente",
+      "marqueeHeader": {
+        "rightButton1Text": "Texto Botón Derecho 1",
+        "rightButton1Link": "Enlace Botón Derecho 1",
+        "rightButton2Text": "Texto Botón Derecho 2",
+        "rightButton2Link": "Enlace Botón Derecho 2"
+      },
+      "visibility_settings": {
+        "title": "Visibilidad y Alcance Geográfico",
+        "subtitle": "Controla dónde es visible tu perfil de negocio.",
+        "active_range": "Rango Activo",
+        "ranges": {
+          "local": "Local (50km)",
+          "regional": "Regional (Ciudad)",
+          "national": "Nacional (País)",
+          "continental": "Continental",
+          "international": "Internacional / Global"
+        },
+        "allowed_continents": "Continentes Permitidos (Para Alcance Internacional)"
+      }
     }
   },
   "plans": {
