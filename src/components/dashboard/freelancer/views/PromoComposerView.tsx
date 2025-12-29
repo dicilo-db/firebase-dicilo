@@ -146,7 +146,7 @@ export function PromoComposerView() {
         try {
             const result = await correctText(textToCorrect);
             if (result.success && result.correctedText) {
-                setTexts(prev => ({ ...prev, [activeLangTab]: result.correctedText }));
+                setTexts(prev => ({ ...prev, [activeLangTab]: result.correctedText || '' }));
                 if (result.wasCorrected) {
                     toast({
                         title: "Texto Mejorado ✨",
@@ -177,8 +177,8 @@ export function PromoComposerView() {
         setIsTranslating(true);
         try {
             const result = await translateUserText(sourceText, targetLanguage);
-            if (result.success && result.translation) {
-                setTexts(prev => ({ ...prev, [targetLanguage]: result.translation }));
+            if (result.success && (result as any).translation) {
+                setTexts(prev => ({ ...prev, [targetLanguage]: (result as any).translation }));
                 // Switch to the target language tab to show result
                 setActiveLangTab(targetLanguage);
                 toast({
