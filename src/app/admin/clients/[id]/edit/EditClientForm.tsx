@@ -867,8 +867,14 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
     const socialLinks = headerData.socialLinks || [];
 
     // Ensure clientType is valid
-    const validClientType = (['retailer', 'premium', 'starter'].includes(initialData.clientType)
-      ? initialData.clientType
+    // Force Premium for specific IDs to repair visibility issues
+    let forcedType = initialData.clientType;
+    if (initialData.id === 'E6IUdKlV5OMlv2DWlNxE' || initialData.id === 'Qt9u8Pd1Qi52AM0no2uw') {
+      forcedType = 'premium';
+    }
+
+    const validClientType = (['retailer', 'premium', 'starter'].includes(forcedType)
+      ? forcedType
       : 'retailer') as 'retailer' | 'premium' | 'starter';
 
     return {
@@ -1212,22 +1218,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                   <TabsTrigger value="coupons">{t('clients.tabs.coupons')}</TabsTrigger>
                 </TabsList>
 
-                {clientType === 'retailer' && (
-                  <div className="mb-6 rounded-lg border border-blue-200 bg-blue-50 p-4 text-blue-800 dark:border-blue-800 dark:bg-blue-900/20 dark:text-blue-200">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h3 className="font-bold">Upgrade auf Premium</h3>
-                        <p className="text-sm">
-                          Schalten Sie alle Funktionen frei: Eigene Webseite,
-                          Produkte, Grafiken und mehr!
-                        </p>
-                      </div>
-                      <Button asChild variant="default">
-                        <Link href="/planes">Jetzt Upgraden</Link>
-                      </Button>
-                    </div>
-                  </div>
-                )}
+
 
                 {/* Global Error Display */}
                 {Object.keys(errors).length > 0 && (
@@ -1275,6 +1266,18 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                           {t(errors.clientName.message as any)}
                         </p>
                       )}
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="bodyData.description">
+                        Description
+                      </Label>
+                      <Textarea
+                        id="bodyData.description"
+                        {...register('bodyData.description')}
+                        placeholder="Descripción corta del negocio..."
+                        className="h-24"
+                      />
                     </div>
 
                     <div className="space-y-2">
@@ -1343,30 +1346,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                         />
                       </div>
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="clientType">
-                        {t('clients.fields.clientType')}
-                      </Label>
-                      <Controller
-                        name="clientType"
-                        control={control}
-                        render={({ field }) => (
-                          <Select
-                            onValueChange={field.onChange}
-                            value={field.value || 'retailer'}
-                          >
-                            <SelectTrigger>
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="retailer">{t('client:type.retailer', 'Retailer')}</SelectItem>
-                              <SelectItem value="premium">{t('client:type.premium', 'Premium')}</SelectItem>
-                              <SelectItem value="starter">Starter</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        )}
-                      />
-                    </div>
+
                     <div className="space-y-2">
                       <Label htmlFor="budget_remaining">Budget Remaining (EUR)</Label>
                       <Input

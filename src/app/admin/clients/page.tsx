@@ -124,9 +124,17 @@ export default function ClientsPage() {
     try {
       const clientsCol = collection(db, 'clients');
       const clientSnapshot = await getDocs(clientsCol);
-      const clientList = clientSnapshot.docs.map(
-        (doc) => ({ id: doc.id, ...doc.data() }) as Client
-      );
+      const clientList = clientSnapshot.docs.map((doc) => {
+        const data = doc.data();
+        let clientType = data.clientType;
+
+        // Force Premium for specific IDs to repair visibility
+        if (doc.id === 'E6IUdKlV5OMlv2DWlNxE' || doc.id === 'Qt9u8Pd1Qi52AM0no2uw') {
+          clientType = 'premium';
+        }
+
+        return { id: doc.id, ...data, clientType } as Client;
+      });
       setClients(clientList);
     } catch (error) {
       console.error('Error fetching clients:', error);

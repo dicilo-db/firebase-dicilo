@@ -57,7 +57,7 @@ function serializeBusiness(docId: string, data: any): Business {
     id: docId,
     name: data.clientName || data.name || 'Unbekanntes Unternehmen',
     category: data.category || 'Allgemein',
-    description: data.description || '',
+    description: data.description || data.bodyData?.description || '',
     location: data.location || '',
     imageUrl: imageUrl,
     imageHint: data.imageHint || '',
