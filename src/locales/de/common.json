@@ -286,6 +286,11 @@
     }
   },
   "dashboard": {
+    "promo": {
+      "estimatedEarnings": "Geschätzter Gewinn",
+      "trafficBonus": "Traffic-Bonus",
+      "unlockBasePay": "Schreiben Sie noch {{chars}} Zeichen, um die Grundvergütung freizuschalten."
+    },
     "myArea": "Mein Bereich",
     "welcome": "Willkommen!",
     "noCompanyFound": "Wir konnten kein Unternehmen finden, das mit Ihrem Konto verknüpft ist. Bitte kontaktieren Sie den Support, wenn Sie glauben, dass dies ein Fehler ist.",

@@ -105,6 +105,11 @@
     "errorDesc": "Hubo un problema al enviar tu recomendación. Por favor, inténtalo de nuevo más tarde."
   },
   "dashboard": {
+    "promo": {
+      "estimatedEarnings": "Ganancia Estimada",
+      "trafficBonus": "Bono Tráfico",
+      "unlockBasePay": "Escribe {{chars}} más caracteres para desbloquear el pago base."
+    },
     "myArea": "Mi Área",
     "welcome": "¡Bienvenido!",
     "noCompanyFound": "No pudimos encontrar ninguna empresa vinculada a su cuenta. Por favor contacte al soporte si cree que esto es un error.",

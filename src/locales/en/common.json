@@ -272,6 +272,11 @@
     }
   },
   "dashboard": {
+    "promo": {
+      "estimatedEarnings": "Estimated Earnings",
+      "trafficBonus": "Traffic Bonus",
+      "unlockBasePay": "Write {{chars}} more characters to unlock base pay."
+    },
     "myArea": "My Area",
     "welcome": "Welcome!",
     "noCompanyFound": "We could not find any company linked to your account. Please contact support if you believe this is an error.",
