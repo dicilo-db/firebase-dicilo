@@ -329,6 +329,7 @@
       "name": "Name",
       "category": "Kategorie",
       "description": "Beschreibung",
+      "descriptionPlaceholder": "Erzähl uns etwas über dich...",
       "location": "Standort",
       "address": "Adresse",
       "phone": "Telefon",

@@ -1,6 +1,6 @@
 [
   {
-    "categoria": "Beratung",
+    "categoria": "Beratung & Coaching",
     "subcategorias": [
       "Altersvorsorgeberatung",
       "Arbeitsrechtliche Beratung",
@@ -77,7 +77,7 @@
     ]
   },
   {
-    "categoria": "Bildung",
+    "categoria": "Bildung & Karriere",
     "subcategorias": [
       "Akademische Konferenzen",
       "Anatomiekurse",
@@ -132,7 +132,7 @@
     ]
   },
   {
-    "categoria": "Finanzen",
+    "categoria": "Finanzdienstleistung & Vorsorge",
     "subcategorias": [
       "Crowdfunding",
       "Investmentbanking",
@@ -235,7 +235,7 @@
     ]
   },
   {
-    "categoria": "Gastronomie",
+    "categoria": "Gastronomie & Kulinarik",
     "subcategorias": [
       "Afghanische Küche",
       "Afrikanische Restaurants",
@@ -308,7 +308,7 @@
     ]
   },
   {
-    "categoria": "Gesundheit",
+    "categoria": "Gesundheit & Wellness",
     "subcategorias": [
       "Allergologische Praxen",
       "Allgemeine Krankenhäuser",
@@ -413,7 +413,7 @@
     ]
   },
   {
-    "categoria": "Hotellerie",
+    "categoria": "Hotellerie & Gastgewerbe",
     "subcategorias": [
       "Airbnb-Dienste",
       "All-Inclusive-Resorts",
@@ -468,7 +468,7 @@
     ]
   },
   {
-    "categoria": "Immobilien",
+    "categoria": "Immobilien & Wohnraum",
     "subcategorias": [
       "Anlageimmobilien",
       "Apartmentkomplexe",
@@ -522,7 +522,7 @@
     ]
   },
   {
-    "categoria": "Lebensmittel",
+    "categoria": "Lebensmittel & Feinkost",
     "subcategorias": [
       "Ätherische Öle für die Küche",
       "Ahornsirup",
@@ -624,7 +624,7 @@
     ]
   },
   {
-    "categoria": "Lifestyle & persönliche Dienste",
+    "categoria": "Textil & Mode",
     "subcategorias": [
       "Fotografía Profesional",
       "Organización de Eventos",
@@ -649,7 +649,7 @@
     ]
   },
   {
-    "categoria": "Musik",
+    "categoria": "Musik & Events",
     "subcategorias": [
       "Audio-Mixing-Dienstleistungen",
       "Bandaufnahmen",
@@ -729,7 +729,7 @@
     ]
   },
   {
-    "categoria": "Soziales",
+    "categoria": "Soziales & Engagement",
     "subcategorias": [
       "Alphabetisierungsprogramme – Regional",
       "Altenpflegeberatungsdienste – National",
@@ -834,7 +834,7 @@
     ]
   },
   {
-    "categoria": "Sport",
+    "categoria": "Sport & Fitness",
     "subcategorias": [
       "Badmintonvereine",
       "Baseball-Ligen",
@@ -889,7 +889,7 @@
     ]
   },
   {
-    "categoria": "Reise",
+    "categoria": "Reise & Tourismus",
     "subcategorias": [
       "Abenteuercamps",
       "Abenteuertouren",
@@ -944,7 +944,7 @@
     ]
   },
   {
-    "categoria": "Technologie",
+    "categoria": "Technologie & Innovation",
     "subcategorias": [
       "5G-Technologien",
       "App-Entwicklung",
@@ -999,7 +999,7 @@
     ]
   },
   {
-    "categoria": "Textil",
+    "categoria": "Textil & Mode",
     "subcategorias": [
       "Abendkleider",
       "Accessoires für Anzüge",
@@ -1107,7 +1107,7 @@
     ]
   },
   {
-    "categoria": "Tier",
+    "categoria": "Tier & Haustierbedarf",
     "subcategorias": [
       "Aquarienfilter",
       "Aquarienwasseraufbereiter",
@@ -1162,7 +1162,7 @@
     ]
   },
   {
-    "categoria": "Transport",
+    "categoria": "Transport & Mobilität",
     "subcategorias": [
       "Autobusreisen",
       "Autoreparaturdienste",
@@ -1217,7 +1217,7 @@
     ]
   },
   {
-    "categoria": "Umwelt",
+    "categoria": "Umwelt & Nachhaltigkeit",
     "subcategorias": [
       "Abfallmanagement",
       "Baumaterialien",
@@ -1273,7 +1273,7 @@
     ]
   },
   {
-    "categoria": "Unterhaltung",
+    "categoria": "Unterhaltung & Freizeit",
     "subcategorias": [
       "Animationsdienste",
       "Architekturführungen",

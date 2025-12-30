@@ -6,6 +6,7 @@ import {
   collection,
   getDocs,
   deleteDoc,
+  updateDoc,
   doc,
 } from 'firebase/firestore';
 import { app } from '@/lib/firebase';
@@ -19,6 +20,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
+import { Switch } from '@/components/ui/switch';
 import {
   PlusCircle,
   Edit,
@@ -55,6 +57,7 @@ interface Client {
   clientTitle: string;
   slug: string;
   clientType: 'starter' | 'retailer' | 'premium';
+  active?: boolean;
 }
 
 const ClientsPageSkeleton = () => (
@@ -83,11 +86,17 @@ const ClientsPageSkeleton = () => (
             <TableHead>
               <Skeleton className="h-5 w-20" />
             </TableHead>
+            <TableHead>
+              <Skeleton className="h-5 w-20" />
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {[...Array(5)].map((_, i) => (
             <TableRow key={i}>
+              <TableCell>
+                <Skeleton className="h-5 w-full" />
+              </TableCell>
               <TableCell>
                 <Skeleton className="h-5 w-full" />
               </TableCell>
@@ -113,6 +122,7 @@ export default function ClientsPage() {
   const [clients, setClients] = useState<Client[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
+  const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const { toast } = useToast();
   const searchParams = useSearchParams();
@@ -133,7 +143,12 @@ export default function ClientsPage() {
           clientType = 'premium';
         }
 
-        return { id: doc.id, ...data, clientType } as Client;
+        return {
+          id: doc.id,
+          ...data,
+          clientType,
+          active: data.active !== undefined ? data.active : true
+        } as Client;
       });
       setClients(clientList);
     } catch (error) {
@@ -178,6 +193,34 @@ export default function ClientsPage() {
       });
     } finally {
       setIsDeleting(null);
+    }
+  };
+
+  const handleToggleActive = async (clientId: string, currentStatus: boolean) => {
+    setUpdatingId(clientId);
+    try {
+      const clientRef = doc(db, 'clients', clientId);
+      await updateDoc(clientRef, {
+        active: !currentStatus
+      });
+
+      setClients(prev => prev.map(c =>
+        c.id === clientId ? { ...c, active: !currentStatus } : c
+      ));
+
+      toast({
+        title: t('businesses.edit.saveSuccessTitle', "Saved"),
+        description: t('businesses.edit.saveSuccessDesc', "Status updated"),
+      });
+    } catch (error) {
+      console.error('Error updating status:', error);
+      toast({
+        title: t('businesses.edit.saveErrorTitle', "Error"),
+        description: t('businesses.edit.saveErrorDesc', "Could not update status"),
+        variant: "destructive"
+      });
+    } finally {
+      setUpdatingId(null);
     }
   };
 
@@ -233,6 +276,7 @@ export default function ClientsPage() {
               <TableHead>{t('clients.table.name')}</TableHead>
               <TableHead>{t('clients.table.title')}</TableHead>
               <TableHead>{t('clients.table.slug')}</TableHead>
+              <TableHead>Active</TableHead>
               <TableHead>{t('clients.table.actions')}</TableHead>
             </TableRow>
           </TableHeader>
@@ -252,6 +296,13 @@ export default function ClientsPage() {
                     >
                       /client/{client.slug}
                     </a>
+                  </TableCell>
+                  <TableCell>
+                    <Switch
+                      checked={client.active}
+                      disabled={updatingId === client.id}
+                      onCheckedChange={() => handleToggleActive(client.id, client.active || false)}
+                    />
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
@@ -303,7 +354,7 @@ export default function ClientsPage() {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={4} className="h-24 text-center">
+                <TableCell colSpan={5} className="h-24 text-center">
                   {isLoading ? '...' : t('clients.noResults')}
                 </TableCell>
               </TableRow>

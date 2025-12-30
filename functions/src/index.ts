@@ -716,3 +716,6 @@ export * from './userManagement';
 // --- Pioneer Referrals System ---
 export * from './pioneer-referrals';
 
+// --- Category Counters ---
+export * from './categories';
+

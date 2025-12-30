@@ -27,7 +27,25 @@ const VIEWS: Record<string, React.ComponentType> = {
     'faqs': FaqsView
 };
 
+import { useAuthGuard } from '@/hooks/useAuthGuard';
+
 export default function FreelancerPage() {
+    // Permission Check: Requires 'freelancer_tool' permission OR admin/superadmin/freelancer role
+    // Note: We include 'freelancer' role in allowedRoles, but the 'freelancer_tool' permission 
+    // is the specific gate if the role check doesn't auto-pass (depending on useAuthGuard impl).
+    // Actually, useAuthGuard logic:
+    // 1. If Superadmin -> Pass
+    // 2. If has 'freelancer_tool' permission -> Pass
+    // 3. If Role is in allowedRoles -> Pass (Wait, we want to RESTRICT this if they DON'T have permission?)
+    // The current logic allows access if role matches allowedRoles OR permissions match.
+    // If we want to *REQUIRE* the permission even for Freelancers (e.g. they need to activate it), then we should REMOVE 'freelancer' from allowedRoles list passed here?
+    // No, standard `freelancer` role *should* have access.
+    // The issue is likely users who have NO role but "Extra Permission: Freelancer Tool".
+    // So:
+    // - If Role=Freelancer -> Access Granted via role check.
+    // - If Role=User + Permission='freelancer_tool' -> Access Granted via Permission Check.
+    useAuthGuard(['admin', 'superadmin', 'freelancer', 'team_office'], 'freelancer_tool');
+
     const searchParams = useSearchParams();
     const currentTab = searchParams.get('tab') || 'dashboard';
 

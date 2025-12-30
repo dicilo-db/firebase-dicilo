@@ -40,6 +40,7 @@ import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
+import { useAuthGuard } from '@/hooks/useAuthGuard';
 
 interface AdBanner {
     id: string;
@@ -57,6 +58,9 @@ interface AdBanner {
 }
 
 export default function AdsManagerPage() {
+    // Permission Check: Requires 'access_ads_manager' OR admin/superadmin role
+    useAuthGuard(['admin', 'superadmin', 'team_office', 'freelancer'], 'access_ads_manager');
+
     const [ads, setAds] = useState<AdBanner[]>([]);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);

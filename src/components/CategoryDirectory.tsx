@@ -1,7 +1,6 @@
 'use client';
 
-import React from 'react';
-import categoriesData from '@/data/categories.json';
+import React, { useEffect, useState } from 'react';
 import {
     Briefcase,
     GraduationCap,
@@ -23,7 +22,15 @@ import {
     HelpCircle,
     Sparkles,
     Smile,
-    LucideIcon
+    LucideIcon,
+    ShoppingBasket,
+    Landmark,
+    Bed,
+    Home,
+    Plane,
+    Leaf,
+    Gamepad2,
+    Dumbbell
 } from 'lucide-react';
 import {
     Card,
@@ -39,90 +46,131 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { useTranslation } from 'react-i18next';
+import { getFirestore, collection, getDocs, orderBy, query } from 'firebase/firestore';
+import { app } from '@/lib/firebase';
+import { Category } from '@/types/category';
+import { Skeleton } from '@/components/ui/skeleton';
 
-import categoryTranslationsData from '@/data/category_translations.json';
-
-// Mapping of category names to Lucide icons
-const iconMapping: Record<string, LucideIcon> = {
-    'Beratung': Briefcase,
-    'Bildung': GraduationCap,
-    'Finanzen': Wallet,
-    'Gastronomie': Utensils,
-    'Gesundheit': Heart,
-    'Hotellerie': Hotel,
-    'Immobilien': Building,
-    'Lebensmittel': Fish,
-    'Lifestyle & persönliche Dienste': Smile,
-    'Musik': Music,
-    'Soziales': Users,
-    'Schönheit & Wellness': Sparkles,
-    'Sport': Trophy,
-    'Reise': Bus, // Using Bus as generic travel icon if Plane not available, or import Plane
-    'Technologie': Bot,
-    'Textil': Shirt,
-    'Tier': PawPrint,
-    'Transport': Bus,
-    'Umwelt': Trees,
-    'Unterhaltung': Tv,
+// Mapping of category names/icons. 
+// We now use the 'icon' field from Firestore which stores the string name.
+const ICON_MAP: Record<string, LucideIcon> = {
+    Briefcase,
+    GraduationCap,
+    Wallet,
+    Utensils,
+    Heart,
+    Hotel,
+    Building,
+    Fish,
+    Music,
+    Users,
+    Trophy,
+    Bot,
+    Shirt,
+    PawPrint,
+    Bus,
+    Trees,
+    Tv,
+    HelpCircle,
+    Sparkles,
+    Smile,
+    ShoppingBasket,
+    Landmark,
+    Bed,
+    Home,
+    Plane,
+    Leaf,
+    Gamepad2,
+    Dumbbell
 };
-
-interface Category {
-    categoria: string;
-    subcategorias: string[];
-}
-
-import subcategoryTranslationsData from '@/data/subcategory_translations.json';
-
-// ... (existing imports and iconMapping)
-
-// Type for translations
-type Translations = Record<string, { de: string; en: string; es: string }>;
-const categoryTranslations = categoryTranslationsData as Translations;
-const subcategoryTranslations = subcategoryTranslationsData as Translations;
 
 export const CategoryDirectory = () => {
     const { t, i18n } = useTranslation('directory');
     const currentLang = (i18n.language?.split('-')[0] || 'de') as 'de' | 'en' | 'es';
+    const [categories, setCategories] = useState<Category[]>([]);
+    const [loading, setLoading] = useState(true);
 
-    // Cast the imported data to the correct type
-    const categories: Category[] = categoriesData as Category[];
+    useEffect(() => {
+        const fetchCategories = async () => {
+            const db = getFirestore(app);
+            try {
+                const q = query(collection(db, 'categories'));
+                const snap = await getDocs(q);
+                const cats: Category[] = [];
+                snap.forEach(d => cats.push(d.data() as Category));
 
-    // Sort categories alphabetically based on the current language
-    const sortedCategories = [...categories].sort((a, b) => {
-        const titleA = categoryTranslations[a.categoria]?.[currentLang] || a.categoria;
-        const titleB = categoryTranslations[b.categoria]?.[currentLang] || b.categoria;
-        return titleA.localeCompare(titleB, currentLang);
-    });
+                // Sort client-side to avoid missing index issues
+                cats.sort((a, b) => {
+                    const nameA = a.name?.[currentLang] || a.name?.de || '';
+                    const nameB = b.name?.[currentLang] || b.name?.de || '';
+                    return nameA.localeCompare(nameB);
+                });
+
+                setCategories(cats);
+            } catch (e) {
+                console.error("Failed to load categories", e);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchCategories();
+    }, []);
+
+    // Helper to get translated name
+    const getCatName = (cat: Category) => {
+        return cat.name[currentLang] || cat.name.de;
+    };
+    const getSubName = (sub: any) => {
+        return sub.name[currentLang] || sub.name.de;
+    };
+
+    if (loading) {
+        return (
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                {[...Array(8)].map((_, i) => (
+                    <Card key={i} className="h-48 flex items-center justify-center">
+                        <Skeleton className="h-full w-full" />
+                    </Card>
+                ))}
+            </div>
+        );
+    }
 
     return (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {sortedCategories.map((cat, index) => {
-                const IconComponent = iconMapping[cat.categoria] || HelpCircle;
-                // Get translation or fallback to original category name (German)
-                const translatedTitle = categoryTranslations[cat.categoria]?.[currentLang] || cat.categoria;
+            {categories.map((cat) => {
+                const IconComponent = ICON_MAP[cat.icon] || HelpCircle;
+                const title = getCatName(cat);
 
                 return (
-                    <Card key={index} className="flex flex-col items-center text-center transition-shadow hover:shadow-lg">
+                    <Card key={cat.id} className="flex flex-col items-center text-center transition-shadow hover:shadow-lg">
                         <CardHeader className="pb-2 flex flex-col items-center">
                             <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
                                 <IconComponent className="h-8 w-8" />
                             </div>
                             <CardTitle className="text-lg font-semibold text-primary">
-                                {translatedTitle}
+                                {title}
+                                {cat.businessCount > 0 && (
+                                    <span className="ml-2 text-sm font-normal text-muted-foreground">
+                                        ({cat.businessCount})
+                                    </span>
+                                )}
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="w-full">
                             <Select>
                                 <SelectTrigger className="w-full">
-                                    <SelectValue placeholder={t('selectOption', 'Wählen Sie eine Option')} />
+                                    <SelectValue placeholder={t('selectOption', 'Select Subcategory')} />
                                 </SelectTrigger>
                                 <SelectContent className="max-h-[300px]">
-                                    {cat.subcategorias.map((sub, subIndex) => {
-                                        // Get translation for subcategory or fallback to original
-                                        const translatedSub = subcategoryTranslations[sub]?.[currentLang] || sub;
+                                    {cat.subcategories?.map((sub) => {
+                                        const subTitle = getSubName(sub);
                                         return (
-                                            <SelectItem key={subIndex} value={sub}>
-                                                {translatedSub}
+                                            <SelectItem key={sub.id} value={sub.id}>
+                                                {subTitle}
+                                                {sub.businessCount !== undefined && sub.businessCount > 0 && (
+                                                    <span className="ml-1 text-muted-foreground">({sub.businessCount})</span>
+                                                )}
                                             </SelectItem>
                                         );
                                     })}

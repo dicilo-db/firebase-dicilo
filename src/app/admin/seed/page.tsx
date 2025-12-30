@@ -21,8 +21,39 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { ArrowLeft, Terminal, Database, UserPlus } from 'lucide-react';
+import { ArrowLeft, Terminal, Database, UserPlus, Tag, Loader2 } from 'lucide-react';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
+import { seedCategoriesAction } from '@/app/actions/seed-categories';
+import { useState } from 'react';
+import { useToast } from '@/hooks/use-toast';
+
+function CategorySeedButton() {
+  const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
+
+  const handleSeed = async () => {
+    setLoading(true);
+    try {
+      const res = await seedCategoriesAction();
+      if (res.success) {
+        toast({ title: 'Success', description: res.message });
+      } else {
+        toast({ title: 'Error', description: res.message, variant: 'destructive' });
+      }
+    } catch (e: any) {
+      toast({ title: 'Error', description: e.message, variant: 'destructive' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Button onClick={handleSeed} disabled={loading} variant="secondary" className="w-full sm:w-auto">
+      {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Tag className="mr-2 h-4 w-4" />}
+      Seed Categories
+    </Button>
+  );
+}
 
 export default function SeedPage() {
   useAuthGuard(['superadmin']); // Protege esta página
@@ -136,6 +167,22 @@ export default function SeedPage() {
                   </ol>
                 </AlertDescription>
               </Alert>
+            </CardContent>
+          </Card>
+
+          {/* Category Database Seeding */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Tag className="h-5 w-5" />
+                Category Database
+              </CardTitle>
+              <CardDescription>
+                Initialize the category collection with the standard German list.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <CategorySeedButton />
             </CardContent>
           </Card>
 

@@ -44,7 +44,8 @@ export const useAdminUser = () => {
 };
 
 export const useAuthGuard = (
-  allowedRoles: ('admin' | 'superadmin' | 'team_office')[] = ['admin', 'superadmin', 'team_office']
+  allowedRoles: ('admin' | 'superadmin' | 'team_office' | 'freelancer')[] = ['admin', 'superadmin', 'team_office'],
+  requiredPermission?: string
 ) => {
   const router = useRouter();
   const { toast } = useToast();
@@ -62,19 +63,55 @@ export const useAuthGuard = (
       return;
     }
 
-    // User is logged in, but does not have the required role.
-    if (!adminUser.role || !allowedRoles.includes(adminUser.role)) {
+    // --- NEW LOGIC: Superadmin Bypass & Granular Permissions ---
+
+    const role = adminUser.role;
+    const permissions = adminUser.permissions || [];
+
+    // 1. Superadmin always has access
+    if (role === 'superadmin') {
+      return;
+    }
+
+    // 2. Check Granular Permission (if required)
+    if (requiredPermission) {
+      // If user has the specific permission, access granted regardless of role
+      if (permissions.includes(requiredPermission)) {
+        return;
+      }
+      // If NOT, continue to check role matches (maybe role implies permission? - usually keep separate)
+      // Check if current role is implicitly allowed?
+      // But usually "requiredPermission" means specifically that. 
+      // If the user DOES NOT have the permission, we fail here UNLESS the allowedRoles match covers it?
+      // Let's assume strict check if 'requiredPermission' is provided.
+      // Actually, sometimes a Role (like 'admin') should implicitly have 'access_ads_manager'.
+      // Let's verify if we want implicit role mappings.
+      // For 'admin', we usually expect full access except superadmin stuff.
+      if (role === 'admin') {
+        return;
+      }
+
+      // If failed permission check:
+      toast({
+        title: t('dashboard.accessDenied'),
+        description: `Missing permission: ${requiredPermission}`,
+        variant: 'destructive',
+      });
+      router.push('/dashboard'); // Redirect to safe zone
+      return;
+    }
+
+    // 3. Standard Role Check (Legacy behavior for pages without granular requirement)
+    if (!allowedRoles.includes(role)) {
       toast({
         title: t('dashboard.accessDenied'),
         description: t('dashboard.noAdminRights'),
         variant: 'destructive',
       });
-      // Actively sign out the user to prevent loops and clear auth state.
-      signOut(auth).finally(() => {
-        router.push('/admin');
-      });
+      // Redirect instead of signout to allow user to go back to their allowed area
+      router.push('/dashboard');
     }
-  }, [adminUser, isUserLoading, router, allowedRoles, t, toast]);
+  }, [adminUser, isUserLoading, router, allowedRoles, requiredPermission, t, toast]);
 
   return { user: adminUser, isLoading: isUserLoading };
 };

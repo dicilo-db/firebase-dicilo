@@ -1,97 +1,92 @@
 {
-    "Beratung": {
-        "de": "Beratung",
-        "en": "Consulting",
-        "es": "Consultoría"
+    "Beratung & Coaching": {
+        "de": "Beratung & Coaching",
+        "en": "Consulting & Coaching",
+        "es": "Consultoría y Coaching"
     },
-    "Bildung": {
-        "de": "Bildung",
-        "en": "Education",
-        "es": "Educación"
+    "Bildung & Karriere": {
+        "de": "Bildung & Karriere",
+        "en": "Education & Career",
+        "es": "Educación y Carrera"
     },
-    "Finanzen": {
-        "de": "Finanzen",
-        "en": "Finance",
-        "es": "Finanzas"
+    "Finanzdienstleistung & Vorsorge": {
+        "de": "Finanzdienstleistung & Vorsorge",
+        "en": "Financial Services & Provision",
+        "es": "Servicios Financieros y Previsión"
     },
-    "Gastronomie": {
-        "de": "Gastronomie",
-        "en": "Gastronomy",
-        "es": "Gastronomía"
+    "Gastronomie & Kulinarik": {
+        "de": "Gastronomie & Kulinarik",
+        "en": "Gastronomy & Culinary Arts",
+        "es": "Gastronomía y Culinaria"
     },
-    "Gesundheit": {
-        "de": "Gesundheit",
-        "en": "Health",
-        "es": "Salud"
+    "Gesundheit & Wellness": {
+        "de": "Gesundheit & Wellness",
+        "en": "Health & Wellness",
+        "es": "Salud y Bienestar"
     },
-    "Hotellerie": {
-        "de": "Hotellerie",
-        "en": "Hospitality",
-        "es": "Hostelería"
+    "Hotellerie & Gastgewerbe": {
+        "de": "Hotellerie & Gastgewerbe",
+        "en": "Hospitality & Accommodation",
+        "es": "Hostelería y Alojamiento"
     },
-    "Immobilien": {
-        "de": "Immobilien",
-        "en": "Real Estate",
-        "es": "Bienes raíces"
+    "Immobilien & Wohnraum": {
+        "de": "Immobilien & Wohnraum",
+        "en": "Real Estate & Housing",
+        "es": "Bienes Raíces y Vivienda"
     },
-    "Lebensmittel": {
-        "de": "Lebensmittel",
-        "en": "Food",
-        "es": "Alimentación"
+    "Lebensmittel & Feinkost": {
+        "de": "Lebensmittel & Feinkost",
+        "en": "Food & Delicatessen",
+        "es": "Alimentos y Delicatessen"
     },
-    "Lifestyle & persönliche Dienste": {
-        "de": "Lifestyle & persönliche Dienste",
-        "en": "Lifestyle & Personal Services",
-        "es": "Estilo & Servicios Personales"
+    "Textil & Mode": {
+        "de": "Textil & Mode",
+        "en": "Textile & Fashion",
+        "es": "Textil y Moda"
     },
-    "Musik": {
-        "de": "Musik",
-        "en": "Music",
-        "es": "Música"
+    "Musik & Events": {
+        "de": "Musik & Events",
+        "en": "Music & Events",
+        "es": "Música y Eventos"
     },
-    "Soziales": {
-        "de": "Soziales",
-        "en": "Social Services",
-        "es": "Sociales"
+    "Soziales & Engagement": {
+        "de": "Soziales & Engagement",
+        "en": "Social Services & Engagement",
+        "es": "Servicios Sociales y Compromiso"
     },
-    "Sport": {
-        "de": "Sport",
-        "en": "Sports",
-        "es": "Deportes"
+    "Sport & Fitness": {
+        "de": "Sport & Fitness",
+        "en": "Sports & Fitness",
+        "es": "Deporte y Fitness"
     },
-    "Reise": {
-        "de": "Reise",
-        "en": "Travel",
-        "es": "Viajes"
+    "Reise & Tourismus": {
+        "de": "Reise & Tourismus",
+        "en": "Travel & Tourism",
+        "es": "Viajes y Turismo"
     },
-    "Technologie": {
-        "de": "Technologie",
-        "en": "Technology",
-        "es": "Tecnología"
+    "Technologie & Innovation": {
+        "de": "Technologie & Innovation",
+        "en": "Technology & Innovation",
+        "es": "Tecnología e Innovación"
     },
-    "Textil": {
-        "de": "Textil",
-        "en": "Textile",
-        "es": "Textil"
+    "Tier & Haustierbedarf": {
+        "de": "Tier & Haustierbedarf",
+        "en": "Animals & Pet Supplies",
+        "es": "Animales y Mascotas"
     },
-    "Tier": {
-        "de": "Tier",
-        "en": "Animals",
-        "es": "Animales"
+    "Transport & Mobilität": {
+        "de": "Transport & Mobilität",
+        "en": "Transport & Mobility",
+        "es": "Transporte y Movilidad"
     },
-    "Transport": {
-        "de": "Transport",
-        "en": "Transportation",
-        "es": "Transporte"
+    "Umwelt & Nachhaltigkeit": {
+        "de": "Umwelt & Nachhaltigkeit",
+        "en": "Environment & Sustainability",
+        "es": "Medio Ambiente y Sostenibilidad"
     },
-    "Umwelt": {
-        "de": "Umwelt",
-        "en": "Environment",
-        "es": "Medio ambiente"
-    },
-    "Unterhaltung": {
-        "de": "Unterhaltung",
-        "en": "Entertainment",
-        "es": "Entretenimiento"
+    "Unterhaltung & Freizeit": {
+        "de": "Unterhaltung & Freizeit",
+        "en": "Entertainment & Leisure",
+        "es": "Entretenimiento y Ocio"
     }
 }

@@ -8,12 +8,13 @@ import Link from 'next/link';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { doc, getDoc, updateDoc, getFirestore, collection, query, where, getDocs } from 'firebase/firestore';
+import { doc, getDoc, updateDoc, deleteDoc, getFirestore, collection, query, where, getDocs, orderBy } from 'firebase/firestore';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { app } from '@/lib/firebase';
 import { isValidUrl } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from 'react-i18next';
+import { Category } from '@/types/category';
 import {
   Card,
   CardContent,
@@ -32,10 +33,13 @@ import {
   LocateFixed,
   Star,
   ChevronDown,
+  MapPinOff,
+  Database,
 } from 'lucide-react';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
+import { seedCategories } from '@/lib/seed-categories';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -43,6 +47,21 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Switch } from '@/components/ui/switch';
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { Check, ChevronsUpDown } from "lucide-react";
 
 const DiciloMap = dynamic(() => import('@/components/dicilo-map'), {
   ssr: false,
@@ -69,6 +88,7 @@ const businessSchema = z.object({
   currentOfferUrl: z.string().url().optional().or(z.literal('')),
   mapUrl: z.string().url().optional().or(z.literal('')),
   active: z.boolean().default(true),
+  businessCode: z.string().optional(),
 });
 
 type BusinessFormData = z.infer<typeof businessSchema>;
@@ -131,6 +151,11 @@ export default function EditBusinessPage() {
   const [isGeocoding, setIsGeocoding] = useState(false);
   const [isPromoting, setIsPromoting] = useState(false);
 
+  // Category State
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [selectedCategorySlug, setSelectedCategorySlug] = useState<string>('');
+  const [selectedSubcategorySlug, setSelectedSubcategorySlug] = useState<string>('');
+
   const slugify = (text: string) =>
     text
       .toLowerCase()
@@ -153,24 +178,75 @@ export default function EditBusinessPage() {
   const coords = watch('coords');
   const imageUrl = watch('imageUrl');
 
+  const [categoriesLoaded, setCategoriesLoaded] = useState(false);
+
+  // Fetch Categories
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const q = query(collection(db, 'categories'));
+        const snapshot = await getDocs(q);
+        const cats: Category[] = [];
+        snapshot.forEach((doc) => cats.push(doc.data() as Category));
+        // Sort in memory by German name
+        cats.sort((a, b) => a.name.de.localeCompare(b.name.de));
+        setCategories(cats);
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      } finally {
+        setCategoriesLoaded(true);
+      }
+    };
+    fetchCategories();
+  }, [db]);
+
+  // Effect to sync selects with the form's 'category' string
+  useEffect(() => {
+    if (selectedCategorySlug) {
+      const cat = categories.find((c) => c.id === selectedCategorySlug);
+      if (cat) {
+        let catString = cat.name.de;
+        if (selectedSubcategorySlug) {
+          const sub = cat.subcategories.find((s) => s.id === selectedSubcategorySlug);
+          if (sub) {
+            catString += ` / ${sub.name.de}`;
+          }
+        }
+        setValue('category', catString, { shouldDirty: true, shouldValidate: true });
+      }
+    }
+  }, [selectedCategorySlug, selectedSubcategorySlug, categories, setValue]);
+
+
   const handleGeocode = useCallback(
     async (addressToGeocode: string) => {
       setIsGeocoding(true);
       try {
         const response = await fetch(
-          `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(addressToGeocode)}&format=json&limit=1&accept-language=${locale}`
+          `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(addressToGeocode)}&format=json&limit=1&addressdetails=1&accept-language=${locale}`
         );
         const data = await response.json();
         if (data && data.length > 0) {
-          const { lat, lon } = data[0];
+          const { lat, lon, address } = data[0];
           const newCoords: [number, number] = [
             parseFloat(lat),
             parseFloat(lon),
           ];
+
           setValue('coords', newCoords, {
             shouldValidate: true,
             shouldDirty: true,
           });
+
+          // Attempt to extract city - ONLY if location field is empty
+          const currentLoc = getValues('location');
+          if (!currentLoc) {
+            const city = address.city || address.town || address.village || address.municipality;
+            if (city) {
+              setValue('location', city, { shouldValidate: true, shouldDirty: true });
+            }
+          }
+
           toast({
             title: t('businesses.edit.geocode.successTitle'),
             description: `${t('businesses.edit.geocode.successDesc')}: ${newCoords.join(', ')}`,
@@ -236,9 +312,6 @@ export default function EditBusinessPage() {
           description: `Existing client updated to ${clientType}. Redirecting...`,
         });
 
-        // IMPORTANT: If we strictly follow the rule, the Basic business entry should be removed if it exists.
-        // But since we are only updating an EXISTING client here, the Basic entry might have been deleted already.
-        // Just to be safe, we can try to delete the current business doc if it's still treated as "Basic" (which is this page context).
         try {
           await deleteDoc(doc(db, 'businesses', id));
         } catch (e) {
@@ -255,17 +328,10 @@ export default function EditBusinessPage() {
         clientType,
       });
       if (result.data.success) {
-        // SUCCESS: Now delete the Basic Business entry to prevent duplicates
         try {
           await deleteDoc(doc(db, 'businesses', id));
-          console.log(`Deleted basic business ${id} after promotion.`);
         } catch (delError) {
           console.error('Failed to delete basic business after promotion:', delError);
-          toast({
-            title: 'Warning',
-            description: 'Client promoted, but failed to remove Basic entry. Please delete manually.',
-            variant: 'destructive',
-          });
         }
 
         toast({
@@ -289,7 +355,7 @@ export default function EditBusinessPage() {
   };
 
   useEffect(() => {
-    if (id) {
+    if (id && categoriesLoaded) {
       const fetchBusiness = async () => {
         setIsLoadingData(true);
         try {
@@ -299,6 +365,7 @@ export default function EditBusinessPage() {
             const data = docSnap.data();
             const formData = {
               name: data.name || '',
+              // ... map remaining fields ...
               category: data.category || '',
               description: data.description || '',
               location: data.location || '',
@@ -312,8 +379,26 @@ export default function EditBusinessPage() {
               currentOfferUrl: data.currentOfferUrl || '',
               mapUrl: data.mapUrl || '',
               active: data.active !== undefined ? data.active : true,
+              businessCode: data.businessCode || '',
             };
             reset(formData as BusinessFormData);
+
+            // Attempt to pre-select category dropdowns
+            if (data.category && categories.length > 0) {
+              const parts = data.category.split('/').map((s: string) => s.trim());
+              if (parts.length > 0) {
+                const mainName = parts[0];
+                const subName = parts[1];
+                const matchedCat = categories.find(c => c.name.de === mainName);
+                if (matchedCat) {
+                  setSelectedCategorySlug(matchedCat.id);
+                  if (subName) {
+                    const matchedSub = matchedCat.subcategories.find(s => s.name.de === subName);
+                    if (matchedSub) setSelectedSubcategorySlug(matchedSub.id);
+                  }
+                }
+              }
+            }
           } else {
             toast({
               title: t('businesses.edit.notFoundTitle'),
@@ -334,9 +419,10 @@ export default function EditBusinessPage() {
           setIsLoadingData(false);
         }
       };
+
       fetchBusiness();
     }
-  }, [id, reset, router, toast, t, db]);
+  }, [id, reset, router, toast, t, db, categoriesLoaded, categories]);
 
   const handleMapDragEnd = (newCoords: [number, number]) => {
     setValue('coords', newCoords, { shouldDirty: true, shouldValidate: true });
@@ -351,15 +437,28 @@ export default function EditBusinessPage() {
     try {
       let finalData: { [key: string]: any } = { ...data };
 
-      const [mainCategory, subCategory] = data.category
-        .split('/')
-        .map((s) => s.trim());
-      finalData.category_key = `category.${slugify(mainCategory)}`;
-      if (subCategory) {
-        finalData.subcategory_key = `subcategory.${slugify(subCategory)}`;
+      // Ensure category_key is set based on the slugs from selection
+      if (selectedCategorySlug) {
+        finalData.category_key = `category.${selectedCategorySlug}`;
+        if (selectedSubcategorySlug) {
+          finalData.subcategory_key = `subcategory.${selectedSubcategorySlug}`;
+        } else {
+          finalData.subcategory_key = '';
+        }
       } else {
-        finalData.subcategory_key = '';
+        // Fallback to legacy string parsing if no dropdown selection (edge case)
+        const [mainCategory, subCategory] = data.category
+          .split('/')
+          .map((s) => s.trim());
+        // Note: reusing the old slugify local function for fallback
+        finalData.category_key = `category.${slugify(mainCategory)}`;
+        if (subCategory) {
+          finalData.subcategory_key = `subcategory.${slugify(subCategory)}`;
+        } else {
+          finalData.subcategory_key = '';
+        }
       }
+
 
       Object.keys(finalData).forEach((key) => {
         if (finalData[key] === undefined || finalData[key] === '') {
@@ -389,9 +488,12 @@ export default function EditBusinessPage() {
     }
   };
 
-  if (isLoadingData) {
+  if (isLoadingData || !categoriesLoaded) {
     return <EditBusinessSkeleton />;
   }
+
+  // Find selected category object for subcategory filtering
+  const selectedCategoryObj = categories.find(c => c.id === selectedCategorySlug);
 
   return (
     <div className="p-8">
@@ -434,6 +536,7 @@ export default function EditBusinessPage() {
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               {/* Form fields */}
+              {/* Form fields */}
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 {/* Name */}
                 <div className="space-y-2">
@@ -451,23 +554,169 @@ export default function EditBusinessPage() {
                     </p>
                   )}
                 </div>
-                {/* Category */}
+
+                {/* ID Field (Read Only) */}
                 <div className="space-y-2">
-                  <Label htmlFor="category">
-                    {t('businesses.fields.category')}
-                  </Label>
+                  <Label>ID #</Label>
                   <Input
-                    id="category"
-                    {...register('category')}
-                    className={errors.category ? 'border-destructive' : ''}
-                    placeholder="Hauptkategorie / Unterkategorie"
+                    value={watch('businessCode') ? `EMDC ${watch('businessCode')}` : 'Pending'}
+                    disabled
+                    className="bg-muted"
                   />
-                  {errors.category && (
-                    <p className="text-sm text-destructive">
-                      {errors.category.message}
-                    </p>
+                </div>
+
+                {/* Categories - Combobox */}
+                <div className="flex flex-col space-y-2">
+                  <Label>Category</Label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        className={cn(
+                          "w-full justify-between",
+                          !selectedCategorySlug && "text-muted-foreground"
+                        )}
+                      >
+                        {selectedCategorySlug
+                          ? categories.find((c) => c.id === selectedCategorySlug)?.name.de
+                          : "Select Category"}
+                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-[300px] p-0">
+                      <Command>
+                        <CommandInput placeholder="Search category..." />
+                        <CommandList>
+                          <CommandEmpty>No category found.</CommandEmpty>
+                          <CommandGroup>
+                            {categories.map((cat) => (
+                              <CommandItem
+                                key={cat.id}
+                                value={cat.name.de}
+                                onSelect={() => {
+                                  setSelectedCategorySlug(cat.id);
+                                  setSelectedSubcategorySlug(''); // Reset sub on main change
+                                }}
+                              >
+                                <Check
+                                  className={cn(
+                                    "mr-2 h-4 w-4",
+                                    selectedCategorySlug === cat.id ? "opacity-100" : "opacity-0"
+                                  )}
+                                />
+                                {cat.name.de}
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                  {/* Validation/Empty State for Categories */}
+                  {categoriesLoaded && categories.length === 0 && (
+                    <div className="mt-2 flex items-center justify-between rounded-md border border-yellow-200 bg-yellow-50 p-2 text-xs text-yellow-800">
+                      <div className="flex items-center gap-2">
+                        <Database className="h-3 w-3" />
+                        <span>No categories.</span>
+                      </div>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="h-6 border-yellow-300 bg-white px-2 text-xs hover:bg-yellow-100"
+                        onClick={async () => {
+                          const confirm = window.confirm('Seed default categories? This will populate the DB.');
+                          if (confirm) {
+                            try {
+                              const { getAuth } = await import('firebase/auth');
+                              const auth = getAuth(app);
+                              const user = auth.currentUser;
+                              if (!user) throw new Error("Not authenticated");
+                              const token = await user.getIdToken();
+
+                              const res = await fetch('/api/admin/seed-categories', {
+                                method: 'POST',
+                                headers: {
+                                  'Authorization': `Bearer ${token}`
+                                }
+                              });
+
+                              if (!res.ok) {
+                                const err = await res.json();
+                                throw new Error(err.error || 'Request failed');
+                              }
+
+                              window.location.reload();
+                            } catch (e: any) {
+                              alert('Seeding failed: ' + e.message);
+                            }
+                          }
+                        }}
+                      >
+                        Seed
+                      </Button>
+                    </div>
                   )}
                 </div>
+
+                <div className="flex flex-col space-y-2">
+                  <Label>Subcategory</Label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        disabled={!selectedCategorySlug}
+                        className={cn(
+                          "w-full justify-between",
+                          !selectedSubcategorySlug && "text-muted-foreground"
+                        )}
+                      >
+                        {selectedSubcategorySlug
+                          ? selectedCategoryObj?.subcategories.find((s) => s.id === selectedSubcategorySlug)?.name.de
+                          : "Select Subcategory"}
+                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-[300px] p-0">
+                      <Command>
+                        <CommandInput placeholder="Search subcategory..." />
+                        <CommandList>
+                          <CommandEmpty>No subcategory found.</CommandEmpty>
+                          <CommandGroup>
+                            {selectedCategoryObj?.subcategories?.map((sub) => (
+                              <CommandItem
+                                key={sub.id}
+                                value={sub.name.de}
+                                onSelect={() => {
+                                  setSelectedSubcategorySlug(sub.id);
+                                }}
+                              >
+                                <Check
+                                  className={cn(
+                                    "mr-2 h-4 w-4",
+                                    selectedSubcategorySlug === sub.id ? "opacity-100" : "opacity-0"
+                                  )}
+                                />
+                                {sub.name.de}
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                </div>
+
+                {/* Hidden input to satisfy internal form logic/validation */}
+                <input type="hidden" {...register('category')} />
+                {errors.category && (
+                  <p className="text-sm text-destructive col-span-2">
+                    Category selection is required.
+                  </p>
+                )}
+
                 {/* Description */}
                 <div className="space-y-2 md:col-span-2">
                   <Label htmlFor="description">
@@ -476,6 +725,7 @@ export default function EditBusinessPage() {
                   <Textarea
                     id="description"
                     {...register('description')}
+                    placeholder={t('businesses.fields.descriptionPlaceholder', "Hablanos sobre ti...")}
                     className={errors.description ? 'border-destructive' : ''}
                   />
                   {errors.description && (
@@ -500,7 +750,6 @@ export default function EditBusinessPage() {
                     </p>
                   )}
                 </div>
-                {/* Address */}
                 <div className="space-y-2">
                   <Label htmlFor="address">
                     {t('businesses.fields.address')}
@@ -537,6 +786,12 @@ export default function EditBusinessPage() {
                   <Input
                     id="website"
                     {...register('website')}
+                    onBlur={(e) => {
+                      let val = e.target.value.trim();
+                      if (val && !val.match(/^https?:\/\//)) {
+                        setValue('website', `https://${val}`, { shouldValidate: true });
+                      }
+                    }}
                     className={errors.website ? 'border-destructive' : ''}
                   />
                   {errors.website && (
@@ -705,23 +960,37 @@ export default function EditBusinessPage() {
           </CardContent>
         </Card>
 
-        <div className="relative z-0 h-[400px] w-full overflow-hidden rounded-lg shadow-lg lg:h-full">
-          {coords && (
+        <div className="relative z-0 h-[400px] w-full overflow-hidden rounded-lg shadow-lg lg:h-full bg-slate-100">
+          {coords ? (
             <DiciloMap
               key={coords.join(',')}
               center={coords as [number, number]}
+              zoom={15}
               businesses={[
                 {
-                  id: 'edit-marker',
-                  coords: coords as [number, number],
+                  id: id,
                   name: getValues('name'),
+                  coords: coords as [number, number],
+                  category: getValues('category'),
+                  address: getValues('address'),
+                  phone: getValues('phone'),
+                  website: getValues('website'),
+                  currentOfferUrl: getValues('currentOfferUrl'),
+                  mapUrl: getValues('mapUrl'),
                 },
               ]}
-              selectedBusinessId="edit-marker"
+              selectedBusinessId={id}
               onMarkerDragEnd={handleMapDragEnd}
-              zoom={15}
               t={t}
             />
+          ) : (
+            <div className="flex h-full w-full flex-col items-center justify-center p-6 text-center text-muted-foreground">
+              <MapPinOff className="mb-4 h-12 w-12 opacity-50" />
+              <h3 className="text-lg font-semibold">{t('businesses.edit.noCoordsTitle', 'No Location Data')}</h3>
+              <p className="max-w-xs text-sm">
+                {t('businesses.edit.noCoordsDesc', 'Use the "Locate" button next to the address address field to generate coordinates for this business.')}
+              </p>
+            </div>
           )}
         </div>
       </div>

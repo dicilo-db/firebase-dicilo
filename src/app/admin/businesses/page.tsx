@@ -6,6 +6,7 @@ import {
   collection,
   getDocs,
   deleteDoc,
+  updateDoc,
   doc,
 } from 'firebase/firestore';
 import { app } from '@/lib/firebase';
@@ -19,6 +20,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
+import { Switch } from '@/components/ui/switch';
 import {
   PlusCircle,
   Edit,
@@ -52,6 +54,7 @@ interface Business {
   name: string;
   category: string;
   location: string;
+  active?: boolean;
 }
 
 const BusinessesSkeleton = () => (
@@ -80,11 +83,17 @@ const BusinessesSkeleton = () => (
             <TableHead>
               <Skeleton className="h-5 w-20" />
             </TableHead>
+            <TableHead>
+              <Skeleton className="h-5 w-20" />
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {[...Array(5)].map((_, i) => (
             <TableRow key={i}>
+              <TableCell>
+                <Skeleton className="h-5 w-full" />
+              </TableCell>
               <TableCell>
                 <Skeleton className="h-5 w-full" />
               </TableCell>
@@ -110,6 +119,7 @@ export default function BusinessesPage() {
   const [businesses, setBusinesses] = useState<Business[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
+  const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const { toast } = useToast();
   const t = useTranslation('admin').t;
@@ -120,7 +130,11 @@ export default function BusinessesPage() {
       const businessesCol = collection(db, 'businesses');
       const businessSnapshot = await getDocs(businessesCol);
       const businessList = businessSnapshot.docs.map(
-        (doc) => ({ id: doc.id, ...doc.data() }) as Business
+        (doc) => ({
+          id: doc.id,
+          ...doc.data(),
+          active: doc.data().active !== undefined ? doc.data().active : true
+        }) as Business
       );
       setBusinesses(businessList);
     } catch (error) {
@@ -164,6 +178,34 @@ export default function BusinessesPage() {
       });
     } finally {
       setIsDeleting(null);
+    }
+  };
+
+  const handleToggleActive = async (businessId: string, currentStatus: boolean) => {
+    setUpdatingId(businessId);
+    try {
+      const businessRef = doc(db, 'businesses', businessId);
+      await updateDoc(businessRef, {
+        active: !currentStatus
+      });
+
+      setBusinesses(prev => prev.map(b =>
+        b.id === businessId ? { ...b, active: !currentStatus } : b
+      ));
+
+      toast({
+        title: t('businesses.edit.saveSuccessTitle', "Saved"),
+        description: t('businesses.edit.saveSuccessDesc', "Status updated"),
+      });
+    } catch (error) {
+      console.error('Error updating status:', error);
+      toast({
+        title: t('businesses.edit.saveErrorTitle', "Error"),
+        description: t('businesses.edit.saveErrorDesc', "Could not update status"),
+        variant: "destructive"
+      });
+    } finally {
+      setUpdatingId(null);
     }
   };
 
@@ -219,6 +261,7 @@ export default function BusinessesPage() {
               <TableHead>{t('businesses.table.name')}</TableHead>
               <TableHead>{t('businesses.table.category')}</TableHead>
               <TableHead>{t('businesses.table.location')}</TableHead>
+              <TableHead>Active</TableHead>
               <TableHead>{t('businesses.table.actions')}</TableHead>
             </TableRow>
           </TableHeader>
@@ -236,6 +279,9 @@ export default function BusinessesPage() {
                     <Skeleton className="h-5 w-1/4" />
                   </TableCell>
                   <TableCell>
+                    <Skeleton className="h-5 w-1/4" />
+                  </TableCell>
+                  <TableCell>
                     <Skeleton className="h-8 w-20" />
                   </TableCell>
                 </TableRow>
@@ -246,6 +292,13 @@ export default function BusinessesPage() {
                   <TableCell className="font-medium">{business.name}</TableCell>
                   <TableCell>{business.category}</TableCell>
                   <TableCell>{business.location}</TableCell>
+                  <TableCell>
+                    <Switch
+                      checked={business.active}
+                      disabled={updatingId === business.id}
+                      onCheckedChange={() => handleToggleActive(business.id, business.active || false)}
+                    />
+                  </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
                       <Button variant="outline" size="icon" asChild>
@@ -296,7 +349,7 @@ export default function BusinessesPage() {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={4} className="h-24 text-center">
+                <TableCell colSpan={5} className="h-24 text-center">
                   {t('businesses.noResults')}
                 </TableCell>
               </TableRow>

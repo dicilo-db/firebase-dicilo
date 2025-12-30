@@ -343,6 +343,7 @@
       "name": "Nombre",
       "category": "Categoría",
       "description": "Descripción",
+      "descriptionPlaceholder": "Hablanos sobre ti...",
       "location": "Ubicación",
       "address": "Dirección",
       "phone": "Teléfono",
