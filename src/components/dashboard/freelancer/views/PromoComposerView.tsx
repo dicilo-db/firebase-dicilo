@@ -571,6 +571,27 @@ export function PromoComposerView() {
                                                     WhatsApp
                                                 </DropdownMenuItem>
 
+                                                <DropdownMenuItem onClick={handleWhatsAppShare} className="cursor-pointer">
+                                                    <MessageCircle className="mr-2 h-4 w-4 text-green-700" />
+                                                    WhatsApp Business
+                                                </DropdownMenuItem>
+
+                                                <DropdownMenuItem onClick={() => {
+                                                    const text = `${currentText}\n\n${generatedLink}`;
+                                                    window.open(`https://t.me/share/url?url=${encodeURIComponent(generatedLink)}&text=${encodeURIComponent(currentText)}`, '_blank');
+                                                }} className="cursor-pointer">
+                                                    <Send className="mr-2 h-4 w-4 text-sky-500" />
+                                                    Telegram
+                                                </DropdownMenuItem>
+
+                                                <DropdownMenuItem onClick={() => {
+                                                    const text = `${currentText} ${generatedLink}`;
+                                                    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, '_blank');
+                                                }} className="cursor-pointer">
+                                                    <Twitter className="mr-2 h-4 w-4 text-black dark:text-white" />
+                                                    X (Twitter)
+                                                </DropdownMenuItem>
+
                                                 <DropdownMenuItem onClick={async () => {
                                                     await navigator.clipboard.writeText(`${currentText}\n\n${generatedLink}`);
                                                     toast({
