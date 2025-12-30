@@ -8,34 +8,62 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     // Fallback URL if everything fails
     const DEFAULT_REDIRECT = 'https://dicilo.net';
 
-    if (!linkId) {
-        return NextResponse.redirect(DEFAULT_REDIRECT);
+    // 1. FAIL-SAFE: Capture 'dest' param EARLY
+    // If DB fails or link invalid, we still want to redirect the user if possible.
+    let overrideDestination: string | null = null;
+
+    // Robust extraction attempt using standard URL API if nextUrl is quirky
+    try {
+        const fullUrl = new URL(request.url);
+        const rawDest = fullUrl.searchParams.get('dest');
+
+        if (rawDest) {
+            // Express/Node usually decodes, but we ensure it here to be safe as requested
+            const decodedDest = decodeURIComponent(rawDest);
+            // Basic validation: Must be http or https
+            if (decodedDest.startsWith('http://') || decodedDest.startsWith('https://')) {
+                overrideDestination = decodedDest;
+            }
+        }
+    } catch (e) {
+        // Fallback or ignore invalid URLs
     }
 
-    // 1. Get IP Address for Fraud Protection
-    const forwardedFor = request.headers.get('x-forwarded-for');
-    const ip = forwardedFor ? forwardedFor.split(',')[0] : '127.0.0.1';
-
-    // Hash IP to preserve privacy but allow uniqueness check
-    const ipHash = crypto.createHash('sha256').update(ip).digest('hex');
-
-    const db = getAdminDb();
-    const linkRef = db.collection('freelancer_links').doc(linkId);
-    const clickTrackingRef = linkRef.collection('unique_clicks').doc(ipHash);
+    if (!linkId) {
+        return NextResponse.redirect(overrideDestination || DEFAULT_REDIRECT);
+    }
 
     try {
+        const db = getAdminDb();
+
+        // 1. IP Hashing for Fraud/Unique Check
+        const forwardedFor = request.headers.get('x-forwarded-for');
+        const ip = forwardedFor ? forwardedFor.split(',')[0] : '127.0.0.1';
+        const ipHash = crypto.createHash('sha256').update(ip).digest('hex');
+
+        const linkRef = db.collection('freelancer_links').doc(linkId);
+        const clickTrackingRef = linkRef.collection('unique_clicks').doc(ipHash);
+
         // Run as transaction to ensure atomic updates for payments & counting
         const targetUrl = await db.runTransaction(async (t) => {
             const linkDoc = await t.get(linkRef);
-            const clickDoc = await t.get(clickTrackingRef);
 
-            // If link doesn't exist, return default
+            // If link doesn't exist in DB, check if we have override
             if (!linkDoc.exists) {
-                return DEFAULT_REDIRECT;
+                // Return override if available (Fail-safe for invalid IDs), otherwise default
+                return overrideDestination || DEFAULT_REDIRECT;
             }
 
+            const clickDoc = await t.get(clickTrackingRef);
+
             const data = linkDoc.data();
-            const destination = data?.targetUrl || DEFAULT_REDIRECT;
+            // Default destination from DB
+            let destination = data?.targetUrl || DEFAULT_REDIRECT;
+
+            // Apply Override if valid
+            if (overrideDestination) {
+                destination = overrideDestination;
+            }
 
             // FRAUD CHECK: If this IP already clicked, just redirect, do NOT increment or pay.
             if (clickDoc.exists) {
@@ -47,7 +75,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
             // 1. Register the click for this IP
             t.set(clickTrackingRef, {
                 timestamp: admin.firestore.FieldValue.serverTimestamp(),
-                ipHash: ipHash // redundancy
+                ipHash: ipHash
             });
 
             // 2. Increment click count
@@ -58,10 +86,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
             };
 
             // 3. BONUS LOGIC: Check if this click triggers the reward
-            // Rule: "If unique clicks reaches 5 AND bonus not paid"
-
             if (data?.monetizationActive && !data?.bonusPaidStatus && newCount >= 5) {
-                // Threshold reached!
                 const freelancerId = data.freelancerId;
                 const bonusAmount = data.clickBonusAmount || 0.10;
 
@@ -85,10 +110,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
                     timestamp: admin.firestore.FieldValue.serverTimestamp()
                 });
 
-                // Mark as Paid & Deactivate further monetization for THIS specific goal
                 updates.bonusPaidStatus = true;
-                // Note: We might keep monetizationActive true if we have higher tiers later, 
-                // but for this specific rule, we mark the bonus as paid.
             }
 
             t.update(linkRef, updates);
@@ -99,6 +121,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 
     } catch (error) {
         console.error(`[Redirect Error] Link ${linkId}:`, error);
-        return NextResponse.redirect(DEFAULT_REDIRECT);
+        // CRITICAL FAIL-SAFE: Redirect to override if DB fails
+        return NextResponse.redirect(overrideDestination || DEFAULT_REDIRECT);
     }
 }

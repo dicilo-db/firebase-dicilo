@@ -100,7 +100,20 @@ export default function DashboardPage() {
             const profileSnap = await getDoc(profileRef);
 
             if (profileSnap.exists()) {
-                setPrivateProfile(profileSnap.data());
+                const pData = profileSnap.data();
+                const serializableProfile = JSON.parse(
+                    JSON.stringify(pData, (key, value) => {
+                        if (
+                            value &&
+                            value.hasOwnProperty('seconds') &&
+                            value.hasOwnProperty('nanoseconds')
+                        ) {
+                            return new Date(value.seconds * 1000).toISOString();
+                        }
+                        return value;
+                    })
+                );
+                setPrivateProfile(serializableProfile);
                 setIsLoading(false);
                 return;
             }

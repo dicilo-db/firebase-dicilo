@@ -11,13 +11,60 @@ import { Label } from '@/components/ui/label';
 import { Facebook, Instagram, Linkedin, Twitter, Save, Loader2, Link as LinkIcon, Youtube, Twitch, Pin, Video, MessageCircle, Send } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
+const SocialInput = ({
+    provider,
+    icon: Icon,
+    placeholder,
+    label,
+    value,
+    onChange,
+    onSave,
+    isSaving,
+    isValid
+}: {
+    provider: SocialProvider,
+    icon: any,
+    placeholder: string,
+    label: string,
+    value: string,
+    onChange: (val: string) => void,
+    onSave: () => void,
+    isSaving: boolean,
+    isValid: boolean
+}) => (
+    <div className="flex items-end gap-3">
+        <div className="flex-1 space-y-2">
+            <Label className="flex items-center gap-2">
+                <Icon className="h-4 w-4" /> {label}
+            </Label>
+            <div className="relative">
+                <Input
+                    placeholder={placeholder}
+                    value={value || ''}
+                    onChange={(e) => onChange(e.target.value)}
+                    className="pl-9"
+                />
+                <LinkIcon className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+            </div>
+        </div>
+        <Button
+            onClick={onSave}
+            disabled={isSaving || !isValid}
+            size="icon"
+            className="mb-0.5"
+        >
+            {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+        </Button>
+    </div>
+);
+
 export function ConnectionsView() {
     const { t } = useTranslation('common');
     const { user } = useAuth();
     const { toast } = useToast();
 
     const [isLoading, setIsLoading] = useState(true);
-    const [isSaving, setIsSaving] = useState(false);
+    const [savingProvider, setSavingProvider] = useState<SocialProvider | null>(null);
 
     // Local state for form inputs
     const [connections, setConnections] = useState<{ [key in SocialProvider]?: string }>({});
@@ -45,7 +92,7 @@ export function ConnectionsView() {
         const url = connections[provider];
         if (!url) return;
 
-        setIsSaving(true);
+        setSavingProvider(provider);
         try {
             const result = await saveSocialConnection(user.uid, provider, url);
             if (result.success) {
@@ -63,36 +110,9 @@ export function ConnectionsView() {
                 variant: "destructive"
             });
         } finally {
-            setIsSaving(false);
+            setSavingProvider(null);
         }
     };
-
-    const SocialInput = ({ provider, icon: Icon, placeholder, label }: { provider: SocialProvider, icon: any, placeholder: string, label: string }) => (
-        <div className="flex items-end gap-3">
-            <div className="flex-1 space-y-2">
-                <Label className="flex items-center gap-2">
-                    <Icon className="h-4 w-4" /> {label}
-                </Label>
-                <div className="relative">
-                    <Input
-                        placeholder={placeholder}
-                        value={connections[provider] || ''}
-                        onChange={(e) => setConnections(prev => ({ ...prev, [provider]: e.target.value }))}
-                        className="pl-9"
-                    />
-                    <LinkIcon className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                </div>
-            </div>
-            <Button
-                onClick={() => handleSave(provider)}
-                disabled={isSaving || !connections[provider]}
-                size="icon"
-                className="mb-0.5"
-            >
-                {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-            </Button>
-        </div>
-    );
 
     if (isLoading) {
         return <div className="p-8 flex justify-center"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>;
@@ -120,20 +140,120 @@ export function ConnectionsView() {
                 </CardHeader>
                 <CardContent className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <SocialInput provider="whatsapp" icon={MessageCircle} label="WhatsApp" placeholder="https://wa.me/yournumber" />
-                        <SocialInput provider="telegram" icon={Send} label="Telegram" placeholder="https://t.me/username" />
+                        <SocialInput
+                            provider="whatsapp"
+                            icon={MessageCircle}
+                            label="WhatsApp"
+                            placeholder="https://wa.me/yournumber"
+                            value={connections.whatsapp || ''}
+                            onChange={(val) => setConnections(prev => ({ ...prev, whatsapp: val }))}
+                            onSave={() => handleSave('whatsapp')}
+                            isSaving={savingProvider === 'whatsapp'}
+                            isValid={!!connections.whatsapp}
+                        />
+                        <SocialInput
+                            provider="telegram"
+                            icon={Send}
+                            label="Telegram"
+                            placeholder="https://t.me/username"
+                            value={connections.telegram || ''}
+                            onChange={(val) => setConnections(prev => ({ ...prev, telegram: val }))}
+                            onSave={() => handleSave('telegram')}
+                            isSaving={savingProvider === 'telegram'}
+                            isValid={!!connections.telegram}
+                        />
 
-                        <SocialInput provider="instagram" icon={Instagram} label="Instagram" placeholder="https://instagram.com/username" />
-                        <SocialInput provider="facebook" icon={Facebook} label="Facebook Fanpage" placeholder="https://facebook.com/page" />
+                        <SocialInput
+                            provider="instagram"
+                            icon={Instagram}
+                            label="Instagram"
+                            placeholder="https://instagram.com/username"
+                            value={connections.instagram || ''}
+                            onChange={(val) => setConnections(prev => ({ ...prev, instagram: val }))}
+                            onSave={() => handleSave('instagram')}
+                            isSaving={savingProvider === 'instagram'}
+                            isValid={!!connections.instagram}
+                        />
+                        <SocialInput
+                            provider="facebook"
+                            icon={Facebook}
+                            label="Facebook Fanpage"
+                            placeholder="https://facebook.com/page"
+                            value={connections.facebook || ''}
+                            onChange={(val) => setConnections(prev => ({ ...prev, facebook: val }))}
+                            onSave={() => handleSave('facebook')}
+                            isSaving={savingProvider === 'facebook'}
+                            isValid={!!connections.facebook}
+                        />
 
-                        <SocialInput provider="tiktok" icon={Video} label="TikTok" placeholder="https://tiktok.com/@username" />
-                        <SocialInput provider="linkedin" icon={Linkedin} label="LinkedIn Fanpage" placeholder="https://linkedin.com/company/page" />
+                        <SocialInput
+                            provider="tiktok"
+                            icon={Video}
+                            label="TikTok"
+                            placeholder="https://tiktok.com/@username"
+                            value={connections.tiktok || ''}
+                            onChange={(val) => setConnections(prev => ({ ...prev, tiktok: val }))}
+                            onSave={() => handleSave('tiktok')}
+                            isSaving={savingProvider === 'tiktok'}
+                            isValid={!!connections.tiktok}
+                        />
+                        <SocialInput
+                            provider="linkedin"
+                            icon={Linkedin}
+                            label="LinkedIn Fanpage"
+                            placeholder="https://linkedin.com/company/page"
+                            value={connections.linkedin || ''}
+                            onChange={(val) => setConnections(prev => ({ ...prev, linkedin: val }))}
+                            onSave={() => handleSave('linkedin')}
+                            isSaving={savingProvider === 'linkedin'}
+                            isValid={!!connections.linkedin}
+                        />
 
-                        <SocialInput provider="youtube" icon={Youtube} label="YouTube Kanal" placeholder="https://youtube.com/@channel" />
-                        <SocialInput provider="twitter" icon={Twitter} label='"X" (Früher Twitter)' placeholder="https://x.com/username" />
+                        <SocialInput
+                            provider="youtube"
+                            icon={Youtube}
+                            label="YouTube Kanal"
+                            placeholder="https://youtube.com/@channel"
+                            value={connections.youtube || ''}
+                            onChange={(val) => setConnections(prev => ({ ...prev, youtube: val }))}
+                            onSave={() => handleSave('youtube')}
+                            isSaving={savingProvider === 'youtube'}
+                            isValid={!!connections.youtube}
+                        />
+                        <SocialInput
+                            provider="twitter"
+                            icon={Twitter}
+                            label='"X" (Früher Twitter)'
+                            placeholder="https://x.com/username"
+                            value={connections.twitter || ''}
+                            onChange={(val) => setConnections(prev => ({ ...prev, twitter: val }))}
+                            onSave={() => handleSave('twitter')}
+                            isSaving={savingProvider === 'twitter'}
+                            isValid={!!connections.twitter}
+                        />
 
-                        <SocialInput provider="twitch" icon={Twitch} label="Twitch Kanal" placeholder="https://twitch.tv/username" />
-                        <SocialInput provider="pinterest" icon={Pin} label="Pinterest Kanal" placeholder="https://pinterest.com/username" />
+                        <SocialInput
+                            provider="twitch"
+                            icon={Twitch}
+                            label="Twitch Kanal"
+                            placeholder="https://twitch.tv/username"
+                            value={connections.twitch || ''}
+                            onChange={(val) => setConnections(prev => ({ ...prev, twitch: val }))}
+                            onSave={() => handleSave('twitch')}
+                            isSaving={savingProvider === 'twitch'}
+                            isValid={!!connections.twitch}
+                        />
+                        <SocialInput
+                            provider="pinterest"
+                            icon={Pin}
+                            label="Pinterest Kanal"
+                            placeholder="https://pinterest.com/username"
+                            value={connections.pinterest || ''}
+                            onChange={(val) => setConnections(prev => ({ ...prev, pinterest: val }))}
+                            onSave={() => handleSave('pinterest')}
+                            isSaving={savingProvider === 'pinterest'}
+                            isValid={!!connections.pinterest}
+                        />
                     </div>
                 </CardContent>
             </Card>

@@ -24,6 +24,7 @@ export interface CreateCampaignData {
             suggestedText: string;
         }
     };
+    targetUrls: { [lang: string]: string[] }; // Map langCode -> URL[]
 }
 
 export interface ClientOption {
@@ -130,8 +131,13 @@ export async function createCampaign(idToken: string, data: CreateCampaignData) 
             description: defaultContent.description,
             suggestedText: defaultContent.suggestedText,
 
+
+
             // Content Map (Full data)
             content_map: data.content,
+
+            // Destination URLs
+            target_urls: data.targetUrls || {},
 
             // Meta
             createdBy: user.uid,
@@ -179,5 +185,106 @@ export async function getClientsForSelect(idToken: string): Promise<{ success: b
         return { success: true, clients };
     } catch (error: any) {
         return { success: false, error: error.message };
+    }
+}
+
+
+export async function getCampaigns(idToken: string) {
+    try {
+        const decodedToken = await verifyAdminRole(idToken); // Reuse consistent check
+
+        const snapshot = await getAdminDb().collection('campaigns')
+            .orderBy('createdAt', 'desc')
+            .get();
+
+        const campaigns = snapshot.docs.map((doc: FirebaseFirestore.QueryDocumentSnapshot) => {
+            const data = doc.data();
+            return {
+                id: doc.id,
+                ...data,
+                created_at: data.createdAt?.toDate?.()?.toISOString() || data.created_at || null,
+                updated_at: data.updatedAt?.toDate?.()?.toISOString() || data.updatedAt || null,
+                // Overwrite original timestamp fields to prevent serialization errors
+                createdAt: data.createdAt?.toDate?.()?.toISOString() || null,
+                updatedAt: data.updatedAt?.toDate?.()?.toISOString() || null,
+                start_date: data.start_date,
+                end_date: data.end_date
+            };
+        });
+
+        return { success: true, campaigns };
+    } catch (error: any) {
+        console.error('Error fetching campaigns:', error);
+        return { success: false, error: 'Failed to fetch campaigns: ' + error.message };
+    }
+}
+
+export async function updateCampaign(idToken: string, campaignId: string, data: CreateCampaignData) {
+    try {
+        await verifyAdminRole(idToken); // Reuse consistent check
+
+        const campaignRef = getAdminDb().collection('campaigns').doc(campaignId);
+
+        // Calculate costs
+        // Margin logic assumed same as create: 40% margin. Price = Reward / 0.6
+        const MARGIN = 0.4;
+        let finalCostPerAction = data.manualCostPerAction;
+        if (finalCostPerAction === undefined || finalCostPerAction === null) {
+            if (data.rewardPerAction > 0) {
+                finalCostPerAction = Number((data.rewardPerAction / (1 - MARGIN)).toFixed(2));
+            } else {
+                finalCostPerAction = 0;
+            }
+        }
+
+        const updateData = {
+            budget_total: Number(data.budgetTotal),
+            reward_per_action: Number(data.rewardPerAction),
+            cost_per_action: Number(finalCostPerAction),
+            daily_limit_per_user: Number(data.dailyLimit),
+            start_date: data.startDate,
+            end_date: data.endDate,
+            languages: data.allowedLanguages, // Fixed property name
+
+            // Content Map (Full data)
+            content_map: data.content,
+
+            // Denormalize Text (using first language or es default)
+            title: data.content[data.allowedLanguages[0]]?.title || data.content['es']?.title,
+            description: data.content[data.allowedLanguages[0]]?.description || data.content['es']?.description,
+
+            // Target URLs
+            target_urls: data.targetUrls || {},
+
+            images: data.images,
+
+            updatedAt: admin.firestore.FieldValue.serverTimestamp()
+        };
+
+        await campaignRef.update(updateData);
+
+        revalidatePath('/dashboard/freelancer');
+        revalidatePath('/admin');
+
+        return { success: true, id: campaignId };
+    } catch (error: any) {
+        console.error('Error updating campaign:', error);
+        return { success: false, error: 'Failed to update campaign: ' + error.message };
+    }
+}
+
+export async function deleteCampaign(idToken: string, campaignId: string) {
+    try {
+        await verifyAdminRole(idToken); // Reuse consistent check
+
+        await getAdminDb().collection('campaigns').doc(campaignId).delete();
+
+        revalidatePath('/dashboard/freelancer');
+        revalidatePath('/admin');
+
+        return { success: true };
+    } catch (error: any) {
+        console.error('Error deleting campaign:', error);
+        return { success: false, error: 'Failed to delete campaign: ' + error.message };
     }
 }

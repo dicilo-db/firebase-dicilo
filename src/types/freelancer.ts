@@ -26,6 +26,7 @@ export interface Campaign {
     default_language: string;
     translations: { [langCode: string]: CampaignTranslation };
     tracking_ids?: { [langCode: string]: string };
+    target_urls?: { [langCode: string]: string[] }; // Destination/Landing Page URLs
 
     // Legacy/Display fields (can be populated from default translation)
     title: string;

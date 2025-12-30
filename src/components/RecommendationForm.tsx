@@ -29,6 +29,7 @@ import { submitRecommendation } from '@/app/actions/recommendations';
 import { useTranslation } from 'react-i18next';
 import { Label } from './ui/label';
 import { Country, City } from 'country-state-city';
+import { useAuth } from '@/context/AuthContext';
 
 // Schema
 const formSchema = z.object({
@@ -95,6 +96,7 @@ interface RecommendationFormContentProps {
 export function RecommendationFormContent({ initialBusinessName, onSuccess, onCancel }: RecommendationFormContentProps) {
   const { t } = useTranslation('common');
   const { toast } = useToast();
+  const { user } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<RecommendationFormValues>({
@@ -143,6 +145,7 @@ export function RecommendationFormContent({ initialBusinessName, onSuccess, onCa
         ...values,
         country: countryName,
         countryCode: values.country,
+        userId: user?.uid, // Link to freelancer
       });
 
       if (!result.success) throw new Error(result.error);

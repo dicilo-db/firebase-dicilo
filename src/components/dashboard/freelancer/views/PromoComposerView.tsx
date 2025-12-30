@@ -26,6 +26,13 @@ import {
     ResizablePanel,
     ResizablePanelGroup,
 } from "@/components/ui/resizable";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { FreelancerRules } from '@/components/dashboard/freelancer/FreelancerRules';
 
 // Icons
@@ -40,6 +47,7 @@ import {
     Languages,
     Linkedin,
     Loader2,
+    Mail,
     MessageCircle,
     MoreHorizontal,
     Plus,
@@ -101,6 +109,18 @@ export function PromoComposerView() {
         { chars: 600, rate: 0.40 }
     ];
 
+    // Mobile Detection
+    const [isMobile, setIsMobile] = useState(false);
+    useEffect(() => {
+        const checkMobile = () => setIsMobile(window.innerWidth < 768);
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
+
+    // Target URL State
+    const [selectedTargetUrl, setSelectedTargetUrl] = useState<string>('');
+
     const currentText = texts[activeLangTab] || '';
 
     const currentTier = PRICING_TIERS.reduce((prev, curr) => {
@@ -138,16 +158,24 @@ export function PromoComposerView() {
             setIsLoading(false);
         }
         loadData();
-    }, [campaignId, user]);
+    }, [campaignId, user?.uid]);
 
-    // POLYMORPHIC TRACKING: Update link when language changes
+    // 1. Auto-select default URL
     useEffect(() => {
         if (!activeCampaign) return;
 
-        // Strategy:
-        // 1. Check if campaign has explicit tracking ID for this language.
-        // 2. If not, AUTO-GENERATE one by appending the language code to the legacy ID.
-        // This ensures the user ALWAYS sees a language-specifc link (e.g. ..._ES)
+        // Auto-select first target URL for the language if available
+        const urls = activeCampaign.target_urls?.[activeLangTab];
+        if (urls && Array.isArray(urls) && urls.length > 0) {
+            setSelectedTargetUrl(urls[0].trim());
+        } else {
+            setSelectedTargetUrl('');
+        }
+    }, [activeCampaign, activeLangTab]);
+
+    // 2. Generate Link
+    useEffect(() => {
+        if (!activeCampaign) return;
 
         const legacyId = activeCampaign.id?.substring(0, 8) || 'campaign';
         const specificTrackingId = activeCampaign.tracking_ids?.[activeLangTab];
@@ -155,8 +183,21 @@ export function PromoComposerView() {
         // Fallback: Generate one like "xc90_es"
         const generatedId = specificTrackingId || `${legacyId}_${activeLangTab.toUpperCase()}`;
 
-        setGeneratedLink(`https://dicilo.net/r/${generatedId}`);
-    }, [activeCampaign, activeLangTab]);
+        let baseLink = `https://dicilo.net/r/${generatedId}`;
+
+        // If a specific URL is selected (and it's different from the main one or we want to force it)
+        // We append it as a destination parameter. 
+        // NOTE: The redirector must support ?dest=... or similar to override.
+        // Assuming 'dest' is the param name.
+        if (selectedTargetUrl) {
+            // Aggressively trim any whitespace
+            const cleanUrl = selectedTargetUrl.trim().replace(/^\s+|\s+$/g, '');
+            // User requested standard encoding (Correct: %3A%2F%2F) to ensure reliability
+            baseLink += `?dest=${encodeURIComponent(cleanUrl)}`;
+        }
+
+        setGeneratedLink(baseLink);
+    }, [activeCampaign, activeLangTab, selectedTargetUrl]);
 
     const handleCorrectGrammar = async () => {
         const textToCorrect = texts[activeLangTab];
@@ -215,9 +256,11 @@ export function PromoComposerView() {
     };
 
     const handleCopyText = async () => {
-        if (!currentText) return;
-        await navigator.clipboard.writeText(currentText);
-        toast({ title: t('campaign_explorer.copy_text') + " OK", description: "Texto copiado al portapapeles." });
+        if (!currentText || !activeCampaign) return;
+        const trackingLink = generatedLink;
+        const message = `${currentText}\n\n${trackingLink} #${activeCampaign.companyName.replace(/[^a-zA-Z0-9]/g, '')}`;
+        await navigator.clipboard.writeText(message);
+        toast({ title: t('campaign_explorer.copy_text') + " OK", description: "Texto y enlace copiados al portapapeles." });
     };
 
     const selectedImageUrl = activeCampaign?.images && activeCampaign.images.length > 0
@@ -226,6 +269,14 @@ export function PromoComposerView() {
 
     const handleWhatsAppShare = async () => {
         if (!activeCampaign) return;
+
+        // 1. OPTIMISTIC SHARE: Open WhatsApp immediately for best UX
+        // Use generatedLink (Polymorphic) instead of backend returned linkId
+        const trackingLink = generatedLink;
+        const message = `${currentText}\n\n${trackingLink} #${activeCampaign.companyName.replace(/[^a-zA-Z0-9]/g, '')}`;
+        window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
+
+        // 2. BACKEND PROCESSING (Background)
         setIsSharing(true);
         try {
             // Use current tab language for post
@@ -244,28 +295,24 @@ export function PromoComposerView() {
                 if ((result as any).error?.includes('10 posts')) {
                     toast({
                         title: "Límite Diario Alcanzado",
-                        description: "Has completado tus 10 posts de hoy para esta campaña.",
-                        variant: "destructive"
+                        description: "Nota: Has completado tus 10 posts de hoy. Este post no generará recompensa adicional.",
+                        className: "bg-yellow-500 text-white mb-2",
+                        variant: "default" // Changed to warning/info since we allowed the share
                     });
                     return;
                 }
-                throw new Error((result as any).error);
+                // Silently log or show minor error, but share already happened
+                console.error("Backend process error:", (result as any).error);
+            } else {
+                const reward = (result as any).reward;
+                toast({
+                    title: "¡Publicando!",
+                    description: `Has asegurado $${reward} por creación. ¡Consigue 5 clics para el bono extra de $0.10!`,
+                    className: "bg-green-600 text-white"
+                });
             }
-
-            const reward = (result as any).reward;
-            // Use generatedLink (Polymorphic) instead of backend returned linkId
-            const trackingLink = generatedLink;
-
-            const message = `${currentText}\n\n${trackingLink} #${activeCampaign.companyName.replace(/[^a-zA-Z0-9]/g, '')}`;
-            window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
-
-            toast({
-                title: "¡Publicando!",
-                description: `Has asegurado $${reward} por creación. ¡Consigue 5 clics para el bono extra de $0.10!`,
-                className: "bg-green-600 text-white"
-            });
         } catch (error: any) {
-            toast({ title: "Error", description: error.message, variant: 'destructive' });
+            console.error("Share error:", error);
         } finally {
             setIsSharing(false);
         }
@@ -283,7 +330,7 @@ export function PromoComposerView() {
         );
     }
 
-    // Quick helper for generic icons in dropdown
+    // Helper for generic icons
     const NetworkIcon = ({ provider, className }: { provider: string, className?: string }) => {
         switch (provider) {
             case 'facebook': return <Facebook className={className} />;
@@ -296,9 +343,9 @@ export function PromoComposerView() {
     };
 
     return (
-        <ResizablePanelGroup direction="horizontal" className="h-full w-full rounded-lg border bg-background overflow-hidden relative">
+        <MainLayout isMobile={isMobile}>
             {/* LEFT PANEL: EDITOR */}
-            <ResizablePanel defaultSize={40} minSize={30} maxSize={60} className="bg-white dark:bg-slate-950 flex flex-col border-r h-full overflow-hidden">
+            <EditorPanelWrapper isMobile={isMobile}>
                 <div className="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-6">
                     {/* Header Section */}
                     <div className="flex items-center gap-4">
@@ -367,6 +414,40 @@ export function PromoComposerView() {
                             <div className="space-y-3">
                                 <div className="flex flex-col gap-2">
                                     <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Contenido & Traducción</label>
+
+                                    {/* Link Selection - ALWAYS VISIBLE with Fallback */}
+                                    <div className="bg-blue-50 dark:bg-blue-900/20 p-2 rounded border border-blue-100 dark:border-blue-800 mb-2">
+                                        <label className="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-1 block">
+                                            Objetivo del Link
+                                        </label>
+                                        <Select
+                                            value={selectedTargetUrl}
+                                            onValueChange={setSelectedTargetUrl}
+                                            disabled={!activeCampaign.target_urls?.[activeLangTab]?.length} // Disable if no choices
+                                        >
+                                            <SelectTrigger className="h-8 text-xs bg-white dark:bg-slate-950">
+                                                <SelectValue placeholder={
+                                                    (!activeCampaign.target_urls?.[activeLangTab]?.length)
+                                                        ? "Default Campaign URL"
+                                                        : "Selecciona URL destino"
+                                                } />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {/* Always show at least one option if list is empty, effectively the default */}
+                                                {(!activeCampaign.target_urls?.[activeLangTab]?.length) && (
+                                                    <SelectItem value="default" className="text-xs">
+                                                        Default URL (Campaign Home)
+                                                    </SelectItem>
+                                                )}
+
+                                                {activeCampaign.target_urls?.[activeLangTab]?.map((url, i) => (
+                                                    <SelectItem key={i} value={url.trim()} className="text-xs">
+                                                        {url.trim()}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
 
                                     <div className="flex items-center justify-between bg-slate-50 dark:bg-slate-900 p-1.5 rounded-lg border">
                                         <div className="flex items-center gap-2">
@@ -440,11 +521,78 @@ export function PromoComposerView() {
                                         <Button
                                             onClick={handleWhatsAppShare}
                                             disabled={isSharing || currentText.length < 10}
-                                            className="h-10 bg-[#25D366] hover:bg-[#25D366]/90 text-white font-bold shadow-sm px-6 whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
+                                            className="h-10 bg-[#25D366] hover:bg-[#25D366]/90 text-white font-bold shadow-sm flex-1 disabled:opacity-50 disabled:cursor-not-allowed"
                                         >
                                             {isSharing ? <Loader2 className="animate-spin mr-2 h-4 w-4" /> : <MessageCircle className="mr-2 h-4 w-4" />}
-                                            Compartir en WhatsApp
+                                            WhatsApp
                                         </Button>
+
+                                        {/* GENERIC SHARE MENU */}
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger asChild>
+                                                <Button
+                                                    variant="outline"
+                                                    disabled={currentText.length < 10}
+                                                    className="h-10 px-4 font-semibold text-slate-700 dark:text-slate-200"
+                                                    title="Otras Redes"
+                                                >
+                                                    <Share2 className="h-4 w-4 mr-2" />
+                                                    Share
+                                                </Button>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent align="end" className="w-56">
+                                                {/* WhatsApp (Redundant but requested in menu) */}
+                                                <DropdownMenuItem onClick={handleWhatsAppShare} className="cursor-pointer">
+                                                    <MessageCircle className="mr-2 h-4 w-4 text-green-500" />
+                                                    WhatsApp
+                                                </DropdownMenuItem>
+
+                                                {/* Facebook */}
+                                                <DropdownMenuItem onClick={() => {
+                                                    const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(generatedLink)}&quote=${encodeURIComponent(currentText)}`;
+                                                    window.open(url, '_blank', 'width=600,height=500');
+                                                }} className="cursor-pointer">
+                                                    <Facebook className="mr-2 h-4 w-4 text-blue-600" />
+                                                    Facebook
+                                                </DropdownMenuItem>
+
+                                                {/* Email */}
+                                                <DropdownMenuItem onClick={() => {
+                                                    const subject = `Check out ${activeCampaign.companyName}`;
+                                                    const body = `${currentText}\n\n${generatedLink}`;
+                                                    window.open(`mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`);
+                                                }} className="cursor-pointer">
+                                                    <Mail className="mr-2 h-4 w-4" />
+                                                    Email
+                                                </DropdownMenuItem>
+
+                                                <DropdownMenuSeparator />
+
+                                                {/* Native / More Options */}
+                                                <DropdownMenuItem onClick={() => {
+                                                    if (navigator.share) {
+                                                        navigator.share({
+                                                            title: activeCampaign.companyName,
+                                                            text: currentText,
+                                                            url: generatedLink
+                                                        }).catch(console.error);
+                                                    } else {
+                                                        toast({ description: "Native sharing not supported on this device." });
+                                                    }
+                                                }} className="cursor-pointer">
+                                                    <MoreHorizontal className="mr-2 h-4 w-4" />
+                                                    Más opciones...
+                                                </DropdownMenuItem>
+
+                                                <DropdownMenuSeparator />
+
+                                                {/* Copy Link */}
+                                                <DropdownMenuItem onClick={handleCopyText} className="cursor-pointer">
+                                                    <Copy className="mr-2 h-4 w-4" />
+                                                    Copiar Link
+                                                </DropdownMenuItem>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
 
                                         <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-900 rounded-md border p-1 h-10 w-full overflow-hidden">
                                             <div className="bg-transparent px-3 py-1 text-xs font-mono text-muted-foreground select-all truncate flex-1 leading-8">
@@ -460,12 +608,13 @@ export function PromoComposerView() {
                         </TabsContent>
                     </Tabs>
                 </div>
-            </ResizablePanel>
+            </EditorPanelWrapper>
 
-            <ResizableHandle withHandle className="bg-slate-200 dark:bg-slate-800" />
+            {/* Handle only for desktop is handled inside wrapper or here? Handled here */}
+            {!isMobile && <ResizableHandle withHandle className="bg-slate-200 dark:bg-slate-800" />}
 
             {/* RIGHT PANEL: PREVIEW */}
-            <ResizablePanel defaultSize={60} className="bg-slate-100/50 dark:bg-black/40 relative flex flex-col h-full overflow-hidden">
+            <PreviewPanelWrapper isMobile={isMobile}>
                 {/* Modern Dot Background Pattern */}
                 <div className="absolute inset-0 z-0 opacity-[0.4] pointer-events-none"
                     style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, #cbd5e1 1px, transparent 0)', backgroundSize: '24px 24px' }}>
@@ -481,21 +630,27 @@ export function PromoComposerView() {
                                 <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                                {connections.length > 0 ? connections.map(conn => (
-                                    <SelectItem key={conn.provider} value={conn.provider}>
-                                        <div className="flex items-center gap-2">
-                                            <NetworkIcon provider={conn.provider} className="h-3 w-3" />
-                                            <span className="capitalize">{conn.provider}</span>
-                                        </div>
-                                    </SelectItem>
-                                )) : (
-                                    <>
-                                        <SelectItem value="instagram">Instagram</SelectItem>
-                                        <SelectItem value="facebook">Facebook</SelectItem>
-                                        <SelectItem value="twitter">X / Twitter</SelectItem>
-                                        <SelectItem value="linkedin">LinkedIn</SelectItem>
-                                    </>
-                                )}
+                                {/* ALWAYS show all networks for Preview, regardless of connection status */}
+                                <SelectItem value="instagram">
+                                    <div className="flex items-center gap-2">
+                                        <Instagram className="h-3 w-3" /> Instagram
+                                    </div>
+                                </SelectItem>
+                                <SelectItem value="facebook">
+                                    <div className="flex items-center gap-2">
+                                        <Facebook className="h-3 w-3" /> Facebook
+                                    </div>
+                                </SelectItem>
+                                <SelectItem value="twitter">
+                                    <div className="flex items-center gap-2">
+                                        <Twitter className="h-3 w-3" /> X / Twitter
+                                    </div>
+                                </SelectItem>
+                                <SelectItem value="linkedin">
+                                    <div className="flex items-center gap-2">
+                                        <Linkedin className="h-3 w-3" /> LinkedIn
+                                    </div>
+                                </SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
@@ -588,7 +743,7 @@ export function PromoComposerView() {
                                             <div className="text-sm font-bold mb-1">2,845 likes</div>
                                             <div className="text-sm leading-snug">
                                                 <span className="font-bold mr-2">{activeCampaign.companyName}</span>
-                                                {currentText || activeCampaign.description}
+                                                {currentText}
                                             </div>
                                         </div>
                                     </div>
@@ -609,7 +764,7 @@ export function PromoComposerView() {
                                                 <MoreHorizontal className="h-5 w-5 text-slate-500" />
                                             </div>
                                             <div className="px-4 pb-2 text-sm text-slate-900 dark:text-white whitespace-pre-wrap">
-                                                {currentText || activeCampaign.description}
+                                                {currentText}
                                             </div>
                                             <div className="aspect-[4/5] bg-slate-100 relative w-full">
                                                 <Image src={selectedImageUrl} alt="" fill className="object-cover" />
@@ -642,7 +797,7 @@ export function PromoComposerView() {
                                                     <span className="text-slate-500">Promoted</span>
                                                 </div>
                                                 <div className="text-[13px] text-slate-900 dark:text-white mt-0.5 whitespace-pre-wrap">
-                                                    {currentText || activeCampaign.description}
+                                                    {currentText}
                                                     <span className="text-blue-500 ml-1">{generatedLink}</span>
                                                 </div>
                                                 <div className="mt-2 aspect-video rounded-xl overflow-hidden relative border border-slate-100 dark:border-slate-800">
@@ -678,7 +833,7 @@ export function PromoComposerView() {
                                             </div>
 
                                             <div className="px-3 text-xs text-slate-900 dark:text-white mb-2 leading-relaxed whitespace-pre-wrap">
-                                                {currentText || activeCampaign.description}
+                                                {currentText}
                                             </div>
 
                                             <div className="aspect-[1.91/1] w-full relative bg-slate-100">
@@ -742,7 +897,57 @@ export function PromoComposerView() {
                         </p>
                     </div>
                 </div>
-            </ResizablePanel>
-        </ResizablePanelGroup>
+            </PreviewPanelWrapper>
+        </MainLayout>
     );
 }
+
+// ============================================================================
+// RESPONSIVE LAYOUT WRAPPERS
+// Extracted to prevent re-renders on every state change
+// ============================================================================
+
+const MainLayout = ({ children, isMobile }: { children: React.ReactNode, isMobile: boolean }) => {
+    if (isMobile) {
+        return (
+            <Tabs defaultValue="editor" className="flex flex-col h-full bg-background">
+                <div className="border-b px-4 py-2 bg-white dark:bg-slate-950 shrink-0">
+                    <TabsList className="grid w-full grid-cols-2">
+                        <TabsTrigger value="editor">Editor</TabsTrigger>
+                        <TabsTrigger value="preview">Vista Previa</TabsTrigger>
+                    </TabsList>
+                </div>
+                {children}
+            </Tabs>
+        );
+    }
+    return (
+        <ResizablePanelGroup direction="horizontal" className="h-full w-full rounded-lg border bg-background overflow-hidden relative">
+            {children}
+        </ResizablePanelGroup>
+    );
+};
+
+const EditorPanelWrapper = ({ children, isMobile }: { children: React.ReactNode, isMobile: boolean }) => {
+    if (isMobile) {
+        return (
+            <TabsContent value="editor" className="flex-1 overflow-hidden data-[state=inactive]:hidden mt-0">
+                <div className="h-full overflow-y-auto bg-white dark:bg-slate-950">{children}</div>
+            </TabsContent>
+        );
+    }
+    // Editor Panel: Default to 60% width
+    return <ResizablePanel defaultSize={60} minSize={40} maxSize={80} className="bg-white dark:bg-slate-950 flex flex-col border-r h-full overflow-hidden">{children}</ResizablePanel>;
+};
+
+const PreviewPanelWrapper = ({ children, isMobile }: { children: React.ReactNode, isMobile: boolean }) => {
+    if (isMobile) {
+        return (
+            <TabsContent value="preview" className="flex-1 overflow-hidden data-[state=inactive]:hidden mt-0">
+                {children}
+            </TabsContent>
+        );
+    }
+    // Preview Panel: Default to 40% width
+    return <ResizablePanel defaultSize={40} className="bg-slate-100/50 dark:bg-black/40 relative flex flex-col h-full overflow-hidden">{children}</ResizablePanel>;
+};
