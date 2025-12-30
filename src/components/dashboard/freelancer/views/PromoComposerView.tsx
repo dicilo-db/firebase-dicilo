@@ -184,20 +184,33 @@ export function PromoComposerView() {
         const generatedId = specificTrackingId || `${legacyId}_${activeLangTab.toUpperCase()}`;
 
         let baseLink = `https://dicilo.net/r/${generatedId}`;
+        const params = new URLSearchParams();
 
-        // If a specific URL is selected (and it's different from the main one or we want to force it)
-        // We append it as a destination parameter. 
-        // NOTE: The redirector must support ?dest=... or similar to override.
-        // Assuming 'dest' is the param name.
+        // 1. Destination
         if (selectedTargetUrl) {
-            // Aggressively trim any whitespace
             const cleanUrl = selectedTargetUrl.trim().replace(/^\s+|\s+$/g, '');
-            // User requested standard encoding (Correct: %3A%2F%2F) to ensure reliability
-            baseLink += `?dest=${encodeURIComponent(cleanUrl)}`;
+            params.set('dest', cleanUrl);
+        }
+
+        // 2. Open Graph Data (Rich Previews)
+        if (activeCampaign.images && activeCampaign.images.length > selectedImageIndex) {
+            params.set('og_img', activeCampaign.images[selectedImageIndex]);
+        }
+        if (activeCampaign.companyName) {
+            params.set('og_title', activeCampaign.companyName);
+        }
+        const desc = texts[activeLangTab] || activeCampaign.description || '';
+        if (desc) {
+            params.set('og_desc', desc.substring(0, 150));
+        }
+
+        const paramString = params.toString();
+        if (paramString) {
+            baseLink += `?${paramString}`;
         }
 
         setGeneratedLink(baseLink);
-    }, [activeCampaign, activeLangTab, selectedTargetUrl]);
+    }, [activeCampaign, activeLangTab, selectedTargetUrl, selectedImageIndex, texts]);
 
     const handleCorrectGrammar = async () => {
         const textToCorrect = texts[activeLangTab];
@@ -516,47 +529,56 @@ export function PromoComposerView() {
                                 </Tabs>
 
                                 <div className="mt-auto pt-4 border-t">
-
-                                    <div className="grid grid-cols-[auto_1fr] gap-3 items-center">
-                                        <Button
-                                            onClick={handleWhatsAppShare}
-                                            disabled={isSharing || currentText.length < 10}
-                                            className="h-10 bg-[#25D366] hover:bg-[#25D366]/90 text-white font-bold shadow-sm flex-1 disabled:opacity-50 disabled:cursor-not-allowed"
-                                        >
-                                            {isSharing ? <Loader2 className="animate-spin mr-2 h-4 w-4" /> : <MessageCircle className="mr-2 h-4 w-4" />}
-                                            WhatsApp
-                                        </Button>
+                                    <div className="flex gap-3 items-center">
+                                        {/* URL DISPLAY (Expanded) */}
+                                        <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-900 rounded-md border p-1 h-10 w-full overflow-hidden flex-1 relative">
+                                            <div className="bg-transparent px-3 py-1 text-xs font-mono text-muted-foreground select-all truncate flex-1 leading-8">
+                                                {generatedLink}
+                                            </div>
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="h-8 w-8 absolute right-1 hover:bg-slate-200 dark:hover:bg-slate-800"
+                                                onClick={handleCopyText}
+                                                title="Copiar Link"
+                                            >
+                                                <Copy className="h-4 w-4 text-slate-500" />
+                                            </Button>
+                                        </div>
 
                                         {/* GENERIC SHARE MENU */}
                                         <DropdownMenu>
                                             <DropdownMenuTrigger asChild>
                                                 <Button
-                                                    variant="outline"
+                                                    variant="default"
                                                     disabled={currentText.length < 10}
-                                                    className="h-10 px-4 font-semibold text-slate-700 dark:text-slate-200"
-                                                    title="Otras Redes"
+                                                    className="h-10 px-6 font-bold bg-green-600 hover:bg-green-700 text-white shadow-sm"
+                                                    title="Compartir"
                                                 >
                                                     <Share2 className="h-4 w-4 mr-2" />
                                                     Share
                                                 </Button>
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent align="end" className="w-56">
-                                                {/* WhatsApp (Redundant but requested in menu) */}
                                                 <DropdownMenuItem onClick={handleWhatsAppShare} className="cursor-pointer">
                                                     <MessageCircle className="mr-2 h-4 w-4 text-green-500" />
                                                     WhatsApp
                                                 </DropdownMenuItem>
 
-                                                {/* Facebook */}
-                                                <DropdownMenuItem onClick={() => {
-                                                    const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(generatedLink)}&quote=${encodeURIComponent(currentText)}`;
-                                                    window.open(url, '_blank', 'width=600,height=500');
+                                                <DropdownMenuItem onClick={async () => {
+                                                    await navigator.clipboard.writeText(`${currentText}\n\n${generatedLink}`);
+                                                    toast({
+                                                        title: "Texto Copiado",
+                                                        description: "Pega el texto (Ctrl+V) en Facebook.",
+                                                        duration: 4000
+                                                    });
+                                                    const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(generatedLink)}`;
+                                                    window.open(url, '_blank', 'width=600,height=600');
                                                 }} className="cursor-pointer">
                                                     <Facebook className="mr-2 h-4 w-4 text-blue-600" />
                                                     Facebook
                                                 </DropdownMenuItem>
 
-                                                {/* Email */}
                                                 <DropdownMenuItem onClick={() => {
                                                     const subject = `Check out ${activeCampaign.companyName}`;
                                                     const body = `${currentText}\n\n${generatedLink}`;
@@ -568,7 +590,6 @@ export function PromoComposerView() {
 
                                                 <DropdownMenuSeparator />
 
-                                                {/* Native / More Options */}
                                                 <DropdownMenuItem onClick={() => {
                                                     if (navigator.share) {
                                                         navigator.share({
@@ -583,25 +604,8 @@ export function PromoComposerView() {
                                                     <MoreHorizontal className="mr-2 h-4 w-4" />
                                                     Más opciones...
                                                 </DropdownMenuItem>
-
-                                                <DropdownMenuSeparator />
-
-                                                {/* Copy Link */}
-                                                <DropdownMenuItem onClick={handleCopyText} className="cursor-pointer">
-                                                    <Copy className="mr-2 h-4 w-4" />
-                                                    Copiar Link
-                                                </DropdownMenuItem>
                                             </DropdownMenuContent>
                                         </DropdownMenu>
-
-                                        <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-900 rounded-md border p-1 h-10 w-full overflow-hidden">
-                                            <div className="bg-transparent px-3 py-1 text-xs font-mono text-muted-foreground select-all truncate flex-1 leading-8">
-                                                {generatedLink}
-                                            </div>
-                                            <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0 hover:bg-slate-200" onClick={() => { navigator.clipboard.writeText(generatedLink); toast({ description: "Link copiado" }); }}>
-                                                <Copy className="h-4 w-4" />
-                                            </Button>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -630,7 +634,6 @@ export function PromoComposerView() {
                                 <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                                {/* ALWAYS show all networks for Preview, regardless of connection status */}
                                 <SelectItem value="instagram">
                                     <div className="flex items-center gap-2">
                                         <Instagram className="h-3 w-3" /> Instagram

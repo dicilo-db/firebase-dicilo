@@ -8,10 +8,34 @@ type Props = {
     searchParams: { [key: string]: string | string[] | undefined };
 };
 
-export const metadata: Metadata = {
-    title: 'Redirecting... | Dicilo',
-    robots: 'noindex, nofollow',
-};
+export async function generateMetadata(
+    { params, searchParams }: Props
+): Promise<Metadata> {
+    // Decode params if necessary, but usually Next.js provides decoded values
+    const title = (searchParams.og_title as string) || 'Dicilo';
+    const description = (searchParams.og_desc as string) || 'Conectando Marcas con Personas';
+    // Fallback to default logo if no image provided
+    const image = (searchParams.og_img as string) || 'https://dicilo.net/logo.png';
+
+    return {
+        title: title,
+        description: description,
+        openGraph: {
+            title: title,
+            description: description,
+            images: [image],
+            url: `https://dicilo.net/r/${params.id}`,
+            type: 'website',
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title: title,
+            description: description,
+            images: [image],
+        },
+        robots: 'noindex, nofollow',
+    };
+}
 
 export default function RedirectPage({ params, searchParams }: Props) {
     const trackingId = params.id;
