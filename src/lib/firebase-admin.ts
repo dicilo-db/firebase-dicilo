@@ -20,20 +20,38 @@ function initFirebaseAdmin() {
                 // Fallback to default if JSON parsing fails, though this is risky
                 throw new Error("Invalid FIREBASE_SERVICE_ACCOUNT_KEY JSON");
             }
-            return admin.initializeApp({
-                credential: admin.credential.cert(serviceAccount),
-                projectId: PROJECT_ID,
-                storageBucket: 'geosearch-fq4i9.firebasestorage.app',
-            });
+            try {
+                return admin.initializeApp({
+                    credential: admin.credential.cert(serviceAccount),
+                    projectId: PROJECT_ID,
+                    storageBucket: 'geosearch-fq4i9.firebasestorage.app',
+                });
+            } catch (error: any) {
+                if (error.code === 'app/duplicate-app') {
+                    console.log("Firebase Admin App already initialized (concurrent race detected).");
+                    return admin.app();
+                }
+                throw error;
+            }
         } else {
-            return admin.initializeApp({
-                projectId: PROJECT_ID,
-                storageBucket: 'geosearch-fq4i9.firebasestorage.app',
-                credential: admin.credential.applicationDefault(),
-            });
+            try {
+                return admin.initializeApp({
+                    projectId: PROJECT_ID,
+                    storageBucket: 'geosearch-fq4i9.firebasestorage.app',
+                    credential: admin.credential.applicationDefault(),
+                });
+            } catch (error: any) {
+                if (error.code === 'app/duplicate-app') {
+                    console.log("Firebase Admin App already initialized (concurrent race detected).");
+                    return admin.app();
+                }
+                throw error;
+            }
         }
     } catch (error) {
         console.error("Firebase Admin initialization failed:", error);
+        // Attempt to return existing app as last resort?
+        if (admin.apps.length > 0) return admin.app();
         throw error;
     }
 }
