@@ -539,8 +539,14 @@ export function PromoComposerView() {
                                                 variant="ghost"
                                                 size="icon"
                                                 className="h-8 w-8 absolute right-1 hover:bg-slate-200 dark:hover:bg-slate-800"
-                                                onClick={handleCopyText}
-                                                title="Copiar Link"
+                                                onClick={async () => {
+                                                    await navigator.clipboard.writeText(generatedLink);
+                                                    toast({
+                                                        title: "Enlace Copiado",
+                                                        description: "Solo el enlace ha sido copiado."
+                                                    });
+                                                }}
+                                                title="Copiar Solo Link"
                                             >
                                                 <Copy className="h-4 w-4 text-slate-500" />
                                             </Button>
