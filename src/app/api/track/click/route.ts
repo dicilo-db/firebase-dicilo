@@ -3,34 +3,12 @@ import { getAdminDb } from '@/lib/firebase-admin';
 import * as admin from 'firebase-admin';
 import crypto from 'crypto';
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
-    const linkId = params.id;
-    // Fallback URL if everything fails
-    const DEFAULT_REDIRECT = 'https://dicilo.net';
-
-    // 1. FAIL-SAFE: Capture 'dest' param EARLY
-    // If DB fails or link invalid, we still want to redirect the user if possible.
-    let overrideDestination: string | null = null;
-
-    // Robust extraction attempt using standard URL API if nextUrl is quirky
-    try {
-        const fullUrl = new URL(request.url);
-        const rawDest = fullUrl.searchParams.get('dest');
-
-        if (rawDest) {
-            // Express/Node usually decodes, but we ensure it here to be safe as requested
-            const decodedDest = decodeURIComponent(rawDest);
-            // Basic validation: Must be http or https
-            if (decodedDest.startsWith('http://') || decodedDest.startsWith('https://')) {
-                overrideDestination = decodedDest;
-            }
-        }
-    } catch (e) {
-        // Fallback or ignore invalid URLs
-    }
+export async function GET(request: NextRequest) {
+    const searchParams = request.nextUrl.searchParams;
+    const linkId = searchParams.get('id');
 
     if (!linkId) {
-        return NextResponse.redirect(overrideDestination || DEFAULT_REDIRECT);
+        return NextResponse.json({ success: false, error: 'Missing link ID' }, { status: 400 });
     }
 
     try {
@@ -44,35 +22,25 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
         const linkRef = db.collection('freelancer_links').doc(linkId);
         const clickTrackingRef = linkRef.collection('unique_clicks').doc(ipHash);
 
-        // Run as transaction to ensure atomic updates for payments & counting
-        const targetUrl = await db.runTransaction(async (t) => {
+        // Run as transaction
+        await db.runTransaction(async (t) => {
             const linkDoc = await t.get(linkRef);
 
-            // If link doesn't exist in DB, check if we have override
             if (!linkDoc.exists) {
-                // Return override if available (Fail-safe for invalid IDs), otherwise default
-                return overrideDestination || DEFAULT_REDIRECT;
+                return; // Link doesn't exist, nothing to track
             }
 
             const clickDoc = await t.get(clickTrackingRef);
-
             const data = linkDoc.data();
-            // Default destination from DB
-            let destination = data?.targetUrl || DEFAULT_REDIRECT;
 
-            // Apply Override if valid
-            if (overrideDestination) {
-                destination = overrideDestination;
-            }
-
-            // FRAUD CHECK: If this IP already clicked, just redirect, do NOT increment or pay.
+            // FRAUD CHECK: If this IP already clicked, do nothing
             if (clickDoc.exists) {
-                return destination;
+                return;
             }
 
             // --- Valid New Unique Click ---
 
-            // 1. Register the click for this IP
+            // 1. Register the click
             t.set(clickTrackingRef, {
                 timestamp: admin.firestore.FieldValue.serverTimestamp(),
                 ipHash: ipHash
@@ -114,14 +82,12 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
             }
 
             t.update(linkRef, updates);
-            return destination;
         });
 
-        return NextResponse.redirect(targetUrl);
+        return NextResponse.json({ success: true });
 
     } catch (error) {
-        console.error(`[Redirect Error] Link ${linkId}:`, error);
-        // CRITICAL FAIL-SAFE: Redirect to override if DB fails
-        return NextResponse.redirect(overrideDestination || DEFAULT_REDIRECT);
+        console.error(`[Tracking Error] Link ${linkId}:`, error);
+        return NextResponse.json({ success: false, error: 'Internal Error' }, { status: 500 });
     }
 }
