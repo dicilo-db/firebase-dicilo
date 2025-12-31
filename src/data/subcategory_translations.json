@@ -358,5 +358,255 @@
         "de": "Zuschussberatung",
         "en": "Grant Consulting",
         "es": "Asesoría de subvenciones"
+    },
+    "Abenteuercamps": {
+        "de": "Abenteuercamps",
+        "en": "Adventure Camps",
+        "es": "Campamentos de aventura"
+    },
+    "Abenteuertouren": {
+        "de": "Abenteuertouren",
+        "en": "Adventure Tours",
+        "es": "Tours de aventura"
+    },
+    "Aktivurlaub": {
+        "de": "Aktivurlaub",
+        "en": "Active Holidays",
+        "es": "Vacaciones activas"
+    },
+    "All-Inclusive-Pakete": {
+        "de": "All-Inclusive-Pakete",
+        "en": "All-Inclusive Packages",
+        "es": "Paquetes todo incluido"
+    },
+    "Autovermietung": {
+        "de": "Autovermietung",
+        "en": "Car Rental",
+        "es": "Alquiler de coches"
+    },
+    "Backpacking": {
+        "de": "Backpacking",
+        "en": "Backpacking",
+        "es": "Mochileros"
+    },
+    "Bergtouren": {
+        "de": "Bergtouren",
+        "en": "Mountain Tours",
+        "es": "Excursiones de montaña"
+    },
+    "Campingreisen": {
+        "de": "Campingreisen",
+        "en": "Camping Trips",
+        "es": "Viajes de camping"
+    },
+    "Erlebnisreisen": {
+        "de": "Erlebnisreisen",
+        "en": "Experience Travel",
+        "es": "Viajes de experiencia"
+    },
+    "Expeditionen": {
+        "de": "Expeditionen",
+        "en": "Expeditions",
+        "es": "Expediciones"
+    },
+    "Fahrradtouren": {
+        "de": "Fahrradtouren",
+        "en": "Bicycle Tours",
+        "es": "Tours en bicicleta"
+    },
+    "Familienurlaubsreisen": {
+        "de": "Familienurlaubsreisen",
+        "en": "Family Holidays",
+        "es": "Vacaciones familiares"
+    },
+    "Flitterwochen-Reisen": {
+        "de": "Flitterwochen-Reisen",
+        "en": "Honeymoon Trips",
+        "es": "Viajes de luna de miel"
+    },
+    "Flugreservierungen": {
+        "de": "Flugreservierungen",
+        "en": "Flight Reservations",
+        "es": "Reservas de vuelos"
+    },
+    "Flugtouren": {
+        "de": "Flugtouren",
+        "en": "Air Tours",
+        "es": "Tours aéreos"
+    },
+    "Fotoreisen": {
+        "de": "Fotoreisen",
+        "en": "Photography Tours",
+        "es": "Viajes fotográficos"
+    },
+    "Freizeitparks und Resorts": {
+        "de": "Freizeitparks und Resorts",
+        "en": "Theme Parks & Resorts",
+        "es": "Parques temáticos y resorts"
+    },
+    "Geschäftsreisen": {
+        "de": "Geschäftsreisen",
+        "en": "Business Travel",
+        "es": "Viajes de negocios"
+    },
+    "Incentive-Reisen": {
+        "de": "Incentive-Reisen",
+        "en": "Incentive Travel",
+        "es": "Viajes de incentivos"
+    },
+    "Junggesellenabschiedsreisen": {
+        "de": "Junggesellenabschiedsreisen",
+        "en": "Bachelor Party Trips",
+        "es": "Despedidas de soltero/a"
+    },
+    "Koch- und Gourmetreisen": {
+        "de": "Koch- und Gourmetreisen",
+        "en": "Culinary Tours",
+        "es": "Viajes gastronómicos"
+    },
+    "Kreuzfahrten": {
+        "de": "Kreuzfahrten",
+        "en": "Cruises",
+        "es": "Cruceros"
+    },
+    "Kultur- und Kunstreisen": {
+        "de": "Kultur- und Kunstreisen",
+        "en": "Culture & Art Tours",
+        "es": "Viajes culturales y de arte"
+    },
+    "Kulturreisen": {
+        "de": "Kulturreisen",
+        "en": "Cultural Trips",
+        "es": "Viajes culturales"
+    },
+    "Luxusreisen": {
+        "de": "Luxusreisen",
+        "en": "Luxury Travel",
+        "es": "Viajes de lujo"
+    },
+    "Motorradtouren": {
+        "de": "Motorradtouren",
+        "en": "Motorcycle Tours",
+        "es": "Tours en motocicleta"
+    },
+    "Nationalparks-Touren": {
+        "de": "Nationalparks-Touren",
+        "en": "National Park Tours",
+        "es": "Tours a parques nacionales"
+    },
+    "Öko-Luxusreisen": {
+        "de": "Öko-Luxusreisen",
+        "en": "Eco-Luxury Travel",
+        "es": "Viajes de eco-lujo"
+    },
+    "Öko-Touren": {
+        "de": "Öko-Touren",
+        "en": "Eco-Tours",
+        "es": "Eco-tours"
+    },
+    "Ökotourismus-Reisen": {
+        "de": "Ökotourismus-Reisen",
+        "en": "Ecotourism Trips",
+        "es": "Viajes de ecoturismo"
+    },
+    "Reisebüros": {
+        "de": "Reisebüros",
+        "en": "Travel Agencies",
+        "es": "Agencias de viajes"
+    },
+    "Reiseversicherungen": {
+        "de": "Reiseversicherungen",
+        "en": "Travel Insurance",
+        "es": "Seguros de viaje"
+    },
+    "Rucksacktouren": {
+        "de": "Rucksacktouren",
+        "en": "Backpacking Tours",
+        "es": "Excursiones con mochila"
+    },
+    "Rundreisen": {
+        "de": "Rundreisen",
+        "en": "Round Trips",
+        "es": "Circuitos"
+    },
+    "Safari-Reisen": {
+        "de": "Safari-Reisen",
+        "en": "Safari Trips",
+        "es": "Safaris"
+    },
+    "Schiffsreisen": {
+        "de": "Schiffsreisen",
+        "en": "Boat Trips",
+        "es": "Viajes en barco"
+    },
+    "Segelreisen": {
+        "de": "Segelreisen",
+        "en": "Sailing Trips",
+        "es": "Viajes en velero"
+    },
+    "Skireisen": {
+        "de": "Skireisen",
+        "en": "Ski Trips",
+        "es": "Viajes de esquí"
+    },
+    "Sprachreisen": {
+        "de": "Sprachreisen",
+        "en": "Language Trips",
+        "es": "Viajes de idiomas"
+    },
+    "Städtereisen": {
+        "de": "Städtereisen",
+        "en": "City Breaks",
+        "es": "Escapadas urbanas"
+    },
+    "Strandreisen": {
+        "de": "Strandreisen",
+        "en": "Beach Holidays",
+        "es": "Vacaciones en la playa"
+    },
+    "Studienreisen": {
+        "de": "Studienreisen",
+        "en": "Study Trips",
+        "es": "Viajes de estudio"
+    },
+    "Studentenreisen": {
+        "de": "Studentenreisen",
+        "en": "Student Trips",
+        "es": "Viajes de estudiantes"
+    },
+    "Touristische Ausflüge": {
+        "de": "Touristische Ausflüge",
+        "en": "Tourist Excursions",
+        "es": "Excursiones turísticas"
+    },
+    "Wander- und Trekkingreisen": {
+        "de": "Wander- und Trekkingreisen",
+        "en": "Hiking & Trekking Trips",
+        "es": "Senderismo y trekking"
+    },
+    "Wanderreisen": {
+        "de": "Wanderreisen",
+        "en": "Hiking Trips",
+        "es": "Viajes de senderismo"
+    },
+    "Wassersport-Touren": {
+        "de": "Wassersport-Touren",
+        "en": "Water Sports Tours",
+        "es": "Tours de deportes acuáticos"
+    },
+    "Weltreisen": {
+        "de": "Weltreisen",
+        "en": "World Tours",
+        "es": "Vuelta al mundo"
+    },
+    "Wüstentouren": {
+        "de": "Wüstentouren",
+        "en": "Desert Tours",
+        "es": "Tours por el desierto"
+    },
+    "Zugreisen": {
+        "de": "Zugreisen",
+        "en": "Train Journeys",
+        "es": "Viajes en tren"
     }
 }

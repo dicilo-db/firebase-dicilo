@@ -313,10 +313,27 @@ export default function CategoriesPage() {
                         Manage categories, subcategories, and structure logic.
                     </p>
                 </div>
-                <Button onClick={openCreateCategory}>
-                    <Plus className="mr-2 h-4 w-4" />
-                    New Category
-                </Button>
+                <div className="flex gap-2">
+                    <Button variant="outline" onClick={async () => {
+                        try {
+                            setLoading(true);
+                            const { seedCategories } = await import('@/lib/seed-categories');
+                            await seedCategories();
+                            toast({ title: 'Success', description: 'Categories re-seeded successfully.' });
+                        } catch (err: any) {
+                            toast({ title: 'Error', description: err.message, variant: 'destructive' });
+                        } finally {
+                            setLoading(false);
+                        }
+                    }}>
+                        <Icons.Database className="mr-2 h-4 w-4" />
+                        Seed Defaults
+                    </Button>
+                    <Button onClick={openCreateCategory}>
+                        <Plus className="mr-2 h-4 w-4" />
+                        New Category
+                    </Button>
+                </div>
             </div>
 
             <Card>

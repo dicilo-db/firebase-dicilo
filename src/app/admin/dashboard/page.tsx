@@ -477,6 +477,20 @@ const DashboardContent: React.FC = () => {
 
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
 
+            {/* Configuración de Categorías */}
+            <Link href="/admin/categories" className="group">
+              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Categorías</CardTitle>
+                  <Tag className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">Categorías</div>
+                  <p className="text-xs text-muted-foreground mt-1">Verwalten von Kategorien & Subkategorien</p>
+                </CardContent>
+              </Card>
+            </Link>
+
             {/* Basic (Formerly Businesses / Verzeichnis) */}
             <Link href="/admin/businesses" className="group">
               <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">

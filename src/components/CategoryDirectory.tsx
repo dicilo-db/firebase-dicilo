@@ -101,8 +101,12 @@ export const CategoryDirectory = () => {
 
                 // Sort client-side to avoid missing index issues
                 cats.sort((a, b) => {
-                    const nameA = a.name?.[currentLang] || a.name?.de || '';
-                    const nameB = b.name?.[currentLang] || b.name?.de || '';
+                    const getName = (obj: any) => {
+                        if (typeof obj.name === 'string') return obj.name;
+                        return obj.name?.[currentLang] || obj.name?.de || '';
+                    };
+                    const nameA = getName(a);
+                    const nameB = getName(b);
                     return nameA.localeCompare(nameB);
                 });
 
@@ -114,14 +118,16 @@ export const CategoryDirectory = () => {
             }
         };
         fetchCategories();
-    }, []);
+    }, [currentLang]);
 
     // Helper to get translated name
     const getCatName = (cat: Category) => {
-        return cat.name[currentLang] || cat.name.de;
+        if (typeof cat.name === 'string') return cat.name;
+        return cat.name?.[currentLang] || cat.name?.de || '';
     };
     const getSubName = (sub: any) => {
-        return sub.name[currentLang] || sub.name.de;
+        if (typeof sub.name === 'string') return sub.name;
+        return sub.name?.[currentLang] || sub.name?.de || '';
     };
 
     if (loading) {
