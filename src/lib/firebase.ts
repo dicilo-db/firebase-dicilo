@@ -13,6 +13,7 @@ export const firebaseConfig = {
 };
 
 import { getFirestore } from 'firebase/firestore';
+import { getStorage } from 'firebase/storage';
 
 // Initialize Firebase using a singleton pattern to prevent re-initialization
 function initializeFirebaseApp() {
@@ -24,3 +25,4 @@ function initializeFirebaseApp() {
 
 export const app: FirebaseApp = initializeFirebaseApp();
 export const db = getFirestore(app);
+export const storage = getStorage(app);

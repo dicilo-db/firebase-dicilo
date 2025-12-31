@@ -22,7 +22,14 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { Users, Send, Loader2, Eye, Plus, Trash2 } from 'lucide-react';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Users, Send, Loader2, Eye, Plus, Trash2, Share2, MessageCircle, Facebook, Mail, Copy, Twitter } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from "@/hooks/use-toast";
 import { getAuth } from 'firebase/auth';
@@ -215,6 +222,56 @@ export function ReferralCard() {
 
     const previewData = getPreviewContent();
 
+    const handleSocialShare = async (platform: string) => {
+        const currentUser = auth.currentUser;
+        if (!currentUser && !uniqueCode) {
+            toast({ title: "Esperando datos...", description: "Cargando tu perfil, intenta en un momento." });
+            return;
+        }
+
+        const inviteUrl = `https://dicilo.net/registrieren?ref=${uniqueCode || currentUser?.uid}`;
+
+        // Construct a generic message based on the selected template's SUBJECT or a short generic text
+        // We use the subject as the main "hook" + the link.
+        // Replacing placeholders with generic terms since we don't know the recipient's name.
+        let shareText = previewData.subject || "Te invito a unirte a Dicilo";
+
+        // Add a bit of body? The body is usually too long for social sharing (esp Twitter).
+        // Let's stick to Subject + "Hola!..." + Link
+
+        const intro = currentLanguage === 'es' ? `Hola! Te invito a unirte: ` :
+            currentLanguage === 'en' ? `Hello! Join me here: ` :
+                `Hallo! Mach mit: `;
+
+        const fullShareText = `${intro} ${inviteUrl}\n\n${shareText}`;
+
+        switch (platform) {
+            case 'whatsapp':
+                window.open(`https://wa.me/?text=${encodeURIComponent(fullShareText)}`, '_blank');
+                break;
+            case 'telegram':
+                window.open(`https://t.me/share/url?url=${encodeURIComponent(inviteUrl)}&text=${encodeURIComponent(shareText)}`, '_blank');
+                break;
+            case 'facebook':
+                window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(inviteUrl)}`, '_blank');
+                break;
+            case 'twitter':
+                window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(inviteUrl)}&text=${encodeURIComponent(shareText)}`, '_blank');
+                break;
+            case 'email':
+                window.location.href = `mailto:?subject=${encodeURIComponent(shareText)}&body=${encodeURIComponent(fullShareText)}`;
+                break;
+            case 'copy':
+                try {
+                    await navigator.clipboard.writeText(inviteUrl);
+                    toast({ title: t('share.copied', 'Enlace copiado al portapapeles') });
+                } catch (err) {
+                    console.error('Clipboard failed');
+                }
+                break;
+        }
+    };
+
     return (
         <>
             <Card className="bg-blue-50 dark:bg-blue-900/10 border-blue-200 shadow-sm hover:shadow-md transition-all">
@@ -388,12 +445,48 @@ export function ReferralCard() {
                                 )}
                             </div>
 
-                            <DialogFooter>
+                            <DialogFooter className="flex-col sm:flex-row gap-2">
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white h-11 text-lg">
+                                            <Share2 className="mr-2 h-4 w-4" />
+                                            {t('share.button', 'Compartir')}
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="start" className="w-56">
+                                        <DropdownMenuItem onClick={() => handleSocialShare('whatsapp')} className="cursor-pointer gap-2">
+                                            <MessageCircle className="h-4 w-4 text-green-500" />
+                                            <span>WhatsApp</span>
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem onClick={() => handleSocialShare('telegram')} className="cursor-pointer gap-2">
+                                            <Send className="h-4 w-4 text-blue-400" />
+                                            <span>Telegram</span>
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem onClick={() => handleSocialShare('facebook')} className="cursor-pointer gap-2">
+                                            <Facebook className="h-4 w-4 text-blue-600" />
+                                            <span>Facebook</span>
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem onClick={() => handleSocialShare('twitter')} className="cursor-pointer gap-2">
+                                            <Twitter className="h-4 w-4 text-black dark:text-white" />
+                                            <span>X (Twitter)</span>
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem onClick={() => handleSocialShare('email')} className="cursor-pointer gap-2">
+                                            <Mail className="h-4 w-4 text-gray-600" />
+                                            <span>Email</span>
+                                        </DropdownMenuItem>
+                                        <DropdownMenuSeparator />
+                                        <DropdownMenuItem onClick={() => handleSocialShare('copy')} className="cursor-pointer gap-2">
+                                            <Copy className="h-4 w-4" />
+                                            <span>{t('ad.copyLink', 'Copiar Enlace')}</span>
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+
                                 <Button
                                     type="submit"
                                     onClick={handleSend}
                                     disabled={isLoading || friends.length === 0}
-                                    className="w-full bg-green-600 hover:bg-green-700 text-white h-11 text-lg"
+                                    className="w-full sm:w-auto flex-1 bg-blue-600 hover:bg-blue-700 text-white h-11 text-lg"
                                 >
                                     {isLoading ? (
                                         <>

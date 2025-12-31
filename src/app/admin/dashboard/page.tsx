@@ -684,6 +684,20 @@ const DashboardContent: React.FC = () => {
               </Card>
             </Link>
 
+            {/* Email Templates (NEW) */}
+            <Link href="/admin/email-templates" className="group">
+              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Plantillas Email</CardTitle>
+                  <MessageSquare className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">Plantillas Email</div>
+                  <p className="text-xs text-muted-foreground mt-1">Gestión de correos automatizados</p>
+                </CardContent>
+              </Card>
+            </Link>
+
             {/* Feedbacks */}
             <Link href="/admin/feedbacks" className="group">
               <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
@@ -699,97 +713,6 @@ const DashboardContent: React.FC = () => {
             </Link>
 
             {/* Support Tickets (Central) */}
-            <Link href="/admin/tickets" className="group">
-              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Ticket System</CardTitle>
-                  <MessageSquare className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold flex items-center gap-2">
-                    Admin Tickets
-                    {counts.tickets > 0 ? (
-                      <span className="flex h-6 min-w-[24px] items-center justify-center rounded-full bg-red-500 px-2 text-xs font-bold text-white shadow-sm animate-pulse">
-                        {counts.tickets}
-                      </span>
-                    ) : (
-                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-green-500/20 text-green-600 shadow-sm">
-                        <ThumbsUp className="h-3 w-3" />
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {counts.tickets > 0
-                      ? `${counts.tickets} open tickets require attention`
-                      : 'All caught up! No open tickets.'}
-                  </p>
-                </CardContent>
-              </Card>
-            </Link>
-
-            {/* AI Chat Module (NEW) */}
-            {isAdminOrSuper && (
-              <Link href="/admin/ai-chat" className="group">
-                <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">AI Chat</CardTitle>
-                    <Bot className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">AI Chat</div>
-                    <p className="text-xs text-muted-foreground mt-1">Manage AI Knowledge & Settings</p>
-                  </CardContent>
-                </Card>
-              </Link>
-            )}
-
-            {/* Coupons Module (NEW) */}
-            <Link href="/admin/coupons" className="group">
-              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Promotions</CardTitle>
-                  <Tag className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">Cupones</div>
-                  <p className="text-xs text-muted-foreground mt-1">Gutscheine & Angebote</p>
-                </CardContent>
-              </Card>
-            </Link>
-
-            {/* DiciCoin Purchasers (NEW) */}
-            {isSuperAdmin && (
-              <Link href="/admin/dicicoin-purchasers" className="group">
-                <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">DiciCoin Orders</CardTitle>
-                    <Coins className="h-4 w-4 text-muted-foreground group-hover:text-amber-500 transition-colors" />
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">DiciCoins</div>
-                    <p className="text-xs text-muted-foreground mt-1">Gestión de Compras</p>
-                  </CardContent>
-                </Card>
-              </Link>
-            )}
-
-            {/* Dicipoints Central Control (NEW) */}
-            {isSuperAdmin && (
-              <Link href="/admin/dicipoints" className="group">
-                <Card className="h-full transition-all hover:shadow-md hover:border-red-500/50 cursor-pointer relative">
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium text-red-600">Economy Control</CardTitle>
-                    <Wallet className="h-4 w-4 text-muted-foreground group-hover:text-red-500 transition-colors" />
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">Dicipoints</div>
-                    <p className="text-xs text-muted-foreground mt-1">Manage Point Value & Injection</p>
-                  </CardContent>
-                </Card>
-              </Link>
-            )}
-
-            {/* Freelancer Module (NEW) */}
             <Link href="/dashboard/freelancer" className="group">
               <Card className="h-full transition-all hover:shadow-md hover:border-blue-500/50 cursor-pointer relative">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
