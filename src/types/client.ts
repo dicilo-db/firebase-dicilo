@@ -80,6 +80,8 @@ export interface ClientData {
     graphics?: GraphicData[];
     translations: any;
     slug: string;
+    category?: string;
+    subcategory?: string;
     layout?: any[];
     coordinates?: { lat: number; lng: number };
     address?: string;
@@ -88,4 +90,18 @@ export interface ClientData {
     email?: string;
     galleryImages?: string[];
     ownerUid?: string;
+
+    // New fields
+    products?: {
+        name: string;
+        price: string;
+        description?: string;
+        imageUrl?: string;
+    }[];
+    visibility_settings?: {
+        active_range?: 'local' | 'regional' | 'national' | 'continental' | 'international';
+        geo_coordinates?: { lat: number; lng: number } | null;
+        allowed_continents?: string[] | null;
+    } | null;
+    layout?: any[];
 }

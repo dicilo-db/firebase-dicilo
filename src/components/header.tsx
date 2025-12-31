@@ -1,6 +1,6 @@
 // src/components/header.tsx
 'use client';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Menu, User as UserIcon } from 'lucide-react';
@@ -23,6 +23,7 @@ import { LanguageSelector } from './LanguageSelector';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import { MoreVertical } from 'lucide-react';
+import { usePathname } from 'next/navigation';
 
 // Desktop visible links
 const desktopLinks = [
@@ -44,6 +45,8 @@ const mobileLinks = [
 const Header = () => {
   const { t } = useTranslation('common');
   const { user, loading, logout } = useAuth();
+  const pathname = usePathname();
+  // We can add hydration check if needed, but simple CSS classes handle responsive display best without flash.
 
   const handleLogout = async () => {
     await logout();
@@ -53,23 +56,42 @@ const Header = () => {
     <header className="relative z-10 flex-shrink-0 bg-white shadow-md">
       <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
-          {/* Logo - Responsive logic: Always visible mobile, hidden on desktop if space constrained? 
-              User request: "Responsivo, Solo se ve en la pantalla el movil y en la web si hay espacio."
-              We'll keep it visible but allow shrinking.
-          */}
           <Link href="/" className="flex items-center flex-shrink-0 mr-4">
-            <Image
-              src="/logo.png"
-              alt="Dicilo"
-              width={120}
-              height={50}
-              className="h-10 w-auto sm:h-12"
-              priority
-            />
+            {/* Logo Logic:
+                 Mobile (< 768px): Show Isotype (/logo.png).
+                 Desktop (>= 768px): Show Full Logo (/Logo negro dicilo.png).
+                 Exception: The user mentioned a Home Page exception, but emphasized prioritizing Rule 1 (Screen Size).
+                 Rule 1 states Desktop MUST show Full Logo. We adhere to Rule 1.
+             */}
+
+            {/* Mobile Logo (Isotype) - Visible up to md */}
+            <div className="block md:hidden">
+              <Image
+                src="/logo.png"
+                alt="Dicilo Isotype"
+                width={50}
+                height={50}
+                className="h-10 w-auto"
+                priority
+              />
+            </div>
+
+            {/* Desktop Logo (Full Text) - Visible from md upwards */}
+            <div className="hidden md:block">
+              {/* Note: Ensure 'Logo negro dicilo.png' is in public/ folder. URL encoded spaces. */}
+              <Image
+                src="/Logo negro dicilo.png"
+                alt="Dicilo Logo"
+                width={150}
+                height={50}
+                className="h-12 w-auto"
+                priority
+              />
+            </div>
           </Link>
 
-          {/* DESKTOP MENU */}
-          <div className="hidden items-center gap-4 lg:flex">
+          {/* DESKTOP MENU - Visible from md breakpoint */}
+          <div className="hidden items-center gap-4 md:flex">
             <nav className="flex items-center gap-4">
               {desktopLinks.map((link) => (
                 <Button
@@ -124,8 +146,8 @@ const Header = () => {
             <LanguageSelector />
           </div>
 
-          {/* MOBILE MENU (HAMBURGER) */}
-          <div className="lg:hidden">
+          {/* MOBILE MENU (HAMBURGER) - Hidden on md breakpoint */}
+          <div className="md:hidden">
             <Sheet>
               <SheetTrigger asChild>
                 <Button variant="outline" size="icon">

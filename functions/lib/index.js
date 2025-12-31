@@ -620,3 +620,5 @@ __exportStar(require("./telegram"), exports);
 __exportStar(require("./userManagement"), exports);
 // --- Pioneer Referrals System ---
 __exportStar(require("./pioneer-referrals"), exports);
+// --- Category Counters ---
+__exportStar(require("./categories"), exports);

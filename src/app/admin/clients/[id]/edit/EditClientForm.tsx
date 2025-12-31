@@ -11,6 +11,9 @@ import {
   getFirestore,
   Timestamp,
   getDoc,
+  collection,
+  getDocs,
+  query,
 } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { getFunctions, httpsCallable } from 'firebase/functions';
@@ -82,6 +85,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import type { ClientData } from '@/types/client';
 import { Checkbox } from '@/components/ui/checkbox';
 import Link from 'next/link';
@@ -97,8 +101,8 @@ const LayoutEditor = dynamic(() => import('@/app/dashboard/LayoutEditor'), {
   ssr: false,
 });
 
-import { WalletCard } from '@/components/dashboard/WalletCard';
 import { AdStatistics } from '@/components/dashboard/AdStatistics';
+import { WalletCard } from '@/components/dashboard/WalletCard';
 import { ClientCouponManager } from '@/components/dashboard/ClientCouponManager';
 
 
@@ -597,6 +601,9 @@ const bodySchema = z
 const productSchema = z.object({
   id: z.string().optional(),
   name: z.string().min(1, 'El nombre del producto es obligatorio.'),
+  price: z.string().optional(),
+  description: z.string().optional(),
+  imageUrl: z.string().optional(),
 });
 
 const graphicSchema = z.object({
@@ -616,6 +623,8 @@ const graphicSchema = z.object({
 const clientSchema = z.object({
   clientName: z.string().min(1, 'Name is required'),
   slug: z.string().min(1, 'Slug is required').regex(/^[a-z0-9-]+$/, 'Slug must be lowercase alphanumeric with dashes'),
+  category: z.string().optional(),
+  subcategory: z.string().optional(),
   clientType: z.enum(['retailer', 'premium', 'starter']).optional().or(z.literal('')),
   clientLogoUrl: z.string().url().optional().or(z.literal('')),
 
@@ -703,16 +712,41 @@ interface EditClientFormProps {
 }
 
 export default function EditClientForm({ initialData }: EditClientFormProps) {
-  const { t } = useTranslation(['admin', 'form', 'legal', 'register', 'client', 'common']);
+  const { t, i18n } = useTranslation(['admin', 'form', 'legal', 'register', 'client', 'common']);
   const db = getFirestore(app);
   const storage = getStorage(app);
   const router = useRouter();
   const id = initialData.id;
   const { toast } = useToast();
+  const currentLang = (i18n.language?.split('-')[0] || 'de') as 'de' | 'en' | 'es';
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isGeocoding, setIsGeocoding] = useState(false);
+  const [categories, setCategories] = useState<any[]>([]);
   const [uploadProgress, setUploadProgress] = useState<number | null>(null);
   const [embedCode, setEmbedCode] = useState('');
+
+  // Fetch categories
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const q = query(collection(db, 'categories'));
+        const snap = await getDocs(q);
+        const cats: any[] = [];
+        snap.forEach((d) => cats.push({ id: d.id, ...d.data() }));
+
+        cats.sort((a, b) => {
+          const nameA = a.name?.[currentLang] || a.name?.de || '';
+          const nameB = b.name?.[currentLang] || b.name?.de || '';
+          return nameA.localeCompare(nameB);
+        });
+
+        setCategories(cats);
+      } catch (e) {
+        console.error('Error fetching categories:', e);
+      }
+    };
+    fetchCategories();
+  }, [db, currentLang]);
 
   const handleGeocode = async (addressToGeocode: string) => {
     setIsGeocoding(true);
@@ -880,6 +914,8 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
     return {
       clientName: initialData.clientName || '',
       slug: initialData.slug || '',
+      category: initialData.category || '',
+      subcategory: initialData.subcategory || '',
       clientType: validClientType,
       clientLogoUrl: data.clientLogoUrl || '',
       headerData: {
@@ -922,7 +958,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
         bannerShareUrl: headerData.bannerShareUrl || '',
       },
       marqueeHeaderData: {
-        enabled: marqueeData.enabled === true || marqueeData.enabled === 'true',
+        enabled: marqueeData.enabled ?? false,
         offerEnabled: marqueeData.offerEnabled ?? false,
         offerEndDate: marqueeData.offerEndDate
           ? typeof marqueeData.offerEndDate === 'string'
@@ -1003,6 +1039,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
   } = useFieldArray({ control, name: 'products' });
 
   const clientType = watch('clientType');
+  const selectedCategory = watch('category');
   const bannerType = watch('headerData.bannerType');
 
   const handleFileUpload = async (
@@ -1030,6 +1067,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
           bannerImageUrl: downloadURL,
           bannerImageWidth: currentWidth,
           bannerImageHeight: currentHeight,
+          bannerType: watch('headerData.bannerType') || 'embed',
         },
         { shouldValidate: true, shouldDirty: true }
       );
@@ -1085,7 +1123,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
 
       // Explicitly convert Date object to Firestore Timestamp before merging
       if (newData.marqueeHeaderData?.offerEndDate instanceof Date) {
-        newData.marqueeHeaderData.offerEndDate = Timestamp.fromDate(
+        (newData.marqueeHeaderData.offerEndDate as any) = Timestamp.fromDate(
           newData.marqueeHeaderData.offerEndDate
         );
       }
@@ -1252,6 +1290,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                   </CardDescription>
 
                   <div className="grid grid-cols-1 gap-6 pt-4 md:grid-cols-2">
+                    {/* 1. Client Name (Left) */}
                     <div className="space-y-2">
                       <Label htmlFor="clientName">
                         {t('clients.fields.clientName')}
@@ -1268,6 +1307,54 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                       )}
                     </div>
 
+                    {/* 2. Slug (Right) */}
+                    <div className="space-y-2">
+                      <Label htmlFor="slug">
+                        {t('clients.fields.slug')}
+                      </Label>
+                      <Input
+                        id="slug"
+                        {...register('slug')}
+                        placeholder="my-client-slug"
+                      />
+                      {errors.slug && (
+                        <p className="text-sm text-destructive">
+                          {t((errors.slug.message as string) || 'error')}
+                        </p>
+                      )}
+                      <p className="text-xs text-muted-foreground">
+                        URL: {typeof window !== 'undefined' ? window.location.origin : ''}/client/{watch('slug')}
+                      </p>
+                    </div>
+
+                    {/* 3. Address (Left) */}
+                    <div className="space-y-2">
+                      <Label htmlFor="address">Address</Label>
+                      <div className="flex gap-2">
+                        <Input id="address" {...register('address')} placeholder="Calle Principal 123, Madrid" />
+                        <Button
+                          type="button"
+                          variant="secondary"
+                          disabled={isGeocoding}
+                          onClick={() => handleGeocode(watch('address') || '')}
+                        >
+                          {isGeocoding ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <MapPin className="h-4 w-4" />
+                          )}
+                          <span className="ml-2 hidden sm:inline">Locate</span>
+                        </Button>
+                      </div>
+                    </div>
+
+                    {/* 4. Phone (Right) - Moved from bottom */}
+                    <div className="space-y-2">
+                      <Label htmlFor="phone">Phone</Label>
+                      <Input id="phone" {...register('phone')} placeholder="+34 600 000 000" />
+                    </div>
+
+                    {/* 5. Description (Left) */}
                     <div className="space-y-2">
                       <Label htmlFor="bodyData.description">
                         Description
@@ -1280,55 +1367,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                       />
                     </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="slug">
-                        {t('clients.fields.slug')}
-                      </Label>
-                      <Input
-                        id="slug"
-                        {...register('slug')}
-                        placeholder="my-client-slug"
-                      />
-                      {errors.slug && (
-                        <p className="text-sm text-destructive">
-                          {t(errors.slug.message as any)}
-                        </p>
-                      )}
-                      <p className="text-xs text-muted-foreground">
-                        URL: {typeof window !== 'undefined' ? window.location.origin : ''}/client/{watch('slug')}
-                      </p>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="address">Address</Label>
-                      <div className="flex gap-2">
-                        <Input id="address" {...register('address')} placeholder="Calle Principal 123, Madrid" />
-                        <Button
-                          type="button"
-                          variant="secondary"
-                          disabled={isGeocoding}
-                          onClick={() => handleGeocode(watch('address'))}
-                        >
-                          {isGeocoding ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                          ) : (
-                            <MapPin className="h-4 w-4" />
-                          )}
-                          <span className="ml-2 hidden sm:inline">Locate</span>
-                        </Button>
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="phone">Phone</Label>
-                      <Input id="phone" {...register('phone')} placeholder="+34 600 000 000" />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="website">Website</Label>
-                      <Input id="website" {...register('website')} placeholder="https://example.com" />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="email">Public Email</Label>
-                      <Input id="email" {...register('email')} placeholder="contact@example.com" />
-                    </div>
+                    {/* 6. Coordinates (Right) */}
                     <div className="space-y-2">
                       <Label>Coordinates</Label>
                       <div className="flex gap-2">
@@ -1346,6 +1385,82 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                         />
                       </div>
                     </div>
+
+                    {/* 7. Category (Left) */}
+                    <div className="space-y-2">
+                      <Label htmlFor="category">
+                        {t('admin:clients.fields.category')}
+                      </Label>
+                      <Controller
+                        control={control}
+                        name="category"
+                        render={({ field }) => (
+                          <Select
+                            onValueChange={(val) => {
+                              field.onChange(val);
+                              setValue('subcategory', '');
+                            }}
+                            defaultValue={field.value}
+                          >
+                            <SelectTrigger>
+                              <SelectValue
+                                placeholder={
+                                  t('admin:clients.fields.category') as string
+                                }
+                              />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {categories.map((cat: any) => (
+                                <SelectItem key={cat.id} value={cat.id}>
+                                  {cat.name?.[currentLang] || cat.name?.de}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        )}
+                      />
+                    </div>
+
+                    {/* 8. Subcategory (Right) */}
+                    <div className="space-y-2">
+                      <Label>{t('admin:clients.fields.subcategory')}</Label>
+                      <Controller
+                        control={control}
+                        name="subcategory"
+                        render={({ field }) => {
+                          const currentCat = categories.find(c => c.id === selectedCategory);
+                          const subs = currentCat?.subcategories || [];
+                          return (
+                            <Select onValueChange={field.onChange} value={field.value} disabled={!selectedCategory || subs.length === 0}>
+                              <SelectTrigger>
+                                <SelectValue placeholder={t('admin:clients.fields.subcategory') as string} />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {subs.map((sub: any) => (
+                                  <SelectItem key={sub.id} value={sub.id}>
+                                    {sub.name?.[currentLang] || sub.name?.de}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          );
+                        }}
+                      />
+                    </div>
+
+                    {/* 9. Website (Left) */}
+                    <div className="space-y-2">
+                      <Label htmlFor="website">Website</Label>
+                      <Input id="website" {...register('website')} placeholder="https://example.com" />
+                    </div>
+
+                    {/* 10. Public Email (Right) */}
+                    <div className="space-y-2">
+                      <Label htmlFor="email">Public Email</Label>
+                      <Input id="email" {...register('email')} placeholder="contact@example.com" />
+                    </div>
+
+                    {/* No duplicate Phone field here! */}
 
                     <div className="space-y-2">
                       <Label htmlFor="budget_remaining">Budget Remaining (EUR)</Label>
@@ -1586,7 +1701,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                           control={control}
                           render={({ field }) => (
                             <RadioGroup
-                              value={field.value}
+                              value={field.value || 'embed'}
                               onValueChange={field.onChange}
                               className="flex items-center gap-6"
                             >
@@ -1723,11 +1838,10 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                     <div className="mb-4 grid grid-cols-2 gap-4 md:grid-cols-4">
                       {watch('galleryImages')?.map((url, index) => (
                         <div key={index} className="relative aspect-square overflow-hidden rounded-lg border">
-                          <Image
+                          <img
                             src={url}
                             alt={`Gallery ${index}`}
-                            fill
-                            className="object-cover"
+                            className="object-cover w-full h-full"
                           />
                           <Button
                             type="button"
@@ -1892,7 +2006,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
 
                 {/* --- Section: User Management --- */}
 
-                < TabsContent value="userManagement" className="space-y-6" >
+                <TabsContent value="userManagement" className="space-y-6">
                   <CardTitle>User Management</CardTitle>
                   <CardDescription>
                     Manage the user account associated with this client.
@@ -2017,10 +2131,10 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                       Generate Reset Link
                     </Button>
                   </div>
-                </TabsContent >
+                </TabsContent>
 
                 {/* Marquee Header Tab */}
-                < TabsContent value="marqueeHeader" className="space-y-6" >
+                <TabsContent value="marqueeHeader" className="space-y-6">
                   <CardTitle>{t('clients.tabs.marqueeHeader')}</CardTitle>
                   <CardDescription>
                     {t('clients.fields.marqueeHeader.description')}
@@ -2191,19 +2305,21 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                       </div>
                     </div>
                   </div>
-                </TabsContent >
-
-                {/* Body Tab */}
-                < TabsContent value="body" className="space-y-6" >
+                </TabsContent>
+                <TabsContent value="body" className="space-y-6">
                   <CardTitle>{t('clients.tabs.body')}</CardTitle>
                   <CardDescription>
                     {t('clients.fields.body.description')}
                   </CardDescription>
+
                   <div className="space-y-2">
                     <Label htmlFor="bodyData.title">
                       {t('clients.fields.body.title')}
                     </Label>
-                    <Input id="bodyData.title" {...register('bodyData.title')} />
+                    <Input
+                      id="bodyData.title"
+                      {...register('bodyData.title')}
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="bodyData.subtitle">
@@ -2214,18 +2330,43 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                       {...register('bodyData.subtitle')}
                     />
                   </div>
+                  {/* Note: Description is also in General, but syncs to bodyData.description, so it appears here too. */}
                   <div className="space-y-2">
-                    <Label htmlFor="bodyData.description">
-                      {t('clients.fields.body.descriptionField')}
+                    <Label htmlFor="bodyData.description_body">
+                      {t('clients.fields.body.description')}
+                    </Label>
+                    <Textarea
+                      id="bodyData.description_body"
+                      {...register('bodyData.description')}
+                      className="h-32"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="bodyData.layout">
+                      {t('clients.fields.body.layout')}
                     </Label>
                     <Controller
-                      name="bodyData.description"
                       control={control}
+                      name="bodyData.layout"
                       render={({ field }) => (
-                        <TiptapEditor
-                          name="bodyData.description"
-                          control={control}
-                        />
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value}
+                        >
+                          <SelectTrigger>
+                            <SelectValue
+                              placeholder={t('clients.fields.body.layout')}
+                            />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="image-left">
+                              {t('clients.fields.body.layoutOptions.imageLeft')}
+                            </SelectItem>
+                            <SelectItem value="image-right">
+                              {t('clients.fields.body.layoutOptions.imageRight')}
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
                       )}
                     />
                   </div>
@@ -2239,419 +2380,319 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                     />
                   </div>
                   <div className="space-y-2">
+                    <Label htmlFor="bodyData.imageHint">
+                      {t('clients.fields.body.imageHint')}
+                    </Label>
+                    <Input
+                      id="bodyData.imageHint"
+                      {...register('bodyData.imageHint')}
+                    />
+                  </div>
+                  <div className="space-y-2">
                     <Label htmlFor="bodyData.videoUrl">
                       {t('clients.fields.body.videoUrl')}
                     </Label>
                     <Input
                       id="bodyData.videoUrl"
                       {...register('bodyData.videoUrl')}
-                      placeholder="https://www.youtube.com/embed/..."
+                      placeholder="YouTube/Vimeo URL"
                     />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="bodyData.ctaButtonText">
-                      {t('clients.fields.body.ctaButtonText')}
-                    </Label>
-                    <Input
-                      id="bodyData.ctaButtonText"
-                      {...register('bodyData.ctaButtonText')}
-                    />
+                  <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                    <div className="space-y-2">
+                      <Label htmlFor="bodyData.ctaButtonText">
+                        {t('clients.fields.body.ctaButtonText')}
+                      </Label>
+                      <Input
+                        id="bodyData.ctaButtonText"
+                        {...register('bodyData.ctaButtonText')}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="bodyData.ctaButtonLink">
+                        {t('clients.fields.body.ctaButtonLink')}
+                      </Label>
+                      <Input
+                        id="bodyData.ctaButtonLink"
+                        {...register('bodyData.ctaButtonLink')}
+                      />
+                    </div>
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="bodyData.ctaButtonLink">
-                      {t('clients.fields.body.ctaButtonLink')}
-                    </Label>
-                    <Input
-                      id="bodyData.ctaButtonLink"
-                      {...register('bodyData.ctaButtonLink')}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="bodyData.layout">
-                      {t('clients.fields.body.layout')}
-                    </Label>
-                    <Controller
-                      name="bodyData.layout"
-                      control={control}
-                      render={({ field }) => (
-                        <Select
-                          onValueChange={field.onChange}
-                          value={field.value || 'image-right'}
-                        >
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="image-left">Bild links</SelectItem>
-                            <SelectItem value="image-right">
-                              Bild rechts
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
-                      )}
-                    />
-                  </div>
-                </TabsContent >
+                </TabsContent>
 
-                {/* Info Cards Tab */}
-                < TabsContent value="cards" className="space-y-4" >
+                <TabsContent value="cards" className="space-y-6">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-medium">
-                      {t('clients.fields.infoCards.title')}
-                    </h3>
+                    <div>
+                      <CardTitle>{t('clients.tabs.infoCards')}</CardTitle>
+                      <CardDescription>
+                        {t('clients.fields.infoCards.description')}
+                      </CardDescription>
+                    </div>
                     <Button
                       type="button"
+                      variant="outline"
                       size="sm"
-                      onClick={() => appendInfoCard({ title: '', content: '' })}
+                      onClick={() =>
+                        appendInfoCard({ title: '', content: '' })
+                      }
                     >
-                      <PlusCircle className="mr-2 h-4 w-4" />{' '}
+                      <PlusCircle className="mr-2 h-4 w-4" />
                       {t('clients.fields.infoCards.add')}
                     </Button>
                   </div>
-                  <div className="max-h-[500px] space-y-4 overflow-y-auto pr-2">
+                  <div className="space-y-4">
                     {infoCardFields.map((field, index) => (
-                      <fieldset key={field.id} className="rounded-md border p-4">
-                        <div className="mb-2 flex items-center justify-between">
-                          <legend className="px-1 text-sm font-medium">
-                            {t('clients.fields.infoCards.card')} {index + 1}
-                          </legend>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => removeInfoCard(index)}
-                          >
-                            <Trash2 className="h-4 w-4 text-destructive" />
-                          </Button>
-                        </div>
-                        <div className="mt-2 space-y-4">
-                          <div className="space-y-2">
-                            <Label htmlFor={`infoCards.${index}.title`}>
-                              {t('clients.fields.title')}
-                            </Label>
-                            <Input
-                              id={`infoCards.${index}.title`}
-                              {...register(`infoCards.${index}.title`)}
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor={`infoCards.${index}.content`}>
-                              {t('clients.fields.content')}
-                            </Label>
-                            <Controller
-                              name={`infoCards.${index}.content`}
-                              control={control}
-                              render={({ field }) => (
-                                <TiptapEditor
-                                  name={`infoCards.${index}.content`}
-                                  control={control}
+                      <Card key={field.id}>
+                        <CardContent className="pt-6">
+                          <div className="flex items-start gap-4">
+                            <div className="grid flex-1 gap-4">
+                              <div className="space-y-2">
+                                <Label>
+                                  {t('clients.fields.infoCards.title')}
+                                </Label>
+                                <Input
+                                  {...register(`infoCards.${index}.title`)}
                                 />
-                              )}
-                            />
+                              </div>
+                              <div className="space-y-2">
+                                <Label>
+                                  {t('clients.fields.infoCards.content')}
+                                </Label>
+                                <Textarea
+                                  {...register(`infoCards.${index}.content`)}
+                                />
+                              </div>
+                            </div>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              className="mt-8"
+                              onClick={() => removeInfoCard(index)}
+                            >
+                              <Trash2 className="h-4 w-4 text-destructive" />
+                            </Button>
                           </div>
-                        </div>
-                      </fieldset>
+                        </CardContent>
+                      </Card>
                     ))}
                   </div>
-                </TabsContent >
+                </TabsContent>
 
-                {/* Products Tab */}
-                < TabsContent value="products" className="space-y-4" >
+                <TabsContent value="products" className="space-y-6">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-medium">
-                      {t('clients.tabs.products')}
-                    </h3>
+                    <div>
+                      <CardTitle>{t('clients.tabs.products')}</CardTitle>
+                      <CardDescription>Add products to your listing.</CardDescription>
+                    </div>
                     <Button
                       type="button"
+                      variant="outline"
                       size="sm"
-                      onClick={() => appendProduct({ name: '' })}
+                      onClick={() => appendProduct({ name: '', price: '' })}
                     >
-                      <PlusCircle className="mr-2 h-4 w-4" />{' '}
-                      {t('clients.fields.products.add')}
+                      <PlusCircle className="mr-2 h-4 w-4" />
+                      Add Product
                     </Button>
                   </div>
-                  <p className="text-sm text-muted-foreground">
-                    {t('clients.fields.products.description')}
-                  </p>
-                  <div className="max-h-[500px] space-y-4 overflow-y-auto pr-2">
+                  <div className="space-y-4">
                     {productFields.map((field, index) => (
-                      <fieldset key={field.id} className="rounded-md border p-4">
-                        <div className="mb-2 flex items-center justify-between">
-                          <legend className="px-1 text-sm font-medium">
-                            {t('clients.fields.products.product')}{' '}
-                            {index + 1}
-                          </legend>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => removeProduct(index)}
-                          >
-                            <Trash2 className="h-4 w-4 text-destructive" />
-                          </Button>
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor={`products.${index}.name`}>
-                            {t('clients.fields.products.productName')}
-                          </Label>
-                          <Input
-                            id={`products.${index}.name`}
-                            {...register(`products.${index}.name`)}
-                          />
-                          {errors.products?.[index]?.name && (
-                            <p className="text-sm text-destructive">
-                              {errors.products?.[index]?.name?.message}
-                            </p>
-                          )}
-                        </div>
-                      </fieldset>
+                      <Card key={field.id}>
+                        <CardContent className="pt-6">
+                          <div className="flex items-start gap-4">
+                            <div className="grid flex-1 gap-4 md:grid-cols-2">
+                              <div className="space-y-2">
+                                <Label>Product Name</Label>
+                                <Input {...register(`products.${index}.name`)} />
+                              </div>
+                              <div className="space-y-2">
+                                <Label>Price</Label>
+                                <Input {...register(`products.${index}.price`)} />
+                              </div>
+                              <div className="space-y-2 md:col-span-2">
+                                <Label>Description</Label>
+                                <Textarea {...register(`products.${index}.description`)} />
+                              </div>
+                              <div className="space-y-2 md:col-span-2">
+                                <Label>Image URL</Label>
+                                <Input {...register(`products.${index}.imageUrl`)} />
+                              </div>
+                            </div>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => removeProduct(index)}
+                            >
+                              <Trash2 className="h-4 w-4 text-destructive" />
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
                     ))}
                   </div>
-                </TabsContent >
+                </TabsContent>
 
-                {/* Graphics Tab */}
-                < TabsContent value="graphics" className="space-y-4" >
+                <TabsContent value="graphics" className="space-y-6">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-medium">
-                      {t('clients.fields.graphics.title')}
-                    </h3>
+                    <div>
+                      <CardTitle>{t('clients.tabs.graphics')}</CardTitle>
+                      <CardDescription>
+                        {t('clients.fields.graphics.description')}
+                      </CardDescription>
+                    </div>
                     <Button
                       type="button"
+                      variant="outline"
                       size="sm"
                       onClick={() =>
                         appendGraphic({ imageUrl: '', targetUrl: '', text: '' })
                       }
                     >
-                      <PlusCircle className="mr-2 h-4 w-4" />{' '}
+                      <PlusCircle className="mr-2 h-4 w-4" />
                       {t('clients.fields.graphics.add')}
                     </Button>
                   </div>
-                  <p className="text-sm text-muted-foreground">
-                    {t('clients.fields.graphics.description')}
-                  </p>
-                  <div className="max-h-[500px] space-y-4 overflow-y-auto pr-2">
+                  <div className="space-y-4">
                     {graphicsFields.map((field, index) => (
-                      <fieldset key={field.id} className="rounded-md border p-4">
-                        <div className="mb-2 flex items-center justify-between">
-                          <legend className="px-1 text-sm font-medium">
-                            {t('clients.fields.graphics.graphic')}{' '}
-                            {index + 1}
-                          </legend>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => removeGraphic(index)}
-                          >
-                            <Trash2 className="h-4 w-4 text-destructive" />
-                          </Button>
-                        </div>
-                        <div className="grid grid-cols-1 gap-4">
-                          <div className="space-y-2">
-                            <Label htmlFor={`graphics.${index}.imageUrl`}>
-                              {t('clients.fields.graphics.imageUrl')}
-                            </Label>
-                            <Input
-                              id={`graphics.${index}.imageUrl`}
-                              {...register(`graphics.${index}.imageUrl`)}
-                            />
-                            {errors.graphics?.[index]?.imageUrl && (
-                              <p className="text-sm text-destructive">
-                                {errors.graphics[index]?.imageUrl?.message}
-                              </p>
-                            )}
+                      <Card key={field.id}>
+                        <CardContent className="pt-6">
+                          <div className="flex items-start gap-4">
+                            <div className="grid flex-1 gap-4 md:grid-cols-2">
+                              <div className="space-y-2 md:col-span-2">
+                                <Label>
+                                  {t('clients.fields.graphics.text')}
+                                </Label>
+                                <Input
+                                  {...register(`graphics.${index}.text`)}
+                                />
+                              </div>
+                              <div className="space-y-2">
+                                <Label>
+                                  {t('clients.fields.graphics.imageUrl')}
+                                </Label>
+                                <Input
+                                  {...register(`graphics.${index}.imageUrl`)}
+                                />
+                              </div>
+                              <div className="space-y-2">
+                                <Label>
+                                  {t('clients.fields.graphics.targetUrl')}
+                                </Label>
+                                <Input
+                                  {...register(`graphics.${index}.targetUrl`)}
+                                />
+                              </div>
+                            </div>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              className="mt-8"
+                              onClick={() => removeGraphic(index)}
+                            >
+                              <Trash2 className="h-4 w-4 text-destructive" />
+                            </Button>
                           </div>
-                          <div className="space-y-2">
-                            <Label htmlFor={`graphics.${index}.targetUrl`}>
-                              {t('clients.fields.graphics.targetUrl')}
-                            </Label>
-                            <Input
-                              id={`graphics.${index}.targetUrl`}
-                              {...register(`graphics.${index}.targetUrl`)}
-                            />
-                            {errors.graphics?.[index]?.targetUrl && (
-                              <p className="text-sm text-destructive">
-                                {errors.graphics[index]?.targetUrl?.message}
-                              </p>
-                            )}
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor={`graphics.${index}.text`}>
-                              {t('clients.fields.graphics.title')}
-                            </Label>
-                            <Input
-                              id={`graphics.${index}.text`}
-                              {...register(`graphics.${index}.text`)}
-                            />
-                          </div>
-                        </div>
-                      </fieldset>
+                        </CardContent>
+                      </Card>
                     ))}
                   </div>
-                </TabsContent >
+                </TabsContent>
 
-                {/* Form Tab */}
-                < TabsContent value="form" >
-                  <div className="mb-4 flex items-center justify-between">
-                    <div>
-                      <CardTitle>{t('clients.tabs.form')}</CardTitle>
-                      <CardDescription>
-                        {t('clients.fields.form.description')}
-                      </CardDescription>
-                    </div>
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button variant="outline">
-                          <Code className="mr-2 h-4 w-4" /> Insertar en Landing
-                          Page
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent className="sm:max-w-2xl">
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Insertar Formulario</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            Copie y pegue este código en el HTML de su landing
-                            page para insertar el formulario.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <pre className="mt-2 w-full overflow-x-auto whitespace-pre-wrap rounded-md bg-slate-950 p-4">
-                          <code className="break-all text-white">
-                            {embedCode}
-                          </code>
-                        </pre>
-                        <AlertDialogFooter>
-                          <AlertDialogAction
-                            onClick={() => {
-                              navigator.clipboard.writeText(embedCode);
-                              toast({
-                                title: '¡Copiado!',
-                                description:
-                                  'El código de inserción se ha copiado al portapapeles.',
-                              });
-                            }}
-                          >
-                            Copiar Código
-                          </AlertDialogAction>
-                          <AlertDialogCancel>Cerrar</AlertDialogCancel>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
+                <TabsContent value="form" className="space-y-6">
+                  <CardTitle>{t('clients.tabs.form')}</CardTitle>
+                  <CardDescription>
+                    Configure contact form settings.
+                  </CardDescription>
+                  <Alert>
+                    <AlertTitle>Not Implemented Yet</AlertTitle>
+                    <AlertDescription>
+                      This section will allow you to configure custom fields for the contact form.
+                    </AlertDescription>
+                  </Alert>
+                </TabsContent>
+
+                <TabsContent value="stats">
+                  <div className="p-4">
+                    <AdStatistics adId={id} />
                   </div>
-                  <div className="mt-6 rounded-lg border bg-slate-50 p-4">
-                    <RecommendationFormForClient
-                      products={watch('products') || []}
+                </TabsContent>
+
+                <TabsContent value="wallet">
+                  <div className="p-4 space-y-4">
+                    <CardTitle>Client Wallet</CardTitle>
+                    <CardDescription>Manage budget and transactions.</CardDescription>
+                    <WalletCard
                       clientId={id}
+                      clientEmail={watch('email')}
+                      currentBudget={watch('budget_remaining') || 0}
+                      totalInvested={watch('total_invested') || 0}
                     />
                   </div>
-                </TabsContent >
+                </TabsContent>
 
-                {/* Statistics Tab */}
-                < TabsContent value="stats" >
-                  <AdStatistics adId={id} />
-                </TabsContent >
-
-                {/* Wallet Tab */}
-                < TabsContent value="wallet" className="space-y-6" >
-                  <CardTitle>{t('wallet.title')}</CardTitle>
+                <TabsContent value="translations" className="space-y-6">
+                  <CardTitle>{t('clients.tabs.translations')}</CardTitle>
                   <CardDescription>
-                    {t('wallet.description')}
+                    {t('clients.fields.translations.description')}
                   </CardDescription>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-4 rounded-lg border p-4 bg-slate-50">
-                      <h3 className="font-semibold text-lg">{t('wallet.manualAdjustment')}</h3>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="budget_remaining">{t('wallet.availableBudget')}</Label>
-                        <Input
-                          id="budget_remaining"
-                          type="number"
-                          step="0.01"
-                          {...register('budget_remaining', { valueAsNumber: true })}
-                        />
-                        <p className="text-xs text-muted-foreground">
-                          {t('wallet.currentBudgetHelp')}
-                        </p>
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="total_invested">{t('wallet.totalInvested')}</Label>
-                        <Input
-                          id="total_invested"
-                          type="number"
-                          step="0.01"
-                          {...register('total_invested', { valueAsNumber: true })}
-                        />
-                        <p className="text-xs text-muted-foreground">
-                          {t('wallet.totalInvestedHelp')}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="space-y-4">
-                      <h3 className="font-semibold text-lg">{t('wallet.preview')}</h3>
-                      <WalletCard
-                        clientId={id}
-                        clientEmail={watch('newEmailForUpdate') || ''}
-                        currentBudget={watch('budget_remaining') || 0}
-                        totalInvested={watch('total_invested') || 0}
-                      />
-                    </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="translations">JSON Translations</Label>
+                    <Textarea
+                      id="translations"
+                      {...register('translations')}
+                      className="font-mono text-sm h-[400px]"
+                      placeholder='{ "en": { ... }, "es": { ... } }'
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Edit the raw JSON translations for this client. Be careful with syntax.
+                    </p>
                   </div>
-                </TabsContent >
+                </TabsContent>
 
-                {/* Translations Tab */}
-                < TabsContent value="translations" >
-                  <div className="space-y-4">
-                    <div className="rounded-lg border bg-card p-4">
-                      <h3 className="mb-4 text-lg font-medium">
-                        {t('clients.fields.translations')}
-                      </h3>
-                      <FormField
-                        control={control}
-                        name="translations"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormControl>
-                              <Textarea
-                                {...field}
-                                placeholder={t('clients.fields.jsonPlaceholderObject')}
-                                className="font-mono text-sm"
-                                rows={10}
-                              />
-                            </FormControl>
-                            <p className="text-xs text-muted-foreground">
-                              {t('clients.fields.jsonHelpObject')}
-                            </p>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                  </div>
-                </TabsContent >
-
-                {/* Coupons Tab */}
-                < TabsContent value="coupons" >
+                <TabsContent value="coupons">
                   <ClientCouponManager
                     companyId={id}
-                    companyName={initialData.clientName}
-                    category={initialData.category || 'Allgemein'}
+                    companyName={watch('clientName')}
+                    category={watch('category') || ''}
                   />
-                </TabsContent >
-              </Tabs >
-            </CardContent >
-            <CardFooter className="flex justify-end">
+                </TabsContent>
+
+              </Tabs>
+            </CardContent>
+            <CardFooter className="flex justify-between">
+              <Button
+                variant="outline"
+                type="button"
+                onClick={() => router.push('/admin/clients')}
+              >
+                {t('common.cancel')}
+              </Button>
               <Button type="submit" disabled={isSubmitting}>
                 {isSubmitting && (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 )}
-                {t('clients.edit.save')}
+                {t('common.save')}
               </Button>
             </CardFooter>
-          </Card >
-        </form >
-      </Form >
+          </Card>
+        </form>
+      </Form>
+
+      {/* Alert Dialog for Confirmations (optional usage) */}
+      <AlertDialog open={false} onOpenChange={() => { }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>Action cannot be undone.</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction>Continue</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }

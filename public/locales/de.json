@@ -237,5 +237,11 @@
         "popular": true
       }
     ]
+  },
+  "clients": {
+    "fields": {
+      "category": "Kategorie",
+      "subcategory": "Unterkategorie"
+    }
   }
 }

@@ -196,6 +196,8 @@
     "fields": {
       "clientName": "Client Name",
       "slug": "Slug",
+      "category": "Category",
+      "subcategory": "Subcategory",
       "clientLogoUrl": "Logo URL",
       "clientTitle": "Title",
       "clientSubtitle": "Subtitle",

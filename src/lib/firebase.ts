@@ -12,6 +12,8 @@ export const firebaseConfig = {
   messagingSenderId: '382703499489',
 };
 
+import { getFirestore } from 'firebase/firestore';
+
 // Initialize Firebase using a singleton pattern to prevent re-initialization
 function initializeFirebaseApp() {
   if (getApps().length > 0) {
@@ -21,3 +23,4 @@ function initializeFirebaseApp() {
 }
 
 export const app: FirebaseApp = initializeFirebaseApp();
+export const db = getFirestore(app);

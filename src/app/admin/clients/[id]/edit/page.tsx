@@ -26,6 +26,8 @@ export interface ClientData {
   products?: any[];
   translations: any;
   slug: string;
+  category?: string;
+  subcategory?: string;
   layout?: any[]; // For the Landing Page Builder
 }
 

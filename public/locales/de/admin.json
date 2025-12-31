@@ -132,6 +132,7 @@
     "fields": {
       "name": "Name des Unternehmens",
       "category": "Kategorie",
+      "subcategory": "Unterkategorie",
       "description": "Beschreibung",
       "location": "Standort (Stadt, Land)",
       "address": "Adresse",
@@ -203,6 +204,8 @@
     "fields": {
       "clientName": "Kundenname",
       "slug": "Slug",
+      "category": "Kategorie",
+      "subcategory": "Unterkategorie",
       "clientLogoUrl": "Logo-URL",
       "clientTitle": "Titel",
       "clientSubtitle": "Untertitel",
