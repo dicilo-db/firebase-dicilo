@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { NetworkCampaignsManager } from './NetworkCampaignsManager';
 import { QrManager } from './QrManager';
 import { ProspectsManager } from './ProspectsManager';
+import { ReferralCard } from '@/components/dashboard/ReferralCard';
 
 type View = 'overview' | 'qr-codes' | 'network-campaigns' | 'prospects';
 
@@ -167,21 +168,7 @@ export default function AdsDashboard() {
                 </Card>
 
                 {/* Module: Recommend Friends */}
-                <Card className="opacity-75 border-dashed bg-blue-50/50 dark:bg-blue-900/10">
-                    <CardHeader>
-                        <div className="flex items-start justify-between">
-                            <Users className="h-8 w-8 text-blue-400 mb-2" />
-                            <Badge variant="outline" className="bg-blue-100 text-blue-700 border-blue-200">{t('adsManager.cards.comingSoon')}</Badge>
-                        </div>
-                        <CardTitle>{t('adsManager.cards.programs.recommendFriends.title')}</CardTitle>
-                        <CardDescription>{t('adsManager.cards.programs.recommendFriends.description')}</CardDescription>
-                    </CardHeader>
-                    <CardFooter>
-                        <Button variant="secondary" disabled className="w-full bg-blue-100/50 text-blue-700">
-                            {t('adsManager.cards.inDevelopment')}
-                        </Button>
-                    </CardFooter>
-                </Card>
+                <ReferralCard />
 
                 {/* Module: Your Prospects (ACTIVE NOW) */}
                 <Card className="bg-blue-50 dark:bg-blue-900/10 border-blue-200">

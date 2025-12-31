@@ -2,9 +2,10 @@ import { onDocumentWritten } from 'firebase-functions/v2/firestore';
 import * as admin from 'firebase-admin';
 import * as logger from 'firebase-functions/logger';
 
-const db = admin.firestore();
+// const db = admin.firestore(); // Moved inside handler
 
 export const onBusinessWrite = onDocumentWritten('businesses/{businessId}', async (event) => {
+    const db = admin.firestore();
     const change = event.data;
     if (!change) return; // Should not happen
 

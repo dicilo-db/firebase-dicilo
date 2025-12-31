@@ -1,0 +1,147 @@
+{
+    "name": "Dicilo Referral Sender",
+    "nodes": [
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "dicilo-referrals",
+                "options": {}
+            },
+            "id": "webhook",
+            "name": "Webhook",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                460,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "fieldToSplitOut": "body.emails"
+            },
+            "id": "split_emails",
+            "name": "Split Out Emails",
+            "type": "n8n-nodes-base.itemLists",
+            "typeVersion": 1,
+            "position": [
+                680,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "jsCode": "// MAPPING LOGIC\n// Input: language, template, referrer_name, referrer_id\nconst lang = $input.item.json.body.language || 'es';\nconst templateType = $input.item.json.body.template || 'general';\nconst referrerName = $input.item.json.body.referrer_name;\nconst referrerId = $input.item.json.body.referrer_id;\n\n// Content Map with specific copywriting\nconst contentMap = {\n  'es': {\n    'general': {\n      subject: `Te invito a ahorrar y ganar dinero en Dicilo.net`,\n      intro: `Hola, he descubierto Dicilo.net, un club global donde conectamos directamente con empresas para obtener ofertas únicas. No solo ahorras, sino que ganas DiciPoints por recomendar. Únete gratis con mi enlace y empieza con ventajas VIP.`,\n      cta: 'Unirme y Ahorrar'\n    },\n    'business': { // Mapped from \"Trabajo desde Casa\"\n      subject: `Genera ingresos extra recomendando empresas`,\n      intro: `¿Buscas trabajar desde casa? En Dicilo puedes monetizar tu red de contactos. Recomienda empresas y gana comisiones, o vende tus propios servicios. Es la plataforma ideal para el 'Xposting' y marketing digital. Regístrate aquí para que empecemos juntos.`,\n      cta: 'Empezar a Ganar'\n    },\n    'crypto': {\n      subject: `50 DiciPoints te están esperando 🪙`,\n      intro: `Únete a la economía de Dicilo. Gana DiciPoints y DiciCoins canjeables por productos y viajes. Es un ecosistema descentralizado donde tu participación tiene valor real. Usa mi invitación exclusiva aquí.`,\n      cta: 'Reclamar DiciPoints'\n    }\n  },\n  'en': {\n    'general': {\n      subject: `I invite you to save and earn money on Dicilo.net`,\n      intro: `Hi, I discovered Dicilo.net, a global club where we connect directly with businesses to get unique offers. You not only save but also earn DiciPoints for referring. Join for free with my link and start with VIP perks.`,\n      cta: 'Join and Save'\n    },\n    'business': {\n      subject: `Generate extra income by referring businesses`,\n      intro: `Looking to work from home? On Dicilo you can monetize your network. Refer businesses and earn commissions, or sell your own services. It's the ideal platform for 'Xposting' and digital marketing. Register here so we can start together.`,\n      cta: 'Start Earning'\n    },\n    'crypto': {\n      subject: `50 DiciPoints are waiting for you 🪙`,\n      intro: `Join the Dicilo economy. Earn DiciPoints and DiciCoins redeemable for products and travel. It's a decentralized ecosystem where your participation has real value. Use my exclusive invitation here.`,\n      cta: 'Claim DiciPoints'\n    }\n  },\n  'de': {\n    'general': {\n      subject: `Ich lade dich ein, auf Dicilo.net zu sparen und zu verdienen`,\n      intro: `Hallo, ich habe Dicilo.net entdeckt, einen globalen Club, in dem wir uns direkt mit Unternehmen verbinden, um einzigartige Angebote zu erhalten. Du sparst nicht nur, sondern verdienst auch DiciPoints durch Empfehlungen. Melde dich kostenlos über meinen Link an und starte mit VIP-Vorteilen.`,\n      cta: 'Beitreten und Sparen'\n    },\n    'business': {\n      subject: `Generiere Zusatzeinkommen durch Unternehmensnachweis`,\n      intro: `Möchtest du von zu Hause aus arbeiten? Auf Dicilo kannst du dein Netzwerk monetarisieren. Empfiehl Unternehmen und verdiene Provisionen oder verkaufe deine eigenen Dienstleistungen. Es ist die ideale Plattform für 'Xposting' und digitales Marketing. Registriere dich hier, damit wir gemeinsam starten können.`,\n      cta: 'Jetzt Verdienen'\n    },\n    'crypto': {\n      subject: `50 DiciPoints warten auf dich 🪙`,\n      intro: `Schließ dich der Dicilo-Wirtschaft an. Verdiene DiciPoints und DiciCoins, die gegen Produkte und Reisen eingelöst werden können. Es ist ein dezentrales Ökosystem, in dem deine Teilnahme echten Wert hat. Nutze hier meine exklusive Einladung.`,\n      cta: 'DiciPoints Beanspruchen'\n    }\n  }\n};\n\nconst content = contentMap[lang][templateType] || contentMap['es']['general'];\n\n// HTML Template Construction\nconst htmlBody = `\n<!DOCTYPE html><html><body>\n<div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;'>\n  <div style='text-align: center; padding: 20px;'>\n    <img src='https://dicilo.net/logo-full.png' alt='Dicilo Logo' width='150'>\n  </div>\n  <div style='background-color: #f9f9f9; padding: 20px; border-radius: 8px;'>\n    <h2>Hola! 👋</h2>\n    <p>${content.intro}</p>\n    <div style='text-align: center; margin: 30px 0;'>\n      <a href='https://dicilo.net/registrieren?ref=${referrerId}' style='background-color: #007bff; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold;'>${content.cta}</a>\n    </div>\n    <p style='font-size: 12px; color: #888;'>Si no te interesa, puedes ignorar este mensaje.</p>\n    \n    <!-- TRACKING PIXEL -->\n    <img src='YOUR_N8N_TRACKING_WEBHOOK_URL?ref=${referrerId}&email=${$input.item.json.email}' width='1' height='1' />\n  </div>\n</div></body></html>\n`;\n\nreturn {\n  email_subject: content.subject,\n  email_body: htmlBody,\n  to_email: $input.item.json.email,\n  referrer_id: referrerId\n};"
+            },
+            "id": "prepare_content",
+            "name": "Prepare Content",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                900,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "resource": "message",
+                "subject": "={{ $json.email_subject }}",
+                "htmlMessage": "={{ $json.email_body }}",
+                "toEmail": "={{ $json.to_email }}",
+                "additionalFields": {
+                    "senderName": "Dicilo Team"
+                }
+            },
+            "id": "gmail_sender",
+            "name": "Gmail",
+            "type": "n8n-nodes-base.gmail",
+            "typeVersion": 2,
+            "position": [
+                1150,
+                300
+            ],
+            "credentials": {
+                "gmailOAuth2": {
+                    "id": "YOUR_CREDENTIAL_ID_HERE",
+                    "name": "Gmail Account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "authentication": "oAuth2",
+                "documentId": {
+                    "__rl": true,
+                    "value": "DICILO_REFERRAL_LOGS",
+                    "mode": "name"
+                },
+                "sheetName": {
+                    "__rl": true,
+                    "value": "Sheet1",
+                    "mode": "name"
+                },
+                "options": {}
+            },
+            "id": "log_sent",
+            "name": "Log Sent (Google Sheets)",
+            "type": "n8n-nodes-base.googleSheets",
+            "typeVersion": 4,
+            "position": [
+                1400,
+                300
+            ],
+            "credentials": {
+                "googleSheetsOAuth2Api": {
+                    "id": "YOUR_GSHEETS_CRED_ID",
+                    "name": "Google Sheets Account"
+                }
+            }
+        }
+    ],
+    "connections": {
+        "Webhook": {
+            "main": [
+                [
+                    {
+                        "node": "Split Out Emails",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Split Out Emails": {
+            "main": [
+                [
+                    {
+                        "node": "Prepare Content",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Prepare Content": {
+            "main": [
+                [
+                    {
+                        "node": "Gmail",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Gmail": {
+            "main": [
+                [
+                    {
+                        "node": "Log Sent (Google Sheets)",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}

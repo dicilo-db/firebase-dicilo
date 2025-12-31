@@ -15,7 +15,7 @@ const apiKey = defaultClient.authentications['api-key'];
 // Access the parameter value at runtime
 apiKey.apiKey = brevoApiKey;
 
-const db = admin.firestore();
+
 
 // --- 1. Cloud Function de Envío (Callable) ---
 interface PioneerFriend {
@@ -32,6 +32,7 @@ interface SendPioneerInvitationsData {
 }
 
 export const sendPioneerInvitations = onCall(async (request) => {
+    const db = admin.firestore();
     // Verificar autenticación
     if (!request.auth) {
         throw new HttpsError('unauthenticated', 'User must be logged in to send invitations.');
@@ -129,6 +130,7 @@ export const sendPioneerInvitations = onCall(async (request) => {
 
 // --- 2. Webhook de Brevo (Tracking Open/Click) ---
 export const handleBrevoWebhook = onRequest(async (req, res) => {
+    const db = admin.firestore();
     // Brevo envía eventos POST
     const event = req.body;
 
@@ -196,6 +198,7 @@ export const handleBrevoWebhook = onRequest(async (req, res) => {
 
 // --- 3. Cron Job de Automatización (7, 14, 21 días) ---
 export const referralAutomationCron = onSchedule('every 24 hours', async (event) => {
+    const db = admin.firestore();
     const now = moment();
     const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
 
@@ -300,6 +303,7 @@ async function sendReminderEmail(docId: string, data: any, iteration: number, ap
 }
 
 async function notifyReferrer(referrerId: string, friendName: string, friendEmail: string) {
+    const db = admin.firestore();
     // Aquí deberíamos crear una notificación en el sistema o enviar un email al referrer
     // Para simplificar, creamos un documento de notificación en una colección 'notifications'
     await db.collection('notifications').add({
@@ -414,6 +418,7 @@ interface PurchaseData {
 }
 
 export const confirmPioneerPurchase = onCall(async (request) => {
+    const db = admin.firestore();
     // Autenticación: Solo Admin o Sistema
     // if (!request.auth || request.auth.token.role !== 'admin') ... (Simplificado por ahora)
 

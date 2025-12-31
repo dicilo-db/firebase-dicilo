@@ -59,8 +59,8 @@ const defaultClient = SibApiV3Sdk.ApiClient.instance;
 const apiKey = defaultClient.authentications['api-key'];
 // Access the parameter value at runtime
 apiKey.apiKey = brevoApiKey;
-const db = admin.firestore();
 exports.sendPioneerInvitations = (0, https_1.onCall)((request) => __awaiter(void 0, void 0, void 0, function* () {
+    const db = admin.firestore();
     // Verificar autenticación
     if (!request.auth) {
         throw new https_1.HttpsError('unauthenticated', 'User must be logged in to send invitations.');
@@ -138,6 +138,7 @@ exports.sendPioneerInvitations = (0, https_1.onCall)((request) => __awaiter(void
 }));
 // --- 2. Webhook de Brevo (Tracking Open/Click) ---
 exports.handleBrevoWebhook = (0, https_1.onRequest)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const db = admin.firestore();
     // Brevo envía eventos POST
     const event = req.body;
     // Estructura típica: { "event": "opened", "email": "user@example.com", "message-id": "..." }
@@ -197,6 +198,7 @@ exports.handleBrevoWebhook = (0, https_1.onRequest)((req, res) => __awaiter(void
 }));
 // --- 3. Cron Job de Automatización (7, 14, 21 días) ---
 exports.referralAutomationCron = (0, scheduler_1.onSchedule)('every 24 hours', (event) => __awaiter(void 0, void 0, void 0, function* () {
+    const db = admin.firestore();
     const now = (0, moment_1.default)();
     const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
     // Buscamos invitaciones enviadas y NO abiertas (opened == false)
@@ -288,6 +290,7 @@ function sendReminderEmail(docId, data, iteration, apiInstance) {
 }
 function notifyReferrer(referrerId, friendName, friendEmail) {
     return __awaiter(this, void 0, void 0, function* () {
+        const db = admin.firestore();
         // Aquí deberíamos crear una notificación en el sistema o enviar un email al referrer
         // Para simplificar, creamos un documento de notificación en una colección 'notifications'
         yield db.collection('notifications').add({
@@ -389,6 +392,7 @@ function generatePioneerEmailHtml(name, referrerName, customMessage, link, lang)
 </html>`;
 }
 exports.confirmPioneerPurchase = (0, https_1.onCall)((request) => __awaiter(void 0, void 0, void 0, function* () {
+    const db = admin.firestore();
     // Autenticación: Solo Admin o Sistema
     // if (!request.auth || request.auth.token.role !== 'admin') ... (Simplificado por ahora)
     const data = request.data;
