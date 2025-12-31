@@ -286,5 +286,34 @@
       "message": "Message"
     },
     "noResults": "No feedback found."
+  },
+  "emailTemplates": {
+    "title": "Content Management",
+    "subtitle": "Select a module to manage its templates.",
+    "managing": "Managing: {{category}}",
+    "backToModules": "Back to Modules",
+    "backToDashboard": "Back to Dashboard",
+    "newTemplate": "New Template",
+    "manage": "Manage",
+    "templates": "Templates",
+    "loading": "Loading templates...",
+    "noTemplates": "No templates in this category",
+    "firstTemplate": "Create First Template",
+    "createDescription": "You haven't created any templates for {{category}} yet.",
+    "edit": "Edit Template",
+    "categories": {
+      "network_campaigns": {
+        "title": "Network Campaigns",
+        "description": "Templates for promotion campaigns in the network."
+      },
+      "email_marketing": {
+        "title": "Email Marketing",
+        "description": "Newsletters and mass promotional emails."
+      },
+      "referrals": {
+        "title": "Refer a Friend",
+        "description": "Invitation emails and referral system."
+      }
+    }
   }
 }

@@ -314,5 +314,34 @@
       "message": "Mensaje"
     },
     "noResults": "No se encontraron opiniones."
+  },
+  "emailTemplates": {
+    "title": "Gestión de Contenido",
+    "subtitle": "Selecciona un módulo para gestionar sus plantillas.",
+    "managing": "Administrando: {{category}}",
+    "backToModules": "Volver a Módulos",
+    "backToDashboard": "Regresar al Panel",
+    "newTemplate": "Nueva Plantilla",
+    "manage": "Gestionar",
+    "templates": "Plantillas",
+    "loading": "Cargando plantillas...",
+    "noTemplates": "Sin plantillas en esta categoría",
+    "firstTemplate": "Crear Primera Plantilla",
+    "createDescription": "Aún no has creado plantillas para {{category}}.",
+    "edit": "Editar Plantilla",
+    "categories": {
+      "network_campaigns": {
+        "title": "Campañas de Red",
+        "description": "Plantillas para campañas de promoción en la red."
+      },
+      "email_marketing": {
+        "title": "Email Marketing",
+        "description": "Newsletters y correos promocionales masivos."
+      },
+      "referrals": {
+        "title": "Recomienda a amigos",
+        "description": "Correos de invitación y sistema de referidos."
+      }
+    }
   }
 }

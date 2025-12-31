@@ -1,22 +1,13 @@
 'use server';
 
-import { getFirestore } from 'firebase-admin/firestore';
-import { getApps, initializeApp, cert } from 'firebase-admin/app';
+import { getAdminDb } from '@/lib/firebase-admin';
 
-// Initialize Admin SDK if not already initialized
-if (!getApps().length) {
-    // Provided logic to reuse existing or init app - but simpler to assume environment is set up.
-    // Using standard nextjs-firebase-admin pattern or existing util if available.
-    // I will check if there is a 'lib/firebase-admin' but for now use standard lazy init.
-    initializeApp();
-}
-
-const db = getFirestore();
+const db = getAdminDb();
 
 export type EmailTemplate = {
     id?: string;
     name: string;
-    category: 'system' | 'marketing' | 'referral';
+    category: 'network_campaigns' | 'email_marketing' | 'referrals' | 'system' | 'marketing' | 'referral';
     versions: {
         [key: string]: {
             subject: string;

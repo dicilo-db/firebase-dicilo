@@ -86,6 +86,10 @@
         "title": "Builder",
         "description": "Create and edit landing pages"
       },
+      "referral": {
+        "title": "Refer a Friend",
+        "description": "Refer friends and earn 50 DiciPoints for each friend who registers on dicilo.net with your unique affiliate link"
+      },
       "clients": {
         "title": "Clients",
         "description": "Manage client profiles"
@@ -748,6 +752,62 @@
       "starterHelp": "Creates Business + Starter Client entry.",
       "retailerHelp": "Creates Business + Retailer Client entry.",
       "premiumHelp": "Creates Business + Premium Client entry."
+    }
+  },
+  "emailTemplates": {
+    "title": "Content Management",
+    "subtitle": "Select a module to manage its templates.",
+    "managing": "Managing: {{category}}",
+    "backToModules": "Back to Modules",
+    "backToDashboard": "Back to Dashboard",
+    "newTemplate": "New Template",
+    "manage": "Manage",
+    "templates": "Templates",
+    "loading": "Loading templates...",
+    "noTemplates": "No templates in this category",
+    "firstTemplate": "Create First Template",
+    "createDescription": "You haven't created any templates for {{category}} yet.",
+    "edit": "Edit Template",
+    "categories": {
+      "network_campaigns": {
+        "title": "Network Campaigns",
+        "description": "Templates for promotion campaigns in the network."
+      },
+      "email_marketing": {
+        "title": "Email Marketing",
+        "description": "Newsletters and mass promotional emails."
+      },
+      "referrals": {
+        "title": "Refer a Friend",
+        "description": "Invitation emails and referral system."
+      }
+    },
+    "editor": {
+      "newTemplate": "New Template",
+      "editTemplate": "Edit Template",
+      "noName": "No name",
+      "autoTranslate": "Auto-translate (ES -> EN/DE)",
+      "save": "Save Changes",
+      "internalName": "Internal Name",
+      "category": "Category",
+      "categoryLocked": "Category is locked to current module.",
+      "headerImage": "Header Image (Optional)",
+      "imageUploaded": "Image Uploaded",
+      "imageSuccess": "Image successfully attached.",
+      "imageError": "Could not upload image",
+      "error": "Error",
+      "success": "Success",
+      "saved": "Template saved successfully.",
+      "nameRequired": "Name is required.",
+      "saveError": "Error saving.",
+      "notFound": "Template not found.",
+      "translationComplete": "Translation Complete",
+      "translationCheck": "Please review generated texts.",
+      "translationError": "Auto-translation failed.",
+      "subject": "Subject",
+      "body": "Email Body (HTML)",
+      "htmlSupport": "Supports basic HTML. Use {{variable}} for dynamic data.",
+      "imageUrlPlaceholder": "Or paste an image URL here..."
     }
   }
 }

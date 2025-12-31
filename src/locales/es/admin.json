@@ -98,6 +98,10 @@
         "title": "Constructor",
         "description": "Crear y editar páginas de destino"
       },
+      "referral": {
+        "title": "Recomienda a amigos",
+        "description": "Recomienda amigos y gana 50 DiciPoints con cada amigo tuyo que se registre en dicilo.net con tu enlace unico de afiliado"
+      },
       "clients": {
         "title": "Clientes",
         "description": "Gestionar perfiles de clientes"
@@ -788,6 +792,62 @@
       "starterHelp": "Crea Negocio + Cliente Starter.",
       "retailerHelp": "Crea Negocio + Cliente Minorista.",
       "premiumHelp": "Crea Negocio + Cliente Premium."
+    }
+  },
+  "emailTemplates": {
+    "title": "Gestión de Contenido",
+    "subtitle": "Selecciona un módulo para gestionar sus plantillas.",
+    "managing": "Administrando: {{category}}",
+    "backToModules": "Volver a Módulos",
+    "backToDashboard": "Regresar al Panel",
+    "newTemplate": "Nueva Plantilla",
+    "manage": "Gestionar",
+    "templates": "Plantillas",
+    "loading": "Cargando plantillas...",
+    "noTemplates": "Sin plantillas en esta categoría",
+    "firstTemplate": "Crear Primera Plantilla",
+    "createDescription": "Aún no has creado plantillas para {{category}}.",
+    "edit": "Editar Plantilla",
+    "categories": {
+      "network_campaigns": {
+        "title": "Campañas de Red",
+        "description": "Plantillas para campañas de promoción en la red."
+      },
+      "email_marketing": {
+        "title": "Email Marketing",
+        "description": "Newsletters y correos promocionales masivos."
+      },
+      "referrals": {
+        "title": "Recomienda a amigos",
+        "description": "Correos de invitación y sistema de referidos."
+      }
+    },
+    "editor": {
+      "newTemplate": "Nueva Plantilla",
+      "editTemplate": "Editar Plantilla",
+      "noName": "Sin nombre",
+      "autoTranslate": "Auto-traducir (ES -> EN/DE)",
+      "save": "Guardar Cambios",
+      "internalName": "Nombre Interno",
+      "category": "Categoría",
+      "categoryLocked": "La categoría está bloqueada al módulo actual.",
+      "headerImage": "Imagen de Cabecera (Opcional)",
+      "imageUploaded": "Imagen subida",
+      "imageSuccess": "La imagen se ha adjuntado correctamente.",
+      "imageError": "No se pudo subir la imagen",
+      "error": "Error",
+      "success": "Éxito",
+      "saved": "Plantilla guardada correctamente.",
+      "nameRequired": "El nombre es obligatorio.",
+      "saveError": "Error al guardar.",
+      "notFound": "Plantilla no encontrada.",
+      "translationComplete": "Traducción completada",
+      "translationCheck": "Revisa los textos generados.",
+      "translationError": "Falló la traducción automática.",
+      "subject": "Asunto",
+      "body": "Cuerpo del Email (HTML)",
+      "htmlSupport": "Soporta HTML básico. Usa {{variable}} para insertar datos dinámicos.",
+      "imageUrlPlaceholder": "O pega una URL de imagen aquí..."
     }
   }
 }

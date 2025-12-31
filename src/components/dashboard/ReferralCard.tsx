@@ -39,8 +39,8 @@ import { app } from '@/lib/firebase';
 const CONTENT_PREVIEWS: Record<string, Record<string, any>> = {
     'es': {
         'general': {
-            subject: "Te invito a ahorrar y ganar dinero en Dicilo.net",
-            body: "Hola [Nombre]! 👋\n\nTu amigo [Tu Nombre] te ha invitado a unirte a Dicilo.\n\nDicilo es la red confiable y que esta creciendo bastante rapido a nivel internacional.\n\n[BOTÓN: Unirme y Ahorrar]\n\nSi no es de tu interes,por favor hazmelo saber. Gracias y espero nos hablemos pronto."
+            subject: "{{Nombre del amigo}}, tengo una invitación personal para ti (Ahorro + Ingresos) 🚀",
+            body: "Hola [Nombre], ¡espero que estés genial! 👋\n\nTe escribo precisamente a ti porque sé que eres una persona que valora las oportunidades inteligentes y el crecimiento.\n\nQuiero invitarte personalmente a formar parte de Dicilo.net.\n\nQuizás no lo has escuchado aún, pero imagina formar parte de un ecosistema digital respaldado por la solidez alemana (MHC Alemania) que está revolucionando la forma en que conectamos, compramos y generamos ingresos.\n\nDicilo no es solo una plataforma más; es una red de confianza creada en Hamburgo, Alemania, por un grupo de jóvenes empresarios visionarios. ¿Su misión? Empoderar al comercio real y permitirnos a nosotros, los usuarios, ganar dinero mientras apoyamos a la economía.\n\n¿Por qué pensé en ti para esto? Porque en Dicilo tienes tres ventajas claras:\n\nAhorro inteligente: Accedes a ofertas exclusivas.\n\nIngresos reales: Puedes generar ganancias (DiciPoints y DiciCoins) recomendando o trabajando desde casa.\n\nSeguridad: Es una comunidad seria que está creciendo muy rápido a nivel internacional.\n\nMe encantaría que fuéramos parte de esto juntos desde el principio.\n\nRegístrate gratis con mi pase de invitado aquí abajo y echa un vistazo a la plataforma. No tienes nada que perder y sí mucho mundo por descubrir.\n\n👉 [BOTÓN: Entrar a Dicilo y Empezar a Ganar] (Usa mi ID de invitado para acceso VIP: [RefCode])\n\nSi al entrar te surge la duda de \"¿cómo puedo sacar el máximo provecho de esto?\", escríbeme. Tengo un par de estrategias para rentabilizar la cuenta que me gustaría contarte.\n\nUn abrazo y te veo dentro,\n\n[Tu Nombre]"
         },
         'business': {
             subject: "Genera ingresos extra recomendando empresas",
@@ -48,35 +48,35 @@ const CONTENT_PREVIEWS: Record<string, Record<string, any>> = {
         },
         'crypto': {
             subject: "50 DiciPoints te están esperando 🪙",
-            body: "Hola [Nombre]! 👋\n\nÚnete a la economía de Dicilo. Gana DiciPoints y DiciCoins canjeables por productos y viajes. Es un ecosistema descentralizado donde tu participación tiene valor real. Usa mi invitación exclusiva aquí.\n\nDicilo es la red confiable y que esta creciendo bastante rapido a nivel internacional.\n\n[BOTÓN: Reclamar DiciPoints]\n\nSi no es de tu interes,por favor hazmelo saber. Gracias y espero nos hablemos pronto."
+            body: "Hola [Nombre], 👋\n\nTe escribo porque sé que siempre estás buscando formas inteligentes de maximizar tus recursos y valoras estar un paso adelante.\n\nHe activado una invitación exclusiva para ti en Dicilo.net y quiero asegurarme de que la aproveches.\n\nImagina un ecosistema digital diferente: uno donde tu participación no genera solo \"likes\", sino valor tangible. Dicilo es una red descentralizada en plena expansión global que nos recompensa con DiciPoints y DiciCoins.\n\nNo son simples puntos; es una economía real respaldada por empresas, canjeable por productos, servicios e incluso viajes.\n\nQuiero que entremos juntos en esto antes de que se vuelva masivo. Es el momento perfecto para posicionarse en esta economía colaborativa.\n\nTu acceso VIP ya tiene una recompensa de bienvenida esperando:\n\n👉 [BOTÓN: Reclamar mis 50 DiciPoints y Acceder] (Usa mi ID de invitado para asegurar el bono: [RefCode])\n\nUn consejo extra: Ya he descubierto cómo acelerar la acumulación de DiciPoins más rápido que el usuario promedio. Si te registras hoy, escríbeme y te cuento el truco. 😉\n\nUn abrazo,\n\n[Tu Nombre]"
         }
     },
     'en': {
         'general': {
-            subject: "I invite you to save and earn money on Dicilo.net",
-            body: "Hello [Nombre]! 👋\n\nYour friend [Tu Nombre] invited you to join Dicilo.\n\nDicilo is the trusted network and is growing quite fast internationally.\n\n[BUTTON: Join and Save]\n\nIf this is not of interest to you, please let me know. Thanks and I hope we speak soon."
+            subject: "{{Friend's Name}}, I have a personal invitation for you (Savings + Income) 🚀",
+            body: "Hello [Nombre], hope you are doing great! 👋\n\nI'm writing specifically to you because I know you value smart opportunities and growth.\n\nI want to personally invite you to be part of Dicilo.net.\n\nYou might not have heard of it yet, but imagine being part of a digital ecosystem backed by German solidity (MHC Germany) that is revolutionizing how we connect, shop, and generate income.\n\nDicilo is not just another platform; it's a trusted network created in Hamburg, Germany, by a group of visionary young entrepreneurs. Their mission? To empower real commerce and allow us, the users, to earn money while supporting the economy.\n\nWhy did I think of you for this? Because in Dicilo you have three clear advantages:\n\nSmart Savings: You access exclusive offers.\n\nReal Income: You can generate earnings (DiciPoints and DiciCoins) by recommending or working from home.\n\nSecurity: It is a serious community growing very fast internationally.\n\nI would love for us to be part of this together from the start.\n\nSign up for free with my guest pass below and take a look at the platform. You have nothing to lose and a lot to discover.\n\n👉 [BUTTON: Enter Dicilo and Start Earning] (Use my guest ID for VIP access: [RefCode])\n\nIf you wonder \"how can I get the most out of this?\" upon entering, write to me. I have a couple of strategies to make the account profitable that I'd like to tell you about.\n\nBest regards,\n\n[Tu Nombre]"
         },
         'business': {
-            subject: "Generate extra income by referring businesses",
-            body: "Hello [Nombre]! 👋\n\nAre you looking to work from home, or would you be interested in generating extra income from your PC or mobile?\n\nAt Dicilo you can make it happen thanks to the ease of online work; let me explain.\n\nRefer businesses and earn Dicipoints that you can later exchange for discounts at our allied companies, or recommend the companies where you usually shop and earn commissions for the advertising they purchase thanks to your recommendation.\n\nDicilo is the digital marketing platform of MHC Germany. Register here for free so we can start together.\n\nDicilo is a trusted network created in Hamburg, Germany, by a group of young entrepreneurs to support small and medium-sized merchants, and it is growing quite fast nationally and internationally.\n\n[BUTTON: Start Earning]\n\nIf this is not of interest to you or if you have any questions, please let me know. Thanks and I hope we speak soon.\nRegards\n[Tu Nombre]"
+            subject: "Generate extra income by recommending businesses",
+            body: "Hello [Nombre]! 👋\n\nAre you looking to work from home, or interested in generating extras from your PC or mobile?\n\nIn Dicilo you can make it happen thanks to the ease of online work; let me explain.\n\nRecommend businesses and earn Dicipoints that you can later exchange for discounts at our allied businesses, or recommend the businesses where you usually shop and earn commissions for the advertising purchases they make thanks to your recommendation.\n\nDicilo is the digital marketing platform of MHC Germany. Register here for free so we can start together.\n\nDicilo is a trusted network created in Hamburg, Germany, by a group of young entrepreneurs to support small and medium-sized merchants and is growing quite fast nationally and internationally.\n\n[BUTTON: Start Earning]\n\nIf this is not of interest to you or you have any doubts, please let me know. Thanks and hope to speak soon.\nRegards,\n[Tu Nombre]"
         },
         'crypto': {
-            subject: "50 DiciPoints are waiting for you 🪙",
-            body: "Hello [Nombre]! 👋\n\nJoin the Dicilo economy. Earn DiciPoints. Earn DiciPoints and DiciCoins redeemable for products and travel. It's a decentralized ecosystem where your participation has real value. Use my exclusive invitation here.\n\nDicilo is the trusted network and is growing quite fast internationally.\n\n[BUTTON: Claim DiciPoints]\n\nIf this is not of interest to you, please let me know. Thanks and I hope we speak soon."
+            subject: "[Nombre], I have reserved 50 DiciPoints for you 🪙",
+            body: "Hello [Nombre], 👋\n\nI'm writing because I know you are always looking for smart ways to maximize your resources and value staying one step ahead.\n\nI have activated an exclusive invitation for you at Dicilo.net and I want to make sure you take advantage of it.\n\nImagine a different digital ecosystem: one where your participation generates not just \"likes\", but tangible value. Dicilo is a decentralized network in full global expansion that rewards us with DiciPoints and DiciCoins.\n\nThey are not simple points; it is a real economy backed by businesses, redeemable for products, services, and even trips.\n\nI want us to get into this together before it becomes massive. It is the perfect time to position oneself in this collaborative economy.\n\nYour VIP access already has a welcome reward waiting:\n\n👉 [BUTTON: Claim my 50 DiciPoints and Access] (Use my guest ID to secure the bonus: [RefCode])\n\nAn extra tip: I have already discovered how to accelerate DiciPoints accumulation faster than the average user. If you register today, write to me and I'll tell you the trick. 😉\n\nBest,\n\n[Tu Nombre]"
         }
     },
     'de': {
         'general': {
-            subject: "Ich lade dich ein, auf Dicilo.net zu sparen und zu verdienen",
-            body: "Hallo [Nombre]! 👋\n\nDein Freund [Tu Nombre] hat dich eingeladen, Dicilo beizutreten.\n\nDicilo ist das vertrauenswürdige Netzwerk und wächst international ziemlich schnell.\n\n[BUTTON: Beitreten und Sparen]\n\nWenn dich das nicht interessiert, lass es mich bitte wissen. Danke und ich hoffe, wir sprechen uns bald."
+            subject: "{{Name des Freundes}}, ich habe eine persönliche Einladung für dich (Sparen + Einkommen) 🚀",
+            body: "Hallo [Nombre], ich hoffe, es geht dir gut! 👋\n\nIch schreibe dir, weil ich weiß, dass du clevere Möglichkeiten und Wachstum schätzt.\n\nIch möchte dich persönlich einladen, Teil von Dicilo.net zu werden.\n\nVielleicht hast du noch nichts davon gehört, aber stell dir vor, Teil eines digitalen Ökosystems zu sein, das durch deutsche Solidität (MHC Deutschland) gestützt wird und die Art und Weise revolutioniert, wie wir uns vernetzen, einkaufen und Einkommen generieren.\n\nDicilo ist nicht nur eine weitere Plattform; es ist ein vertrauenswürdiges Netzwerk, das in Hamburg von einer Gruppe visionärer Jungunternehmer gegründet wurde. Ihre Mission? Den realen Handel stärken und uns Nutzern ermöglichen, Geld zu verdienen, während wir die Wirtschaft unterstützen.\n\nWarum habe ich dabei an dich gedacht? Weil du bei Dicilo drei klare Vorteile hast:\n\nSmartes Sparen: Zugang zu exklusiven Angeboten.\n\nReales Einkommen: Du kannst Einnahmen (DiciPoints und DiciCoins) durch Empfehlungen oder Arbeit von zu Hause aus generieren.\n\nSicherheit: Es ist eine seriöse Gemeinschaft, die international sehr schnell wächst.\n\nIch würde mich freuen, wenn wir von Anfang an gemeinsam dabei wären.\n\nRegistriere dich unten kostenlos mit meinem Gastpass und schau dir die Plattform an. Du hast nichts zu verlieren und viel zu entdecken.\n\n👉 [BUTTON: Dicilo betreten und Geld verdienen] (Nutze meine Gast-ID für VIP-Zugang: [RefCode])\n\nWenn du dich nach dem Eintritt fragst: \"Wie kann ich das Beste daraus machen?\", schreib mir. Ich habe ein paar Strategien, um das Konto rentabel zu machen, die ich dir gerne erzählen würde.\n\nViele Grüße,\n\n[Tu Nombre]"
         },
         'business': {
-            subject: "Generiere Zusatzeinkommen durch Unternehmensnachweis",
-            body: "Hallo [Nombre]! 👋\n\nSuchst du Arbeit von zu Hause aus, oder wärst du daran interessiert, Extras von deinem PC oder Handy aus zu generieren?\n\nBei Dicilo kannst du das dank der einfachen Online-Arbeit verwirklichen; ich erkläre es dir.\n\nEmpfiehl Unternehmen und verdiene Dicipoints, die du später gegen Rabatte bei unseren Partnerunternehmen eintauschen kannst, oder empfiehl die Unternehmen, bei denen du normalerweise einkaufst, und verdiene Provisionen für die Werbung, die sie dank deiner Empfehlung kaufen.\n\nDicilo ist die digitale Marketingplattform von MHC Deutschland. Registriere dich hier kostenlos, damit wir gemeinsam starten können.\n\nDicilo ist ein vertrauenswürdiges Netzwerk, das in Hamburg, Deutschland, von einer Gruppe junger Unternehmer gegründet wurde, um kleine und mittlere Händler zu unterstützen, und das national und international ziemlich schnell wächst.\n\n[BUTTON: Jetzt Verdienen]\n\nWenn dich das nicht interessiert oder du Fragen hast, lass es mich bitte wissen. Danke und ich hoffe, wir sprechen uns bald.\nGrüße\n[Tu Nombre]"
+            subject: "Generiere Zusatzeinkommen durch Unternehmens-Empfehlungen",
+            body: "Hallo [Nombre]! 👋\n\nSuchst du Arbeit von zu Hause oder möchtest du dir etwas dazuverdienen, bequem von PC oder Handy aus?\n\nBei Dicilo kannst du das dank der einfachen Online-Arbeit verwirklichen; lass es mich erklären.\n\nEmpfiehl Unternehmen und verdiene DicioPoints, die du später gegen Rabatte bei unseren Partnerunternehmen eintauschen kannst, oder empfiehl die Geschäfte, in denen du normalerweise einkaufst, und verdiene Provisionen für deren Werbekäufe dank deiner Empfehlung.\n\nDicilo ist die digitale Marketingplattform der MHC Deutschland. Registriere dich hier kostenlos, damit wir gemeinsam starten können.\n\nDicilo ist ein vertrauenswürdiges Netzwerk, das in Hamburg von einer Gruppe junger Unternehmer gegründet wurde, um kleine und mittlere Händler zu unterstützen, und wächst national sowie international sehr schnell.\n\n[BUTTON: Jetzt Geld verdienen]\n\nFalls kein Interesse besteht oder du Fragen hast, lass es mich bitte wissen. Danke und ich hoffe, wir hören bald voneinander.\nGrüße,\n[Tu Nombre]"
         },
         'crypto': {
-            subject: "50 DiciPoints warten auf dich 🪙",
-            body: "Hallo [Nombre]! 👋\n\nSchließ dich der Dicilo-Wirtschaft an. Verdiene DiciPoints und DiciCoins, die gegen Produkte und Reisen eingelöst werden können. Es ist ein dezentrales Ökosystem, in dem deine Teilnahme echten Wert hat. Nutze hier meine exklusive Einladung.\n\nDicilo ist das vertrauenswürdige Netzwerk und wächst international ziemlich schnell.\n\n[BUTTON: DiciPoints Beanspruchen]\n\nWenn dich das nicht interessiert, lass es mich bitte wissen. Danke und ich hoffe, wir sprechen uns bald."
+            subject: "[Nombre], ich habe 50 DiciPoints für dich reserviert 🪙",
+            body: "Hallo [Nombre], 👋\n\nIch schreibe dir, weil ich weiß, dass du immer nach smarten Wegen suchst, deine Ressourcen zu maximieren und es schätzt, einen Schritt voraus zu sein.\n\nIch habe eine exklusive Einladung für dich auf Dicilo.net aktiviert und möchte sicherstellen, dass du sie nutzt.\n\nStell dir ein anderes digitales Ökosystem vor: eines, in dem deine Teilnahme nicht nur \"Likes\", sondern greifbaren Wert generiert. Dicilo ist ein dezentrales Netzwerk in voller globaler Expansion, das uns mit DiciPoints und DiciCoins belohnt.\n\nEs sind keine einfachen Punkte; es ist eine reale Wirtschaft, gestützt durch Unternehmen, einlösbar gegen Produkte, Dienstleistungen und sogar Reisen.\n\nIch möchte, dass wir gemeinsam einsteigen, bevor es massentauglich wird. Es ist der perfekte Zeitpunkt, um sich in dieser kollaborativen Wirtschaft zu positionieren.\n\nDein VIP-Zugang hält bereits eine Willkommensbelohnung bereit:\n\n👉 [BUTTON: Meine 50 DiciPoints beanspruchen und zugreifen] (Nutze meine Gast-ID, um den Bonus zu sichern: [RefCode])\n\nEin Extra-Tipp: Ich habe bereits herausgefunden, wie man die Ansammlung von DiciPoints schneller beschleunigt als der Durchschnittsnutzer. Wenn du dich heute registrierst, schreib mir und ich verrate dir den Trick. 😉\n\nAlles Gute,\n\n[Tu Nombre]"
         }
     }
 };
@@ -89,7 +89,7 @@ type Friend = {
 };
 
 export function ReferralCard() {
-    const { t, i18n } = useTranslation('common');
+    const { t, i18n } = useTranslation(['common', 'admin']);
     const { toast } = useToast();
     const auth = getAuth(app);
     const db = getFirestore(app);
@@ -231,35 +231,52 @@ export function ReferralCard() {
 
         const inviteUrl = `https://dicilo.net/registrieren?ref=${uniqueCode || currentUser?.uid}`;
 
-        // Construct a generic message based on the selected template's SUBJECT or a short generic text
-        // We use the subject as the main "hook" + the link.
-        // Replacing placeholders with generic terms since we don't know the recipient's name.
-        let shareText = previewData.subject || "Te invito a unirte a Dicilo";
+        // Prepare the body text by replacing placeholders
+        let rawBody = previewData.body || "";
 
-        // Add a bit of body? The body is usually too long for social sharing (esp Twitter).
-        // Let's stick to Subject + "Hola!..." + Link
+        // 1. Replace [Nombre] with a generic term based on language
+        const genericName = currentLanguage === 'es' ? 'Amigo/a' :
+            currentLanguage === 'de' ? 'Freund/in' : 'Friend';
 
-        const intro = currentLanguage === 'es' ? `Hola! Te invito a unirte: ` :
-            currentLanguage === 'en' ? `Hello! Join me here: ` :
-                `Hallo! Mach mit: `;
+        let processedBody = rawBody
+            .replace(/\[Name\]|\[Nombre\]/g, genericName)
+            .replace(/\[Tu Nombre\]/g, referrerName || (currentLanguage === 'es' ? 'Tu Amigo' : 'Your Friend'))
+            .replace(/\[RefCode\]/g, uniqueCode || currentUser?.uid);
 
-        const fullShareText = `${intro} ${inviteUrl}\n\n${shareText}`;
+        // 2. Replace [BOTÓN: ...] with a clearer Call to Action and the Link
+        // We add newlines to make it stand out.
+        processedBody = processedBody.replace(/\[(BOTÓN|BUTTON):.*?\]/g, `\n👉 ${inviteUrl}\n`);
+
+        // 3. Combine Subject + Body
+        const subject = previewData.subject || "";
+        const fullShareText = `*${subject}*\n\n${processedBody}`;
 
         switch (platform) {
             case 'whatsapp':
                 window.open(`https://wa.me/?text=${encodeURIComponent(fullShareText)}`, '_blank');
                 break;
             case 'telegram':
-                window.open(`https://t.me/share/url?url=${encodeURIComponent(inviteUrl)}&text=${encodeURIComponent(shareText)}`, '_blank');
+                window.open(`https://t.me/share/url?url=${encodeURIComponent(inviteUrl)}&text=${encodeURIComponent(fullShareText)}`, '_blank');
                 break;
             case 'facebook':
                 window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(inviteUrl)}`, '_blank');
                 break;
             case 'twitter':
-                window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(inviteUrl)}&text=${encodeURIComponent(shareText)}`, '_blank');
+                window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(inviteUrl)}&text=${encodeURIComponent(subject)}`, '_blank');
                 break;
             case 'email':
-                window.location.href = `mailto:?subject=${encodeURIComponent(shareText)}&body=${encodeURIComponent(fullShareText)}`;
+                window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(processedBody)}`;
+                break;
+            case 'native':
+                if (navigator.share) {
+                    navigator.share({
+                        title: subject,
+                        text: processedBody,
+                        url: inviteUrl,
+                    }).catch(console.error);
+                } else {
+                    toast({ description: "Sharing not supported on this device", variant: "destructive" });
+                }
                 break;
             case 'copy':
                 try {
@@ -279,12 +296,12 @@ export function ReferralCard() {
                     <div className="flex items-start justify-between">
                         <Users className="h-8 w-8 text-blue-600 mb-2" />
                         <Badge className="bg-blue-600 text-white hover:bg-blue-700">
-                            {t('adsManager.cards.active', 'Activo')}
+                            {t('admin:dashboard.cards.active', 'Activo')}
                         </Badge>
                     </div>
-                    <CardTitle className="text-xl">Recomienda a amigos</CardTitle>
+                    <CardTitle className="text-xl">{t('admin:dashboard.cards.referral.title', 'Recomienda a amigos')}</CardTitle>
                     <CardDescription>
-                        Gana 50 DiciPoints con cada amigo que se registre.
+                        {t('admin:dashboard.cards.referral.description', 'Recomienda amigos y gana 50 DiciPoints con cada amigo tuyo que se registre en dicilo.net con tu enlace unico de afiliado')}
                     </CardDescription>
                 </CardHeader>
                 <CardFooter>
@@ -473,6 +490,10 @@ export function ReferralCard() {
                                         <DropdownMenuItem onClick={() => handleSocialShare('email')} className="cursor-pointer gap-2">
                                             <Mail className="h-4 w-4 text-gray-600" />
                                             <span>Email</span>
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem onClick={() => handleSocialShare('native')} className="cursor-pointer gap-2">
+                                            <Share2 className="h-4 w-4 text-gray-800 dark:text-gray-200" />
+                                            <span>... Más opciones...</span>
                                         </DropdownMenuItem>
                                         <DropdownMenuSeparator />
                                         <DropdownMenuItem onClick={() => handleSocialShare('copy')} className="cursor-pointer gap-2">

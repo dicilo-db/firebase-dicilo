@@ -294,5 +294,34 @@
       "message": "Nachricht"
     },
     "noResults": "Kein Feedback gefunden."
+  },
+  "emailTemplates": {
+    "title": "Inhaltsverwaltung",
+    "subtitle": "Wählen Sie ein Modul aus, um dessen Vorlagen zu verwalten.",
+    "managing": "Verwaltung: {{category}}",
+    "backToModules": "Zurück zu Modulen",
+    "backToDashboard": "Zurück zum Dashboard",
+    "newTemplate": "Neue Vorlage",
+    "manage": "Verwalten",
+    "templates": "Vorlagen",
+    "loading": "Vorlagen werden geladen...",
+    "noTemplates": "Keine Vorlagen in dieser Kategorie",
+    "firstTemplate": "Erste Vorlage erstellen",
+    "createDescription": "Sie haben noch keine Vorlagen für {{category}} erstellt.",
+    "edit": "Vorlage bearbeiten",
+    "categories": {
+      "network_campaigns": {
+        "title": "Netzwerkkampagnen",
+        "description": "Vorlagen für Werbekampagnen im Netzwerk."
+      },
+      "email_marketing": {
+        "title": "E-Mail-Marketing",
+        "description": "Newsletter und Massen-Werbe-E-Mails."
+      },
+      "referrals": {
+        "title": "Freunde werben",
+        "description": "Einladungs-E-Mails und Empfehlungssystem."
+      }
+    }
   }
 }

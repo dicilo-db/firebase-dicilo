@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { getTemplate, saveTemplate, translateText, EmailTemplate } from '@/actions/email-templates';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,21 +9,17 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, Save, ArrowLeft, Languages, Trash2 } from 'lucide-react';
+import { Loader2, ArrowLeft, Languages, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { storage } from '@/lib/firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
 import { useAuthGuard } from '@/hooks/useAuthGuard';
+import { useTranslation } from 'react-i18next';
+import { Badge } from '@/components/ui/badge';
 
 export default function EditTemplatePage() {
     useAuthGuard(['admin', 'superadmin', 'team_office'], 'access_admin_panel');
+    const { t } = useTranslation('admin');
     const { id } = useParams();
     const router = useRouter();
     const { toast } = useToast();
@@ -32,6 +28,20 @@ export default function EditTemplatePage() {
     const [loading, setLoading] = useState(!isNew);
     const [saving, setSaving] = useState(false);
     const [uploadingImage, setUploadingImage] = useState(false);
+
+    const searchParams = useSearchParams();
+    const defaultCategory = searchParams.get('category') || 'email_marketing';
+
+    const [template, setTemplate] = useState<EmailTemplate>({
+        name: '',
+        category: (defaultCategory as any),
+        versions: {
+            'es': { subject: '', body: '' },
+            'en': { subject: '', body: '' },
+            'de': { subject: '', body: '' },
+        },
+        variables: []
+    });
 
     const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
@@ -42,26 +52,15 @@ export default function EditTemplatePage() {
                 await uploadBytes(storageRef, file);
                 const url = await getDownloadURL(storageRef);
                 handleChange('imageUrl', url);
-                toast({ title: "Imagen subida", description: "La imagen se ha adjuntado correctamente." });
+                toast({ title: t("emailTemplates.editor.imageUploaded"), description: t("emailTemplates.editor.imageSuccess") });
             } catch (error) {
                 console.error("Upload error:", error);
-                toast({ title: "Error", description: "No se pudo subir la imagen", variant: "destructive" });
+                toast({ title: t("emailTemplates.editor.error"), description: t("emailTemplates.editor.imageError"), variant: "destructive" });
             } finally {
                 setUploadingImage(false);
             }
         }
     };
-
-    const [template, setTemplate] = useState<EmailTemplate>({
-        name: '',
-        category: 'marketing',
-        versions: {
-            'es': { subject: '', body: '' },
-            'en': { subject: '', body: '' },
-            'de': { subject: '', body: '' },
-        },
-        variables: []
-    });
 
     useEffect(() => {
         if (!isNew && typeof id === 'string') {
@@ -70,7 +69,7 @@ export default function EditTemplatePage() {
                     const data = await getTemplate(id);
                     if (data) setTemplate(data);
                     else {
-                        toast({ title: "Error", description: "Plantilla no encontrada", variant: "destructive" });
+                        toast({ title: t("emailTemplates.editor.error"), description: t("emailTemplates.editor.notFound"), variant: "destructive" });
                         router.push('/admin/email-templates');
                     }
                 } catch (e) {
@@ -81,7 +80,7 @@ export default function EditTemplatePage() {
             };
             fetchTpl();
         }
-    }, [id, isNew, router, toast]);
+    }, [id, isNew, router, toast, t]);
 
     const handleChange = (field: string, value: any) => {
         setTemplate(prev => ({ ...prev, [field]: value }));
@@ -102,16 +101,16 @@ export default function EditTemplatePage() {
 
     const handleSave = async () => {
         if (!template.name) {
-            toast({ title: "Error", description: "El nombre es obligatorio", variant: "destructive" });
+            toast({ title: t("emailTemplates.editor.error"), description: t("emailTemplates.editor.nameRequired"), variant: "destructive" });
             return;
         }
         setSaving(true);
         try {
             await saveTemplate(isNew ? template : { ...template, id: id as string });
-            toast({ title: "Éxito", description: "Plantilla guardada correctamente" });
+            toast({ title: t("emailTemplates.editor.success"), description: t("emailTemplates.editor.saved") });
             if (isNew) router.push('/admin/email-templates');
         } catch (e) {
-            toast({ title: "Error", description: "Error al guardar", variant: "destructive" });
+            toast({ title: t("emailTemplates.editor.error"), description: t("emailTemplates.editor.saveError"), variant: "destructive" });
         } finally {
             setSaving(false);
         }
@@ -136,15 +135,18 @@ export default function EditTemplatePage() {
                 }
             }
             setTemplate(prev => ({ ...prev, versions: newVersions }));
-            toast({ title: "Traducción completada", description: "Revisa los textos generados." });
+            toast({ title: t("emailTemplates.editor.translationComplete"), description: t("emailTemplates.editor.translationCheck") });
         } catch (e) {
-            toast({ title: "Error", description: "Falló la traducción automática", variant: "destructive" });
+            toast({ title: t("emailTemplates.editor.error"), description: t("emailTemplates.editor.translationError"), variant: "destructive" });
         } finally {
             setSaving(false);
         }
     };
 
-    if (loading) return <div className="p-10 text-center">Cargando...</div>;
+    if (loading) return <div className="p-10 text-center">{t('emailTemplates.loading')}</div>;
+
+    // Get localized category name
+    const categoryName = t(`emailTemplates.categories.${template.category}.title`);
 
     return (
         <div className="container mx-auto p-6 space-y-6 max-w-4xl">
@@ -153,17 +155,17 @@ export default function EditTemplatePage() {
                     <Button variant="ghost" size="icon"><ArrowLeft /></Button>
                 </Link>
                 <div>
-                    <h1 className="text-2xl font-bold">{isNew ? 'Nueva Plantilla' : 'Editar Plantilla'}</h1>
-                    <p className="text-muted-foreground">{template.name || 'Sin nombre'}</p>
+                    <h1 className="text-2xl font-bold">{isNew ? t('emailTemplates.newTemplate') : t('emailTemplates.edit')}</h1>
+                    <p className="text-muted-foreground">{template.name || t('emailTemplates.editor.noName')}</p>
                 </div>
                 <div className="ml-auto flex gap-2">
                     <Button variant="outline" onClick={() => autoTranslate('es')} disabled={saving}>
                         <Languages className="mr-2 h-4 w-4" />
-                        Auto-traducir (ES -&gt; EN/DE)
+                        {t('emailTemplates.editor.autoTranslate')}
                     </Button>
                     <Button onClick={handleSave} disabled={saving}>
                         {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                        Guardar Cambios
+                        {t('emailTemplates.editor.save')}
                     </Button>
                 </div>
             </div>
@@ -171,22 +173,22 @@ export default function EditTemplatePage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="md:col-span-1 space-y-4">
                     <div className="space-y-2">
-                        <Label>Nombre Interno</Label>
+                        <Label>{t('emailTemplates.editor.internalName')}</Label>
                         <Input value={template.name} onChange={(e) => handleChange('name', e.target.value)} placeholder="Ej. Promo Verano 2025" />
                     </div>
                     <div className="space-y-2">
-                        <Label>Categoría</Label>
-                        <Select value={template.category} onValueChange={(val) => handleChange('category', val)}>
-                            <SelectTrigger><SelectValue /></SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="marketing">Marketing</SelectItem>
-                                <SelectItem value="system">Sistema</SelectItem>
-                                <SelectItem value="referral">Referidos</SelectItem>
-                            </SelectContent>
-                        </Select>
+                        <Label>{t('emailTemplates.editor.category')}</Label>
+                        {/* Locked Category UI */}
+                        <div className="p-3 bg-muted/50 border rounded-md text-sm font-medium flex items-center justify-between">
+                            <span>{categoryName}</span>
+                            <Badge variant="outline" className="text-xs">Locked</Badge>
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                            {t('emailTemplates.editor.categoryLocked')}
+                        </p>
                     </div>
                     <div className="space-y-2">
-                        <Label>Imagen de Cabecera (Opcional)</Label>
+                        <Label>{t('emailTemplates.editor.headerImage')}</Label>
                         <div className="flex flex-col gap-4">
                             {template.imageUrl && (
                                 <div className="relative w-full h-40 bg-gray-100 rounded-md overflow-hidden border">
@@ -211,7 +213,7 @@ export default function EditTemplatePage() {
                                 {uploadingImage && <Loader2 className="h-4 w-4 animate-spin" />}
                             </div>
                             <Input
-                                placeholder="O pega una URL de imagen aquí..."
+                                placeholder={t('emailTemplates.editor.imageUrlPlaceholder')}
                                 value={template.imageUrl || ''}
                                 onChange={(e) => handleChange('imageUrl', e.target.value)}
                             />
@@ -230,20 +232,20 @@ export default function EditTemplatePage() {
                         {['es', 'en', 'de'].map((lang) => (
                             <TabsContent key={lang} value={lang} className="space-y-4 mt-4 border p-4 rounded-md">
                                 <div className="space-y-2">
-                                    <Label>Asunto ({lang.toUpperCase()})</Label>
+                                    <Label>{t('emailTemplates.editor.subject')} ({lang.toUpperCase()})</Label>
                                     <Input
                                         value={template.versions[lang]?.subject || ''}
                                         onChange={(e) => handleVersionChange(lang, 'subject', e.target.value)}
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label>Cuerpo del Email (HTML) ({lang.toUpperCase()})</Label>
+                                    <Label>{t('emailTemplates.editor.body')} ({lang.toUpperCase()})</Label>
                                     <Textarea
                                         className="min-h-[300px] font-mono text-sm"
                                         value={template.versions[lang]?.body || ''}
                                         onChange={(e) => handleVersionChange(lang, 'body', e.target.value)}
                                     />
-                                    <p className="text-xs text-muted-foreground">Soporta HTML básico. Usa {'{{variable}}'} para insertar datos dinámicos.</p>
+                                    <p className="text-xs text-muted-foreground">{t('emailTemplates.editor.htmlSupport')}</p>
                                 </div>
                             </TabsContent>
                         ))}

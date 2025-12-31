@@ -99,6 +99,10 @@
         "title": "Builder",
         "description": "Landing Pages erstellen und bearbeiten"
       },
+      "referral": {
+        "title": "Freunde werben",
+        "description": "Empfiehl Freunde und verdiene 50 DiciPoints für jeden Freund, der sich über deinen einzigartigen Affiliate-Link auf dicilo.net registriert"
+      },
       "clients": {
         "title": "Kunden",
         "description": "Kundenprofile verwalten"
@@ -776,6 +780,62 @@
       "starterHelp": "Erstellt Firma + Starter-Kunde.",
       "retailerHelp": "Erstellt Firma + Einzelhändler-Kunde.",
       "premiumHelp": "Erstellt Firma + Premium-Kunde."
+    }
+  },
+  "emailTemplates": {
+    "title": "Inhaltsverwaltung",
+    "subtitle": "Wählen Sie ein Modul aus, um dessen Vorlagen zu verwalten.",
+    "managing": "Verwaltung: {{category}}",
+    "backToModules": "Zurück zu Modulen",
+    "backToDashboard": "Zurück zum Dashboard",
+    "newTemplate": "Neue Vorlage",
+    "manage": "Verwalten",
+    "templates": "Vorlagen",
+    "loading": "Vorlagen werden geladen...",
+    "noTemplates": "Keine Vorlagen in dieser Kategorie",
+    "firstTemplate": "Erste Vorlage erstellen",
+    "createDescription": "Sie haben noch keine Vorlagen für {{category}} erstellt.",
+    "edit": "Vorlage bearbeiten",
+    "categories": {
+      "network_campaigns": {
+        "title": "Netzwerkkampagnen",
+        "description": "Vorlagen für Werbekampagnen im Netzwerk."
+      },
+      "email_marketing": {
+        "title": "E-Mail-Marketing",
+        "description": "Newsletter und Massen-Werbe-E-Mails."
+      },
+      "referrals": {
+        "title": "Freunde werben",
+        "description": "Einladungs-E-Mails und Empfehlungssystem."
+      }
+    },
+    "editor": {
+      "newTemplate": "Neue Vorlage",
+      "editTemplate": "Vorlage bearbeiten",
+      "noName": "Kein Name",
+      "autoTranslate": "Automatisch übersetzen (ES -> EN/DE)",
+      "save": "Änderungen speichern",
+      "internalName": "Interner Name",
+      "category": "Kategorie",
+      "categoryLocked": "Kategorie ist an das aktuelle Modul gebunden.",
+      "headerImage": "Header-Grafik (Optional)",
+      "imageUploaded": "Bild hochgeladen",
+      "imageSuccess": "Das Bild wurde erfolgreich angehängt.",
+      "imageError": "Bild konnte nicht hochgeladen werden",
+      "error": "Fehler",
+      "success": "Erfolg",
+      "saved": "Vorlage erfolgreich gespeichert.",
+      "nameRequired": "Name ist erforderlich.",
+      "saveError": "Fehler beim Speichern.",
+      "notFound": "Vorlage nicht gefunden.",
+      "translationComplete": "Übersetzung abgeschlossen",
+      "translationCheck": "Bitte überprüfen Sie die generierten Texte.",
+      "translationError": "Automatische Übersetzung fehlgeschlagen.",
+      "subject": "Betreff",
+      "body": "E-Mail-Text (HTML)",
+      "htmlSupport": "Unterstützt grundlegendes HTML. Verwenden Sie {{variable}} für dynamische Daten.",
+      "imageUrlPlaceholder": "Oder fügen Sie hier eine Bild-URL ein..."
     }
   }
 }
