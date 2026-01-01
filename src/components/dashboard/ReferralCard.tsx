@@ -39,44 +39,56 @@ import { app } from '@/lib/firebase';
 const CONTENT_PREVIEWS: Record<string, Record<string, any>> = {
     'es': {
         'general': {
-            subject: "{{Nombre del amigo}}, tengo una invitación personal para ti (Ahorro + Ingresos) 🚀",
-            body: "Hola [Nombre], ¡espero que estés genial! 👋\n\nTe escribo precisamente a ti porque sé que eres una persona que valora las oportunidades inteligentes y el crecimiento.\n\nQuiero invitarte personalmente a formar parte de Dicilo.net.\n\nQuizás no lo has escuchado aún, pero imagina formar parte de un ecosistema digital respaldado por la solidez alemana (MHC Alemania) que está revolucionando la forma en que conectamos, compramos y generamos ingresos.\n\nDicilo no es solo una plataforma más; es una red de confianza creada en Hamburgo, Alemania, por un grupo de jóvenes empresarios visionarios. ¿Su misión? Empoderar al comercio real y permitirnos a nosotros, los usuarios, ganar dinero mientras apoyamos a la economía.\n\n¿Por qué pensé en ti para esto? Porque en Dicilo tienes tres ventajas claras:\n\nAhorro inteligente: Accedes a ofertas exclusivas.\n\nIngresos reales: Puedes generar ganancias (DiciPoints y DiciCoins) recomendando o trabajando desde casa.\n\nSeguridad: Es una comunidad seria que está creciendo muy rápido a nivel internacional.\n\nMe encantaría que fuéramos parte de esto juntos desde el principio.\n\nRegístrate gratis con mi pase de invitado aquí abajo y echa un vistazo a la plataforma. No tienes nada que perder y sí mucho mundo por descubrir.\n\n👉 [BOTÓN: Entrar a Dicilo y Empezar a Ganar] (Usa mi ID de invitado para acceso VIP: [RefCode])\n\nSi al entrar te surge la duda de \"¿cómo puedo sacar el máximo provecho de esto?\", escríbeme. Tengo un par de estrategias para rentabilizar la cuenta que me gustaría contarte.\n\nUn abrazo y te veo dentro,\n\n[Tu Nombre]"
+            subject: "{{Nombre}}, te guardé esta invitación (Ahorro + $$) 🚀",
+            body: "Hola {{Nombre}}, ¿cómo va todo? 👋\n\nMe acordé de ti porque sé que tienes buen ojo para las oportunidades y no te gusta tirar el dinero.\n\nTe invito a entrar en Dicilo.net. Es una plataforma alemana (de Hamburgo, gente seria) que está cambiando las reglas: no solo ahorras comprando, sino que ganas dinero real por recomendar y conectar empresas.\n\nTe paso mi pase VIP gratis para que entres ya.\n\nTienen un sistema de puntos (DiciPoints) que vale la pena mirar. Entra, regístrate y echa un ojo. 👀\n\n👉 [BOTÓN: Ver Dicilo y Aceptar Invitación] (Se activará con mi código: {{RefCode}})\n\nPD: Si te registras, escríbeme por WhatsApp. Ya descubrí un par de trucos para sumar puntos más rápido y quiero contártelos para que arranques con ventaja. 😉\n\nUn abrazo,\n\n{{Tu Nombre}}"
         },
         'business': {
             subject: "Genera ingresos extra recomendando empresas",
             body: "Hola [Nombre]! 👋\n\n¿Buscas trabajar desde casa, o te interesaría generar extras desde tu PC o móvil?\n\nEn Dicilo puedes hacerlo realidad gracias a la facilidad del trabajo online; te explico.\n\nRecomienda empresas y gana Dicipoints que luego puedes cambiar por descuentos en nuestras empresas aliadas, o recomienda las empresas donde sueles comprar y gana comisiones por la compra de publicidad que ellos hagan gracias a tu recomendación.\n\nDicilo es la plataforma de marketing digital de MHC Alemania. Regístrate aquí gratis para que empecemos juntos.\n\nDicilo es una red confiable creada en Hamburgo, Alemania, por un grupo de empresarios jóvenes para apoyar a los pequeños y medianos comerciantes y que está creciendo bastante rápido a nivel nacional e internacional.\n\n[BOTÓN: Empezar a Ganar]\n\nSi no es de tu interés o tienes alguna duda, por favor házmelo saber. Gracias y espero nos hablemos pronto.\nSaludos\n[Tu Nombre]"
         },
         'crypto': {
-            subject: "50 DiciPoints te están esperando 🪙",
-            body: "Hola [Nombre], 👋\n\nTe escribo porque sé que siempre estás buscando formas inteligentes de maximizar tus recursos y valoras estar un paso adelante.\n\nHe activado una invitación exclusiva para ti en Dicilo.net y quiero asegurarme de que la aproveches.\n\nImagina un ecosistema digital diferente: uno donde tu participación no genera solo \"likes\", sino valor tangible. Dicilo es una red descentralizada en plena expansión global que nos recompensa con DiciPoints y DiciCoins.\n\nNo son simples puntos; es una economía real respaldada por empresas, canjeable por productos, servicios e incluso viajes.\n\nQuiero que entremos juntos en esto antes de que se vuelva masivo. Es el momento perfecto para posicionarse en esta economía colaborativa.\n\nTu acceso VIP ya tiene una recompensa de bienvenida esperando:\n\n👉 [BOTÓN: Reclamar mis 50 DiciPoints y Acceder] (Usa mi ID de invitado para asegurar el bono: [RefCode])\n\nUn consejo extra: Ya he descubierto cómo acelerar la acumulación de DiciPoins más rápido que el usuario promedio. Si te registras hoy, escríbeme y te cuento el truco. 😉\n\nUn abrazo,\n\n[Tu Nombre]"
+            subject: "{{Nombre}}, te guardé esta invitación (Ahorro + €€) 🚀",
+            body: "Hola {{Nombre}}, ¿todo bien? 👋\n\nMe acordé de ti porque sé que tienes buen ojo para las oportunidades y no te gusta tirar el dinero.\n\nTe invito a Dicilo.net. Es una plataforma de aquí de Alemania (de Hamburgo, gente seria) que está cambiando las reglas: No solo ahorras al comprar, sino que ganas dinero real (DiciPoints) recomendando empresas.\n\nAquí tienes mi pase VIP gratis para ti.\n\nEl sistema de puntos vale mucho la pena. Regístrate y échale un vistazo. 👀\n\n👉 [BOTÓN: Ver Dicilo y Aceptar Invitación] (Tu bono se activa con mi código: {{RefCode}})\n\nP.D.: Cuando te registres, escríbeme por WhatsApp. Ya averigüé cómo sumar puntos más rápido y te cuento el truco encantado. 😉\n\nSaludos,\n\n{{Tu Nombre}}"
+        },
+        'freelancer': {
+            subject: "{{Nombre}}, buscan 300 líderes de país (Oportunidad 2026) 🌍",
+            body: "Hola {{Nombre}}, ¡feliz año nuevo! 👋 Espero que hayas arrancado este 2026 con la mejor energía.\n\nTe escribo justo ahora porque me enteré de algo que encaja con las metas de este año.\n\nUn amigo está dentro de Dicilo.net, una comunidad global que está en fase de expansión agresiva. Están buscando un grupo selecto de 1500 pioneros, y lo interesante es que de ahí seleccionarán a 300 Representantes de País.\n\nBásicamente, pagan por conectar empresas y dar \"tips\" de negocios. Si lo haces bien, pasas a ser Team Leader.\n\nOjo, importante: Esto NO es MLM ni esquemas piramidales. Es trabajo real de recomendación B2B y marketing. Tú ayudas a conseguir clientes y ellos pagan. Simple.\n\nYo ya aseguré mi lugar. Regístrate gratis con mi código para que te den tus primeros 50 DiciPoints (moneda interna para descuentos) y veas de qué va.\n\n👉 [BOTÓN: Ver Proyecto y Registrarme Gratis] (Código de acceso VIP: {{RefCode}})\n\nNo tienes nada que perder por mirar, el registro es gratuito. Si le inviertes tiempo, ganas. Avísame si tienes dudas y lo charlamos.\n\nUn abrazo,\n\n{{Tu Nombre}}"
         }
     },
     'en': {
         'general': {
-            subject: "{{Friend's Name}}, I have a personal invitation for you (Savings + Income) 🚀",
-            body: "Hello [Nombre], hope you are doing great! 👋\n\nI'm writing specifically to you because I know you value smart opportunities and growth.\n\nI want to personally invite you to be part of Dicilo.net.\n\nYou might not have heard of it yet, but imagine being part of a digital ecosystem backed by German solidity (MHC Germany) that is revolutionizing how we connect, shop, and generate income.\n\nDicilo is not just another platform; it's a trusted network created in Hamburg, Germany, by a group of visionary young entrepreneurs. Their mission? To empower real commerce and allow us, the users, to earn money while supporting the economy.\n\nWhy did I think of you for this? Because in Dicilo you have three clear advantages:\n\nSmart Savings: You access exclusive offers.\n\nReal Income: You can generate earnings (DiciPoints and DiciCoins) by recommending or working from home.\n\nSecurity: It is a serious community growing very fast internationally.\n\nI would love for us to be part of this together from the start.\n\nSign up for free with my guest pass below and take a look at the platform. You have nothing to lose and a lot to discover.\n\n👉 [BUTTON: Enter Dicilo and Start Earning] (Use my guest ID for VIP access: [RefCode])\n\nIf you wonder \"how can I get the most out of this?\" upon entering, write to me. I have a couple of strategies to make the account profitable that I'd like to tell you about.\n\nBest regards,\n\n[Tu Nombre]"
+            subject: "{{Name}}, I saved this invitation for you (Savings + $$) 🚀",
+            body: "Hi {{Name}}, how is everything going? 👋\n\nI thought of you because I know you have an eye for opportunities and don't like throwing money away.\n\nI invite you to join Dicilo.net. It's a German platform (from Hamburg, serious people) that is changing the rules: not only do you save by buying, but you earn real money by recommending and connecting businesses.\n\nHere is my free VIP pass for you to enter now.\n\nThey have a points system (DiciPoints) that is worth looking at. Come in, register and take a look. 👀\n\n👉 [BUTTON: View Dicilo and Accept Invitation] (It will activate with my code: {{RefCode}})\n\nPS: If you register, text me on WhatsApp. I already discovered a couple of tricks to earn points faster and I want to tell you so you start with an advantage. 😉\n\nBig hug,\n\n{{Your Name}}"
         },
         'business': {
             subject: "Generate extra income by recommending businesses",
             body: "Hello [Nombre]! 👋\n\nAre you looking to work from home, or interested in generating extras from your PC or mobile?\n\nIn Dicilo you can make it happen thanks to the ease of online work; let me explain.\n\nRecommend businesses and earn Dicipoints that you can later exchange for discounts at our allied businesses, or recommend the businesses where you usually shop and earn commissions for the advertising purchases they make thanks to your recommendation.\n\nDicilo is the digital marketing platform of MHC Germany. Register here for free so we can start together.\n\nDicilo is a trusted network created in Hamburg, Germany, by a group of young entrepreneurs to support small and medium-sized merchants and is growing quite fast nationally and internationally.\n\n[BUTTON: Start Earning]\n\nIf this is not of interest to you or you have any doubts, please let me know. Thanks and hope to speak soon.\nRegards,\n[Tu Nombre]"
         },
         'crypto': {
-            subject: "[Nombre], I have reserved 50 DiciPoints for you 🪙",
-            body: "Hello [Nombre], 👋\n\nI'm writing because I know you are always looking for smart ways to maximize your resources and value staying one step ahead.\n\nI have activated an exclusive invitation for you at Dicilo.net and I want to make sure you take advantage of it.\n\nImagine a different digital ecosystem: one where your participation generates not just \"likes\", but tangible value. Dicilo is a decentralized network in full global expansion that rewards us with DiciPoints and DiciCoins.\n\nThey are not simple points; it is a real economy backed by businesses, redeemable for products, services, and even trips.\n\nI want us to get into this together before it becomes massive. It is the perfect time to position oneself in this collaborative economy.\n\nYour VIP access already has a welcome reward waiting:\n\n👉 [BUTTON: Claim my 50 DiciPoints and Access] (Use my guest ID to secure the bonus: [RefCode])\n\nAn extra tip: I have already discovered how to accelerate DiciPoints accumulation faster than the average user. If you register today, write to me and I'll tell you the trick. 😉\n\nBest,\n\n[Tu Nombre]"
+            subject: "{{Name}}, I saved this invitation for you (Savings + €€) 🚀",
+            body: "Hi {{Name}}, everything good? 👋\n\nI thought of you because I know you have an eye for good opportunities and hate wasting money.\n\nI invite you to Dicilo.net. It is a platform from here in Germany (from Hamburg, serious stuff) that is changing the rules: You not only save when shopping but earn real money (DiciPoints) by recommending businesses.\n\nHere is my free VIP pass for you.\n\nThe point system is really worth it. Sign up and take a look. 👀\n\n👉 [BUTTON: View Dicilo & Accept Invitation] (Your bonus is activated with my code: {{RefCode}})\n\nPS: Once you are registered, drop me a message on WhatsApp. I found out how to collect points faster and would love to tell you the trick. 😉\n\nBest regards,\n\n{{Your Name}}"
+        },
+        'freelancer': {
+            subject: "{{Name}}, looking for 300 country leaders (Opportunity 2026) 🌍",
+            body: "Hello {{Name}}, Happy New Year! 👋 I hope you started this 2026 with the best energy.\n\nI'm writing you right now because I found out about something that fits this year's goals.\n\nA friend is inside Dicilo.net, a global community that is in an aggressive expansion phase. They are looking for a select group of 1500 pioneers, and the interesting thing is that from there they will select 300 Country Representatives.\n\nBasically, they pay to connect companies and give business \"tips\". If you do well, you become a Team Leader.\n\nNote, important: This is NOT MLM or pyramid schemes. It is real B2B recommendation and marketing work. You help get clients and they pay. Simple.\n\nI already secured my spot. Sign up for free with my code to get your first 50 DiciPoints (internal currency for discounts) and see what it's about.\n\n👉 [BUTTON: View Project and Register for Free] (VIP access code: {{RefCode}})\n\nYou have nothing to lose by looking, registration is free. If you invest time, you earn. Let me know if you have doubts and we'll chat.\n\nBig hug,\n\n{{Your Name}}"
         }
     },
     'de': {
         'general': {
-            subject: "{{Name des Freundes}}, ich habe eine persönliche Einladung für dich (Sparen + Einkommen) 🚀",
-            body: "Hallo [Nombre], ich hoffe, es geht dir gut! 👋\n\nIch schreibe dir, weil ich weiß, dass du clevere Möglichkeiten und Wachstum schätzt.\n\nIch möchte dich persönlich einladen, Teil von Dicilo.net zu werden.\n\nVielleicht hast du noch nichts davon gehört, aber stell dir vor, Teil eines digitalen Ökosystems zu sein, das durch deutsche Solidität (MHC Deutschland) gestützt wird und die Art und Weise revolutioniert, wie wir uns vernetzen, einkaufen und Einkommen generieren.\n\nDicilo ist nicht nur eine weitere Plattform; es ist ein vertrauenswürdiges Netzwerk, das in Hamburg von einer Gruppe visionärer Jungunternehmer gegründet wurde. Ihre Mission? Den realen Handel stärken und uns Nutzern ermöglichen, Geld zu verdienen, während wir die Wirtschaft unterstützen.\n\nWarum habe ich dabei an dich gedacht? Weil du bei Dicilo drei klare Vorteile hast:\n\nSmartes Sparen: Zugang zu exklusiven Angeboten.\n\nReales Einkommen: Du kannst Einnahmen (DiciPoints und DiciCoins) durch Empfehlungen oder Arbeit von zu Hause aus generieren.\n\nSicherheit: Es ist eine seriöse Gemeinschaft, die international sehr schnell wächst.\n\nIch würde mich freuen, wenn wir von Anfang an gemeinsam dabei wären.\n\nRegistriere dich unten kostenlos mit meinem Gastpass und schau dir die Plattform an. Du hast nichts zu verlieren und viel zu entdecken.\n\n👉 [BUTTON: Dicilo betreten und Geld verdienen] (Nutze meine Gast-ID für VIP-Zugang: [RefCode])\n\nWenn du dich nach dem Eintritt fragst: \"Wie kann ich das Beste daraus machen?\", schreib mir. Ich habe ein paar Strategien, um das Konto rentabel zu machen, die ich dir gerne erzählen würde.\n\nViele Grüße,\n\n[Tu Nombre]"
+            subject: "{{Name}}, ich habe diese Einladung für dich aufgehoben (Sparen + $$) 🚀",
+            body: "Hallo {{Name}}, wie läuft's? 👋\n\nIch musste an dich denken, weil ich weiß, dass du ein Auge für Chancen hast und kein Geld verschwenden magst.\n\nIch lade dich ein, Dicilo.net beizutreten. Es ist eine deutsche Plattform (aus Hamburg, seriöse Leute), die die Regeln ändert: Du sparst nicht nur beim Einkaufen, sondern verdienst echtes Geld durch Empfehlen und Vernetzen von Unternehmen.\n\nHier ist mein kostenloser VIP-Pass für dich, damit du sofort starten kannst.\n\nSie haben ein Punktesystem (DiciPoints), das einen Blick wert ist. Komm rein, registriere dich und schau es dir an. 👀\n\n👉 [BUTTON: Dicilo ansehen und Einladung annehmen] (Wird aktiviert mit meinem Code: {{RefCode}})\n\nPS: Wenn du dich registriert hast, schreib mir auf WhatsApp. Ich habe schon ein paar Tricks entdeckt, um schneller Punkte zu sammeln, und möchte sie dir verraten, damit du mit einem Vorteil startest. 😉\n\nViele Grüße,\n\n{{Dein Name}}"
         },
         'business': {
             subject: "Generiere Zusatzeinkommen durch Unternehmens-Empfehlungen",
             body: "Hallo [Nombre]! 👋\n\nSuchst du Arbeit von zu Hause oder möchtest du dir etwas dazuverdienen, bequem von PC oder Handy aus?\n\nBei Dicilo kannst du das dank der einfachen Online-Arbeit verwirklichen; lass es mich erklären.\n\nEmpfiehl Unternehmen und verdiene DicioPoints, die du später gegen Rabatte bei unseren Partnerunternehmen eintauschen kannst, oder empfiehl die Geschäfte, in denen du normalerweise einkaufst, und verdiene Provisionen für deren Werbekäufe dank deiner Empfehlung.\n\nDicilo ist die digitale Marketingplattform der MHC Deutschland. Registriere dich hier kostenlos, damit wir gemeinsam starten können.\n\nDicilo ist ein vertrauenswürdiges Netzwerk, das in Hamburg von einer Gruppe junger Unternehmer gegründet wurde, um kleine und mittlere Händler zu unterstützen, und wächst national sowie international sehr schnell.\n\n[BUTTON: Jetzt Geld verdienen]\n\nFalls kein Interesse besteht oder du Fragen hast, lass es mich bitte wissen. Danke und ich hoffe, wir hören bald voneinander.\nGrüße,\n[Tu Nombre]"
         },
         'crypto': {
-            subject: "[Nombre], ich habe 50 DiciPoints für dich reserviert 🪙",
-            body: "Hallo [Nombre], 👋\n\nIch schreibe dir, weil ich weiß, dass du immer nach smarten Wegen suchst, deine Ressourcen zu maximieren und es schätzt, einen Schritt voraus zu sein.\n\nIch habe eine exklusive Einladung für dich auf Dicilo.net aktiviert und möchte sicherstellen, dass du sie nutzt.\n\nStell dir ein anderes digitales Ökosystem vor: eines, in dem deine Teilnahme nicht nur \"Likes\", sondern greifbaren Wert generiert. Dicilo ist ein dezentrales Netzwerk in voller globaler Expansion, das uns mit DiciPoints und DiciCoins belohnt.\n\nEs sind keine einfachen Punkte; es ist eine reale Wirtschaft, gestützt durch Unternehmen, einlösbar gegen Produkte, Dienstleistungen und sogar Reisen.\n\nIch möchte, dass wir gemeinsam einsteigen, bevor es massentauglich wird. Es ist der perfekte Zeitpunkt, um sich in dieser kollaborativen Wirtschaft zu positionieren.\n\nDein VIP-Zugang hält bereits eine Willkommensbelohnung bereit:\n\n👉 [BUTTON: Meine 50 DiciPoints beanspruchen und zugreifen] (Nutze meine Gast-ID, um den Bonus zu sichern: [RefCode])\n\nEin Extra-Tipp: Ich habe bereits herausgefunden, wie man die Ansammlung von DiciPoints schneller beschleunigt als der Durchschnittsnutzer. Wenn du dich heute registrierst, schreib mir und ich verrate dir den Trick. 😉\n\nAlles Gute,\n\n[Tu Nombre]"
+            subject: "{{Name}}, ich habe diese Einladung für dich reserviert (Sparen + €€) 🚀",
+            body: "Hallo {{Name}}, alles klar bei dir? 👋\n\nIch musste an dich denken, weil ich weiß, dass du ein Händchen für gute Gelegenheiten hast und ungern Geld verschwendest.\n\nIch lade dich zu Dicilo.net ein. Das ist eine Plattform hier aus Deutschland (aus Hamburg, seriöse Sache), die die Regeln ändert: Du sparst nicht nur beim Einkaufen, sondern verdienst echtes Geld (DiciPoints), indem du Unternehmen empfiehlst.\n\nHier ist mein kostenloser VIP-Pass für dich.\n\nDas Punktesystem lohnt sich wirklich. Melde dich an und schau es dir an. 👀\n\n👉 [BUTTON: Dicilo ansehen & Einladung annehmen] (Dein Bonus wird mit meinem Code aktiviert: {{RefCode}})\n\nP.S.: Wenn du angemeldet bist, schreib mir kurz bei WhatsApp. Ich habe schon herausgefunden, wie man die Punkte schneller sammelt, und verrate dir den Trick gerne. 😉\n\nViele Grüße,\n\n{{Dein Name}}"
+        },
+        'freelancer': {
+            subject: "{{Name}}, 300 Landesleiter gesucht (Chance 2026) 🌍",
+            body: "Hallo {{Name}}, frohes neues Jahr! 👋 Ich hoffe, du bist mit bester Energie in dieses 2026 gestartet.\n\nIch schreibe dir gerade jetzt, weil ich von etwas erfahren habe, das zu den Zielen dieses Jahres passt.\n\nEin Freund ist bei Dicilo.net dabei, einer globalen Community, die sich in einer aggressiven Expansionsphase befindet. Sie suchen eine ausgewählte Gruppe von 1500 Pionieren, und das Interessante ist, dass sie daraus 300 Landesvertreter auswählen werden.\n\nIm Grunde zahlen sie für das Vernetzen von Unternehmen und das Geben von Geschäfts-\"Tipps\". Wenn du es gut machst, wirst du Team Leader.\n\nAchtung, wichtig: Das ist KEIN MLM oder Schneeballsystem. Es ist echte B2B-Empfehlungs- und Marketingarbeit. Du hilfst dabei, Kunden zu gewinnen, und sie zahlen. Simpel.\n\nIch habe mir meinen Platz schon gesichert. Registriere dich kostenlos mit meinem Code, um deine ersten 50 DiciPoints (interne Währung für Rabatte) zu erhalten und zu sehen, worum es geht.\n\n👉 [BUTTON: Projekt ansehen und kostenlos registrieren] (VIP-Zugangscode: {{RefCode}})\n\nDu hast nichts zu verlieren, wenn du es dir ansiehst, die Registrierung ist kostenlos. Wenn du Zeit investierst, gewinnst du. Sag mir Bescheid, wenn du Fragen hast, dann quatschen wir.\n\nViele Grüße,\n\n{{Dein Name}}"
         }
     }
 };
@@ -173,11 +185,39 @@ export function ReferralCard() {
 
         setIsLoading(true);
 
+        const enrichedFriends = friends.map(friend => {
+            const langContent = CONTENT_PREVIEWS[friend.language] || CONTENT_PREVIEWS['es'];
+            const tmplContent = langContent[friend.template] || langContent['general'];
+
+            const inviteUrl = `https://dicilo.net/registrieren?ref=${uniqueCode || currentUser?.uid}`;
+
+            // 1. Process Body
+            let body = tmplContent.body || "";
+            body = body
+                .replace(/\[Name\]|\[Nombre\]|\{\{Nombre\}\}|\{\{Name\}\}/g, friend.name)
+                .replace(/\[Tu Nombre\]|\{\{Tu Nombre\}\}|\{\{Your Name\}\}|\{\{Dein Name\}\}/g, referrerName)
+                .replace(/\[RefCode\]|\{\{RefCode\}\}/g, uniqueCode || currentUser?.uid)
+                .replace(/\[(BOTÓN|BUTTON):.*?\]/g, `\n👉 ${inviteUrl}\n`);
+
+            // 2. Process Subject
+            let subject = tmplContent.subject || "";
+            // Handle various placeholder formats including {{}}
+            subject = subject
+                .replace(/\{\{.*?\}\}/g, friend.name)
+                .replace(/\[Name\]|\[Nombre\]/g, friend.name);
+
+            return {
+                ...friend,
+                generated_subject: subject,
+                generated_body: body
+            };
+        });
+
         const payload = {
             referrer_id: uniqueCode || currentUser.uid,
             referrer_name: referrerName,
             referrer_email: currentUser.email,
-            friends: friends, // Array of objects with all config
+            friends: enrichedFriends,
             timestamp: new Date().toISOString()
         };
 
@@ -239,9 +279,9 @@ export function ReferralCard() {
             currentLanguage === 'de' ? 'Freund/in' : 'Friend';
 
         let processedBody = rawBody
-            .replace(/\[Name\]|\[Nombre\]/g, genericName)
-            .replace(/\[Tu Nombre\]/g, referrerName || (currentLanguage === 'es' ? 'Tu Amigo' : 'Your Friend'))
-            .replace(/\[RefCode\]/g, uniqueCode || currentUser?.uid);
+            .replace(/\[Name\]|\[Nombre\]|\{\{Nombre\}\}|\{\{Name\}\}/g, genericName)
+            .replace(/\[Tu Nombre\]|\{\{Tu Nombre\}\}|\{\{Your Name\}\}|\{\{Dein Name\}\}/g, referrerName || (currentLanguage === 'es' ? 'Tu Amigo' : 'Your Friend'))
+            .replace(/\[RefCode\]|\{\{RefCode\}\}/g, uniqueCode || currentUser?.uid);
 
         // 2. Replace [BOTÓN: ...] with a clearer Call to Action and the Link
         // We add newlines to make it stand out.
@@ -308,15 +348,15 @@ export function ReferralCard() {
                     <Dialog open={isOpen} onOpenChange={setIsOpen}>
                         <DialogTrigger asChild>
                             <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
-                                Invitar Amigos
+                                {t('admin:invite.form.inviteFriendsButton', 'Invitar Amigos')}
                                 <Send className="ml-2 h-4 w-4" />
                             </Button>
                         </DialogTrigger>
                         <DialogContent className="sm:max-w-[650px] max-h-[90vh] overflow-y-auto">
                             <DialogHeader>
-                                <DialogTitle>Personalizar Invitación</DialogTitle>
+                                <DialogTitle>{t('admin:invite.form.title', 'Personalizar Invitación')}</DialogTitle>
                                 <DialogDescription>
-                                    Agrega hasta 7 amigos y envíales una invitación personalizada.
+                                    {t('admin:invite.form.description', 'Agrega hasta 7 amigos y envíales una invitación personalizada.')}
                                 </DialogDescription>
                             </DialogHeader>
 
@@ -324,15 +364,15 @@ export function ReferralCard() {
                                 {/* Global User Info */}
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="space-y-2">
-                                        <Label>Tu ID</Label>
-                                        <Input value={uniqueCode || 'Cargando...'} disabled className="bg-muted" />
+                                        <Label>{t('admin:invite.form.yourId', 'Tu ID')}</Label>
+                                        <Input value={uniqueCode || t('admin:invite.form.id_loading', 'Cargando...')} disabled className="bg-muted" />
                                     </div>
                                     <div className="space-y-2">
-                                        <Label>Tu Nombre</Label>
+                                        <Label>{t('admin:invite.form.yourName', 'Tu Nombre')}</Label>
                                         <Input
                                             value={referrerName}
                                             onChange={(e) => setReferrerName(e.target.value)}
-                                            placeholder="Tu nombre"
+                                            placeholder={t('admin:invite.form.yourNamePlaceholder', 'Tu nombre')}
                                         />
                                     </div>
                                 </div>
@@ -340,53 +380,54 @@ export function ReferralCard() {
                                 {/* ADD FRIEND BLOCK */}
                                 <div className="border border-blue-200 p-4 rounded-md bg-blue-50/50 dark:bg-blue-900/10 space-y-4">
                                     <div className="flex justify-between items-center">
-                                        <h4 className="font-semibold text-sm text-blue-700">Agregar Amigo ({friends.length}/7)</h4>
+                                        <h4 className="font-semibold text-sm text-blue-700">{t('admin:invite.form.addFriend', { count: friends.length, defaultValue: `Agregar Amigo (${friends.length}/7)` })}</h4>
                                     </div>
 
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div className="space-y-2">
-                                            <Label>Nombre</Label>
+                                            <Label>{t('admin:invite.form.name', 'Nombre')}</Label>
                                             <Input
                                                 value={currentName}
                                                 onChange={(e) => setCurrentName(e.target.value)}
-                                                placeholder="Ej. Martín"
+                                                placeholder={t('admin:invite.form.namePlaceholder', 'Ej. Martín')}
                                             />
                                         </div>
                                         <div className="space-y-2">
-                                            <Label>Email</Label>
+                                            <Label>{t('admin:invite.form.email', 'Email')}</Label>
                                             <Input
                                                 type="email"
                                                 value={currentEmail}
                                                 onChange={(e) => setCurrentEmail(e.target.value)}
-                                                placeholder="email@ejemplo.com"
+                                                placeholder={t('admin:invite.form.emailPlaceholder', 'email@ejemplo.com')}
                                             />
                                         </div>
                                     </div>
 
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div className="space-y-2">
-                                            <Label>Idioma</Label>
+                                            <Label>{t('admin:invite.form.language', 'Idioma')}</Label>
                                             <Select value={currentLanguage} onValueChange={setCurrentLanguage}>
                                                 <SelectTrigger>
-                                                    <SelectValue placeholder="Selecciona idioma" />
+                                                    <SelectValue placeholder={t('admin:invite.form.languagePlaceholder', 'Selecciona idioma')} />
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    <SelectItem value="es">Español</SelectItem>
-                                                    <SelectItem value="en">English</SelectItem>
-                                                    <SelectItem value="de">Deutsch</SelectItem>
+                                                    <SelectItem value="es">{t('admin:invite.form.languages.es', 'Español')}</SelectItem>
+                                                    <SelectItem value="en">{t('admin:invite.form.languages.en', 'English')}</SelectItem>
+                                                    <SelectItem value="de">{t('admin:invite.form.languages.de', 'Deutsch')}</SelectItem>
                                                 </SelectContent>
                                             </Select>
                                         </div>
                                         <div className="space-y-2">
-                                            <Label>Plantilla</Label>
+                                            <Label>{t('admin:invite.form.template', 'Plantilla')}</Label>
                                             <Select value={currentTemplate} onValueChange={setCurrentTemplate}>
                                                 <SelectTrigger>
-                                                    <SelectValue placeholder="Selecciona plantilla" />
+                                                    <SelectValue placeholder={t('admin:invite.form.templatePlaceholder', 'Selecciona plantilla')} />
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    <SelectItem value="general">Ahorro (General)</SelectItem>
-                                                    <SelectItem value="business">Trabajo (Negocios)</SelectItem>
-                                                    <SelectItem value="crypto">Cripto (DiciPoints)</SelectItem>
+                                                    <SelectItem value="general">{t('admin:invite.form.templates.general', 'Ahorro (General)')}</SelectItem>
+                                                    <SelectItem value="business">{t('admin:invite.form.templates.business', 'Trabajo (Negocios)')}</SelectItem>
+                                                    <SelectItem value="crypto">{t('admin:invite.form.templates.crypto', 'Cripto (DiciPoints)')}</SelectItem>
+                                                    <SelectItem value="freelancer">{t('admin:invite.form.templates.freelancer', 'Busqueda (Freelancer)')}</SelectItem>
                                                 </SelectContent>
                                             </Select>
                                         </div>
@@ -398,12 +439,12 @@ export function ReferralCard() {
                                             <DialogTrigger asChild>
                                                 <Button variant="outline" className="flex-1" type="button">
                                                     <Eye className="mr-2 h-4 w-4" />
-                                                    Vista Previa
+                                                    {t('admin:invite.form.preview', 'Vista Previa')}
                                                 </Button>
                                             </DialogTrigger>
                                             <DialogContent className="sm:max-w-[500px]">
                                                 <DialogHeader>
-                                                    <DialogTitle>Vista Previa ({currentName || 'Amigo'})</DialogTitle>
+                                                    <DialogTitle>{t('admin:invite.form.previewTitle', 'Vista Previa')} ({currentName || 'Amigo'})</DialogTitle>
                                                 </DialogHeader>
                                                 <div className="border rounded p-4 space-y-4 bg-white text-black text-sm max-h-[60vh] overflow-y-auto">
                                                     <div>
@@ -432,7 +473,7 @@ export function ReferralCard() {
                                             className="flex-1 bg-slate-800 hover:bg-slate-900 text-white"
                                         >
                                             <Plus className="mr-2 h-4 w-4" />
-                                            Agregar a la lista
+                                            {t('admin:invite.form.addToList', 'Agregar a la lista')}
                                         </Button>
                                     </div>
                                 </div>
@@ -440,7 +481,7 @@ export function ReferralCard() {
                                 {/* FRIENDS LIST */}
                                 {friends.length > 0 && (
                                     <div className="space-y-2">
-                                        <Label className="text-muted-foreground text-xs uppercase tracking-wider">Lista de envío ({friends.length})</Label>
+                                        <Label className="text-muted-foreground text-xs uppercase tracking-wider">{t('admin:invite.form.sendList', { count: friends.length, defaultValue: `Lista de envío (${friends.length})` })}</Label>
                                         <div className="bg-white dark:bg-slate-950 border rounded-md divide-y max-h-[200px] overflow-y-auto">
                                             {friends.map((friend, index) => (
                                                 <div key={index} className="flex items-center justify-between p-3 text-sm">
@@ -467,38 +508,38 @@ export function ReferralCard() {
                                     <DropdownMenuTrigger asChild>
                                         <Button className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white h-11 text-lg">
                                             <Share2 className="mr-2 h-4 w-4" />
-                                            {t('share.button', 'Compartir')}
+                                            {t('admin:invite.form.share', 'Compartir')}
                                         </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="start" className="w-56">
                                         <DropdownMenuItem onClick={() => handleSocialShare('whatsapp')} className="cursor-pointer gap-2">
                                             <MessageCircle className="h-4 w-4 text-green-500" />
-                                            <span>WhatsApp</span>
+                                            <span>{t('admin:invite.form.share_whatsapp', 'WhatsApp')}</span>
                                         </DropdownMenuItem>
                                         <DropdownMenuItem onClick={() => handleSocialShare('telegram')} className="cursor-pointer gap-2">
                                             <Send className="h-4 w-4 text-blue-400" />
-                                            <span>Telegram</span>
+                                            <span>{t('admin:invite.form.share_telegram', 'Telegram')}</span>
                                         </DropdownMenuItem>
                                         <DropdownMenuItem onClick={() => handleSocialShare('facebook')} className="cursor-pointer gap-2">
                                             <Facebook className="h-4 w-4 text-blue-600" />
-                                            <span>Facebook</span>
+                                            <span>{t('admin:invite.form.share_facebook', 'Facebook')}</span>
                                         </DropdownMenuItem>
                                         <DropdownMenuItem onClick={() => handleSocialShare('twitter')} className="cursor-pointer gap-2">
                                             <Twitter className="h-4 w-4 text-black dark:text-white" />
-                                            <span>X (Twitter)</span>
+                                            <span>{t('admin:invite.form.share_twitter', 'X (Twitter)')}</span>
                                         </DropdownMenuItem>
                                         <DropdownMenuItem onClick={() => handleSocialShare('email')} className="cursor-pointer gap-2">
                                             <Mail className="h-4 w-4 text-gray-600" />
-                                            <span>Email</span>
+                                            <span>{t('admin:invite.form.share_email', 'Email')}</span>
                                         </DropdownMenuItem>
                                         <DropdownMenuItem onClick={() => handleSocialShare('native')} className="cursor-pointer gap-2">
                                             <Share2 className="h-4 w-4 text-gray-800 dark:text-gray-200" />
-                                            <span>... Más opciones...</span>
+                                            <span>{t('admin:invite.form.share_more', '... Más opciones...')}</span>
                                         </DropdownMenuItem>
                                         <DropdownMenuSeparator />
                                         <DropdownMenuItem onClick={() => handleSocialShare('copy')} className="cursor-pointer gap-2">
                                             <Copy className="h-4 w-4" />
-                                            <span>{t('ad.copyLink', 'Copiar Enlace')}</span>
+                                            <span>{t('admin:invite.form.share_copy', 'Copiar Enlace')}</span>
                                         </DropdownMenuItem>
                                     </DropdownMenuContent>
                                 </DropdownMenu>
@@ -512,11 +553,11 @@ export function ReferralCard() {
                                     {isLoading ? (
                                         <>
                                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                            Enviando {friends.length} Invitaciones...
+                                            {t('admin:invite.form.sending', { count: friends.length, defaultValue: `Enviando ${friends.length} Invitaciones...` })}
                                         </>
                                     ) : (
                                         <>
-                                            Enviar {friends.length} Invitaciones
+                                            {t('admin:invite.form.send', { count: friends.length, defaultValue: `Enviar ${friends.length} Invitaciones` })}
                                             <Send className="ml-2 h-4 w-4" />
                                         </>
                                     )}

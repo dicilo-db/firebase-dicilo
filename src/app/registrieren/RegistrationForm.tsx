@@ -343,9 +343,15 @@ export function RegistrationForm() {
             />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="whatsapp">{t('register.fields.whatsapp')}</Label>
-            <Input id="whatsapp" {...register('whatsapp')} />
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="whatsapp">{t('register.fields.whatsapp')}</Label>
+              <Input id="whatsapp" {...register('whatsapp')} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="referralCode">{t('register.fields.referralCode')}</Label>
+              <Input id="referralCode" {...register('referralCode')} />
+            </div>
           </div>
 
           <div className="space-y-2">

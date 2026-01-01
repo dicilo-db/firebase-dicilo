@@ -1,6 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useAuth } from '@/context/AuthContext';
 import { Settings, LifeBuoy, LogOut, Coins, Shield, Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -78,7 +79,15 @@ export function DashboardLayout({ userData, currentView, onViewChange, children 
                                 )}
                             </SheetContent>
                         </Sheet>
-                        <span className="font-bold text-lg">Dicilo</span>
+                        <div className="relative h-8 w-32">
+                            <Image
+                                src="/Logo negro dicilo.png"
+                                alt="Dicilo"
+                                fill
+                                className="object-contain object-left"
+                                priority
+                            />
+                        </div>
                     </div>
 
                     {/* Desktop Header Actions (Right aligned) - REMOVED (Moved to Sidebar) */}

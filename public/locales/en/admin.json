@@ -315,5 +315,71 @@
         "description": "Invitation emails and referral system."
       }
     }
+  },
+  "invite": {
+    "form": {
+      "title": "Customize Invitation",
+      "description": "Add up to 7 friends and send them all a personalized invitation from here, just enter the details and add them to the list and then send to everyone at once.",
+      "yourId": "Your ID",
+      "yourName": "Your Name",
+      "addFriend": "Add Friend ({{count}}/7)",
+      "addFriendTitle": "Add Friend",
+      "name": "Name",
+      "namePlaceholder": "Ex. Martin",
+      "email": "Email",
+      "emailPlaceholder": "email@example.com",
+      "language": "Language",
+      "languages": {
+        "es": "Spanish",
+        "en": "English",
+        "de": "German"
+      },
+      "template": "Template",
+      "templates": {
+        "general": "Savings (General)",
+        "business": "Work (Business)",
+        "crypto": "Crypto (DiciPoints)",
+        "freelancer": "Search (Freelancer)"
+      },
+      "preview": "Preview",
+      "addToList": "Add to list",
+      "share": "Share",
+      "send": "Send {{count}} Invitations",
+      "sending": "Sending {{count}} Invitations...",
+      "share_whatsapp": "WhatsApp",
+      "share_telegram": "Telegram",
+      "share_facebook": "Facebook",
+      "share_twitter": "X (Twitter)",
+      "share_email": "Email",
+      "share_more": "... More options...",
+      "share_copy": "Copy Link",
+      "id_loading": "Loading..."
+    },
+    "stats": {
+      "availableSlots": "Available Slots",
+      "ofInvites": "of {{count}} Pioneer invitations",
+      "opened": "Browsing Proposal",
+      "openedLabel": "Opened Emails",
+      "registered": "Closed Pioneers",
+      "registeredLabel": "+50 DP per each"
+    },
+    "tracking": {
+      "title": "Invitation Tracking",
+      "subtitle": "Monitor your network status in real time.",
+      "visualContacts": "Visual Contacts",
+      "reach": "Reach",
+      "followers": "Followers",
+      "instagram": "Instagram"
+    },
+    "history": {
+      "title": "Invitation History",
+      "empty": "You haven't sent any invitations yet.",
+      "status": {
+        "registered": "Registered",
+        "sent": "Sent",
+        "opened": "Viewed",
+        "pending": "Pending"
+      }
+    }
   }
 }

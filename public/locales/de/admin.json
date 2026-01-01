@@ -323,5 +323,71 @@
         "description": "Einladungs-E-Mails und Empfehlungssystem."
       }
     }
+  },
+  "invite": {
+    "form": {
+      "title": "Einladung anpassen",
+      "description": "Fügen Sie bis zu 7 Freunde hinzu und senden Sie ihnen allen von hier aus eine personalisierte Einladung. Geben Sie einfach die Daten ein, fügen Sie sie der Liste hinzu und senden Sie sie dann an alle auf einmal.",
+      "yourId": "Deine ID",
+      "yourName": "Dein Name",
+      "addFriend": "Freund hinzufügen ({{count}}/7)",
+      "addFriendTitle": "Freund hinzufügen",
+      "name": "Name",
+      "namePlaceholder": "z.B. Martin",
+      "email": "E-Mail",
+      "emailPlaceholder": "email@beispiel.com",
+      "language": "Sprache",
+      "languages": {
+        "es": "Spanisch",
+        "en": "Englisch",
+        "de": "Deutsch"
+      },
+      "template": "Vorlage",
+      "templates": {
+        "general": "Sparen (Allgemein)",
+        "business": "Arbeit (Business)",
+        "crypto": "Krypto (DiciPoints)",
+        "freelancer": "Suche (Freelancer)"
+      },
+      "preview": "Vorschau",
+      "addToList": "Zur Liste hinzufügen",
+      "share": "Teilen",
+      "send": "{{count}} Einladungen senden",
+      "sending": "Sende {{count}} Einladungen...",
+      "share_whatsapp": "WhatsApp",
+      "share_telegram": "Telegram",
+      "share_facebook": "Facebook",
+      "share_twitter": "X (Twitter)",
+      "share_email": "E-Mail",
+      "share_more": "... Mehr Optionen...",
+      "share_copy": "Link kopieren",
+      "id_loading": "Lädt..."
+    },
+    "stats": {
+      "availableSlots": "Verfügbare Plätze",
+      "ofInvites": "von {{count}} Pionier-Einladungen",
+      "opened": "Vorschlag ansehen",
+      "openedLabel": "Geöffnete E-Mails",
+      "registered": "Abgeschlossene Pioniere",
+      "registeredLabel": "+50 DP pro Person"
+    },
+    "tracking": {
+      "title": "Einladungsverfolgung",
+      "subtitle": "Überwachen Sie den Status Ihres Netzwerks in Echtzeit.",
+      "visualContacts": "Sichtkontakte",
+      "reach": "Reichweite",
+      "followers": "Follower",
+      "instagram": "Instagram"
+    },
+    "history": {
+      "title": "Einladungshistorie",
+      "empty": "Sie haben noch keine Einladungen versendet.",
+      "status": {
+        "registered": "Registriert",
+        "sent": "Gesendet",
+        "opened": "Gesehen",
+        "pending": "Ausstehend"
+      }
+    }
   }
 }

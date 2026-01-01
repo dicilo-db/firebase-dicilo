@@ -343,5 +343,71 @@
         "description": "Correos de invitación y sistema de referidos."
       }
     }
+  },
+  "invite": {
+    "form": {
+      "title": "Personalizar Invitación",
+      "description": "Agrega hasta 7 amigos y envíales una invitación personalizada a todos desde acá, solo ingresa los datos y agregalos a la lista y luego envia a todos de una vez.",
+      "yourId": "Tu ID",
+      "yourName": "Tu Nombre",
+      "addFriend": "Agregar Amigo ({{count}}/7)",
+      "addFriendTitle": "Agregar Amigo",
+      "name": "Nombre",
+      "namePlaceholder": "Ej. Martín",
+      "email": "Email",
+      "emailPlaceholder": "email@ejemplo.com",
+      "language": "Idioma",
+      "languages": {
+        "es": "Español",
+        "en": "English",
+        "de": "Deutsch"
+      },
+      "template": "Plantilla",
+      "templates": {
+        "general": "Ahorro (General)",
+        "business": "Trabajo (Negocios)",
+        "crypto": "Cripto (DiciPoints)",
+        "freelancer": "Busqueda (Freelancer)"
+      },
+      "preview": "Vista Previa",
+      "addToList": "Agregar a la lista",
+      "share": "Compartir",
+      "send": "Enviar {{count}} Invitaciones",
+      "sending": "Enviando {{count}} Invitaciones...",
+      "share_whatsapp": "WhatsApp",
+      "share_telegram": "Telegram",
+      "share_facebook": "Facebook",
+      "share_twitter": "X (Twitter)",
+      "share_email": "Email",
+      "share_more": "... Más opciones...",
+      "share_copy": "Copiar Enlace",
+      "id_loading": "Cargando..."
+    },
+    "stats": {
+      "availableSlots": "Espacios Disponibles",
+      "ofInvites": "de {{count}} invitaciones Pioneras",
+      "opened": "Ojeando Propuesta",
+      "openedLabel": "Emails Abiertos",
+      "registered": "Pioneros Cerrados",
+      "registeredLabel": "+50 DP por c/u"
+    },
+    "tracking": {
+      "title": "Seguimiento de Invitaciones",
+      "subtitle": "Monitoriza el estado de tu red en tiempo real.",
+      "visualContacts": "Contactos Visuales",
+      "reach": "Alcance",
+      "followers": "Seguidores",
+      "instagram": "Instagram"
+    },
+    "history": {
+      "title": "Historial de Invitaciones",
+      "empty": "No has enviado invitaciones aún.",
+      "status": {
+        "registered": "Registrado",
+        "sent": "Enviado",
+        "opened": "Visto",
+        "pending": "Pendiente"
+      }
+    }
   }
 }

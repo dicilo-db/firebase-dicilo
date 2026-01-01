@@ -110,6 +110,9 @@ import { ClientCouponManager } from '@/components/dashboard/ClientCouponManager'
 const functions = getFunctions(app, 'europe-west1');
 const submitRecommendationFn = httpsCallable(functions, 'submitRecommendation');
 
+import { InviteFriendSection } from '@/components/dashboard/InviteFriendSection';
+import { ensureUniqueCode } from '@/app/actions/profile';
+
 const recipientSchema = z
   .object({
     name: z.string().min(1, 'required'),
@@ -724,6 +727,22 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
   const [categories, setCategories] = useState<any[]>([]);
   const [uploadProgress, setUploadProgress] = useState<number | null>(null);
   const [embedCode, setEmbedCode] = useState('');
+  const [uniqueCode, setUniqueCode] = useState<string>('');
+
+  // Fetch unique code for invite section
+  useEffect(() => {
+    const fetchCode = async () => {
+      const auth = getAuth(app);
+      const uid = initialData.ownerUid || auth.currentUser?.uid;
+      if (uid) {
+        const result = await ensureUniqueCode(uid);
+        if (result.success && result.uniqueCode) {
+          setUniqueCode(result.uniqueCode);
+        }
+      }
+    };
+    fetchCode();
+  }, [initialData.ownerUid]);
 
   // Fetch categories
   useEffect(() => {
@@ -1254,6 +1273,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                     {t('clients.tabs.translations')}
                   </TabsTrigger>
                   <TabsTrigger value="coupons">{t('clients.tabs.coupons')}</TabsTrigger>
+                  <TabsTrigger value="invite" className="text-green-600 font-bold">Invitar Amigos</TabsTrigger>
                 </TabsList>
 
 
@@ -2657,6 +2677,21 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                     companyName={watch('clientName')}
                     category={watch('category') || ''}
                   />
+                </TabsContent>
+
+                <TabsContent value="invite">
+                  <div className="p-4 space-y-4">
+                    <CardTitle>Invitar Amigos</CardTitle>
+                    <CardDescription>Invita a amigos y gana recompensas para tu negocio.</CardDescription>
+                    {uniqueCode ? (
+                      <InviteFriendSection uniqueCode={uniqueCode} referrals={[]} />
+                    ) : (
+                      <div className="p-8 text-center text-muted-foreground">
+                        <Loader2 className="h-8 w-8 animate-spin mx-auto mb-2" />
+                        Generando código de invitación...
+                      </div>
+                    )}
+                  </div>
                 </TabsContent>
 
               </Tabs>

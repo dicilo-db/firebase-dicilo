@@ -71,6 +71,7 @@
       "lastName": "Apellido",
       "email": "Correo Electrónico",
       "whatsapp": "Número de Contacto",
+      "referralCode": "Código DICILO (opcional)",
       "contactType": "Tipo de Contacto",
       "registrationType": "Tipo de Registro",
       "password": "Contraseña",

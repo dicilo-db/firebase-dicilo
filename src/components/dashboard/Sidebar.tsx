@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import {
@@ -135,6 +136,9 @@ export function Sidebar({ userData, onViewChange, currentView }: SidebarProps) {
 
     return (
         <div className="flex h-full w-64 flex-col border-r bg-white">
+            {/* Logo Isotype */}
+
+
             {/* Info Dialog */}
             <Dialog open={showInfo} onOpenChange={setShowInfo}>
                 <DialogContent>
