@@ -841,7 +841,7 @@
   "invite": {
     "form": {
       "title": "Einladung anpassen",
-      "description": "Fügen Sie bis zu 7 Freunde hinzu und senden Sie ihnen allen von hier aus eine personalisierte Einladung. Geben Sie einfach die Daten ein, fügen Sie sie der Liste hinzu und senden Sie sie dann an alle auf einmal.",
+      "description": "Fügen Sie bis zu 7 Freunde hinzu und senden Sie ihnen eine personalisierte Einladung. Geben Sie einfach ihre Daten ein, fügen Sie sie der Liste hinzu und senden Sie sie mit nur einem Klick massenhaft ab.",
       "yourId": "Deine ID",
       "yourName": "Dein Name",
       "addFriend": "Freund hinzufügen ({{count}}/7)",

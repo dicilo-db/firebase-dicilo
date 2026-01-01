@@ -813,7 +813,7 @@
   "invite": {
     "form": {
       "title": "Customize Invitation",
-      "description": "Add up to 7 friends and send them all a personalized invitation from here, just enter the details and add them to the list and then send to everyone at once.",
+      "description": "Add up to 7 friends and send them a personalized invitation. Simply enter their details, add them to the list, and send in bulk with just one click.",
       "yourId": "Your ID",
       "yourName": "Your Name",
       "addFriend": "Add Friend ({{count}}/7)",

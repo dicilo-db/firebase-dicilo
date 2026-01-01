@@ -853,7 +853,7 @@
   "invite": {
     "form": {
       "title": "Personalizar Invitación",
-      "description": "Agrega hasta 7 amigos y envíales una invitación personalizada a todos desde acá, solo ingresa los datos y agregalos a la lista y luego envia a todos de una vez.",
+      "description": "Añade hasta 7 amigos y envíales una invitación personalizada. Simplemente ingresa sus datos, agrégalos a la lista y realiza el envío masivo en un solo clic.",
       "yourId": "Tu ID",
       "yourName": "Tu Nombre",
       "addFriend": "Agregar Amigo ({{count}}/7)",
