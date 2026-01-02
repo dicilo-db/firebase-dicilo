@@ -63,8 +63,10 @@ ${historyText}
 
 === INSTRUCCIONES ===
 1. **IDIOMA**: Responde en el idioma del usuario.
-2. **IDENTIFICAR EMPRESA**: Si el usuario pregunta por una empresa (ej: "Cuéntame de Travelposting"), extrae "Travelposting" en 'targetCompanyName'.
-   - Mira el DIRECTORIO. Si ves "Travelposting Premium", extrae solo el nombre clave "Travelposting".
+2. **IDENTIFICAR EMPRESA**: 
+   - Si el usuario menciona explícitamente una empresa, extráela en 'targetCompanyName'.
+   - **CRÍTICO - CONTEXTO HISTÓRICO**: Si el usuario pregunta de forma implícita (ej: "¿dónde queda?", "dame más info", "su teléfono") y en el <HISTORIAL> reciente se estaba hablando de una empresa, **ASUME** que se refiere a esa misma empresa y pon su nombre en 'targetCompanyName'.
+   - Si no hay empresa clara, devuelve null.
 3. **IDENTIFICAR USUARIO**: Si el usuario dice "Soy Nilo", 'extractedName' = "Nilo".
 4. **FORMATO**: Devuelve JSON exacto.
 `;
@@ -74,7 +76,7 @@ ${historyText}
             model: gemini20Flash,
             prompt: analysisPrompt,
             output: { schema: AnalysisSchema },
-            config: { temperature: 0.0 }
+            config: { temperature: 0.1 }
         });
 
         const thoughtProcess = analysis.output;

@@ -97,7 +97,9 @@ export async function getDynamicKnowledgeContext(): Promise<string> {
             snippetsSnapshot.forEach(doc => {
                 const data = doc.data();
                 // Include ONLY if NO clientId (Global) 
-                if (data.text && !data.clientId) {
+                // CRITICAL: Filter out specific "HörComfort" or displaced text that ended up as global noise
+                const isNoise = data.text && data.text.includes("Bereits seit 2011");
+                if (data.text && !data.clientId && !isNoise) {
                     dynamicContext += `- ${data.text}\n`;
                     globalCount++;
                 }
