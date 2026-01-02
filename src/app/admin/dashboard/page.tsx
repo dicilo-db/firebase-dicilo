@@ -477,6 +477,20 @@ const DashboardContent: React.FC = () => {
 
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
 
+            {/* AI Knowledge Base (Katei) */}
+            <Link href="/admin/ai-chat" className="group">
+              <Card className="h-full bg-indigo-50/50 dark:bg-indigo-900/10 border-indigo-200 transition-all hover:shadow-md hover:border-indigo-500 cursor-pointer relative">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium text-indigo-700 dark:text-indigo-400">AI Knowledge Base</CardTitle>
+                  <Bot className="h-4 w-4 text-indigo-500 group-hover:scale-110 transition-transform" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">Katei AI</div>
+                  <p className="text-xs text-muted-foreground mt-1">Gestión de Conocimientos y FAQs</p>
+                </CardContent>
+              </Card>
+            </Link>
+
             {/* Configuración de Categorías */}
             <Link href="/admin/categories" className="group">
               <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">

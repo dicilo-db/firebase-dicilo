@@ -118,7 +118,7 @@ export default function AdminAiChatPage() {
             if (result.success) {
                 toast({ title: 'Success', description: 'File uploaded and processed.' });
             } else {
-                toast({ title: 'Warning', description: 'File uploaded but processing failed: ' + result.error, variant: 'warning' });
+                toast({ title: 'Warning', description: 'File uploaded but processing failed: ' + result.error, variant: 'default' });
             }
 
         } catch (error) {

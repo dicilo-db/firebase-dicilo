@@ -12,7 +12,7 @@ import dynamic from 'next/dynamic';
 
 const AiChatWidget = dynamic(
   () => import('@/components/AiChatWidget').then((mod) => mod.AiChatWidget),
-  { ssr: false }
+  { ssr: false } // Client-side only
 );
 
 export const metadata: Metadata = {

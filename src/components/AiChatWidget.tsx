@@ -5,9 +5,12 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { MessageCircle, X, Send, Loader2, Bot, User } from 'lucide-react';
+import { MessageCircle, X, Send, Loader2, Bot, User, Mic, MicOff } from 'lucide-react';
 import { chatAction } from '@/app/actions/chat';
 import Image from 'next/image';
+import { getGreetingAction } from '@/app/actions/greeting';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 interface Message {
     id: string;
@@ -22,10 +25,6 @@ declare global {
         SpeechRecognition: any;
     }
 }
-
-import { getGreetingAction } from '@/app/actions/greeting';
-import { extractTextFromDocument } from '@/app/actions/upload';
-import { Paperclip, FileText, Mic, MicOff } from 'lucide-react'; // Added Mic icons
 
 interface AiChatWidgetProps {
     // greeting property removed as we fetch it internally now
@@ -42,19 +41,49 @@ export function AiChatWidget() {
     ]);
     const [inputValue, setInputValue] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [isListening, setIsListening] = useState(false);
-    const fileInputRef = useRef<HTMLInputElement>(null);
+    const [userId, setUserId] = useState<string>(''); // User Identity State
     const scrollAreaRef = useRef<HTMLDivElement>(null);
+    const inputRef = useRef<HTMLInputElement>(null);
+
+    // Auto-focus input when loading finishes
+    useEffect(() => {
+        if (!isLoading && isOpen) {
+            setTimeout(() => {
+                inputRef.current?.focus();
+            }, 100);
+        }
+    }, [isLoading, isOpen]);
+
+    // Auth & Identity Logic
+    useEffect(() => {
+        // Import dynamically to avoid SSR issues if any, though regular import is fine in 'use client'
+        const { auth } = require('@/lib/firebase');
+        const { onAuthStateChanged } = require('firebase/auth');
+
+        const unsubscribe = onAuthStateChanged(auth, (user: any) => {
+            if (user) {
+                setUserId(user.uid);
+            } else {
+                // Anonymous Session logic
+                let sessionUid = sessionStorage.getItem('dicilo_anon_uid');
+                if (!sessionUid) {
+                    sessionUid = 'anon_' + Math.random().toString(36).substr(2, 9);
+                    sessionStorage.setItem('dicilo_anon_uid', sessionUid);
+                }
+                setUserId(sessionUid);
+            }
+        });
+
+        return () => unsubscribe();
+    }, []);
 
     // Speech Recognition Logic
     const startListening = () => {
         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             const recognition = new SpeechRecognition();
-            recognition.lang = 'es-ES'; // Default to Spanish or detect from detecting.ts logic ideally, but browser usually handles auto or we can set dynamic.
-            // Let's try to infer from browser or just set to user's likely language. 
-            // Better: use detected language if possible, but for now Auto or ES is safe fallback.
+            recognition.lang = 'es-ES'; // Default to Spanish or detect from detecting.ts logic ideally
             recognition.interimResults = false;
             recognition.maxAlternatives = 1;
 
@@ -100,13 +129,9 @@ export function AiChatWidget() {
     }, [messages, isOpen]);
 
     const handleSendMessage = async () => {
-        if ((!inputValue.trim() && !selectedFile) || isLoading) return;
+        if (!inputValue.trim() || isLoading) return;
 
         let userContent = inputValue;
-        if (selectedFile) {
-            userContent += ` [Anhänge: ${selectedFile.name}]`;
-        }
-
         const userMessage: Message = {
             id: Date.now().toString(),
             role: 'user',
@@ -115,27 +140,16 @@ export function AiChatWidget() {
 
         setMessages((prev) => [...prev, userMessage]);
         setInputValue('');
-        const fileToUpload = selectedFile;
-        setSelectedFile(null); // Clear formatting immediately
         setIsLoading(true);
 
         try {
             let context = '';
-            if (fileToUpload) {
-                const formData = new FormData();
-                formData.append('file', fileToUpload);
-                const uploadResult = await extractTextFromDocument(formData);
-                if (uploadResult.success && uploadResult.text) {
-                    context = uploadResult.text;
-                } else {
-                    console.error('File processing failed:', uploadResult.error);
-                    // Optionally notify user
-                }
-            }
+            // File processing removed
 
             const result = await chatAction({
                 question: userMessage.content,
-                context: context
+                context: context,
+                userId: userId // Pass the identified user ID
             });
 
             if (!result.success || !result.answer) {
@@ -154,7 +168,7 @@ export function AiChatWidget() {
             const errorMessage: Message = {
                 id: (Date.now() + 1).toString(),
                 role: 'assistant',
-                content: 'Sorry, I encountered an error. Please try again.',
+                content: `Error: ${error instanceof Error ? error.message : 'Unknown error'}`,
             };
             setMessages((prev) => [...prev, errorMessage]);
         } finally {
@@ -162,16 +176,7 @@ export function AiChatWidget() {
         }
     };
 
-    const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
-            const file = e.target.files[0];
-            if (file.size > 5 * 1024 * 1024) {
-                alert('File size too large (max 5MB)');
-                return;
-            }
-            setSelectedFile(file);
-        }
-    };
+
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter' && !e.shiftKey) {
@@ -189,7 +194,7 @@ export function AiChatWidget() {
                             <div className="relative w-6 h-6 rounded-full overflow-hidden">
                                 <Image src="/dicibot.jpg" alt="DiciBot" fill className="object-cover" />
                             </div>
-                            DiciBot
+                            DiciBot <span className="text-xs text-muted-foreground ml-1">(v2.0)</span>
                         </CardTitle>
                         <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setIsOpen(false)}>
                             <X className="h-4 w-4" />
@@ -217,12 +222,22 @@ export function AiChatWidget() {
                                             )}
                                         </div>
                                         <div
-                                            className={`rounded-lg p-3 text-sm ${message.role === 'user'
+                                            className={`rounded-lg p-3 text-sm break-words ${message.role === 'user'
                                                 ? 'bg-primary text-primary-foreground'
                                                 : 'bg-muted text-foreground'
                                                 }`}
                                         >
-                                            {message.content}
+                                            <ReactMarkdown
+                                                remarkPlugins={[remarkGfm]}
+                                                components={{
+                                                    a: ({ node, ...props }) => (
+                                                        <a {...props} target="_blank" rel="noopener noreferrer" className="font-bold underline hover:text-blue-500 transition-colors" />
+                                                    ),
+                                                    p: ({ node, ...props }) => <p {...props} className="mb-1 last:mb-0 leading-relaxed" />,
+                                                }}
+                                            >
+                                                {message.content}
+                                            </ReactMarkdown>
                                         </div>
                                     </div>
                                 ))}
@@ -242,28 +257,16 @@ export function AiChatWidget() {
                     <CardFooter className="p-3 border-t bg-background">
                         <div className="flex w-full gap-2">
                             <Input
-                                placeholder="Type a message..."
+                                ref={inputRef}
+                                autoFocus
+                                placeholder="Escribe un mensaje..."
                                 value={inputValue}
                                 onChange={(e) => setInputValue(e.target.value)}
                                 onKeyDown={handleKeyDown}
                                 disabled={isLoading}
                                 className="flex-grow"
                             />
-                            <Input
-                                type="file"
-                                ref={fileInputRef}
-                                className="hidden"
-                                accept=".pdf,.txt"
-                                onChange={handleFileSelect}
-                            />
-                            <Button
-                                variant="outline"
-                                size="icon"
-                                onClick={() => fileInputRef.current?.click()}
-                                className={selectedFile ? "bg-primary/20" : ""}
-                            >
-                                <Paperclip className="w-4 h-4" />
-                            </Button>
+                            {/* File Upload Removed as per user request */}
                             <Button size="icon" onClick={handleSendMessage} disabled={isLoading || !inputValue.trim()}>
                                 <Send className="w-4 h-4" />
                             </Button>
@@ -273,7 +276,7 @@ export function AiChatWidget() {
                                 onClick={startListening}
                                 className={isListening ? "text-red-500 animate-pulse" : "text-muted-foreground"}
                                 disabled={isLoading}
-                                title="Speak to DiciBot"
+                                title="Hablar con DiciBot"
                             >
                                 {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
                             </Button>
