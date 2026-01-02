@@ -2,112 +2,144 @@ import { getAdminDb } from '@/lib/firebase-admin';
 import { DICILO_KNOWLEDGE } from '@/ai/data/dicilo-knowledge';
 import { DICICOIN_KNOWLEDGE } from '@/ai/data/dicicoin-knowledge';
 
+// --- HELPER: Normalize strings for search ---
+function normalize(str: string): string {
+    return str.toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
+export async function getClientDeepKnowledge(queryName: string): Promise<string> {
+    if (!queryName || queryName.length < 3) return "";
+
+    const db = getAdminDb();
+    const normalizedQuery = normalize(queryName);
+    let knowledge = "";
+
+    try {
+        // 1. Find the Client ID first (Search in 'clients' and 'businesses')
+        // This is a naive search. Ideal: Text Search / Vector. 
+        // For V1/Firebase: We iterate or use a simple query if we had a keywords field.
+        // We'll fetch 'clients' (smaller collection usually) and filter.
+        const clientsSnap = await db.collection('clients').get(); // Potentially expensive if 1000s, but okay for active list.
+
+        let targetClient: any = null;
+        let targetClientId = "";
+
+        // Fuzzy Match
+        clientsSnap.forEach(doc => {
+            const data = doc.data();
+            const name = normalize(data.clientName || data.name || "");
+            if (name.includes(normalizedQuery) || normalizedQuery.includes(name)) {
+                targetClient = data;
+                targetClientId = doc.id;
+            }
+        });
+
+        if (!targetClientId) {
+            // Try businesses collection if not in clients (Retailers might be in businesses?)
+            // Assuming Premium/Retailers are synced to 'clients' or we check 'businesses' too.
+            const businessSnap = await db.collection('businesses').where('name', '>=', queryName).limit(5).get(); // Basic prefix search
+            if (!businessSnap.empty) {
+                targetClientId = businessSnap.docs[0].id; // Fallback ID
+            }
+        }
+
+        if (targetClientId) {
+            knowledge += `\n\n[DEEP KNOWLEDGE FOR: ${queryName}]\n`;
+
+            // 2. Fetch Targeted Snippets
+            const snippets = await db.collection('ai_knowledge_snippets')
+                .where('clientId', '==', targetClientId)
+                .get();
+
+            snippets.forEach(doc => {
+                knowledge += `➤ ${doc.data().text}\n`;
+            });
+
+            // 3. Fetch Targeted Files (PDFs)
+            const files = await db.collection('ai_knowledge_files')
+                .where('clientId', '==', targetClientId)
+                .where('status', '==', 'processed')
+                .limit(3) // Limit valid docs
+                .get();
+
+            files.forEach(doc => {
+                const f = doc.data();
+                if (f.extractedText) {
+                    knowledge += `\n📄 DOCUMENT: ${f.name}\n${f.extractedText.slice(0, 3000)}\n... (truncated)\n`;
+                }
+            });
+
+            if (!snippets.empty || !files.empty) {
+                console.log(`✅ [RGA] Found deep knowledge for ${queryName} (${targetClientId})`);
+            } else {
+                console.log(`ℹ️ [RGA] Client found (${queryName}) but has no specific RGA data.`);
+            }
+        }
+
+    } catch (e) {
+        console.error("[RGA] Error fetching deep knowledge:", e);
+    }
+    return knowledge;
+}
+
 export async function getDynamicKnowledgeContext(): Promise<string> {
     try {
         const db = getAdminDb();
         let dynamicContext = "";
 
-        // 1. Fetch Text Snippets
-        const snippetsSnapshot = await db.collection('ai_knowledge_snippets').get();
+        // 1. Fetch GLOBAL Text Snippets (No clientId)
+        // We filter manually or use a query for non-private snippets.
+        // Determining "Global" via missing clientId.
+        const snippetsSnapshot = await db.collection('ai_knowledge_snippets').orderBy('createdAt', 'desc').get();
         if (!snippetsSnapshot.empty) {
-            dynamicContext += "\n\n[ADMIN CUSTOM KNOWLEDGE]\n";
+            dynamicContext += "\n\n[GLOBAL SYSTEM KNOWLEDGE]\n";
+            let globalCount = 0;
             snippetsSnapshot.forEach(doc => {
                 const data = doc.data();
-                if (data.text) {
+                // Include ONLY if NO clientId (Global) 
+                if (data.text && !data.clientId) {
                     dynamicContext += `- ${data.text}\n`;
+                    globalCount++;
                 }
             });
+            // If we have very few globals, maybe include recent client updates? No, privacy/confusion risk.
         }
 
-        // 2. Fetch File Content (extracted text)
-        const filesSnapshot = await db.collection('ai_knowledge_files')
-            .where('status', '==', 'processed')
-            .limit(10)
-            .get();
-
-        if (!filesSnapshot.empty) {
-            dynamicContext += "\n\n[KNOWLEDGE FROM DOCUMENTS]\n";
-            filesSnapshot.forEach(doc => {
-                const data = doc.data();
-                if (data.extractedText) {
-                    dynamicContext += `--- Source: ${data.name} ---\n${data.extractedText}\n\n`;
-                }
-            });
-        }
-
-        // 3. Fetch Businesses (Directory Data) & Clients
-        // Gemini 2.0 Flash has a large context window, so we can afford to fetch more entries (e.g. 300 each)
-        // to ensure we don't miss companies like "HörComfort".
+        // 2. Fetch DATA SNAPSHOT (Directory)
+        // This remains the "Wide Net" to let the Brain know WHO exists.
         const [businessesSnapshot, clientsSnapshot] = await Promise.all([
-            db.collection('businesses').limit(300).get(),
-            db.collection('clients').limit(300).get()
+            db.collection('businesses').limit(150).get(), // Reduced limit for speed, assuming search will handle deep dive
+            db.collection('clients').limit(150).get()
         ]);
 
         if (!businessesSnapshot.empty || !clientsSnapshot.empty) {
-            dynamicContext += "\n\n[DIRECTORY LISTING - BUSINESSES & CLIENTS]\n";
+            dynamicContext += "\n\n[DIRECTORY - KNOWN COMPANIES]\n(Use these names to identify who the user is asking about)\n";
 
-            const processDoc = (doc: any) => {
-                const data = doc.data();
-
-                // DEBUG: Inspect data structure for HörComfort
-                if (JSON.stringify(data).toLowerCase().includes('comfort') || JSON.stringify(data).toLowerCase().includes('hoer')) {
-                    console.log("🔍 DEBUG DATA STRUCTURE:", JSON.stringify(data, null, 2));
-                }
-
-                // EMERGENCY DUMP: Concatenate all potential name fields so the LLM sees them all.
-                // This prevents "logic" from hiding the data.
-                const nameCandidates = [data.name, data.companyName, data.businessName, data.title, data.id].filter(s => s && typeof s === 'string').join(" | ");
-                const name = nameCandidates || 'Empresa sin nombre';
-
-                const clientType = data.clientType || 'Standard'; // Starter, Premium, etc.
-                const category = data.category?.name || data.category || 'Uncategorized';
-
-                // Address Logic
-                const addrObj = data.address || {};
-                const street = addrObj.street || data.street || '';
-                const zip = addrObj.zip || data.zip || '';
-                const city = addrObj.city || data.city || '';
-                const country = addrObj.country || data.country || '';
-                const fullAddress = [street, zip, city, country].filter(Boolean).join(', ');
-
-                // Contact Logic
-                const website = data.website || data.url || data.web || '';
-                const phone = data.phone || data.mobile || data.celular || data.telefon || data.telephone || '';
-                const email = data.email || data.contactEmail || '';
-
-                const description = data.description || '';
-                const slogan = data.slogan || '';
-                const services = Array.isArray(data.services) ? data.services.join(', ') : (data.services || '');
-
-                let entry = `- **${name}** [${clientType} - ${category}]`;
-                if (fullAddress) entry += `\n  📍 Dirección: ${fullAddress}`;
-                if (phone) entry += `\n  📞 Teléfono: ${phone}`;
-                if (website) entry += `\n  🌐 Web: ${website}`;
-                if (email) entry += `\n  ✉️ Email: ${email}`;
-
-                if (slogan) entry += `\n  Slogan: "${slogan}"`;
-                if (description) entry += `\n  Info: ${description}`;
-                if (services) entry += `\n  Servicios: ${services}`;
-                if (services) entry += `\n  Services: ${services}`;
-                entry += '\n\n'; // Double newline for clear separation
-
-                return entry;
+            const processEntry = (doc: any) => {
+                const d = doc.data();
+                const name = d.clientName || d.name || d.businessName || "Unknown";
+                const type = d.clientType || 'Standard';
+                const cat = d.category?.name || d.category || '';
+                return `- ${name} (${type} / ${cat})`;
             };
 
-            businessesSnapshot.forEach(doc => {
-                dynamicContext += processDoc(doc);
-            });
+            const seen = new Set();
+
             clientsSnapshot.forEach(doc => {
-                dynamicContext += processDoc(doc);
+                const entry = processEntry(doc);
+                if (!seen.has(entry)) { dynamicContext += entry + "\n"; seen.add(entry); }
+            });
+            businessesSnapshot.forEach(doc => {
+                const entry = processEntry(doc);
+                if (!seen.has(entry)) { dynamicContext += entry + "\n"; seen.add(entry); }
             });
         }
 
-        // 4. Combine with Static Knowledge and DiciCoin Data
+        // 3. Combine
         return `${DICILO_KNOWLEDGE}\n\n[DICICOIN INFO]\n${DICICOIN_KNOWLEDGE}\n${dynamicContext}`;
 
     } catch (error) {
         console.error("Error fetching dynamic knowledge:", error);
-        // Fallback to static knowledge
         return `${DICILO_KNOWLEDGE}\n\n[DICICOIN INFO]\n${DICICOIN_KNOWLEDGE}`;
     }
 }

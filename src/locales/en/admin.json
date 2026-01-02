@@ -875,5 +875,37 @@
         "pending": "Pending"
       }
     }
+  },
+  "common": {
+    "back": "Back"
+  },
+  "ai_chat": {
+    "library_title": "Katei RGA Library",
+    "library_subtitle": "Central Knowledge Base for Agent Intelligence.",
+    "search_title": "Library Search",
+    "search_placeholder": "Search client e.g. Travel...",
+    "search_label": "Search Client",
+    "category_label": "Category",
+    "all_categories": "All Categories",
+    "global_knowledge": "Global Knowledge",
+    "global_desc": "Data applicable to ALL clients/system.",
+    "view_all_global": "View All Global",
+    "no_clients_found": "No clients found with those filters.",
+    "open_folder": "Open RGA Folder",
+    "back_to_library": "Back to Library",
+    "managing_context": "Managing RGA Context",
+    "snippets_title": "Knowledge Snippets",
+    "snippets_desc": "Add specific facts, hours or FAQs. AI reads this first.",
+    "add_fact_label": "Add New Fact",
+    "fact_placeholder": "e.g. 'The company offers special discount on Fridays...'",
+    "save_fact": "Save Fact",
+    "saved_facts": "Saved Facts",
+    "no_facts_yet": "No facts yet.",
+    "documents_title": "Documents and PDFs",
+    "upload_desc": "Upload PDFs or Images. AI will read their content.",
+    "upload_instruction": "Click to upload (PDF, IMG)",
+    "view_file": "View File",
+    "processing": "Processing...",
+    "uncategorized": "Uncategorized"
   }
 }

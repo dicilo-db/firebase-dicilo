@@ -903,5 +903,37 @@
         "pending": "Ausstehend"
       }
     }
+  },
+  "common": {
+    "back": "Zurück"
+  },
+  "ai_chat": {
+    "library_title": "Katei RGA Bibliothek",
+    "library_subtitle": "Zentrale Wissensbasis für Agenten-Intelligenz.",
+    "search_title": "Bibliothekssuche",
+    "search_placeholder": "Kunde suchen z.B. Travel...",
+    "search_label": "Kunde Suchen",
+    "category_label": "Kategorie",
+    "all_categories": "Alle Kategorien",
+    "global_knowledge": "Globales Wissen",
+    "global_desc": "Daten, die für ALLE Kunden/System gelten.",
+    "view_all_global": "Alles Globale anzeigen",
+    "no_clients_found": "Keine Kunden mit diesen Filtern gefunden.",
+    "open_folder": "RGA Ordner öffnen",
+    "back_to_library": "Zurück zur Bibliothek",
+    "managing_context": "RGA Kontext verwalten",
+    "snippets_title": "Wissensschnipsel",
+    "snippets_desc": "Fügen Sie Fakten, Öffnungszeiten oder FAQs hinzu. KI liest dies zuerst.",
+    "add_fact_label": "Neuen Fakt hinzufügen",
+    "fact_placeholder": "z.B. 'Das Unternehmen bietet freitags Rabatt...'",
+    "save_fact": "Fakt speichern",
+    "saved_facts": "Gespeicherte Fakten",
+    "no_facts_yet": "Noch keine Fakten.",
+    "documents_title": "Dokumente und PDFs",
+    "upload_desc": "Laden Sie PDFs oder Bilder hoch. KI wird deren Inhalt lesen.",
+    "upload_instruction": "Klicken zum Hochladen (PDF, IMG)",
+    "view_file": "Datei ansehen",
+    "processing": "Verarbeitung...",
+    "uncategorized": "Unkategorisiert"
   }
 }

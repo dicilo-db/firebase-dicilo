@@ -104,7 +104,6 @@ i18n
     defaultNS: 'common',
     react: {
       useSuspense: false,
-      transKeepHTMLValues: true, // Preserve HTML tags in translations
     },
   });
 

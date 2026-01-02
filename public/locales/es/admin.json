@@ -1,4 +1,7 @@
 {
+  "common": {
+    "back": "Volver"
+  },
   "login": {
     "title": "Acceso de Administrador",
     "description": "Por favor, introduce tus credenciales para continuar.",
@@ -409,5 +412,34 @@
         "pending": "Pendiente"
       }
     }
+  },
+  "ai_chat": {
+    "library_title": "Biblioteca RGA Katei",
+    "library_subtitle": "Base de Conocimiento Central para la Inteligencia del Agente.",
+    "search_title": "Buscador de Biblioteca",
+    "search_placeholder": "Buscar cliente ej. Travel...",
+    "search_label": "Buscar Cliente",
+    "category_label": "Categoría",
+    "all_categories": "Todas las Categorías",
+    "global_knowledge": "Conocimiento Global",
+    "global_desc": "Datos aplicables a TODOS los clientes/sistema.",
+    "view_all_global": "Ver Todo lo Global",
+    "no_clients_found": "No se encontraron clientes con esos filtros.",
+    "open_folder": "Abrir Carpeta RGA",
+    "back_to_library": "Volver a la Biblioteca",
+    "managing_context": "Gestionando Contexto RGA",
+    "snippets_title": "Fragmentos de Conocimiento",
+    "snippets_desc": "Añade hechos, horarios o FAQs específicas. La IA lee esto primero.",
+    "add_fact_label": "Añadir Nuevo Hecho",
+    "fact_placeholder": "ej. 'La empresa ofrece descuento especial los viernes...'",
+    "save_fact": "Guardar Hecho",
+    "saved_facts": "Hechos Guardados",
+    "no_facts_yet": "Aún no hay hechos.",
+    "documents_title": "Documentos y PDFs",
+    "upload_desc": "Sube PDFs o Imágenes. La IA leerá su contenido.",
+    "upload_instruction": "Clic para subir (PDF, IMG)",
+    "view_file": "Ver Archivo",
+    "processing": "Procesando...",
+    "uncategorized": "Sin Categoría"
   }
 }

@@ -1,4 +1,7 @@
 {
+  "common": {
+    "back": "Zurück"
+  },
   "login": {
     "title": "Admin Login",
     "description": "Bitte geben Sie Ihre Anmeldedaten ein, um fortzufahren.",
@@ -380,14 +383,43 @@
       "instagram": "Instagram"
     },
     "history": {
-      "title": "Einladungshistorie",
+      "title": "Einladungsverlauf",
       "empty": "Sie haben noch keine Einladungen versendet.",
       "status": {
         "registered": "Registriert",
         "sent": "Gesendet",
-        "opened": "Gesehen",
+        "opened": "Geöffnet",
         "pending": "Ausstehend"
       }
     }
+  },
+  "ai_chat": {
+    "library_title": "Katei RGA Bibliothek",
+    "library_subtitle": "Zentrale Wissensdatenbank für Agenten-Intelligenz.",
+    "search_title": "Bibliothek Suche",
+    "search_placeholder": "Kunden suchen z.B. Travel...",
+    "search_label": "Kunde suchen",
+    "category_label": "Kategorie",
+    "all_categories": "Alle Kategorien",
+    "global_knowledge": "Globales Wissen",
+    "global_desc": "Fakten für ALLE Kunden/Systeme.",
+    "view_all_global": "Alle Globalen anzeigen",
+    "no_clients_found": "Keine Kunden mit diesen Filtern gefunden.",
+    "open_folder": "RGA Ordner öffnen",
+    "back_to_library": "Zurück zur Bibliothek",
+    "managing_context": "RGA Kontext verwalten",
+    "snippets_title": "Wissensschnipsel",
+    "snippets_desc": "Fügen Sie Fakten, Öffnungszeiten oder FAQs hinzu. Die KI liest das zuerst.",
+    "add_fact_label": "Neuen Fakt hinzufügen",
+    "fact_placeholder": "z.B. 'Das Unternehmen bietet freitags Rabatt an...'",
+    "save_fact": "Fakt speichern",
+    "saved_facts": "Gespeicherte Fakten",
+    "no_facts_yet": "Noch keine Fakten.",
+    "documents_title": "Dokumente & PDFs",
+    "upload_desc": "PDFs oder Bilder hochladen. Die KI liest den Inhalt.",
+    "upload_instruction": "Klicken zum Hochladen (PDF, IMG)",
+    "view_file": "Datei ansehen",
+    "processing": "Verarbeitung...",
+    "uncategorized": "Ohne Kategorie"
   }
 }
