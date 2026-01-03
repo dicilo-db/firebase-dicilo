@@ -1,5 +1,17 @@
 # Bitácora de Cambios - Dicilo.net
 
+### **195. FIX: CHATBOT UX, HALLUCINATIONS & SHARE FLOW - CÓDIGO: FIX-CHAT-UX-SHARE-V1**
+- **Fecha y Hora:** 02 de Enero de 2026, 17:00 (CET)
+- **Módulos Afectados:** `src/ai/flows/website-chat-flow.ts`, `src/components/AiChatWidget.tsx`.
+- **Descripción del Cambio:**
+  - **Corrección Anti-Alucinación (Email):** Se endureció la lógica del prompt para que la IA NUNCA confirme el envío de un correo ("Enviado") sin tener la dirección de email verificada en memoria. Ahora, si falta el email, la IA está obligada a preguntarlo.
+  - **Links de Direcciones:** Se instruyó a la IA para formatear siempre las direcciones físicas como enlaces clicables a Google Maps, mejorando la usabilidad.
+  - **Flujo "Compartir":**
+    - Se implementó un nuevo flujo de decisión: Si el usuario pide "enviármelo", la IA ahora ofrece primero la opción de "Enviártelo tú mismo" (mostrando botones de compartir) o "Enviarlo por email".
+    - Se añadió la lógica para activar el componente `SHARE_BUTTONS` en el chat widget.
+  - **Fix Técnico:** Se añadió la importación faltante del icono `Share2` en `AiChatWidget.tsx` que causaba errores potenciales al intentar renderizar los botones de compartir.
+- **Resultado:** Una experiencia de chat más robusta, sin promesas falsas de envío y con opciones de compartir funcionales y visibles.
+
 ### **194. FEAT: DICICOIN LANDING PAGE - CÓDIGO: FEAT-DICICOIN-PAGE-V1**
 - **Fecha y Hora:** 26 de Diciembre de 2025, 13:15 (CET)
 - **Módulos Afectados:** `src/app/dicicoin/page.tsx`, `src/components/header.tsx`, `src/locales/{es,en,de}/common.json`.

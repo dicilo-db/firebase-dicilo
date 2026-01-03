@@ -1,36 +1,32 @@
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
-import { sendMessageTool, calendarTool } from '@/ai/tools';
+import { sendMessageTool, calendarTool, retrieveCompanyInfoTool } from '@/ai/tools';
 import { gemini20Flash } from '@genkit-ai/googleai';
-import { getDynamicKnowledgeContext, getClientDeepKnowledge } from '@/ai/data/knowledge-retriever';
+import { getDynamicKnowledgeContext } from '@/ai/data/knowledge-retriever';
+import { getSessionHistory, saveInteraction } from '@/lib/chat-history';
 import { DICICOIN_SCRIPT } from '@/ai/data/scripts';
 
-// --- ESQUEMAS DE ENTRADA/SALIDA ---
+// Esquemas
 const WebsiteChatInputSchema = z.object({
     question: z.string(),
+    sessionId: z.string().optional(),
     context: z.string().optional(),
-    history: z.array(z.string()).optional(),
+    // Optional compatibility fields if needed by caller
     userId: z.string().optional(),
 });
 
 const WebsiteChatOutputSchema = z.object({
     answer: z.string(),
-});
-
-// --- ESQUEMA DEL CEREBRO (RAZONAMIENTO) ---
-const AnalysisSchema = z.object({
-    intent: z.enum(['INFO_QUERY', 'ACTION_REQUEST', 'DATA_INPUT', 'GREETING']),
-    targetCompanyName: z.string().nullable().describe("Nombre de la EMPRESA/CLIENTE por la que pregunta el usuario (ej: 'Travelposting', 'HörComfort'). Null si no pregunta por empresa."),
-    extractedName: z.string().nullable().describe("Nombre del USUARIO (Humano) si aparece en el mensaje actual. Null si no se sabe."),
-    extractedEmail: z.string().nullable().describe("Email del USUARIO si aparece. Null si no se sabe."),
-    actionNeeded: z.enum(['NONE', 'SEND_MESSAGE', 'CALENDAR']).describe("Si el usuario quiere enviar algo o agendar."),
-    missingFields: z.array(z.string()).describe("Lista de campos que faltan para ejecutar la acción ('name', 'email', 'date')."),
-    finalResponseText: z.string().describe("La respuesta preliminar que se le daría al usuario."),
-    emailContentSummary: z.string().optional().describe("Resumen del contenido que el usuario pidió enviar."),
+    uiComponent: z.enum(['NONE', 'SHARE_BUTTONS', 'CALENDAR_WIDGET']).optional(),
 });
 
 export async function websiteChat(input: z.infer<typeof WebsiteChatInputSchema>) {
-    return websiteChatFlow(input);
+    // Ensure sessionId is populated if missing
+    if (!input.sessionId && input.userId) {
+        input.sessionId = input.userId;
+    }
+    const result = await websiteChatFlow(input);
+    return result;
 }
 
 const websiteChatFlow = ai.defineFlow(
@@ -40,163 +36,196 @@ const websiteChatFlow = ai.defineFlow(
         outputSchema: WebsiteChatOutputSchema,
     },
     async (input) => {
-        // 1. Contexto Inicial (Global + Directorio Ligero)
-        let baseContext = await getDynamicKnowledgeContext();
-        if (input.context) baseContext += "\n\n[DOCS ADICIONALES]:\n" + input.context;
-        const historyText = input.history?.join("\n") || "";
+        // 0. ID DE SESIÓN
+        const effectiveSessionId = input.sessionId || input.userId || 'unknown-session';
 
-        // 2. PROMPT DE ANÁLISIS (Fase 1: Identificación)
-        const analysisPrompt = `
-Eres el "Cerebro Analítico" de DiciBot. Analiza y extrae entidades.
+        // ---------------------------------------------------------
+        // TRAMPA DETERMINISTA DE EMAIL (Para romper bucles)
+        // ---------------------------------------------------------
+        // Si el usuario manda algo que parece un email (y es corto),
+        // ASUMIMOS que es para completar el envío pendiente.
+        const emailRegex = /[\w.-]+@[\w.-]+\.\w+/;
+        const emailMatch = input.question.match(emailRegex);
+        const isEmailInput = !!emailMatch && input.question.length < 100;
 
-<CONTEXTO_DIRECTORIO>
-${baseContext}
-</CONTEXTO_DIRECTORIO>
+        if (isEmailInput) {
+            const userEmail = emailMatch[0];
+            console.log(`[DiciBot] Email detectado por Regex: ${userEmail}. Ejecutando envío Forzoso.`);
 
-<HISTORIAL>
+            let toolResultContent: any;
+            try {
+                // Ejecución directa, sin preguntar a la IA
+                toolResultContent = await sendMessageTool.run({
+                    channel: 'email',
+                    contactInfo: userEmail,
+                    messageBody: "(Envío solicitado por chat)",
+                    userName: "Usuario"
+                });
+            } catch (e: any) {
+                toolResultContent = JSON.stringify({ success: false, error: e.message });
+            }
+
+            // Generar respuesta final (Traducción del resultado)
+            const resultPrompt = `
+ROL: DiciBot.
+SITUACIÓN: El usuario acaba de dar su email (${userEmail}) para recibir información.
+ACCIÓN REALIZADA: El sistema YA ejecutó el envío.
+RESULTADO TÉCNICO: ${JSON.parse(JSON.stringify(toolResultContent))}
+
+TU TAREA:
+1. Dile al usuario el resultado (Éxito o Error) basado en "RESULTADO TÉCNICO".
+2. IMPRESCINDIBLE: Responde en el MISMO IDIOMA que el usuario venía usando en la sesión anterior (o detecta por el contexto).
+3. Sé breve y amable. No uses Markdown complejo.
+`;
+            // Recuperamos historial breve solo para contexto de idioma si es necesario
+            const prevHistory = await getSessionHistory(effectiveSessionId, 5);
+
+            const response = await ai.generate({
+                model: gemini20Flash,
+                prompt: `${resultPrompt}\n\nCONTEXTO PREVIO:\n${prevHistory}`,
+                config: { temperature: 0.3 }
+            });
+
+            const finalText = response.text;
+            await saveInteraction(effectiveSessionId, input.question, finalText);
+
+            return {
+                answer: finalText,
+                uiComponent: 'SHARE_BUTTONS'
+            };
+        }
+
+
+        // ---------------------------------------------------------
+        // FLUJO NORMAL (Si no es solo un email)
+        // ---------------------------------------------------------
+        // 1. Cargar Contextos
+        const historyText = await getSessionHistory(effectiveSessionId, 30);
+        let dynamicContext = await getDynamicKnowledgeContext();
+        if (input.context) dynamicContext += "\n\n[DOCS ADICIONALES]:\n" + input.context;
+
+        // 2. System Prompt (CON LÓGICA RESTRICTIVA + IDIOMA FORZADO)
+        const systemPrompt = `
+ROL: Agente DiciBot.
+
+=== 🌍 REGLA DE ORO: IDIOMA ===
+El usuario manda: "${input.question}"
+1. IDENTIFICA el idioma de esa frase.
+2. RESPONDE SOLAMENTE EN ESE IDIOMA.
+3. SI el contexto está en otro idioma (ej: Alemán) y el usuario pregunta en Español -> TRADUCE EL CONTENIDO.
+
+Ejemplos de Comportamiento Obligatorio:
+- Contexto: "Travelposting ist ein Unternehmen..." (Alemán)
+- User Input: "¿Qué hace Travelposting?" (Español)
+- Tu Respuesta: "Travelposting es una empresa de viajes..." (TRADUCIDO AL ESPAÑOL)
+
+=== 🔍 POLITICA DE RECOMENDACIONES ===
+Si encuentras un negocio que coincide en CATEGORÍA ("Agencia de Viajes") pero te faltan detalles específicos ("Familiar", "Alemania"):
+1. NO digas "no tengo nada".
+2. OFRECE la opción que tienes CON SUS DATOS (si los ves): "Encontré 'Club Inviajes' (Tel: ...). Es una agencia. Podríamos consultar..."
+3. SIEMPRE intenta conectar al usuario con el negocio disponible.
+
+<MEMORIA_RECIENTE>
 ${historyText}
-</HISTORIAL>
+</MEMORIA_RECIENTE>
 
-<INPUT_ACTUAL>
-"${input.question}"
-</INPUT_ACTUAL>
+<CONTEXTO_CONOCIMIENTO>
+${dynamicContext}
+</CONTEXTO_CONOCIMIENTO>
 
-=== INSTRUCCIONES ===
-1. **IDIOMA**: Responde en el idioma del usuario.
-2. **IDENTIFICAR EMPRESA**: 
-   - Si el usuario menciona explícitamente una empresa, extráela en 'targetCompanyName'.
-   - **CRÍTICO - CONTEXTO HISTÓRICO**: Si el usuario pregunta de forma implícita (ej: "¿dónde queda?", "dame más info", "su teléfono") y en el <HISTORIAL> reciente se estaba hablando de una empresa, **ASUME** que se refiere a esa misma empresa y pon su nombre en 'targetCompanyName'.
-   - Si no hay empresa clara, devuelve null.
-3. **IDENTIFICAR USUARIO**: Si el usuario dice "Soy Nilo", 'extractedName' = "Nilo".
-4. **FORMATO**: Devuelve JSON exacto.
+<SCRIPT_DICICOIN>
+${DICICOIN_SCRIPT}
+</SCRIPT_DICICOIN>
+
+=== 🛑 REGLAS DE ACCIÓN (PRIORIDAD 2) ===
+
+1. **BÚSQUEDA Y DETALLES (PRIORIDAD TÉCNICA):**
+   - SIEMPRE que el usuario busque un servicio ("Busco abogados", "Agencia de viajes") o pregunte detalles:
+   - **ESCANEA** el [DIRECTORY] buscando coincidencias de palabras clave en el NOMBRE o CATEGORÍA.
+   - **EJEMPLO:** Si busca "viajes" y ves "Inviajes" o "Reisen" -> **ES UN MATCH.**
+   - **ACCIÓN:** USA LA TOOL 'retrieveCompanyInfo' con el nombre del candidato OBLIGATORIAMENTE antes de decir que no existe.
+
+2. **FALTA DE DATOS (CRÍTICO):**
+   - Si piden enviar ("Senden") pero NO hay email en el historial:
+     - **PROHIBIDO:** Decir "No puedo".
+     - **ÚNICA ACCIÓN:** Preguntar "¿A qué email te lo envío?" (En el idioma del usuario).
+
+3. **DICICOIN:**
+   - Si preguntan qué es, traduce el <SCRIPT_DICICOIN> al idioma del usuario y úsalo.
 `;
 
-        // 3. EJECUTAR EL CEREBRO (Fase 1)
-        const analysis = await ai.generate({
+        let currentPrompt = `${systemPrompt}\n\nUSER INPUT: "${input.question}"\n(DETECT LANGUAGE OF INPUT -> ANSWER IN THAT LANGUAGE)`;
+
+        // 3. Generación Inicial (Baja temperatura para obedecer reglas negativas)
+        let response = await ai.generate({
             model: gemini20Flash,
-            prompt: analysisPrompt,
-            output: { schema: AnalysisSchema },
-            config: { temperature: 0.1 }
+            prompt: currentPrompt,
+            tools: [sendMessageTool, calendarTool, retrieveCompanyInfoTool],
+            config: { temperature: 0.4 }
         });
 
-        const thoughtProcess = analysis.output;
-        if (!thoughtProcess) return { answer: "Error interno de procesamiento de IA." };
+        let showShareButtons = false;
+        let turns = 0;
 
-        console.log("🧠 FASE 1 (Analisis):", { intent: thoughtProcess.intent, target: thoughtProcess.targetCompanyName, user: thoughtProcess.extractedName });
+        // 4. Bucle de Ejecución
+        while (response.toolRequests && response.toolRequests.length > 0 && turns < 5) {
+            // Genkit response parts access fix
+            const toolPart = response.toolRequests[0];
+            const toolName = toolPart.toolRequest.name;
+            const toolInput = toolPart.toolRequest.input;
 
-        // 4. LÓGICA DE PROFUNDIDAD (DEEP DIVE RGA)
-        // Si detectamos una empresa objetivo, buscamos su conocimiento profundo (PDFs, Snippets)
-        let deepContext = "";
-        if (thoughtProcess.targetCompanyName) {
-            console.log(`🔎 [RGA] Buscando conocimiento profundo para: ${thoughtProcess.targetCompanyName}`);
-            deepContext = await getClientDeepKnowledge(thoughtProcess.targetCompanyName);
-        }
+            if (toolName === 'sendMessage') showShareButtons = true;
 
-        // 5. GENERACIÓN DE RESPUESTA FINAL
-        // Si encontramos info profunda, o si simplemente queremos refinar la respuesta,
-        // podríamos volver a llamar al LLM con el contexto completo.
-        // PERO para ahorrar latencia, si NO hay deepContext, usamos la 'finalResponseText' de Fase 1.
-        // SI hay deepContext, DEBEMOS regenerar la respuesta para incluir los detalles del PDF.
+            console.log(`[DiciBot] Ejecutando Tool: ${toolName}`);
 
-        let finalAnswer = thoughtProcess.finalResponseText;
-
-        if (deepContext) {
-            console.log("💡 [RGA] Regenerando respuesta con Deep Context...");
-            // Fase 2: Generación con Contexto Rico
-            const deepPrompt = `
-ACTÚA COMO: Agente Experto de Katei/Dicilo.
-TAREA: Responder la pregunta del usuario usando el CONOCIMIENTO PROFUNDO encontrado.
-
-<CONOCIMIENTO_PROFUNDO_PARA_${thoughtProcess.targetCompanyName?.toUpperCase()}>
-${deepContext}
-</CONOCIMIENTO_PROFUNDO_PARA_${thoughtProcess.targetCompanyName?.toUpperCase()}>
-
-<CONTEXTO_GLOBAL>
-${baseContext}
-</CONTEXTO_GLOBAL>
-
-<PREGUNTA_USUARIO>
-"${input.question}"
-</PREGUNTA_USUARIO>
-
-<HISTORIAL>
-${historyText}
-</HISTORIAL>
-
-INSTRUCCIONES:
-1. Usa la información de CONOCIMIENTO PROFUNDO (PDFs, Hechos) para dar una respuesta detallada y precisa.
-2. Si la info está en el PDF, cítala naturalmente (no digas "según el PDF").
-3. Mantén el tono servicial y profesional.
-4. Si el usuario pidió contactar, confirma que tienes los datos si aparecen en el texto profundo.
-`;
-            const deepGeneration = await ai.generate({
-                model: gemini20Flash,
-                prompt: deepPrompt,
-                config: { temperature: 0.1 } // Un poco de creatividad para redactar bien el resumen del PDF
-            });
-            finalAnswer = deepGeneration.text;
-        }
-
-
-        // 6. LÓGICA DE ACCIÓN (Email / Calendar) - Igual que antes
-        const isJunkData = (val: string | null) => !val || val.length < 2 || val.toLowerCase().includes('null');
-        const cleanName = isJunkData(thoughtProcess.extractedName) ? null : thoughtProcess.extractedName;
-        const cleanEmail = (thoughtProcess.extractedEmail && thoughtProcess.extractedEmail.includes('@') && !isJunkData(thoughtProcess.extractedEmail)) ? thoughtProcess.extractedEmail : null;
-
-        const hasContactData = !!(cleanName && cleanEmail);
-        const isSendAction = thoughtProcess.actionNeeded === 'SEND_MESSAGE';
-        const saysProcessing = finalAnswer.toLowerCase().includes('procesando') || finalAnswer.toLowerCase().includes('momento');
-
-        // Execute Action Logic
-        if ((isSendAction && hasContactData) || (saysProcessing && hasContactData && thoughtProcess.actionNeeded !== 'NONE')) {
-            console.log("⚡ EJECUTANDO ACCIÓN AUTOMÁTICA (RGA ENHANCED)");
-
-            // Si tenemos Deep Context, el resumen del email debería incluirlo?
-            // El brain Phase 1 no tenía el deep context para generar 'emailContentSummary'.
-            // Podríamos usar 'finalAnswer' como el cuerpo del mensaje si es informativo.
-            // O simplemente enviar el 'emailContentSummary' original si era bueno.
-            // Mejor: Si regeneramos respuesta con Deep Context, eso es lo que el usuario ve en el chat.
-            // Para el EMAIL, idealmente querríamos enviar esa misma info detallada.
-
-            let messageBody = thoughtProcess.emailContentSummary || finalAnswer;
-            if (deepContext && thoughtProcess.emailContentSummary) {
-                // Append deep context hint to email body? 
-                // Simple: Use the original summary + "Based on our extended files."
-            }
-
-            // ... [Rest of Tool Execution Logic - Keeping simple for this update] ...
-            // (Copying existing tool execution logic briefly for safety)
-
-            let toolResult: any = "";
+            let toolResultContent: any = "Error";
             try {
-                const payload = {
-                    to: cleanEmail || "",
-                    message: messageBody,
-                    userName: cleanName || "Usuario",
-                    channel: 'email'
-                } as const;
-                toolResult = await sendMessageTool.run(payload);
-
-                let cleanMessage = "Acción completada.";
-                if (typeof toolResult === 'string') cleanMessage = toolResult;
-                else if (toolResult?.message) cleanMessage = toolResult.message;
-
-                const prefix = cleanName ? `Listo ${cleanName}, ` : "";
-                return { answer: `${prefix}${cleanMessage}` };
-
-            } catch (e) {
-                return { answer: "Hubo un error técnico al enviar el email." };
+                if (toolName === 'sendMessage') toolResultContent = await sendMessageTool.run(toolInput as any);
+                if (toolName === 'calendar') toolResultContent = await calendarTool.run(toolInput as any);
+                if (toolName === 'retrieveCompanyInfo') toolResultContent = await retrieveCompanyInfoTool.run(toolInput as any);
+            } catch (e: any) {
+                toolResultContent = JSON.stringify({ success: false, error: e.message });
             }
+
+            if (toolName === 'retrieveCompanyInfo') {
+                currentPrompt += `
+                \n[SYSTEM EVENT: RAG Data Retrieved successfully]
+                \n[KNOWLEDGE FOUND]: ${toolResultContent}
+                \n[CRITICAL INSTRUCTION]: 
+                1. DETECT Language of Original User Input: "${input.question}" 
+                2. IGNORE the language of the [KNOWLEDGE FOUND] (it might be German/English).
+                3. CONSTRUCT your valid Final Answer SOLELY in the language of the User Input.
+                4. Use the facts from [KNOWLEDGE FOUND].`;
+            } else {
+                currentPrompt += `
+                \n[SYSTEM EVENT: Tool '${toolName}' executed. Result: ${toolResultContent}.]
+                \n[INSTRUCTION: Translate the status result to the USER'S LANGUAGE (${input.question}) and explain it politely.]`;
+            }
+
+            // Segunda generación (Temp media para naturalidad en la respuesta final)
+            response = await ai.generate({
+                model: gemini20Flash,
+                prompt: currentPrompt,
+                tools: [sendMessageTool, calendarTool, retrieveCompanyInfoTool],
+                config: { temperature: 0.3 }
+            });
+
+            turns++;
         }
 
-        // Anti-Hallucination Fallback (If Brain wanted to send but lacked data)
-        const brainThinkItsReady = (thoughtProcess.missingFields.length === 0) || isSendAction;
-        if (brainThinkItsReady && !hasContactData && isSendAction) {
-            if (!cleanName && !cleanEmail) finalAnswer = "Para enviártelo, necesito tu nombre y tu email.";
-            else if (!cleanName) finalAnswer = "Genial, tengo tu email, pero ¿me dices tu nombre?";
-            else if (!cleanEmail) finalAnswer = `Gracias ${cleanName}, ¿a qué email te envío la información?`;
+        // 5. Fallback Share Buttons
+        const lowerQ = input.question.toLowerCase();
+        if (lowerQ.includes('share') || lowerQ.includes('teilen') || lowerQ.includes('compartir') || showShareButtons) {
+            showShareButtons = true;
         }
 
-        return { answer: finalAnswer };
+        // 6. Guardar y Salir
+        const finalAnswerText = response.text;
+        await saveInteraction(effectiveSessionId, input.question, finalAnswerText);
+
+        return {
+            answer: finalAnswerText,
+            uiComponent: showShareButtons ? 'SHARE_BUTTONS' as const : 'NONE' as const
+        };
     }
 );

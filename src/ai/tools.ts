@@ -1,92 +1,116 @@
 import { ai } from './genkit';
 import { z } from 'genkit';
+import { getClientDeepKnowledge } from '@/ai/data/knowledge-retriever';
 
-// Tool 1: Messaging Tool (Email/WhatsApp/Telegram)
-// This tool calls the n8n webhook to send messages outside the chat.
+// --- HERRAMIENTA 3: BUSCADOR DE INFORMACIÓN DE EMPRESA (RAG) ---
+export const retrieveCompanyInfoTool = ai.defineTool(
+    {
+        name: 'retrieveCompanyInfo',
+        description: 'Busca información detallada sobre una empresa específica (Dirección, Servicios, Descripción). Úsala SIEMPRE que el usuario pregunte "Qué es", "Qué hace" o "Dónde está" una empresa del directorio.',
+        inputSchema: z.object({
+            companyName: z.string().describe("El nombre exacto de la empresa a buscar."),
+        }),
+        outputSchema: z.string(),
+    },
+    async ({ companyName }) => {
+        console.log(`[Tool:retrieveCompanyInfo] Buscando: ${companyName}`);
+        try {
+            const knowledge = await getClientDeepKnowledge(companyName);
+            if (!knowledge || knowledge.length < 10) {
+                return JSON.stringify({ success: false, error: "No se encontró información detallada para esta empresa." });
+            }
+            return JSON.stringify({ success: true, data: knowledge });
+        } catch (error: any) {
+            return JSON.stringify({ success: false, error: error.message });
+        }
+    }
+);
+const WEBHOOK_MESSAGE = 'https://dicilo.app.n8n.cloud/webhook/dicibot-message';
+const WEBHOOK_CALENDAR = 'https://dicilo.app.n8n.cloud/webhook/dicibot-calendar';
+
+// --- HERRAMIENTA 1: ENVÍO DE MENSAJES ---
 export const sendMessageTool = ai.defineTool(
     {
-        name: 'sendMessageTool',
-        description: 'Sends a message to a user via Email, WhatsApp, or Telegram. Use this when the user asks to receive information outside of this chat.',
+        name: 'sendMessage',
+        description: 'Envía información por Email o WhatsApp. Retorna JSON con éxito o error.',
         inputSchema: z.object({
-            to: z.string().describe('The destination email address or phone number. If unknown, ask the user.'),
-            message: z.string().describe('The content of the message to send.'),
-            channel: z.enum(['email', 'whatsapp']).describe('The channel to use for sending the message.'),
-            userName: z.string().describe('The name of the user sending the request.'),
+            userName: z.string(),
+            contactInfo: z.string(),
+            messageBody: z.string().describe("El contenido o resumen a enviar."),
+            channel: z.enum(['email', 'whatsapp']).default('email'),
         }),
-        outputSchema: z.object({
-            success: z.boolean(),
-            message: z.string(),
-        }),
+        outputSchema: z.string(),
     },
-    async (input) => {
+    async ({ userName, contactInfo, messageBody, channel }) => {
+        console.log(`[Tool:sendMessage] Enviando a ${channel} -> ${contactInfo}`);
+
         try {
-            console.log(`[Tool: sendMessageTool] Sending ${input.channel} to ${input.to}`);
-
-            // n8n expects specific structure: userName, details (mapped from message)
-            const payload = {
-                details: input.message, // Map 'message' to 'details' for n8n
-                email: input.to,        // Send email as 'email' just in case
-                ...input
-            };
-
-            const response = await fetch('https://dicilo.app.n8n.cloud/webhook/dicibot-message', {
+            const response = await fetch(WEBHOOK_MESSAGE, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(payload),
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    actionType: channel === 'whatsapp' ? 'send_whatsapp' : 'send_email',
+                    payload: { userName, email: contactInfo, phone: contactInfo, details: messageBody }
+                }),
             });
 
             if (!response.ok) {
-                // Try to get error text if possible
-                const errorText = await response.text();
-                throw new Error(`n8n webhook failed with status ${response.status}: ${errorText}`);
+                return JSON.stringify({ success: false, error: `Error servidor n8n: ${response.status} ${response.statusText}` });
             }
 
-            return { success: true, message: 'Message sent successfully.' };
+            // LOGGING TO FIRESTORE (Legacy Support)
+            try {
+                const { getAdminDb } = await import('@/lib/firebase-admin');
+                const db = getAdminDb();
+                await db.collection('email_logs').add({
+                    to: contactInfo,
+                    message: messageBody,
+                    channel: channel,
+                    userName: userName,
+                    sentAt: new Date(),
+                    status: 'success',
+                    metadata: { n8n_status: response.status }
+                });
+            } catch (e) {
+                console.error('[Tool:sendMessage] Log failed', e);
+            }
+
+            return JSON.stringify({ success: true, message: "Envío procesado correctamente por n8n." });
+
         } catch (error: any) {
-            console.error('[Tool: sendMessageTool] Error:', error);
-            return { success: false, message: `Failed to send message: ${error.message}` };
+            return JSON.stringify({ success: false, error: `Fallo de conexión: ${error.message}` });
         }
     }
 );
 
-// Tool 2: Calendar Tool
-// This tool calls the n8n webhook to schedule meetings.
+// --- HERRAMIENTA 2: CALENDARIO ---
 export const calendarTool = ai.defineTool(
     {
-        name: 'calendarTool',
-        description: 'Schedules a meeting or appointment in the Google Calendar. Use this when the user explicitly asks to book a meeting or appointment.',
+        name: 'calendar',
+        description: 'Agenda una cita en el calendario. Retorna JSON.',
         inputSchema: z.object({
-            userEmail: z.string().describe('The email address of the user participating in the meeting. Ask if unknown.'),
-            intent: z.string().describe('The purpose or topic of the meeting (e.g., "Consulting", "Demo", "Support").'),
-            proposedTime: z.string().describe('The proposed date and time for the meeting in ISO format (e.g., 2023-10-27T10:00:00Z) or a clear natural language description.'),
+            userName: z.string(),
+            date: z.string().describe("Fecha y hora ISO"),
+            contactInfo: z.string(),
+            details: z.string().optional()
         }),
-        outputSchema: z.object({
-            success: z.boolean(),
-            message: z.string(),
-        }),
+        outputSchema: z.string(),
     },
-    async (input) => {
+    async (payload) => {
+        console.log(`[Tool:calendar] Agendando para ${payload.date}`);
         try {
-            console.log(`[Tool: calendarTool] Scheduling for ${input.userEmail} at ${input.proposedTime}`);
-
-            const response = await fetch('https://dicilo.app.n8n.cloud/webhook/dicibot-calendar', {
+            const response = await fetch(WEBHOOK_CALENDAR, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(input),
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ actionType: 'calendar_booking', payload }),
             });
 
             if (!response.ok) {
-                throw new Error(`n8n webhook failed with status ${response.status}`);
+                return JSON.stringify({ success: false, error: `Error servidor n8n: ${response.status}` });
             }
-
-            return { success: true, message: 'Meeting scheduled successfully.' };
+            return JSON.stringify({ success: true, message: "Cita agendada." });
         } catch (error: any) {
-            console.error('[Tool: calendarTool] Error:', error);
-            return { success: false, message: `Failed to schedule meeting: ${error.message}` };
+            return JSON.stringify({ success: false, error: `Fallo de conexión: ${error.message}` });
         }
     }
 );

@@ -110,8 +110,8 @@ export async function getDynamicKnowledgeContext(): Promise<string> {
         // 2. Fetch DATA SNAPSHOT (Directory)
         // This remains the "Wide Net" to let the Brain know WHO exists.
         const [businessesSnapshot, clientsSnapshot] = await Promise.all([
-            db.collection('businesses').limit(150).get(), // Reduced limit for speed, assuming search will handle deep dive
-            db.collection('clients').limit(150).get()
+            db.collection('businesses').get(),
+            db.collection('clients').get()
         ]);
 
         if (!businessesSnapshot.empty || !clientsSnapshot.empty) {
@@ -121,20 +121,57 @@ export async function getDynamicKnowledgeContext(): Promise<string> {
                 const d = doc.data();
                 const name = d.clientName || d.name || d.businessName || "Unknown";
                 const type = d.clientType || 'Standard';
-                const cat = d.category?.name || d.category || '';
-                return `- ${name} (${type} / ${cat})`;
+                let cat = d.category?.name || d.category || '';
+
+                // Fallback: Infer category from name if missing
+                if (!cat) {
+                    const lowerName = name.toLowerCase();
+                    if (lowerName.includes('reisen') || lowerName.includes('travel') || lowerName.includes('viajes')) cat = 'Agencia de Viajes / Reisebüro';
+                    else if (lowerName.includes('shop') || lowerName.includes('market')) cat = 'Comercio';
+                }
+
+                // Enrich with cues for the LLM (Crucial for "Reisen" -> "Viajes" matching)
+                const desc = d.shortDescription || d.description || d.about || "";
+                const snippet = desc ? desc.substring(0, 80).replace(/\n/g, " ") : "";
+                const phone = d.contact?.phone || d.phone || d.phoneNumber || d.celular || d.contactPhone || "";
+
+                return `- ${name} (${type} / ${cat}) [Info: ${snippet}...] [Tel: ${phone}]`;
             };
 
-            const seen = new Set();
+            const seenKey = new Set();
 
-            clientsSnapshot.forEach(doc => {
-                const entry = processEntry(doc);
-                if (!seen.has(entry)) { dynamicContext += entry + "\n"; seen.add(entry); }
-            });
-            businessesSnapshot.forEach(doc => {
-                const entry = processEntry(doc);
-                if (!seen.has(entry)) { dynamicContext += entry + "\n"; seen.add(entry); }
-            });
+            const addToContext = (doc: any) => {
+                const d = doc.data();
+
+                // FILTER: Only allow Starter, Retailer (Minorista), Premium. Exclude Basic.
+                const type = (d.clientType || 'basic').toLowerCase();
+                // We match partial strings to catch 'premium-plus' or 'retailer-v1' if they exist.
+                const allowedTypes = ['starter', 'retailer', 'minorista', 'premium'];
+
+                if (!allowedTypes.some(t => type.includes(t))) {
+                    return;
+                }
+
+                const rawName = d.clientName || d.name || d.businessName || "";
+
+                // Dedupe strictly by Normalized Name or Slug. 
+                // Ignore Doc ID for deduplication purposes to force merging of "Inviajes" (client) and "Inviajes" (business).
+                const key = d.slug || normalize(rawName);
+
+                if (key && key.length > 2 && !seenKey.has(key)) {
+                    const entry = processEntry(doc);
+                    dynamicContext += entry + "\n";
+                    seenKey.add(key);
+                } else if ((!key || key.length <= 2) && !seenKey.has(doc.id)) {
+                    // Fallback for messy data without name/slug
+                    const entry = processEntry(doc);
+                    dynamicContext += entry + "\n";
+                    seenKey.add(doc.id);
+                }
+            };
+
+            clientsSnapshot.forEach(doc => addToContext(doc));
+            businessesSnapshot.forEach(doc => addToContext(doc));
         }
 
         // 3. Combine

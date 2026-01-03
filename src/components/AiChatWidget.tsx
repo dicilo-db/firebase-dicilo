@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { MessageCircle, X, Send, Loader2, Bot, User, Mic, MicOff } from 'lucide-react';
+import { MessageCircle, X, Send, Loader2, Bot, User, Mic, MicOff, Share2 } from 'lucide-react';
 import { chatAction } from '@/app/actions/chat';
 import Image from 'next/image';
 import { getGreetingAction } from '@/app/actions/greeting';
@@ -16,6 +16,7 @@ interface Message {
     id: string;
     role: 'user' | 'assistant';
     content: string;
+    uiComponent?: 'NONE' | 'SHARE_BUTTONS' | 'CALENDAR_WIDGET';
 }
 
 // Add global declaration for Web Speech API
@@ -36,7 +37,7 @@ export function AiChatWidget() {
         {
             id: 'welcome',
             role: 'assistant',
-            content: '...', // Placeholder until fetched
+            content: '¡Hola! Soy DiciBot el Asistente Virtual de Dicilo.net. Mi misión es conectarte con empresas verificadas de nuestro catálogo global o ayudarte a impulsar tu negocio con nuestros servicios. ¿Buscas una recomendación o servicios para tu empresa?',
         },
     ]);
     const [inputValue, setInputValue] = useState('');
@@ -65,11 +66,11 @@ export function AiChatWidget() {
             if (user) {
                 setUserId(user.uid);
             } else {
-                // Anonymous Session logic
-                let sessionUid = sessionStorage.getItem('dicilo_anon_uid');
+                // Anonymous Session logic (Persistent via LocalStorage)
+                let sessionUid = localStorage.getItem('dicilo_guest_id');
                 if (!sessionUid) {
                     sessionUid = 'anon_' + Math.random().toString(36).substr(2, 9);
-                    sessionStorage.setItem('dicilo_anon_uid', sessionUid);
+                    localStorage.setItem('dicilo_guest_id', sessionUid);
                 }
                 setUserId(sessionUid);
             }
@@ -104,20 +105,6 @@ export function AiChatWidget() {
         }
     };
 
-    useEffect(() => {
-        // Fetch personalized greeting on mount
-        const fetchGreeting = async () => {
-            const greeting = await getGreetingAction();
-            setMessages(prev => {
-                const newMessages = [...prev];
-                if (newMessages.length > 0 && newMessages[0].id === 'welcome') {
-                    newMessages[0].content = greeting;
-                }
-                return newMessages;
-            });
-        };
-        fetchGreeting();
-    }, []);
 
     useEffect(() => {
         if (scrollAreaRef.current) {
@@ -238,6 +225,40 @@ export function AiChatWidget() {
                                             >
                                                 {message.content}
                                             </ReactMarkdown>
+
+                                            {/* UI COMPONENT: SHARE BUTTONS */}
+                                            {message.uiComponent === 'SHARE_BUTTONS' && (
+                                                <div className="mt-3 flex flex-wrap gap-2 border-t pt-2 border-primary/10">
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        className="h-7 text-xs bg-green-500/10 text-green-700 hover:bg-green-500/20 border-green-200"
+                                                        onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent(message.content + "\n\nEnviado desde dicilo.net")}`, '_blank')}
+                                                    >
+                                                        <Share2 className="w-3 h-3 mr-1" /> WhatsApp
+                                                    </Button>
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        className="h-7 text-xs"
+                                                        onClick={() => {
+                                                            if (navigator.share) {
+                                                                navigator.share({
+                                                                    title: 'Dicilo Info',
+                                                                    text: message.content,
+                                                                    url: 'https://dicilo.net'
+                                                                });
+                                                            } else {
+                                                                // Fallback copying to clipboard
+                                                                navigator.clipboard.writeText(message.content);
+                                                                alert('Texto copiado al portapapeles');
+                                                            }
+                                                        }}
+                                                    >
+                                                        <Share2 className="w-3 h-3 mr-1" /> Compartir
+                                                    </Button>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 ))}
@@ -255,22 +276,28 @@ export function AiChatWidget() {
                         </ScrollArea>
                     </CardContent>
                     <CardFooter className="p-3 border-t bg-background">
-                        <div className="flex w-full gap-2">
+                        <form
+                            className="flex w-full gap-2"
+                            onSubmit={(e) => {
+                                e.preventDefault();
+                                handleSendMessage();
+                            }}
+                        >
                             <Input
                                 ref={inputRef}
                                 autoFocus
                                 placeholder="Escribe un mensaje..."
                                 value={inputValue}
                                 onChange={(e) => setInputValue(e.target.value)}
-                                onKeyDown={handleKeyDown}
                                 disabled={isLoading}
                                 className="flex-grow"
                             />
                             {/* File Upload Removed as per user request */}
-                            <Button size="icon" onClick={handleSendMessage} disabled={isLoading || !inputValue.trim()}>
+                            <Button type="submit" size="icon" disabled={isLoading || !inputValue.trim()}>
                                 <Send className="w-4 h-4" />
                             </Button>
                             <Button
+                                type="button"
                                 variant="ghost"
                                 size="icon"
                                 onClick={startListening}
@@ -280,7 +307,7 @@ export function AiChatWidget() {
                             >
                                 {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
                             </Button>
-                        </div>
+                        </form>
                     </CardFooter>
                 </Card>
             )}
