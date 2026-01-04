@@ -31,7 +31,8 @@ import {
   Coins,
   Wallet,
   Briefcase,
-  Megaphone
+  Megaphone,
+  Scan
 } from 'lucide-react';
 import { useAdminUser, useAuthGuard } from '@/hooks/useAuthGuard';
 import { useServerAction } from '@/hooks/useServerAction';
@@ -722,6 +723,20 @@ const DashboardContent: React.FC = () => {
                 <CardContent>
                   <div className="text-2xl font-bold">{t('dashboard.cards.feedback.title')}</div>
                   <p className="text-xs text-muted-foreground mt-1">{t('dashboard.cards.feedback.description')}</p>
+                </CardContent>
+              </Card>
+            </Link>
+
+            {/* Scanner & Reports (B2B Tools) */}
+            <Link href="/admin/scan" className="group">
+              <Card className="h-full bg-blue-50/50 dark:bg-blue-900/10 border-blue-200 transition-all hover:shadow-md hover:border-blue-500 cursor-pointer relative">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium text-blue-700 dark:text-blue-400">Scanner & Reports</CardTitle>
+                  <Scan className="h-4 w-4 text-blue-500 group-hover:scale-110 transition-transform" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">Scanner Pro</div>
+                  <p className="text-xs text-muted-foreground mt-1">Captura OCR & Reportes B2B</p>
                 </CardContent>
               </Card>
             </Link>
