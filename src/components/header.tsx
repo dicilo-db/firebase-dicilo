@@ -64,29 +64,40 @@ const Header = () => {
                  Rule 1 states Desktop MUST show Full Logo. We adhere to Rule 1.
              */}
 
-            {/* Mobile Logo (Isotype) - Visible up to md */}
+            {/* Mobile Logo (Full Text) - Visible up to md (Request 2: Mobile must show Full Logo) */}
             <div className="block md:hidden">
               <Image
-                src="/logo.png"
-                alt="Dicilo Isotype"
-                width={50}
-                height={50}
+                src="/Logo negro dicilo.png"
+                alt="Dicilo Logo"
+                width={140}
+                height={46}
                 className="h-10 w-auto"
                 priority
               />
             </div>
 
-            {/* Desktop Logo (Full Text) - Visible from md upwards */}
+            {/* Desktop Logo - Visible from md upwards */}
             <div className="hidden md:block">
-              {/* Note: Ensure 'Logo negro dicilo.png' is in public/ folder. URL encoded spaces. */}
-              <Image
-                src="/Logo negro dicilo.png"
-                alt="Dicilo Logo"
-                width={150}
-                height={50}
-                className="h-12 w-auto"
-                priority
-              />
+              {/* Request 1: Home Page shows Icon Only, Inner Pages show Full Logo */}
+              {pathname === '/' ? (
+                <Image
+                  src="/logo.png"
+                  alt="Dicilo Isotype"
+                  width={50}
+                  height={50}
+                  className="h-12 w-auto"
+                  priority
+                />
+              ) : (
+                <Image
+                  src="/Logo negro dicilo.png"
+                  alt="Dicilo Logo"
+                  width={150}
+                  height={50}
+                  className="h-12 w-auto"
+                  priority
+                />
+              )}
             </div>
           </Link>
 

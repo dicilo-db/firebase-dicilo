@@ -100,68 +100,70 @@ TU TAREA:
         // FLUJO NORMAL (Si no es solo un email)
         // ---------------------------------------------------------
         // 1. Cargar Contextos
-        const historyText = await getSessionHistory(effectiveSessionId, 30);
+        // 2. System Prompt (CON LÓGICA RESTRICTIVA + IDIOMA FORZADO)
+        // Reducimos historial a 10 items (5 turnos de pregunta/respuesta) para evitar alucinaciones con contexto viejo
+        const historyText = await getSessionHistory(effectiveSessionId, 10);
         let dynamicContext = await getDynamicKnowledgeContext();
         if (input.context) dynamicContext += "\n\n[DOCS ADICIONALES]:\n" + input.context;
 
-        // 2. System Prompt (CON LÓGICA RESTRICTIVA + IDIOMA FORZADO)
         const systemPrompt = `
 ROL: Agente DiciBot.
-
-=== 🌍 REGLA DE ORO: IDIOMA ===
-El usuario manda: "${input.question}"
-1. IDENTIFICA el idioma de esa frase.
-2. RESPONDE SOLAMENTE EN ESE IDIOMA.
-3. SI el contexto está en otro idioma (ej: Alemán) y el usuario pregunta en Español -> TRADUCE EL CONTENIDO.
-
-Ejemplos de Comportamiento Obligatorio:
-- Contexto: "Travelposting ist ein Unternehmen..." (Alemán)
-- User Input: "¿Qué hace Travelposting?" (Español)
-- Tu Respuesta: "Travelposting es una empresa de viajes..." (TRADUCIDO AL ESPAÑOL)
-
-=== 🔍 POLITICA DE RECOMENDACIONES ===
-Si encuentras un negocio que coincide en CATEGORÍA ("Agencia de Viajes") pero te faltan detalles específicos ("Familiar", "Alemania"):
-1. NO digas "no tengo nada".
-2. OFRECE la opción que tienes CON SUS DATOS (si los ves): "Encontré 'Club Inviajes' (Tel: ...). Es una agencia. Podríamos consultar..."
-3. SIEMPRE intenta conectar al usuario con el negocio disponible.
-
-<MEMORIA_RECIENTE>
-${historyText}
-</MEMORIA_RECIENTE>
 
 <CONTEXTO_CONOCIMIENTO>
 ${dynamicContext}
 </CONTEXTO_CONOCIMIENTO>
 
+<MEMORIA_RECIENTE>
+${historyText}
+</MEMORIA_RECIENTE>
+
 <SCRIPT_DICICOIN>
 ${DICICOIN_SCRIPT}
 </SCRIPT_DICICOIN>
 
-=== 🛑 REGLAS DE ACCIÓN (PRIORIDAD 2) ===
+=== 🧠 REGLA DE ATENCIÓN (FRESH START) ===
+- Analiza el "INPUT DEL USUARIO" actual por sí mismo.
+- Si el usuario cambia de tema (ej: estaba hablando de "Travelposting" y ahora dice "quiero viajar a Hamburgo"), IGNORA el fracaso anterior.
+- NO repitas "No encontré X" si el usuario ya no pregunta por X. ¡Busca lo nuevo!
 
-1. **BÚSQUEDA Y DETALLES (PRIORIDAD TÉCNICA):**
-   - SIEMPRE que el usuario busque un servicio ("Busco abogados", "Agencia de viajes") o pregunte detalles:
-   - **ESCANEA** el [DIRECTORY] buscando coincidencias de palabras clave en el NOMBRE o CATEGORÍA.
-   - **EJEMPLO:** Si busca "viajes" y ves "Inviajes" o "Reisen" -> **ES UN MATCH.**
-   - **ACCIÓN:** USA LA TOOL 'retrieveCompanyInfo' con el nombre del candidato OBLIGATORIAMENTE antes de decir que no existe.
+=== ⚠️ REGLAS NEGATIVAS (PROHIBICIONES) ===
+1. [MODO SILENCIO]: PROHIBIDO DECIR "Voy a usar la herramienta...". ¡Simplemente úsala!
+2. [NO INVENTAR]: Si no hay empresas de ese tipo en [CONTEXTO_CONOCIMIENTO], di "No encuentro coincidencias exactas en el directorio, pero puedo buscar otros servicios".
+3. [IDIOMA]: PROHIBIDO hablar en un idioma diferente al del usuario.
 
-2. **FALTA DE DATOS (CRÍTICO):**
-   - Si piden enviar ("Senden") pero NO hay email en el historial:
-     - **PROHIBIDO:** Decir "No puedo".
-     - **ÚNICA ACCIÓN:** Preguntar "¿A qué email te lo envío?" (En el idioma del usuario).
+=== 🌍 PROTOCOLO DE IDIOMA (PRIORIDAD MÁXIMA) ===
+- INPUT DEL USUARIO: "${input.question}"
+- TU TAREA: Detecta el idioma del input. 
+- RESPUESTA: TODA tu salida debe estar EN ESE MISMO IDIOMA.
+- TRADUCCIÓN OBLIGATORIA: Si lees datos en alemán/inglés de la base de datos, TRADÚCELOS antes de hablar.
+- EJEMPLO: Si el usuario pregunta en Español y la ficha dice "Zahnklinik Hamburg", tú respondes: "Aquí tienes una Clínica Dental en Hamburgo..."
 
-3. **DICICOIN:**
-   - Si preguntan qué es, traduce el <SCRIPT_DICICOIN> al idioma del usuario y úsalo.
+=== 🔍 ESTRATEGIA DE BÚSQUEDA ===
+1. Si el usuario busca Categoría ("Dentista", "Abogado", "Viaje") -> ESCANEA el [CONTEXTO_CONOCIMIENTO].
+2. Si ves algo relevante -> EJECUTA 'retrieveCompanyInfo' con el nombre de esa empresa.
+3. Si el usuario pregunta "¿Dónde está...?" o "¿Dirección de...?" -> ¡OBLIGATORIO USAR 'retrieveCompanyInfo'!
+4. NO preguntes "¿Cuál nombre?" si ya ves candidatos probables.
+
+=== 🔗 FORMATO DE ENLACES ===
+- Cuando menciones una UBICACIÓN o DIRECCIÓN (aunque sea solo CIUDAD), DEBES convertirla en un enlace de Google Maps.
+- Formato: [Ubicación](https://www.google.com/maps/search/?api=1&query=Ubicación)
+- Ejemplo: [Musterstraße 123, Hamburgo](https://www.google.com/maps/search/?api=1&query=Musterstraße+123,+Hamburgo)
+
+=== ⚠️ REGLA DE "DIRECCIÓN EXACTA" ===
+- Si la base de datos solo dice "Hamburg, Germany", **ESA ES LA DIRECCIÓN**.
+- NO digas "no tengo la dirección exacta".
+- Di: "Está ubicada en [Hamburg, Germany](...)."
+- ¡Cualquier ubicación geográfica cuenta como dirección!
 `;
 
-        let currentPrompt = `${systemPrompt}\n\nUSER INPUT: "${input.question}"\n(DETECT LANGUAGE OF INPUT -> ANSWER IN THAT LANGUAGE)`;
+        let currentPrompt = `${systemPrompt}\n\nUSER INPUT: "${input.question}"\n\n[SYSTEM]: REPLY IN THE LANGUAGE OF THE USER INPUT ONLY. TRANSLATE DATA IF NEEDED.`;
 
-        // 3. Generación Inicial (Baja temperatura para obedecer reglas negativas)
+        // 3. Generación Inicial
         let response = await ai.generate({
             model: gemini20Flash,
             prompt: currentPrompt,
             tools: [sendMessageTool, calendarTool, retrieveCompanyInfoTool],
-            config: { temperature: 0.4 }
+            config: { temperature: 0.2 }
         });
 
         let showShareButtons = false;
@@ -190,16 +192,20 @@ ${DICICOIN_SCRIPT}
             if (toolName === 'retrieveCompanyInfo') {
                 currentPrompt += `
                 \n[SYSTEM EVENT: RAG Data Retrieved successfully]
-                \n[KNOWLEDGE FOUND]: ${toolResultContent}
-                \n[CRITICAL INSTRUCTION]: 
-                1. DETECT Language of Original User Input: "${input.question}" 
-                2. IGNORE the language of the [KNOWLEDGE FOUND] (it might be German/English).
-                3. CONSTRUCT your valid Final Answer SOLELY in the language of the User Input.
-                4. Use the facts from [KNOWLEDGE FOUND].`;
+                \n[KNOWLEDGE FOUND (RAW DATA, DO NOT COPY LANGUAGE)]: ${toolResultContent}
+                \n[FINAL INSTRUCTION]: 
+                You have retrieved detailed data. Now you must ANSWER the user's question "${input.question}".
+                
+                CRITICAL LANGUAGE RULE:
+                1. The USER speaks: "${input.question}" (Detect Language!).
+                2. The DATA is likely in German/English.
+                3. YOU MUST TRANSLATE the key concepts from the DATA into the USER'S LANGUAGE.
+                4. DO NOT OUTPUT GERMAN if the user spoke Spanish.
+                5. Answer directly.`;
             } else {
                 currentPrompt += `
                 \n[SYSTEM EVENT: Tool '${toolName}' executed. Result: ${toolResultContent}.]
-                \n[INSTRUCTION: Translate the status result to the USER'S LANGUAGE (${input.question}) and explain it politely.]`;
+                \n[INSTRUCTION: Translate the result to the language of "${input.question}" and explain it politely.]`;
             }
 
             // Segunda generación (Temp media para naturalidad en la respuesta final)

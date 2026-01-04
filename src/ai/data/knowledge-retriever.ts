@@ -35,16 +35,58 @@ export async function getClientDeepKnowledge(queryName: string): Promise<string>
         });
 
         if (!targetClientId) {
-            // Try businesses collection if not in clients (Retailers might be in businesses?)
-            // Assuming Premium/Retailers are synced to 'clients' or we check 'businesses' too.
-            const businessSnap = await db.collection('businesses').where('name', '>=', queryName).limit(5).get(); // Basic prefix search
-            if (!businessSnap.empty) {
-                targetClientId = businessSnap.docs[0].id; // Fallback ID
-            }
+            // STRATEGY CHANGE: Instead of sensitive 'where' query, we fetch all businesses to ensure
+            // we catch "Travelposting" vs "travelposting" or minor variations, matching the robustness of the context loader.
+            const businessSnap = await db.collection('businesses').get();
+
+            businessSnap.forEach(doc => {
+                // If we already found a match, skip
+                if (targetClientId) return;
+
+                const data = doc.data();
+                const name = normalize(data.businessName || data.name || "");
+                if (name && (name.includes(normalizedQuery) || normalizedQuery.includes(name))) {
+                    targetClient = data;
+                    targetClientId = doc.id;
+                }
+            });
         }
 
         if (targetClientId) {
             knowledge += `\n\n[DEEP KNOWLEDGE FOR: ${queryName}]\n`;
+
+            // 1.5 INJECT CORE PROFILE DATA (Address, Contact, etc.)
+            const profile = targetClient || {};
+
+            // Multilingual Fallbacks & 'location' field support
+            const address = profile.address?.street || profile.street || profile.address ||
+                profile.calle || profile.direccion || profile.strasse ||
+                profile.location || ""; // Added 'location' as generic fallback
+
+            const city = profile.address?.city || profile.city ||
+                profile.ciudad || profile.stadt || profile.municipio || "";
+
+            const zip = profile.address?.zip || profile.zip || profile.plz ||
+                profile.codigo_postal || profile.cp || "";
+
+            const country = profile.address?.country || profile.country ||
+                profile.pais || profile.land || "";
+
+            const fullAddress = `${address}, ${zip} ${city}, ${country}`.replace(/^, /, '').replace(/, $/, '');
+
+            const phone = profile.contact?.phone || profile.phone || profile.phoneNumber || profile.celular || profile.telefono || profile.telefon || "";
+            const email = profile.contact?.email || profile.email || profile.correo || "";
+            const website = profile.contact?.website || profile.website || profile.url || profile.web || "";
+            const desc = profile.description || profile.about || profile.shortDescription || profile.descripcion || profile.beschreibung || "";
+
+            knowledge += `[PROFILE SUMMARY]\n`;
+            // Force output of Location/Address if any part exists to ensure the AI has something to link to
+            if (fullAddress.length > 3) knowledge += `Address: ${fullAddress}\n`;
+            if (phone) knowledge += `Phone: ${phone}\n`;
+            if (email) knowledge += `Email: ${email}\n`;
+            if (website) knowledge += `Website: ${website}\n`;
+            if (desc) knowledge += `Description: ${desc}\n`;
+            knowledge += `----------------------------------------\n`;
 
             // 2. Fetch Targeted Snippets
             const snippets = await db.collection('ai_knowledge_snippets')
@@ -134,8 +176,9 @@ export async function getDynamicKnowledgeContext(): Promise<string> {
                 const desc = d.shortDescription || d.description || d.about || "";
                 const snippet = desc ? desc.substring(0, 80).replace(/\n/g, " ") : "";
                 const phone = d.contact?.phone || d.phone || d.phoneNumber || d.celular || d.contactPhone || "";
+                const city = d.address?.city || d.city || d.location || "";
 
-                return `- ${name} (${type} / ${cat}) [Info: ${snippet}...] [Tel: ${phone}]`;
+                return `- ${name} (${type} / ${cat}) ${city ? `[${city}] ` : ''}[Info: ${snippet}...] [Tel: ${phone}]`;
             };
 
             const seenKey = new Set();
@@ -143,13 +186,16 @@ export async function getDynamicKnowledgeContext(): Promise<string> {
             const addToContext = (doc: any) => {
                 const d = doc.data();
 
-                // FILTER: Only allow Starter, Retailer (Minorista), Premium. Exclude Basic.
+                // FILTER: We now allow ALL types to ensure the AI can find everything in the directory ("Travelposting", etc).
                 const type = (d.clientType || 'basic').toLowerCase();
                 // We match partial strings to catch 'premium-plus' or 'retailer-v1' if they exist.
-                const allowedTypes = ['starter', 'retailer', 'minorista', 'premium'];
+                // Added: 'basic', 'free', 'standard', 'business' to ensure coverage.
+                const allowedTypes = ['starter', 'retailer', 'minorista', 'premium', 'basic', 'free', 'standard', 'business'];
 
-                if (!allowedTypes.some(t => type.includes(t))) {
-                    return;
+                if (!allowedTypes.some(t => type.includes(t)) && type !== 'unknown') {
+                    // Minimal filter for truly invalid/test types if needed, but for now we open the gates.
+                    // If strict filtering is invalid for "Travelposting", we must allow it.
+                    // return; 
                 }
 
                 const rawName = d.clientName || d.name || d.businessName || "";

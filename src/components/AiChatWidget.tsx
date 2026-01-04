@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { MessageCircle, X, Send, Loader2, Bot, User, Mic, MicOff, Share2 } from 'lucide-react';
 import { chatAction } from '@/app/actions/chat';
@@ -45,7 +45,7 @@ export function AiChatWidget() {
     const [isListening, setIsListening] = useState(false);
     const [userId, setUserId] = useState<string>(''); // User Identity State
     const scrollAreaRef = useRef<HTMLDivElement>(null);
-    const inputRef = useRef<HTMLInputElement>(null);
+    const inputRef = useRef<HTMLTextAreaElement>(null);
 
     // Auto-focus input when loading finishes
     useEffect(() => {
@@ -139,8 +139,8 @@ export function AiChatWidget() {
                 userId: userId // Pass the identified user ID
             });
 
-            if (!result.success || !result.answer) {
-                throw new Error(result.error || 'Unknown error');
+            if (!result || !result.success || !result.answer) {
+                throw new Error(result?.error || 'Unknown error');
             }
 
             const aiMessage: Message = {
@@ -173,9 +173,9 @@ export function AiChatWidget() {
     };
 
     return (
-        <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end gap-2">
+        <div className="fixed bottom-4 right-4 z-40 flex flex-col items-end gap-2">
             {isOpen && (
-                <Card className="w-[350px] h-[500px] flex flex-col shadow-xl border-primary/20 animate-in slide-in-from-bottom-10 fade-in duration-200">
+                <Card className="w-[calc(100vw-2rem)] sm:w-[350px] h-[80vh] sm:h-[500px] flex flex-col shadow-xl border-primary/20 animate-in slide-in-from-bottom-10 fade-in duration-200">
                     <CardHeader className="flex flex-row items-center justify-between p-4 border-b bg-primary/5">
                         <CardTitle className="text-sm font-medium flex items-center gap-2">
                             <div className="relative w-6 h-6 rounded-full overflow-hidden">
@@ -277,20 +277,26 @@ export function AiChatWidget() {
                     </CardContent>
                     <CardFooter className="p-3 border-t bg-background">
                         <form
-                            className="flex w-full gap-2"
+                            className="flex w-full gap-2 items-end"
                             onSubmit={(e) => {
                                 e.preventDefault();
                                 handleSendMessage();
                             }}
                         >
-                            <Input
+                            <Textarea
                                 ref={inputRef}
                                 autoFocus
                                 placeholder="Escribe un mensaje..."
                                 value={inputValue}
-                                onChange={(e) => setInputValue(e.target.value)}
+                                onChange={(e) => {
+                                    setInputValue(e.target.value);
+                                    e.target.style.height = 'auto';
+                                    e.target.style.height = `${Math.min(e.target.scrollHeight, 100)}px`;
+                                }}
+                                onKeyDown={handleKeyDown}
                                 disabled={isLoading}
-                                className="flex-grow"
+                                className="flex-grow min-h-[40px] max-h-[100px] resize-none py-3"
+                                rows={1}
                             />
                             {/* File Upload Removed as per user request */}
                             <Button type="submit" size="icon" disabled={isLoading || !inputValue.trim()}>
