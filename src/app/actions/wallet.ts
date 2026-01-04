@@ -235,3 +235,90 @@ export async function processQrPayment(userId: string, merchantId: string, amoun
         return { success: false, message: error.message };
     }
 }
+
+/**
+ * Syncs the user's wallet with their confirmed referrals.
+ * Checks for missing 'REFERRAL_BONUS' transactions for each referral in the profile
+ * and credits +50 DP per missing referral.
+ */
+export async function syncReferralRewards(uid: string) {
+    const POINTS_PER_REFERRAL = 50;
+    const db = getAdminDb();
+
+    try {
+        // 1. Get User Profile (Source of Truth for Referrals)
+        const profileSnap = await db.collection('private_profiles').doc(uid).get();
+        if (!profileSnap.exists) return { success: false, message: 'User profile not found' };
+
+        const profileData = profileSnap.data();
+        const referrals = profileData?.referrals || [];
+
+        if (referrals.length === 0) return { success: true, message: 'No referrals to sync.' };
+
+        // 2. Get Existing Referral Transactions
+        const trxSnap = await db.collection('wallet_transactions')
+            .where('userId', '==', uid)
+            .where('type', '==', 'REFERRAL_BONUS')
+            .get();
+
+        // Map of already paid referral UIDs
+        const paidReferralIds = new Set<string>();
+        trxSnap.docs.forEach(doc => {
+            const data = doc.data();
+            if (data.referralUid) {
+                paidReferralIds.add(data.referralUid);
+            }
+        });
+
+        // 3. Identify Unpaid Referrals
+        const unpaidReferrals = referrals.filter((ref: any) => {
+            // ref can be an object { uid, ... } or string ID depending on legacy data structure
+            const refId = typeof ref === 'object' ? ref.uid : ref;
+            // Only count if valid ID and not already paid
+            return refId && !paidReferralIds.has(refId);
+        });
+
+        if (unpaidReferrals.length === 0) {
+            return { success: true, message: 'All referrals already rewarded.' };
+        }
+
+        // 4. Batch Update
+        const batch = db.batch();
+        const walletRef = db.collection('wallets').doc(uid);
+
+        // Calculate Total
+        const totalPointsToAdd = unpaidReferrals.length * POINTS_PER_REFERRAL;
+
+        // Upsert Wallet
+        batch.set(walletRef, {
+            balance: admin.firestore.FieldValue.increment(totalPointsToAdd),
+            totalEarned: admin.firestore.FieldValue.increment(totalPointsToAdd),
+            updatedAt: admin.firestore.FieldValue.serverTimestamp()
+        }, { merge: true });
+
+        // Create Transactions
+        unpaidReferrals.forEach((ref: any) => {
+            const refId = typeof ref === 'object' ? ref.uid : ref;
+
+            const trxRef = db.collection('wallet_transactions').doc();
+            batch.set(trxRef, {
+                userId: uid,
+                amount: POINTS_PER_REFERRAL,
+                type: 'REFERRAL_BONUS',
+                referralUid: refId,
+                description: `Bono por referido 50DP`,
+                timestamp: admin.firestore.FieldValue.serverTimestamp(),
+                metaCreated: new Date().toISOString()
+            });
+        });
+
+        await batch.commit();
+
+        revalidatePath('/dashboard');
+        return { success: true, message: `Synced ${unpaidReferrals.length} referrals (+${totalPointsToAdd} DP)` };
+
+    } catch (error: any) {
+        console.error('Sync Error:', error);
+        return { success: false, error: error.message };
+    }
+}

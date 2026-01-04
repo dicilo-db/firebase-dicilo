@@ -33,4 +33,15 @@
 
 ## Next Steps
 *   **n8n Webhook:** Still requires validation for email delivery.
-*   **Ongoing Monitoring:** Watch for edge cases where valid Premium clients might have missing `clientType` fields (currently defaulted to 'basic' and strict-filtered out, which is safer but strict).
+### 5. Final UI & Logic Refinements (Session 3: 2026-01-04)
+*   **Mobile UX Overhaul:** Replaced the chat Input field with a smart `Textarea` that auto-expands (grows downwards) as usage requested. Fixed `Enter` key behavior to ensure seamless submission on both desktop and mobile, while allowing multiline input.
+*   **Prompt Engineering 3.0:** Refactored the `website-chat-flow.ts` System Prompt to include a "Hidden Thought" mechanism and stricter "Silent Execution" rules. The bot is now explicitly forbidden from announcing "I will use tool X" and is programmed to detect user language and auto-translate any retrieved German/English RAG data into that language before responding.
+*   **Category Search:** Added logic to "SCAN" the directory for generic category matches (e.g., "African Restaurants") and proactively query them, rather than asking the user for a specific name first.
+*   **Crash Fix:** Resolved a critical client-side crash (`Cannot read properties of undefined`) by hardening the `chatAction` response check in `AiChatWidget.tsx` and refactoring `actions/chat.ts` to ensuring it always returns a response object (catching internal flow errors). Also removed redundant history fetching logic to streamline performance.
+*   **Firefox Mobile & Responsive Fixes:**
+    *   **Chat Widget Overflow:** Adjusted Chat Card width to `w-[calc(100vw-2rem)]` on mobile to ensure it fits perfectly within the screen with 1rem margins, solving the "out of size" issue.
+    *   **Menu Overlap:** Lowered Chat Widget `z-index` from 50 to 40. This ensures the Mobile Navigation Menu (z-50) correctly overlays the chat button/window instead of being obscured by it ("Menu looks bad" fix).
+*   **Language Enforcement 3.1 (RAG Loop):** Added extremely strict prompts *inside* the RAG execution loop (post-tool use) to force the model to acknowledge that retrieved data is raw (German/English) and explicit instructions to TRANSLATE it to the user's detected language before finalizing the answer. This addresses the "Dental Clinic" mixed-language issue.
+*   **Context Freshness Logic:** Detected an issue where the bot would get "stuck" on a previous failed query (e.g., repeatedly saying "I can't find Travelposting" even after the user switched topics).
+    *   **Fix:** Reduced history window from 30 to 10 lines to prioritize recent context.
+    *   **Fix:** Added a `=== 🧠 REGLA DE ATENCIÓN (FRESH START) ===` block to the system prompt, explicitly instructing the AI to forget previous failures if the topic changes and treating each new query independently.

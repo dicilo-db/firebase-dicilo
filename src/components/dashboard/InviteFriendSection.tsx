@@ -16,7 +16,7 @@ interface InviteFriendSectionProps {
     referrals: any[];
 }
 
-export function InviteFriendSection({ uniqueCode }: InviteFriendSectionProps) {
+export function InviteFriendSection({ uniqueCode, referrals }: InviteFriendSectionProps) {
     const { t } = useTranslation(['admin']);
     const auth = getAuth(app);
     const db = getFirestore(app);
@@ -52,9 +52,14 @@ export function InviteFriendSection({ uniqueCode }: InviteFriendSectionProps) {
         return () => unsubscribe();
     }, [auth.currentUser]);
 
-    const availableSlots = Math.max(0, MAX_FRIENDS - invites.length);
+    // We prioritize the referrals list from the profile content as it is the source of truth for successful signups
+    const registeredCount = referrals?.length || 0;
+
+    // Available slots: Max friends minus registered friends. 
+    // (We could also subtract pending invites, but usually limits apply to successful connections)
+    const availableSlots = Math.max(0, MAX_FRIENDS - registeredCount);
+
     const openedCount = invites.filter(i => i.opened).length;
-    const registeredCount = invites.filter(i => i.status === 'registered').length;
     const sentCount = invites.length;
 
     // Determine user name

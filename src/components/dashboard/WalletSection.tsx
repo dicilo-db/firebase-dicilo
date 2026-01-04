@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { QrCode, TrendingUp, History, CreditCard, Loader2, Info } from 'lucide-react';
 import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { getWalletData } from '@/app/actions/wallet';
+import { getWalletData, syncReferralRewards } from '@/app/actions/wallet';
 import { PointsChart } from './PointsChart';
 // import { QRCodeSVG } from 'qrcode.react'; // Not installed, using simple img API or placeholder
 import { Badge } from '@/components/ui/badge';
@@ -26,6 +26,9 @@ export function WalletSection({ uid, uniqueCode }: WalletSectionProps) {
         async function load() {
             setLoading(true);
             try {
+                // Auto-sync missing referral rewards (retroactive fix)
+                await syncReferralRewards(uid);
+
                 const res = await getWalletData(uid);
                 setData(res);
             } catch (e) {

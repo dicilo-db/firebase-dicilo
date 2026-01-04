@@ -155,6 +155,8 @@ export default function EditBusinessPage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategorySlug, setSelectedCategorySlug] = useState<string>('');
   const [selectedSubcategorySlug, setSelectedSubcategorySlug] = useState<string>('');
+  const [openCategory, setOpenCategory] = useState(false);
+  const [openSubcategory, setOpenSubcategory] = useState(false);
 
   const slugify = (text: string) =>
     text
@@ -180,6 +182,13 @@ export default function EditBusinessPage() {
 
   const [categoriesLoaded, setCategoriesLoaded] = useState(false);
 
+  const getLocalizedName = useCallback((obj: { name: { de: string; en?: string; es?: string } } | undefined) => {
+    if (!obj) return '';
+    if (locale.startsWith('es') && obj.name.es) return obj.name.es;
+    if (locale.startsWith('en') && obj.name.en) return obj.name.en;
+    return obj.name.de;
+  }, [locale]);
+
   // Fetch Categories
   useEffect(() => {
     const fetchCategories = async () => {
@@ -188,8 +197,8 @@ export default function EditBusinessPage() {
         const snapshot = await getDocs(q);
         const cats: Category[] = [];
         snapshot.forEach((doc) => cats.push(doc.data() as Category));
-        // Sort in memory by German name
-        cats.sort((a, b) => a.name.de.localeCompare(b.name.de));
+        // Sort in memory by Localized name
+        cats.sort((a, b) => getLocalizedName(a).localeCompare(getLocalizedName(b)));
         setCategories(cats);
       } catch (error) {
         console.error('Error fetching categories:', error);
@@ -198,24 +207,24 @@ export default function EditBusinessPage() {
       }
     };
     fetchCategories();
-  }, [db]);
+  }, [db, getLocalizedName]);
 
   // Effect to sync selects with the form's 'category' string
   useEffect(() => {
     if (selectedCategorySlug) {
       const cat = categories.find((c) => c.id === selectedCategorySlug);
       if (cat) {
-        let catString = cat.name.de;
+        let catString = getLocalizedName(cat);
         if (selectedSubcategorySlug) {
           const sub = cat.subcategories.find((s) => s.id === selectedSubcategorySlug);
           if (sub) {
-            catString += ` / ${sub.name.de}`;
+            catString += ` / ${getLocalizedName(sub)}`;
           }
         }
         setValue('category', catString, { shouldDirty: true, shouldValidate: true });
       }
     }
-  }, [selectedCategorySlug, selectedSubcategorySlug, categories, setValue]);
+  }, [selectedCategorySlug, selectedSubcategorySlug, categories, setValue, getLocalizedName]);
 
 
   const handleGeocode = useCallback(
@@ -567,47 +576,53 @@ export default function EditBusinessPage() {
 
                 {/* Categories - Combobox */}
                 <div className="flex flex-col space-y-2">
-                  <Label>Category</Label>
-                  <Popover>
+                  <Label>{t('businesses.fields.category', 'Categoría')}</Label>
+                  <Popover open={openCategory} onOpenChange={setOpenCategory}>
                     <PopoverTrigger asChild>
                       <Button
+                        type="button"
                         variant="outline"
                         role="combobox"
+                        aria-expanded={openCategory}
                         className={cn(
                           "w-full justify-between",
                           !selectedCategorySlug && "text-muted-foreground"
                         )}
                       >
                         {selectedCategorySlug
-                          ? categories.find((c) => c.id === selectedCategorySlug)?.name.de
-                          : "Select Category"}
+                          ? getLocalizedName(categories.find((c) => c.id === selectedCategorySlug))
+                          : t('businesses.fields.selectCategory', 'Seleccionar Categoría')}
                         <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-[300px] p-0">
                       <Command>
-                        <CommandInput placeholder="Search category..." />
+                        <CommandInput placeholder={t('businesses.fields.searchCategory', 'Buscar categoría...')} />
                         <CommandList>
-                          <CommandEmpty>No category found.</CommandEmpty>
+                          <CommandEmpty>{t('businesses.fields.noCategoryFound', 'No se encontró la categoría.')}</CommandEmpty>
                           <CommandGroup>
-                            {categories.map((cat) => (
-                              <CommandItem
-                                key={cat.id}
-                                value={cat.name.de}
-                                onSelect={() => {
-                                  setSelectedCategorySlug(cat.id);
-                                  setSelectedSubcategorySlug(''); // Reset sub on main change
-                                }}
-                              >
-                                <Check
-                                  className={cn(
-                                    "mr-2 h-4 w-4",
-                                    selectedCategorySlug === cat.id ? "opacity-100" : "opacity-0"
-                                  )}
-                                />
-                                {cat.name.de}
-                              </CommandItem>
-                            ))}
+                            {categories.map((cat) => {
+                              const catName = getLocalizedName(cat);
+                              return (
+                                <CommandItem
+                                  key={cat.id}
+                                  value={catName}
+                                  onSelect={() => {
+                                    setSelectedCategorySlug(cat.id);
+                                    setSelectedSubcategorySlug(''); // Reset sub on main change
+                                    setOpenCategory(false);
+                                  }}
+                                >
+                                  <Check
+                                    className={cn(
+                                      "mr-2 h-4 w-4",
+                                      selectedCategorySlug === cat.id ? "opacity-100" : "opacity-0"
+                                    )}
+                                  />
+                                  {catName}
+                                </CommandItem>
+                              );
+                            })}
                           </CommandGroup>
                         </CommandList>
                       </Command>
@@ -661,47 +676,53 @@ export default function EditBusinessPage() {
                 </div>
 
                 <div className="flex flex-col space-y-2">
-                  <Label>Subcategory</Label>
-                  <Popover>
+                  <Label>{t('businesses.fields.subcategory', 'Subcategoría')}</Label>
+                  <Popover open={openSubcategory} onOpenChange={setOpenSubcategory}>
                     <PopoverTrigger asChild>
                       <Button
+                        type="button"
                         variant="outline"
                         role="combobox"
                         disabled={!selectedCategorySlug}
+                        aria-expanded={openSubcategory}
                         className={cn(
                           "w-full justify-between",
                           !selectedSubcategorySlug && "text-muted-foreground"
                         )}
                       >
                         {selectedSubcategorySlug
-                          ? selectedCategoryObj?.subcategories.find((s) => s.id === selectedSubcategorySlug)?.name.de
-                          : "Select Subcategory"}
+                          ? getLocalizedName(selectedCategoryObj?.subcategories.find((s) => s.id === selectedSubcategorySlug))
+                          : t('businesses.fields.selectSubcategory', 'Seleccionar Subcategoría')}
                         <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-[300px] p-0">
                       <Command>
-                        <CommandInput placeholder="Search subcategory..." />
+                        <CommandInput placeholder={t('businesses.fields.searchSubcategory', 'Buscar subcategoría...')} />
                         <CommandList>
-                          <CommandEmpty>No subcategory found.</CommandEmpty>
+                          <CommandEmpty>{t('businesses.fields.noSubcategoryFound', 'No se encontró subcategoría.')}</CommandEmpty>
                           <CommandGroup>
-                            {selectedCategoryObj?.subcategories?.map((sub) => (
-                              <CommandItem
-                                key={sub.id}
-                                value={sub.name.de}
-                                onSelect={() => {
-                                  setSelectedSubcategorySlug(sub.id);
-                                }}
-                              >
-                                <Check
-                                  className={cn(
-                                    "mr-2 h-4 w-4",
-                                    selectedSubcategorySlug === sub.id ? "opacity-100" : "opacity-0"
-                                  )}
-                                />
-                                {sub.name.de}
-                              </CommandItem>
-                            ))}
+                            {selectedCategoryObj?.subcategories?.map((sub) => {
+                              const subName = getLocalizedName(sub);
+                              return (
+                                <CommandItem
+                                  key={sub.id}
+                                  value={subName}
+                                  onSelect={() => {
+                                    setSelectedSubcategorySlug(sub.id);
+                                    setOpenSubcategory(false);
+                                  }}
+                                >
+                                  <Check
+                                    className={cn(
+                                      "mr-2 h-4 w-4",
+                                      selectedSubcategorySlug === sub.id ? "opacity-100" : "opacity-0"
+                                    )}
+                                  />
+                                  {subName}
+                                </CommandItem>
+                              );
+                            })}
                           </CommandGroup>
                         </CommandList>
                       </Command>
