@@ -10,6 +10,7 @@ import { InviteTracking } from './invite/InviteTracking';
 import { ReferralCard } from './ReferralCard';
 import { InviteList } from './invite/InviteList';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { FollowersListDialog } from './invite/FollowersListDialog';
 
 interface InviteFriendSectionProps {
     uniqueCode: string;
@@ -23,6 +24,7 @@ export function InviteFriendSection({ uniqueCode, referrals }: InviteFriendSecti
 
     const [invites, setInvites] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [isFollowersDialogOpen, setIsFollowersDialogOpen] = useState(false);
 
     const MAX_FRIENDS = 1500;
 
@@ -83,6 +85,8 @@ export function InviteFriendSection({ uniqueCode, referrals }: InviteFriendSecti
                         reach={sentCount}
                         instagram={0} // Placeholder
                         followers={registeredCount}
+                        onViewFollowers={() => setIsFollowersDialogOpen(true)}
+                        uniqueCode={uniqueCode}
                     />
 
                     <InviteList invites={invites} />
@@ -105,6 +109,12 @@ export function InviteFriendSection({ uniqueCode, referrals }: InviteFriendSecti
                     </div>
                 </div>
             </div>
+
+            <FollowersListDialog
+                open={isFollowersDialogOpen}
+                onOpenChange={setIsFollowersDialogOpen}
+                followerReferrals={referrals || []}
+            />
         </div>
     );
 }

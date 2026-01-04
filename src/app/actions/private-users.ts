@@ -184,3 +184,36 @@ export async function setReferrer(uid: string, referrerCode: string) {
     }
 }
 
+/**
+ * Fetches details for a list of users by UID.
+ * Useful for displaying follower lists. Includes basic info only.
+ * Limits to 30 UIDs at a time for performance.
+ */
+export async function getFollowersDetails(uids: string[]) {
+    if (!uids || uids.length === 0) return [];
+
+    // Limit to 30 for safety/performance in this UI
+    const safeUids = uids.slice(0, 30);
+    const db = getAdminDb();
+
+    try {
+        const refs = safeUids.map(uid => db.collection('private_profiles').doc(uid));
+        const snapshots = await db.getAll(...refs);
+
+        return snapshots.map(snap => {
+            if (!snap.exists) return null;
+            const data = snap.data();
+            return {
+                uid: snap.id,
+                firstName: data?.firstName || 'Usuario',
+                lastName: data?.lastName || '',
+                email: data?.email || 'No email',
+                photoUrl: data?.photoUrl || null,
+                createdAt: data?.createdAt?.toDate ? data.createdAt.toDate().toISOString() : null
+            };
+        }).filter(u => u !== null);
+    } catch (error: any) {
+        console.error('Error fetching follower details:', error);
+        return [];
+    }
+}

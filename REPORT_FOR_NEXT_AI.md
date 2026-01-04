@@ -45,3 +45,18 @@
 *   **Context Freshness Logic:** Detected an issue where the bot would get "stuck" on a previous failed query (e.g., repeatedly saying "I can't find Travelposting" even after the user switched topics).
     *   **Fix:** Reduced history window from 30 to 10 lines to prioritize recent context.
     *   **Fix:** Added a `=== 🧠 REGLA DE ATENCIÓN (FRESH START) ===` block to the system prompt, explicitly instructing the AI to forget previous failures if the topic changes and treating each new query independently.
+    
+### 6. Admin & Dashboard Critical Fixes (Session 4: 2026-01-04 Latest)
+*   **Business Edit Form UX:**
+    *   **Issue:** Category/Subcategory selection was slow; user had to search or click multiple times.
+    *   **Fix:** Implemented "Click-and-Close" logic. The popup now closes immediately upon selecting an item, making the process snappy and intuitive.
+    *   **Fix:** Added `type="button"` to dropdown triggers to prevent accidental form submissions or page refreshes.
+    *   **Refinement:** Improved locale detection for `getLocalizedName` to robustly handle variations like `es-MX` or `es-ES`.
+*   **Referral System Corrections:**
+    *   **Issue:** "Invite Friends" dashboard showed correct referral count (6) but "Wallet" showed wrong balance (40 DP instead of 300+).
+    *   **Root Cause:** The `InviteFriendSection` was counting profile referrals correctly, but the Wallet transaction history lacked the `REFERRAL_BONUS` entries (likely due to legacy data or manual assignments).
+    *   **Fix 1 (Stats):** Updated `InviteStats` to calculate "Registered" and "Available Slots" using the Authoritative Profile Referral List, ensuring UI consistency across dashboards.
+    *   **Fix 2 (Wallet Sync):** Created `syncReferralRewards` server action. It auto-scans the user's confirmed referrals, checks against paid transactions, and retroactively awards +50 DP for any missing ones.
+    *   **Fix 3 (Automation):** The `WalletSection` now auto-runs this sync on load, ensuring the balance is always up-to-date without manual intervention.
+*   **Deployment:**
+    *   All changes built and deployed to production (`https://geosearch-fq4i9.web.app`).
