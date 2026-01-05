@@ -74,11 +74,12 @@ function ImpressumClientContent() {
           <h2 className="mb-3 text-xl font-semibold text-foreground">
             {t('dispute.title')}
           </h2>
-          <p
+          {/* <p
             dangerouslySetInnerHTML={{
               __html: t('dispute.description'),
             }}
-          />
+          /> */}
+          <p>{t('dispute.description')}</p>
         </section>
 
         <section>

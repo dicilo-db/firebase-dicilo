@@ -10,10 +10,11 @@ export interface Ticket {
     userEmail: string;
     title: string;
     description: string;
-    module: string; // Added module
+    module: string;
     status: 'open' | 'in_progress' | 'closed';
     priority: 'low' | 'medium' | 'high';
-    attachments?: string[]; // Added attachments
+    attachments?: string[];
+    assignedRoles?: string[]; // Roles that can view/manage this ticket
     createdAt: any;
     updatedAt: any;
     messages?: TicketMessage[];
@@ -27,15 +28,29 @@ export interface TicketMessage {
     timestamp: any;
 }
 
+// Helper to check role server-side
+async function getRequestorRole(uid: string): Promise<string | null> {
+    try {
+        const doc = await getAdminDb().collection('private_profiles').doc(uid).get();
+        if (doc.exists) {
+            return doc.data()?.role || null;
+        }
+        return null;
+    } catch (e) {
+        console.error('Error fetching role:', e);
+        return null;
+    }
+}
+
 export async function createTicket(data: {
     uid: string;
     userName: string;
     userEmail: string;
     title: string;
     description: string;
-    module: string; // Added module
+    module: string;
     priority: 'low' | 'medium' | 'high';
-    attachments?: string[]; // Added attachments
+    attachments?: string[];
 }) {
     try {
         if (!data.uid) return { success: false, error: 'Unauthorized' };
@@ -44,6 +59,7 @@ export async function createTicket(data: {
             ...data,
             status: 'open',
             attachments: data.attachments || [],
+            assignedRoles: [], // Default: Only Superadmin sees it (implied)
             createdAt: admin.firestore.FieldValue.serverTimestamp(),
             updatedAt: admin.firestore.FieldValue.serverTimestamp(),
             messages: []
@@ -51,13 +67,12 @@ export async function createTicket(data: {
 
         const docRef = await getAdminDb().collection('tickets').add(ticketData);
 
-        // Send notification email to user
+        // Send notification email
         try {
             const { sendTicketCreatedEmail } = await import('@/lib/email');
             await sendTicketCreatedEmail(data.userEmail, docRef.id, data.title, data.description);
         } catch (emailError) {
             console.error('Failed to send ticket email:', emailError);
-            // Don't fail the ticket creation if email fails
         }
 
         return { success: true, ticketId: docRef.id };
@@ -76,7 +91,6 @@ export async function getUserTickets(uid: string) {
         const tickets = snapshot.docs.map(doc => ({
             id: doc.id,
             ...doc.data(),
-            // Serialize timestamps for client
             createdAt: doc.data().createdAt?.toDate().toISOString(),
             updatedAt: doc.data().updatedAt?.toDate().toISOString(),
         })).sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
@@ -104,7 +118,7 @@ export async function getTicket(ticketId: string) {
                 ...data,
                 createdAt: data?.createdAt?.toDate().toISOString(),
                 updatedAt: data?.updatedAt?.toDate().toISOString(),
-                messages: data?.messages || [] // Ensure messages are returned
+                messages: data?.messages || []
             }
         };
     } catch (error: any) {
@@ -120,9 +134,8 @@ export async function addTicketMessage(ticketId: string, message: {
 }) {
     try {
         const ticketRef = getAdminDb().collection('tickets').doc(ticketId);
-        let emailWarning: string | undefined;
 
-        // Get ticket first to find recipient
+        // Get ticket first
         const ticketSnap = await ticketRef.get();
         if (!ticketSnap.exists) throw new Error('Ticket not found');
         const ticketData = ticketSnap.data();
@@ -138,49 +151,22 @@ export async function addTicketMessage(ticketId: string, message: {
             updatedAt: admin.firestore.FieldValue.serverTimestamp()
         });
 
-        // Debug: Log the logic for email sending
-        console.log(`[TicketSystem] Processing message from ${message.senderId} for ticket ${ticketId}. Ticket Owner: ${ticketData?.uid}`);
-
-        // Send email notification if the sender is NOT the ticket owner
+        // Email Notification Logic
         if (ticketData?.uid && message.senderId !== ticketData.uid) {
-            console.log(`[TicketSystem] Sender is different from Owner. Attempting to send email to ${ticketData.userEmail}`);
             try {
                 const { sendTicketReplyEmail } = await import('@/lib/email');
-
-                // Debug Env availability
-                if (!process.env.RESEND_API_KEY) {
-                    console.error('[TicketSystem] CRITICAL: RESEND_API_KEY is missing in process.env');
-                } else {
-                    console.log('[TicketSystem] RESEND_API_KEY is present.');
-                }
-
-                if (!sendTicketReplyEmail) {
-                    emailWarning = 'Email service not found';
-                    console.error('[TicketSystem] sendTicketReplyEmail import failed');
-                } else {
-                    const emailResult = await sendTicketReplyEmail(
+                if (sendTicketReplyEmail) {
+                    await sendTicketReplyEmail(
                         ticketData.userEmail,
                         ticketId,
                         ticketData.title || 'Support Ticket',
                         message.message,
                         message.senderName
                     );
-
-                    console.log('[TicketSystem] Email Result:', JSON.stringify(emailResult));
-
-                    if (!emailResult || !emailResult.success) {
-                        emailWarning = `Email failed: ${emailResult?.error || 'Unknown error'}`;
-                        console.error('Email send failed:', emailResult?.error);
-                    } else {
-                        console.log(`[TicketSystem] Email successfully sent to ${ticketData.userEmail}`);
-                    }
                 }
             } catch (emailError: any) {
                 console.error('Failed to send reply email:', emailError);
-                emailWarning = `Email error: ${emailError.message}`;
             }
-        } else {
-            console.log('[TicketSystem] Skipping email: Sender is Ticket Owner or Ticket UID missing.');
         }
 
         try {
@@ -189,27 +175,43 @@ export async function addTicketMessage(ticketId: string, message: {
             revalidatePath(`/admin/tickets/${ticketId}`);
         } catch (e) { console.error('Revalidate failed', e); }
 
-        return { success: true, emailWarning };
+        return { success: true };
     } catch (error: any) {
         console.error('Error adding message:', error);
         return { success: false, error: error.message };
     }
 }
 
-export async function getAllTickets() {
+export async function getAllTickets(requestorUid?: string) {
     try {
+        let role = null;
+        if (requestorUid) {
+            role = await getRequestorRole(requestorUid);
+        }
+
+        // Fetch all tickets ordered by creation
         const snapshot = await getAdminDb().collection('tickets')
             .orderBy('createdAt', 'desc')
             .get();
 
-        const tickets = snapshot.docs.map(doc => ({
+        let tickets = snapshot.docs.map(doc => ({
             id: doc.id,
             ...doc.data(),
             createdAt: doc.data().createdAt?.toDate().toISOString(),
             updatedAt: doc.data().updatedAt?.toDate().toISOString(),
-        }));
+        })) as Ticket[];
 
-        return { success: true, tickets };
+        // Filter based on role
+        if (role !== 'superadmin') {
+            // If not superadmin, only show tickets assigned to their role
+            // Or if they are the creator (though this function is for admin pool)
+            tickets = tickets.filter(t => {
+                const assigned = t.assignedRoles || [];
+                return assigned.includes(role || '') || (requestorUid && t.uid === requestorUid);
+            });
+        }
+
+        return { success: true, tickets, role };
     } catch (error: any) {
         console.error('Error fetching all tickets:', error);
         return { success: false, error: error.message };
@@ -258,6 +260,25 @@ export async function editTicketMessage(ticketId: string, messageId: string, new
         return { success: true };
     } catch (error: any) {
         console.error('Error editing message:', error);
+        return { success: false, error: error.message };
+    }
+}
+
+export async function assignTicketRoles(ticketId: string, requestorUid: string, roles: string[]) {
+    try {
+        // Verify requestor is superadmin
+        const requestorRole = await getRequestorRole(requestorUid);
+        if (requestorRole !== 'superadmin') {
+            return { success: false, error: 'Only Superadmin can assign tickets.' };
+        }
+
+        await getAdminDb().collection('tickets').doc(ticketId).update({
+            assignedRoles: roles
+        });
+
+        return { success: true };
+    } catch (error: any) {
+        console.error('Error assigning roles:', error);
         return { success: false, error: error.message };
     }
 }

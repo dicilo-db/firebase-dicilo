@@ -25,21 +25,27 @@ interface Ticket {
     module: string;
 }
 
+import { useAuth } from '@/context/AuthContext';
+
 export default function AdminTicketsPage() {
     const { t } = useTranslation('admin');
+    const { user } = useAuth();
     const [tickets, setTickets] = useState<Ticket[]>([]);
     const [loading, setLoading] = useState(true);
     const { toast } = useToast();
     const db = getFirestore(app);
 
     useEffect(() => {
-        fetchTickets();
-    }, []);
+        if (user) {
+            fetchTickets();
+        }
+    }, [user]);
 
     const fetchTickets = async () => {
+        if (!user) return;
         try {
             const { getAllTickets } = await import('@/app/actions/tickets');
-            const result = await getAllTickets();
+            const result = await getAllTickets(user.uid);
 
             if (result.success && result.tickets) {
                 setTickets(result.tickets as unknown as Ticket[]);
