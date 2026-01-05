@@ -9,6 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Loader2, Camera, Search, Check, AlertTriangle, CheckCircle } from 'lucide-react';
 import { createProspect } from '@/app/actions/prospects';
 import { processBusinessCard } from '@/app/actions/scanner';
+import { Prospect } from '@/types/prospect';
 
 // --- STYLES & ASSETS ---
 import { useTranslation } from 'react-i18next';
@@ -258,17 +259,22 @@ export default function ScannerPro({ recruiterId = 'DIC-001' }: { recruiterId?: 
         setIsProcessing(true);
         setLastResult(null);
 
-        const payload = {
+        // Explicitly type the payload to match what createProspect expects
+        const payload: Omit<Prospect, 'id' | 'createdAt' | 'updatedAt' | 'isActive' | 'reportGeneratedAt'> = {
             ...formData,
             // Data Completeness Defaults
             category: 'Prospecto Pendiente',
             subcategory: 'General', // Placeholder to be filled by human
             location: '', // Human fill
-            offerUrl: '',
+            offerUrl: '', // Not in form
             logoUrl: 'default_logo.png', // Placeholder
-            isActive: false,
+            // Cast leadDestination to the specific string literal union type
+            leadDestination: formData.leadDestination as 'DICILO' | 'CLIENTE' | 'AMBOS',
             recruiterId,
-            ocrRawData: formData.description
+            ocrRawData: formData.description,
+            // Initialize optional fields that might be added later
+            photoUrl: undefined,
+            interest: undefined
         };
 
         // 1. Associate Image (Already uploaded by scanCard action)
@@ -278,7 +284,7 @@ export default function ScannerPro({ recruiterId = 'DIC-001' }: { recruiterId?: 
 
         // 2. Add Interest
         if (interest) {
-            payload.interest = interest as any;
+            payload.interest = interest as 'Basic' | 'Starter' | 'Minorista' | 'Premium';
         }
 
         const res = await createProspect(payload);
