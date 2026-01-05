@@ -441,5 +441,87 @@
     "view_file": "Ver Archivo",
     "processing": "Procesando...",
     "uncategorized": "Sin Categoría"
+  },
+  "scanner": {
+    "title": "Dicilo Scanner & Reports",
+    "subtitle": "Herramienta unificada para capturar prospectos y generar reportes B2B.",
+    "cardTitle": "Scanner Pro",
+    "cardDesc": "Captura tarjetas y asigna leads en tiempo real.",
+    "howItWorks": {
+      "title": "¿Cómo funciona?",
+      "step1": {
+        "title": "1. Captura (Scanner)",
+        "desc": "Apunta la cámara a una tarjeta de visita. La IA extraerá los datos automáticamente. Si estás trabajando para un cliente específico (ej. Travelposting), selecciona \"Recordar\" para escanear en ráfaga."
+      },
+      "step2": {
+        "title": "2. Fusión Inteligente (Smart Merge)",
+        "desc": "Si escaneas una empresa que ya existe, el sistema no la duplicará. En su lugar, completará los datos que falten (ej. si tenías el email pero no el teléfono) y te avisará."
+      },
+      "step3": {
+        "title": "3. Reportes",
+        "desc": "Al final del día, usa el panel de arriba para descargar un Excel con todos los leads capturados para tu cliente. ¡Listo para enviar!"
+      }
+    },
+    "pro": {
+      "header": "DICILOSCAN PRO",
+      "overlay": "ENCUADRAR TARJETA (HORIZONTAL)",
+      "debug": {
+        "show": "Ver qué ve el robot (Debug)",
+        "hide": "Ocultar visión del robot"
+      },
+      "status": {
+        "ready": "Listo para escanear",
+        "optimizing": "Optimizando Imagen...",
+        "reading": "Leyendo Textos...",
+        "success": "Lectura Completada",
+        "error": "Error en lectura",
+        "shortText": "Texto no claro. Mejora luz/enfoque."
+      },
+      "btn": {
+        "processing": "Procesando...",
+        "capture": "Capturar Datos",
+        "save": "Guardar Prospecto",
+        "saving": "Guardando..."
+      },
+      "form": {
+        "name": "Nombre / Empresa",
+        "phone": "Teléfono",
+        "email": "Email",
+        "web": "Web / Dirección",
+        "notes": "Notas (OCR Raw)",
+        "sender": "Datos enviados por",
+        "event": "Evento / Feria",
+        "placeholder": {
+          "name": "Ej. Restaurante Pepe",
+          "phone": "+34 600...",
+          "email": "info@...",
+          "web": "www.ejemplo.com",
+          "address": "Calle Principal 1, Madrid",
+          "notes": "Texto extraído..."
+        },
+        "event_notes": "Selecciona 'Online' si no aplica."
+      },
+      "assign": {
+        "label": "Asignar Lead A",
+        "dicilo": "DICILO",
+        "client": "CLIENTE",
+        "both": "AMBOS"
+      },
+      "result": {
+        "success": "Registro Exitoso",
+        "duplicate": "Empresa Existente",
+        "pending": "Pendiente Revisión",
+        "company": "Empresa",
+        "assigned": "Asignado a",
+        "status": "Estado"
+      }
+    },
+    "reports": {
+      "generate": "Generar Reporte Diario (B2B)",
+      "receivingCompany": "Empresa Receptora",
+      "selectCompany": "Seleccionar Empresa",
+      "date": "Fecha",
+      "download": "Descargar Excel"
+    }
   }
 }

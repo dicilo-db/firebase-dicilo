@@ -907,5 +907,87 @@
     "view_file": "View File",
     "processing": "Processing...",
     "uncategorized": "Uncategorized"
+  },
+  "scanner": {
+    "title": "Dicilo Scanner & Reports",
+    "subtitle": "Unified tool to capture prospects and generate B2B reports.",
+    "cardTitle": "Scanner Pro",
+    "cardDesc": "Capture business cards and assign leads in real-time.",
+    "howItWorks": {
+      "title": "How it works?",
+      "step1": {
+        "title": "1. Capture (Scanner)",
+        "desc": "Point the camera at a business card. AI will automatically extract data. If working for a specific client (e.g., Travelposting), select \"Remember\" to scan in burst mode."
+      },
+      "step2": {
+        "title": "2. Smart Merge",
+        "desc": "If you scan an existing company, the system won't duplicate it. Instead, it completes missing data (e.g., if you had email but not phone) and notifies you."
+      },
+      "step3": {
+        "title": "3. Reports",
+        "desc": "At the end of the day, use the panel above to download an Excel file with all captured leads for your client. Ready to send!"
+      }
+    },
+    "pro": {
+      "header": "DICILOSCAN PRO",
+      "overlay": "FRAME CARD (HORIZONTAL)",
+      "debug": {
+        "show": "See what the robot sees (Debug)",
+        "hide": "Hide robot vision"
+      },
+      "status": {
+        "ready": "Ready to scan",
+        "optimizing": "Optimizing Image...",
+        "reading": "Reading Text...",
+        "success": "Reading Completed",
+        "error": "Reading Error",
+        "shortText": "Text unclear. Improve lighting/focus."
+      },
+      "btn": {
+        "processing": "Processing...",
+        "capture": "Capture Data",
+        "save": "Save Prospect",
+        "saving": "Saving..."
+      },
+      "form": {
+        "name": "Name / Company",
+        "phone": "Phone",
+        "email": "Email",
+        "web": "Web / Address",
+        "notes": "Notes (OCR Raw)",
+        "sender": "Data sent by",
+        "event": "Event / Fair",
+        "placeholder": {
+          "name": "Ex. Restaurant Pepe",
+          "phone": "+1 555...",
+          "email": "info@...",
+          "web": "www.example.com",
+          "address": "123 Main St, New York",
+          "notes": "Extracted text..."
+        },
+        "event_notes": "Select 'Online' if not applicable."
+      },
+      "assign": {
+        "label": "Assign Lead To",
+        "dicilo": "DICILO",
+        "client": "CLIENT",
+        "both": "BOTH"
+      },
+      "result": {
+        "success": "Registration Successful",
+        "duplicate": "Company Exists",
+        "pending": "Pending Review",
+        "company": "Company",
+        "assigned": "Assigned to",
+        "status": "Status"
+      }
+    },
+    "reports": {
+      "generate": "Generate Daily Report (B2B)",
+      "receivingCompany": "Receiving Company",
+      "selectCompany": "Select Company",
+      "date": "Date",
+      "download": "Download Excel"
+    }
   }
 }

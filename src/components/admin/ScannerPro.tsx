@@ -11,6 +11,44 @@ import { createWorker } from 'tesseract.js';
 import { createProspect } from '@/app/actions/prospects';
 
 // --- STYLES & ASSETS ---
+import { useTranslation } from 'react-i18next';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
+
+// --- DATA: FAIRS & EVENTS ---
+const FAIRS_DATA = {
+    "Turismo": [
+        "ITB Berlín (Alemania)", "FITUR (España)", "World Travel Market (WTM) (Reino Unido)",
+        "Arabian Travel Market (Dubái)", "Tourism EXPO Japan (Japón)"
+    ],
+    "Gastronomía": [
+        "Salón Internacional del Gourmet (SIG) (España)", "SIAL Paris (Francia)",
+        "Fiera Internazionale del Tartufo Bianco (Italia)", "Food & Hotel Asia (FHA) (Singapur)",
+        "The Restaurant Show (Reino Unido)"
+    ],
+    "Inmobiliaria": [
+        "MIPIM (Francia)", "Expo Real (Alemania)",
+        "China International Fair for Trade in Services (CIFTIS) (China)", "Real Estate Expo (India)",
+        "The Property Show (Emiratos Árabes Unidos)"
+    ],
+    "Hotelería": [
+        "ITB Berlin (Alemania)", "EquipHotel (Francia)", "Hotel Show Dubai (Emiratos Árabes Unidos)",
+        "World Travel Market (Reino Unido)", "Fitur (Hotelería) (España)"
+    ],
+    "Robótica": [
+        "CES (Consumer Electronics Show) (EE. UU.)", "Automatica (Alemania)",
+        "Robotics Summit & Expo (EE. UU.)", "Robogames (EE. UU.)", "China International Robot Show (China)"
+    ],
+    "Textil": [
+        "Texworld Paris (Francia)", "The London Textile Fair (Reino Unido)",
+        "Intertextile Shanghai (China)", "FIMI (España)", "Première Vision Paris (Francia)"
+    ],
+    "Electrodomésticos": [
+        "IFA (Alemania)", "CES (EE. UU.)", "MEBLE POLSKA (Polonia)",
+        "KBIS (EE. UU.)", "China International Consumer Electronics Show (China)"
+    ]
+};
+
+// --- STYLES & ASSETS ---
 const STYLE = {
     green: '#8cc63f',
     dark: '#1a1a1a',
@@ -19,10 +57,11 @@ const STYLE = {
 };
 
 export default function ScannerPro({ recruiterId = 'DIC-001' }: { recruiterId?: string }) {
+    const { t } = useTranslation('admin');
     const { toast } = useToast();
     const videoRef = useRef<HTMLVideoElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    const [status, setStatus] = useState<string>('Listo para escanear');
+    const [status, setStatus] = useState<string>(t('scanner.pro.status.ready', 'Listo para escanear'));
     const [isProcessing, setIsProcessing] = useState(false);
     const [lastResult, setLastResult] = useState<{ status: 'success' | 'duplicate', message: string, companyName: string, clientName: string } | null>(null);
     const [showDebug, setShowDebug] = useState(false);
@@ -37,7 +76,8 @@ export default function ScannerPro({ recruiterId = 'DIC-001' }: { recruiterId?: 
         description: '',
         leadDestination: 'DICILO',
         clientCompanyId: '',
-        clientCompanyName: ''
+        clientCompanyName: '',
+        eventName: 'Online (Directo)' // Default
     });
 
     // Campaign Memory State
@@ -234,7 +274,7 @@ export default function ScannerPro({ recruiterId = 'DIC-001' }: { recruiterId?: 
         if (!videoRef.current || !canvasRef.current) return;
 
         setIsProcessing(true);
-        setStatus('Optimizando Imagen...');
+        setStatus(t('scanner.pro.status.optimizing', 'Optimizando Imagen...'));
 
         const video = videoRef.current;
         const canvas = canvasRef.current;
@@ -248,7 +288,7 @@ export default function ScannerPro({ recruiterId = 'DIC-001' }: { recruiterId?: 
         // 2. Apply Pre-processing Filter (Grayscale + Contrast)
         preprocessImage(canvas);
 
-        setStatus('Leyendo Textos...');
+        setStatus(t('scanner.pro.status.reading', 'Leyendo Textos...'));
 
         try {
             const worker = await createWorker('spa');
@@ -262,8 +302,8 @@ export default function ScannerPro({ recruiterId = 'DIC-001' }: { recruiterId?: 
             await worker.terminate();
 
             // Intelligent Parsing
-            if (text.trim().length < 4) {
-                setStatus('⚠️ Texto muy corto. Acerca la cámara.');
+            if (text.trim().length < 5) {
+                setStatus(t('scanner.pro.status.shortText', '⚠️ Texto no claro. Mejora luz/enfoque.'));
                 setIsProcessing(false);
                 return;
             }
@@ -281,10 +321,10 @@ export default function ScannerPro({ recruiterId = 'DIC-001' }: { recruiterId?: 
                 description: text
             }));
 
-            setStatus('✅ Lectura Completada');
+            setStatus(t('scanner.pro.status.success', '✅ Lectura Completada'));
         } catch (error) {
             console.error(error);
-            setStatus('❌ Error en lectura');
+            setStatus(t('scanner.pro.status.error', '❌ Error en lectura'));
         } finally {
             setIsProcessing(false);
         }
@@ -348,7 +388,7 @@ export default function ScannerPro({ recruiterId = 'DIC-001' }: { recruiterId?: 
                 description: ''
             }));
 
-            setStatus('Listo para el siguiente');
+            setStatus(t('scanner.pro.status.ready', 'Listo para el siguiente'));
         } else {
             toast({ title: 'Error', description: 'Error al conectar con el servidor.', variant: 'destructive' });
         }
@@ -361,7 +401,7 @@ export default function ScannerPro({ recruiterId = 'DIC-001' }: { recruiterId?: 
 
             {/* Header App Style */}
             <div className="bg-[#1a1a1a] text-white p-4 text-center border-b-4 border-[#8cc63f] mb-6 shadow-md sticky top-0 z-50">
-                <h1 className="text-xl font-bold tracking-wider">DICILO<span className="text-[#8cc63f]">SCAN</span> PRO</h1>
+                <h1 className="text-xl font-bold tracking-wider">{t('scanner.pro.header', 'DICILOSCAN PRO').replace('PRO', '')}<span className="text-[#8cc63f]">PRO</span></h1>
             </div>
 
             {/* Campaign Banner */}
@@ -395,7 +435,7 @@ export default function ScannerPro({ recruiterId = 'DIC-001' }: { recruiterId?: 
                 {/* Visual Guide Overlay - Horizontal Card Shape */}
                 <div className="absolute top-[15%] left-[5%] right-[5%] bottom-[15%] border-2 border-dashed border-[#8cc63f] rounded-lg shadow-[0_0_0_100vmax_rgba(0,0,0,0.6)] pointer-events-none">
                     <div className="absolute -top-8 left-0 w-full text-center text-white font-bold text-sm tracking-widest drop-shadow-md bg-black/50 py-1 rounded">
-                        ENCUADRAR TARJETA (HORIZONTAL)
+                        {t('scanner.pro.overlay', 'ENCUADRAR TARJETA (HORIZONTAL)')}
                     </div>
                 </div>
             </div>
@@ -406,7 +446,7 @@ export default function ScannerPro({ recruiterId = 'DIC-001' }: { recruiterId?: 
                     onClick={() => setShowDebug(!showDebug)}
                     className="text-[10px] text-gray-500 underline"
                 >
-                    {showDebug ? 'Ocultar visión del robot' : 'Ver qué ve el robot (Debug)'}
+                    {showDebug ? t('scanner.pro.debug.hide', 'Ocultar visión del robot') : t('scanner.pro.debug.show', 'Ver qué ve el robot (Debug)')}
                 </button>
             </div>
 
@@ -418,11 +458,11 @@ export default function ScannerPro({ recruiterId = 'DIC-001' }: { recruiterId?: 
             >
                 {isProcessing ? (
                     <span className="flex items-center justify-center gap-2">
-                        <Loader2 className="animate-spin" /> Procesando...
+                        <Loader2 className="animate-spin" /> {t('scanner.pro.btn.processing', 'Procesando...')}
                     </span>
                 ) : (
                     <span className="flex items-center justify-center gap-2">
-                        <Camera /> Capturar Datos
+                        <Camera /> {t('scanner.pro.btn.capture', 'Capturar Datos')}
                     </span>
                 )}
             </button>
@@ -436,14 +476,14 @@ export default function ScannerPro({ recruiterId = 'DIC-001' }: { recruiterId?: 
                         {lastResult.status === 'success' ? <CheckCircle className="text-green-600 w-6 h-6 shrink-0" /> : <AlertTriangle className="text-amber-600 w-6 h-6 shrink-0" />}
                         <div>
                             <h3 className={`font-bold ${lastResult.status === 'success' ? 'text-green-800' : 'text-amber-800'}`}>
-                                {lastResult.status === 'success' ? 'Registro Exitoso' : 'Empresa Existente'}
+                                {lastResult.status === 'success' ? t('scanner.pro.result.success', 'Registro Exitoso') : t('scanner.pro.result.duplicate', 'Empresa Existente')}
                             </h3>
                             <p className="text-sm text-gray-700 mt-1">{lastResult.message}</p>
 
                             <div className="mt-3 bg-white/60 p-2 rounded text-sm">
-                                <p><strong>Empresa:</strong> {lastResult.companyName}</p>
-                                <p><strong>Asignado a:</strong> {lastResult.clientName}</p>
-                                <p><strong>Estado:</strong> <span className="bg-gray-200 px-1 rounded text-xs">Pendiente Revisión</span></p>
+                                <p><strong>{t('scanner.pro.result.company', 'Empresa')}:</strong> {lastResult.companyName}</p>
+                                <p><strong>{t('scanner.pro.result.assigned', 'Asignado a')}:</strong> {lastResult.clientName}</p>
+                                <p><strong>{t('scanner.pro.result.status', 'Estado')}:</strong> <span className="bg-gray-200 px-1 rounded text-xs">{t('scanner.pro.result.pending', 'Pendiente Revisión')}</span></p>
                             </div>
                         </div>
                     </div>
@@ -454,68 +494,105 @@ export default function ScannerPro({ recruiterId = 'DIC-001' }: { recruiterId?: 
             <div className="w-full mt-6 bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
                 <form onSubmit={handleSubmit}>
                     <div className="mb-4">
-                        <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Nombre / Empresa</label>
+                        <label className="block text-xs font-bold text-gray-500 uppercase mb-1">{t('scanner.pro.form.name', 'Nombre / Empresa')}</label>
                         <input
                             value={formData.businessName}
                             onChange={e => setFormData({ ...formData, businessName: e.target.value })}
                             className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-[#8cc63f] focus:bg-white transition-colors"
-                            placeholder="Ej. Restaurante Pepe"
+                            placeholder={t('scanner.pro.form.placeholder.name', 'Ej. Restaurante Pepe')}
                             required
                         />
                     </div>
 
                     <div className="flex gap-3 mb-4">
                         <div className="flex-1">
-                            <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Teléfono</label>
+                            <label className="block text-xs font-bold text-gray-500 uppercase mb-1">{t('scanner.pro.form.phone', 'Teléfono')}</label>
                             <input
                                 value={formData.phone}
                                 onChange={e => setFormData({ ...formData, phone: e.target.value })}
                                 className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-[#8cc63f] focus:bg-white transition-colors"
-                                placeholder="+34 600..."
+                                placeholder={t('scanner.pro.form.placeholder.phone', '+34 600...')}
                             />
                         </div>
                         <div className="flex-1">
-                            <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Email</label>
+                            <label className="block text-xs font-bold text-gray-500 uppercase mb-1">{t('scanner.pro.form.email', 'Email')}</label>
                             <input
                                 type="email"
                                 value={formData.email}
                                 onChange={e => setFormData({ ...formData, email: e.target.value })}
                                 className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-[#8cc63f] focus:bg-white transition-colors"
-                                placeholder="info@..."
+                                placeholder={t('scanner.pro.form.placeholder.email', 'info@...')}
                             />
                         </div>
                     </div>
 
                     <div className="mb-4">
-                        <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Web / Dirección</label>
+                        <label className="block text-xs font-bold text-gray-500 uppercase mb-1">{t('scanner.pro.form.web', 'Web / Dirección')}</label>
                         <input
                             value={formData.website}
                             onChange={e => setFormData({ ...formData, website: e.target.value })}
                             className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-[#8cc63f] focus:bg-white transition-colors mb-2"
-                            placeholder="www.ejemplo.com"
+                            placeholder={t('scanner.pro.form.placeholder.web', 'www.ejemplo.com')}
                         />
                         <input
                             value={formData.address}
                             onChange={e => setFormData({ ...formData, address: e.target.value })}
                             className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-[#8cc63f] focus:bg-white transition-colors"
-                            placeholder="Calle Principal 1, Madrid"
+                            placeholder={t('scanner.pro.form.placeholder.address', 'Calle Principal 1, Madrid')}
                         />
                     </div>
 
                     <div className="mb-6">
-                        <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Notas (OCR Raw)</label>
+                        <label className="block text-xs font-bold text-gray-500 uppercase mb-1">{t('scanner.pro.form.notes', 'Notas (OCR Raw)')}</label>
                         <textarea
                             value={formData.description}
                             onChange={e => setFormData({ ...formData, description: e.target.value })}
                             className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-[#8cc63f] focus:bg-white transition-colors min-h-[80px] text-xs font-mono"
-                            placeholder="Texto extraído..."
+                            placeholder={t('scanner.pro.form.placeholder.notes', 'Texto extraído...')}
                         />
+                    </div>
+
+                    {/* Meta Data: Recruiter & Event (NEW) */}
+                    <div className="mb-6 grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-50 p-4 rounded-xl">
+                        <div>
+                            <label className="block text-xs font-bold text-gray-500 uppercase mb-1">{t('scanner.pro.form.sender', 'Datos enviados por')}:</label>
+                            <div className="font-mono text-sm font-bold text-gray-800 bg-white p-2 border rounded">
+                                {recruiterId}
+                            </div>
+                        </div>
+                        <div>
+                            <label className="block text-xs font-bold text-gray-500 uppercase mb-1">{t('scanner.pro.form.event', 'Evento / Feria')}:</label>
+                            <Select
+                                value={formData.eventName}
+                                onValueChange={(val) => setFormData({ ...formData, eventName: val })}
+                            >
+                                <SelectTrigger className="w-full bg-white border-gray-200">
+                                    <SelectValue placeholder="Seleccionar Evento" />
+                                </SelectTrigger>
+                                <SelectContent className="max-h-[300px]">
+                                    <SelectItem value="Online (Directo)">🌍 Online / Directo / Otro</SelectItem>
+                                    {Object.entries(FAIRS_DATA).map(([category, events]) => (
+                                        <SelectGroup key={category}>
+                                            <SelectLabel className="bg-gray-100 text-xs font-extrabold uppercase tracking-wide text-gray-600 px-2 py-1 sticky top-0">
+                                                {category}
+                                            </SelectLabel>
+                                            {events.map(event => (
+                                                <SelectItem key={event} value={event} className="text-xs pl-4">
+                                                    {event}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectGroup>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                            <p className="text-[10px] text-gray-400 mt-1">{t('scanner.pro.form.event_notes', 'Selecciona Online si no aplica.')}</p>
+                        </div>
                     </div>
 
                     {/* Assignment Selector (Only if No Campaign Set) */}
                     {!campaignClient && (
                         <div className="mb-6 bg-gray-50 p-4 rounded-xl">
-                            <label className="block text-xs font-bold text-[#8cc63f] uppercase mb-2">Asignar Lead A:</label>
+                            <label className="block text-xs font-bold text-[#8cc63f] uppercase mb-2">{t('scanner.pro.assign.label', 'Asignar Lead A')}:</label>
 
                             <div className="flex gap-2 mb-4">
                                 {['DICILO', 'CLIENTE', 'AMBOS'].map((opt) => (
@@ -527,7 +604,7 @@ export default function ScannerPro({ recruiterId = 'DIC-001' }: { recruiterId?: 
                                             : 'text-gray-400 hover:bg-gray-100'
                                             }`}
                                     >
-                                        {opt}
+                                        {opt === 'DICILO' ? t('scanner.pro.assign.dicilo', 'DICILO') : opt === 'CLIENTE' ? t('scanner.pro.assign.client', 'CLIENTE') : t('scanner.pro.assign.both', 'AMBOS')}
                                     </div>
                                 ))}
                             </div>
@@ -564,7 +641,7 @@ export default function ScannerPro({ recruiterId = 'DIC-001' }: { recruiterId?: 
                                         <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${rememberClient ? 'bg-[#8cc63f] border-[#8cc63f]' : 'bg-white border-gray-300'}`}>
                                             {rememberClient && <Check className="w-3 h-3 text-white" />}
                                         </div>
-                                        <span className="text-xs text-gray-600 font-medium select-none">Recordar para escaneo continuo</span>
+                                        <span className="text-xs text-gray-600 font-medium select-none">{t('scanner.pro.assign.remember_client', 'Recordar para escaneo continuo')}</span>
                                     </div>
                                 </div>
                             )}
@@ -576,7 +653,7 @@ export default function ScannerPro({ recruiterId = 'DIC-001' }: { recruiterId?: 
                         disabled={isProcessing}
                         className="w-full py-4 bg-[#1a1a1a] text-white rounded-xl font-bold uppercase tracking-widest shadow-lg active:scale-95 transition-transform"
                     >
-                        {isProcessing ? 'Guardando...' : 'Guardar Prospecto'}
+                        {isProcessing ? t('scanner.pro.btn.saving', 'Guardando...') : t('scanner.pro.btn.save', 'Guardar Prospecto')}
                     </button>
 
                 </form>

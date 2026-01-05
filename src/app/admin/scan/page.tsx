@@ -8,18 +8,42 @@ import { useTranslation } from 'react-i18next';
 import { Separator } from '@/components/ui/separator';
 import { Scan } from 'lucide-react';
 
+import { useAuth } from '@/context/AuthContext';
+import { getUserProfileSummary } from '@/app/actions/profile';
+import { ensureUniqueCode } from '@/app/actions/profile';
+
 export default function ScannerPage() {
     const { t } = useTranslation('admin');
+    const { user } = useAuth();
+    const [recruiterInfo, setRecruiterInfo] = React.useState<string>('Cargando...');
+
+    React.useEffect(() => {
+        const fetchRecruiterData = async () => {
+            if (user?.uid) {
+                // Ensure they have a code first
+                await ensureUniqueCode(user.uid);
+                // Get details
+                const res = await getUserProfileSummary(user.uid);
+                if (res.success && res.data) {
+                    const { firstName, lastName, uniqueCode } = res.data;
+                    setRecruiterInfo(`${firstName} ${lastName} (${uniqueCode})`.trim());
+                } else {
+                    setRecruiterInfo('Usuario Desconocido');
+                }
+            }
+        };
+        fetchRecruiterData();
+    }, [user]);
 
     return (
         <div className="w-full max-w-[1800px] mx-auto p-4 md:p-8 space-y-8 pb-24">
             <div className="space-y-2 text-center md:text-left">
                 <h1 className="text-3xl font-bold tracking-tight text-slate-900 flex items-center gap-2 justify-center md:justify-start">
                     <Scan className="h-8 w-8 text-blue-600" />
-                    Dicilo Scanner & Reports
+                    {t('scanner.title', 'Dicilo Scanner & Reports')}
                 </h1>
                 <p className="text-slate-500">
-                    Herramienta unificada para capturar prospectos y generar reportes B2B.
+                    {t('scanner.subtitle', 'Herramienta unificada para capturar prospectos y generar reportes B2B.')}
                 </p>
             </div>
 
@@ -29,11 +53,11 @@ export default function ScannerPage() {
                 <div className="space-y-6">
                     <Card className="border-blue-100 shadow-md">
                         <CardHeader className="bg-blue-50/50 border-b border-blue-100 pb-3">
-                            <CardTitle className="text-lg text-blue-900">Scanner Pro</CardTitle>
-                            <CardDescription>Captura tarjetas y asigna leads en tiempo real.</CardDescription>
+                            <CardTitle className="text-lg text-blue-900">{t('scanner.cardTitle')}</CardTitle>
+                            <CardDescription>{t('scanner.cardDesc')}</CardDescription>
                         </CardHeader>
                         <CardContent className="pt-6">
-                            <ScannerPro />
+                            <ScannerPro recruiterId={recruiterInfo} />
                         </CardContent>
                     </Card>
                 </div>
@@ -47,22 +71,22 @@ export default function ScannerPage() {
                     {/* Instructions / Help */}
                     <Card>
                         <CardHeader>
-                            <CardTitle className="text-base">¿Cómo funciona?</CardTitle>
+                            <CardTitle className="text-base">{t('scanner.howItWorks.title')}</CardTitle>
                         </CardHeader>
                         <CardContent className="text-sm space-y-4 text-slate-600">
                             <div>
-                                <strong className="block text-slate-900 mb-1">1. Captura (Scanner)</strong>
-                                <p>Apunta la cámara a una tarjeta de visita. La IA extraerá los datos automáticamente. Si estás trabajando para un cliente específico (ej. Travelposting), selecciona "Recordar" para escanear en ráfaga.</p>
+                                <strong className="block text-slate-900 mb-1">{t('scanner.howItWorks.step1.title')}</strong>
+                                <p>{t('scanner.howItWorks.step1.desc')}</p>
                             </div>
                             <Separator />
                             <div>
-                                <strong className="block text-slate-900 mb-1">2. Fusión Inteligente (Smart Merge)</strong>
-                                <p>Si escaneas una empresa que ya existe, el sistema <b>no la duplicará</b>. En su lugar, completará los datos que falten (ej. si tenías el email pero no el teléfono) y te avisará.</p>
+                                <strong className="block text-slate-900 mb-1">{t('scanner.howItWorks.step2.title')}</strong>
+                                <p>{t('scanner.howItWorks.step2.desc')}</p>
                             </div>
                             <Separator />
                             <div>
-                                <strong className="block text-slate-900 mb-1">3. Reportes</strong>
-                                <p>Al final del día, usa el panel de arriba para descargar un Excel con todos los leads capturados para tu cliente. ¡Listo para enviar!</p>
+                                <strong className="block text-slate-900 mb-1">{t('scanner.howItWorks.step3.title')}</strong>
+                                <p>{t('scanner.howItWorks.step3.desc')}</p>
                             </div>
                         </CardContent>
                     </Card>

@@ -71,3 +71,29 @@ export async function ensureUniqueCode(uid: string) {
     }
 }
 
+
+export async function getUserProfileSummary(uid: string) {
+    try {
+        if (!uid) return { success: false, error: 'Unauthorized' };
+
+        const docRef = getAdminDb().collection('private_profiles').doc(uid);
+        const doc = await docRef.get();
+
+        if (!doc.exists) return { success: false, error: 'Profile not found' };
+
+        const data = doc.data();
+        return {
+            success: true,
+            data: {
+                firstName: data?.firstName || '',
+                lastName: data?.lastName || '',
+                uniqueCode: data?.uniqueCode || '',
+                role: data?.role || 'user'
+            }
+        };
+
+    } catch (error: any) {
+        console.error('Error fetching profile summary:', error);
+        return { success: false, error: error.message };
+    }
+}

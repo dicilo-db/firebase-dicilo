@@ -21,7 +21,8 @@ import {
     Briefcase,
     Megaphone,
     ChevronDown,
-    ChevronRight
+    ChevronRight,
+    Scan
 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -129,6 +130,12 @@ export function Sidebar({ userData, onViewChange, currentView }: SidebarProps) {
     // Add Admin conditionally
     if (canSeeAdmin) {
         navItems.push({ id: 'admin', label: 'Admin Panel', icon: Shield, type: 'link', href: '/admin' });
+    }
+
+    // Add Scanner Pro for Freelancers+
+    const canUseScanner = ['freelancer', 'team_office', 'admin', 'superadmin'].includes(role) || hasPermission('use_scanner');
+    if (canUseScanner) {
+        navItems.push({ id: 'scanner', label: 'Scanner Pro', icon: Scan, type: 'link', href: '/admin/scan' });
     }
 
     // Dialog state for info

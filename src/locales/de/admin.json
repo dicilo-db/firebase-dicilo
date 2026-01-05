@@ -935,5 +935,87 @@
     "view_file": "Datei ansehen",
     "processing": "Verarbeitung...",
     "uncategorized": "Unkategorisiert"
+  },
+  "scanner": {
+    "title": "Dicilo Scanner & Reports",
+    "subtitle": "Einheitliches Tool zur Erfassung von Interessenten und Generierung von B2B-Berichten.",
+    "cardTitle": "Scanner Pro",
+    "cardDesc": "Erfassen Sie Visitenkarten und weisen Sie Leads in Echtzeit zu.",
+    "howItWorks": {
+      "title": "Wie funktioniert es?",
+      "step1": {
+        "title": "1. Erfassung (Scanner)",
+        "desc": "Richten Sie die Kamera auf eine Visitenkarte. Die KI extrahiert die Daten automatisch. Wenn Sie für einen bestimmten Kunden arbeiten (z.B. Travelposting), wählen Sie \"Erinnern\", um in Serie zu scannen."
+      },
+      "step2": {
+        "title": "2. Intelligente Zusammenführung (Smart Merge)",
+        "desc": "Wenn Sie ein Unternehmen scannen, das bereits existiert, wird das System es nicht duplizieren. Stattdessen vervollständigt es fehlende Daten (z.B. wenn Sie die E-Mail hatten, aber nicht die Telefonnummer) und benachrichtigt Sie."
+      },
+      "step3": {
+        "title": "3. Berichte",
+        "desc": "Am Ende des Tages verwenden Sie das obere Panel, um eine Excel-Datei mit allen erfassten Leads für Ihren Kunden herunterzuladen. Bereit zum Senden!"
+      }
+    },
+    "pro": {
+      "header": "DICILOSCAN PRO",
+      "overlay": "VISITENKARTE AUSRICHTEN (HORIZONTAL)",
+      "debug": {
+        "show": "Sehen, was der Roboter sieht (Debug)",
+        "hide": "Robotersicht ausblenden"
+      },
+      "status": {
+        "ready": "Bereit zum Scannen",
+        "optimizing": "Bild wird optimiert...",
+        "reading": "Text wird gelesen...",
+        "success": "Lesevorgang abgeschlossen",
+        "error": "Fehler beim Lesen",
+        "shortText": "Text unklar. Licht/Fokus verbessern."
+      },
+      "btn": {
+        "processing": "Verarbeitung...",
+        "capture": "Daten erfassen",
+        "save": "Interessent speichern",
+        "saving": "Speichern..."
+      },
+      "form": {
+        "name": "Name / Unternehmen",
+        "phone": "Telefon",
+        "email": "E-Mail",
+        "web": "Web / Adresse",
+        "notes": "Notizen (OCR Raw)",
+        "sender": "Daten gesendet von",
+        "event": "Event / Messe",
+        "placeholder": {
+          "name": "z.B. Restaurant Pepe",
+          "phone": "+49 151...",
+          "email": "info@...",
+          "web": "www.beispiel.de",
+          "address": "Hauptstraße 1, Berlin",
+          "notes": "Extrahierter Text..."
+        },
+        "event_notes": "Wählen Sie 'Online', wenn nicht zutreffend."
+      },
+      "assign": {
+        "label": "Lead zuweisen an",
+        "dicilo": "DICILO",
+        "client": "KUNDE",
+        "both": "BEIDE"
+      },
+      "result": {
+        "success": "Erfolgreich registriert",
+        "duplicate": "Unternehmen existiert",
+        "pending": "Ausstehende Überprüfung",
+        "company": "Unternehmen",
+        "assigned": "Zugewiesen an",
+        "status": "Status"
+      }
+    },
+    "reports": {
+      "generate": "Tagesbericht erstellen (B2B)",
+      "receivingCompany": "Empfängerunternehmen",
+      "selectCompany": "Unternehmen auswählen",
+      "date": "Datum",
+      "download": "Excel herunterladen"
+    }
   }
 }
