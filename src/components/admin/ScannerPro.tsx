@@ -260,21 +260,28 @@ export default function ScannerPro({ recruiterId = 'DIC-001' }: { recruiterId?: 
         setLastResult(null);
 
         // Explicitly type the payload to match what createProspect expects
+        // 1. Destructure to remove fields that are not unique or mapped differently
+        const { description, ...restFormData } = formData;
+
         const payload: Omit<Prospect, 'id' | 'createdAt' | 'updatedAt' | 'isActive' | 'reportGeneratedAt'> = {
-            ...formData,
+            ...restFormData, // Contains: businessName, phone, email, website, address, leadDestination, clientCompanyId, clientCompanyName, eventName
+
             // Data Completeness Defaults
             category: 'Prospecto Pendiente',
-            subcategory: 'General', // Placeholder to be filled by human
-            location: '', // Human fill
-            offerUrl: '', // Not in form
-            logoUrl: 'default_logo.png', // Placeholder
+            subcategory: 'General',
+
             // Cast leadDestination to the specific string literal union type
             leadDestination: formData.leadDestination as 'DICILO' | 'CLIENTE' | 'AMBOS',
             recruiterId,
-            ocrRawData: formData.description,
-            // Initialize optional fields that might be added later
+            ocrRawData: description, // Mapped from description
+
+            // Initialize optional fields
             photoUrl: undefined,
-            interest: undefined
+            interest: undefined,
+            isActive: false,
+
+            // Coordinates are optional in Prospect, so we can omit them or set undefined
+            coordinates: undefined
         };
 
         // 1. Associate Image (Already uploaded by scanCard action)

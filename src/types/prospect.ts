@@ -39,4 +39,5 @@ export interface Prospect {
     ocrRawData?: string;
     photoUrl?: string; // Card image
     interest?: 'Basic' | 'Starter' | 'Minorista' | 'Premium';
+    eventName?: string; // Event or Fair where the lead was captured
 }
