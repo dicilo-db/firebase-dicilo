@@ -9,6 +9,8 @@ import { useToast } from '@/hooks/use-toast';
 import { Loader2, Camera, Search, Check, AlertTriangle, CheckCircle } from 'lucide-react';
 import { createWorker } from 'tesseract.js';
 import { createProspect } from '@/app/actions/prospects';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { storage } from '@/lib/firebase';
 
 // --- STYLES & ASSETS ---
 import { useTranslation } from 'react-i18next';
@@ -79,6 +81,10 @@ export default function ScannerPro({ recruiterId = 'DIC-001' }: { recruiterId?: 
         clientCompanyName: '',
         eventName: 'Online (Directo)' // Default
     });
+
+    // New Features State
+    const [cardImageBlob, setCardImageBlob] = useState<Blob | null>(null);
+    const [interest, setInterest] = useState<string>(''); // Output: Basic, Starter, Minorista, Premium
 
     // Campaign Memory State
     const [campaignClient, setCampaignClient] = useState<{ id: string, name: string } | null>(null);
@@ -285,6 +291,11 @@ export default function ScannerPro({ recruiterId = 'DIC-001' }: { recruiterId?: 
         const ctx = canvas.getContext('2d');
         ctx?.drawImage(video, 0, 0);
 
+        // 1.5 Capture Blob for Storage (WebP - Lightweight)
+        canvas.toBlob((blob) => {
+            if (blob) setCardImageBlob(blob);
+        }, 'image/webp', 0.8);
+
         // 2. Apply Pre-processing Filter (Grayscale + Contrast)
         preprocessImage(canvas);
 
@@ -366,6 +377,24 @@ export default function ScannerPro({ recruiterId = 'DIC-001' }: { recruiterId?: 
             ocrRawData: formData.description
         };
 
+        // 1. Upload Image if exists
+        if (cardImageBlob) {
+            try {
+                const storageRef = ref(storage, `receipts/${recruiterId}/${Date.now()}.webp`);
+                const snapshot = await uploadBytes(storageRef, cardImageBlob);
+                const url = await getDownloadURL(snapshot.ref);
+                payload.photoUrl = url;
+            } catch (err) {
+                console.error("Error upload image", err);
+                toast({ title: 'Aviso', description: 'No se pudo guardar la imagen, pero se guardarán los datos.', variant: 'destructive' });
+            }
+        }
+
+        // 2. Add Interest
+        if (interest) {
+            payload.interest = interest as any;
+        }
+
         const res = await createProspect(payload);
 
         if (res.success) {
@@ -387,6 +416,8 @@ export default function ScannerPro({ recruiterId = 'DIC-001' }: { recruiterId?: 
                 website: '',
                 description: ''
             }));
+            setCardImageBlob(null);
+            setInterest('');
 
             setStatus(t('scanner.pro.status.ready', 'Listo para el siguiente'));
         } else {
@@ -586,6 +617,27 @@ export default function ScannerPro({ recruiterId = 'DIC-001' }: { recruiterId?: 
                                 </SelectContent>
                             </Select>
                             <p className="text-[10px] text-gray-400 mt-1">{t('scanner.pro.form.event_notes', 'Selecciona Online si no aplica.')}</p>
+                        </div>
+                    </div>
+
+                    {/* Interest Selector (New) */}
+                    <div className="mb-6 bg-blue-50/50 p-4 rounded-xl border border-blue-100">
+                        <label className="block text-xs font-bold text-[#1a1a1a] uppercase mb-2">
+                            {t('scanner.pro.form.interest', 'Interés Prospecto')}:
+                        </label>
+                        <div className="grid grid-cols-2 gap-2">
+                            {['Basic', 'Starter', 'Minorista', 'Premium'].map((item) => (
+                                <div
+                                    key={item}
+                                    onClick={() => setInterest(item)}
+                                    className={`text-center py-2 rounded-lg text-xs font-bold cursor-pointer transition-all border ${interest === item
+                                            ? 'bg-[#1a1a1a] text-white border-[#1a1a1a] shadow-md'
+                                            : 'bg-white text-gray-500 border-gray-200 hover:border-gray-400'
+                                        }`}
+                                >
+                                    {t(`scanner.pro.interest.${item.toLowerCase()}`, item)}
+                                </div>
+                            ))}
                         </div>
                     </div>
 

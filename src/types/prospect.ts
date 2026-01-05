@@ -38,4 +38,5 @@ export interface Prospect {
     // OCR Metadata (Optional)
     ocrRawData?: string;
     photoUrl?: string; // Card image
+    interest?: 'Basic' | 'Starter' | 'Minorista' | 'Premium';
 }

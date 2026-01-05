@@ -993,7 +993,14 @@
           "address": "Hauptstraße 1, Berlin",
           "notes": "Extrahierter Text..."
         },
-        "event_notes": "Wählen Sie 'Online', wenn nicht zutreffend."
+        "event_notes": "Wählen Sie 'Online', wenn nicht zutreffend.",
+        "interest": "Interesse"
+      },
+      "interest": {
+        "basic": "Basic",
+        "starter": "Starter",
+        "minorista": "Einzelhändler",
+        "premium": "Premium"
       },
       "assign": {
         "label": "Lead zuweisen an",

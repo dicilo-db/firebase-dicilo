@@ -965,7 +965,14 @@
           "address": "123 Main St, New York",
           "notes": "Extracted text..."
         },
-        "event_notes": "Select 'Online' if not applicable."
+        "event_notes": "Select 'Online' if not applicable.",
+        "interest": "Prospect Interest"
+      },
+      "interest": {
+        "basic": "Basic",
+        "starter": "Starter",
+        "minorista": "Retailer",
+        "premium": "Premium"
       },
       "assign": {
         "label": "Assign Lead To",

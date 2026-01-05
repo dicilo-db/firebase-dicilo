@@ -1005,7 +1005,14 @@
           "address": "Calle Principal 1, Madrid",
           "notes": "Texto extraído..."
         },
-        "event_notes": "Selecciona 'Online' si no aplica."
+        "event_notes": "Selecciona 'Online' si no aplica.",
+        "interest": "Interés Prospecto"
+      },
+      "interest": {
+        "basic": "Basic",
+        "starter": "Starter",
+        "minorista": "Minorista",
+        "premium": "Premium"
       },
       "assign": {
         "label": "Asignar Lead A",
