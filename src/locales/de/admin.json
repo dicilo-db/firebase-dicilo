@@ -966,6 +966,7 @@
       "status": {
         "ready": "Bereit zum Scannen",
         "optimizing": "Bild wird optimiert...",
+        "capturing": "Aufnahme und Analyse mit KI...",
         "reading": "Text wird gelesen...",
         "success": "Lesevorgang abgeschlossen",
         "error": "Fehler beim Lesen",

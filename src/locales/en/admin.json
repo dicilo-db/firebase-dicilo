@@ -938,6 +938,7 @@
       "status": {
         "ready": "Ready to scan",
         "optimizing": "Optimizing Image...",
+        "capturing": "Capturing and analyzing with AI...",
         "reading": "Reading Text...",
         "success": "Reading Completed",
         "error": "Reading Error",

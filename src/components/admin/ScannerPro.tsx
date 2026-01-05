@@ -7,10 +7,8 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Camera, Search, Check, AlertTriangle, CheckCircle } from 'lucide-react';
-import { createWorker } from 'tesseract.js';
 import { createProspect } from '@/app/actions/prospects';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { storage } from '@/lib/firebase';
+import { processBusinessCard } from '@/app/actions/scanner';
 
 // --- STYLES & ASSETS ---
 import { useTranslation } from 'react-i18next';
@@ -65,6 +63,7 @@ export default function ScannerPro({ recruiterId = 'DIC-001' }: { recruiterId?: 
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [status, setStatus] = useState<string>(t('scanner.pro.status.ready', 'Listo para escanear'));
     const [isProcessing, setIsProcessing] = useState(false);
+    const [scannedPhotoUrl, setScannedPhotoUrl] = useState<string | null>(null);
     const [lastResult, setLastResult] = useState<{ status: 'success' | 'duplicate', message: string, companyName: string, clientName: string } | null>(null);
     const [showDebug, setShowDebug] = useState(false);
 
@@ -83,7 +82,7 @@ export default function ScannerPro({ recruiterId = 'DIC-001' }: { recruiterId?: 
     });
 
     // New Features State
-    const [cardImageBlob, setCardImageBlob] = useState<Blob | null>(null);
+    // const [cardImageBlob, setCardImageBlob] = useState<Blob | null>(null); // Removed locally as it's processed immediately
     const [interest, setInterest] = useState<string>(''); // Output: Basic, Starter, Minorista, Premium
 
     // Campaign Memory State
@@ -167,120 +166,12 @@ export default function ScannerPro({ recruiterId = 'DIC-001' }: { recruiterId?: 
         }
     };
 
-    // --- Image Pre-processing Logic (Contrast Boost) ---
-    const preprocessImage = (sourceCanvas: HTMLCanvasElement): HTMLCanvasElement => {
-        const ctx = sourceCanvas.getContext('2d');
-        if (!ctx) return sourceCanvas;
-
-        const image = ctx.getImageData(0, 0, sourceCanvas.width, sourceCanvas.height);
-        const data = image.data;
-        const contrast = 1.2; // Increase contrast by 20%
-        const intercept = 128 * (1 - contrast);
-
-        for (let i = 0; i < data.length; i += 4) {
-            // 1. Grayscale
-            let gray = (data[i] + data[i + 1] + data[i + 2]) / 3;
-
-            // 2. Contrast Strecth
-            gray = gray * contrast + intercept;
-
-            // Clamp values
-            gray = Math.min(255, Math.max(0, gray));
-
-            data[i] = gray;     // R
-            data[i + 1] = gray; // G
-            data[i + 2] = gray; // B
-            // Alpha (data[i+3]) remains unchanged
-        }
-
-        ctx.putImageData(image, 0, 0);
-        return sourceCanvas;
-    };
-
-    // --- Advanced Parsing Logic ---
-    const parseOCRText = (text: string) => {
-        const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 2);
-
-        // 1. Website Strategy
-        const webRegex = /\b(?:www\.|https?:\/\/)[a-z0-9.-]+\.[a-z]{2,}\b/i;
-        const bestWeb = text.match(webRegex)?.[0] || '';
-
-        let domain = '';
-        if (bestWeb) {
-            domain = bestWeb.replace(/^(?:https?:\/\/)?(?:www\.)?/, '').split('/')[0];
-        }
-
-        // 2. Email Strategy (Multi-layer)
-        let bestEmail = '';
-        const strictEmailRegex = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/;
-        bestEmail = text.match(strictEmailRegex)?.[0] || '';
-
-        if (!bestEmail && domain.length > 4) {
-            const safeDomain = domain.replace('.', '\\.');
-            const domainRegex = new RegExp(`\\b([a-zA-Z0-9._%+-]+)[\\s\\W]{1,4}${safeDomain}`, 'i');
-            const match = text.match(domainRegex);
-            if (match) bestEmail = `${match[1]}@${domain}`;
-        }
-
-        if (!bestEmail) {
-            const looseEmailRegex = /[A-Za-z0-9._%+-]+\s?@\s?[A-Za-z0-9.-]+\s?\.\s?[A-Za-z]{2,}/;
-            const looseMatch = text.match(looseEmailRegex);
-            if (looseMatch) bestEmail = looseMatch[0].replace(/\s/g, '');
-        }
-
-        // 3. Phone Strategy
-        const phoneRegex = /(?:(?:\+|00)\d{1,3}[\s.-]{0,3}(?:\(\d{1,5}\)[\s.-]{0,3})?|\b0\d{1,5}[\s.-]{0,3})[\d\s.-]{5,}/g;
-        const potentialPhones = text.match(phoneRegex) || [];
-        const bestPhone = potentialPhones.find(p => p.replace(/\D/g, '').length > 7) || '';
-
-        // 4. Address Strategy
-        const zipCityRegex = /\b\d{4,5}\s+[A-Za-zäöüÄÖÜß]+/g;
-        const zipCityLineIndex = lines.findIndex(l => zipCityRegex.test(l));
-        let bestAddress = '';
-
-        if (zipCityLineIndex !== -1) {
-            const zipLine = lines[zipCityLineIndex];
-            const prevLine = zipCityLineIndex > 0 ? lines[zipCityLineIndex - 1] : '';
-            if (prevLine && !prevLine.includes('@') && prevLine.length > 5) {
-                bestAddress = `${prevLine}, ${zipLine}`;
-            } else {
-                bestAddress = zipLine;
-            }
-        }
-
-        // 5. Company Name Strategy
-        const legalSuffixes = ['GmbH', 'AG', 'S.L.', 'S.L.U.', 'S.A.', 'Inc', 'Ltd', 'LLC', 'e.V.', 'KG'];
-        let companyName = '';
-        const companyLine = lines.find(l => legalSuffixes.some(s => l.includes(s)));
-
-        if (companyLine) {
-            companyName = companyLine;
-        } else {
-            for (const line of lines) {
-                if (line.includes('@') || line.match(phoneRegex) || line.match(webRegex)) continue;
-                const cleanLine = line.replace(/^[^a-zA-Z0-9]+/, '').trim();
-                if (cleanLine.length > 3 && !cleanLine.toLowerCase().startsWith('tel') && !cleanLine.toLowerCase().startsWith('fax')) {
-                    companyName = cleanLine;
-                    break;
-                }
-            }
-        }
-
-        return {
-            businessName: companyName.replace(/^[^a-zA-Z0-9]+/, '').trim(),
-            phone: bestPhone.trim(),
-            email: bestEmail,
-            website: bestWeb,
-            address: bestAddress
-        };
-    };
-
-    // --- OCR Logic ---
+    // --- Server-Side AI OCR Logic ---
     const scanCard = async () => {
         if (!videoRef.current || !canvasRef.current) return;
 
         setIsProcessing(true);
-        setStatus(t('scanner.pro.status.optimizing', 'Optimizando Imagen...'));
+        setStatus(t('scanner.pro.status.capturing', 'Capturando y analizando con AI...'));
 
         const video = videoRef.current;
         const canvas = canvasRef.current;
@@ -291,54 +182,57 @@ export default function ScannerPro({ recruiterId = 'DIC-001' }: { recruiterId?: 
         const ctx = canvas.getContext('2d');
         ctx?.drawImage(video, 0, 0);
 
-        // 1.5 Capture Blob for Storage (WebP - Lightweight)
-        canvas.toBlob((blob) => {
-            if (blob) setCardImageBlob(blob);
-        }, 'image/webp', 0.8);
-
-        // 2. Apply Pre-processing Filter (Grayscale + Contrast)
-        preprocessImage(canvas);
-
-        setStatus(t('scanner.pro.status.reading', 'Leyendo Textos...'));
-
-        try {
-            const worker = await createWorker('spa');
-
-            // PSM 6: Assume a single uniform block of text (Good for business cards)
-            await worker.setParameters({
-                tessedit_pageseg_mode: '6' as any,
-            });
-
-            const { data: { text } } = await worker.recognize(canvas.toDataURL());
-            await worker.terminate();
-
-            // Intelligent Parsing
-            if (text.trim().length < 5) {
-                setStatus(t('scanner.pro.status.shortText', '⚠️ Texto no claro. Mejora luz/enfoque.'));
+        // 2. Convert to Blob
+        canvas.toBlob(async (blob) => {
+            if (!blob) {
+                setStatus('Error al capturar imagen.');
                 setIsProcessing(false);
                 return;
             }
 
-            // 3. Smart Parsing
-            const parsed = parseOCRText(text);
+            try {
+                // 3. Send to Server (Upload + AI)
+                const formData = new FormData();
+                formData.append('image', blob, 'scan.webp');
+                formData.append('recruiterId', recruiterId);
 
-            setFormData(prev => ({
-                ...prev,
-                businessName: parsed.businessName,
-                email: parsed.email || prev.email,
-                phone: parsed.phone || prev.phone,
-                website: parsed.website || prev.website,
-                address: parsed.address || prev.address,
-                description: text
-            }));
+                const result = await processBusinessCard(formData);
 
-            setStatus(t('scanner.pro.status.success', '✅ Lectura Completada'));
-        } catch (error) {
-            console.error(error);
-            setStatus(t('scanner.pro.status.error', '❌ Error en lectura'));
-        } finally {
-            setIsProcessing(false);
-        }
+                if (result.success && result.data) {
+                    const data = result.data;
+
+                    setFormData(prev => ({
+                        ...prev,
+                        businessName: data.businessName || prev.businessName,
+                        email: data.email || prev.email,
+                        phone: data.phone || prev.phone,
+                        website: data.website || prev.website,
+                        address: data.address || prev.address,
+                        description: `SCANNED VIA GEMINI AI`
+                    }));
+
+                    if (data.interest && ['Basic', 'Starter', 'Minorista', 'Premium'].includes(data.interest)) {
+                        setInterest(data.interest);
+                    }
+
+                    if (result.photoUrl) {
+                        setScannedPhotoUrl(result.photoUrl);
+                    }
+
+                    setStatus(t('scanner.pro.status.success', '✅ Análisis AI Completado'));
+                } else {
+                    console.error("AI Error:", result.error);
+                    setStatus(t('scanner.pro.status.error', '❌ Error en análisis AI'));
+                }
+
+            } catch (error) {
+                console.error(error);
+                setStatus('Error de conexión.');
+            } finally {
+                setIsProcessing(false);
+            }
+
+        }, 'image/webp', 0.85);
     };
 
     // --- Search Logic (Mock for now) ---
@@ -377,17 +271,9 @@ export default function ScannerPro({ recruiterId = 'DIC-001' }: { recruiterId?: 
             ocrRawData: formData.description
         };
 
-        // 1. Upload Image if exists
-        if (cardImageBlob) {
-            try {
-                const storageRef = ref(storage, `receipts/${recruiterId}/${Date.now()}.webp`);
-                const snapshot = await uploadBytes(storageRef, cardImageBlob);
-                const url = await getDownloadURL(snapshot.ref);
-                payload.photoUrl = url;
-            } catch (err) {
-                console.error("Error upload image", err);
-                toast({ title: 'Aviso', description: 'No se pudo guardar la imagen, pero se guardarán los datos.', variant: 'destructive' });
-            }
+        // 1. Associate Image (Already uploaded by scanCard action)
+        if (scannedPhotoUrl) {
+            payload.photoUrl = scannedPhotoUrl;
         }
 
         // 2. Add Interest
@@ -416,7 +302,8 @@ export default function ScannerPro({ recruiterId = 'DIC-001' }: { recruiterId?: 
                 website: '',
                 description: ''
             }));
-            setCardImageBlob(null);
+            // setCardImageBlob(null); // No longer needed
+            setScannedPhotoUrl(null);
             setInterest('');
 
             setStatus(t('scanner.pro.status.ready', 'Listo para el siguiente'));
@@ -631,8 +518,8 @@ export default function ScannerPro({ recruiterId = 'DIC-001' }: { recruiterId?: 
                                     key={item}
                                     onClick={() => setInterest(item)}
                                     className={`text-center py-2 rounded-lg text-xs font-bold cursor-pointer transition-all border ${interest === item
-                                            ? 'bg-[#1a1a1a] text-white border-[#1a1a1a] shadow-md'
-                                            : 'bg-white text-gray-500 border-gray-200 hover:border-gray-400'
+                                        ? 'bg-[#1a1a1a] text-white border-[#1a1a1a] shadow-md'
+                                        : 'bg-white text-gray-500 border-gray-200 hover:border-gray-400'
                                         }`}
                                 >
                                     {t(`scanner.pro.interest.${item.toLowerCase()}`, item)}
