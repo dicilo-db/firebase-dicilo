@@ -949,9 +949,9 @@ export default function EditBusinessPage() {
                           className="bg-blue-100 hover:bg-blue-200 text-blue-800 border-blue-200"
                         >
                           {isUploadingLogo ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Upload className="mr-2 h-4 w-4" />}
-                          Sube tu logo
+                          {t('businesses.edit.logo.upload', 'Sube tu logo')}
                         </Button>
-                        <p className="text-[10px] text-muted-foreground uppercase tracking-widest text-center">{t('common.or', 'O')}</p>
+                        <p className="text-[10px] text-muted-foreground uppercase tracking-widest text-center">{t('businesses.edit.logo.or', 'O')}</p>
                         <Button
                           type="button"
                           variant="secondary"
@@ -959,7 +959,7 @@ export default function EditBusinessPage() {
                           onClick={() => setValue('imageUrl', 'https://dicilo.net/logo.png', { shouldValidate: true, shouldDirty: true })}
                         >
                           <div className="flex items-center gap-2">
-                            <span>Agrega Standar</span>
+                            <span>{t('businesses.edit.logo.useStandard', 'Agrega Estándar')}</span>
                             <Image src="/logo.png" width={20} height={20} alt="Dicilo" />
                           </div>
                         </Button>
@@ -978,14 +978,14 @@ export default function EditBusinessPage() {
                           </div>
                         ) : (
                           <div className="flex h-24 w-24 items-center justify-center rounded-full border-2 border-dashed border-blue-200 bg-white text-blue-200">
-                            <span className="text-xs">Sin Logo</span>
+                            <span className="text-xs">{t('businesses.edit.logo.noLogo', 'Sin Logo')}</span>
                           </div>
                         )}
                       </div>
                     </div>
 
                     <Label htmlFor="imageUrl" className="mb-1 block text-xs font-medium text-muted-foreground">
-                      O pega una URL pública:
+                      {t('businesses.edit.logo.pasteUrl', 'O pega una URL pública:')}
                     </Label>
                     <Input
                       id="imageUrl"

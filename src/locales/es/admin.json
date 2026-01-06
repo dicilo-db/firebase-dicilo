@@ -333,7 +333,12 @@
         "dragSuccessDesc": "Posición del marcador actualizada"
       },
       "logo": {
-        "urlHelp": "Pega una URL pública a una imagen de logo (p. ej., de un sitio web de la empresa)."
+        "urlHelp": "Pega una URL pública a una imagen de logo (p. ej., de un sitio web de la empresa).",
+        "upload": "Sube tu logo",
+        "or": "o",
+        "useStandard": "Agrega Estándar",
+        "noLogo": "Sin Logo",
+        "pasteUrl": "O pega una URL pública:"
       }
     },
     "new": {

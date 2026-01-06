@@ -319,7 +319,12 @@
         "dragSuccessDesc": "Marker-Position aktualisiert"
       },
       "logo": {
-        "urlHelp": "Fügen Sie eine öffentliche URL zu einem Logo-Bild ein (z. B. von einer Unternehmenswebsite)."
+        "urlHelp": "Fügen Sie eine öffentliche URL zu einem Logo-Bild ein (z. B. von einer Unternehmenswebsite).",
+        "upload": "Logo hochladen",
+        "or": "oder",
+        "useStandard": "Standard verwenden",
+        "noLogo": "Kein Logo",
+        "pasteUrl": "Oder fügen Sie eine öffentliche URL ein:"
       }
     },
     "new": {

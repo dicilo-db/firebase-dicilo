@@ -321,7 +321,12 @@
         "dragSuccessDesc": "Marker position updated"
       },
       "logo": {
-        "urlHelp": "Paste a public URL to a logo image (e.g., from a company website)."
+        "urlHelp": "Paste a public URL to a logo image (e.g., from a company website).",
+        "upload": "Upload your logo",
+        "or": "or",
+        "useStandard": "Use Standard",
+        "noLogo": "No Logo",
+        "pasteUrl": "Or paste a public URL:"
       }
     },
     "new": {
