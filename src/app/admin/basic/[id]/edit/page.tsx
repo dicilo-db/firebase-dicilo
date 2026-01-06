@@ -367,11 +367,12 @@ export default function EditBusinessPage() {
 
   const [isTranslating, setIsTranslating] = useState(false);
 
-  const handleTranslateDescription = async (sourceLang: 'es' | 'en' | 'de', text: string) => {
+  const handleTranslateDescription = async (sourceLang: 'es' | 'en' | 'de' | 'auto', text: string) => {
     if (!text) return;
     setIsTranslating(true);
     try {
-      const targetLanguages = ['es', 'en', 'de'].filter(l => l !== sourceLang);
+      // If auto, target all. If specific, target others.
+      const targetLanguages = ['es', 'en', 'de'].filter(l => sourceLang === 'auto' ? true : l !== sourceLang);
 
       const response = await fetch('/api/translate', {
         method: 'POST',
@@ -382,7 +383,7 @@ export default function EditBusinessPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Translation failed');
+        throw new Error(data.error || t('businesses.edit.translation.errorDesc', 'Translation failed'));
       }
 
       // Update form values
@@ -396,14 +397,14 @@ export default function EditBusinessPage() {
       });
 
       toast({
-        title: "Translation Complete",
-        description: "Description has been translated to other languages.",
+        title: t('businesses.edit.translation.successTitle', "Translation Complete"),
+        description: t('businesses.edit.translation.successDesc', "Description has been translated to other languages."),
       });
     } catch (error: any) {
       console.error('Translation error:', error);
       toast({
-        title: "Translation Error",
-        description: error.message || "Failed to translate description.",
+        title: t('businesses.edit.translation.errorTitle', "Translation Error"),
+        description: error.message || t('businesses.edit.translation.errorDesc', "Failed to translate description."),
         variant: "destructive"
       });
     } finally {
@@ -875,7 +876,7 @@ export default function EditBusinessPage() {
                   <div className="flex items-center justify-between">
                     <Label>{t('businesses.fields.description')}</Label>
                     <div className="flex items-center gap-2">
-                      {isTranslating && <span className="text-xs text-muted-foreground animate-pulse">Translating...</span>}
+                      {isTranslating && <span className="text-xs text-muted-foreground animate-pulse">{t('businesses.edit.translation.translating', 'Translating...')}</span>}
                     </div>
                   </div>
 
@@ -899,10 +900,11 @@ export default function EditBusinessPage() {
                             size="icon"
                             variant="ghost"
                             className="absolute right-2 top-2 h-8 w-8 text-muted-foreground hover:text-primary"
-                            title={`Translate from ${lang.toUpperCase()} to others`}
+                            title={`Translate to other languages`}
                             onClick={() => {
                               const text = getValues(`description_translations.${lang}` as any);
-                              handleTranslateDescription(lang as 'es' | 'en' | 'de', text);
+                              // Pass 'auto' to force detection since user might have typed wrong language in this tab
+                              handleTranslateDescription('auto' as any, text);
                             }}
                           >
                             <SparklesIcon className="h-4 w-4" />
