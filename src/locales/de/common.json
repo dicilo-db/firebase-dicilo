@@ -296,6 +296,9 @@
       "maximizeEarnings": "Gut gemacht! Schreiben Sie noch {{chars}}, um auf 0,40 € zu erhöhen.",
       "earningsMaximized": "Ausgezeichnet! Sie haben Ihren Basistarif maximiert."
     },
+    "scanToRegister": "Scannen Sie, um sich mit meinem Code zu registrieren.",
+    "myCode": "mein Code.",
+    "download": "Herunterladen",
     "myArea": "Mein Bereich",
     "welcome": "Willkommen!",
     "noCompanyFound": "Wir konnten kein Unternehmen finden, das mit Ihrem Konto verknüpft ist. Bitte kontaktieren Sie den Support, wenn Sie glauben, dass dies ein Fehler ist.",

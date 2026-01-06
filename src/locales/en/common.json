@@ -282,6 +282,9 @@
       "maximizeEarnings": "Good job! Write {{chars}} more to maximize to €0.40.",
       "earningsMaximized": "Excellent! You have maximized your base rate."
     },
+    "scanToRegister": "Scan to register with my code.",
+    "myCode": "my code.",
+    "download": "Download",
     "myArea": "My Area",
     "welcome": "Welcome!",
     "noCompanyFound": "We could not find any company linked to your account. Please contact support if you believe this is an error.",

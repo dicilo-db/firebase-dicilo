@@ -16,9 +16,15 @@
 
 ## Files Modified
 *   `src/components/dashboard/PrivateDashboard.tsx`
-*   `public/locales/en/common.json`
-*   `public/locales/de/common.json`
-*   `public/locales/es/common.json`
+*   `src/locales/en/common.json`
+*   `src/locales/de/common.json`
+*   `src/locales/es/common.json`
+*   `public/locales/en/common.json` (redundant but kept for consistency)
+*   `public/locales/de/common.json` (redundant but kept for consistency)
+*   `public/locales/es/common.json` (redundant but kept for consistency)
+*   `src/locales/en/admin.json`
+*   `src/locales/de/admin.json`
+*   `src/locales/es/admin.json`
 
 ## Verification
 *   Checked that translation keys are present in all supported languages.

@@ -14,7 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Copy, Share2, Gift, Users, Heart, Settings, Star } from 'lucide-react';
+import { Loader2, Copy, Share2, Gift, Users, Heart, Settings, Star, CreditCard, Info, Download, QrCode } from 'lucide-react';
 import { CategorySelector } from './CategorySelector';
 import { useTranslation } from 'react-i18next';
 import { DashboardLayout } from './DashboardLayout';
@@ -42,6 +42,60 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
     const { t } = useTranslation('common');
     const router = useRouter();
     const searchParams = useSearchParams();
+    const [walletData, setWalletData] = useState<{ balance: number, valueInEur: number } | null>(null);
+    const [registerUrl, setRegisterUrl] = useState('');
+
+    // Fetch wallet data for preview
+    useEffect(() => {
+        if (user?.uid) {
+            import('@/app/actions/wallet').then(({ getWalletData }) => {
+                getWalletData(user.uid).then((data) => setWalletData(data));
+            });
+        }
+    }, [user?.uid]);
+
+    useEffect(() => {
+        if (typeof window !== 'undefined' && formData?.uniqueCode) {
+            setRegisterUrl(`${window.location.origin}/registrieren?ref=${formData.uniqueCode}`);
+        }
+    }, [formData?.uniqueCode]);
+
+    const handleDownloadQr = async () => {
+        if (!registerUrl) return;
+        try {
+            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(registerUrl)}`;
+            const response = await fetch(qrUrl);
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `dicilo-code-${formData.uniqueCode || 'invite'}.png`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        } catch (e) {
+            console.error(e);
+            toast({ title: t('dashboard.errorTitle'), description: t('dashboard.errorDesc'), variant: 'destructive' });
+        }
+    };
+
+    const handleShareQr = async () => {
+        if (!registerUrl) return;
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: 'Dicilo Invitation',
+                    text: t('dashboard.scanToRegister'),
+                    url: registerUrl
+                });
+            } catch (error) {
+                console.log('Error sharing:', error);
+            }
+        } else {
+            copyToClipboard(registerUrl);
+        }
+    };
 
     // Initialize activeView from URL param if available, otherwise default to 'overview'
     const [activeView, setActiveView] = useState(searchParams?.get('view') || 'overview'); // overview, wallet, invite, map, settings, dicicoin, tickets
@@ -199,19 +253,100 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
                         </div>
 
                         {/* Quick Prompts */}
-                        <div className="grid gap-4 md:grid-cols-2">
-                            <Card>
+                        {/* Dashboard Bottom Section */}
+                        <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-3">
+                            {/* Quick Actions (Left) */}
+                            <Card className="h-full">
                                 <CardHeader>
                                     <CardTitle>{t('dashboard.quickActions')}</CardTitle>
                                 </CardHeader>
-                                <CardContent className="grid gap-2">
-                                    <Button variant="outline" className="justify-start" onClick={() => setActiveView('wallet')}>
-                                        <Users className="mr-2 h-4 w-4" /> {t('dashboard.goToWallet')}
+                                <CardContent className="grid gap-3">
+                                    <Button variant="outline" className="justify-start w-full h-12 text-base" onClick={() => setActiveView('wallet')}>
+                                        <Users className="mr-3 h-5 w-5" /> {t('dashboard.goToWallet')}
                                     </Button>
-                                    <Button variant="outline" className="justify-start" onClick={() => setActiveView('invite')}>
-                                        <Share2 className="mr-2 h-4 w-4" /> {t('dashboard.inviteFriends')}
+                                    <Button variant="outline" className="justify-start w-full h-12 text-base" onClick={() => setActiveView('invite')}>
+                                        <Share2 className="mr-3 h-5 w-5" /> {t('dashboard.inviteFriends')}
                                     </Button>
                                 </CardContent>
+                            </Card>
+
+                            {/* Wallet Card (Middle) - Dark Theme */}
+                            <Card className="h-full relative overflow-hidden bg-[#1a1f2c] text-white border-none shadow-xl">
+                                <div className="absolute right-0 top-0 h-32 w-32 -translate-y-8 translate-x-8 rounded-full bg-white/5 blur-3xl"></div>
+                                <CardHeader className="pb-2">
+                                    <div className="flex justify-between items-start">
+                                        <div>
+                                            <CardTitle className="text-xs font-semibold text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                                                DICILO WALLET
+                                                <Info size={14} className="cursor-help" />
+                                            </CardTitle>
+                                            <div className="mt-2">
+                                                <span className="inline-flex items-center rounded-full border border-white/20 bg-white/10 px-2.5 py-0.5 text-xs font-medium text-white transition-colors hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
+                                                    {t('dashboard.wallet.personal')}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <CreditCard className="text-gray-400 h-6 w-6" />
+                                    </div>
+                                </CardHeader>
+                                <CardContent className="space-y-6">
+                                    <div className="space-y-1">
+                                        <div className="text-4xl font-bold tracking-tight">
+                                            {walletData ? walletData.balance : '...'} DP
+                                        </div>
+                                        <p className="text-sm text-gray-400 font-medium">
+                                            ≈ {walletData ? walletData.valueInEur.toFixed(2) : '...'} EUR
+                                        </p>
+                                    </div>
+
+                                    <Button
+                                        variant="secondary"
+                                        className="w-full bg-white text-gray-900 hover:bg-gray-100 font-semibold"
+                                        onClick={() => setActiveView('wallet')}
+                                    >
+                                        <QrCode className="mr-2 h-4 w-4" />
+                                        {t('dashboard.wallet.showQr', 'Mostrar QR para Pagar')}
+                                    </Button>
+                                </CardContent>
+                            </Card>
+
+                            {/* Referral QR Card (Right) */}
+                            <Card className="h-full flex flex-col justify-center items-center text-center p-6 space-y-4">
+                                <div>
+                                    <p className="text-sm text-muted-foreground mb-1">{t('dashboard.scanToRegister')}</p>
+                                </div>
+
+                                <div className="bg-white p-2 rounded-lg border shadow-sm">
+                                    {/* Display Register QR */}
+                                    <div className="relative">
+                                        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-white px-2 text-xs text-muted-foreground whitespace-nowrap">
+                                            {t('dashboard.myCode')} <span className="font-mono font-bold text-black">{formData.uniqueCode}</span>
+                                        </div>
+                                        {formData.uniqueCode && registerUrl ? (
+                                            <img
+                                                src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(registerUrl)}&color=000000`}
+                                                alt="Registration QR"
+                                                className="h-32 w-32 mt-2"
+                                            />
+                                        ) : (
+                                            <div className="h-32 w-32 mt-2 bg-gray-100 animate-pulse rounded" />
+                                        )}
+                                    </div>
+                                </div>
+
+                                <div className="w-full max-w-[200px] text-center">
+                                    <p className="text-[10px] text-muted-foreground truncate mb-3 italic">
+                                        {registerUrl}
+                                    </p>
+                                    <div className="flex gap-2 justify-center">
+                                        <Button variant="outline" size="sm" className="flex-1" onClick={handleDownloadQr}>
+                                            <span className="font-semibold">{t('dashboard.download')}</span>
+                                        </Button>
+                                        <Button variant="outline" size="icon" className="w-9 px-0" onClick={handleShareQr}>
+                                            <Share2 className="h-4 w-4" />
+                                        </Button>
+                                    </div>
+                                </div>
                             </Card>
                         </div>
                     </div>

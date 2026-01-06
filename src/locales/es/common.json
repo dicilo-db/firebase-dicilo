@@ -115,6 +115,9 @@
       "maximizeEarnings": "¡Buen trabajo! Escribe {{chars}} más para maximizar a €0.40.",
       "earningsMaximized": "¡Excelente! Has maximizado tu tarifa base."
     },
+    "scanToRegister": "Escanea para registrarte con mi código.",
+    "myCode": "mi código.",
+    "download": "Descargar",
     "myArea": "Mi Área",
     "welcome": "¡Bienvenido!",
     "noCompanyFound": "No pudimos encontrar ninguna empresa vinculada a su cuenta. Por favor contacte al soporte si cree que esto es un error.",
