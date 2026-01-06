@@ -1343,5 +1343,255 @@
         "de": "Zuckersirup",
         "en": "Sugar Syrup",
         "es": "Jarabe de azúcar"
+    },
+    "Aquarienfilter": {
+        "de": "Aquarienfilter",
+        "en": "Aquarium Filters",
+        "es": "Filtros de acuario"
+    },
+    "Aquarienwasseraufbereiter": {
+        "de": "Aquarienwasseraufbereiter",
+        "en": "Aquarium Water Conditioners",
+        "es": "Acondicionadores de agua para acuarios"
+    },
+    "Aquarienzubehör": {
+        "de": "Aquarienzubehör",
+        "en": "Aquarium Accessories",
+        "es": "Accesorios para acuarios"
+    },
+    "Automatische Futterspender": {
+        "de": "Automatische Futterspender",
+        "en": "Automatic Feeders",
+        "es": "Comederos automáticos"
+    },
+    "Automatische Haustiertüren": {
+        "de": "Automatische Haustiertüren",
+        "en": "Automatic Pet Doors",
+        "es": "Puertas automáticas para mascotas"
+    },
+    "Automatische Wasserspender": {
+        "de": "Automatische Wasserspender",
+        "en": "Automatic Water Dispensers",
+        "es": "Dispensadores de agua automáticos"
+    },
+    "Biologisch abbaubare Hundekotbeutel": {
+        "de": "Biologisch abbaubare Hundekotbeutel",
+        "en": "Biodegradable Dog Poop Bags",
+        "es": "Bolsas biodegradables para excrementos de perro"
+    },
+    "Einstellbare Geschirre": {
+        "de": "Einstellbare Geschirre",
+        "en": "Adjustable Harnesses",
+        "es": "Arneses ajustables"
+    },
+    "Erste-Hilfe-Sets für Haustiere": {
+        "de": "Erste-Hilfe-Sets für Haustiere",
+        "en": "Pet First Aid Kits",
+        "es": "Botiquines de primeros auxilios para mascotas"
+    },
+    "Fischfutter": {
+        "de": "Fischfutter",
+        "en": "Fish Food",
+        "es": "Comida para peces"
+    },
+    "Futterstationen": {
+        "de": "Futterstationen",
+        "en": "Feeding Stations",
+        "es": "Estaciones de alimentación"
+    },
+    "Gefrorenes Schlangenfutter": {
+        "de": "Gefrorenes Schlangenfutter",
+        "en": "Frozen Snake Food",
+        "es": "Comida congelada para serpientes"
+    },
+    "Haustierbetten": {
+        "de": "Haustierbetten",
+        "en": "Pet Beds",
+        "es": "Camas para mascotas"
+    },
+    "Haustierzubehör": {
+        "de": "Haustierzubehör",
+        "en": "Pet Accessories",
+        "es": "Accesorios para mascotas"
+    },
+    "Hundeleinen und Halsbänder": {
+        "de": "Hundeleinen und Halsbänder",
+        "en": "Dog Leashes and Collars",
+        "es": "Correas y collares para perros"
+    },
+    "Hundesalons": {
+        "de": "Hundesalons",
+        "en": "Dog Grooming",
+        "es": "Peluquería canina"
+    },
+    "Hundesnacks": {
+        "de": "Hundesnacks",
+        "en": "Dog Snacks",
+        "es": "Snacks para perros"
+    },
+    "Hundespazierdienste": {
+        "de": "Hundespazierdienste",
+        "en": "Dog Walking Services",
+        "es": "Servicios de paseo de perros"
+    },
+    "Hundetagesstätten": {
+        "de": "Hundetagesstätten",
+        "en": "Dog Daycare",
+        "es": "Guarderías caninas"
+    },
+    "Hundetraining": {
+        "de": "Hundetraining",
+        "en": "Dog Training",
+        "es": "Adiestramiento canino"
+    },
+    "Hundewesten": {
+        "de": "Hundewesten",
+        "en": "Dog Vests",
+        "es": "Chalecos para perros"
+    },
+    "Hygieneprodukte für Haustiere": {
+        "de": "Hygieneprodukte für Haustiere",
+        "en": "Pet Hygiene Products",
+        "es": "Productos de higiene para mascotas"
+    },
+    "Kauspielzeug": {
+        "de": "Kauspielzeug",
+        "en": "Chew Toys",
+        "es": "Juguetes para masticar"
+    },
+    "Katzensnacks": {
+        "de": "Katzensnacks",
+        "en": "Cat Snacks",
+        "es": "Snacks para gatos"
+    },
+    "Katzenspielzeug": {
+        "de": "Katzenspielzeug",
+        "en": "Cat Toys",
+        "es": "Juguetes para gatos"
+    },
+    "Katzenstreu": {
+        "de": "Katzenstreu",
+        "en": "Cat Litter",
+        "es": "Arena para gatos"
+    },
+    "Katzentoiletten": {
+        "de": "Katzentoiletten",
+        "en": "Litter Boxes",
+        "es": "Cajas de arena"
+    },
+    "Kratzbäume für Katzen": {
+        "de": "Kratzbäume für Katzen",
+        "en": "Cat Scratching Posts",
+        "es": "Rascadores para gatos"
+    },
+    "Nahrungsergänzungsmittel für Haustiere": {
+        "de": "Nahrungsergänzungsmittel für Haustiere",
+        "en": "Pet Supplements",
+        "es": "Suplementos para mascotas"
+    },
+    "Nagernahrung": {
+        "de": "Nagernahrung",
+        "en": "Rodent Food",
+        "es": "Comida para roedores"
+    },
+    "Nagetiere Zubehör": {
+        "de": "Nagetiere Zubehör",
+        "en": "Rodent Accessories",
+        "es": "Accesorios para roedores"
+    },
+    "Nassfutter für Hunde": {
+        "de": "Nassfutter für Hunde",
+        "en": "Wet Dog Food",
+        "es": "Comida húmeda para perros"
+    },
+    "Natürliche Haustiernahrung": {
+        "de": "Natürliche Haustiernahrung",
+        "en": "Natural Pet Food",
+        "es": "Comida natural para mascotas"
+    },
+    "Orthopädische Hundebetten": {
+        "de": "Orthopädische Hundebetten",
+        "en": "Orthopedic Dog Beds",
+        "es": "Camas ortopédicas para perros"
+    },
+    "Ornamentale Fischausrüstung": {
+        "de": "Ornamentale Fischausrüstung",
+        "en": "Ornamental Fish Equipment",
+        "es": "Equipamiento para peces ornamentales"
+    },
+    "Reptilienfutter": {
+        "de": "Reptilienfutter",
+        "en": "Reptile Food",
+        "es": "Comida para reptiles"
+    },
+    "Terrariensubstrate": {
+        "de": "Terrariensubstrate",
+        "en": "Terrarium Substrates",
+        "es": "Sustratos para terrarios"
+    },
+    "Tieradoption": {
+        "de": "Tieradoption",
+        "en": "Pet Adoption",
+        "es": "Adopción de mascotas"
+    },
+    "Tiergeschäfte": {
+        "de": "Tiergeschäfte",
+        "en": "Pet Shops",
+        "es": "Tiendas de mascotas"
+    },
+    "Tierheime": {
+        "de": "Tierheime",
+        "en": "Animal Shelters",
+        "es": "Refugios de animales"
+    },
+    "Tierkleidung": {
+        "de": "Tierkleidung",
+        "en": "Pet Clothing",
+        "es": "Ropa para mascotas"
+    },
+    "Tierkliniken": {
+        "de": "Tierkliniken",
+        "en": "Veterinary Clinics",
+        "es": "Clínicas veterinarias"
+    },
+    "Tiernahrung": {
+        "de": "Tiernahrung",
+        "en": "Pet Food",
+        "es": "Comida para mascotas"
+    },
+    "Tierpflegeprodukte": {
+        "de": "Tierpflegeprodukte",
+        "en": "Pet Care Products",
+        "es": "Productos para el cuidado de mascotas"
+    },
+    "Tier-Spielzeug": {
+        "de": "Tier-Spielzeug",
+        "en": "Pet Toys",
+        "es": "Juguetes para mascotas"
+    },
+    "Transportboxen für Haustiere": {
+        "de": "Transportboxen für Haustiere",
+        "en": "Pet Carriers",
+        "es": "Transportines para mascotas"
+    },
+    "Transportboxen für Vögel": {
+        "de": "Transportboxen für Vögel",
+        "en": "Bird Carriers",
+        "es": "Transportines para pájaros"
+    },
+    "Vogelkäfig-Spiegel": {
+        "de": "Vogelkäfig-Spiegel",
+        "en": "Bird Cage Mirrors",
+        "es": "Espejos para jaulas de pájaros"
+    },
+    "Vogelkäfige": {
+        "de": "Vogelkäfige",
+        "en": "Bird Cages",
+        "es": "Jaulas para pájaros"
+    },
+    "Wärmelampen für Terrarien": {
+        "de": "Wärmelampen für Terrarien",
+        "en": "Heat Lamps for Terrariums",
+        "es": "Lámparas de calor para terrarios"
     }
 }
