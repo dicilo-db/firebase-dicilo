@@ -42,6 +42,13 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
     const { t } = useTranslation('common');
     const router = useRouter();
     const searchParams = useSearchParams();
+    const [activeView, setActiveView] = useState(searchParams?.get('view') || 'overview'); // overview, wallet, invite, map, settings, dicicoin, tickets
+    const [isLoading, setIsLoading] = useState(false);
+    const [formData, setFormData] = useState(profile);
+    const [feedbackMessage, setFeedbackMessage] = useState('');
+    const [feedbackRating, setFeedbackRating] = useState(0);
+    const [isSubmittingFeedback, setIsSubmittingFeedback] = useState(false);
+
     const [walletData, setWalletData] = useState<{ balance: number, valueInEur: number } | null>(null);
     const [registerUrl, setRegisterUrl] = useState('');
 
@@ -59,6 +66,14 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
             setRegisterUrl(`${window.location.origin}/registrieren?ref=${formData.uniqueCode}`);
         }
     }, [formData?.uniqueCode]);
+
+    const copyToClipboard = (text: string) => {
+        navigator.clipboard.writeText(text);
+        toast({
+            title: t('dashboard.copied', 'Copied!'),
+            description: t('dashboard.codeCopied', 'Code copied to clipboard.'),
+        });
+    };
 
     const handleDownloadQr = async () => {
         if (!registerUrl) return;
@@ -97,13 +112,7 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
         }
     };
 
-    // Initialize activeView from URL param if available, otherwise default to 'overview'
-    const [activeView, setActiveView] = useState(searchParams?.get('view') || 'overview'); // overview, wallet, invite, map, settings, dicicoin, tickets
-    const [isLoading, setIsLoading] = useState(false);
-    const [formData, setFormData] = useState(profile);
-    const [feedbackMessage, setFeedbackMessage] = useState('');
-    const [feedbackRating, setFeedbackRating] = useState(0);
-    const [isSubmittingFeedback, setIsSubmittingFeedback] = useState(false);
+    // State initialized above
 
     // Sync state with URL changes if user navigates back/forward
     useEffect(() => {
@@ -191,13 +200,7 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
         }
     };
 
-    const copyToClipboard = (text: string) => {
-        navigator.clipboard.writeText(text);
-        toast({
-            title: t('dashboard.copied', 'Copied!'),
-            description: t('dashboard.codeCopied', 'Code copied to clipboard.'),
-        });
-    };
+
 
     // Safe Date Parsing
     const memberSinceDate = formData.createdAt?.seconds
