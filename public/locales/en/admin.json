@@ -105,6 +105,10 @@
       "saveSuccessDesc": "Business details updated successfully.",
       "saveErrorTitle": "Save Error",
       "saveErrorDesc": "The business details could not be saved.",
+      "updateToClient": "Update to Client",
+      "asStarter": "As Starter",
+      "asRetailer": "As Retailer",
+      "asPremium": "As Premium",
       "logo": {
         "urlHelp": "Provide a public URL to the logo."
       },

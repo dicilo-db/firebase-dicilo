@@ -105,6 +105,10 @@
       "saveSuccessDesc": "Los detalles de la empresa se actualizaron con éxito.",
       "saveErrorTitle": "Error al Guardar",
       "saveErrorDesc": "No se pudieron guardar los detalles de la empresa.",
+      "updateToClient": "Actualizar a Cliente",
+      "asStarter": "Como Starter",
+      "asRetailer": "Como Retailer",
+      "asPremium": "Como Premium",
       "logo": {
         "urlHelp": "Proporciona una URL pública para el logotipo."
       },

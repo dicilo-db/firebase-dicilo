@@ -105,6 +105,10 @@
       "saveSuccessDesc": "Die Unternehmensdaten wurden erfolgreich aktualisiert.",
       "saveErrorTitle": "Fehler beim Speichern",
       "saveErrorDesc": "Die Unternehmensdaten konnten nicht gespeichert werden.",
+      "updateToClient": "Update auf Client",
+      "asStarter": "Als Starter",
+      "asRetailer": "Als Retailer",
+      "asPremium": "Als Premium",
       "logo": {
         "urlHelp": "Geben Sie eine öffentliche URL zum Logo an."
       },

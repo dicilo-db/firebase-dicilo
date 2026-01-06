@@ -535,7 +535,7 @@ export default function EditBusinessPage() {
               description: t('businesses.edit.notFoundDesc'),
               variant: 'destructive',
             });
-            router.push('/admin/businesses');
+            router.push('/admin/basic');
           }
         } catch (error) {
           console.error('Error fetching business:', error);
@@ -544,7 +544,7 @@ export default function EditBusinessPage() {
             description: t('businesses.edit.fetchErrorDesc'),
             variant: 'destructive',
           });
-          router.push('/admin/businesses');
+          router.push('/admin/basic');
         } finally {
           setIsLoadingData(false);
         }
@@ -603,7 +603,7 @@ export default function EditBusinessPage() {
         title: t('businesses.edit.saveSuccessTitle'),
         description: t('businesses.edit.saveSuccessDesc'),
       });
-      // router.push('/admin/businesses'); // User requested to stay on page
+      // router.push('/admin/basic'); // User requested to stay on page
     } catch (error) {
       console.error('Error during submission:', error);
       const errorMessage =
@@ -632,7 +632,7 @@ export default function EditBusinessPage() {
           {t('businesses.edit.title')}
         </h1>
         <Button variant="outline" asChild>
-          <Link href="/admin/businesses">
+          <Link href="/admin/basic">
             <ArrowLeft className="mr-2 h-4 w-4" />
             {t('businesses.edit.back')}
           </Link>
@@ -1056,7 +1056,7 @@ export default function EditBusinessPage() {
                         ) : (
                           <Star className="mr-2 h-4 w-4" />
                         )}
-                        Promote to Client
+                        {t('businesses.edit.updateToClient')}
                         <ChevronDown className="ml-2 h-4 w-4" />
                       </Button>
                     </DropdownMenuTrigger>
@@ -1064,17 +1064,17 @@ export default function EditBusinessPage() {
                       <DropdownMenuItem
                         onClick={() => handlePromote('starter')}
                       >
-                        As Starter
+                        {t('businesses.edit.asStarter')}
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         onClick={() => handlePromote('retailer')}
                       >
-                        As Retailer
+                        {t('businesses.edit.asRetailer')}
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         onClick={() => handlePromote('premium')}
                       >
-                        As Premium
+                        {t('businesses.edit.asPremium')}
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>

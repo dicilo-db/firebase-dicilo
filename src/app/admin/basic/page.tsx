@@ -235,7 +235,7 @@ export default function BusinessesPage() {
             {t('businesses.reload')}
           </Button>
           <Button asChild>
-            <Link href="/admin/businesses/new">
+            <Link href="/admin/basic/new">
               <PlusCircle className="mr-2 h-4 w-4" />
               {t('businesses.addBusiness')}
             </Link>
@@ -302,7 +302,7 @@ export default function BusinessesPage() {
                   <TableCell>
                     <div className="flex items-center gap-2">
                       <Button variant="outline" size="icon" asChild>
-                        <Link href={`/admin/businesses/${business.id}/edit`}>
+                        <Link href={`/admin/basic/${business.id}/edit`}>
                           <Edit className="h-4 w-4" />
                         </Link>
                       </Button>

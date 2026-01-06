@@ -212,7 +212,7 @@ export default function NewBusinessPage() {
         title: t('businesses.new.saveSuccessTitle'),
         description: t('businesses.new.saveSuccessDesc'),
       });
-      router.push('/admin/businesses');
+      router.push('/admin/basic');
     } catch (error) {
       console.error('Error during submission:', error);
       const errorMessage =
@@ -234,7 +234,7 @@ export default function NewBusinessPage() {
           {t('businesses.new.title')}
         </h1>
         <Button variant="outline" asChild>
-          <Link href="/admin/businesses">
+          <Link href="/admin/basic">
             <ArrowLeft className="mr-2 h-4 w-4" />
             {t('businesses.new.back')}
           </Link>
@@ -493,12 +493,12 @@ export default function NewBusinessPage() {
             businesses={
               coords
                 ? [
-                    {
-                      id: 'new-marker',
-                      coords: coords as [number, number],
-                      name: getValues('name'),
-                    },
-                  ]
+                  {
+                    id: 'new-marker',
+                    coords: coords as [number, number],
+                    name: getValues('name'),
+                  },
+                ]
                 : []
             }
             selectedBusinessId={coords ? 'new-marker' : null}

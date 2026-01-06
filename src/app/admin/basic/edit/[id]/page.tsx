@@ -266,7 +266,7 @@ export default function EditBusinessPage() {
               description: t('admin.businesses.edit.notFoundDesc'),
               variant: 'destructive',
             });
-            router.push('/admin/businesses');
+            router.push('/admin/basic');
           }
         } catch (error) {
           console.error('Error fetching business:', error);
@@ -275,7 +275,7 @@ export default function EditBusinessPage() {
             description: t('admin.businesses.edit.fetchErrorDesc'),
             variant: 'destructive',
           });
-          router.push('/admin/businesses');
+          router.push('/admin/basic');
         } finally {
           setIsLoadingData(false);
         }
@@ -320,7 +320,7 @@ export default function EditBusinessPage() {
         title: t('admin.businesses.edit.saveSuccessTitle'),
         description: t('admin.businesses.edit.saveSuccessDesc'),
       });
-      router.push('/admin/businesses');
+      router.push('/admin/basic');
     } catch (error) {
       console.error('Error during submission:', error);
       const errorMessage =
@@ -346,7 +346,7 @@ export default function EditBusinessPage() {
           {t('admin.businesses.edit.title')}
         </h1>
         <Button variant="outline" asChild>
-          <Link href="/admin/businesses">
+          <Link href="/admin/basic">
             <ArrowLeft className="mr-2 h-4 w-4" />
             {t('admin.businesses.edit.back')}
           </Link>

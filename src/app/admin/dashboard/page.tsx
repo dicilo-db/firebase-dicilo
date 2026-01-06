@@ -508,7 +508,7 @@ const DashboardContent: React.FC = () => {
             </Link>
 
             {/* Basic (Formerly Businesses / Verzeichnis) */}
-            <Link href="/admin/businesses" className="group">
+            <Link href="/admin/basic" className="group">
               <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Basic</CardTitle>

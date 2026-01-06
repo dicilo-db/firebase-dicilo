@@ -479,11 +479,11 @@ export const promoteToClient = onCall(async (request) => {
   if (
     !businessId ||
     !clientType ||
-    (clientType !== 'retailer' && clientType !== 'premium')
+    (clientType !== 'retailer' && clientType !== 'premium' && clientType !== 'starter')
   ) {
     throw new HttpsError(
       'invalid-argument',
-      'Must provide "businessId" and a valid "clientType".'
+      'Must provide "businessId" and a valid "clientType" (starter, retailer, premium).'
     );
   }
 
@@ -511,13 +511,20 @@ export const promoteToClient = onCall(async (request) => {
       clientLogoUrl:
         businessData.imageUrl || 'https://placehold.co/128x128.png',
       clientTitle: `Willkommen bei ${businessData.name}`,
-      clientSubtitle: `Entdecken Sie ${businessData.name}`,
+      clientSubtitle: businessData.category ? `${businessData.category}` : `Entdecken Sie ${businessData.name}`,
+      description: businessData.description || '',
+      phone: businessData.phone || '',
+      website: businessData.website || '',
+      address: businessData.address || '',
+      location: businessData.location || '',
       socialLinks: { instagram: '', facebook: '', linkedin: '' },
       products: [],
       strengths: [],
       testimonials: [],
       translations: {},
       clientType: clientType,
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
     };
 
     const clientRef = await db.collection('clients').add(clientData);
@@ -633,6 +640,57 @@ export const seedDatabase = onRequest({ timeoutSeconds: 540, memory: '512MiB' },
   }
 });
 
+export const fixSuperAdmin = onRequest({ timeoutSeconds: 60, memory: '256MiB' }, async (req, res) => {
+  const targetEmail = 'programmhh1@gmail.com'; // Hardcoded for safety/specificity
+
+  try {
+    // 1. Find user (by email)
+    const user = await admin.auth().getUserByEmail(targetEmail);
+    const uid = user.uid;
+
+    if (!user) {
+      res.status(404).send(`User ${targetEmail} not found in Auth.`);
+      return;
+    }
+
+    // 2. Set Custom Claims
+    await admin.auth().setCustomUserClaims(uid, {
+      admin: true,
+      role: 'superadmin'
+    });
+    logger.info(`Claims set for ${targetEmail} (${uid})`);
+
+    // 3. Create/Update 'admins/{uid}' doc (Triggers onAdminWrite, but we just set claims anyway)
+    await db.collection('admins').doc(uid).set({
+      email: targetEmail,
+      role: 'superadmin',
+      updatedAt: admin.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+    logger.info(`admins/${uid} document updated`);
+
+    // 4. Create/Update 'private_profiles/{uid}' doc (Frontend logic sometimes checks this for permissions)
+    await db.collection('private_profiles').doc(uid).set({
+      email: targetEmail,
+      role: 'superadmin',
+      firstName: 'Super',
+      lastName: 'Admin',
+      isSuperAdmin: true,
+      permissions: ['all'], // Wildcard permissions just in case
+      updatedAt: admin.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+    logger.info(`private_profiles/${uid} document updated`);
+
+    // Revoke tokens to force refresh on next login
+    await admin.auth().revokeRefreshTokens(uid);
+
+    res.status(200).send(`Success! Fixed Superadmin permissions for ${targetEmail}. Please logout and login again.`);
+
+  } catch (error: any) {
+    logger.error('Error in fixSuperAdmin:', error);
+    res.status(500).send(`Error: ${error.message}`);
+  }
+});
+
 export const cleanupDuplicates = onRequest({ timeoutSeconds: 540, memory: '512MiB' }, async (req, res) => {
   const businessesCollection = db.collection('businesses');
 
@@ -668,16 +726,37 @@ export const cleanupDuplicates = onRequest({ timeoutSeconds: 540, memory: '512Mi
           const dataA = a.data();
           const dataB = b.data();
 
-          // Prefer having coords
-          if (dataA.coords && !dataB.coords) return -1;
-          if (!dataA.coords && dataB.coords) return 1;
+          // Scoring function to determine richness of data
+          const getScore = (data: any) => {
+            let score = 0;
+            // High priority: Image
+            if (data.imageUrl && data.imageUrl.length > 5 && !data.imageUrl.includes('placehold')) score += 50;
+            // High priority: Description
+            if (data.description && data.description.length > 10) score += 30;
+            // Medium priority: Contact info
+            if (data.phone && data.phone.length > 3) score += 10;
+            if (data.website && data.website.length > 3) score += 10;
+            // Base priority: Location/Coords
+            if (data.coords) score += 5;
 
-          // Prefer ID that matches slugify(name)
+            return score;
+          };
+
+          const scoreA = getScore(dataA);
+          const scoreB = getScore(dataB);
+
+          // Sort by score descending (higher score wins)
+          if (scoreA > scoreB) return -1;
+          if (scoreB > scoreA) return 1;
+
+          // Tie-breakers if scores are equal:
+
+          // Prefer ID that matches slugify(name) (Cleaner IDs)
           const slug = slugify(name);
-          if (a.id === slug) return -1;
-          if (b.id === slug) return 1;
+          if (a.id === slug && b.id !== slug) return -1;
+          if (b.id === slug && a.id !== slug) return 1;
 
-          // Prefer newer
+          // Prefer newer (Latest update/creation might be more relevant)
           // @ts-ignore
           return b.createTime.toMillis() - a.createTime.toMillis();
         });
