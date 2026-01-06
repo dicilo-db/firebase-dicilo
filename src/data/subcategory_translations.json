@@ -164,6 +164,11 @@
         "en": "Cultural Change Consulting",
         "es": "Consultoría de cambio cultural"
     },
+    "Kurierdienste": {
+        "de": "Kurierdienste",
+        "en": "Courier Services",
+        "es": "Servicios de mensajería"
+    },
     "Krankenversicherungsberatung": {
         "de": "Krankenversicherungsberatung",
         "en": "Health Insurance Consulting",
@@ -608,5 +613,250 @@
         "de": "Zugreisen",
         "en": "Train Journeys",
         "es": "Viajes en tren"
+    },
+    "Autobusreisen": {
+        "de": "Autobusreisen",
+        "en": "Bus Tours",
+        "es": "Viajes en autobús"
+    },
+    "Autoreparaturdienste": {
+        "de": "Autoreparaturdienste",
+        "en": "Car Repair Services",
+        "es": "Servicios de reparación de automóviles"
+    },
+    "Autovermietung für Touristen": {
+        "de": "Autovermietung für Touristen",
+        "en": "Tourist Car Rental",
+        "es": "Alquiler de coches para turistas"
+    },
+    "Autovermietungen für Langzeit": {
+        "de": "Autovermietungen für Langzeit",
+        "en": "Long-term Car Rental",
+        "es": "Alquiler de coches a largo plazo"
+    },
+    "Bahnreisen": {
+        "de": "Bahnreisen",
+        "en": "Train Travel",
+        "es": "Viajes en tren"
+    },
+    "Binnenschifffahrt": {
+        "de": "Binnenschifffahrt",
+        "en": "Inland Navigation",
+        "es": "Navegación fluvial"
+    },
+    "Busreisen": {
+        "de": "Busreisen",
+        "en": "Bus Travel",
+        "es": "Viajes en autobús"
+    },
+    "Carsharing-Dienste": {
+        "de": "Carsharing-Dienste",
+        "en": "Car Sharing Services",
+        "es": "Servicios de carsharing"
+    },
+    "Containertransporte": {
+        "de": "Containertransporte",
+        "en": "Container Transport",
+        "es": "Transporte de contenedores"
+    },
+    "Elektrofahrzeuge": {
+        "de": "Elektrofahrzeuge",
+        "en": "Electric Vehicles",
+        "es": "Vehículos eléctricos"
+    },
+    "Elektromopedverleih": {
+        "de": "Elektromopedverleih",
+        "en": "Electric Moped Rental",
+        "es": "Alquiler de ciclomotores eléctricos"
+    },
+    "Eisenbahnen": {
+        "de": "Eisenbahnen",
+        "en": "Railways",
+        "es": "Ferrocarriles"
+    },
+    "Fahrradkurierdienste": {
+        "de": "Fahrradkurierdienste",
+        "en": "Bicycle Courier Services",
+        "es": "Servicios de mensajería en bicicleta"
+    },
+    "Fahrradverleih": {
+        "de": "Fahrradverleih",
+        "en": "Bicycle Rental",
+        "es": "Alquiler de bicicletas"
+    },
+    "Fahrdienste für Senioren": {
+        "de": "Fahrdienste für Senioren",
+        "en": "Senior Transport Services",
+        "es": "Servicios de transporte para mayores"
+    },
+    "Fahrzeugvermietung": {
+        "de": "Fahrzeugvermietung",
+        "en": "Vehicle Rental",
+        "es": "Alquiler de vehículos"
+    },
+    "Fährdienste": {
+        "de": "Fährdienste",
+        "en": "Ferry Services",
+        "es": "Servicios de ferry"
+    },
+    "Flughafentransfers": {
+        "de": "Flughafentransfers",
+        "en": "Airport Transfers",
+        "es": "Traslados al aeropuerto"
+    },
+    "Frachttransport": {
+        "de": "Frachttransport",
+        "en": "Freight Transport",
+        "es": "Transporte de carga"
+    },
+    "Güterzugdienste": {
+        "de": "Güterzugdienste",
+        "en": "Freight Train Services",
+        "es": "Servicios de trenes de carga"
+    },
+    "Helikopter-Transfers": {
+        "de": "Helikopter-Transfers",
+        "en": "Helicopter Transfers",
+        "es": "Traslados en helicóptero"
+    },
+    "Kurierlogistik": {
+        "de": "Kurierlogistik",
+        "en": "Courier Logistics",
+        "es": "Logística de mensajería"
+    },
+    "Lastwagenverleih": {
+        "de": "Lastwagenverleih",
+        "en": "Truck Rental",
+        "es": "Alquiler de camiones"
+    },
+    "Lieferwagenvermietung": {
+        "de": "Lieferwagenvermietung",
+        "en": "Van Rental",
+        "es": "Alquiler de furgonetas"
+    },
+    "Limousinenservice": {
+        "de": "Limousinenservice",
+        "en": "Limousine Service",
+        "es": "Servicio de limusina"
+    },
+    "Logistikdienste": {
+        "de": "Logistikdienste",
+        "en": "Logistics Services",
+        "es": "Servicios de logística"
+    },
+    "Luftfrachtlogistik": {
+        "de": "Luftfrachtlogistik",
+        "en": "Air Freight Logistics",
+        "es": "Logística de carga aérea"
+    },
+    "Lufttransport": {
+        "de": "Lufttransport",
+        "en": "Air Transport",
+        "es": "Transporte aéreo"
+    },
+    "Lkw-Logistikdienste": {
+        "de": "Lkw-Logistikdienste",
+        "en": "Truck Logistics Services",
+        "es": "Servicios de logística de camiones"
+    },
+    "Mopedverleih": {
+        "de": "Mopedverleih",
+        "en": "Moped Rental",
+        "es": "Alquiler de ciclomotores"
+    },
+    "Motorradverleih": {
+        "de": "Motorradverleih",
+        "en": "Motorcycle Rental",
+        "es": "Alquiler de motocicletas"
+    },
+    "Parkplatz-Shuttleservices": {
+        "de": "Parkplatz-Shuttleservices",
+        "en": "Parking Shuttle Services",
+        "es": "Servicios de transporte al aparcamiento"
+    },
+    "Privatflugzeugvermietung": {
+        "de": "Privatflugzeugvermietung",
+        "en": "Private Jet Rental",
+        "es": "Alquiler de aviones privados"
+    },
+    "Ride-Sharing-Dienste": {
+        "de": "Ride-Sharing-Dienste",
+        "en": "Ride-Sharing Services",
+        "es": "Servicios de viaje compartido"
+    },
+    "Rikscha-Verleih": {
+        "de": "Rikscha-Verleih",
+        "en": "Rickshaw Rental",
+        "es": "Alquiler de rickshaws"
+    },
+    "Schulbusse": {
+        "de": "Schulbusse",
+        "en": "School Buses",
+        "es": "Autobuses escolares"
+    },
+    "Schultransport": {
+        "de": "Schultransport",
+        "en": "School Transport",
+        "es": "Transporte escolar"
+    },
+    "Schiffsverleih": {
+        "de": "Schiffsverleih",
+        "en": "Boat Rental",
+        "es": "Alquiler de barcos"
+    },
+    "Schnelltransporte": {
+        "de": "Schnelltransporte",
+        "en": "Express Transport",
+        "es": "Transporte urgente"
+    },
+    "Seetransport": {
+        "de": "Seetransport",
+        "en": "Sea Transport",
+        "es": "Transporte marítimo"
+    },
+    "Shuttleservices": {
+        "de": "Shuttleservices",
+        "en": "Shuttle Services",
+        "es": "Servicios de transporte"
+    },
+    "Stadtbusse": {
+        "de": "Stadtbusse",
+        "en": "City Buses",
+        "es": "Autobuses urbanos"
+    },
+    "Straßenbahndienste": {
+        "de": "Straßenbahndienste",
+        "en": "Tram Services",
+        "es": "Servicios de tranvía"
+    },
+    "Taxi-Dienste": {
+        "de": "Taxi-Dienste",
+        "en": "Taxi Services",
+        "es": "Servicios de taxi"
+    },
+    "Transportdienst für Events": {
+        "de": "Transportdienst für Events",
+        "en": "Event Transport Services",
+        "es": "Transporte para eventos"
+    },
+    "Transportdienste für Umzüge": {
+        "de": "Transportdienste für Umzüge",
+        "en": "Moving Transport Services",
+        "es": "Transporte de mudanzas"
+    },
+    "Transporte für Schwerlast": {
+        "de": "Transporte für Schwerlast",
+        "en": "Heavy Load Transport",
+        "es": "Transporte de carga pesada"
+    },
+    "Wassertransporte": {
+        "de": "Wassertransporte",
+        "en": "Water Transport",
+        "es": "Transporte acuático"
+    },
+    "Zugfrachtlogistik": {
+        "de": "Zugfrachtlogistik",
+        "en": "Rail Freight Logistics",
+        "es": "Logística de carga ferroviaria"
     }
 }

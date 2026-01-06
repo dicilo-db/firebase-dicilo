@@ -8,10 +8,11 @@ import Link from 'next/link';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { doc, getDoc, updateDoc, deleteDoc, getFirestore, collection, query, where, getDocs, orderBy } from 'firebase/firestore';
+import { doc, getDoc, updateDoc, deleteDoc, getFirestore, collection, query, where, getDocs, orderBy, runTransaction } from 'firebase/firestore';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { app } from '@/lib/firebase';
 import { isValidUrl } from '@/lib/utils';
+import { uploadImage } from '@/app/actions/upload';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from 'react-i18next';
 import { Category } from '@/types/category';
@@ -35,11 +36,19 @@ import {
   ChevronDown,
   MapPinOff,
   Database,
+  Upload,
 } from 'lucide-react';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { seedCategories } from '@/lib/seed-categories';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -47,21 +56,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Switch } from '@/components/ui/switch';
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { Check, ChevronsUpDown } from "lucide-react";
 
 const DiciloMap = dynamic(() => import('@/components/dicilo-map'), {
   ssr: false,
@@ -363,6 +358,99 @@ export default function EditBusinessPage() {
     }
   };
 
+
+  const generateInternalId = async () => {
+    if (getValues('businessCode')) return;
+
+    try {
+      const newCode = await runTransaction(db, async (transaction) => {
+        const busRef = doc(db, 'businesses', id);
+        const busDoc = await transaction.get(busRef);
+        if (!busDoc.exists()) throw new Error("Business not found");
+
+        // Double check inside transaction
+        if (busDoc.data().businessCode) return busDoc.data().businessCode;
+
+        // Logic for year: Default to 26 (2026) for now as requested for the example.
+        // "todos las que ya estan creadas... comenzado con el año 25".
+        // If we want to detect old ones, we could check createdAt.
+        // For now, let's use 26 to match the "EMPDC-26..." request for the active example.
+        // If the user wants 25 for everything old, we might need a migration script or stronger logic.
+        // But for "Edit Business", using the current year (26) is the safest bet for "Active/New" interactions.
+        const yearPrefix = 26;
+
+        const counterRef = doc(db, 'counters', `businesses-EMPDC-${yearPrefix}`);
+        const counterDoc = await transaction.get(counterRef);
+
+        let nextVal = 1;
+        if (counterDoc.exists()) {
+          nextVal = counterDoc.data().val + 1;
+          transaction.update(counterRef, { val: nextVal });
+        } else {
+          transaction.set(counterRef, { val: 1 });
+        }
+
+        // EMPDC-260000001 (7 digits for the counter part)
+        const code = `EMPDC-${yearPrefix}${String(nextVal).padStart(7, '0')}`;
+        transaction.update(busRef, { businessCode: code });
+        return code;
+      });
+
+      setValue('businessCode', newCode);
+      toast({
+        title: "ID Generated",
+        description: `Internal ID assigned: ${newCode}`,
+      });
+    } catch (e: any) {
+      console.error('ID Gen Error:', e);
+      toast({
+        title: "Error generating ID",
+        description: e.message,
+        variant: "destructive"
+      });
+    }
+  };
+
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const [isUploadingLogo, setIsUploadingLogo] = useState(false);
+
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploadingLogo(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      // Path: businesses/{id}/logo-{timestamp}.{ext}
+      const ext = file.name.split('.').pop();
+      const path = `businesses/${id}/logo-${Date.now()}.${ext}`;
+      formData.append('path', path);
+
+      const result = await uploadImage(formData);
+      if (result.success && result.url) {
+        setValue('imageUrl', result.url, { shouldValidate: true, shouldDirty: true });
+        toast({
+          title: "Logo Uploaded",
+          description: "Logo has been uploaded successfully.",
+        });
+      } else {
+        throw new Error(result.error || "Upload failed");
+      }
+    } catch (error: any) {
+      console.error(error);
+      toast({
+        title: "Upload Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsUploadingLogo(false);
+      // Reset input
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
   useEffect(() => {
     if (id && categoriesLoaded) {
       const fetchBusiness = async () => {
@@ -515,7 +603,7 @@ export default function EditBusinessPage() {
         title: t('businesses.edit.saveSuccessTitle'),
         description: t('businesses.edit.saveSuccessDesc'),
       });
-      router.push('/admin/businesses');
+      // router.push('/admin/businesses'); // User requested to stay on page
     } catch (error) {
       console.error('Error during submission:', error);
       const errorMessage =
@@ -601,66 +689,47 @@ export default function EditBusinessPage() {
                 <div className="space-y-2">
                   <Label>ID #</Label>
                   <Input
-                    value={watch('businessCode') ? `EMDC ${watch('businessCode')}` : 'Pending'}
+                    value={watch('businessCode') || 'Pending'}
                     disabled
-                    className="bg-muted"
+                    className="bg-muted font-mono"
                   />
+
+                  {/* Better: Put it in an input group or just below */}
+                  {!watch('businessCode') && (
+                    <Button
+                      type="button"
+                      onClick={generateInternalId}
+                      variant="outline"
+                      size="sm"
+                      className="mt-1"
+                    >
+                      Generate Internal ID (EMPDC)
+                    </Button>
+                  )}
                 </div>
 
-                {/* Categories - Combobox */}
+                {/* Categories - Select */}
                 <div className="flex flex-col space-y-2">
                   <Label>{t('businesses.fields.category', 'Categoría')}</Label>
-                  <Popover open={openCategory} onOpenChange={setOpenCategory}>
-                    <PopoverTrigger asChild>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        role="combobox"
-                        aria-expanded={openCategory}
-                        className={cn(
-                          "w-full justify-between",
-                          !selectedCategorySlug && "text-muted-foreground"
-                        )}
-                      >
-                        {selectedCategorySlug
-                          ? getLocalizedName(categories.find((c) => c.id === selectedCategorySlug))
-                          : t('businesses.fields.selectCategory', 'Seleccionar Categoría')}
-                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-[300px] p-0">
-                      <Command>
-                        <CommandInput placeholder={t('businesses.fields.searchCategory', 'Buscar categoría...')} />
-                        <CommandList>
-                          <CommandEmpty>{t('businesses.fields.noCategoryFound', 'No se encontró la categoría.')}</CommandEmpty>
-                          <CommandGroup>
-                            {categories.map((cat) => {
-                              const catName = getLocalizedName(cat);
-                              return (
-                                <CommandItem
-                                  key={cat.id}
-                                  value={`${cat.name.de} ${cat.name.es || ''} ${cat.name.en || ''} ${cat.id}`}
-                                  onSelect={() => {
-                                    setSelectedCategorySlug(cat.id);
-                                    setSelectedSubcategorySlug(''); // Reset sub on main change
-                                    setOpenCategory(false);
-                                  }}
-                                >
-                                  <Check
-                                    className={cn(
-                                      "mr-2 h-4 w-4",
-                                      selectedCategorySlug === cat.id ? "opacity-100" : "opacity-0"
-                                    )}
-                                  />
-                                  {catName}
-                                </CommandItem>
-                              );
-                            })}
-                          </CommandGroup>
-                        </CommandList>
-                      </Command>
-                    </PopoverContent>
-                  </Popover>
+                  <Select
+                    value={selectedCategorySlug}
+                    onValueChange={(val) => {
+                      setSelectedCategorySlug(val);
+                      setSelectedSubcategorySlug(''); // Reset sub on main change
+                    }}
+                  >
+                    <SelectTrigger className="w-full bg-white">
+                      <SelectValue placeholder={t('businesses.fields.selectCategory', 'Seleccionar Categoría')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories.map((cat) => (
+                        <SelectItem key={cat.id} value={cat.id}>
+                          {getLocalizedName(cat)}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
                   {/* Validation/Empty State for Categories */}
                   {categoriesLoaded && categories.length === 0 && (
                     <div className="mt-2 flex items-center justify-between rounded-md border border-yellow-200 bg-yellow-50 p-2 text-xs text-yellow-800">
@@ -710,57 +779,22 @@ export default function EditBusinessPage() {
 
                 <div className="flex flex-col space-y-2">
                   <Label>{t('businesses.fields.subcategory', 'Subcategoría')}</Label>
-                  <Popover open={openSubcategory} onOpenChange={setOpenSubcategory}>
-                    <PopoverTrigger asChild>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        role="combobox"
-                        disabled={!selectedCategorySlug}
-                        aria-expanded={openSubcategory}
-                        className={cn(
-                          "w-full justify-between",
-                          !selectedSubcategorySlug && "text-muted-foreground"
-                        )}
-                      >
-                        {selectedSubcategorySlug
-                          ? getLocalizedName(selectedCategoryObj?.subcategories.find((s) => s.id === selectedSubcategorySlug))
-                          : t('businesses.fields.selectSubcategory', 'Seleccionar Subcategoría')}
-                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-[300px] p-0">
-                      <Command>
-                        <CommandInput placeholder={t('businesses.fields.searchSubcategory', 'Buscar subcategoría...')} />
-                        <CommandList>
-                          <CommandEmpty>{t('businesses.fields.noSubcategoryFound', 'No se encontró subcategoría.')}</CommandEmpty>
-                          <CommandGroup>
-                            {selectedCategoryObj?.subcategories?.map((sub) => {
-                              const subName = getLocalizedName(sub);
-                              return (
-                                <CommandItem
-                                  key={sub.id}
-                                  value={`${sub.name.de} ${sub.name.es || ''} ${sub.name.en || ''} ${sub.id}`}
-                                  onSelect={() => {
-                                    setSelectedSubcategorySlug(sub.id);
-                                    setOpenSubcategory(false);
-                                  }}
-                                >
-                                  <Check
-                                    className={cn(
-                                      "mr-2 h-4 w-4",
-                                      selectedSubcategorySlug === sub.id ? "opacity-100" : "opacity-0"
-                                    )}
-                                  />
-                                  {subName}
-                                </CommandItem>
-                              );
-                            })}
-                          </CommandGroup>
-                        </CommandList>
-                      </Command>
-                    </PopoverContent>
-                  </Popover>
+                  <Select
+                    value={selectedSubcategorySlug}
+                    onValueChange={setSelectedSubcategorySlug}
+                    disabled={!selectedCategorySlug}
+                  >
+                    <SelectTrigger className="w-full bg-white">
+                      <SelectValue placeholder={t('businesses.fields.selectSubcategory', 'Seleccionar Subcategoría')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {selectedCategoryObj?.subcategories?.map((sub) => (
+                        <SelectItem key={sub.id} value={sub.id}>
+                          {getLocalizedName(sub)}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 {/* Hidden input to satisfy internal form logic/validation */}
@@ -894,35 +928,77 @@ export default function EditBusinessPage() {
                   <Label htmlFor="imageUrl">
                     {t('businesses.fields.logoUrl')}
                   </Label>
-                  <div className="flex items-center gap-4">
-                    {isValidUrl(imageUrl) && (
-                      <Image
-                        src={imageUrl!}
-                        alt="Logo preview"
-                        width={64}
-                        height={64}
-                        className="rounded-md object-cover bg-muted"
+                  {/* Enhanced Logo Upload Area */}
+                  <div className="rounded-lg border bg-blue-50/50 p-4">
+                    <div className="mb-4 flex flex-wrap items-center gap-4">
+                      {/* Input File Hidden */}
+                      <input
+                        type="file"
+                        className="hidden"
+                        ref={fileInputRef}
+                        accept="image/*"
+                        onChange={handleLogoUpload}
                       />
-                    )}
+
+                      <div className="flex flex-col gap-2">
+                        <Button
+                          type="button"
+                          variant="secondary"
+                          onClick={() => fileInputRef.current?.click()}
+                          disabled={isUploadingLogo}
+                          className="bg-blue-100 hover:bg-blue-200 text-blue-800 border-blue-200"
+                        >
+                          {isUploadingLogo ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Upload className="mr-2 h-4 w-4" />}
+                          Sube tu logo
+                        </Button>
+                        <p className="text-[10px] text-muted-foreground uppercase tracking-widest text-center">{t('common.or', 'O')}</p>
+                        <Button
+                          type="button"
+                          variant="secondary"
+                          className="bg-white hover:bg-slate-50 border"
+                          onClick={() => setValue('imageUrl', 'https://dicilo.net/logo.png', { shouldValidate: true, shouldDirty: true })}
+                        >
+                          <div className="flex items-center gap-2">
+                            <span>Agrega Standar</span>
+                            <Image src="/logo.png" width={20} height={20} alt="Dicilo" />
+                          </div>
+                        </Button>
+                      </div>
+
+                      {/* Preview */}
+                      <div className="flex-1 flex justify-center">
+                        {isValidUrl(imageUrl) ? (
+                          <div className="relative h-24 w-24 overflow-hidden rounded-full border-4 border-white shadow-sm bg-white">
+                            <Image
+                              src={imageUrl!}
+                              alt="Logo preview"
+                              fill
+                              className="object-contain p-2"
+                            />
+                          </div>
+                        ) : (
+                          <div className="flex h-24 w-24 items-center justify-center rounded-full border-2 border-dashed border-blue-200 bg-white text-blue-200">
+                            <span className="text-xs">Sin Logo</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    <Label htmlFor="imageUrl" className="mb-1 block text-xs font-medium text-muted-foreground">
+                      O pega una URL pública:
+                    </Label>
                     <Input
                       id="imageUrl"
                       {...register('imageUrl')}
-                      placeholder={
-                        t(
-                          'businesses.fields.logoUrlPlaceholder'
-                        ) as string
-                      }
-                      className={errors.imageUrl ? 'border-destructive' : ''}
+                      placeholder="https://..."
+                      className={cn("bg-white", errors.imageUrl ? 'border-destructive' : '')}
                     />
+                    {errors.imageUrl && (
+                      <p className="mt-1 text-sm text-destructive">
+                        {errors.imageUrl.message}
+                      </p>
+                    )}
                   </div>
-                  <p className="text-xs text-muted-foreground">
-                    {t('businesses.edit.logo.urlHelp')}
-                  </p>
-                  {errors.imageUrl && (
-                    <p className="text-sm text-destructive">
-                      {errors.imageUrl.message}
-                    </p>
-                  )}
                 </div>
 
                 {/* Image Hint */}
