@@ -106,6 +106,8 @@
     "errorDesc": "Hubo un problema al enviar tu recomendación. Por favor, inténtalo de nuevo más tarde."
   },
   "dashboard": {
+    "welcomeUser": "¡Bienvenido, {{name}}!",
+    "goToWallet": "Ir a la Billetera",
     "promo": {
       "estimatedEarnings": "Ganancia Estimada",
       "trafficBonus": "Bono Tráfico",
