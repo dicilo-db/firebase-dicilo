@@ -376,7 +376,7 @@ export default function EditBusinessPage() {
       const response = await fetch('/api/translate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text, targetLanguages }),
+        body: JSON.stringify({ text, targetLanguages, sourceLanguage: sourceLang }),
       });
 
       const data = await response.json();
@@ -387,9 +387,11 @@ export default function EditBusinessPage() {
 
       // Update form values
       Object.entries(data.translations).forEach(([lang, translatedText]) => {
+        console.log(`Applying translation for ${lang}:`, translatedText);
         setValue(`description_translations.${lang}` as any, translatedText as string, {
           shouldDirty: true,
-          shouldValidate: true
+          shouldValidate: true,
+          shouldTouch: true
         });
       });
 

@@ -15,7 +15,7 @@ export async function POST(req: Request) {
             );
         }
 
-        const { text, targetLanguages } = await req.json();
+        const { text, targetLanguages, sourceLanguage } = await req.json();
 
         if (!text || !targetLanguages || !Array.isArray(targetLanguages)) {
             return NextResponse.json(
@@ -24,18 +24,24 @@ export async function POST(req: Request) {
             );
         }
 
-        const prompt = `Translate the following text into the specified languages: ${targetLanguages.join(
-            ", "
-        )}.
-    
-    Return ONLY a valid JSON object where keys are the language codes (e.g., "en", "de", "es") and values are the translated text. Do not include any markdown or explanations.
+        const prompt = `You are a professional translator. Translate the following text from ${sourceLanguage || "auto-detect"} into these languages: ${targetLanguages.join(", ")}.
+        
+        Rules:
+        - Maintain the tone and intent of the original text.
+        - Return ONLY a valid JSON object.
+        - Keys must be the 2-letter language codes (e.g., "en", "de", "es").
+        - Values must be the translated text strings.
+        - Do not include any explanations or markdown formatting (no \`\`\`json).
 
-    Text to translate:
-    "${text}"
-    `;
+        Text to translate:
+        "${text}"
+        `;
 
         const completion = await openai.chat.completions.create({
-            messages: [{ role: "user", content: prompt }],
+            messages: [
+                { role: "system", content: "You are a helpful assistant that translates text precisely into the requested languages returning pure JSON." },
+                { role: "user", content: prompt }
+            ],
             model: "gpt-4o-mini",
             response_format: { type: "json_object" },
         });
