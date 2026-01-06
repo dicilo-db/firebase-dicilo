@@ -85,7 +85,7 @@ exports.onAdminWrite = (0, firestore_1.onDocumentWritten)('admins/{uid}', (event
     const roleAfter = afterData === null || afterData === void 0 ? void 0 : afterData.role;
     // If the document is deleted or the role is removed, revoke admin claims.
     if (!change.after.exists ||
-        (roleAfter !== 'admin' && roleAfter !== 'superadmin')) {
+        (roleAfter !== 'admin' && roleAfter !== 'superadmin' && roleAfter !== 'team_office')) {
         logger.info(`Admin role removed for user ${uid}. Revoking admin custom claim.`);
         try {
             const user = yield admin.auth().getUser(uid);
@@ -100,10 +100,12 @@ exports.onAdminWrite = (0, firestore_1.onDocumentWritten)('admins/{uid}', (event
         }
         return;
     }
-    // If a role of 'admin' or 'superadmin' is set, grant the claims.
-    if (roleAfter === 'admin' || roleAfter === 'superadmin') {
+    // If a role of 'admin', 'superadmin', or 'team_office' is set, grant the claims.
+    if (roleAfter === 'admin' || roleAfter === 'superadmin' || roleAfter === 'team_office') {
         logger.info(`Role document for user ${uid} written with role: ${roleAfter}. Setting/Verifying custom claims.`);
         try {
+            // We give admin: true to all these roles so they can access the admin panel.
+            // Fine-grained permission checks should use the 'role' claim.
             yield admin.auth().setCustomUserClaims(uid, {
                 admin: true,
                 role: roleAfter,

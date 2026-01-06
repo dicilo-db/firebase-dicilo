@@ -10,33 +10,64 @@ service cloud.firestore {
       return request.auth.uid == userId;
     }
 
+    // High-level role checks
+    
+    // Superadmin: Can do everything (Delete, Deactivate, etc.)
+    function isSuperAdmin() {
+      return request.auth.token.role == 'superadmin';
+    }
+
+    // Admin: Can edit modules, translations, improvements. (Includes Superadmin)
     function isAdmin() {
-      return request.auth.token.admin == true || request.auth.token.role == 'admin' || request.auth.token.role == 'superadmin';
+      return request.auth.token.role == 'admin' || isSuperAdmin();
+    }
+
+    // Team Office: Can edit text of records/registrations. (Includes Admin and Superadmin)
+    function isTeamOffice() {
+      return request.auth.token.role == 'team_office' || isAdmin();
+    }
+
+    // General Access: Anyone with admin: true claim (view access)
+    function hasDashboardAccess() {
+      return request.auth.token.admin == true; 
     }
 
     // Registrations collection
     match /registrations/{registrationId} {
-      // Allow create if authenticated (or even unauthenticated if that's the flow, but usually auth first)
-      // For now, we are creating auth user first, so request.auth should be present.
-      allow create: if true; // Allow public registration creation for now to avoid issues
+      allow create: if true; // Public registration
       
-      // Allow read/update if owner or admin
-      allow read, update: if isAuthenticated() && (resource.data.ownerUid == request.auth.uid || isAdmin());
-      allow delete: if isAdmin();
+      // Read: Owner or anyone with dashboard access (Superadmin, Admin, Team Office)
+      allow read: if isAuthenticated() && (resource.data.ownerUid == request.auth.uid || hasDashboardAccess());
+      
+      // Update: Owner or Team Office (text editing)
+      allow update: if isAuthenticated() && (resource.data.ownerUid == request.auth.uid || isTeamOffice());
+      
+      // Delete: Superadmin only
+      allow delete: if isSuperAdmin();
     }
 
     // Clients collection (public directory)
     match /clients/{clientId} {
-      allow read: if true; // Public read access for directory
-      allow create: if isAuthenticated();
-      allow update: if isAuthenticated() && (resource.data.ownerUid == request.auth.uid || isAdmin());
-      allow delete: if isAdmin();
+      allow read: if true; // Public
+      
+      allow create: if isAuthenticated(); // Or restricted to admins? Keeping existing logic
+      
+      // Update: Owner or Team Office
+      allow update: if isAuthenticated() && (resource.data.ownerUid == request.auth.uid || isTeamOffice());
+      
+      // Delete: Superadmin only
+      allow delete: if isSuperAdmin();
     }
 
-    // Legacy Businesses collection (read-only public, writable by admin)
+    // Businesses collection
     match /businesses/{businessId} {
       allow read: if true;
-      allow write: if isAdmin();
+      
+      // Create/Update: Team Office (Data entry/Edit)
+      allow create, update: if isTeamOffice();
+      
+      // Delete: Superadmin only
+      allow delete: if isSuperAdmin();
     }
     
     // Admins collection
@@ -45,18 +76,18 @@ service cloud.firestore {
       allow write: if false; // Only manual or cloud function writes
     }
 
-    // Pricing Plans collection (public read)
+    // Pricing Plans (Config - Admin/Superadmin)
     match /pricing_plans/{planId} {
       allow read: if true;
       allow write: if isAdmin();
     }
 
-    // Private Profiles collection
+    // Private Profiles
     match /private_profiles/{userId} {
-      allow read, write: if isAuthenticated() && (request.auth.uid == userId || isAdmin());
+      allow read, write: if isAuthenticated() && (request.auth.uid == userId || hasDashboardAccess());
     }
     
-    // Ad Banners (Public read for display, Admin write for management)
+    // Ad Banners (Config - Admin/Superadmin)
     match /ads_banners/{bannerId} {
       allow read: if true;
       allow write: if isAdmin();
@@ -64,51 +95,53 @@ service cloud.firestore {
     
     // Ad Events (Admin/API write only, Admin read)
     match /ad_events/{eventId} {
-      allow read: if isAdmin();
-      allow write: if false; // Writes happen via API (Admin SDK)
+      allow read: if hasDashboardAccess();
+      allow write: if false;
     }
 
     // Recommendations collection
     match /recommendations/{recommendationId} {
-      allow create: if true; // Public recommendations
-      allow read, update, delete: if isAdmin();
+      allow create: if true;
+      allow read, update: if isAdmin(); // Keeping higher restriction for management? Or Team Office? Prompt implies Team Office on "registros". Recommendations are kind of user records. Let's say Team Office can view/update status.
+      // Actually, let's stick to isAdmin for now unless specified.
+      allow delete: if isSuperAdmin();
     }
 
-    // AI Knowledge Base (Admin only - relaxed for debugging to fix "Failed to add snippet")
+    // AI Knowledge Base (Config - Admin/Superadmin)
     match /ai_knowledge_snippets/{snippetId} {
-      allow read, write: if true; // TEMPORARY DEBUG: Allow all writes to rule out auth issues
+      allow read, write: if isAdmin();
     }
     match /ai_knowledge_files/{fileId} {
-      allow read, write: if true; // TEMPORARY DEBUG
-    }
+      allow read, write: if isAdmin();
+    } // Removed debug true
 
     // Tickets collection
     match /tickets/{ticketId} {
       allow create: if isAuthenticated();
-      allow read: if isAuthenticated() && (resource.data.uid == request.auth.uid || isAdmin());
-      allow update: if isAuthenticated() && (resource.data.uid == request.auth.uid || isAdmin());
-      allow delete: if isAdmin();
+      allow read, update: if isAuthenticated() && (resource.data.uid == request.auth.uid || isTeamOffice());
+      allow delete: if isSuperAdmin(); // Only Superadmin deletes
     }
 
     // Analytics Events (for Admin Dashboard)
     match /analyticsEvents/{eventId} {
-      allow read: if isAdmin();
-      allow write: if false; // Writes via Admin SDK only
+      allow read: if hasDashboardAccess();
+      allow write: if false;
     }
 
     // Daily Ad Stats (for Admin Dashboard)
     match /ad_stats_daily/{statId} {
-      allow read: if isAdmin();
-      allow write: if false; // Writes via Admin SDK only
+      allow read: if hasDashboardAccess();
+      allow write: if false;
     }
 
     // Feedbacks collection
     match /feedbacks/{feedbackId} {
       allow create: if isAuthenticated();
-      allow read, update, delete: if isAdmin();
+      allow read, update: if isAdmin();
+      allow delete: if isSuperAdmin();
     }
 
-    // Categories collection
+    // Categories collection (Config - Admin/Superadmin)
     match /categories/{categoryId} {
       allow read: if true;
       allow write: if isAdmin(); 
@@ -116,7 +149,7 @@ service cloud.firestore {
 
     // Counters collection for IDs
     match /counters/{counterId} {
-      allow read, write: if isAdmin();
+      allow read, write: if hasDashboardAccess(); // Needed for generating IDs (Team Office needs this)
     }
 
     // Default deny
