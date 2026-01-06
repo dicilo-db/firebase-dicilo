@@ -1838,5 +1838,255 @@
         "de": "Wohnungsvermietung",
         "en": "Apartment Rental",
         "es": "Alquiler de viviendas"
+    },
+    "Badmintonvereine": {
+        "de": "Badmintonvereine",
+        "en": "Badminton Clubs",
+        "es": "Clubes de bádminton"
+    },
+    "Baseball-Ligen": {
+        "de": "Baseball-Ligen",
+        "en": "Baseball Leagues",
+        "es": "Ligas de béisbol"
+    },
+    "Basketballclubs": {
+        "de": "Basketballclubs",
+        "en": "Basketball Clubs",
+        "es": "Clubes de baloncesto"
+    },
+    "Bogensportzentren": {
+        "de": "Bogensportzentren",
+        "en": "Archery Centers",
+        "es": "Centros de tiro con arco"
+    },
+    "Boxclubs": {
+        "de": "Boxclubs",
+        "en": "Boxing Clubs",
+        "es": "Clubes de boxeo"
+    },
+    "Eissportvereine": {
+        "de": "Eissportvereine",
+        "en": "Ice Sports Clubs",
+        "es": "Clubes de deportes de hielo"
+    },
+    "E-Sport-Wettbewerbe": {
+        "de": "E-Sport-Wettbewerbe",
+        "en": "Esports Competitions",
+        "es": "Competiciones de esports"
+    },
+    "Fahrradgeschäfte": {
+        "de": "Fahrradgeschäfte",
+        "en": "Bicycle Shops",
+        "es": "Tiendas de bicicletas"
+    },
+    "Fechtschulen": {
+        "de": "Fechtschulen",
+        "en": "Fencing Schools",
+        "es": "Escuelas de esgrima"
+    },
+    "Fitnesskurse": {
+        "de": "Fitnesskurse",
+        "en": "Fitness Classes",
+        "es": "Clases de fitness"
+    },
+    "Fitnessstudios": {
+        "de": "Fitnessstudios",
+        "en": "Gyms",
+        "es": "Gimnasios"
+    },
+    "Fußballakademien": {
+        "de": "Fußballakademien",
+        "en": "Football Academies",
+        "es": "Academias de fútbol"
+    },
+    "Fußballvereine": {
+        "de": "Fußballvereine",
+        "en": "Football Clubs",
+        "es": "Clubes de fútbol"
+    },
+    "Golfplätze": {
+        "de": "Golfplätze",
+        "en": "Golf Courses",
+        "es": "Campos de golf"
+    },
+    "Inline-Skating-Clubs": {
+        "de": "Inline-Skating-Clubs",
+        "en": "Inline Skating Clubs",
+        "es": "Clubes de patinaje en línea"
+    },
+    "Judo-Vereine": {
+        "de": "Judo-Vereine",
+        "en": "Judo Clubs",
+        "es": "Clubes de judo"
+    },
+    "Kampfsportakademien": {
+        "de": "Kampfsportakademien",
+        "en": "Martial Arts Academies",
+        "es": "Academias de artes marciales"
+    },
+    "Kanuclubs": {
+        "de": "Kanuclubs",
+        "en": "Canoe Clubs",
+        "es": "Clubes de canoa"
+    },
+    "Kletterhallen": {
+        "de": "Kletterhallen",
+        "en": "Climbing Gyms",
+        "es": "Rocódromos"
+    },
+    "Klettervereine": {
+        "de": "Klettervereine",
+        "en": "Climbing Clubs",
+        "es": "Clubes de escalada"
+    },
+    "Kletterwettbewerbe": {
+        "de": "Kletterwettbewerbe",
+        "en": "Climbing Competitions",
+        "es": "Competiciones de escalada"
+    },
+    "Laufschulen": {
+        "de": "Laufschulen",
+        "en": "Running Schools",
+        "es": "Escuelas de running"
+    },
+    "Laufsportvereine": {
+        "de": "Laufsportvereine",
+        "en": "Running Clubs",
+        "es": "Clubes de running"
+    },
+    "Leichtathletikvereine": {
+        "de": "Leichtathletikvereine",
+        "en": "Athletics Clubs",
+        "es": "Clubes de atletismo"
+    },
+    "Marathons und Rennen": {
+        "de": "Marathons und Rennen",
+        "en": "Marathons and Races",
+        "es": "Maratones y carreras"
+    },
+    "Motorsportvereine": {
+        "de": "Motorsportvereine",
+        "en": "Motorsport Clubs",
+        "es": "Clubes de automovilismo"
+    },
+    "Mountainbike-Rennen": {
+        "de": "Mountainbike-Rennen",
+        "en": "Mountain Bike Races",
+        "es": "Carreras de mountain bike"
+    },
+    "Personal Training": {
+        "de": "Personal Training",
+        "en": "Personal Training",
+        "es": "Entrenamiento personal"
+    },
+    "Radsportwettbewerbe": {
+        "de": "Radsportwettbewerbe",
+        "en": "Cycling Competitions",
+        "es": "Competiciones de ciclismo"
+    },
+    "Reitsportzentren": {
+        "de": "Reitsportzentren",
+        "en": "Equestrian Centers",
+        "es": "Centros ecuestres"
+    },
+    "Rudervereine": {
+        "de": "Rudervereine",
+        "en": "Rowing Clubs",
+        "es": "Clubes de remo"
+    },
+    "Rugbyvereine": {
+        "de": "Rugbyvereine",
+        "en": "Rugby Clubs",
+        "es": "Clubes de rugby"
+    },
+    "Schachvereine": {
+        "de": "Schachvereine",
+        "en": "Chess Clubs",
+        "es": "Clubes de ajedrez"
+    },
+    "Schwimmschulen": {
+        "de": "Schwimmschulen",
+        "en": "Swimming Schools",
+        "es": "Escuelas de natación"
+    },
+    "Segelvereine": {
+        "de": "Segelvereine",
+        "en": "Sailing Clubs",
+        "es": "Clubes de vela"
+    },
+    "Skateboard-Wettbewerbe": {
+        "de": "Skateboard-Wettbewerbe",
+        "en": "Skateboarding Competitions",
+        "es": "Competiciones de skateboarding"
+    },
+    "Skateparks": {
+        "de": "Skateparks",
+        "en": "Skateparks",
+        "es": "Skateparks"
+    },
+    "Sportausrüstung": {
+        "de": "Sportausrüstung",
+        "en": "Sports Equipment",
+        "es": "Equipamiento deportivo"
+    },
+    "Sportförderprogramme": {
+        "de": "Sportförderprogramme",
+        "en": "Sports Promotion Programs",
+        "es": "Programas de promoción deportiva"
+    },
+    "Sporttrainingscamps": {
+        "de": "Sporttrainingscamps",
+        "en": "Sports Training Camps",
+        "es": "Campamentos de entrenamiento deportivo"
+    },
+    "Sportveranstaltungen": {
+        "de": "Sportveranstaltungen",
+        "en": "Sports Events",
+        "es": "Eventos deportivos"
+    },
+    "Surfschulen": {
+        "de": "Surfschulen",
+        "en": "Surf Schools",
+        "es": "Escuelas de surf"
+    },
+    "Tanzschulen": {
+        "de": "Tanzschulen",
+        "en": "Dance Schools",
+        "es": "Escuelas de baile"
+    },
+    "Tennisclubs": {
+        "de": "Tennisclubs",
+        "en": "Tennis Clubs",
+        "es": "Clubes de tenis"
+    },
+    "Tischtennisvereine": {
+        "de": "Tischtennisvereine",
+        "en": "Table Tennis Clubs",
+        "es": "Clubes de tenis de mesa"
+    },
+    "Triathlonwettbewerbe": {
+        "de": "Triathlonwettbewerbe",
+        "en": "Triathlon Competitions",
+        "es": "Competiciones de triatlón"
+    },
+    "Turnhallen": {
+        "de": "Turnhallen",
+        "en": "Sports Halls",
+        "es": "Pabellones deportivos"
+    },
+    "Wassersport": {
+        "de": "Wassersport",
+        "en": "Water Sports",
+        "es": "Deportes acuáticos"
+    },
+    "Wintersportzentren": {
+        "de": "Wintersportzentren",
+        "en": "Winter Sports Centers",
+        "es": "Centros de deportes de invierno"
+    },
+    "Yoga-Zentren": {
+        "de": "Yoga-Zentren",
+        "en": "Yoga Centers",
+        "es": "Centros de yoga"
     }
 }
