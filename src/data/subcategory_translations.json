@@ -858,5 +858,490 @@
         "de": "Zugfrachtlogistik",
         "en": "Rail Freight Logistics",
         "es": "Logística de carga ferroviaria"
+    },
+    "Ätherische Öle für die Küche": {
+        "de": "Ätherische Öle für die Küche",
+        "en": "Essential Oils for Cooking",
+        "es": "Aceites esenciales para cocina"
+    },
+    "Ahornsirup": {
+        "de": "Ahornsirup",
+        "en": "Maple Syrup",
+        "es": "Jarabe de arce"
+    },
+    "Alkoholfreie Getränke": {
+        "de": "Alkoholfreie Getränke",
+        "en": "Non-alcoholic Beverages",
+        "es": "Bebidas sin alcohol"
+    },
+    "Apfelsaft": {
+        "de": "Apfelsaft",
+        "en": "Apple Juice",
+        "es": "Jugo de manzana"
+    },
+    "Aromatische Gewürze": {
+        "de": "Aromatische Gewürze",
+        "en": "Aromatic Spices",
+        "es": "Especias aromáticas"
+    },
+    "Backpulver": {
+        "de": "Backpulver",
+        "en": "Baking Powder",
+        "es": "Polvo de hornear"
+    },
+    "Bäckerei und Konditorei": {
+        "de": "Bäckerei und Konditorei",
+        "en": "Bakery and Confectionery",
+        "es": "Panadería y pastelería"
+    },
+    "Balsamico-Essig": {
+        "de": "Balsamico-Essig",
+        "en": "Balsamic Vinegar",
+        "es": "Vinagre balsámico"
+    },
+    "Bio-Lebensmittel": {
+        "de": "Bio-Lebensmittel",
+        "en": "Organic Food",
+        "es": "Alimentos orgánicos"
+    },
+    "Bohnen": {
+        "de": "Bohnen",
+        "en": "Beans",
+        "es": "Frijoles"
+    },
+    "Chips": {
+        "de": "Chips",
+        "en": "Chips",
+        "es": "Patatas fritas"
+    },
+    "Chutneys": {
+        "de": "Chutneys",
+        "en": "Chutneys",
+        "es": "Chutneys"
+    },
+    "Couscous": {
+        "de": "Couscous",
+        "en": "Couscous",
+        "es": "Cuscús"
+    },
+    "Desserts": {
+        "de": "Desserts",
+        "en": "Desserts",
+        "es": "Postres"
+    },
+    "Eingelegtes Gemüse": {
+        "de": "Eingelegtes Gemüse",
+        "en": "Pickled Vegetables",
+        "es": "Verduras encurtidas"
+    },
+    "Eier": {
+        "de": "Eier",
+        "en": "Eggs",
+        "es": "Huevos"
+    },
+    "Energydrinks": {
+        "de": "Energydrinks",
+        "en": "Energy Drinks",
+        "es": "Bebidas energéticas"
+    },
+    "Essbare Öle": {
+        "de": "Essbare Öle",
+        "en": "Edible Oils",
+        "es": "Aceites comestibles"
+    },
+    "Essig": {
+        "de": "Essig",
+        "en": "Vinegar",
+        "es": "Vinagre"
+    },
+    "Fertiggerichte": {
+        "de": "Fertiggerichte",
+        "en": "Ready Meals",
+        "es": "Comidas preparadas"
+    },
+    "Fisch und Meeresfrüchte": {
+        "de": "Fisch und Meeresfrüchte",
+        "en": "Fish and Seafood",
+        "es": "Pescado y mariscos"
+    },
+    "Fladenbrot": {
+        "de": "Fladenbrot",
+        "en": "Flatbread",
+        "es": "Pan plano"
+    },
+    "Fleisch und Geflügel": {
+        "de": "Fleisch und Geflügel",
+        "en": "Meat and Poultry",
+        "es": "Carne y aves"
+    },
+    "Frische Kräuter": {
+        "de": "Frische Kräuter",
+        "en": "Fresh Herbs",
+        "es": "Hierbas frescas"
+    },
+    "Frisches Obst und Gemüse": {
+        "de": "Frisches Obst und Gemüse",
+        "en": "Fresh Fruit and Vegetables",
+        "es": "Frutas y verduras frescas"
+    },
+    "Fruchtsäfte": {
+        "de": "Fruchtsäfte",
+        "en": "Fruit Juices",
+        "es": "Jugos de frutas"
+    },
+    "Frühstückscerealien": {
+        "de": "Frühstückscerealien",
+        "en": "Breakfast Cereals",
+        "es": "Cereales para el desayuno"
+    },
+    "Gefrorene Beeren": {
+        "de": "Gefrorene Beeren",
+        "en": "Frozen Berries",
+        "es": "Bayas congeladas"
+    },
+    "Gefrorene Snacks": {
+        "de": "Gefrorene Snacks",
+        "en": "Frozen Snacks",
+        "es": "Snacks congelados"
+    },
+    "Gelees": {
+        "de": "Gelees",
+        "en": "Jellies",
+        "es": "Jaleas"
+    },
+    "Getrocknete Kräuter": {
+        "de": "Getrocknete Kräuter",
+        "en": "Dried Herbs",
+        "es": "Hierbas secas"
+    },
+    "Getreide und Körner": {
+        "de": "Getreide und Körner",
+        "en": "Grains and Cereals",
+        "es": "Granos y cereales"
+    },
+    "Gewürze und Kräuter": {
+        "de": "Gewürze und Kräuter",
+        "en": "Spices and Herbs",
+        "es": "Especias y hierbas"
+    },
+    "Glutenfreies Brot": {
+        "de": "Glutenfreies Brot",
+        "en": "Gluten-free Bread",
+        "es": "Pan sin gluten"
+    },
+    "Griechischer Joghurt": {
+        "de": "Griechischer Joghurt",
+        "en": "Greek Yogurt",
+        "es": "Yogur griego"
+    },
+    "Grillsoßen": {
+        "de": "Grillsoßen",
+        "en": "BBQ Sauces",
+        "es": "Salsas barbacoa"
+    },
+    "Haferflocken": {
+        "de": "Haferflocken",
+        "en": "Oatmeal",
+        "es": "Avena"
+    },
+    "Halbfertigprodukte": {
+        "de": "Halbfertigprodukte",
+        "en": "Semi-finished Products",
+        "es": "Productos semielaborados"
+    },
+    "Honig": {
+        "de": "Honig",
+        "en": "Honey",
+        "es": "Miel"
+    },
+    "Instant-Kartoffelpüree": {
+        "de": "Instant-Kartoffelpüree",
+        "en": "Instant Mashed Potatoes",
+        "es": "Puré de patatas instantáneo"
+    },
+    "Instant-Nudeln": {
+        "de": "Instant-Nudeln",
+        "en": "Instant Noodles",
+        "es": "Fideos instantáneos"
+    },
+    "Instant-Suppen": {
+        "de": "Instant-Suppen",
+        "en": "Instant Soups",
+        "es": "Sopas instantáneas"
+    },
+    "Joghurt": {
+        "de": "Joghurt",
+        "en": "Yogurt",
+        "es": "Yogur"
+    },
+    "Kaffee und Tee": {
+        "de": "Kaffee und Tee",
+        "en": "Coffee and Tea",
+        "es": "Café y té"
+    },
+    "Kakao": {
+        "de": "Kakao",
+        "en": "Cocoa",
+        "es": "Cacao"
+    },
+    "Kartoffelpüree": {
+        "de": "Kartoffelpüree",
+        "en": "Mashed Potatoes",
+        "es": "Puré de patatas"
+    },
+    "Kekse und Waffeln": {
+        "de": "Kekse und Waffeln",
+        "en": "Cookies and Waffles",
+        "es": "Galletas y gofres"
+    },
+    "Ketchup": {
+        "de": "Ketchup",
+        "en": "Ketchup",
+        "es": "Kétchup"
+    },
+    "Knäckebrot": {
+        "de": "Knäckebrot",
+        "en": "Crispbread",
+        "es": "Pan crujiente"
+    },
+    "Kokosmilch": {
+        "de": "Kokosmilch",
+        "en": "Coconut Milk",
+        "es": "Leche de coco"
+    },
+    "Konserven": {
+        "de": "Konserven",
+        "en": "Canned Goods",
+        "es": "Conservas"
+    },
+    "Laktosefreie Milchprodukte": {
+        "de": "Laktosefreie Milchprodukte",
+        "en": "Lactose-free Dairy Products",
+        "es": "Productos lácteos sin lactosa"
+    },
+    "Linsen": {
+        "de": "Linsen",
+        "en": "Lentils",
+        "es": "Lentejas"
+    },
+    "Margarine": {
+        "de": "Margarine",
+        "en": "Margarine",
+        "es": "Margarina"
+    },
+    "Marmeladen": {
+        "de": "Marmeladen",
+        "en": "Jams",
+        "es": "Mermeladas"
+    },
+    "Mayonnaise": {
+        "de": "Mayonnaise",
+        "en": "Mayonnaise",
+        "es": "Mayonesa"
+    },
+    "Mehl": {
+        "de": "Mehl",
+        "en": "Flour",
+        "es": "Harina"
+    },
+    "Milchprodukte": {
+        "de": "Milchprodukte",
+        "en": "Dairy Products",
+        "es": "Productos lácteos"
+    },
+    "Müsli": {
+        "de": "Müsli",
+        "en": "Muesli",
+        "es": "Muesli"
+    },
+    "Nudeln": {
+        "de": "Nudeln",
+        "en": "Pasta",
+        "es": "Pasta"
+    },
+    "Nüsse und Mandeln": {
+        "de": "Nüsse und Mandeln",
+        "en": "Nuts and Almonds",
+        "es": "Nueces y almendras"
+    },
+    "Oliven": {
+        "de": "Oliven",
+        "en": "Olives",
+        "es": "Aceitunas"
+    },
+    "Olivenöl": {
+        "de": "Olivenöl",
+        "en": "Olive Oil",
+        "es": "Aceite de oliva"
+    },
+    "Orangensaft": {
+        "de": "Orangensaft",
+        "en": "Orange Juice",
+        "es": "Jugo de naranja"
+    },
+    "Pflanzenöle": {
+        "de": "Pflanzenöle",
+        "en": "Vegetable Oils",
+        "es": "Aceites vegetales"
+    },
+    "Popcorn": {
+        "de": "Popcorn",
+        "en": "Popcorn",
+        "es": "Palomitas de maíz"
+    },
+    "Probiotische Getränke": {
+        "de": "Probiotische Getränke",
+        "en": "Probiotic Drinks",
+        "es": "Bebidas probióticas"
+    },
+    "Proteinriegel": {
+        "de": "Proteinriegel",
+        "en": "Protein Bars",
+        "es": "Barras de proteínas"
+    },
+    "Quinoa": {
+        "de": "Quinoa",
+        "en": "Quinoa",
+        "es": "Quinoa"
+    },
+    "Reis": {
+        "de": "Reis",
+        "en": "Rice",
+        "es": "Arroz"
+    },
+    "Salatdressings": {
+        "de": "Salatdressings",
+        "en": "Salad Dressings",
+        "es": "Aderezos para ensaladas"
+    },
+    "Salz": {
+        "de": "Salz",
+        "en": "Salt",
+        "es": "Sal"
+    },
+    "Saucen und Dressings": {
+        "de": "Saucen und Dressings",
+        "en": "Sauces and Dressings",
+        "es": "Salsas y aderezos"
+    },
+    "Schokolade": {
+        "de": "Schokolade",
+        "en": "Chocolate",
+        "es": "Chocolate"
+    },
+    "Schnellgerichte": {
+        "de": "Schnellgerichte",
+        "en": "Fast Food",
+        "es": "Comida rápida"
+    },
+    "Senf": {
+        "de": "Senf",
+        "en": "Mustard",
+        "es": "Mostaza"
+    },
+    "Sirup": {
+        "de": "Sirup",
+        "en": "Syrup",
+        "es": "Jarabe"
+    },
+    "Snacks": {
+        "de": "Snacks",
+        "en": "Snacks",
+        "es": "Snacks"
+    },
+    "Sojaprodukte": {
+        "de": "Sojaprodukte",
+        "en": "Soy Products",
+        "es": "Productos de soja"
+    },
+    "Speiseeis": {
+        "de": "Speiseeis",
+        "en": "Ice Cream",
+        "es": "Helado"
+    },
+    "Süßkartoffeln": {
+        "de": "Süßkartoffeln",
+        "en": "Sweet Potatoes",
+        "es": "Batatas"
+    },
+    "Süßwaren": {
+        "de": "Süßwaren",
+        "en": "Confectionery",
+        "es": "Confitería"
+    },
+    "Suppen": {
+        "de": "Suppen",
+        "en": "Soups",
+        "es": "Sopas"
+    },
+    "Tacos": {
+        "de": "Tacos",
+        "en": "Tacos",
+        "es": "Tacos"
+    },
+    "Tiefkühlprodukte": {
+        "de": "Tiefkühlprodukte",
+        "en": "Frozen Foods",
+        "es": "Productos congelados"
+    },
+    "Tofu": {
+        "de": "Tofu",
+        "en": "Tofu",
+        "es": "Tofu"
+    },
+    "Tomatensoße": {
+        "de": "Tomatensoße",
+        "en": "Tomato Sauce",
+        "es": "Salsa de tomate"
+    },
+    "Tortillas": {
+        "de": "Tortillas",
+        "en": "Tortillas",
+        "es": "Tortillas"
+    },
+    "Trockenfrüchte": {
+        "de": "Trockenfrüchte",
+        "en": "Dried Fruit",
+        "es": "Frutas secas"
+    },
+    "Vanilleextrakt": {
+        "de": "Vanilleextrakt",
+        "en": "Vanilla Extract",
+        "es": "Extracto de vainilla"
+    },
+    "Vegane Gerichte": {
+        "de": "Vegane Gerichte",
+        "en": "Vegan Dishes",
+        "es": "Platos veganos"
+    },
+    "Vollkornbrot": {
+        "de": "Vollkornbrot",
+        "en": "Whole Wheat Bread",
+        "es": "Pan integral"
+    },
+    "Weine und Spirituosen": {
+        "de": "Weine und Spirituosen",
+        "en": "Wines and Spirits",
+        "es": "Vinos y licores"
+    },
+    "Würzmischungen": {
+        "de": "Würzmischungen",
+        "en": "Spice Mixes",
+        "es": "Mezclas de especias"
+    },
+    "Zartbitterschokolade": {
+        "de": "Zartbitterschokolade",
+        "en": "Dark Chocolate",
+        "es": "Chocolate negro"
+    },
+    "Zucker": {
+        "de": "Zucker",
+        "en": "Sugar",
+        "es": "Azúcar"
+    },
+    "Zuckersirup": {
+        "de": "Zuckersirup",
+        "en": "Sugar Syrup",
+        "es": "Jarabe de azúcar"
     }
 }
