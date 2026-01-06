@@ -223,7 +223,7 @@ export function DashboardHomeView() {
                                     <p className="text-xs text-muted-foreground">in 4 hours</p>
                                 </div>
                                 <div className="text-sm">
-                                    <p className="font-semibold text-slate-700 dark:text-slate-300">New Campaign: TechTrend</p>
+                                    <p className="font-semibold text-slate-700 dark:text-slate-300">New Campaign: HörComfort Services</p>
                                     <p className="text-xs text-muted-foreground">Starts tomorrow</p>
                                 </div>
                                 <Button className="w-full mt-2 text-xs" variant="outline" onClick={() => router.push('/dashboard/freelancer?tab=marketing_plan')}>

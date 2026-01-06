@@ -17,12 +17,12 @@ import {
 } from '@/components/ui/table';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useAuth } from '@/context/AuthContext';
+// import { useAuth } from '@/context/AuthContext';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { togglePrivateUserStatus, deletePrivateUser, setPrivateUserRole, updateUserPermissions, setReferrer } from '@/app/actions/private-users';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
-import { CSVLink } from 'react-csv';
+// import { CSVLink } from 'react-csv'; // Removed
 import { Loader2, Search, Download, LayoutDashboard, RefreshCw, Trash2, Pause, Play, Briefcase, ShieldCheck, UserPlus, Edit, Save, X } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
@@ -31,9 +31,9 @@ import { Checkbox } from '@/components/ui/checkbox';
 const db = getFirestore(app);
 
 export default function PrivateUsersPage() {
-    useAuthGuard();
+    const { user: currentUser } = useAuthGuard();
     const { t } = useTranslation(['admin', 'common']);
-    const { user: currentUser } = useAuth(); // Get logged in admin
+    // const { user: currentUser } = useAuth(); // Replaced by useAuthGuard to get role
     const { toast } = useToast();
     const [users, setUsers] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);

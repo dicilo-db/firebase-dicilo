@@ -51,6 +51,11 @@ export interface Business {
     geo_coordinates?: { lat: number; lng: number };
     allowed_continents?: string[];
   };
+  description_translations?: {
+    en?: string;
+    es?: string;
+    de?: string;
+  };
 }
 
 export interface Ad {
@@ -710,7 +715,7 @@ export default function DiciloSearchPage({
                         <div className="min-w-0 flex-1">
                           <h3 className="truncate font-bold">{business.name}</h3>
                           <p className="line-clamp-2 text-sm text-muted-foreground">
-                            {business.description}
+                            {business.description_translations?.[locale as 'en' | 'es' | 'de'] || business.description}
                           </p>
                         </div>
                       </div>

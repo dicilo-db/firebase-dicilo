@@ -57,6 +57,8 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Switch } from '@/components/ui/switch';
 import { cn } from "@/lib/utils";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Sparkles as SparklesIcon } from 'lucide-react';
 
 const DiciloMap = dynamic(() => import('@/components/dicilo-map'), {
   ssr: false,
@@ -68,6 +70,11 @@ const businessSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   category: z.string().min(1, 'Category is required'),
   description: z.string().min(1, 'Description is required'),
+  description_translations: z.object({
+    en: z.string().optional(),
+    es: z.string().optional(),
+    de: z.string().optional(),
+  }).optional(),
   location: z.string().min(1, 'Location is required'),
   address: z.string().optional(),
   phone: z.string().optional(),
@@ -358,6 +365,48 @@ export default function EditBusinessPage() {
     }
   };
 
+  const [isTranslating, setIsTranslating] = useState(false);
+
+  const handleTranslateDescription = async (sourceLang: 'es' | 'en' | 'de', text: string) => {
+    if (!text) return;
+    setIsTranslating(true);
+    try {
+      const targetLanguages = ['es', 'en', 'de'].filter(l => l !== sourceLang);
+
+      const response = await fetch('/api/translate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text, targetLanguages }),
+      });
+
+      if (!response.ok) throw new Error('Translation failed');
+
+      const data = await response.json();
+
+      // Update form values
+      Object.entries(data.translations).forEach(([lang, translatedText]) => {
+        setValue(`description_translations.${lang}` as any, translatedText as string, {
+          shouldDirty: true,
+          shouldValidate: true
+        });
+      });
+
+      toast({
+        title: "Translation Complete",
+        description: "Description has been translated to other languages.",
+      });
+    } catch (error) {
+      console.error('Translation error:', error);
+      toast({
+        title: "Translation Error",
+        description: "Failed to translate description.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsTranslating(false);
+    }
+  };
+
 
   const generateInternalId = async () => {
     if (getValues('businessCode')) return;
@@ -465,6 +514,11 @@ export default function EditBusinessPage() {
               // ... map remaining fields ...
               category: data.category || '',
               description: data.description || '',
+              description_translations: data.description_translations || {
+                es: data.description || '',
+                en: '',
+                de: ''
+              },
               location: data.location || '',
               address: data.address || '',
               phone: data.phone || '',
@@ -561,6 +615,13 @@ export default function EditBusinessPage() {
       description: `${t('businesses.edit.geocode.dragSuccessDesc')}: ${newCoords[0].toFixed(6)}, ${newCoords[1].toFixed(6)}`,
     });
   };
+
+  const esDescription = watch('description_translations.es');
+  useEffect(() => {
+    if (esDescription) {
+      setValue('description', esDescription, { shouldDirty: true });
+    }
+  }, [esDescription, setValue]);
 
   const onSubmit = async (data: BusinessFormData) => {
     setIsSubmitting(true);
@@ -805,17 +866,50 @@ export default function EditBusinessPage() {
                   </p>
                 )}
 
-                {/* Description */}
+                {/* Description with Translations */}
                 <div className="space-y-2 md:col-span-2">
-                  <Label htmlFor="description">
-                    {t('businesses.fields.description')}
-                  </Label>
-                  <Textarea
-                    id="description"
-                    {...register('description')}
-                    placeholder={t('businesses.fields.descriptionPlaceholder', "Hablanos sobre ti...")}
-                    className={errors.description ? 'border-destructive' : ''}
-                  />
+                  <div className="flex items-center justify-between">
+                    <Label>{t('businesses.fields.description')}</Label>
+                    <div className="flex items-center gap-2">
+                      {isTranslating && <span className="text-xs text-muted-foreground animate-pulse">Translating...</span>}
+                    </div>
+                  </div>
+
+                  <Tabs defaultValue="es" className="w-full">
+                    <TabsList className="grid w-full grid-cols-3">
+                      <TabsTrigger value="es">🇪🇸 ES</TabsTrigger>
+                      <TabsTrigger value="en">🇬🇧 EN</TabsTrigger>
+                      <TabsTrigger value="de">🇩🇪 DE</TabsTrigger>
+                    </TabsList>
+
+                    {['es', 'en', 'de'].map((lang) => (
+                      <TabsContent key={lang} value={lang} className="space-y-2">
+                        <div className="relative">
+                          <Textarea
+                            {...register(`description_translations.${lang}` as any)}
+                            placeholder={`Description in ${lang.toUpperCase()}...`}
+                            className="min-h-[120px] pr-12"
+                          />
+                          <Button
+                            type="button"
+                            size="icon"
+                            variant="ghost"
+                            className="absolute right-2 top-2 h-8 w-8 text-muted-foreground hover:text-primary"
+                            title={`Translate from ${lang.toUpperCase()} to others`}
+                            onClick={() => {
+                              const text = getValues(`description_translations.${lang}` as any);
+                              handleTranslateDescription(lang as 'es' | 'en' | 'de', text);
+                            }}
+                          >
+                            <SparklesIcon className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TabsContent>
+                    ))}
+                  </Tabs>
+
+                  {/* Keep main description hidden as it's synced with ES but needed for schema/legacy */}
+                  <input type="hidden" {...register('description')} />
                   {errors.description && (
                     <p className="text-sm text-destructive">
                       {errors.description.message}

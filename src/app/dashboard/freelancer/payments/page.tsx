@@ -65,7 +65,7 @@ export default function FreelancerPaymentsPage() {
                                     </div>
                                     <div>
                                         <p className="font-medium">Pago por Promoción</p>
-                                        <p className="text-xs text-muted-foreground">VasenKeramik GmbH • Ref: 9832{i}</p>
+                                        <p className="text-xs text-muted-foreground">HörComfort Services • Ref: 9832{i}</p>
                                     </div>
                                 </div>
                                 <div className="text-right">

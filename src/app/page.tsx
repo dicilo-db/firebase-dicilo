@@ -58,6 +58,7 @@ function serializeBusiness(docId: string, data: any): Business {
     name: data.clientName || data.name || 'Unbekanntes Unternehmen',
     category: data.category || 'Allgemein',
     description: data.description || data.bodyData?.description || '',
+    description_translations: data.description_translations || undefined,
     location: data.location || '',
     imageUrl: imageUrl,
     imageHint: data.imageHint || '',
