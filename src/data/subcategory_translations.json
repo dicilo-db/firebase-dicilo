@@ -1593,5 +1593,250 @@
         "de": "Wärmelampen für Terrarien",
         "en": "Heat Lamps for Terrariums",
         "es": "Lámparas de calor para terrarios"
+    },
+    "Anlageimmobilien": {
+        "de": "Anlageimmobilien",
+        "en": "Investment Properties",
+        "es": "Propiedades de inversión"
+    },
+    "Apartmentkomplexe": {
+        "de": "Apartmentkomplexe",
+        "en": "Apartment Complexes",
+        "es": "Complejos de apartamentos"
+    },
+    "Bewertungsdienste": {
+        "de": "Bewertungsdienste",
+        "en": "Valuation Services",
+        "es": "Servicios de tasación"
+    },
+    "Büroflächenvermietung": {
+        "de": "Büroflächenvermietung",
+        "en": "Office Space Rental",
+        "es": "Alquiler de oficinas"
+    },
+    "Bürogebäudemanagement": {
+        "de": "Bürogebäudemanagement",
+        "en": "Office Building Management",
+        "es": "Gestión de edificios de oficinas"
+    },
+    "Co-Working Spaces": {
+        "de": "Co-Working Spaces",
+        "en": "Co-Working Spaces",
+        "es": "Espacios de coworking"
+    },
+    "Coworking Spaces": {
+        "de": "Coworking Spaces",
+        "en": "Coworking Spaces",
+        "es": "Coworking Spaces"
+    },
+    "Ferienhäuser": {
+        "de": "Ferienhäuser",
+        "en": "Holiday Homes",
+        "es": "Casas de vacaciones"
+    },
+    "Ferienresorts": {
+        "de": "Ferienresorts",
+        "en": "Holiday Resorts",
+        "es": "Resorts vacacionales"
+    },
+    "Ferienwohnungen": {
+        "de": "Ferienwohnungen",
+        "en": "Holiday Apartments",
+        "es": "Apartamentos vacacionales"
+    },
+    "Finanzierung von Immobilienprojekten": {
+        "de": "Finanzierung von Immobilienprojekten",
+        "en": "Real Estate Project Financing",
+        "es": "Financiación de proyectos inmobiliarios"
+    },
+    "Freizeitimmobilien": {
+        "de": "Freizeitimmobilien",
+        "en": "Leisure Properties",
+        "es": "Propiedades de ocio"
+    },
+    "Gewerbeimmobilien": {
+        "de": "Gewerbeimmobilien",
+        "en": "Commercial Real Estate",
+        "es": "Inmuebles comerciales"
+    },
+    "Gewerbeimmobilienleasing": {
+        "de": "Gewerbeimmobilienleasing",
+        "en": "Commercial Real Estate Leasing",
+        "es": "Arrendamiento de inmuebles comerciales"
+    },
+    "Gewerbeobjekte": {
+        "de": "Gewerbeobjekte",
+        "en": "Commercial Properties",
+        "es": "Propiedades comerciales"
+    },
+    "Gewerbeparkentwicklung": {
+        "de": "Gewerbeparkentwicklung",
+        "en": "Business Park Development",
+        "es": "Desarrollo de parques empresariales"
+    },
+    "Grundstücksentwicklung": {
+        "de": "Grundstücksentwicklung",
+        "en": "Land Development",
+        "es": "Desarrollo de terrenos"
+    },
+    "Grundstücksverkäufe": {
+        "de": "Grundstücksverkäufe",
+        "en": "Land Sales",
+        "es": "Venta de terrenos"
+    },
+    "Hausverkäufe": {
+        "de": "Hausverkäufe",
+        "en": "House Sales",
+        "es": "Venta de casas"
+    },
+    "Hausverwalterdienste": {
+        "de": "Hausverwalterdienste",
+        "en": "Property Management Services",
+        "es": "Servicios de administración de propiedades"
+    },
+    "Hausverwaltungsdienste": {
+        "de": "Hausverwaltungsdienste",
+        "en": "Property Management Services",
+        "es": "Servicios de gestión de propiedades"
+    },
+    "Hochhausvermietung": {
+        "de": "Hochhausvermietung",
+        "en": "High-rise Rental",
+        "es": "Alquiler en rascacielos"
+    },
+    "Immobilienagenturen": {
+        "de": "Immobilienagenturen",
+        "en": "Real Estate Agencies",
+        "es": "Agencias inmobiliarias"
+    },
+    "Immobilienentwicklung": {
+        "de": "Immobilienentwicklung",
+        "en": "Real Estate Development",
+        "es": "Desarrollo inmobiliario"
+    },
+    "Immobilieninvestitionen": {
+        "de": "Immobilieninvestitionen",
+        "en": "Real Estate Investments",
+        "es": "Inversiones inmobiliarias"
+    },
+    "Immobilieninvestments": {
+        "de": "Immobilieninvestments",
+        "en": "Real Estate Investments",
+        "es": "Inversiones en bienes raíces"
+    },
+    "Immobilienmakler": {
+        "de": "Immobilienmakler",
+        "en": "Real Estate Agents",
+        "es": "Agentes inmobiliarios"
+    },
+    "Immobilienverwaltung": {
+        "de": "Immobilienverwaltung",
+        "en": "Property Management",
+        "es": "Gestión inmobiliaria"
+    },
+    "Immobilienvermarktung": {
+        "de": "Immobilienvermarktung",
+        "en": "Real Estate Marketing",
+        "es": "Marketing inmobiliario"
+    },
+    "Industrieimmobilien": {
+        "de": "Industrieimmobilien",
+        "en": "Industrial Real Estate",
+        "es": "Inmuebles industriales"
+    },
+    "Industrieparkentwicklungen": {
+        "de": "Industrieparkentwicklungen",
+        "en": "Industrial Park Developments",
+        "es": "Desarrollos de parques industriales"
+    },
+    "Lagerhäuser": {
+        "de": "Lagerhäuser",
+        "en": "Warehouses",
+        "es": "Almacenes"
+    },
+    "Logistikimmobilien": {
+        "de": "Logistikimmobilien",
+        "en": "Logistics Properties",
+        "es": "Inmuebles logísticos"
+    },
+    "Luxusimmobilien": {
+        "de": "Luxusimmobilien",
+        "en": "Luxury Real Estate",
+        "es": "Inmuebles de lujo"
+    },
+    "Luxusvillen": {
+        "de": "Luxusvillen",
+        "en": "Luxury Villas",
+        "es": "Villas de lujo"
+    },
+    "Management von Ferienimmobilien": {
+        "de": "Management von Ferienimmobilien",
+        "en": "Holiday Property Management",
+        "es": "Gestión de propiedades vacacionales"
+    },
+    "Mietmanagement": {
+        "de": "Mietmanagement",
+        "en": "Rental Management",
+        "es": "Gestión de alquileres"
+    },
+    "Mietwohnungen": {
+        "de": "Mietwohnungen",
+        "en": "Rental Apartments",
+        "es": "Apartamentos en alquiler"
+    },
+    "Nachhaltige Immobilienprojekte": {
+        "de": "Nachhaltige Immobilienprojekte",
+        "en": "Sustainable Real Estate Projects",
+        "es": "Proyectos inmobiliarios sostenibles"
+    },
+    "Neubauprojekte": {
+        "de": "Neubauprojekte",
+        "en": "New Construction Projects",
+        "es": "Proyectos de nueva construcción"
+    },
+    "Shopping-Center-Immobilien": {
+        "de": "Shopping-Center-Immobilien",
+        "en": "Shopping Center Real Estate",
+        "es": "Inmuebles de centros comerciales"
+    },
+    "Studentenwohnheime": {
+        "de": "Studentenwohnheime",
+        "en": "Student Dormitories",
+        "es": "Residencias de estudiantes"
+    },
+    "Verwaltung von Büroimmobilien": {
+        "de": "Verwaltung von Büroimmobilien",
+        "en": "Office Property Management",
+        "es": "Gestión de inmuebles de oficinas"
+    },
+    "Verwaltung von Gewerbeimmobilien": {
+        "de": "Verwaltung von Gewerbeimmobilien",
+        "en": "Commercial Property Management",
+        "es": "Gestión de inmuebles comerciales"
+    },
+    "Verwaltung von Luxusimmobilien": {
+        "de": "Verwaltung von Luxusimmobilien",
+        "en": "Luxury Property Management",
+        "es": "Gestión de propiedades de lujo"
+    },
+    "Verkauf von Gewerbegrundstücken": {
+        "de": "Verkauf von Gewerbegrundstücken",
+        "en": "Commercial Land Sales",
+        "es": "Venta de terrenos comerciales"
+    },
+    "Wohngemeinschaften": {
+        "de": "Wohngemeinschaften",
+        "en": "Shared Housing",
+        "es": "Pisos compartidos"
+    },
+    "Wohnungsbau": {
+        "de": "Wohnungsbau",
+        "en": "Housing Construction",
+        "es": "Construcción de viviendas"
+    },
+    "Wohnungsvermietung": {
+        "de": "Wohnungsvermietung",
+        "en": "Apartment Rental",
+        "es": "Alquiler de viviendas"
     }
 }
