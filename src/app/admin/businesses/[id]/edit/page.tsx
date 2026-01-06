@@ -392,19 +392,52 @@ export default function EditBusinessPage() {
             };
             reset(formData as BusinessFormData);
 
-            // Attempt to pre-select category dropdowns
-            if (data.category && categories.length > 0) {
-              const parts = data.category.split('/').map((s: string) => s.trim());
-              if (parts.length > 0) {
-                const mainName = parts[0];
-                const subName = parts[1];
-                const matchedCat = categories.find(c => c.name.de === mainName);
-                if (matchedCat) {
-                  setSelectedCategorySlug(matchedCat.id);
-                  if (subName) {
-                    const matchedSub = matchedCat.subcategories.find(s => s.name.de === subName);
-                    if (matchedSub) setSelectedSubcategorySlug(matchedSub.id);
+            // Attempt to pre-select category dropdowns using Keys (Preferred) or Improved Legacy parsing
+            if (categories.length > 0) {
+              let foundCatId = '';
+              let foundSubId = '';
+
+              // Strategy 1: Use explicit keys if available (Most Robust)
+              if (data.category_key) {
+                foundCatId = data.category_key.replace(/^category\./, '');
+              }
+              if (data.subcategory_key) {
+                foundSubId = data.subcategory_key.replace(/^subcategory\./, '');
+              }
+
+              // Strategy 2: Fallback to string matching (Legacy support)
+              // Tries to match the stored string against ANY language name (de, es, en)
+              if (!foundCatId && data.category) {
+                const parts = data.category.split('/').map((s: string) => s.trim());
+                if (parts.length > 0) {
+                  const mainName = parts[0];
+                  const subName = parts[1];
+
+                  const matchedCat = categories.find(c =>
+                    c.name.de === mainName ||
+                    c.name.es === mainName ||
+                    c.name.en === mainName
+                  );
+
+                  if (matchedCat) {
+                    foundCatId = matchedCat.id;
+                    if (subName) {
+                      const matchedSub = matchedCat.subcategories.find(s =>
+                        s.name.de === subName ||
+                        s.name.es === subName ||
+                        s.name.en === subName
+                      );
+                      if (matchedSub) foundSubId = matchedSub.id;
+                    }
                   }
+                }
+              }
+
+              // Apply selection
+              if (foundCatId) {
+                setSelectedCategorySlug(foundCatId);
+                if (foundSubId) {
+                  setSelectedSubcategorySlug(foundSubId);
                 }
               }
             }
@@ -606,7 +639,7 @@ export default function EditBusinessPage() {
                               return (
                                 <CommandItem
                                   key={cat.id}
-                                  value={catName}
+                                  value={`${cat.name.de} ${cat.name.es || ''} ${cat.name.en || ''} ${cat.id}`}
                                   onSelect={() => {
                                     setSelectedCategorySlug(cat.id);
                                     setSelectedSubcategorySlug(''); // Reset sub on main change
@@ -707,7 +740,7 @@ export default function EditBusinessPage() {
                               return (
                                 <CommandItem
                                   key={sub.id}
-                                  value={subName}
+                                  value={`${sub.name.de} ${sub.name.es || ''} ${sub.name.en || ''} ${sub.id}`}
                                   onSelect={() => {
                                     setSelectedSubcategorySlug(sub.id);
                                     setOpenSubcategory(false);

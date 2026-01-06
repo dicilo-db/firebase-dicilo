@@ -35,7 +35,7 @@ const websiteChatFlow = ai.defineFlow(
         inputSchema: WebsiteChatInputSchema,
         outputSchema: WebsiteChatOutputSchema,
     },
-    async (input) => {
+    async (input: z.infer<typeof WebsiteChatInputSchema>) => {
         // 0. ID DE SESIÓN
         const effectiveSessionId = input.sessionId || input.userId || 'unknown-session';
 
@@ -91,7 +91,7 @@ TU TAREA:
 
             return {
                 answer: finalText,
-                uiComponent: 'SHARE_BUTTONS'
+                uiComponent: 'SHARE_BUTTONS' as const
             };
         }
 

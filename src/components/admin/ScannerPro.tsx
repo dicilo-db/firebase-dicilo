@@ -130,7 +130,7 @@ export default function ScannerPro({ recruiterId = 'DIC-001' }: { recruiterId?: 
         const storedName = localStorage.getItem('dicilo_client_name');
         if (storedId && storedName) {
             setCampaignClient({ id: storedId, name: storedName });
-            setFormData(prev => ({
+            setFormData((prev: any) => ({
                 ...prev,
                 leadDestination: 'AMBOS',
                 clientCompanyId: storedId,
@@ -143,7 +143,7 @@ export default function ScannerPro({ recruiterId = 'DIC-001' }: { recruiterId?: 
         localStorage.removeItem('dicilo_client_id');
         localStorage.removeItem('dicilo_client_name');
         setCampaignClient(null);
-        setFormData(prev => ({
+        setFormData((prev: any) => ({
             ...prev,
             leadDestination: 'DICILO',
             clientCompanyId: '',
@@ -152,7 +152,7 @@ export default function ScannerPro({ recruiterId = 'DIC-001' }: { recruiterId?: 
     };
 
     const selectCompany = (company: any) => {
-        setFormData(prev => ({
+        setFormData((prev: any) => ({
             ...prev,
             clientCompanyId: company.id,
             clientCompanyName: company.name
@@ -184,7 +184,7 @@ export default function ScannerPro({ recruiterId = 'DIC-001' }: { recruiterId?: 
         ctx?.drawImage(video, 0, 0);
 
         // 2. Convert to Blob
-        canvas.toBlob(async (blob) => {
+        canvas.toBlob(async (blob: Blob | null) => {
             if (!blob) {
                 setStatus('Error al capturar imagen.');
                 setIsProcessing(false);
@@ -202,7 +202,7 @@ export default function ScannerPro({ recruiterId = 'DIC-001' }: { recruiterId?: 
                 if (result.success && result.data) {
                     const data = result.data;
 
-                    setFormData(prev => ({
+                    setFormData((prev: any) => ({
                         ...prev,
                         businessName: data.businessName || prev.businessName,
                         email: data.email || prev.email,
@@ -278,7 +278,8 @@ export default function ScannerPro({ recruiterId = 'DIC-001' }: { recruiterId?: 
             // Initialize optional fields
             photoUrl: undefined,
             interest: undefined,
-            isActive: false,
+            // isActive is omitted from type, defaulting in backend
+            // isActive: false,
 
             // Coordinates are optional in Prospect, so we can omit them or set undefined
             coordinates: undefined
@@ -306,7 +307,7 @@ export default function ScannerPro({ recruiterId = 'DIC-001' }: { recruiterId?: 
             });
 
             // Clear sensitive fields only
-            setFormData(prev => ({
+            setFormData((prev: any) => ({
                 ...prev,
                 businessName: '',
                 phone: '',
