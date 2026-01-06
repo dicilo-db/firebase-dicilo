@@ -2088,5 +2088,255 @@
         "de": "Yoga-Zentren",
         "en": "Yoga Centers",
         "es": "Centros de yoga"
+    },
+    "Akademische Konferenzen": {
+        "de": "Akademische Konferenzen",
+        "en": "Academic Conferences",
+        "es": "Conferencias académicas"
+    },
+    "Anatomiekurse": {
+        "de": "Anatomiekurse",
+        "en": "Anatomy Courses",
+        "es": "Cursos de anatomía"
+    },
+    "Architekturstudiengänge": {
+        "de": "Architekturstudiengänge",
+        "en": "Architecture Programs",
+        "es": "Estudios de arquitectura"
+    },
+    "Bachelorstudiengänge": {
+        "de": "Bachelorstudiengänge",
+        "en": "Bachelor Programs",
+        "es": "Programas de grado"
+    },
+    "Berufsausbildung": {
+        "de": "Berufsausbildung",
+        "en": "Vocational Training",
+        "es": "Formación profesional"
+    },
+    "Biologiekurse": {
+        "de": "Biologiekurse",
+        "en": "Biology Courses",
+        "es": "Cursos de biología"
+    },
+    "Buchhaltungskurse": {
+        "de": "Buchhaltungskurse",
+        "en": "Accounting Courses",
+        "es": "Cursos de contabilidad"
+    },
+    "Chemiekurse": {
+        "de": "Chemiekurse",
+        "en": "Chemistry Courses",
+        "es": "Cursos de química"
+    },
+    "Coaching-Ausbildung": {
+        "de": "Coaching-Ausbildung",
+        "en": "Coaching Training",
+        "es": "Formación en coaching"
+    },
+    "Digitale Bildungsplattformen": {
+        "de": "Digitale Bildungsplattformen",
+        "en": "Digital Education Platforms",
+        "es": "Plataformas educativas digitales"
+    },
+    "Fernunterricht": {
+        "de": "Fernunterricht",
+        "en": "Distance Learning",
+        "es": "Educación a distancia"
+    },
+    "Film- und Medienkurse": {
+        "de": "Film- und Medienkurse",
+        "en": "Film and Media Courses",
+        "es": "Cursos de cine y medios"
+    },
+    "Fotografiekurse": {
+        "de": "Fotografiekurse",
+        "en": "Photography Courses",
+        "es": "Cursos de fotografía"
+    },
+    "Führungskräfteschulungen": {
+        "de": "Führungskräfteschulungen",
+        "en": "Executive Training",
+        "es": "Formación de ejecutivos"
+    },
+    "Geografieunterricht": {
+        "de": "Geografieunterricht",
+        "en": "Geography Lessons",
+        "es": "Clases de geografía"
+    },
+    "Geschichtskurse": {
+        "de": "Geschichtskurse",
+        "en": "History Courses",
+        "es": "Cursos de historia"
+    },
+    "Gesundheitsbildung": {
+        "de": "Gesundheitsbildung",
+        "en": "Health Education",
+        "es": "Educación para la salud"
+    },
+    "Grafikdesign-Kurse": {
+        "de": "Grafikdesign-Kurse",
+        "en": "Graphic Design Courses",
+        "es": "Cursos de diseño gráfico"
+    },
+    "Grundschulbildung": {
+        "de": "Grundschulbildung",
+        "en": "Primary Education",
+        "es": "Educación primaria"
+    },
+    "IT-Schulungen": {
+        "de": "IT-Schulungen",
+        "en": "IT Training",
+        "es": "Formación en TI"
+    },
+    "Journalismus-Workshops": {
+        "de": "Journalismus-Workshops",
+        "en": "Journalism Workshops",
+        "es": "Talleres de periodismo"
+    },
+    "Kindererziehung": {
+        "de": "Kindererziehung",
+        "en": "Early Childhood Education",
+        "es": "Educación infantil"
+    },
+    "Kochkurse": {
+        "de": "Kochkurse",
+        "en": "Cooking Classes",
+        "es": "Clases de cocina"
+    },
+    "Kunstkurse": {
+        "de": "Kunstkurse",
+        "en": "Art Courses",
+        "es": "Cursos de arte"
+    },
+    "Kurse für Umweltwissenschaften": {
+        "de": "Kurse für Umweltwissenschaften",
+        "en": "Environmental Science Courses",
+        "es": "Cursos de ciencias ambientales"
+    },
+    "Lehrerfortbildung": {
+        "de": "Lehrerfortbildung",
+        "en": "Teacher Training",
+        "es": "Formación docente"
+    },
+    "Leadership-Programme": {
+        "de": "Leadership-Programme",
+        "en": "Leadership Programs",
+        "es": "Programas de liderazgo"
+    },
+    "Management-Workshops": {
+        "de": "Management-Workshops",
+        "en": "Management Workshops",
+        "es": "Talleres de gestión"
+    },
+    "Marketing-Schulungen": {
+        "de": "Marketing-Schulungen",
+        "en": "Marketing Training",
+        "es": "Formación en marketing"
+    },
+    "Masterstudiengänge": {
+        "de": "Masterstudiengänge",
+        "en": "Master Programs",
+        "es": "Programas de máster"
+    },
+    "Mathematikkurse": {
+        "de": "Mathematikkurse",
+        "en": "Mathematics Courses",
+        "es": "Cursos de matemáticas"
+    },
+    "Musikworkshops": {
+        "de": "Musikworkshops",
+        "en": "Music Workshops",
+        "es": "Talleres de música"
+    },
+    "Online-Nachhilfe": {
+        "de": "Online-Nachhilfe",
+        "en": "Online Tutoring",
+        "es": "Tutoría online"
+    },
+    "Online-Universitäten": {
+        "de": "Online-Universitäten",
+        "en": "Online Universities",
+        "es": "Universidades online"
+    },
+    "Pharmaziekurse": {
+        "de": "Pharmaziekurse",
+        "en": "Pharmacy Courses",
+        "es": "Cursos de farmacia"
+    },
+    "Philosophiekurse": {
+        "de": "Philosophiekurse",
+        "en": "Philosophy Courses",
+        "es": "Cursos de filosofía"
+    },
+    "Physikkurse": {
+        "de": "Physikkurse",
+        "en": "Physics Courses",
+        "es": "Cursos de física"
+    },
+    "Programmierungskurse": {
+        "de": "Programmierungskurse",
+        "en": "Programming Courses",
+        "es": "Cursos de programación"
+    },
+    "Psychologiekurse": {
+        "de": "Psychologiekurse",
+        "en": "Psychology Courses",
+        "es": "Cursos de psicología"
+    },
+    "Pädagogik-Kurse": {
+        "de": "Pädagogik-Kurse",
+        "en": "Pedagogy Courses",
+        "es": "Cursos de pedagogía"
+    },
+    "Schreibkurse": {
+        "de": "Schreibkurse",
+        "en": "Writing Courses",
+        "es": "Cursos de escritura"
+    },
+    "Schreibworkshops": {
+        "de": "Schreibworkshops",
+        "en": "Writing Workshops",
+        "es": "Talleres de escritura"
+    },
+    "Seminare und Konferenzen": {
+        "de": "Seminare und Konferenzen",
+        "en": "Seminars and Conferences",
+        "es": "Seminarios y conferencias"
+    },
+    "Sozialwissenschaften": {
+        "de": "Sozialwissenschaften",
+        "en": "Social Sciences",
+        "es": "Ciencias sociales"
+    },
+    "Sprachkurse": {
+        "de": "Sprachkurse",
+        "en": "Language Courses",
+        "es": "Cursos de idiomas"
+    },
+    "Sportpädagogik": {
+        "de": "Sportpädagogik",
+        "en": "Sports Education",
+        "es": "Pedagogía deportiva"
+    },
+    "Technische Schulungen": {
+        "de": "Technische Schulungen",
+        "en": "Technical Training",
+        "es": "Formación técnica"
+    },
+    "Trainings für Soft Skills": {
+        "de": "Trainings für Soft Skills",
+        "en": "Soft Skills Training",
+        "es": "Entrenamiento en habilidades blandas"
+    },
+    "Wirtschaftskurse": {
+        "de": "Wirtschaftskurse",
+        "en": "Economics Courses",
+        "es": "Cursos de economía"
+    },
+    "Sozialpädagogische Ausbildung": {
+        "de": "Sozialpädagogische Ausbildung",
+        "en": "Social Pedagogy Training",
+        "es": "Formación en pedagogía social"
     }
 }
