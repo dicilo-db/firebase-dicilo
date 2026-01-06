@@ -162,7 +162,7 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
                 return (
                     <div className="space-y-6 animate-in fade-in duration-500">
                         <div>
-                            <h1 className="text-3xl font-bold tracking-tight">{t('dashboard.welcome')} {formData.firstName}!</h1>
+                            <h1 className="text-3xl font-bold tracking-tight">{t('dashboard.welcomeUser', { name: formData.firstName })}</h1>
                             <p className="text-muted-foreground">{t('dashboard.manageProfile')}</p>
                         </div>
                         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -206,7 +206,7 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
                                 </CardHeader>
                                 <CardContent className="grid gap-2">
                                     <Button variant="outline" className="justify-start" onClick={() => setActiveView('wallet')}>
-                                        <Users className="mr-2 h-4 w-4" /> Go to Wallet
+                                        <Users className="mr-2 h-4 w-4" /> {t('dashboard.goToWallet')}
                                     </Button>
                                     <Button variant="outline" className="justify-start" onClick={() => setActiveView('invite')}>
                                         <Share2 className="mr-2 h-4 w-4" /> {t('dashboard.inviteFriends')}

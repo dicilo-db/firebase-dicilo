@@ -11,6 +11,8 @@
     }
   },
   "dashboard": {
+    "welcomeUser": "Welcome, {{name}}!",
+    "goToWallet": "Go to Wallet",
     "promo": {
       "estimatedEarnings": "Estimated Earnings",
       "trafficBonus": "Traffic Bonus",
