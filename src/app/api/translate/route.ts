@@ -8,6 +8,13 @@ const openai = new OpenAI({
 
 export async function POST(req: Request) {
     try {
+        if (!process.env.OPENAI_API_KEY) {
+            return NextResponse.json(
+                { error: "OpenAI API Key is missing. Please add OPENAI_API_KEY to your .env.local file." },
+                { status: 500 }
+            );
+        }
+
         const { text, targetLanguages } = await req.json();
 
         if (!text || !targetLanguages || !Array.isArray(targetLanguages)) {

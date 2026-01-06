@@ -379,9 +379,11 @@ export default function EditBusinessPage() {
         body: JSON.stringify({ text, targetLanguages }),
       });
 
-      if (!response.ok) throw new Error('Translation failed');
-
       const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Translation failed');
+      }
 
       // Update form values
       Object.entries(data.translations).forEach(([lang, translatedText]) => {
@@ -395,11 +397,11 @@ export default function EditBusinessPage() {
         title: "Translation Complete",
         description: "Description has been translated to other languages.",
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Translation error:', error);
       toast({
         title: "Translation Error",
-        description: "Failed to translate description.",
+        description: error.message || "Failed to translate description.",
         variant: "destructive"
       });
     } finally {
