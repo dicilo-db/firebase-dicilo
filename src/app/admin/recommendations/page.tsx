@@ -5,6 +5,7 @@ import { getFirestore, collection, query, getDocs, orderBy, deleteDoc, doc, upda
 import { app } from '@/lib/firebase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
 import { useTranslation } from 'react-i18next';
 import {
     Table,
@@ -236,7 +237,12 @@ export default function RecommendationsPage() {
 
                 <Card>
                     <CardHeader>
-                        <CardTitle>{t('recommendations.listTitle')}</CardTitle>
+                        <CardTitle className="flex items-center gap-2">
+                            {t('recommendations.listTitle')}
+                            <Badge variant="secondary" className="ml-2">
+                                {filteredRecommendations.length}
+                            </Badge>
+                        </CardTitle>
                         <div className="flex items-center space-x-2">
                             <Search className="h-4 w-4 text-muted-foreground" />
                             <Input

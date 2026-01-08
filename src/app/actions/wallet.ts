@@ -40,7 +40,7 @@ export async function getWalletData(uid: string) {
     const walletData = walletDoc.exists ? walletDoc.data() : { balance: 0, totalEarned: 0 };
     const balance = walletData?.balance || 0;
 
-    // Get Config
+    // Get Config for display purposes
     let pointValue = 0.10;
     try {
         const config = await getDicipointsConfig();
@@ -48,7 +48,9 @@ export async function getWalletData(uid: string) {
     } catch (e) {
         console.warn("Failed to fetch Dicipoints config, using default", e);
     }
-    const valueInEur = balance * pointValue;
+
+    // EUR Balance is now separate from DP, earned via commissions
+    const valueInEur = walletData?.eurBalance || 0;
 
     // Get History (Limit 20)
     let history: any[] = [];

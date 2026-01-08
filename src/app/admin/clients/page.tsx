@@ -22,6 +22,13 @@ import {
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
   PlusCircle,
   Edit,
   Trash2,
@@ -51,6 +58,7 @@ import { useAuthGuard } from '@/hooks/useAuthGuard';
 const db = getFirestore(app);
 
 // Define la estructura de un cliente
+// Define la estructura de un cliente
 interface Client {
   id: string;
   clientName: string;
@@ -58,6 +66,12 @@ interface Client {
   slug: string;
   clientType: 'starter' | 'retailer' | 'premium';
   active?: boolean;
+  // External Data from Business
+  createdAt?: any;
+  city?: string;
+  country?: string;
+  category?: string;
+  businessId?: string;
 }
 
 const ClientsPageSkeleton = () => (
@@ -129,11 +143,28 @@ export default function ClientsPage() {
   const typeFilter = searchParams.get('type');
   const { t } = useTranslation('admin');
 
+  // Filters State
+  const [sortOrder, setSortOrder] = useState<string>('name-asc');
+  const [filterCountry, setFilterCountry] = useState<string>('all');
+  const [filterCity, setFilterCity] = useState<string>('all');
+  const [filterCategory, setFilterCategory] = useState<string>('all');
+
   const fetchClients = useCallback(async () => {
     setIsLoading(true);
     try {
       const clientsCol = collection(db, 'clients');
-      const clientSnapshot = await getDocs(clientsCol);
+      const businessesCol = collection(db, 'businesses');
+
+      const [clientSnapshot, businessSnapshot] = await Promise.all([
+        getDocs(clientsCol),
+        getDocs(businessesCol)
+      ]);
+
+      const businessMap = new Map();
+      businessSnapshot.docs.forEach(doc => {
+        businessMap.set(doc.id, { id: doc.id, ...doc.data() });
+      });
+
       const clientList = clientSnapshot.docs.map((doc) => {
         const data = doc.data();
         let clientType = data.clientType;
@@ -143,11 +174,18 @@ export default function ClientsPage() {
           clientType = 'premium';
         }
 
+        const linkedBusiness = data.businessId ? businessMap.get(data.businessId) : null;
+
         return {
           id: doc.id,
           ...data,
           clientType,
-          active: data.active !== undefined ? data.active : true
+          active: data.active !== undefined ? data.active : true,
+          // Enrich with business data
+          createdAt: data.createdAt || linkedBusiness?.createdAt,
+          city: linkedBusiness?.city || '',
+          country: linkedBusiness?.country || '',
+          category: linkedBusiness?.category || '',
         } as Client;
       });
       setClients(clientList);
@@ -167,13 +205,36 @@ export default function ClientsPage() {
     fetchClients();
   }, [fetchClients]);
 
+  // Extract unique values for filters
+  const uniqueCities = useMemo(() => Array.from(new Set(clients.map(c => c.city).filter(Boolean))).sort(), [clients]);
+  const uniqueCountries = useMemo(() => Array.from(new Set(clients.map(c => c.country).filter(Boolean))).sort(), [clients]);
+  const uniqueCategories = useMemo(() => Array.from(new Set(clients.map(c => c.category).filter(Boolean))).sort(), [clients]);
+
   const filteredClients = useMemo(() => {
     return clients.filter((client) => {
       const matchesSearch = client.clientName.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesType = typeFilter ? client.clientType === typeFilter : true;
-      return matchesSearch && matchesType;
+      const matchesCountry = filterCountry === 'all' || client.country === filterCountry;
+      const matchesCity = filterCity === 'all' || client.city === filterCity;
+      const matchesCategory = filterCategory === 'all' || client.category === filterCategory;
+
+      return matchesSearch && matchesType && matchesCountry && matchesCity && matchesCategory;
+    }).sort((a, b) => {
+      if (sortOrder === 'name-asc') return a.clientName.localeCompare(b.clientName);
+      if (sortOrder === 'name-desc') return b.clientName.localeCompare(a.clientName);
+      if (sortOrder === 'newest') {
+        const dateA = a.createdAt?.seconds ? new Date(a.createdAt.seconds * 1000) : new Date(0);
+        const dateB = b.createdAt?.seconds ? new Date(b.createdAt.seconds * 1000) : new Date(0);
+        return dateB.getTime() - dateA.getTime();
+      }
+      if (sortOrder === 'oldest') {
+        const dateA = a.createdAt?.seconds ? new Date(a.createdAt.seconds * 1000) : new Date(0);
+        const dateB = b.createdAt?.seconds ? new Date(b.createdAt.seconds * 1000) : new Date(0);
+        return dateA.getTime() - dateB.getTime();
+      }
+      return 0;
     });
-  }, [clients, searchQuery, typeFilter]);
+  }, [clients, searchQuery, typeFilter, sortOrder, filterCountry, filterCity, filterCategory]);
 
   const handleDelete = async (clientId: string) => {
     setIsDeleting(clientId);
@@ -258,15 +319,76 @@ export default function ClientsPage() {
         </div>
       </div>
 
-      <div className="relative mb-4">
-        <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
-        <Input
-          type="search"
-          placeholder={t('clients.searchPlaceholder')}
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full pl-10"
-        />
+      <div className="flex flex-col gap-4 mb-6">
+        <div className="flex gap-4 flex-wrap">
+          <div className="relative flex-grow max-w-sm">
+            <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              type="search"
+              placeholder={t('clients.searchPlaceholder')}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+
+          {/* Sort */}
+          <Select value={sortOrder} onValueChange={setSortOrder}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Sort by" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="name-asc">Name (A-Z)</SelectItem>
+              <SelectItem value="name-desc">Name (Z-A)</SelectItem>
+              <SelectItem value="newest">Newest First</SelectItem>
+              <SelectItem value="oldest">Oldest First</SelectItem>
+            </SelectContent>
+          </Select>
+
+          {/* Country Filter */}
+          <Select value={filterCountry} onValueChange={setFilterCountry}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Country" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Countries</SelectItem>
+              {uniqueCountries.map(c => <SelectItem key={c} value={c!}>{c}</SelectItem>)}
+            </SelectContent>
+          </Select>
+
+          {/* City Filter */}
+          <Select value={filterCity} onValueChange={setFilterCity}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="City" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Cities</SelectItem>
+              {uniqueCities.map(c => <SelectItem key={c} value={c!}>{c}</SelectItem>)}
+            </SelectContent>
+          </Select>
+
+          {/* Category Filter */}
+          <Select value={filterCategory} onValueChange={setFilterCategory}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Category" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Categories</SelectItem>
+              {uniqueCategories.map(c => <SelectItem key={c} value={c!}>{c}</SelectItem>)}
+            </SelectContent>
+          </Select>
+
+          {/* Reset */}
+          <Button variant="ghost" onClick={() => {
+            setSearchQuery('');
+            setSortOrder('name-asc');
+            setFilterCountry('all');
+            setFilterCity('all');
+            setFilterCategory('all');
+          }}>
+            Reset
+          </Button>
+        </div>
       </div>
 
       <div className="rounded-lg border">

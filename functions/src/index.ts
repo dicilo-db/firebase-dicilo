@@ -505,6 +505,15 @@ export const promoteToClient = onCall(async (request) => {
         .replace(/\s+/g, '-')
         .replace(/[^\w-]+/g, '');
 
+    // Fix: Map coordinates from Array [lat, lng] to Object {lat, lng}
+    let coordinates = null;
+    if (businessData.coords && Array.isArray(businessData.coords) && businessData.coords.length === 2) {
+      coordinates = {
+        lat: businessData.coords[0],
+        lng: businessData.coords[1]
+      };
+    }
+
     const clientData = {
       clientName: businessData.name,
       slug: slugify(businessData.name),
@@ -521,8 +530,16 @@ export const promoteToClient = onCall(async (request) => {
       products: [],
       strengths: [],
       testimonials: [],
-      translations: {},
+      // Fix: Transfer translations
+      translations: businessData.description_translations || {},
       clientType: clientType,
+      // Fix: Add coordinates
+      coordinates: coordinates,
+      visibility_settings: {
+        active_range: 'local',
+        geo_coordinates: coordinates,
+        allowed_continents: []
+      },
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
       updatedAt: admin.firestore.FieldValue.serverTimestamp(),
     };
@@ -543,6 +560,83 @@ export const promoteToClient = onCall(async (request) => {
       'internal',
       error.message || 'Failed to promote business.'
     );
+  }
+});
+
+export const demoteToBasic = onCall(async (request) => {
+  if (
+    !request.auth ||
+    (request.auth.token.role !== 'admin' &&
+      request.auth.token.role !== 'superadmin')
+  ) {
+    throw new HttpsError(
+      'permission-denied',
+      'Only admins or superadmins can perform this action.'
+    );
+  }
+
+  const { clientId } = request.data;
+  if (!clientId) {
+    throw new HttpsError('invalid-argument', 'Missing "clientId".');
+  }
+
+  try {
+    const clientRef = db.collection('clients').doc(clientId);
+    const clientSnap = await clientRef.get();
+
+    if (!clientSnap.exists) {
+      throw new HttpsError('not-found', 'Client not found.');
+    }
+
+    const clientData = clientSnap.data()!;
+
+    // Reverse mapping: Object {lat, lng} -> Array [lat, lng]
+    let coords = null;
+    if (clientData.coordinates && typeof clientData.coordinates.lat === 'number') {
+      coords = [clientData.coordinates.lat, clientData.coordinates.lng];
+    }
+
+    // Slugify helper
+    const slugify = (text: string) =>
+      text
+        .toLowerCase()
+        .replace(/\s+/g, '-')
+        .replace(/[^\w-]+/g, '');
+
+    const businessId = clientData.slug || slugify(clientData.clientName);
+
+    // Create Business Document
+    await db.collection('businesses').doc(businessId).set({
+      name: clientData.clientName,
+      description: clientData.description,
+      // Fix: Transfer translations back
+      description_translations: clientData.translations || {},
+      category: clientData.clientSubtitle || 'Uncategorized', // Fallback
+      location: clientData.location || '',
+      address: clientData.address || '',
+      phone: clientData.phone || '',
+      website: clientData.website || '',
+      imageUrl: clientData.clientLogoUrl,
+      // Fix: Restore coordinates
+      coords: coords,
+      active: true,
+      createdAt: clientData.createdAt || admin.firestore.FieldValue.serverTimestamp(),
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      status: 'verified', // Assume verified since it was a client
+    });
+
+    // Delete Client Document
+    await clientRef.delete();
+
+    return {
+      success: true,
+      message: `Client ${clientData.clientName} has been demoted to Basic Business (ID: ${businessId}).`,
+      businessId: businessId,
+    };
+
+  } catch (error: any) {
+    logger.error('Error demoting client:', error);
+    throw new HttpsError('internal', error.message || 'Failed to demote client.');
   }
 });
 

@@ -22,7 +22,6 @@ import {
 import { LanguageSelector } from './LanguageSelector';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
-import { MoreVertical } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 
 // Desktop visible links
@@ -120,7 +119,7 @@ const Header = () => {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" aria-label="More links">
-                  <MoreVertical className="h-4 w-4" />
+                  <Menu className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">

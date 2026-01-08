@@ -1,5 +1,51 @@
 # Bitácora de Cambios - Dicilo.net
 
+### **198. UI: PREPAID CARD DASHBOARD - CÓDIGO: FEAT-DASHBOARD-PREPAID-V1**
+- **Fecha y Hora:** 08 de Enero de 2026, 01:10 (CET)
+- **Módulos Afectados:** `src/components/dashboard/PrivateDashboard.tsx`, `public/assets/images/dicilo-prepaid-card.png`.
+- **Descripción del Cambio:**
+  - **Nueva Tarjeta "Dicilo Prepaid":** Se reemplazó el bloque de código QR de invitación por una visualización realista de una tarjeta prepago Dicilo.
+  - **Diseño:** Fondo degradado azul-verde con patrones de ondas digitales, logo de Dicilo y chip EMV (generado por IA).
+  - **Datos Dinámicos:** La tarjeta muestra:
+    - **Saldo/Ganancias:** El valor en EUR disponible en la wallet (`walletData.valueInEur`).
+    - **Nombre del Usuario:** Nombre completo extraído del perfil.
+    - **Número Simulado:** Últimos 4 caracteres del UID del usuario.
+    - **Etiqueta:** "PREMIUM".
+- **Resultado:** Una interfaz más moderna y financiera en el dashboard, destacando el saldo disponible del usuario de forma visualmente atractiva.
+
+### **199. UI: DASHBOARD CARDS REFINEMENT - CÓDIGO: FIX-DASHBOARD-UI-V2**
+- **Fecha y Hora:** 08 de Enero de 2026, 01:28 (CET)
+- **Módulos Afectados:** `src/components/dashboard/PrivateDashboard.tsx`.
+- **Descripción del Cambio:**
+  - **Tarjeta Central (Wallet):** Se aplicó un fondo oscuro (negro con degradado) sin imágenes de fondo, enfocado exclusivamente en **DiciPoints**.
+  - **Tarjeta Derecha (Ganancias):** Se aplicó la imagen de la tarjeta "Dicilo Prepaid" completa como fondo, mostrando las **Ganancias en EUR**.
+- **Motivo:** Feedback del usuario para separar visualmente el concepto de "Puntos" (Wallet oscura) y "Dinero/Prepaid" (Tarjeta visual).
+
+### **197. FEATURES: ADVANCED FILTERS (CLIENTS/BASIC) - CÓDIGO: FEAT-ADMIN-FILTERS-V1**
+- **Fecha y Hora:** 08 de Enero de 2026, 00:35 (CET)
+- **Módulos Afectados:** `src/app/admin/clients/page.tsx`, `src/app/admin/basic/page.tsx`.
+- **Descripción del Cambio:**
+  - **Filtros Avanzados y Ordenación:**
+    - Se implementó una barra de herramientas con opciones de filtrado y ordenación en las vistas de lista de Clientes (Starter, Retailer, Premium) y Negocios Basic.
+    - **Ordenación:** Ahora es posible ordenar por Nombre (A-Z, Z-A) y por Fecha de Creación (Más reciente, Más antiguo).
+    - **Filtrado:** Se agregaron desplegables para filtrar por País, Ciudad y Categoría.
+    - **Lógica de Datos (Clientes):** Se optimizó la carga de datos en la vista de clientes para incluir información del negocio vinculado (como categoría y ubicación) y permitir el filtrado correcto.
+    - **Lógica de Datos (Basic):** Se implementó un parseo inteligente del campo `location` para extraer ciudad y país cuando no están explícitos, habilitando los filtros geográficos.
+- **Resultado:** Mayor control y facilidad de gestión para los administradores al navegar por listas extensas de empresas y clientes.
+
+### **196. UI: DASHBOARD QR & SIDEBAR ORDER - CÓDIGO: FIX-DASHBOARD-QR-UI-V1**
+- **Fecha y Hora:** 08 de Enero de 2026, 00:20 (CET)
+- **Módulos Afectados:** `src/components/dashboard/PrivateDashboard.tsx`, `src/components/dashboard/Sidebar.tsx`.
+- **Descripción del Cambio:**
+  - **Experiencia QR (Dashboard):**
+    - Se implementó un modal (Dialog) para ampliar el código QR al hacer clic.
+    - Se ajustó la posición del texto "Escanea para registrarte..." y la etiqueta del código para mejorar la legibilidad y el espaciado.
+    - Se aumentó significativamente el tamaño de la fuente del código único (referral code) para que sea más legible ("limpio y grande").
+  - **Navegación (Sidebar):**
+    - Se reordenó el menú lateral para que el enlace "Scanner Pro" aparezca inmediatamente después de "Invitar Amigos" (para usuarios con permisos), mejorando la accesibilidad de las herramientas de red.
+- **Resultado:** Una interfaz de dashboard más limpia, con un código QR funcional y fácil de escanear/leer, y una navegación más lógica para los usuarios avanzados.
+
+
 ### **195. FIX: CHATBOT UX, HALLUCINATIONS & SHARE FLOW - CÓDIGO: FIX-CHAT-UX-SHARE-V1**
 - **Fecha y Hora:** 02 de Enero de 2026, 17:00 (CET)
 - **Módulos Afectados:** `src/ai/flows/website-chat-flow.ts`, `src/components/AiChatWidget.tsx`.

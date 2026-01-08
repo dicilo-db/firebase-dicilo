@@ -119,6 +119,7 @@ export function Sidebar({ userData, onViewChange, currentView }: SidebarProps) {
         { id: 'ads-manager', label: 'Ads Manager', icon: Megaphone, type: 'view' },
         { id: 'wallet', label: t('dashboard.myWallet'), icon: Wallet, type: 'view' },
         { id: 'invite', label: t('dashboard.inviteFriends'), icon: Users, type: 'view' },
+        // Scanner Pro will be inserted here if allowed
         { id: 'map', label: t('dashboard.alliesMap'), icon: MapIcon, type: 'view' },
         { id: 'settings', label: t('dashboard.settings'), icon: Settings, type: 'view' },
         // Added items from header - NOW VIEWS for SPA
@@ -127,15 +128,21 @@ export function Sidebar({ userData, onViewChange, currentView }: SidebarProps) {
         { id: 'dicipoints-info', label: t('dicipoints.whatIs.title', 'What are DiciPoints?'), icon: Info, type: 'dialog' },
     ];
 
-    // Add Admin conditionally
-    if (canSeeAdmin) {
-        navItems.push({ id: 'admin', label: 'Admin Panel', icon: Shield, type: 'link', href: '/admin' });
-    }
-
     // Add Scanner Pro for Freelancers+
     const canUseScanner = ['freelancer', 'team_office', 'admin', 'superadmin'].includes(role) || hasPermission('use_scanner');
     if (canUseScanner) {
-        navItems.push({ id: 'scanner', label: 'Scanner Pro', icon: Scan, type: 'link', href: '/admin/scan' });
+        // Find index of 'invite' and insert after it
+        const inviteIndex = navItems.findIndex(item => item.id === 'invite');
+        if (inviteIndex !== -1) {
+            navItems.splice(inviteIndex + 1, 0, { id: 'scanner', label: 'Scanner Pro', icon: Scan, type: 'link', href: '/admin/scan' });
+        } else {
+            navItems.push({ id: 'scanner', label: 'Scanner Pro', icon: Scan, type: 'link', href: '/admin/scan' });
+        }
+    }
+
+    // Add Admin conditionally
+    if (canSeeAdmin) {
+        navItems.push({ id: 'admin', label: 'Admin Panel', icon: Shield, type: 'link', href: '/admin' });
     }
 
     // Dialog state for info

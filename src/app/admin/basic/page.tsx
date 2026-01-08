@@ -22,6 +22,13 @@ import {
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
   PlusCircle,
   Edit,
   Trash2,
@@ -55,6 +62,9 @@ interface Business {
   category: string;
   location: string;
   active?: boolean;
+  city?: string;
+  country?: string;
+  createdAt?: any;
 }
 
 const BusinessesSkeleton = () => (
@@ -124,17 +134,41 @@ export default function BusinessesPage() {
   const { toast } = useToast();
   const t = useTranslation('admin').t;
 
+  // Filters State
+  const [sortOrder, setSortOrder] = useState<string>('name-asc');
+  const [filterCountry, setFilterCountry] = useState<string>('all');
+  const [filterCity, setFilterCity] = useState<string>('all');
+  const [filterCategory, setFilterCategory] = useState<string>('all');
+
   const fetchBusinesses = useCallback(async () => {
     setIsLoading(true);
     try {
       const businessesCol = collection(db, 'businesses');
       const businessSnapshot = await getDocs(businessesCol);
       const businessList = businessSnapshot.docs.map(
-        (doc) => ({
-          id: doc.id,
-          ...doc.data(),
-          active: doc.data().active !== undefined ? doc.data().active : true
-        }) as Business
+        (doc) => {
+          const data = doc.data();
+          // Try to infer city/country if missing, from location string "City, Country"
+          let city = data.city;
+          let country = data.country;
+          if (!city && !country && data.location) {
+            const parts = data.location.split(',').map((s: string) => s.trim());
+            if (parts.length >= 2) {
+              city = parts[0];
+              country = parts[parts.length - 1]; // Last part assumed country
+            } else {
+              country = data.location;
+            }
+          }
+
+          return {
+            id: doc.id,
+            ...data,
+            city,
+            country,
+            active: data.active !== undefined ? data.active : true
+          } as Business;
+        }
       );
       setBusinesses(businessList);
     } catch (error) {
@@ -153,11 +187,35 @@ export default function BusinessesPage() {
     fetchBusinesses();
   }, [fetchBusinesses]);
 
+  // Extract unique values
+  const uniqueCities = useMemo(() => Array.from(new Set(businesses.map(b => b.city).filter(Boolean))).sort(), [businesses]);
+  const uniqueCountries = useMemo(() => Array.from(new Set(businesses.map(b => b.country).filter(Boolean))).sort(), [businesses]);
+  const uniqueCategories = useMemo(() => Array.from(new Set(businesses.map(b => b.category).filter(Boolean))).sort(), [businesses]);
+
   const filteredBusinesses = useMemo(() => {
-    return businesses.filter((business) =>
-      business.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-  }, [businesses, searchQuery]);
+    return businesses.filter((business) => {
+      const matchesSearch = business.name.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesCountry = filterCountry === 'all' || business.country === filterCountry;
+      const matchesCity = filterCity === 'all' || business.city === filterCity;
+      const matchesCategory = filterCategory === 'all' || business.category === filterCategory;
+
+      return matchesSearch && matchesCountry && matchesCity && matchesCategory;
+    }).sort((a, b) => {
+      if (sortOrder === 'name-asc') return a.name.localeCompare(b.name);
+      if (sortOrder === 'name-desc') return b.name.localeCompare(a.name);
+      if (sortOrder === 'newest') {
+        const dateA = a.createdAt?.seconds ? new Date(a.createdAt.seconds * 1000) : new Date(0);
+        const dateB = b.createdAt?.seconds ? new Date(b.createdAt.seconds * 1000) : new Date(0);
+        return dateB.getTime() - dateA.getTime();
+      }
+      if (sortOrder === 'oldest') {
+        const dateA = a.createdAt?.seconds ? new Date(a.createdAt.seconds * 1000) : new Date(0);
+        const dateB = b.createdAt?.seconds ? new Date(b.createdAt.seconds * 1000) : new Date(0);
+        return dateA.getTime() - dateB.getTime();
+      }
+      return 0;
+    });
+  }, [businesses, searchQuery, sortOrder, filterCountry, filterCity, filterCategory]);
 
   const handleDelete = async (businessId: string) => {
     setIsDeleting(businessId);
@@ -243,15 +301,76 @@ export default function BusinessesPage() {
         </div>
       </div>
 
-      <div className="relative mb-4">
-        <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
-        <Input
-          type="search"
-          placeholder={t('businesses.searchPlaceholder')}
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full pl-10"
-        />
+      <div className="flex flex-col gap-4 mb-6">
+        <div className="flex gap-4 flex-wrap">
+          <div className="relative flex-grow max-w-sm">
+            <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              type="search"
+              placeholder={t('businesses.searchPlaceholder')}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+
+          {/* Sort */}
+          <Select value={sortOrder} onValueChange={setSortOrder}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Sort by" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="name-asc">Name (A-Z)</SelectItem>
+              <SelectItem value="name-desc">Name (Z-A)</SelectItem>
+              <SelectItem value="newest">Newest First</SelectItem>
+              <SelectItem value="oldest">Oldest First</SelectItem>
+            </SelectContent>
+          </Select>
+
+          {/* Country Filter */}
+          <Select value={filterCountry} onValueChange={setFilterCountry}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Country" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Countries</SelectItem>
+              {uniqueCountries.map(c => <SelectItem key={c} value={c!}>{c}</SelectItem>)}
+            </SelectContent>
+          </Select>
+
+          {/* City Filter */}
+          <Select value={filterCity} onValueChange={setFilterCity}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="City" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Cities</SelectItem>
+              {uniqueCities.map(c => <SelectItem key={c} value={c!}>{c}</SelectItem>)}
+            </SelectContent>
+          </Select>
+
+          {/* Category Filter */}
+          <Select value={filterCategory} onValueChange={setFilterCategory}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Category" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Categories</SelectItem>
+              {uniqueCategories.map(c => <SelectItem key={c} value={c!}>{c}</SelectItem>)}
+            </SelectContent>
+          </Select>
+
+          {/* Reset */}
+          <Button variant="ghost" onClick={() => {
+            setSearchQuery('');
+            setSortOrder('name-asc');
+            setFilterCountry('all');
+            setFilterCity('all');
+            setFilterCategory('all');
+          }}>
+            Reset
+          </Button>
+        </div>
       </div>
 
       <div className="rounded-lg border">

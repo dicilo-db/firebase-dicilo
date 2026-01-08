@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 import AdsDashboard from '@/components/ads-manager/AdsDashboard';
 import { updatePrivateProfile, ensureUniqueCode } from '@/app/actions/profile';
@@ -6,6 +7,7 @@ import { User } from 'firebase/auth';
 import { doc, getFirestore, updateDoc, setDoc, onSnapshot, addDoc, collection } from 'firebase/firestore';
 import { app } from '@/lib/firebase';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -273,10 +275,13 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
                                 </CardContent>
                             </Card>
 
-                            {/* Wallet Card (Middle) - Dark Theme */}
-                            <Card className="h-full relative overflow-hidden bg-[#1a1f2c] text-white border-none shadow-xl">
-                                <div className="absolute right-0 top-0 h-32 w-32 -translate-y-8 translate-x-8 rounded-full bg-white/5 blur-3xl"></div>
-                                <CardHeader className="pb-2">
+                            {/* Wallet Card (Middle) - DiciPoints Focus (Black/Dark Background) */}
+                            <Card className="h-full min-h-[220px] relative overflow-hidden border-none shadow-xl group transition-all hover:shadow-2xl bg-gradient-to-br from-[#0f1115] to-[#1a1f2c]">
+                                {/* Decorative abstract shapes for the dark background */}
+                                <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-3xl -translate-y-10 translate-x-10"></div>
+                                <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full blur-2xl translate-y-5 -translate-x-5"></div>
+
+                                <CardHeader className="relative z-10 pb-2">
                                     <div className="flex justify-between items-start">
                                         <div>
                                             <CardTitle className="text-xs font-semibold text-gray-400 uppercase tracking-widest flex items-center gap-2">
@@ -284,27 +289,26 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
                                                 <Info size={14} className="cursor-help" />
                                             </CardTitle>
                                             <div className="mt-2">
-                                                <span className="inline-flex items-center rounded-full border border-white/20 bg-white/10 px-2.5 py-0.5 text-xs font-medium text-white transition-colors hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
+                                                <span className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-2.5 py-0.5 text-xs font-medium text-gray-300 transition-colors hover:bg-white/10">
                                                     {t('dashboard.wallet.personal')}
                                                 </span>
                                             </div>
                                         </div>
-                                        <CreditCard className="text-gray-400 h-6 w-6" />
                                     </div>
                                 </CardHeader>
-                                <CardContent className="space-y-6">
+                                <CardContent className="relative z-10 space-y-6">
                                     <div className="space-y-1">
-                                        <div className="text-4xl font-bold tracking-tight">
+                                        <div className="text-4xl font-bold tracking-tight text-white">
                                             {walletData ? walletData.balance : '...'} DP
                                         </div>
                                         <p className="text-sm text-gray-400 font-medium">
-                                            ≈ {walletData ? walletData.valueInEur.toFixed(2) : '...'} EUR
+                                            DiciPoints Balance
                                         </p>
                                     </div>
 
                                     <Button
                                         variant="secondary"
-                                        className="w-full bg-white text-gray-900 hover:bg-gray-100 font-semibold"
+                                        className="w-full bg-white text-black hover:bg-gray-100 font-semibold shadow-md border-0"
                                         onClick={() => setActiveView('wallet')}
                                     >
                                         <QrCode className="mr-2 h-4 w-4" />
@@ -313,36 +317,112 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
                                 </CardContent>
                             </Card>
 
-                            {/* Referral QR Card (Right) */}
-                            <Card className="h-full flex flex-col justify-center items-center text-center p-6 space-y-4">
-                                <div>
-                                    <p className="text-sm text-muted-foreground mb-1">{t('dashboard.scanToRegister')}</p>
+                            {/* Prepaid Card (Right) - EUR Focus (Full Card Image) */}
+                            <Card className="h-full min-h-[220px] relative overflow-hidden border-none shadow-xl group transition-all hover:shadow-2xl">
+                                <div className="absolute inset-0 z-0 select-none">
+                                    <Image
+                                        src="/assets/images/dicilo-prepaid-card.png"
+                                        alt="Dicilo Prepaid Card"
+                                        fill
+                                        className="object-cover transition-transform duration-700 group-hover:scale-105"
+                                        priority
+                                    />
+                                    {/* Minimal overlay just for very high contrast text if needed, kept very light to show card */}
+                                    <div className="absolute inset-0 bg-black/0" />
                                 </div>
 
-                                <div className="bg-white p-2 rounded-lg border shadow-sm">
-                                    {/* Display Register QR */}
-                                    <div className="relative">
-                                        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-white px-2 text-xs text-muted-foreground whitespace-nowrap">
-                                            {t('dashboard.myCode')} <span className="font-mono font-bold text-black">{formData.uniqueCode}</span>
+                                <CardContent className="relative z-20 h-full flex flex-col justify-between p-6 text-white text-shadow-sm">
+                                    <div className="flex justify-between items-start w-full">
+                                        {/* Floating Balance Badge - semi-transparent to integrate with card design */}
+                                        <div className="bg-black/30 backdrop-blur-md rounded-xl px-4 py-2 border border-white/10 shadow-lg">
+                                            <p className="text-[9px] font-bold text-white/90 uppercase tracking-widest mb-0.5">
+                                                Ganancias
+                                            </p>
+                                            <div className="text-2xl font-bold tracking-tight text-white drop-shadow-md">
+                                                € {walletData ? walletData.valueInEur.toFixed(2) : '0.00'}
+                                            </div>
                                         </div>
-                                        {formData.uniqueCode && registerUrl ? (
-                                            <img
-                                                src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(registerUrl)}&color=000000`}
-                                                alt="Registration QR"
-                                                className="h-32 w-32 mt-2"
-                                            />
-                                        ) : (
-                                            <div className="h-32 w-32 mt-2 bg-gray-100 animate-pulse rounded" />
-                                        )}
+
+                                        <div className="text-right">
+                                            <span className="inline-block px-2 py-1 bg-white/20 backdrop-blur-md rounded text-[9px] font-bold tracking-wider border border-white/10 shadow-sm">
+                                                PREPAID
+                                            </span>
+                                        </div>
                                     </div>
+
+                                    <div className="mt-auto">
+                                        <div className="flex gap-3 text-white/90 font-mono text-base tracking-widest opacity-95 pl-1 drop-shadow-md mb-2">
+                                            <span>••••</span>
+                                            <span>••••</span>
+                                            <span>••••</span>
+                                            <span>{user.uid.slice(0, 4).toUpperCase()}</span>
+                                        </div>
+                                        <div>
+                                            <p className="text-[7px] text-white/80 uppercase tracking-wider mb-0.5 font-semibold">Card Holder</p>
+                                            <p className="text-sm font-bold tracking-widest uppercase text-white drop-shadow-md">
+                                                {(formData.firstName || 'Miembro').substring(0, 20)}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </div>
+
+                        {/* Recent Transactions & Actions Row */}
+                        <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-3">
+                            {/* Invitation QR Card (Restored) */}
+                            <Card className="flex flex-col justify-center items-center text-center p-6 relative lg:col-span-1">
+                                <div className="mb-4">
+                                    <h3 className="text-lg font-semibold">{t('dashboard.scanToRegister')}</h3>
                                 </div>
 
-                                <div className="w-full max-w-[200px] text-center">
-                                    <p className="text-[10px] text-muted-foreground truncate mb-3 italic">
-                                        {registerUrl}
-                                    </p>
+                                <Dialog>
+                                    <div className="bg-white p-3 rounded-xl border shadow-sm relative mt-2 group">
+                                        {/* Display Register QR */}
+                                        <div className="absolute -top-7 left-1/2 -translate-x-1/2 bg-white px-4 py-1 rounded-full shadow-sm border text-sm text-muted-foreground whitespace-nowrap z-10">
+                                            {t('dashboard.myCode')} <span className="font-mono font-bold text-black text-lg ml-2">{formData.uniqueCode}</span>
+                                        </div>
+
+                                        <DialogTrigger asChild>
+                                            <div className="cursor-zoom-in hover:opacity-90 transition-all">
+                                                {formData.uniqueCode && registerUrl ? (
+                                                    <img
+                                                        src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(registerUrl)}&color=000000`}
+                                                        alt="Registration QR"
+                                                        className="h-32 w-32 mt-2"
+                                                    />
+                                                ) : (
+                                                    <div className="h-32 w-32 mt-2 bg-gray-100 animate-pulse rounded" />
+                                                )}
+                                                <p className="text-[10px] text-muted-foreground mt-1 opacity-0 group-hover:opacity-100 transition-opacity">Click to enlarge</p>
+                                            </div>
+                                        </DialogTrigger>
+
+                                        <DialogContent className="sm:max-w-md flex flex-col items-center justify-center bg-white p-8">
+                                            <div className="text-center space-y-6 w-full flex flex-col items-center">
+                                                <h3 className="text-xl font-semibold text-center">{t('dashboard.scanToRegister')}</h3>
+
+                                                <div className="bg-white p-4 rounded-xl border shadow-lg inline-block relative">
+                                                    <div className="absolute -top-5 left-1/2 -translate-x-1/2 bg-white px-4 py-1 rounded-full border shadow-sm text-sm text-muted-foreground whitespace-nowrap">
+                                                        {t('dashboard.myCode')} <span className="font-mono font-bold text-black text-xl ml-2">{formData.uniqueCode}</span>
+                                                    </div>
+                                                    <img
+                                                        src={`https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(registerUrl)}&color=000000`}
+                                                        alt="Registration QR Large"
+                                                        className="h-64 w-64 mt-4"
+                                                    />
+                                                </div>
+
+                                                <p className="text-sm text-muted-foreground break-all max-w-[80%] text-center">{registerUrl}</p>
+                                            </div>
+                                        </DialogContent>
+                                    </div>
+                                </Dialog>
+
+                                <div className="w-full max-w-[200px] text-center mt-4">
                                     <div className="flex gap-2 justify-center">
                                         <Button variant="outline" size="sm" className="flex-1" onClick={handleDownloadQr}>
+                                            <Download className="h-4 w-4 mr-2" />
                                             <span className="font-semibold">{t('dashboard.download')}</span>
                                         </Button>
                                         <Button variant="outline" size="icon" className="w-9 px-0" onClick={handleShareQr}>
@@ -351,11 +431,23 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
                                     </div>
                                 </div>
                             </Card>
+
+                            {/* Recent Transactions Placeholder (2/3 width) */}
+                            <Card className="col-span-1 lg:col-span-2">
+                                <CardHeader>
+                                    <CardTitle>Transacciones Recientes</CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="min-h-[200px] flex items-center justify-center text-muted-foreground text-sm">
+                                        Aún no hay transacciones.
+                                    </div>
+                                </CardContent>
+                            </Card>
                         </div>
                     </div>
                 );
             case 'wallet':
-                return <WalletSection uid={user.uid} uniqueCode={formData.uniqueCode} />;
+                return <WalletSection uid={user.uid} uniqueCode={formData.uniqueCode} userProfile={formData} />;
             case 'invite':
                 return <InviteFriendSection uniqueCode={formData.uniqueCode} referrals={formData.referrals} />;
             case 'dicicoin':

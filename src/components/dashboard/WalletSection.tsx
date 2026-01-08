@@ -12,12 +12,15 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { useTranslation } from 'react-i18next';
 
+import Image from 'next/image';
+
 interface WalletSectionProps {
     uid: string;
     uniqueCode: string;
+    userProfile?: any;
 }
 
-export function WalletSection({ uid, uniqueCode }: WalletSectionProps) {
+export function WalletSection({ uid, uniqueCode, userProfile }: WalletSectionProps) {
     const { t } = useTranslation('common');
     const [loading, setLoading] = useState(true);
     const [data, setData] = useState<any>(null);
@@ -117,7 +120,55 @@ export function WalletSection({ uid, uniqueCode }: WalletSectionProps) {
                     </CardContent>
                 </Card>
 
-                <PointsChart data={data.history} />
+                {/* Prepaid Card (Right) - Replaces History Chart */}
+                <Card className="h-full min-h-[240px] relative overflow-hidden border-none shadow-xl group transition-all hover:shadow-2xl">
+                    <div className="absolute inset-0 z-0 select-none">
+                        <Image
+                            src="/assets/images/dicilo-prepaid-card.png"
+                            alt="Dicilo Prepaid Card"
+                            fill
+                            className="object-cover transition-transform duration-700 group-hover:scale-105"
+                            priority
+                        />
+                        {/* Minimal overlay just for very high contrast text if needed, kept very light to show card */}
+                        <div className="absolute inset-0 bg-black/0" />
+                    </div>
+
+                    <CardContent className="relative z-20 h-full flex flex-col justify-between p-6 text-white text-shadow-sm">
+                        <div className="flex justify-between items-start w-full">
+                            {/* Floating Balance Badge - semi-transparent to integrate with card design */}
+                            <div className="bg-black/30 backdrop-blur-md rounded-xl px-4 py-2 border border-white/10 shadow-lg">
+                                <p className="text-[9px] font-bold text-white/90 uppercase tracking-widest mb-0.5">
+                                    Ganancias
+                                </p>
+                                <div className="text-2xl font-bold tracking-tight text-white drop-shadow-md">
+                                    € {data ? data.valueInEur.toFixed(2) : '0.00'}
+                                </div>
+                            </div>
+
+                            <div className="text-right">
+                                <span className="inline-block px-2 py-1 bg-white/20 backdrop-blur-md rounded text-[9px] font-bold tracking-wider border border-white/10 shadow-sm">
+                                    PREPAID
+                                </span>
+                            </div>
+                        </div>
+
+                        <div className="mt-auto">
+                            <div className="flex gap-3 text-white/90 font-mono text-base tracking-widest opacity-95 pl-1 drop-shadow-md mb-2">
+                                <span>••••</span>
+                                <span>••••</span>
+                                <span>••••</span>
+                                <span>{uid.slice(0, 4).toUpperCase()}</span>
+                            </div>
+                            <div>
+                                <p className="text-[7px] text-white/80 uppercase tracking-wider mb-0.5 font-semibold">Card Holder</p>
+                                <p className="text-sm font-bold tracking-widest uppercase text-white drop-shadow-md">
+                                    {(userProfile?.firstName || 'Miembro').substring(0, 20)} {(userProfile?.lastName || 'Dicilo').substring(0, 20)}
+                                </p>
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
             </div>
 
             {/* Transactions History */}

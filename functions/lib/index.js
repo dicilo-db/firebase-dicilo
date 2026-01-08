@@ -48,7 +48,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.cleanupDuplicates = exports.fixSuperAdmin = exports.seedDatabase = exports.promoteToClient = exports.consentDecline = exports.consentAccept = exports.taskWorker = exports.submitRecommendation = exports.syncExistingCustomersToErp = exports.sendWelcomeEmail = exports.notifyAdminOnTopUp = exports.notifyAdminOnRegistration = exports.sendRegistrationToErp = exports.onAdminWrite = void 0;
+exports.cleanupDuplicates = exports.fixSuperAdmin = exports.seedDatabase = exports.demoteToBasic = exports.promoteToClient = exports.consentDecline = exports.consentAccept = exports.taskWorker = exports.submitRecommendation = exports.syncExistingCustomersToErp = exports.sendWelcomeEmail = exports.notifyAdminOnTopUp = exports.notifyAdminOnRegistration = exports.sendRegistrationToErp = exports.onAdminWrite = void 0;
 /**
  * @fileoverview Cloud Functions for Firebase (Gen 2).
  * Migrated to Gen 2 to support Node 20 and explicit CPU/Memory configuration.
@@ -441,6 +441,14 @@ exports.promoteToClient = (0, https_1.onCall)((request) => __awaiter(void 0, voi
             .toLowerCase()
             .replace(/\s+/g, '-')
             .replace(/[^\w-]+/g, '');
+        // Fix: Map coordinates from Array [lat, lng] to Object {lat, lng}
+        let coordinates = null;
+        if (businessData.coords && Array.isArray(businessData.coords) && businessData.coords.length === 2) {
+            coordinates = {
+                lat: businessData.coords[0],
+                lng: businessData.coords[1]
+            };
+        }
         const clientData = {
             clientName: businessData.name,
             slug: slugify(businessData.name),
@@ -456,8 +464,16 @@ exports.promoteToClient = (0, https_1.onCall)((request) => __awaiter(void 0, voi
             products: [],
             strengths: [],
             testimonials: [],
-            translations: {},
+            // Fix: Transfer translations
+            translations: businessData.description_translations || {},
             clientType: clientType,
+            // Fix: Add coordinates
+            coordinates: coordinates,
+            visibility_settings: {
+                active_range: 'local',
+                geo_coordinates: coordinates,
+                allowed_continents: []
+            },
             createdAt: admin.firestore.FieldValue.serverTimestamp(),
             updatedAt: admin.firestore.FieldValue.serverTimestamp(),
         };
@@ -474,6 +490,66 @@ exports.promoteToClient = (0, https_1.onCall)((request) => __awaiter(void 0, voi
             throw error;
         }
         throw new https_1.HttpsError('internal', error.message || 'Failed to promote business.');
+    }
+}));
+exports.demoteToBasic = (0, https_1.onCall)((request) => __awaiter(void 0, void 0, void 0, function* () {
+    if (!request.auth ||
+        (request.auth.token.role !== 'admin' &&
+            request.auth.token.role !== 'superadmin')) {
+        throw new https_1.HttpsError('permission-denied', 'Only admins or superadmins can perform this action.');
+    }
+    const { clientId } = request.data;
+    if (!clientId) {
+        throw new https_1.HttpsError('invalid-argument', 'Missing "clientId".');
+    }
+    try {
+        const clientRef = db.collection('clients').doc(clientId);
+        const clientSnap = yield clientRef.get();
+        if (!clientSnap.exists) {
+            throw new https_1.HttpsError('not-found', 'Client not found.');
+        }
+        const clientData = clientSnap.data();
+        // Reverse mapping: Object {lat, lng} -> Array [lat, lng]
+        let coords = null;
+        if (clientData.coordinates && typeof clientData.coordinates.lat === 'number') {
+            coords = [clientData.coordinates.lat, clientData.coordinates.lng];
+        }
+        // Slugify helper
+        const slugify = (text) => text
+            .toLowerCase()
+            .replace(/\s+/g, '-')
+            .replace(/[^\w-]+/g, '');
+        const businessId = clientData.slug || slugify(clientData.clientName);
+        // Create Business Document
+        yield db.collection('businesses').doc(businessId).set({
+            name: clientData.clientName,
+            description: clientData.description,
+            // Fix: Transfer translations back
+            description_translations: clientData.translations || {},
+            category: clientData.clientSubtitle || 'Uncategorized', // Fallback
+            location: clientData.location || '',
+            address: clientData.address || '',
+            phone: clientData.phone || '',
+            website: clientData.website || '',
+            imageUrl: clientData.clientLogoUrl,
+            // Fix: Restore coordinates
+            coords: coords,
+            active: true,
+            createdAt: clientData.createdAt || admin.firestore.FieldValue.serverTimestamp(),
+            updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+            status: 'verified', // Assume verified since it was a client
+        });
+        // Delete Client Document
+        yield clientRef.delete();
+        return {
+            success: true,
+            message: `Client ${clientData.clientName} has been demoted to Basic Business (ID: ${businessId}).`,
+            businessId: businessId,
+        };
+    }
+    catch (error) {
+        logger.error('Error demoting client:', error);
+        throw new https_1.HttpsError('internal', error.message || 'Failed to demote client.');
     }
 }));
 // --- Seeding (v2) ---

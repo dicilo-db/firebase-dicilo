@@ -109,8 +109,11 @@ import { ClientCouponManager } from '@/components/dashboard/ClientCouponManager'
 
 const functions = getFunctions(app, 'europe-west1');
 const submitRecommendationFn = httpsCallable(functions, 'submitRecommendation');
+const demoteToBasicFn = httpsCallable(functions, 'demoteToBasic');
 
 import { InviteFriendSection } from '@/components/dashboard/InviteFriendSection';
+
+
 import { ensureUniqueCode } from '@/app/actions/profile';
 
 const recipientSchema = z
@@ -728,6 +731,37 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
   const [uploadProgress, setUploadProgress] = useState<number | null>(null);
   const [embedCode, setEmbedCode] = useState('');
   const [uniqueCode, setUniqueCode] = useState<string>('');
+  const [isDemoting, setIsDemoting] = useState(false);
+  const [showDowngradeDialog, setShowDowngradeDialog] = useState(false);
+
+  const handleDowngrade = async () => {
+    setIsDemoting(true);
+    try {
+      const result: any = await demoteToBasicFn({ clientId: id });
+      if (result.data.success) {
+        toast({
+          title: "Downgrade Successful",
+          description: result.data.message,
+        });
+        // Redirect to the new Basic Business edit page
+        if (result.data.businessId) {
+          router.push(`/admin/basic/${result.data.businessId}/edit`);
+        } else {
+          router.push('/admin/basic');
+        }
+      }
+    } catch (error: any) {
+      console.error('Downgrade error:', error);
+      toast({
+        title: "Downgrade Failed",
+        description: error.message || "Could not demote client.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsDemoting(false);
+      setShowDowngradeDialog(false);
+    }
+  };
 
   // Fetch unique code for invite section
   useEffect(() => {
@@ -2714,6 +2748,49 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
           </Card>
         </form>
       </Form>
+
+      <Separator className="my-6" />
+
+      <div className="rounded-md border border-red-200 bg-red-50 p-4 dark:bg-red-900/10 dark:border-red-900/50 mb-8">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-lg font-medium text-red-900 dark:text-red-200">Danger Zone</h3>
+            <p className="text-sm text-red-700 dark:text-red-300">
+              Demote this client back to a Basic Business. This will remove advanced features.
+            </p>
+          </div>
+          <Button
+            type="button"
+            variant="destructive"
+            onClick={() => setShowDowngradeDialog(true)}
+            disabled={isDemoting}
+          >
+            {isDemoting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="mr-2 h-4 w-4" />}
+            Downgrade to Basic
+          </Button>
+        </div>
+      </div>
+
+      {/* Downgrade Confirmation Dialog */}
+      <AlertDialog open={showDowngradeDialog} onOpenChange={setShowDowngradeDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirm Downgrade</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will convert the Client back to a Basic Business.
+              <br /><br />
+              <strong>Warning:</strong> Advanced data like Gallery, Products, and Coupons might be lost if not supported by Basic plan.
+              Basic fields (address, description, translations, coordinates) will be preserved.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDowngrade} className="bg-red-600 hover:bg-red-700">
+              {isDemoting ? 'Downgrading...' : 'Yes, Downgrade'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Alert Dialog for Confirmations (optional usage) */}
       <AlertDialog open={false} onOpenChange={() => { }}>
