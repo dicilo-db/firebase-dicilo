@@ -302,7 +302,7 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
                                             {walletData ? walletData.balance : '...'} DP
                                         </div>
                                         <p className="text-sm text-gray-400 font-medium">
-                                            DiciPoints Balance
+                                            ≈ € {walletData ? (walletData.balance * (walletData.pointValue || 0.10)).toFixed(2) : '0.00'}
                                         </p>
                                     </div>
 
@@ -332,21 +332,15 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
                                 </div>
 
                                 <CardContent className="relative z-20 h-full flex flex-col justify-between p-6 text-white text-shadow-sm">
-                                    <div className="flex justify-between items-start w-full">
-                                        {/* Floating Balance Badge - semi-transparent to integrate with card design */}
-                                        <div className="bg-black/30 backdrop-blur-md rounded-xl px-4 py-2 border border-white/10 shadow-lg">
+                                    <div className="flex justify-end items-start w-full">
+                                        {/* Floating Balance Badge - Moved to Right */}
+                                        <div className="bg-black/30 backdrop-blur-md rounded-xl px-4 py-2 border border-white/10 shadow-lg text-right">
                                             <p className="text-[9px] font-bold text-white/90 uppercase tracking-widest mb-0.5">
                                                 Ganancias
                                             </p>
                                             <div className="text-2xl font-bold tracking-tight text-white drop-shadow-md">
                                                 € {walletData ? walletData.valueInEur.toFixed(2) : '0.00'}
                                             </div>
-                                        </div>
-
-                                        <div className="text-right">
-                                            <span className="inline-block px-2 py-1 bg-white/20 backdrop-blur-md rounded text-[9px] font-bold tracking-wider border border-white/10 shadow-sm">
-                                                PREPAID
-                                            </span>
                                         </div>
                                     </div>
 

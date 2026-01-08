@@ -462,6 +462,12 @@ const DashboardContent: React.FC = () => {
                     )}
                     Initial Seed Data
                   </Button>
+                  <Button variant="outline" className="w-full mt-2" asChild>
+                    <Link href="/admin/freelancers">
+                      <Users className="mr-2 h-4 w-4" />
+                      View Freelancers
+                    </Link>
+                  </Button>
                 </CardContent>
               </Card>
             </div>

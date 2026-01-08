@@ -110,18 +110,7 @@ export function FreelancerSidebar({ className, onViewChange, onMobileClose }: Fr
     return (
         <div className={cn("pb-12 w-64 flex-shrink-0 bg-card border-r h-screen overflow-y-auto flex flex-col", className)}>
 
-            {/* Context Switcher / Back */}
-            <div className="p-4 border-b">
-                <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => onViewChange?.('overview')}
-                    className="w-full justify-start text-muted-foreground hover:text-foreground -ml-2"
-                >
-                    <ArrowLeft className="mr-2 h-4 w-4" />
-                    {t('dashboard.overview', 'Back to Dashboard')}
-                </Button>
-            </div>
+
 
             <div className="space-y-4 py-4 flex-1">
                 <div className="px-6 py-2">

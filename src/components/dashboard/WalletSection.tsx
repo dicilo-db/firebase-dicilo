@@ -89,7 +89,7 @@ export function WalletSection({ uid, uniqueCode, userProfile }: WalletSectionPro
                     <CardContent className="space-y-4">
                         <div className="space-y-1">
                             <span className="text-4xl font-bold tracking-tight">{data.balance} DP</span>
-                            <p className="text-sm text-gray-400">≈ {data.valueInEur.toFixed(2)} {data.currency}</p>
+                            <p className="text-sm text-gray-400">≈ {(data.balance * (data.pointValue || 0.10)).toFixed(2)} {data.currency}</p>
                         </div>
 
                         <div className="flex gap-3 pt-4">
@@ -135,21 +135,15 @@ export function WalletSection({ uid, uniqueCode, userProfile }: WalletSectionPro
                     </div>
 
                     <CardContent className="relative z-20 h-full flex flex-col justify-between p-6 text-white text-shadow-sm">
-                        <div className="flex justify-between items-start w-full">
-                            {/* Floating Balance Badge - semi-transparent to integrate with card design */}
-                            <div className="bg-black/30 backdrop-blur-md rounded-xl px-4 py-2 border border-white/10 shadow-lg">
+                        <div className="flex justify-end items-start w-full">
+                            {/* Floating Balance Badge - Moved to Right */}
+                            <div className="bg-black/30 backdrop-blur-md rounded-xl px-4 py-2 border border-white/10 shadow-lg text-right">
                                 <p className="text-[9px] font-bold text-white/90 uppercase tracking-widest mb-0.5">
                                     Ganancias
                                 </p>
                                 <div className="text-2xl font-bold tracking-tight text-white drop-shadow-md">
                                     € {data ? data.valueInEur.toFixed(2) : '0.00'}
                                 </div>
-                            </div>
-
-                            <div className="text-right">
-                                <span className="inline-block px-2 py-1 bg-white/20 backdrop-blur-md rounded text-[9px] font-bold tracking-wider border border-white/10 shadow-sm">
-                                    PREPAID
-                                </span>
                             </div>
                         </div>
 

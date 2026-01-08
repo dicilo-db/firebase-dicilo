@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { getFirestore, collection, query, getDocs, orderBy, deleteDoc, doc, updateDoc, addDoc, setDoc, where } from 'firebase/firestore';
 import { app } from '@/lib/firebase';
 import { Button } from '@/components/ui/button';
@@ -64,6 +64,12 @@ export default function RecommendationsPage() {
     const [isConvertOpen, setIsConvertOpen] = useState(false);
     const [isConverting, setIsConverting] = useState(false);
     const [targetType, setTargetType] = useState<string>('business'); // business, starter, retailer, premium
+
+    // Filters State
+    const [sortOrder, setSortOrder] = useState<string>('newest');
+    const [filterCountry, setFilterCountry] = useState<string>('all');
+    const [filterCity, setFilterCity] = useState<string>('all');
+    const [filterCategory, setFilterCategory] = useState<string>('all');
 
     const fetchRecommendations = async () => {
         setIsLoading(true);
@@ -211,10 +217,36 @@ export default function RecommendationsPage() {
     };
 
 
-    const filteredRecommendations = recommendations.filter(rec =>
-        rec.companyName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        rec.email?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    // Extract unique values
+    const uniqueCities = useMemo(() => Array.from(new Set(recommendations.map(r => r.city).filter(Boolean))).sort(), [recommendations]);
+    const uniqueCountries = useMemo(() => Array.from(new Set(recommendations.map(r => r.country).filter(Boolean))).sort(), [recommendations]);
+    const uniqueCategories = useMemo(() => Array.from(new Set(recommendations.map(r => r.category).filter(Boolean))).sort(), [recommendations]);
+
+    const filteredRecommendations = useMemo(() => {
+        return recommendations.filter(rec => {
+            const matchesSearch = (rec.companyName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                rec.email?.toLowerCase().includes(searchTerm.toLowerCase()));
+            const matchesCountry = filterCountry === 'all' || rec.country === filterCountry;
+            const matchesCity = filterCity === 'all' || rec.city === filterCity;
+            const matchesCategory = filterCategory === 'all' || rec.category === filterCategory;
+
+            return matchesSearch && matchesCountry && matchesCity && matchesCategory;
+        }).sort((a, b) => {
+            if (sortOrder === 'name-asc') return (a.companyName || '').localeCompare(b.companyName || '');
+            if (sortOrder === 'name-desc') return (b.companyName || '').localeCompare(a.companyName || '');
+            if (sortOrder === 'newest') {
+                const dateA = a.timestamp?.seconds ? new Date(a.timestamp.seconds * 1000) : new Date(0);
+                const dateB = b.timestamp?.seconds ? new Date(b.timestamp.seconds * 1000) : new Date(0);
+                return dateB.getTime() - dateA.getTime();
+            }
+            if (sortOrder === 'oldest') {
+                const dateA = a.timestamp?.seconds ? new Date(a.timestamp.seconds * 1000) : new Date(0);
+                const dateB = b.timestamp?.seconds ? new Date(b.timestamp.seconds * 1000) : new Date(0);
+                return dateA.getTime() - dateB.getTime();
+            }
+            return 0;
+        });
+    }, [recommendations, searchTerm, sortOrder, filterCountry, filterCity, filterCategory]);
 
     return (
         <div className="flex min-h-screen flex-col bg-background">
@@ -243,14 +275,75 @@ export default function RecommendationsPage() {
                                 {filteredRecommendations.length}
                             </Badge>
                         </CardTitle>
-                        <div className="flex items-center space-x-2">
-                            <Search className="h-4 w-4 text-muted-foreground" />
-                            <Input
-                                placeholder={t('recommendations.searchPlaceholder')}
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                className="max-w-sm"
-                            />
+                        <div className="flex flex-col gap-4">
+                            <div className="flex gap-4 flex-wrap">
+                                <div className="relative">
+                                    <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                                    <Input
+                                        placeholder={t('recommendations.searchPlaceholder')}
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                        className="pl-8 w-[250px]"
+                                    />
+                                </div>
+
+                                {/* Sort */}
+                                <Select value={sortOrder} onValueChange={setSortOrder}>
+                                    <SelectTrigger className="w-[160px]">
+                                        <SelectValue placeholder="Sort by" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="newest">Newest First</SelectItem>
+                                        <SelectItem value="oldest">Oldest First</SelectItem>
+                                        <SelectItem value="name-asc">Name (A-Z)</SelectItem>
+                                        <SelectItem value="name-desc">Name (Z-A)</SelectItem>
+                                    </SelectContent>
+                                </Select>
+
+                                {/* Country Filter */}
+                                <Select value={filterCountry} onValueChange={setFilterCountry}>
+                                    <SelectTrigger className="w-[160px]">
+                                        <SelectValue placeholder="Country" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">All Countries</SelectItem>
+                                        {uniqueCountries.map(c => <SelectItem key={c as string} value={c as string}>{c as string}</SelectItem>)}
+                                    </SelectContent>
+                                </Select>
+
+                                {/* City Filter */}
+                                <Select value={filterCity} onValueChange={setFilterCity}>
+                                    <SelectTrigger className="w-[160px]">
+                                        <SelectValue placeholder="City" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">All Cities</SelectItem>
+                                        {uniqueCities.map(c => <SelectItem key={c as string} value={c as string}>{c as string}</SelectItem>)}
+                                    </SelectContent>
+                                </Select>
+
+                                {/* Category Filter */}
+                                <Select value={filterCategory} onValueChange={setFilterCategory}>
+                                    <SelectTrigger className="w-[160px]">
+                                        <SelectValue placeholder="Category" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">All Categories</SelectItem>
+                                        {uniqueCategories.map(c => <SelectItem key={c as string} value={c as string}>{c as string}</SelectItem>)}
+                                    </SelectContent>
+                                </Select>
+
+                                {/* Reset */}
+                                <Button variant="ghost" onClick={() => {
+                                    setSearchTerm('');
+                                    setSortOrder('newest');
+                                    setFilterCountry('all');
+                                    setFilterCity('all');
+                                    setFilterCategory('all');
+                                }}>
+                                    Reset
+                                </Button>
+                            </div>
                         </div>
                     </CardHeader>
                     <CardContent>
