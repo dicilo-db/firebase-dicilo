@@ -1046,5 +1046,36 @@
       "date": "Fecha",
       "download": "Descargar Excel"
     }
+  },
+  "tickets": {
+    "backToTickets": "Volver a Tickets",
+    "conversation": "Conversación",
+    "originalRequest": "Solicitud Original",
+    "readIn": "Leer en",
+    "translate": "Traducir",
+    "translating": "Traduciendo...",
+    "translation": "Traducción",
+    "draftReply": "Borrador de Respuesta",
+    "translateDraftTo": "Traducir borrador a",
+    "translateDraft": "Traducir Borrador",
+    "send": "Enviar",
+    "typeReply": "Escribe tu respuesta aquí... (ej. en {{lang}})",
+    "tipLanguage": "Consejo: Escribe en tu idioma, selecciona el idioma de destino, haz clic en 'Traducir Borrador' y luego Enviar.",
+    "ticketDetails": "Detalles del Ticket",
+    "id": "ID",
+    "status": "Estado",
+    "priority": "Prioridad",
+    "module": "Módulo",
+    "userInfo": "Info del Usuario",
+    "assignShare": "Asignar / Compartir Ticket",
+    "allowRoles": "Permitir que otros roles vean este ticket.",
+    "shareWithAdmins": "Compartir con Admins",
+    "shareWithTeam": "Compartir con Team Office",
+    "edit": "Editar",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "open": "Abierto",
+    "inProgress": "En Progreso",
+    "closed": "Cerrado"
   }
 }

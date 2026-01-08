@@ -1006,5 +1006,36 @@
       "date": "Date",
       "download": "Download Excel"
     }
+  },
+  "tickets": {
+    "backToTickets": "Back to Tickets",
+    "conversation": "Conversation",
+    "originalRequest": "Original Request",
+    "readIn": "Read in",
+    "translate": "Translate",
+    "translating": "Translating...",
+    "translation": "Translation",
+    "draftReply": "Draft Reply",
+    "translateDraftTo": "Translate draft to",
+    "translateDraft": "Translate Draft",
+    "send": "Send",
+    "typeReply": "Type your reply here... (e.g. in {{lang}})",
+    "tipLanguage": "Tip: Write in your language, select target language, click 'Translate Draft', then Send.",
+    "ticketDetails": "Ticket Details",
+    "id": "ID",
+    "status": "Status",
+    "priority": "Priority",
+    "module": "Module",
+    "userInfo": "User Info",
+    "assignShare": "Assign / Share Ticket",
+    "allowRoles": "Allow other roles to view this ticket.",
+    "shareWithAdmins": "Share with Admins",
+    "shareWithTeam": "Share with Team Office",
+    "edit": "Edit",
+    "save": "Save",
+    "cancel": "Cancel",
+    "open": "Open",
+    "inProgress": "In Progress",
+    "closed": "Closed"
   }
 }

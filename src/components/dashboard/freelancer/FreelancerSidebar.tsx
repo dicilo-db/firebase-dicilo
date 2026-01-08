@@ -118,6 +118,18 @@ export function FreelancerSidebar({ className, onViewChange, onMobileClose }: Fr
                     <p className="text-xs text-muted-foreground">{t('adsManager.dashboard.title', 'Herramientas de Campaña')}</p>
                 </div>
 
+                <div className="px-3 pb-2">
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        className="w-full justify-start text-muted-foreground hover:text-foreground mb-2"
+                        onClick={() => window.location.href = '/dashboard'}
+                    >
+                        <ArrowLeft className="mr-2 h-4 w-4" />
+                        {t('dashboard.backToDashboard', 'Volver al Dashboard')}
+                    </Button>
+                </div>
+
                 <div className="px-3 py-2">
                     <div className="space-y-1">
                         {navItems.map((item) => {

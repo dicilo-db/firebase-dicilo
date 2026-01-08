@@ -1034,5 +1034,36 @@
       "date": "Datum",
       "download": "Excel herunterladen"
     }
+  },
+  "tickets": {
+    "backToTickets": "Zurück zu Tickets",
+    "conversation": "Unterhaltung",
+    "originalRequest": "Ursprüngliche Anfrage",
+    "readIn": "Lesen in",
+    "translate": "Übersetzen",
+    "translating": "Übersetze...",
+    "translation": "Übersetzung",
+    "draftReply": "Entwurf Antwort",
+    "translateDraftTo": "Entwurf übersetzen nach",
+    "translateDraft": "Entwurf übersetzen",
+    "send": "Senden",
+    "typeReply": "Geben Sie hier Ihre Antwort ein... (z.B. auf {{lang}})",
+    "tipLanguage": "Tipp: Schreiben Sie in Ihrer Sprache, wählen Sie die Zielsprache, klicken Sie auf 'Entwurf übersetzen' und dann Senden.",
+    "ticketDetails": "Ticket-Details",
+    "id": "ID",
+    "status": "Status",
+    "priority": "Priorität",
+    "module": "Modul",
+    "userInfo": "Benutzer-Info",
+    "assignShare": "Ticket zuweisen / teilen",
+    "allowRoles": "Anderen Rollen erlauben, dieses Ticket zu sehen.",
+    "shareWithAdmins": "Mit Admins teilen",
+    "shareWithTeam": "Mit Team Office teilen",
+    "edit": "Bearbeiten",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "open": "Offen",
+    "inProgress": "In Bearbeitung",
+    "closed": "Geschlossen"
   }
 }
