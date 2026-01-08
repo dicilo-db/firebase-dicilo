@@ -35,10 +35,12 @@ import {
   RefreshCw,
   Search,
   LayoutDashboard,
+  Upload,
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
 import Link from 'next/link';
+import { importBusinessesFromExcel } from '@/app/actions/import-excel';
 import { useTranslation } from 'react-i18next';
 import {
   AlertDialog,
@@ -139,6 +141,51 @@ export default function BusinessesPage() {
   const [filterCountry, setFilterCountry] = useState<string>('all');
   const [filterCity, setFilterCity] = useState<string>('all');
   const [filterCategory, setFilterCategory] = useState<string>('all');
+
+  // Import State
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const [isImporting, setIsImporting] = useState(false);
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsImporting(true);
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const res = await importBusinessesFromExcel(formData);
+      if (res.success) {
+        toast({
+          title: "Import Successful",
+          description: res.message, // e.g., "Imported 10, Skipped 5"
+        });
+        if (res.errors && res.errors.length > 0) {
+          // Maybe show errors in a toast or dialog
+          console.warn('Import warnings:', res.errors);
+        }
+        fetchBusinesses(); // Refresh list
+      } else {
+        toast({
+          title: "Import Failed",
+          description: res.message,
+          variant: "destructive"
+        });
+      }
+    } catch (error: any) {
+      console.error(error);
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive"
+      });
+    } finally {
+      setIsImporting(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
 
   const fetchBusinesses = useCallback(async () => {
     setIsLoading(true);
@@ -292,6 +339,26 @@ export default function BusinessesPage() {
             />
             {t('businesses.reload')}
           </Button>
+
+          {/* Import Button */}
+          <div className="relative">
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileUpload}
+              className="hidden"
+              accept=".xlsx,.csv"
+            />
+            <Button
+              variant="secondary"
+              disabled={isImporting}
+              onClick={() => fileInputRef.current?.click()}
+            >
+              {isImporting ? <RefreshCw className="mr-2 h-4 w-4 animate-spin" /> : <Upload className="mr-2 h-4 w-4" />}
+              Import Excel
+            </Button>
+          </div>
+
           <Button asChild>
             <Link href="/admin/basic/new">
               <PlusCircle className="mr-2 h-4 w-4" />
