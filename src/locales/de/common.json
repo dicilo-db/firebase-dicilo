@@ -408,7 +408,8 @@
       "commingSoon": "Demnächst",
       "readMore": "Mehr lesen",
       "yourBalance": "Ihr Guthaben",
-      "limit": "Das maximale Limit beträgt 2.000 DICICOIN pro Benutzer. Für höhere Beträge ist eine zusätzliche Identitätsprüfung (KYC) gemäß den geltenden Vorschriften erforderlich."
+      "limit": "Das maximale Limit beträgt 2.000 DICICOIN pro Benutzer. Für höhere Beträge ist eine zusätzliche Identitätsprüfung (KYC) gemäß den geltenden Vorschriften erforderlich.",
+      "walletDescription": "Ihr Wallet und Belohnungscenter."
     }
   },
   "tickets": {

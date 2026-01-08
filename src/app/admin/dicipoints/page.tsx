@@ -11,8 +11,14 @@ import { adminAdjustBalance, adminUpdatePointValue, isMasterPasswordSet, setMast
 import { auditRetroactivePoints, reassignProspect, getFreelancerReportData } from '@/app/actions/dicipoints';
 import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { FileText, Download } from 'lucide-react';
+import { FileText, Download, CalendarIcon, Printer } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { format } from 'date-fns';
+import { cn } from '@/lib/utils';
+import { adminProcessManualPayment } from '@/app/actions/wallet';
 
 export default function DicipointsControlCenter() {
     const { toast } = useToast();
@@ -44,9 +50,20 @@ export default function DicipointsControlCenter() {
     const [loadingConfig, setLoadingConfig] = useState(false);
 
     // Adjustment State
+    // Cash Register State
     const [targetUid, setTargetUid] = useState('');
-    const [amount, setAmount] = useState(0);
-    const [reason, setReason] = useState(t('dicipoints.injection.reasonPlaceholder'));
+    const [targetEmail, setTargetEmail] = useState('');
+
+    const [pointsAmount, setPointsAmount] = useState(0);
+    const [pointsReason, setPointsReason] = useState('');
+
+    const [cashAmount, setCashAmount] = useState(0);
+    const [cashReason, setCashReason] = useState('');
+
+    const [referenceNote, setReferenceNote] = useState('');
+    const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+
+    const [paymentResult, setPaymentResult] = useState<any>(null);
     const [loadingAdjustment, setLoadingAdjustment] = useState(false);
 
     // Audit State
@@ -121,23 +138,124 @@ export default function DicipointsControlCenter() {
         }
     };
 
-    const handleAdjustBalance = async () => {
-        if (!targetUid || amount === 0) return;
+    const handleProcessPayment = async () => {
+        if (!targetUid || !targetEmail) {
+            toast({ title: "Faltan datos", description: "El UID y el Email son obligatorios.", variant: "destructive" });
+            return;
+        }
+        if (pointsAmount === 0 && cashAmount === 0) {
+            toast({ title: "Monto inválido", description: "Debe ingresar una cantidad en Puntos o Euros.", variant: "destructive" });
+            return;
+        }
+
         setLoadingAdjustment(true);
         try {
-            const res = await adminAdjustBalance(targetUid, Number(amount), reason, masterPassword);
+            const res = await adminProcessManualPayment({
+                targetUid,
+                targetEmail,
+                pointsAmount: Number(pointsAmount),
+                pointsReason,
+                cashAmount: Number(cashAmount),
+                cashReason,
+                referenceNote,
+                customDate: selectedDate.toISOString(),
+                masterKey: masterPassword
+            });
+
             if (res.success) {
-                toast({ title: t('dicipoints.success'), description: t('dicipoints.balanceAdjusted') });
-                setAmount(0);
-                setTargetUid('');
+                toast({ title: "Transacción Exitosa", description: "El pago se ha registrado correctamente." });
+                setPaymentResult({
+                    ...res.data,
+                    pointsAmount,
+                    pointsReason,
+                    cashAmount,
+                    cashReason,
+                    referenceNote
+                });
+
+                // Reset Fields (optional, depending on UX preference, maybe keep for repeated entry?)
+                // setPointsAmount(0);
+                // setCashAmount(0);
+                // setReferenceNote('');
             } else {
-                toast({ title: t('dicipoints.errorTitle'), description: res.message, variant: "destructive" });
+                toast({ title: "Error en Transacción", description: res.message, variant: "destructive" });
             }
         } catch (e) {
             console.error(e);
-            toast({ title: t('dicipoints.errorTitle'), description: t('dicipoints.transactionFailed'), variant: "destructive" });
+            toast({ title: "Error", description: "Fallo al procesar el pago.", variant: "destructive" });
         } finally {
             setLoadingAdjustment(false);
+        }
+    };
+
+    const handleGenerateReceipt = async () => {
+        if (!paymentResult) return;
+
+        try {
+            const jsPDF = (await import('jspdf')).default;
+            const doc = new jsPDF();
+
+            // Header
+            doc.setFillColor(34, 197, 94); // Green Header
+            doc.rect(0, 0, 210, 40, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(22);
+            doc.text("Dicilo Network - Recibo de Pago", 14, 25);
+
+            // Transaction Info
+            doc.setTextColor(0, 0, 0);
+            doc.setFontSize(10);
+            const yStart = 50;
+
+            doc.text(`Fecha de Transacción: ${new Date(paymentResult.timestamp).toLocaleString()}`, 14, yStart);
+            doc.text(`Referencia interna: ${paymentResult.referenceNote || 'N/A'}`, 14, yStart + 8);
+
+            // User Info Box
+            doc.setDrawColor(200);
+            doc.rect(14, yStart + 15, 180, 35);
+            doc.setFontSize(12);
+            doc.setFont("helvetica", "bold");
+            doc.text("Detalles del Usuario:", 20, yStart + 25);
+            doc.setFont("helvetica", "normal");
+            doc.text(`Nombre: ${paymentResult.userName}`, 20, yStart + 35);
+            doc.text(`Email: ${paymentResult.userEmail} | UID: ${targetUid}`, 20, yStart + 42);
+
+            // Payment Details Table
+            let currentY = yStart + 60;
+
+            if (paymentResult.pointsAmount !== 0) {
+                doc.setFillColor(240, 240, 240);
+                doc.rect(14, currentY, 180, 20, 'F');
+                doc.setFont("helvetica", "bold");
+                doc.text("DiciPoints (DP)", 20, currentY + 8);
+                doc.setFont("helvetica", "normal");
+                doc.text(`Cantidad: ${paymentResult.pointsAmount} DP`, 20, currentY + 16);
+                doc.text(`Motivo: ${paymentResult.pointsReason}`, 100, currentY + 16);
+                currentY += 25;
+            }
+
+            if (paymentResult.cashAmount !== 0) {
+                doc.setFillColor(240, 240, 240);
+                doc.rect(14, currentY, 180, 20, 'F');
+                doc.setFont("helvetica", "bold");
+                doc.text("Pago en Efectivo / Tarjeta (EUR)", 20, currentY + 8);
+                doc.setFont("helvetica", "normal");
+                doc.text(`Cantidad: €${paymentResult.cashAmount}`, 20, currentY + 16);
+                doc.text(`Motivo: ${paymentResult.cashReason}`, 100, currentY + 16);
+                currentY += 25;
+            }
+
+            // Footer
+            doc.setFontSize(9);
+            doc.setTextColor(100);
+            doc.text("Este documento sirve como comprobante de la transacción realizada en Dicilo Network.", 14, 280);
+            doc.text(`Emitido por: Admin / ${new Date().toISOString()}`, 14, 285);
+
+            doc.save(`Recibo_Dicilo_${new Date().getTime()}.pdf`);
+
+        } catch (e) {
+            console.error(e);
+            toast({ title: "Error PDF", description: "No se pudo generar el recibo.", variant: "destructive" });
         }
     };
 
@@ -538,66 +656,98 @@ export default function DicipointsControlCenter() {
                     </CardContent>
                 </Card>
 
-                {/* Manual Injection */}
-                <Card className="border-blue-200 shadow-sm">
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                            <Wallet className="h-5 w-5 text-gray-500" /> {t('dicipoints.injection.title')}
-                        </CardTitle>
-                        <CardDescription>{t('dicipoints.injection.description')}</CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                        <div className="space-y-2">
-                            <Label>{t('dicipoints.injection.uidLabel')}</Label>
-                            <Input
-                                placeholder={t('dicipoints.injection.uidPlaceholder')}
-                                value={targetUid}
-                                onChange={(e) => setTargetUid(e.target.value)}
-                            />
+                {/* Cash Register / Manual Injection */}
+                <Card className="border-blue-200 shadow-sm overflow-visible">
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <div className="flex flex-col space-y-1.5">
+                            <CardTitle className="flex items-center gap-2">
+                                <Wallet className="h-5 w-5 text-gray-500" /> Inyección Manual / Caja Registradora
+                            </CardTitle>
+                            <CardDescription>Cargar o deducir puntos y efectivo (PrePaid) para un usuario.</CardDescription>
                         </div>
+                        <Popover>
+                            <PopoverTrigger asChild>
+                                <Button variant="outline" className={cn("w-[240px] justify-start text-left font-normal", !selectedDate && "text-muted-foreground")}>
+                                    <CalendarIcon className="mr-2 h-4 w-4" />
+                                    {selectedDate ? format(selectedDate, "PPP") : <span>Pick a date</span>}
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0" align="end">
+                                <Calendar mode="single" selected={selectedDate} onSelect={(date) => date && setSelectedDate(date)} initialFocus />
+                            </PopoverContent>
+                        </Popover>
+                    </CardHeader>
+                    <CardContent className="space-y-4 mt-4">
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <Label>{t('dicipoints.injection.amountLabel')}</Label>
-                                <Input
-                                    type="number"
-                                    placeholder={t('dicipoints.injection.amountPlaceholder')}
-                                    value={amount}
-                                    onChange={(e) => setAmount(Number(e.target.value))}
-                                />
-                                <p className="text-xs text-muted-foreground">{t('dicipoints.injection.amountHint')}</p>
+                                <Label>UID del Usuario Objetivo</Label>
+                                <Input placeholder="User UID" value={targetUid} onChange={(e) => setTargetUid(e.target.value)} />
                             </div>
                             <div className="space-y-2">
-                                <Label>{t('dicipoints.injection.reasonLabel')}</Label>
-                                <Input
-                                    placeholder={t('dicipoints.injection.reasonPlaceholder')}
-                                    value={reason}
-                                    onChange={(e) => setReason(e.target.value)}
-                                />
+                                <Label>E-Mail (Verificación)</Label>
+                                <Input placeholder="email@example.com" value={targetEmail} onChange={(e) => setTargetEmail(e.target.value)} />
                             </div>
                         </div>
 
-                        <Dialog>
-                            <DialogTrigger asChild>
-                                <Button className="w-full mt-4" disabled={loadingAdjustment || !targetUid}>
-                                    {t('dicipoints.injection.buttonProcess')}
+                        <div className="grid grid-cols-2 gap-4 items-end">
+                            <div className="space-y-2">
+                                <Label>Cantidad (DP)</Label>
+                                <Input type="number" value={pointsAmount} onChange={(e) => setPointsAmount(Number(e.target.value))} />
+                            </div>
+                            <div className="space-y-2">
+                                <Label>Razón (Puntos)</Label>
+                                <Select value={pointsReason} onValueChange={setPointsReason}>
+                                    <SelectTrigger><SelectValue placeholder="Seleccionar motivo" /></SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="Recomendación empresa">Recomendación empresa</SelectItem>
+                                        <SelectItem value="Recomendación Amigo">Recomendación Amigo</SelectItem>
+                                        <SelectItem value="Ajuste Manual">Ajuste Manual</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4 items-end">
+                            <div className="space-y-2">
+                                <Label>Cantidad (€)</Label>
+                                <Input type="number" value={cashAmount} onChange={(e) => setCashAmount(Number(e.target.value))} />
+                            </div>
+                            <div className="space-y-2">
+                                <Label>Razón (Euros)</Label>
+                                <Select value={cashReason} onValueChange={setCashReason}>
+                                    <SelectTrigger><SelectValue placeholder="Seleccionar motivo" /></SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="Venta: Banner">Venta: Banner</SelectItem>
+                                        <SelectItem value="Venta: Campaña">Venta: Campaña</SelectItem>
+                                        <SelectItem value="Venta: Starter">Venta: Starter</SelectItem>
+                                        <SelectItem value="Venta: Reteil">Venta: Reteil</SelectItem>
+                                        <SelectItem value="Venta: Premium">Venta: Premium</SelectItem>
+                                        <SelectItem value="Deposito Efectivo">Deposito Efectivo</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label>Razón / Ref (Nota Corta)</Label>
+                            <Input placeholder="Escribe una nota corta..." value={referenceNote} onChange={(e) => setReferenceNote(e.target.value)} />
+                        </div>
+
+                        <Button className="w-full bg-green-600 hover:bg-green-700" onClick={handleProcessPayment} disabled={loadingAdjustment}>
+                            {loadingAdjustment ? "Procesando..." : "Procesar Transacción"}
+                        </Button>
+
+                        {paymentResult && (
+                            <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-md flex justify-between items-center">
+                                <div>
+                                    <h4 className="font-bold text-green-800">¡Pago Registrado!</h4>
+                                    <p className="text-xs text-green-600">Fecha: {new Date(paymentResult.timestamp).toLocaleDateString()}</p>
+                                </div>
+                                <Button variant="outline" onClick={handleGenerateReceipt} className="border-green-600 text-green-700 hover:bg-green-100">
+                                    <Printer className="mr-2 h-4 w-4" /> Descargar Recibo PDF
                                 </Button>
-                            </DialogTrigger>
-                            <DialogContent>
-                                <DialogHeader>
-                                    <DialogTitle>{t('dicipoints.injection.dialogTitle')}</DialogTitle>
-                                    <DialogDescription>
-                                        {t('dicipoints.injection.dialogDescPart1')} {amount > 0 ? t('dicipoints.injection.dialogDescSend') : t('dicipoints.injection.dialogDescDeduct')} <strong>{Math.abs(amount)} DP</strong> {t('dicipoints.injection.dialogDescPart2')} <code>{targetUid}</code>?
-                                        <br /><br />
-                                        {t('dicipoints.injection.dialogDescVal')} {(Math.abs(amount) * pointValue).toFixed(2)}
-                                    </DialogDescription>
-                                </DialogHeader>
-                                <DialogFooter>
-                                    <Button onClick={handleAdjustBalance} disabled={loadingAdjustment}>
-                                        {loadingAdjustment ? t('dicipoints.injection.buttonConfirming') : t('dicipoints.injection.buttonConfirm')}
-                                    </Button>
-                                </DialogFooter>
-                            </DialogContent>
-                        </Dialog>
+                            </div>
+                        )}
                     </CardContent>
                 </Card>
 

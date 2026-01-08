@@ -227,7 +227,8 @@
       "commingSoon": "Próximamente",
       "readMore": "Leer más",
       "yourBalance": "Tu Balance",
-      "limit": "El límite máximo permitido es de 2.000 DICICOIN por usuario. Para montos mayores, se requiere una verificación de identidad adicional (KYC) conforme a las regulaciones vigentes."
+      "limit": "El límite máximo permitido es de 2.000 DICICOIN por usuario. Para montos mayores, se requiere una verificación de identidad adicional (KYC) conforme a las regulaciones vigentes.",
+      "walletDescription": "Tu billetera y centro de recompensas."
     }
   },
   "tickets": {

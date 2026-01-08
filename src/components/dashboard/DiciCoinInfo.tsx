@@ -32,7 +32,7 @@ export const DiciCoinInfo = () => {
 
                 <h3 className="text-lg font-semibold mt-4">Value and structural perspective</h3>
                 <p>
-                    The current reference value of a DICICOIN is <strong>€30</strong>.
+                    The current reference value of a DICICOIN is <strong>€35</strong>.
                     As part of Dicilo's long-term development, an internal reference value of up to <strong>€25</strong> will be considered for each DICICOIN once the defined corporate, legal, and structural milestones have been reached.
                 </p>
 
@@ -84,7 +84,7 @@ export const DiciCoinInfo = () => {
 
                 <h3 className="text-lg font-semibold mt-4">Wert und strukturelle Perspektive</h3>
                 <p>
-                    Der aktuelle Referenzwert einer DICICOIN beträgt <strong>30 €</strong>.
+                    Der aktuelle Referenzwert einer DICICOIN beträgt <strong>35 €</strong>.
                     Im Rahmen der langfristigen Entwicklung von Dicilo wird für jede DICICOIN ein interner Referenzwert von bis zu <strong>25 €</strong> berücksichtigt, sobald die definierten unternehmerischen, rechtlichen und strukturellen Meilensteine erreicht sind.
                 </p>
 
@@ -135,7 +135,7 @@ export const DiciCoinInfo = () => {
 
             <h3 className="text-lg font-semibold mt-4">Valor y perspectiva estructural</h3>
             <p>
-                El valor de referencia actual de una DICICOIN es de <strong>30 €</strong>.
+                El valor de referencia actual de una DICICOIN es de <strong>35 €</strong>.
                 En el marco del desarrollo a largo plazo de Dicilo, se considerará un valor de referencia interno de hasta <strong>25 €</strong> por cada DICICOIN, una vez alcanzados los hitos empresariales, legales y estructurales definidos.
             </p>
 

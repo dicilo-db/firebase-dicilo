@@ -324,3 +324,136 @@ export async function syncReferralRewards(uid: string) {
         return { success: false, error: error.message };
     }
 }
+
+/**
+ * Superadmin ONLY: Process a "Cash Register" manual payment.
+ * Handles both DiciPoints and EUR (Prepaid Card) updates atomically.
+ * Verifies User Identity (UID + Email + Optional Code) before processing.
+ */
+export async function adminProcessManualPayment(
+    payload: {
+        targetUid: string;
+        targetEmail: string;
+        targetCode?: string; // Optional unique code verification
+        pointsAmount: number;
+        pointsReason: string;
+        cashAmount: number;
+        cashReason: string;
+        referenceNote: string;
+        customDate: string; // ISO String for backdating
+        masterKey: string;
+    }
+) {
+    const {
+        targetUid, targetEmail, targetCode,
+        pointsAmount, pointsReason,
+        cashAmount, cashReason,
+        referenceNote, customDate, masterKey
+    } = payload;
+
+    // 1. Security Check
+    const isValid = await verifyMasterPassword(masterKey);
+    if (!isValid) {
+        return { success: false, message: 'Invalid Master Password / Access Denied' };
+    }
+
+    const db = getAdminDb();
+
+    // 2. Identity Verification
+    const profileSnap = await db.collection('private_profiles').doc(targetUid).get();
+    if (!profileSnap.exists) {
+        return { success: false, message: `User with UID ${targetUid} not found.` };
+    }
+
+    const userData = profileSnap.data();
+    if (userData?.email !== targetEmail) {
+        return { success: false, message: `Email mismatch! UID belongs to ${userData?.email}, not ${targetEmail}.` };
+    }
+
+    if (targetCode) {
+        // Check if code matches either uniqueCode or any other code field if needed
+        // Assuming 'uniqueCode' is the field name based on previous valid code
+        if (userData?.uniqueCode !== targetCode && userData?.code !== targetCode) {
+            return { success: false, message: `Unique Code mismatch for this user.` };
+        }
+    }
+
+    // 3. Prepare Batch
+    const batch = db.batch();
+    const walletRef = db.collection('wallets').doc(targetUid);
+
+    // Ensure wallet exists
+    batch.set(walletRef, {
+        updatedAt: admin.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+
+    const timestamp = customDate ? new Date(customDate) : new Date();
+    const firestoreTimestamp = admin.firestore.Timestamp.fromDate(timestamp);
+
+    // 4. Handle DiciPoints
+    if (pointsAmount !== 0) {
+        batch.set(walletRef, {
+            balance: admin.firestore.FieldValue.increment(pointsAmount),
+            // Only increment 'earned' if positive addition
+            ...(pointsAmount > 0 ? { totalEarned: admin.firestore.FieldValue.increment(pointsAmount) } : {})
+        }, { merge: true });
+
+        const pointsTrxRef = db.collection('wallet_transactions').doc();
+        batch.set(pointsTrxRef, {
+            userId: targetUid,
+            amount: pointsAmount,
+            type: 'MANUAL_POINTS', // Specific type for manual register
+            description: `${pointsReason} - ${referenceNote}`,
+            adminId: 'SUPERADMIN', // Could be dynamic if we had admin sessions
+            timestamp: firestoreTimestamp,
+            meta: {
+                reasonCategory: pointsReason,
+                manualNote: referenceNote,
+                source: 'CASH_REGISTER'
+            }
+        });
+    }
+
+    // 5. Handle Cash (EUR / Prepaid Card)
+    if (cashAmount !== 0) {
+        batch.set(walletRef, {
+            eurBalance: admin.firestore.FieldValue.increment(cashAmount)
+        }, { merge: true });
+
+        const cashTrxRef = db.collection('wallet_transactions').doc();
+        batch.set(cashTrxRef, {
+            userId: targetUid,
+            amount: cashAmount,
+            currency: 'EUR', // Mark as EUR transaction
+            type: 'MANUAL_CASH',
+            description: `${cashReason} - ${referenceNote}`,
+            adminId: 'SUPERADMIN',
+            timestamp: firestoreTimestamp,
+            meta: {
+                reasonCategory: cashReason,
+                manualNote: referenceNote,
+                source: 'CASH_REGISTER'
+            }
+        });
+    }
+
+    try {
+        await batch.commit();
+        revalidatePath('/admin/dicipoints');
+        revalidatePath('/admin/freelancers');
+
+        return {
+            success: true,
+            message: 'Transaction processed successfully',
+            data: {
+                userName: userData?.name || 'Unknown',
+                userEmail: userData?.email,
+                userCode: userData?.uniqueCode || 'N/A',
+                timestamp: timestamp.toISOString()
+            }
+        };
+    } catch (e: any) {
+        console.error("Manual Payment Error:", e);
+        return { success: false, message: 'Transaction failed: ' + e.message };
+    }
+}
