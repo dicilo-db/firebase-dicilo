@@ -64,6 +64,7 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 import { seedCampaignsAction } from '@/app/actions/seed-freelancer';
+import { MasterKeyDialog } from '@/components/admin/MasterKeyDialog';
 
 // --- COMPONENTES AUXILIARES ---
 
@@ -132,6 +133,10 @@ const DashboardContent: React.FC = () => {
     recommendations: 0,
     tickets: 0,
   });
+
+  // Security Dialog State
+  const [isSecurityDialogOpen, setIsSecurityDialogOpen] = useState(false);
+  const [pendingAction, setPendingAction] = useState<'seed' | 'navigate' | null>(null);
 
   // Hooks para las acciones de servidor
   const { isPending: isSeeding, runAction: runSeedAction } =
@@ -310,6 +315,23 @@ const DashboardContent: React.FC = () => {
     }
   };
 
+  // --- SECURITY HANDLERS ---
+  const handleSecurityCheck = (action: 'seed' | 'navigate') => {
+    setPendingAction(action);
+    setIsSecurityDialogOpen(true);
+  };
+
+  const handleSecuritySuccess = () => {
+    setIsSecurityDialogOpen(false);
+
+    if (pendingAction === 'seed') {
+      handleSeedFreelancer();
+    } else if (pendingAction === 'navigate') {
+      router.push('/admin/freelancers');
+    }
+    setPendingAction(null);
+  };
+
   // --- RENDERIZADO ---
 
   if (isUserLoading || !adminUser) {
@@ -450,7 +472,7 @@ const DashboardContent: React.FC = () => {
                 </CardHeader>
                 <CardContent>
                   <Button
-                    onClick={handleSeedFreelancer}
+                    onClick={() => handleSecurityCheck('seed')}
                     disabled={isFreelancerSeeding}
                     className="w-full"
                     variant="secondary"
@@ -462,11 +484,13 @@ const DashboardContent: React.FC = () => {
                     )}
                     Initial Seed Data
                   </Button>
-                  <Button variant="outline" className="w-full mt-2" asChild>
-                    <Link href="/admin/freelancers">
-                      <Users className="mr-2 h-4 w-4" />
-                      View Freelancers
-                    </Link>
+                  <Button
+                    variant="outline"
+                    className="w-full mt-2"
+                    onClick={() => handleSecurityCheck('navigate')}
+                  >
+                    <Users className="mr-2 h-4 w-4" />
+                    View Freelancers
                   </Button>
                 </CardContent>
               </Card>
@@ -797,6 +821,11 @@ const DashboardContent: React.FC = () => {
         </div>
       </main>
       <Footer />
+      <MasterKeyDialog
+        isOpen={isSecurityDialogOpen}
+        onClose={() => setIsSecurityDialogOpen(false)}
+        onSuccess={handleSecuritySuccess}
+      />
     </div>
   );
 };
