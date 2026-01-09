@@ -1,15 +1,11 @@
 'use server';
 
-import { getFirestore } from 'firebase-admin/firestore';
-import { getStorage } from 'firebase-admin/storage';
-import { initFirebaseAdmin } from '@/lib/firebase-admin';
+import { getAdminDb, getAdminStorage } from '@/lib/firebase-admin';
 import { v4 as uuidv4 } from 'uuid';
 
-// Ensure Admin SDK is initialized
-initFirebaseAdmin();
-
-const db = getFirestore();
-const storage = getStorage();
+// Ensure Admin SDK is initialized via getters
+const db = getAdminDb();
+const storage = getAdminStorage();
 
 export async function submitUGCRecommendation(formData: FormData) {
     try {

@@ -282,3 +282,24 @@ export async function assignTicketRoles(ticketId: string, requestorUid: string, 
         return { success: false, error: error.message };
     }
 }
+
+export async function updateTicketStatus(ticketId: string, status: 'open' | 'in_progress' | 'closed') {
+    try {
+        await getAdminDb().collection('tickets').doc(ticketId).update({
+            status,
+            updatedAt: admin.firestore.FieldValue.serverTimestamp()
+        });
+
+        // Revalidate paths
+        try {
+            const { revalidatePath } = await import('next/cache');
+            revalidatePath(`/admin/tickets/${ticketId}`);
+            revalidatePath(`/dashboard/tickets/${ticketId}`);
+        } catch (e) { console.error('Revalidate failed', e); }
+
+        return { success: true };
+    } catch (error: any) {
+        console.error('Error updating ticket status:', error);
+        return { success: false, error: error.message };
+    }
+}
