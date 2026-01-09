@@ -16,13 +16,11 @@ const AiChatWidget = dynamic(
 );
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://dicilo.net'),
   title: 'Dicilo.net',
   description: 'A functional landing page with a map search feature.',
   icons: {
-    icon: [
-      { url: '/favicon.png', type: 'image/png' },
-      { url: '/favicon.ico', sizes: 'any' }
-    ],
+    icon: '/favicon.ico',
     shortcut: '/favicon.png',
     apple: '/favicon.png',
   },
