@@ -6,8 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { ShieldAlert, RefreshCw, Save, Lock, Wallet, Search, UserPlus } from 'lucide-react';
-import { adminAdjustBalance, adminUpdatePointValue, isMasterPasswordSet, setMasterPassword, verifyMasterPassword } from '@/app/actions/wallet';
+import { ShieldAlert, RefreshCw, Save, Lock, Wallet, Search, UserPlus, Trash2, AlertTriangle, UserCog, UserCheck, Archive } from 'lucide-react';
+import { adminAdjustBalance, adminUpdatePointValue, isMasterPasswordSet, setMasterPassword, verifyMasterPassword, getManualPaymentHistory } from '@/app/actions/wallet';
 import { auditRetroactivePoints, reassignProspect, getFreelancerReportData } from '@/app/actions/dicipoints';
 import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -138,13 +138,22 @@ export default function DicipointsControlCenter() {
         }
     };
 
+    const [paymentHistory, setPaymentHistory] = useState<any[]>([]);
+
+    useEffect(() => {
+        // Initial fetch
+        getManualPaymentHistory().then(res => {
+            if (res.success) setPaymentHistory(res.data);
+        });
+    }, []);
+
     const handleProcessPayment = async () => {
         if (!targetUid || !targetEmail) {
-            toast({ title: "Faltan datos", description: "El UID y el Email son obligatorios.", variant: "destructive" });
+            toast({ title: t('dicipoints.cashRegister.toast.missingDataTitle'), description: t('dicipoints.cashRegister.toast.missingDataDesc'), variant: "destructive" });
             return;
         }
         if (pointsAmount === 0 && cashAmount === 0) {
-            toast({ title: "Monto inválido", description: "Debe ingresar una cantidad en Puntos o Euros.", variant: "destructive" });
+            toast({ title: t('dicipoints.cashRegister.toast.invalidAmountTitle'), description: t('dicipoints.cashRegister.toast.invalidAmountDesc'), variant: "destructive" });
             return;
         }
 
@@ -163,7 +172,7 @@ export default function DicipointsControlCenter() {
             });
 
             if (res.success) {
-                toast({ title: "Transacción Exitosa", description: "El pago se ha registrado correctamente." });
+                toast({ title: t('dicipoints.cashRegister.toast.successTitle'), description: t('dicipoints.cashRegister.toast.successDesc') });
                 setPaymentResult({
                     ...res.data,
                     pointsAmount,
@@ -173,16 +182,21 @@ export default function DicipointsControlCenter() {
                     referenceNote
                 });
 
+                // Refresh History
+                getManualPaymentHistory().then(res => {
+                    if (res.success) setPaymentHistory(res.data);
+                });
+
                 // Reset Fields (optional, depending on UX preference, maybe keep for repeated entry?)
                 // setPointsAmount(0);
                 // setCashAmount(0);
                 // setReferenceNote('');
             } else {
-                toast({ title: "Error en Transacción", description: res.message, variant: "destructive" });
+                toast({ title: t('dicipoints.cashRegister.toast.errorTransactionTitle'), description: res.message, variant: "destructive" });
             }
         } catch (e) {
             console.error(e);
-            toast({ title: "Error", description: "Fallo al procesar el pago.", variant: "destructive" });
+            toast({ title: t('dicipoints.cashRegister.toast.errorGenericTitle'), description: t('dicipoints.cashRegister.toast.errorGenericDesc'), variant: "destructive" });
         } finally {
             setLoadingAdjustment(false);
         }
@@ -661,15 +675,15 @@ export default function DicipointsControlCenter() {
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <div className="flex flex-col space-y-1.5">
                             <CardTitle className="flex items-center gap-2">
-                                <Wallet className="h-5 w-5 text-gray-500" /> Inyección Manual / Caja Registradora
+                                <Wallet className="h-5 w-5 text-gray-500" /> {t('dicipoints.cashRegister.title')}
                             </CardTitle>
-                            <CardDescription>Cargar o deducir puntos y efectivo (PrePaid) para un usuario.</CardDescription>
+                            <CardDescription>{t('dicipoints.cashRegister.description')}</CardDescription>
                         </div>
                         <Popover>
                             <PopoverTrigger asChild>
                                 <Button variant="outline" className={cn("w-[240px] justify-start text-left font-normal", !selectedDate && "text-muted-foreground")}>
                                     <CalendarIcon className="mr-2 h-4 w-4" />
-                                    {selectedDate ? format(selectedDate, "PPP") : <span>Pick a date</span>}
+                                    {selectedDate ? format(selectedDate, "PPP") : <span>{t('dicipoints.cashRegister.datePicker')}</span>}
                                 </Button>
                             </PopoverTrigger>
                             <PopoverContent className="w-auto p-0" align="end">
@@ -680,24 +694,24 @@ export default function DicipointsControlCenter() {
                     <CardContent className="space-y-4 mt-4">
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <Label>UID del Usuario Objetivo</Label>
-                                <Input placeholder="User UID" value={targetUid} onChange={(e) => setTargetUid(e.target.value)} />
+                                <Label>{t('dicipoints.cashRegister.uidLabel')}</Label>
+                                <Input placeholder={t('dicipoints.cashRegister.uidPlaceholder')} value={targetUid} onChange={(e) => setTargetUid(e.target.value)} />
                             </div>
                             <div className="space-y-2">
-                                <Label>E-Mail (Verificación)</Label>
-                                <Input placeholder="email@example.com" value={targetEmail} onChange={(e) => setTargetEmail(e.target.value)} />
+                                <Label>{t('dicipoints.cashRegister.emailLabel')}</Label>
+                                <Input placeholder={t('dicipoints.cashRegister.emailPlaceholder')} value={targetEmail} onChange={(e) => setTargetEmail(e.target.value)} />
                             </div>
                         </div>
 
                         <div className="grid grid-cols-2 gap-4 items-end">
                             <div className="space-y-2">
-                                <Label>Cantidad (DP)</Label>
+                                <Label>{t('dicipoints.cashRegister.pointsAmountLabel')}</Label>
                                 <Input type="number" value={pointsAmount} onChange={(e) => setPointsAmount(Number(e.target.value))} />
                             </div>
                             <div className="space-y-2">
-                                <Label>Razón (Puntos)</Label>
+                                <Label>{t('dicipoints.cashRegister.pointsReasonLabel')}</Label>
                                 <Select value={pointsReason} onValueChange={setPointsReason}>
-                                    <SelectTrigger><SelectValue placeholder="Seleccionar motivo" /></SelectTrigger>
+                                    <SelectTrigger><SelectValue placeholder={t('dicipoints.cashRegister.pointsReasonPlaceholder')} /></SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="Recomendación empresa">Recomendación empresa</SelectItem>
                                         <SelectItem value="Recomendación Amigo">Recomendación Amigo</SelectItem>
@@ -709,13 +723,13 @@ export default function DicipointsControlCenter() {
 
                         <div className="grid grid-cols-2 gap-4 items-end">
                             <div className="space-y-2">
-                                <Label>Cantidad (€)</Label>
+                                <Label>{t('dicipoints.cashRegister.cashAmountLabel')}</Label>
                                 <Input type="number" value={cashAmount} onChange={(e) => setCashAmount(Number(e.target.value))} />
                             </div>
                             <div className="space-y-2">
-                                <Label>Razón (Euros)</Label>
+                                <Label>{t('dicipoints.cashRegister.cashReasonLabel')}</Label>
                                 <Select value={cashReason} onValueChange={setCashReason}>
-                                    <SelectTrigger><SelectValue placeholder="Seleccionar motivo" /></SelectTrigger>
+                                    <SelectTrigger><SelectValue placeholder={t('dicipoints.cashRegister.cashReasonPlaceholder')} /></SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="Venta: Banner">Venta: Banner</SelectItem>
                                         <SelectItem value="Venta: Campaña">Venta: Campaña</SelectItem>
@@ -729,22 +743,22 @@ export default function DicipointsControlCenter() {
                         </div>
 
                         <div className="space-y-2">
-                            <Label>Razón / Ref (Nota Corta)</Label>
-                            <Input placeholder="Escribe una nota corta..." value={referenceNote} onChange={(e) => setReferenceNote(e.target.value)} />
+                            <Label>{t('dicipoints.cashRegister.noteLabel')}</Label>
+                            <Input placeholder={t('dicipoints.cashRegister.notePlaceholder')} value={referenceNote} onChange={(e) => setReferenceNote(e.target.value)} />
                         </div>
 
                         <Button className="w-full bg-green-600 hover:bg-green-700" onClick={handleProcessPayment} disabled={loadingAdjustment}>
-                            {loadingAdjustment ? "Procesando..." : "Procesar Transacción"}
+                            {loadingAdjustment ? t('dicipoints.cashRegister.buttonProcessing') : t('dicipoints.cashRegister.buttonProcess')}
                         </Button>
 
                         {paymentResult && (
                             <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-md flex justify-between items-center">
                                 <div>
-                                    <h4 className="font-bold text-green-800">¡Pago Registrado!</h4>
-                                    <p className="text-xs text-green-600">Fecha: {new Date(paymentResult.timestamp).toLocaleDateString()}</p>
+                                    <h4 className="font-bold text-green-800">{t('dicipoints.cashRegister.successTitle')}</h4>
+                                    <p className="text-xs text-green-600">{t('dicipoints.cashRegister.successDate')} {new Date(paymentResult.timestamp).toLocaleDateString()}</p>
                                 </div>
                                 <Button variant="outline" onClick={handleGenerateReceipt} className="border-green-600 text-green-700 hover:bg-green-100">
-                                    <Printer className="mr-2 h-4 w-4" /> Descargar Recibo PDF
+                                    <Printer className="mr-2 h-4 w-4" /> {t('dicipoints.cashRegister.buttonReceipt')}
                                 </Button>
                             </div>
                         )}
@@ -755,18 +769,18 @@ export default function DicipointsControlCenter() {
                 <Card className="border-orange-200 shadow-sm">
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
-                            <RefreshCw className="h-5 w-5 text-orange-600" /> Maintenance & Migration
+                            <RefreshCw className="h-5 w-5 text-orange-600" /> {t('dicipoints.maintenance.title')}
                         </CardTitle>
-                        <CardDescription>System-wide data patching and normalization tools.</CardDescription>
+                        <CardDescription>{t('dicipoints.maintenance.description')}</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <div className="p-3 bg-orange-50 border border-orange-100 rounded text-xs text-orange-800">
-                            <strong>Warning:</strong> These operations affect thousands of records. Use with caution.
+                            <strong>{t('dicipoints.maintenance.warningTitle')}</strong> {t('dicipoints.maintenance.warningDesc')}
                         </div>
                         <div className="space-y-2">
-                            <Label>Legacy Users Data Patch</Label>
+                            <Label>{t('dicipoints.maintenance.legacyPatchTitle')}</Label>
                             <p className="text-xs text-muted-foreground">
-                                Assigns unique codes (EMDC/DCL) and system referrers to orphaned legacy users.
+                                {t('dicipoints.maintenance.legacyPatchDesc')}
                             </p>
                             <Button
                                 className="w-full bg-orange-600 hover:bg-orange-700"
@@ -775,23 +789,74 @@ export default function DicipointsControlCenter() {
                                     if (!confirm) return;
 
                                     try {
-                                        toast({ title: "Migration Started", description: "Processing batches in background..." });
+                                        toast({ title: t('dicipoints.maintenance.toastStartedTitle'), description: t('dicipoints.maintenance.toastStartedDesc') });
                                         const res = await fetch('/api/admin/migration/legacy-users', { method: 'POST' });
                                         const data = await res.json();
 
                                         if (data.success) {
-                                            toast({ title: "Migration Complete", description: data.message, duration: 5000 });
+                                            toast({ title: t('dicipoints.maintenance.toastCompleteTitle'), description: `Processed: ${data.processed}, Updated: ${data.updated}, Errors: ${data.errors}` });
                                         } else {
-                                            toast({ title: "Migration Failed", description: data.error, variant: "destructive" });
+                                            toast({ title: t('dicipoints.maintenance.toastFailedTitle'), description: data.error, variant: "destructive" });
                                         }
                                     } catch (e: any) {
-                                        toast({ title: "Error", description: e.message || "Failed to trigger migration", variant: "destructive" });
+                                        toast({ title: t('dicipoints.maintenance.toastFailedTitle'), description: "Network error", variant: "destructive" });
                                     }
                                 }}
                             >
-                                <RefreshCw className="mr-2 h-4 w-4" /> Run Legacy Migration (Data Patching)
+                                <RefreshCw className="mr-2 h-4 w-4" />
+                                {t('dicipoints.maintenance.buttonRun')}
                             </Button>
                         </div>
+                    </CardContent>
+                </Card>
+
+                {/* Payment History (Global Log) */}
+                <Card className="border-cyan-200 shadow-sm mt-6">
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                            <FileText className="h-5 w-5 text-cyan-600" /> {t('dicipoints.history.title')}
+                        </CardTitle>
+                        <CardDescription>{t('dicipoints.history.subtitle')}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>{t('dicipoints.history.colDate')}</TableHead>
+                                    <TableHead>{t('dicipoints.history.colUser')}</TableHead>
+                                    <TableHead>{t('dicipoints.history.colType')}</TableHead>
+                                    <TableHead>{t('dicipoints.history.colAmount')}</TableHead>
+                                    <TableHead>{t('dicipoints.history.colDesc')}</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {paymentHistory.length === 0 ? (
+                                    <TableRow>
+                                        <TableCell colSpan={5} className="text-center text-muted-foreground h-24">
+                                            {t('dicipoints.history.empty')}
+                                        </TableCell>
+                                    </TableRow>
+                                ) : (
+                                    paymentHistory.map((trx) => (
+                                        <TableRow key={trx.id}>
+                                            <TableCell className="font-mono text-xs text-nowrap">{new Date(trx.timestamp).toLocaleDateString()} {new Date(trx.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</TableCell>
+                                            <TableCell className="font-mono text-xs max-w-[100px] truncate" title={trx.userId}>{trx.userId}</TableCell>
+                                            <TableCell>
+                                                <span className={cn("px-2 py-1 rounded text-xs font-medium",
+                                                    trx.type === 'MANUAL_CASH' ? "bg-emerald-100 text-emerald-800" : "bg-purple-100 text-purple-800"
+                                                )}>
+                                                    {trx.type === 'MANUAL_CASH' ? 'CASH' : 'POINTS'}
+                                                </span>
+                                            </TableCell>
+                                            <TableCell className={cn("font-bold text-nowrap", trx.amount > 0 ? "text-green-600" : "text-red-600")}>
+                                                {trx.amount > 0 ? '+' : ''}{trx.amount} {trx.currency}
+                                            </TableCell>
+                                            <TableCell className="text-xs text-gray-600 max-w-[200px] truncate" title={trx.description}>{trx.description}</TableCell>
+                                        </TableRow>
+                                    ))
+                                )}
+                            </TableBody>
+                        </Table>
                     </CardContent>
                 </Card>
 

@@ -360,27 +360,43 @@ export async function adminProcessManualPayment(
     const db = getAdminDb();
 
     // 2. Identity Verification
+    let userData: any = null;
+    let finalUid = targetUid;
+
+    // A. Try Direct UID Lookup
     const profileSnap = await db.collection('private_profiles').doc(targetUid).get();
-    if (!profileSnap.exists) {
-        return { success: false, message: `User with UID ${targetUid} not found.` };
-    }
 
-    const userData = profileSnap.data();
-    if (userData?.email !== targetEmail) {
-        return { success: false, message: `Email mismatch! UID belongs to ${userData?.email}, not ${targetEmail}.` };
-    }
+    if (profileSnap.exists) {
+        userData = profileSnap.data();
+    } else {
+        // B. Try Lookup by Unique Code
+        const codeSnap = await db.collection('private_profiles')
+            .where('uniqueCode', '==', targetUid)
+            .limit(1)
+            .get();
 
-    if (targetCode) {
-        // Check if code matches either uniqueCode or any other code field if needed
-        // Assuming 'uniqueCode' is the field name based on previous valid code
-        if (userData?.uniqueCode !== targetCode && userData?.code !== targetCode) {
-            return { success: false, message: `Unique Code mismatch for this user.` };
+        if (!codeSnap.empty) {
+            const doc = codeSnap.docs[0];
+            userData = doc.data();
+            finalUid = doc.id; // Correct UID found via Code
         }
     }
 
+    if (!userData) {
+        return { success: false, message: `User not found (searched by UID: ${targetUid} and Code: ${targetUid}).` };
+    }
+
+    // Verify Email (if provided)
+    if (targetEmail && userData.email !== targetEmail) {
+        return { success: false, message: `Email mismatch! Found user ${userData.email}, but entered ${targetEmail}.` };
+    }
+
+    // Update target parameters to use the resolved UID
+    const resolvedPayload = { ...payload, targetUid: finalUid };
+
     // 3. Prepare Batch
     const batch = db.batch();
-    const walletRef = db.collection('wallets').doc(targetUid);
+    const walletRef = db.collection('wallets').doc(finalUid);
 
     // Ensure wallet exists
     batch.set(walletRef, {
@@ -400,7 +416,7 @@ export async function adminProcessManualPayment(
 
         const pointsTrxRef = db.collection('wallet_transactions').doc();
         batch.set(pointsTrxRef, {
-            userId: targetUid,
+            userId: finalUid,
             amount: pointsAmount,
             type: 'MANUAL_POINTS', // Specific type for manual register
             description: `${pointsReason} - ${referenceNote}`,
@@ -422,7 +438,7 @@ export async function adminProcessManualPayment(
 
         const cashTrxRef = db.collection('wallet_transactions').doc();
         batch.set(cashTrxRef, {
-            userId: targetUid,
+            userId: finalUid,
             amount: cashAmount,
             currency: 'EUR', // Mark as EUR transaction
             type: 'MANUAL_CASH',
@@ -455,5 +471,39 @@ export async function adminProcessManualPayment(
     } catch (e: any) {
         console.error("Manual Payment Error:", e);
         return { success: false, message: 'Transaction failed: ' + e.message };
+    }
+}
+
+/**
+ * Fetch the history of Manual Payments (Cash Register).
+ * Returns the last 50 transactions of type MANUAL_POINTS or MANUAL_CASH.
+ */
+export async function getManualPaymentHistory() {
+    const db = getAdminDb();
+    try {
+        const snapshot = await db.collection('wallet_transactions')
+            .where('type', 'in', ['MANUAL_POINTS', 'MANUAL_CASH'])
+            .orderBy('timestamp', 'desc')
+            .limit(50)
+            .get();
+
+        const history = snapshot.docs.map(doc => {
+            const data = doc.data();
+            return {
+                id: doc.id,
+                userId: data.userId,
+                type: data.type,
+                amount: data.amount,
+                description: data.description,
+                timestamp: data.timestamp.toDate().toISOString(),
+                adminId: data.adminId,
+                currency: data.currency || 'DP'
+            };
+        });
+
+        return { success: true, data: history };
+    } catch (error: any) {
+        console.error("Error fetching payment history:", error);
+        return { success: false, error: error.message, data: [] };
     }
 }
