@@ -544,7 +544,13 @@
         },
         "prospects": {
           "title": "Your Prospects",
-          "description": "Recommend businesses in your area or where you like to shop and earn DiciPoints or cash as a freelancer."
+          "description": "Recommend businesses in your area or where you like to shop and earn DiciPoints or cash as a freelancer.",
+          "button": "Manage Prospects",
+          "managerTitle": "My Registered Prospects",
+          "refresh": "Refresh",
+          "managerDescription": "Here you can view the status of the businesses you have recommended. You earn 10 DiciPoints when the system validates the prospect.",
+          "emptyState": "You have not registered any prospects yet.",
+          "emptyStateCta": "Recommend businesses and start earning!"
         },
         "hostess": {
           "title": "Hostesses",

@@ -34,6 +34,10 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { FreelancerRules } from '@/components/dashboard/freelancer/FreelancerRules';
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 
 // Icons
 import {
@@ -58,7 +62,8 @@ import {
     Smartphone,
     ThumbsUp,
     Twitter,
-    Youtube
+    Youtube,
+    Calendar as CalendarIcon
 } from 'lucide-react';
 
 // Context & Actions
@@ -96,12 +101,16 @@ export function PromoComposerView() {
     const [isCorrecting, setIsCorrecting] = useState(false);
 
     const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+    const [selectedAssetId, setSelectedAssetId] = useState<string | null>(null); // Track V2 asset
     const [visibleImagesCount, setVisibleImagesCount] = useState(4);
     const [generatedLink, setGeneratedLink] = useState('');
 
     // Connections State
     const [connections, setConnections] = useState<SocialConnection[]>([]);
     const [previewNetwork, setPreviewNetwork] = useState('instagram');
+    const [scheduledDate, setScheduledDate] = useState<Date | undefined>(undefined);
+
+    const isGrayMode = activeCampaign ? (activeCampaign.status === 'gray_mode' || (activeCampaign.budget_remaining !== undefined && activeCampaign.budget_remaining <= 0)) : false;
 
     // Pricing Tiers Configuration
     const PRICING_TIERS: { chars: number; rate: number }[] = [
@@ -138,9 +147,27 @@ export function PromoComposerView() {
             if (campaign) {
                 setGeneratedLink(`https://dicilo.net/r/${campaign.id?.substring(0, 8)}`);
                 setActiveCampaign(campaign);
-                // BLANK CANVAS RULE: Do not pre-fill text. Start empty.
-                // setTexts(prev => ({ ...prev, es: campaign.description || '' }));
-                setSelectedImageIndex(0);
+
+                // Asset / Image Init
+                if (campaign.assets && campaign.assets.length > 0) {
+                    setSelectedAssetId(campaign.assets[0].id);
+                    setSelectedImageIndex(0);
+                    // Pre-fill text from first asset
+                    const asset = campaign.assets[0];
+                    if (asset) {
+                        const initialTexts: any = { ...texts };
+                        // Fill all available translations from asset
+                        Object.keys(asset.translations).forEach(lang => {
+                            initialTexts[lang] = asset.translations[lang] || '';
+                        });
+                        // Ensure base text is set for source lang
+                        if (asset.sourceLanguage) initialTexts[asset.sourceLanguage] = asset.baseText;
+
+                        setTexts(initialTexts);
+                    }
+                } else {
+                    setSelectedImageIndex(0);
+                }
                 setVisibleImagesCount(8);
             }
 
@@ -212,6 +239,31 @@ export function PromoComposerView() {
         setGeneratedLink(baseLink);
     }, [activeCampaign, activeLangTab, selectedTargetUrl, selectedImageIndex, texts]);
 
+    // Update Text when Asset Changes (V2)
+    const handleAssetSelection = (index: number) => {
+        setSelectedImageIndex(index);
+
+        if (activeCampaign?.assets && activeCampaign.assets[index]) {
+            const asset = activeCampaign.assets[index];
+            setSelectedAssetId(asset.id);
+
+            // Populate Texts
+            setTexts(prev => {
+                const newTexts: any = { ...prev };
+                // Fill from confirmed translations
+                Object.entries(asset.translations).forEach(([lang, txt]) => {
+                    if (txt) newTexts[lang] = txt;
+                });
+                return newTexts;
+            });
+
+            // Toast info
+            // toast({ title: "Asset Selected", description: "Text updated from asset." });
+        } else {
+            setSelectedAssetId(null);
+        }
+    };
+
     const handleCorrectGrammar = async () => {
         const textToCorrect = texts[activeLangTab];
         if (!textToCorrect || textToCorrect.length < 5) return;
@@ -222,12 +274,12 @@ export function PromoComposerView() {
                 setTexts(prev => ({ ...prev, [activeLangTab]: result.correctedText || '' }));
                 if (result.wasCorrected) {
                     toast({
-                        title: "Texto Mejorado ✨",
-                        description: "Hemos corregido la gramática y el estilo.",
+                        title: t('freelancer.composer.grammar_success_title'),
+                        description: t('freelancer.composer.grammar_success_desc'),
                         className: "bg-purple-600 text-white"
                     });
                 } else {
-                    toast({ title: "¡Perfecto!", description: "Tu texto ya estaba excelente." });
+                    toast({ title: t('freelancer.composer.grammar_perfect_title'), description: t('freelancer.composer.grammar_perfect_desc') });
                 }
             }
         } catch (e) {
@@ -255,8 +307,8 @@ export function PromoComposerView() {
                 // Switch to the target language tab to show result
                 setActiveLangTab(targetLanguage);
                 toast({
-                    title: "Traducido",
-                    description: `Texto traducido a ${targetLanguage.toUpperCase()}.`,
+                    title: t('freelancer.composer.translation_success_title'),
+                    description: t('freelancer.composer.translation_success_desc', { lang: targetLanguage.toUpperCase() }),
                 });
             } else {
                 throw new Error(result.error);
@@ -273,12 +325,14 @@ export function PromoComposerView() {
         const trackingLink = generatedLink;
         const message = `${currentText}\n\n${trackingLink} #${activeCampaign.companyName.replace(/[^a-zA-Z0-9]/g, '')}`;
         await navigator.clipboard.writeText(message);
-        toast({ title: t('campaign_explorer.copy_text') + " OK", description: "Texto y enlace copiados al portapapeles." });
+        toast({ title: t('freelancer.composer.copy_success_title'), description: t('freelancer.composer.copy_success_desc') });
     };
 
-    const selectedImageUrl = activeCampaign?.images && activeCampaign.images.length > 0
-        ? activeCampaign.images[selectedImageIndex]
-        : 'https://placehold.co/600x400/png';
+    const selectedImageUrl = activeCampaign?.assets?.length
+        ? activeCampaign.assets[selectedImageIndex].imageUrl
+        : (activeCampaign?.images && activeCampaign.images.length > 0
+            ? activeCampaign.images[selectedImageIndex]
+            : 'https://placehold.co/600x400/png');
 
     const handleWhatsAppShare = async () => {
         if (!activeCampaign) return;
@@ -301,7 +355,8 @@ export function PromoComposerView() {
                 activeCampaign.id!,
                 postLang,
                 currentText.length,
-                selectedImageUrl
+                selectedImageUrl,
+                selectedAssetId || '' // Pass assetId
             );
 
             if (!result.success) {
@@ -359,7 +414,7 @@ export function PromoComposerView() {
         <MainLayout isMobile={isMobile}>
             {/* LEFT PANEL: EDITOR */}
             <EditorPanelWrapper isMobile={isMobile}>
-                <div className="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-6">
+                <div className="flex-1 overflow-y-auto custom-scrollbar p-4 md:p-6 space-y-6">
                     {/* Header Section */}
                     <div className="flex items-center gap-4">
                         {activeCampaign.companyLogo && activeCampaign.companyLogo !== '/placeholder-logo.png' ? (
@@ -407,31 +462,45 @@ export function PromoComposerView() {
                             <div className="space-y-2">
                                 <div className="flex items-center justify-between">
                                     <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{t('freelancer.composer.selectImage')}</label>
-                                    {activeCampaign.images && activeCampaign.images.length > visibleImagesCount && (
+                                    {/* Show count based on assets OR images */}
+                                    {(activeCampaign.assets?.length || activeCampaign.images?.length || 0) > visibleImagesCount && (
                                         <Button variant="ghost" size="sm" className="h-6 px-2 text-xs" onClick={() => setVisibleImagesCount(prev => Math.min(prev + 4, 32))}>
                                             <Plus className="h-3 w-3 mr-1" /> Más
                                         </Button>
                                     )}
                                 </div>
                                 <div className="grid grid-cols-3 gap-2">
-                                    {activeCampaign.images?.slice(0, visibleImagesCount).map((img, i) => (
-                                        <div key={i} onClick={() => setSelectedImageIndex(i)} className={`relative aspect-square rounded-md overflow-hidden border cursor-pointer transition-all ${i === selectedImageIndex ? 'border-primary ring-2 ring-primary/20 ring-offset-1' : 'border-transparent hover:opacity-90'}`}>
-                                            <Image src={img} alt="" fill className="object-cover bg-muted" />
-                                            {i === selectedImageIndex && <div className="absolute top-1 right-1 bg-primary text-white rounded-full p-0.5 shadow-sm"><CheckCircle2 className="h-3 w-3" /></div>}
-                                        </div>
-                                    ))}
+                                    {/* V2 ASSETS LOOP */}
+                                    {activeCampaign.assets && activeCampaign.assets.length > 0 ? (
+                                        activeCampaign.assets.slice(0, visibleImagesCount).map((asset, i) => (
+                                            <div key={asset.id} onClick={() => handleAssetSelection(i)} className={`relative aspect-square rounded-md overflow-hidden border cursor-pointer transition-all ${i === selectedImageIndex ? 'border-primary ring-2 ring-primary/20 ring-offset-1' : 'border-transparent hover:opacity-90'}`}>
+                                                <Image src={asset.imageUrl} alt="" fill className="object-cover bg-muted" />
+                                                {/* Badge for Asset-based */}
+                                                <div className="absolute top-1 left-1 bg-blue-500/80 text-white rounded px-1 py-0.5 text-[8px] font-bold">V2</div>
+                                                {i === selectedImageIndex && <div className="absolute top-1 right-1 bg-primary text-white rounded-full p-0.5 shadow-sm"><CheckCircle2 className="h-3 w-3" /></div>}
+                                            </div>
+                                        ))
+                                    ) : (
+                                        /* V1 LEGACY IMAGES LOOP */
+                                        activeCampaign.images?.slice(0, visibleImagesCount).map((img, i) => (
+                                            <div key={i} onClick={() => handleAssetSelection(i)} className={`relative aspect-square rounded-md overflow-hidden border cursor-pointer transition-all ${i === selectedImageIndex ? 'border-primary ring-2 ring-primary/20 ring-offset-1' : 'border-transparent hover:opacity-90'}`}>
+                                                <Image src={img} alt="" fill className="object-cover bg-muted" />
+                                                {i === selectedImageIndex && <div className="absolute top-1 right-1 bg-primary text-white rounded-full p-0.5 shadow-sm"><CheckCircle2 className="h-3 w-3" /></div>}
+                                            </div>
+                                        ))
+                                    )}
                                 </div>
                             </div>
 
                             {/* 2. Text Editor */}
                             <div className="space-y-3">
                                 <div className="flex flex-col gap-2">
-                                    <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Contenido & Traducción</label>
+                                    <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{t('freelancer.composer.content_translation_label')}</label>
 
                                     {/* Link Selection - ALWAYS VISIBLE with Fallback */}
                                     <div className="bg-blue-50 dark:bg-blue-900/20 p-2 rounded border border-blue-100 dark:border-blue-800 mb-2">
                                         <label className="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-1 block">
-                                            Objetivo del Link
+                                            {t('freelancer.composer.link_target_label')}
                                         </label>
                                         <Select
                                             value={selectedTargetUrl}
@@ -449,7 +518,7 @@ export function PromoComposerView() {
                                                 {/* Always show at least one option if list is empty, effectively the default */}
                                                 {(!activeCampaign.target_urls?.[activeLangTab]?.length) && (
                                                     <SelectItem value="default" className="text-xs">
-                                                        Default URL (Campaign Home)
+                                                        {t('freelancer.composer.default_url_placeholder')}
                                                     </SelectItem>
                                                 )}
 
@@ -464,11 +533,11 @@ export function PromoComposerView() {
 
                                     <div className="flex items-center justify-between bg-slate-50 dark:bg-slate-900 p-1.5 rounded-lg border">
                                         <div className="flex items-center gap-2">
-                                            <span className="text-xs text-muted-foreground font-medium ml-1">Traducir a:</span>
+                                            <span className="text-xs text-muted-foreground font-medium ml-1">{t('freelancer.composer.translate_to')}</span>
                                             <select
                                                 value={targetLanguage}
                                                 onChange={(e) => setTargetLanguage(e.target.value)}
-                                                className="h-7 text-xs rounded border-0 bg-transparent focus:ring-0 font-medium py-0 pl-1 pr-6 cursor-pointer hover:bg-black/5"
+                                                className="h-9 md:h-7 text-sm md:text-xs rounded border-0 bg-transparent focus:ring-0 font-medium py-0 pl-1 pr-8 cursor-pointer hover:bg-black/5"
                                             >
                                                 <option value="es">Español</option>
                                                 <option value="en">English</option>
@@ -480,7 +549,7 @@ export function PromoComposerView() {
                                         </div>
                                         <Button size="sm" onClick={handleTranslate} disabled={isTranslating} className="h-7 text-xs px-3">
                                             {isTranslating ? <Loader2 className="animate-spin h-3 w-3" /> : <Languages className="h-3 w-3 mr-1" />}
-                                            Traducir
+                                            {t('freelancer.composer.translate_button')}
                                         </Button>
                                     </div>
                                 </div>
@@ -505,8 +574,9 @@ export function PromoComposerView() {
                                                 <Textarea
                                                     value={texts[lang] || ''}
                                                     onChange={(e) => setTexts(prev => ({ ...prev, [lang]: e.target.value }))}
-                                                    className="min-h-[200px] resize-none focus-visible:ring-1 focus-visible:ring-primary/50 text-sm leading-relaxed p-3"
-                                                    placeholder={`Escribe el copy en ${lang.toUpperCase()}...`}
+                                                    readOnly={!!selectedAssetId && !!texts[lang]} // Read-only if asset selected AND text exists
+                                                    className={`min-h-[200px] resize-none focus-visible:ring-1 focus-visible:ring-primary/50 text-sm leading-relaxed p-3 ${selectedAssetId ? 'bg-slate-50 text-slate-600' : ''}`}
+                                                    placeholder={t('freelancer.composer.write_placeholder', { lang: lang.toUpperCase() })}
                                                 />
                                                 <div className="absolute bottom-2 right-2 flex gap-1">
                                                     <Button
@@ -514,12 +584,12 @@ export function PromoComposerView() {
                                                         variant="ghost"
                                                         onClick={handleCorrectGrammar}
                                                         disabled={isCorrecting || !texts[lang]}
-                                                        className="h-7 w-7 text-purple-600 hover:bg-purple-50 rounded-full"
-                                                        title="Corregir Gramática con IA"
+                                                        className="h-8 w-8 md:h-7 md:w-7 text-purple-600 hover:bg-purple-50 rounded-full"
+                                                        title={t('freelancer.composer.grammar_tooltip')}
                                                     >
                                                         {isCorrecting ? <Loader2 className="animate-spin h-4 w-4" /> : <CheckCircle2 className="h-4 w-4" />}
                                                     </Button>
-                                                    <Button size="icon" variant="ghost" onClick={handleCopyText} className="h-7 w-7 text-muted-foreground hover:bg-slate-100 rounded-full" title="Copiar">
+                                                    <Button size="icon" variant="ghost" onClick={handleCopyText} className="h-7 w-7 text-muted-foreground hover:bg-slate-100 rounded-full" title={t('freelancer.composer.copy_tooltip')}>
                                                         <Copy className="h-4 w-4" />
                                                     </Button>
                                                 </div>
@@ -542,27 +612,63 @@ export function PromoComposerView() {
                                                 onClick={async () => {
                                                     await navigator.clipboard.writeText(generatedLink);
                                                     toast({
-                                                        title: "Enlace Copiado",
-                                                        description: "Solo el enlace ha sido copiado."
+                                                        title: t('freelancer.composer.copy_link_only_success'),
+                                                        description: t('freelancer.composer.copy_link_only_success_desc')
                                                     });
                                                 }}
-                                                title="Copiar Solo Link"
+                                                title={t('freelancer.composer.copy_link_only_title')}
                                             >
                                                 <Copy className="h-4 w-4 text-slate-500" />
                                             </Button>
                                         </div>
+
+                                        {/* SCHEDULER */}
+                                        <Popover>
+                                            <PopoverTrigger asChild>
+                                                <Button
+                                                    variant={"outline"}
+                                                    className={cn(
+                                                        "w-[240px] pl-3 text-left font-normal bg-white dark:bg-slate-950",
+                                                        !scheduledDate && "text-muted-foreground"
+                                                    )}
+                                                >
+                                                    {scheduledDate ? (
+                                                        format(scheduledDate, "PPP")
+                                                    ) : (
+                                                        <span>{t('freelancer.composer.pick_date_placeholder')}</span>
+                                                    )}
+                                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                                </Button>
+                                            </PopoverTrigger>
+                                            <PopoverContent className="w-auto p-0" align="start">
+                                                <Calendar
+                                                    mode="single"
+                                                    selected={scheduledDate}
+                                                    onSelect={setScheduledDate}
+                                                    disabled={(date) =>
+                                                        date < new Date() || date < new Date("1900-01-01")
+                                                    }
+                                                    initialFocus
+                                                />
+                                            </PopoverContent>
+                                        </Popover>
 
                                         {/* GENERIC SHARE MENU */}
                                         <DropdownMenu>
                                             <DropdownMenuTrigger asChild>
                                                 <Button
                                                     variant="default"
-                                                    disabled={currentText.length < 10}
-                                                    className="h-10 px-6 font-bold bg-green-600 hover:bg-green-700 text-white shadow-sm"
-                                                    title="Compartir"
+                                                    disabled={currentText.length < 10 || isGrayMode}
+                                                    className={cn(
+                                                        "h-10 px-6 font-bold text-white shadow-sm transition-all",
+                                                        isGrayMode
+                                                            ? "bg-slate-400 cursor-not-allowed hover:bg-slate-400"
+                                                            : "bg-green-600 hover:bg-green-700"
+                                                    )}
+                                                    title={isGrayMode ? t('freelancer.composer.share_disabled_tooltip') : t('freelancer.composer.share_button')}
                                                 >
                                                     <Share2 className="h-4 w-4 mr-2" />
-                                                    Share
+                                                    {t('freelancer.composer.share_button')}
                                                 </Button>
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent align="end" className="w-56">
@@ -654,7 +760,7 @@ export function PromoComposerView() {
                 {/* Top Floating Control Bar */}
                 <div className="h-16 flex items-center justify-center shrink-0 z-10 relative pointer-events-none">
                     <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md shadow-sm border border-slate-200 dark:border-slate-800 rounded-full px-4 py-1.5 flex items-center gap-3 pointer-events-auto mt-4 transition-all hover:scale-105">
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Preview Mode</span>
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{t('freelancer.composer.preview.mode_label')}</span>
                         <div className="h-4 w-[1px] bg-slate-200 dark:bg-slate-700"></div>
                         <Select value={previewNetwork} onValueChange={setPreviewNetwork}>
                             <SelectTrigger className="w-[140px] h-7 text-xs border-0 bg-transparent focus:ring-0 shadow-none px-0 gap-1">
@@ -687,10 +793,10 @@ export function PromoComposerView() {
                 </div>
 
                 {/* Main Preview Canvas - Centered & Scrollable */}
-                <div className="flex-1 overflow-y-auto overflow-x-hidden p-6 relative z-10 flex flex-col items-center justify-center min-h-0">
-                    <div className="origin-center animate-in fade-in zoom-in duration-500">
+                <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-6 relative z-10 flex flex-col items-center justify-center min-h-0">
+                    <div className="origin-center animate-in fade-in zoom-in duration-500 w-full flex justify-center">
                         {/* MODERN REALISTIC PHONE MOCKUP */}
-                        <div className="relative w-[320px] h-[650px] bg-white dark:bg-black border-[6px] border-slate-800 rounded-[40px] overflow-hidden shadow-2xl flex flex-col shrink-0 ring-1 ring-white/10">
+                        <div className="relative w-[300px] h-[610px] sm:w-[320px] sm:h-[650px] bg-white dark:bg-black border-[6px] border-slate-800 rounded-[35px] sm:rounded-[40px] overflow-hidden shadow-2xl flex flex-col shrink-0 ring-1 ring-white/10 transition-all">
                             {/* Modern Notch */}
                             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-6 bg-slate-800 rounded-b-xl z-30 pointer-events-none flex justify-center items-center">
                                 <div className="w-12 h-1.5 bg-slate-700/50 rounded-full"></div>
@@ -753,7 +859,7 @@ export function PromoComposerView() {
                                                 </div>
                                                 <div className="flex flex-col">
                                                     <span className="font-semibold text-xs text-slate-900 dark:text-white">{activeCampaign.companyName}</span>
-                                                    <span className="text-[10px] text-slate-500">Sponsored</span>
+                                                    <span className="text-[10px] text-slate-500">{t('freelancer.composer.preview.sponsored')}</span>
                                                 </div>
                                             </div>
                                             <MoreHorizontal className="h-4 w-4 text-slate-500" />
@@ -789,7 +895,7 @@ export function PromoComposerView() {
                                                 </div>
                                                 <div className="flex-1">
                                                     <div className="font-bold text-sm leading-tight text-slate-900 dark:text-white">{activeCampaign.companyName}</div>
-                                                    <div className="text-xs text-slate-500 flex items-center gap-1">Sponsored <Globe className="h-2.5 w-2.5" /></div>
+                                                    <div className="text-xs text-slate-500 flex items-center gap-1">{t('freelancer.composer.preview.sponsored')} <Globe className="h-2.5 w-2.5" /></div>
                                                 </div>
                                                 <MoreHorizontal className="h-5 w-5 text-slate-500" />
                                             </div>
@@ -804,9 +910,9 @@ export function PromoComposerView() {
                                                 <div>12 Comments • 4 Shares</div>
                                             </div>
                                             <div className="px-2 py-1 flex justify-between">
-                                                <div className="flex-1 flex items-center justify-center gap-2 py-1.5 hover:bg-slate-50 rounded text-slate-600 font-medium text-xs cursor-pointer"><ThumbsUp className="h-4 w-4" /> Like</div>
-                                                <div className="flex-1 flex items-center justify-center gap-2 py-1.5 hover:bg-slate-50 rounded text-slate-600 font-medium text-xs cursor-pointer"><MessageCircle className="h-4 w-4" /> Comment</div>
-                                                <div className="flex-1 flex items-center justify-center gap-2 py-1.5 hover:bg-slate-50 rounded text-slate-600 font-medium text-xs cursor-pointer"><Share2 className="h-4 w-4" /> Share</div>
+                                                <div className="flex-1 flex items-center justify-center gap-2 py-1.5 hover:bg-slate-50 rounded text-slate-600 font-medium text-xs cursor-pointer"><ThumbsUp className="h-4 w-4" /> {t('freelancer.composer.preview.like')}</div>
+                                                <div className="flex-1 flex items-center justify-center gap-2 py-1.5 hover:bg-slate-50 rounded text-slate-600 font-medium text-xs cursor-pointer"><MessageCircle className="h-4 w-4" /> {t('freelancer.composer.preview.comment')}</div>
+                                                <div className="flex-1 flex items-center justify-center gap-2 py-1.5 hover:bg-slate-50 rounded text-slate-600 font-medium text-xs cursor-pointer"><Share2 className="h-4 w-4" /> {t('freelancer.composer.preview.share')}</div>
                                             </div>
                                         </div>
                                     </div>
@@ -824,7 +930,7 @@ export function PromoComposerView() {
                                                     <span className="font-bold text-slate-900 dark:text-white truncate">{activeCampaign.companyName}</span>
                                                     <span className="text-slate-500 truncate">@{activeCampaign.companyName.replace(/\s/g, '').toLowerCase()}</span>
                                                     <span className="text-slate-500">·</span>
-                                                    <span className="text-slate-500">Promoted</span>
+                                                    <span className="text-slate-500">{t('freelancer.composer.preview.promoted')}</span>
                                                 </div>
                                                 <div className="text-[13px] text-slate-900 dark:text-white mt-0.5 whitespace-pre-wrap">
                                                     {currentText}
@@ -832,7 +938,7 @@ export function PromoComposerView() {
                                                 </div>
                                                 <div className="mt-2 aspect-video rounded-xl overflow-hidden relative border border-slate-100 dark:border-slate-800">
                                                     <Image src={selectedImageUrl} alt="" fill className="object-cover" />
-                                                    <div className="absolute bottom-2 left-2 bg-black/60 text-white text-[10px] px-1 rounded">Promoted</div>
+                                                    <div className="absolute bottom-2 left-2 bg-black/60 text-white text-[10px] px-1 rounded">{t('freelancer.composer.preview.promoted')}</div>
                                                 </div>
                                                 <div className="flex justify-between mt-3 pr-8 text-slate-500 text-xs">
                                                     <div className="flex items-center gap-1 group cursor-pointer hover:text-blue-500"><MessageCircle className="h-3.5 w-3.5" /> 24</div>
@@ -855,7 +961,7 @@ export function PromoComposerView() {
                                                 </div>
                                                 <div>
                                                     <div className="font-semibold text-xs text-slate-900 dark:text-white">{activeCampaign.companyName}</div>
-                                                    <div className="text-[10px] text-slate-500">Promoted</div>
+                                                    <div className="text-[10px] text-slate-500">{t('freelancer.composer.preview.promoted')}</div>
                                                 </div>
                                                 <div className="ml-auto flex items-start">
                                                     <MoreHorizontal className="h-4 w-4 text-slate-500" />
@@ -872,27 +978,27 @@ export function PromoComposerView() {
                                             <div className="bg-slate-50 px-3 py-2 border-b flex justify-between items-center">
                                                 <div>
                                                     <div className="font-semibold text-xs truncate">{activeCampaign.companyName}.com</div>
-                                                    <div className="text-[10px] text-slate-500">Learn more about us</div>
+                                                    <div className="text-[10px] text-slate-500">{t('freelancer.composer.preview.learn_more_about_us')}</div>
                                                 </div>
-                                                <div className="border border-blue-600 text-blue-600 rounded-full px-3 py-0.5 text-xs font-semibold">Learn more</div>
+                                                <div className="border border-blue-600 text-blue-600 rounded-full px-3 py-0.5 text-xs font-semibold">{t('freelancer.composer.preview.learn_more')}</div>
                                             </div>
 
                                             <div className="flex justify-between px-2 py-1">
                                                 <div className="flex items-center gap-1 p-2 hover:bg-slate-100 rounded cursor-pointer text-slate-500">
                                                     <ThumbsUp className="h-4 w-4 -scale-x-100" />
-                                                    <span className="text-xs font-medium">Like</span>
+                                                    <span className="text-xs font-medium">{t('freelancer.composer.preview.like')}</span>
                                                 </div>
                                                 <div className="flex items-center gap-1 p-2 hover:bg-slate-100 rounded cursor-pointer text-slate-500">
                                                     <MessageCircle className="h-4 w-4" />
-                                                    <span className="text-xs font-medium">Comment</span>
+                                                    <span className="text-xs font-medium">{t('freelancer.composer.preview.comment')}</span>
                                                 </div>
                                                 <div className="flex items-center gap-1 p-2 hover:bg-slate-100 rounded cursor-pointer text-slate-500">
                                                     <Share2 className="h-4 w-4" />
-                                                    <span className="text-xs font-medium">Share</span>
+                                                    <span className="text-xs font-medium">{t('freelancer.composer.preview.share')}</span>
                                                 </div>
                                                 <div className="flex items-center gap-1 p-2 hover:bg-slate-100 rounded cursor-pointer text-slate-500">
                                                     <Send className="h-4 w-4 rotate-45 -mt-1" />
-                                                    <span className="text-xs font-medium">Send</span>
+                                                    <span className="text-xs font-medium">{t('freelancer.composer.preview.send')}</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -937,14 +1043,25 @@ export function PromoComposerView() {
 // Extracted to prevent re-renders on every state change
 // ============================================================================
 
+// This component would require access to useTranslation hook, or pass strings as props.
+// Since it's outside the main component, we'll wrap it or move it inside if needed.
+// For now, let's assume we can modify MainLayout to accept translated strings or useTranslation inside if we move it or change it to not be a separate component file but defined in the same file.
+// Actually, since these are defined in the same file, we can't easily use hooks unless they are components.
+// Let's refactor MainLayout slightly to use translation if possible, or pass props.
+// Ideally, `MainLayout` is a component so it can use hooks.
+
 const MainLayout = ({ children, isMobile }: { children: React.ReactNode, isMobile: boolean }) => {
+    // If we can't use hooks here easily without massive refactor (if it's not exported/used as component in a standard way), we might need to be careful.
+    // However, it is a functional component.
+    const { t } = useTranslation('common');
+
     if (isMobile) {
         return (
             <Tabs defaultValue="editor" className="flex flex-col h-full bg-background">
                 <div className="border-b px-4 py-2 bg-white dark:bg-slate-950 shrink-0">
                     <TabsList className="grid w-full grid-cols-2">
-                        <TabsTrigger value="editor">Editor</TabsTrigger>
-                        <TabsTrigger value="preview">Vista Previa</TabsTrigger>
+                        <TabsTrigger value="editor">{t('freelancer.composer.layout.editor_tab')}</TabsTrigger>
+                        <TabsTrigger value="preview">{t('freelancer.composer.layout.preview_tab')}</TabsTrigger>
                     </TabsList>
                 </div>
                 {children}

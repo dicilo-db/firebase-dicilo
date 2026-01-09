@@ -77,15 +77,14 @@ export function ProspectsManager({ onBack }: { onBack: () => void }) {
             <Card>
                 <CardHeader>
                     <div className="flex justify-between items-center">
-                        <CardTitle>Mis Prospectos Registrados</CardTitle>
+                        <CardTitle>{t('adsManager.cards.programs.prospects.managerTitle')}</CardTitle>
                         <Button variant="outline" size="sm" onClick={fetchProspects} disabled={isLoading}>
                             <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
-                            Actualizar
+                            {t('adsManager.cards.programs.prospects.refresh')}
                         </Button>
                     </div>
                     <CardDescription>
-                        Aquí puedes ver el estado de las empresas que has recomendado.
-                        Ganas 10 DiciPoints cuando el sistema valida el prospecto.
+                        {t('adsManager.cards.programs.prospects.managerDescription')}
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -95,8 +94,8 @@ export function ProspectsManager({ onBack }: { onBack: () => void }) {
                         </div>
                     ) : prospects.length === 0 ? (
                         <div className="text-center py-12 text-muted-foreground">
-                            <p>No has registrado ningún prospecto aún.</p>
-                            <p className="text-sm mt-2">¡Recomienda empresas y empieza a ganar!</p>
+                            <p>{t('adsManager.cards.programs.prospects.emptyState')}</p>
+                            <p className="text-sm mt-2">{t('adsManager.cards.programs.prospects.emptyStateCta')}</p>
                             {/* TODO: Add button to open recommendation form */}
                         </div>
                     ) : (

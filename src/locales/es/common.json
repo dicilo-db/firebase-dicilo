@@ -553,7 +553,13 @@
         },
         "prospects": {
           "title": "Tus Prospectos",
-          "description": "Recomienda empresas que estan en tu zona o empresas donde te gusta comprar y gana DiciPoints o dinero en efectivo como freelenace."
+          "description": "Recomienda empresas que estan en tu zona o empresas donde te gusta comprar y gana DiciPoints o dinero en efectivo como freelenace.",
+          "button": "Gestionar Prospectos",
+          "managerTitle": "Mis Prospectos Registrados",
+          "refresh": "Actualizar",
+          "managerDescription": "Aquí puedes ver el estado de las empresas que has recomendado. Ganas 10 DiciPoints cuando el sistema valida el prospecto.",
+          "emptyState": "No has registrado ningún prospecto aún.",
+          "emptyStateCta": "¡Recomienda empresas y empieza a ganar!"
         },
         "hostess": {
           "title": "Hostesen",
@@ -630,8 +636,20 @@
       "shareWhatsapp": "Compartir en WhatsApp",
       "preview": {
         "title": "Vista Previa Móvil",
+        "mode_label": "Modo Vista Previa",
         "sponsored": "Patrocinado",
+        "promoted": "Promocionado",
+        "learn_more": "Más información",
+        "learn_more_about_us": "Conoce más sobre nosotros",
+        "like": "Me gusta",
+        "comment": "Comentar",
+        "share": "Compartir",
+        "send": "Enviar",
         "you": "Tú"
+      },
+      "layout": {
+        "editor_tab": "Editor",
+        "preview_tab": "Vista Previa"
       },
       "earnings": {
         "title": "Tu Ganancia Estimada",
@@ -647,7 +665,40 @@
         "openingWhatsapp": "Abriendo WhatsApp con tu promoción...",
         "shareError": "Error al compartir",
         "shareErrorDesc": "No se pudo generar el enlace."
-      }
+      },
+      "content_translation_label": "Contenido & Traducción",
+      "link_target_label": "Objetivo del Link",
+      "default_url_placeholder": "URL por Defecto (Campaña)",
+      "select_url_placeholder": "Selecciona URL destino",
+      "translate_to": "Traducir a:",
+      "translate_button": "Traducir",
+      "write_placeholder": "Escribe el copy en {{lang}}...",
+      "grammar_tooltip": "Corregir Gramática con IA",
+      "copy_tooltip": "Copiar",
+      "copy_link_only_title": "Copiar Solo Link",
+      "copy_link_only_success": "Enlace Copiado",
+      "copy_link_only_success_desc": "Solo el enlace ha sido copiado.",
+      "pick_date_placeholder": "Elige una fecha",
+      "share_button": "Compartir",
+      "share_disabled_tooltip": "Campaña sin presupuesto disponible",
+      "share_menu": {
+        "whatsapp": "WhatsApp",
+        "whatsapp_business": "WhatsApp Business",
+        "telegram": "Telegram",
+        "twitter": "X (Twitter)",
+        "facebook": "Facebook",
+        "email": "Email",
+        "more": "Más opciones...",
+        "native_not_supported": "Compartir nativo no soportado en este dispositivo."
+      },
+      "grammar_success_title": "Texto Mejorado ✨",
+      "grammar_success_desc": "Hemos corregido la gramática y el estilo.",
+      "grammar_perfect_title": "¡Perfecto!",
+      "grammar_perfect_desc": "Tu texto ya estaba excelente.",
+      "translation_success_title": "Traducido",
+      "translation_success_desc": "Texto traducido a {{lang}}.",
+      "copy_success_title": "Texto Copiado",
+      "copy_success_desc": "Texto y enlace copiados al portapapeles."
     }
   },
   "networkCampaigns": {

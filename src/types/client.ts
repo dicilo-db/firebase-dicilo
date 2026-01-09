@@ -82,7 +82,10 @@ export interface ClientData {
     slug: string;
     category?: string;
     subcategory?: string;
-    layout?: any[];
+    neighborhood?: string;
+    city?: string;
+    zip?: string;
+    country?: string;
     coordinates?: { lat: number; lng: number };
     address?: string;
     phone?: string;

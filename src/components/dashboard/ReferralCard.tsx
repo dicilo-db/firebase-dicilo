@@ -331,11 +331,11 @@ export function ReferralCard() {
 
     return (
         <>
-            <Card className="bg-blue-50 dark:bg-blue-900/10 border-blue-200 shadow-sm hover:shadow-md transition-all">
+            <Card className="bg-green-50 dark:bg-green-900/10 border-green-200 shadow-sm hover:shadow-md transition-all">
                 <CardHeader>
                     <div className="flex items-start justify-between">
-                        <Users className="h-8 w-8 text-blue-600 mb-2" />
-                        <Badge className="bg-blue-600 text-white hover:bg-blue-700">
+                        <Users className="h-8 w-8 text-green-600 mb-2" />
+                        <Badge className="bg-green-600 text-white hover:bg-green-700">
                             {t('admin:dashboard.cards.active', 'Activo')}
                         </Badge>
                     </div>
@@ -347,7 +347,7 @@ export function ReferralCard() {
                 <CardFooter>
                     <Dialog open={isOpen} onOpenChange={setIsOpen}>
                         <DialogTrigger asChild>
-                            <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+                            <Button className="w-full bg-green-600 hover:bg-green-700 text-white">
                                 {t('admin:invite.form.inviteFriendsButton', 'Invitar Amigos')}
                                 <Send className="ml-2 h-4 w-4" />
                             </Button>

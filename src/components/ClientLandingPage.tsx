@@ -259,6 +259,7 @@ const ClientHeader = ({ clientData }: { clientData: ClientData }) => {
             headerImageUrl={headerData?.headerImageUrl}
             clientLogoWidth={headerData?.clientLogoWidth}
             textClassName={textClassName}
+            clientId={clientData.id}
           />
         </div>
         {headerData?.dividerLine?.enabled && (

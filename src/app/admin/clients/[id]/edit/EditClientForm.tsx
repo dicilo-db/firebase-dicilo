@@ -115,6 +115,7 @@ import { InviteFriendSection } from '@/components/dashboard/InviteFriendSection'
 
 
 import { ensureUniqueCode } from '@/app/actions/profile';
+import { BERLIN_NEIGHBORHOODS } from '@/data/neighborhoods';
 
 const recipientSchema = z
   .object({
@@ -1200,16 +1201,20 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
 
       // Sanitize visibility_settings to avoid undefined values (Firestore error)
       if (newData.visibility_settings) {
-        if (newData.visibility_settings.geo_coordinates === undefined) {
-          // Default to null if not present, so Firestore doesn't reject it
-          // Or if coordinates exist, try to sync?
-          // For now, null to be safe.
-          newData.visibility_settings.geo_coordinates = null;
-        }
-        // Also allowed_continents
-        if (newData.visibility_settings.allowed_continents === undefined) {
+        if (!newData.visibility_settings.allowed_continents) {
           newData.visibility_settings.allowed_continents = [];
         }
+        if (!newData.visibility_settings.geo_coordinates) {
+          // If no specific coordinates are set, we might want to default to null
+          newData.visibility_settings.geo_coordinates = null;
+        }
+      } else {
+        // Ensure the object exists if it was null/undefined
+        newData.visibility_settings = {
+          active_range: 'national',
+          allowed_continents: [],
+          geo_coordinates: null
+        };
       }
 
       const finalPayload = _.merge({}, originalData, newData);
@@ -1499,6 +1504,30 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                             </Select>
                           );
                         }}
+                      />
+                    </div>
+
+                    {/* Neighborhood (Left) - New */}
+                    <div className="space-y-2">
+                      <Label>Neighborhood (Kiez)</Label>
+                      <Controller
+                        control={control}
+                        name="neighborhood"
+                        render={({ field }) => (
+                          <Select onValueChange={field.onChange} value={field.value || ''}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select Neighborhood" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="none">None</SelectItem>
+                              {BERLIN_NEIGHBORHOODS.map((n) => (
+                                <SelectItem key={n.id} value={n.id}>
+                                  {n.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        )}
                       />
                     </div>
 

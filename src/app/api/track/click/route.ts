@@ -43,7 +43,8 @@ export async function GET(request: NextRequest) {
             // 1. Register the click
             t.set(clickTrackingRef, {
                 timestamp: admin.firestore.FieldValue.serverTimestamp(),
-                ipHash: ipHash
+                ipHash: ipHash,
+                userAgent: request.headers.get('user-agent') || 'unknown'
             });
 
             // 2. Increment click count
@@ -53,32 +54,93 @@ export async function GET(request: NextRequest) {
                 lastClickAt: admin.firestore.FieldValue.serverTimestamp()
             };
 
-            // 3. BONUS LOGIC: Check if this click triggers the reward
-            if (data?.monetizationActive && !data?.bonusPaidStatus && newCount >= 5) {
-                const freelancerId = data.freelancerId;
-                const bonusAmount = data.clickBonusAmount || 0.10;
+            // 3. REVENUE SHARE LOGIC (Conditional V1 vs V2)
+            const paymentModel = data.paymentModel || 'legacy_rev_share';
 
-                // Credit Freelancer Wallet
-                const walletRef = db.collection('wallets').doc(freelancerId);
-                t.update(walletRef, {
-                    balance: admin.firestore.FieldValue.increment(bonusAmount),
-                    totalEarned: admin.firestore.FieldValue.increment(bonusAmount),
-                    updatedAt: admin.firestore.FieldValue.serverTimestamp()
-                });
+            if (paymentModel === 'fixed_plus_bonus') {
+                // --- V2 LOGIC: Bonus at 5 Clicks ---
+                const UNIQUE_CLICKS_THRESHOLD = 5;
+                const BONUS_AMOUNT = 0.10;
 
-                // Log Transaction
-                const trxRef = db.collection('wallet_transactions').doc();
-                t.set(trxRef, {
-                    userId: freelancerId,
-                    amount: bonusAmount,
-                    type: 'CAMPAIGN_BONUS_TRAFFIC',
-                    description: `Bono Objetivo: 5 Clics Únicos Alcanzados (Link: ${linkId})`,
-                    campaignId: data.campaignId,
-                    linkId: linkId,
-                    timestamp: admin.firestore.FieldValue.serverTimestamp()
-                });
+                // Check if we just hit the threshold and haven't paid yet
+                if (newCount === UNIQUE_CLICKS_THRESHOLD && !data.bonusPaidStatus) {
+                    const freelancerId = data.freelancerId;
 
-                updates.bonusPaidStatus = true;
+                    // Credit Wallet
+                    const walletRef = db.collection('wallets').doc(freelancerId);
+
+                    t.update(walletRef, {
+                        balance: admin.firestore.FieldValue.increment(BONUS_AMOUNT),
+                        totalEarned: admin.firestore.FieldValue.increment(BONUS_AMOUNT),
+                        updatedAt: admin.firestore.FieldValue.serverTimestamp()
+                    });
+
+                    // Log Transaction
+                    const trxRef = db.collection('wallet_transactions').doc();
+                    t.set(trxRef, {
+                        userId: freelancerId,
+                        amount: BONUS_AMOUNT,
+                        type: 'CAMPAIGN_BONUS_PERFORMANCE',
+                        description: `Bono Rendimiento (5 Clics): ${data.campaignId}`,
+                        campaignId: data.campaignId,
+                        linkId: linkId,
+                        timestamp: admin.firestore.FieldValue.serverTimestamp()
+                    });
+
+                    // Mark as Paid
+                    updates.bonusPaidStatus = true;
+                    updates.bonusPaidAt = admin.firestore.FieldValue.serverTimestamp();
+                }
+
+            } else {
+                // --- LEGACY V1 LOGIC: Revenue Share ---
+                // Fetch Campaign to get the actual rate
+                const campaignRef = db.collection('campaigns').doc(data.campaignId);
+                const campaignDoc = await t.get(campaignRef);
+
+                const campaignData = campaignDoc.exists ? campaignDoc.data() : null;
+                const ratePerClick = campaignData?.rate_per_click || 0.05; // Default safe 0.05 if missing
+
+                const freelancerShare = ratePerClick * 0.60;
+                const platformShare = ratePerClick * 0.40;
+
+                if (campaignData && freelancerShare > 0) {
+                    const freelancerId = data.freelancerId;
+
+                    // Credit Freelancer Wallet
+                    const walletRef = db.collection('wallets').doc(freelancerId);
+                    const walletDoc = await t.get(walletRef);
+                    const currentTotalEarned = (walletDoc.data()?.totalEarned || 0) + freelancerShare;
+
+                    t.update(walletRef, {
+                        balance: admin.firestore.FieldValue.increment(freelancerShare),
+                        totalEarned: admin.firestore.FieldValue.increment(freelancerShare),
+                        updatedAt: admin.firestore.FieldValue.serverTimestamp()
+                    });
+
+                    // Detailed Transaction Log
+                    const trxRef = db.collection('wallet_transactions').doc();
+                    t.set(trxRef, {
+                        userId: freelancerId,
+                        amount: freelancerShare,
+                        type: 'CAMPAIGN_CLICK_REWARD',
+                        description: `Pago por Click (60%): ${campaignData.name || 'Campaign'}`,
+                        campaignId: data.campaignId,
+                        linkId: linkId,
+                        timestamp: admin.firestore.FieldValue.serverTimestamp(),
+                        meta: {
+                            rate_per_click: ratePerClick,
+                            platform_share: platformShare,
+                            ip_hash: ipHash
+                        }
+                    });
+
+                    // KYC CHECK (> 2000 DiciCoins/EUR)
+                    if (currentTotalEarned > 2000) {
+                        const profileRef = db.collection('private_profiles').doc(freelancerId);
+                        t.set(profileRef, { kycStatus: 'required' }, { merge: true });
+                    }
+                }
             }
 
             t.update(linkRef, updates);

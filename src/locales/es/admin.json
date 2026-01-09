@@ -484,6 +484,8 @@
       "title": "Título",
       "content": "Contenido",
       "clientName": "Nombre del Cliente",
+      "category": "Categoría",
+      "subcategory": "Subcategoría",
       "clientType": "Tipo de Cliente",
       "clientLogoUrl": "URL del Logo del Cliente",
       "clientTitle": "Título del Cliente",
@@ -580,6 +582,19 @@
         "description": "Gestiona el formulario de recomendación que se muestra en la landing page de este cliente.",
         "infoBlockPre": "Tus amigos podrán obtener beneficios (descuentos, sorteos y nuevas ofertas). Te mantendremos al día con novedades y ventajas exclusivas.",
         "infoBlockRecommend": "No se envían emails masivos. Primero pediremos consentimiento al recomendado. Al marcar, confirmas comprender y aceptar este flujo."
+      },
+      "visibility_settings": {
+        "title": "Visibilidad y Alcance Geográfico",
+        "subtitle": "Controla dónde es visible tu perfil de negocio.",
+        "active_range": "Rango Activo",
+        "ranges": {
+          "local": "Local (50km)",
+          "regional": "Regional (Ciudad)",
+          "national": "Nacional (País)",
+          "continental": "Continental",
+          "international": "Internacional / Global"
+        },
+        "allowed_continents": "Continentes Permitidos"
       }
     }
   },
@@ -919,6 +934,7 @@
   "invite": {
     "form": {
       "title": "Personalizar Invitación",
+      "inviteFriendsButton": "Invitar Amigos",
       "description": "Añade hasta 7 amigos y envíales una invitación personalizada. Simplemente ingresa sus datos, agrégalos a la lista y realiza el envío masivo en un solo clic.",
       "yourId": "Tu ID",
       "yourName": "Tu Nombre",

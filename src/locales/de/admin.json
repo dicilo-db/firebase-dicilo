@@ -135,6 +135,11 @@
         "title": "Privatkunden",
         "description": "Private Profile verwalten"
       }
+    },
+    "invite": {
+      "form": {
+        "inviteFriendsButton": "Freunde einladen"
+      }
     }
   },
   "dicipoints": {
@@ -470,6 +475,8 @@
       "title": "Titel",
       "content": "Inhalt",
       "clientName": "Kundenname",
+      "category": "Kategorie",
+      "subcategory": "Unterkategorie",
       "clientType": "Kundentyp",
       "clientLogoUrl": "Kundenlogo URL",
       "clientTitle": "Kundentitel",
@@ -566,7 +573,20 @@
       "form": {
         "description": "Verwalten Sie das Empfehlungsformular, das auf der Landingpage dieses Kunden angezeigt wird.",
         "infoBlockPre": "Ihre Freunde können Vorteile erhalten (Rabatte, Geschenke, neue Angebote). Wir halten Sie mit Neuigkeiten und exklusiven Vorteilen auf dem Laufenden.",
-        "infoBlockRecommend": "Es werden keine Massen-E-Mails gesendet. Zuerst wird die Zustimmung des Kontakts eingeholt. Durch Ankreuzen bestätigen Sie, dass Sie diesen Ablauf verstehen und akzeptieren."
+        "infoBlockRecommend": "Keine Massen-E-Mails. Wir fragen zuerst um Erlaubnis. Durch Markieren bestätigen Sie das Verständnis dieses Ablaufs."
+      },
+      "visibility_settings": {
+        "title": "Sichtbarkeit & Geografische Reichweite",
+        "subtitle": "Steuern Sie, wo Ihr Unternehmensprofil sichtbar ist.",
+        "active_range": "Aktiver Bereich",
+        "ranges": {
+          "local": "Lokal (50km)",
+          "regional": "Regional (Stadt)",
+          "national": "National (Land)",
+          "continental": "Kontinental",
+          "international": "International / Global"
+        },
+        "allowed_continents": "Erlaubte Kontinente"
       }
     }
   },

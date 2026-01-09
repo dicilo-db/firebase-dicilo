@@ -42,6 +42,7 @@ import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { seedCategories } from '@/lib/seed-categories';
+import { BERLIN_NEIGHBORHOODS, HAMBURG_NEIGHBORHOODS } from '@/data/neighborhoods';
 import {
   Select,
   SelectContent,
@@ -75,8 +76,12 @@ const businessSchema = z.object({
     es: z.string().optional(),
     de: z.string().optional(),
   }).optional(),
-  location: z.string().min(1, 'Location is required'),
+  location: z.string().optional(),
   address: z.string().optional(),
+  zip: z.string().optional(),
+  city: z.string().min(1, 'City is required'),
+  neighborhood: z.string().optional(),
+  country: z.string().default('Deutschland'),
   phone: z.string().optional(),
   website: z.string().url().optional().or(z.literal('')),
   imageUrl: z
@@ -181,6 +186,16 @@ export default function EditBusinessPage() {
 
   const coords = watch('coords');
   const imageUrl = watch('imageUrl');
+  const city = watch('city');
+
+  // Determine available neighborhoods based on city
+  const filteredNeighborhoods = React.useMemo(() => {
+    const normalize = (s: string) => s?.toLowerCase().trim();
+    const c = normalize(city || '');
+    if (c.includes('berlin')) return BERLIN_NEIGHBORHOODS;
+    if (c.includes('hamburg')) return HAMBURG_NEIGHBORHOODS;
+    return [];
+  }, [city]);
 
   const [categoriesLoaded, setCategoriesLoaded] = useState(false);
 
@@ -284,8 +299,10 @@ export default function EditBusinessPage() {
 
   const triggerGeocode = useCallback(() => {
     const address = getValues('address');
-    const location = getValues('location');
-    const addressToGeocode = address || location;
+    const city = getValues('city');
+    const zip = getValues('zip');
+    // Construct address for geocoding
+    const addressToGeocode = `${address || ''}, ${zip || ''} ${city || ''}, ${getValues('country') || ''}`;
 
     if (!addressToGeocode) {
       toast({
@@ -526,6 +543,10 @@ export default function EditBusinessPage() {
               },
               location: data.location || '',
               address: data.address || '',
+              zip: data.zip || '',
+              city: data.city || '',
+              neighborhood: data.neighborhood || '',
+              country: data.country || 'Deutschland',
               phone: data.phone || '',
               website: data.website || '',
               imageUrl: data.imageUrl || '',
@@ -958,6 +979,50 @@ export default function EditBusinessPage() {
                       )}
                     </Button>
                   </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="zip">PLZ (Zip)</Label>
+                    <Input id="zip" {...register('zip')} placeholder="20095" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="city">Stadt (City)</Label>
+                    <Input id="city" {...register('city')} placeholder="Hamburg" />
+                    {errors.city && <p className="text-sm text-destructive">{errors.city.message}</p>}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="neighborhood">Stadtteil (Neighborhood)</Label>
+                  {filteredNeighborhoods.length > 0 ? (
+                    <Controller
+                      control={control}
+                      name="neighborhood"
+                      render={({ field }) => (
+                        <Select onValueChange={field.onChange} value={field.value || ''}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Bezirk auswählen..." />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="none">Keine Auswahl</SelectItem>
+                            {filteredNeighborhoods.map((n) => (
+                              <SelectItem key={n.id} value={n.id}>{n.name}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      )}
+                    />
+                  ) : (
+                    <Input id="neighborhood" {...register('neighborhood')} placeholder="e.g. Altona, Mitte..." />
+                  )}
+                  <p className="text-xs text-muted-foreground">
+                    Für Berlin/Hamburg: Bitte den Bezirk/Stadtteil auswählen.
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="country">Land</Label>
+                  <Input id="country" {...register('country')} defaultValue="Deutschland" />
                 </div>
                 {/* Phone */}
                 <div className="space-y-2">

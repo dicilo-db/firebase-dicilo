@@ -14,6 +14,8 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Loader2, ArrowLeft, Plus, Upload, Image as ImageIcon, X, Trash2 } from 'lucide-react';
 import { createCampaign, getClientsForSelect, getCampaigns, updateCampaign, deleteCampaign, ClientOption } from '@/app/actions/campaigns';
+import { CampaignAsset } from '@/types/freelancer';
+import { CampaignAssetEditor } from './CampaignAssetEditor';
 import { uploadImage } from '@/app/actions/upload';
 import { translateText } from '@/app/actions/translate';
 import { correctText } from '@/app/actions/grammar';
@@ -69,6 +71,7 @@ export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
         allowedLanguages: ['es'] as string[],
         targetUrls: {} as Record<string, string[]>,
         images: [] as string[],
+        assets: [] as CampaignAsset[],
     });
 
     const [content, setContent] = useState<Record<string, ContentBlock>>({
@@ -107,9 +110,10 @@ export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
             dailyLimit: 10,
             startDate: '',
             endDate: '',
-            allowedLanguages: ['es'] as string[],
+            allowedLanguages: ['es', 'en', 'de'], // Default to all 3
             targetUrls: {} as Record<string, string[]>,
             images: [] as string[],
+            assets: [] as CampaignAsset[],
         });
         setContent({
             es: { title: '', description: '', suggestedText: '' },
@@ -136,6 +140,35 @@ export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
         setEditingId(campaign.id);
 
         // Map backend snake_case to frontend camelCase
+        let initialAssets: CampaignAsset[] = campaign.assets || [];
+
+        // Migration Logic: If no assets but we have legacy images, create assets from them
+        if (initialAssets.length === 0 && campaign.images && campaign.images.length > 0) {
+            initialAssets = campaign.images.map((imgUrl: string) => ({
+                id: crypto.randomUUID(),
+                imageUrl: imgUrl,
+                baseText: campaign.description || campaign.content_map?.es?.description || '', // Pre-fill with campaign desc
+                sourceLanguage: campaign.languages?.[0] || 'es',
+                translations: {
+                    es: campaign.content_map?.es?.description || campaign.description || '',
+                    en: campaign.content_map?.en?.description || '',
+                    de: campaign.content_map?.de?.description || ''
+                }
+            }));
+            // Ensure we use valid property names from CampaignAsset type
+        }
+
+        // Ensure we have at least the stored languages, but default to all 3 if missing or logic dictates
+        const campaignLangs = campaign.languages && campaign.languages.length > 0 ? campaign.languages : ['es', 'en', 'de'];
+
+        // Per user request: "We handle 3 languages", so let's encourage it by merging defaults if they want
+        // But strictly speaking, we should respect what was saved. 
+        // However, user says "English is missing", implies they want it added now.
+        // Let's ensure 'en' is present if it's missing but 'es' is there, or just trust the campaign.
+        // Actually, if I just modify the state here to include them, it will show up.
+        // Let's force all 3 for now as per "manejamos tres idiomas" implication, or at least union.
+        const mergedLangs = Array.from(new Set([...campaignLangs, 'es', 'en', 'de']));
+
         setFormData({
             clientId: campaign.clientId || campaign.client_id || '',
             budgetTotal: campaign.budget_total || 0,
@@ -143,7 +176,7 @@ export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
             dailyLimit: campaign.daily_limit_per_user || 10,
             startDate: campaign.start_date || '',
             endDate: campaign.end_date || '',
-            allowedLanguages: campaign.languages || ['es'],
+            allowedLanguages: mergedLangs, // Force all 3 available for editing
             targetUrls: (function () {
                 const raw = campaign.target_urls || {};
                 const normalized: Record<string, string[]> = {};
@@ -154,7 +187,8 @@ export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
                 });
                 return normalized;
             })(),
-            images: campaign.images || []
+            images: campaign.images || [],
+            assets: initialAssets
         });
 
         // Map content
@@ -287,7 +321,7 @@ export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
         const file = e.target.files?.[0];
         if (!file) return;
 
-        if (formData.images.length >= 24) {
+        if (formData.images.length >= 60) {
             toast({ title: 'Limit Reached', description: t('networkCampaigns.form.maxImages'), variant: 'destructive' });
             return;
         }
@@ -325,11 +359,16 @@ export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
         e.preventDefault();
         if (!user) return;
 
+        // 4. Validate
+        if (!formData.clientId) {
+            toast({ title: 'Validation', description: t('networkCampaigns.form.validation.client'), variant: 'destructive' });
+            return;
+        }
         if (formData.allowedLanguages.length === 0) {
             toast({ title: 'Validation', description: t('networkCampaigns.form.validation.lang'), variant: 'destructive' });
             return;
         }
-        if (formData.images.length === 0) {
+        if (formData.assets.length === 0 && formData.images.length === 0) {
             toast({ title: 'Validation', description: t('networkCampaigns.form.validation.image'), variant: 'destructive' });
             return;
         }
@@ -344,7 +383,9 @@ export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
 
             const payload = {
                 ...formData,
-                content: relevantContent
+                content: relevantContent,
+                // Ensure images array is populated from assets for backward compat if needed (but we use assets primarily now)
+                images: formData.assets.length > 0 ? formData.assets.map(a => a.imageUrl) : formData.images
             };
 
             let res;
@@ -424,7 +465,7 @@ export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
                         value={textValue}
                         onChange={e => handleContentChange(lang, field, e.target.value)}
                         placeholder={placeholder}
-                        className={field === 'suggestedText' ? "h-24 bg-blue-50/50" : ""}
+                        className={field === 'suggestedText' ? "hidden" : ""} // Hide suggestedText as it is replaced by Assets
                         disabled={isLoading}
                     />
                 ) : (
@@ -736,62 +777,22 @@ export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
                             )}
                         </div>
 
-                        {/* 3. Visuals (Multiple Images) */}
-                        <div className="space-y-2">
-                            <div className="flex justify-between items-center">
-                                <Label>{t('networkCampaigns.form.imagesLabel')}</Label>
-                                <span className="text-xs text-muted-foreground">{formData.images.length} / 24</span>
-                            </div>
-
-                            <div className="border rounded-lg p-4 bg-slate-50">
-                                {formData.images.length === 0 ? (
-                                    <div className="text-center py-8 text-muted-foreground">
-                                        <ImageIcon className="h-10 w-10 mx-auto opacity-20 mb-2" />
-                                        <p>{t('networkCampaigns.form.noImages')}</p>
-                                    </div>
-                                ) : (
-                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                                        {formData.images.map((url, idx) => (
-                                            <div key={idx} className="relative aspect-video bg-white rounded-md border overflow-hidden group">
-                                                <Image src={url} alt={`Campaign ${idx}`} fill className="object-cover" />
-                                                <button
-                                                    type="button"
-                                                    onClick={() => handleRemoveImage(idx)}
-                                                    className="absolute top-1 right-1 bg-black/50 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
-                                                >
-                                                    <X className="h-3 w-3" />
-                                                </button>
-                                                {idx === 0 && (
-                                                    <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-[10px] py-1 text-center">
-                                                        Main
-                                                    </div>
-                                                )}
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-
-                                <div className="mt-4">
-                                    <Label htmlFor="image-upload" className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground hover:bg-primary/90 rounded-md text-sm font-medium transition-colors">
-                                        {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
-                                        {t('networkCampaigns.form.addImage')}
-                                    </Label>
-                                    <Input
-                                        id="image-upload"
-                                        type="file"
-                                        onChange={handleImageUpload}
-                                        disabled={uploading || formData.images.length >= 24}
-                                        className="hidden"
-                                        accept="image/*"
-                                    />
-                                    <p className="text-xs text-muted-foreground mt-2">{t('networkCampaigns.form.uploadHelp')}</p>
-                                </div>
-                            </div>
+                        {/* 3. Assets (V2) */}
+                        <div className="space-y-4 pt-4 border-t">
+                            {/* Sync Assets with Legacy Images for now if needed, but Editor manages assets independently */}
+                            <CampaignAssetEditor
+                                assets={formData.assets}
+                                onAssetsChange={newAssets => setFormData(p => ({ ...p, assets: newAssets }))}
+                                allowedLanguages={formData.allowedLanguages}
+                            />
                         </div>
 
-                        {/* 4. Content (Tabs) */}
-                        <div className="space-y-2">
-                            <Label>{t('networkCampaigns.form.content')}</Label>
+                        {/* Legacy Image Upload (Hidden/Removed in favor of Asset Editor) */}
+                        {/* We keep the state for compatibility, but UI is replaced */}
+
+                        {/* 4. Content (Campaign Details Only) */}
+                        <div className="space-y-2 pt-4 border-t">
+                            <Label className="text-lg font-semibold">{t('networkCampaigns.form.content')} (Listing Details)</Label>
                             <Tabs
                                 key={formData.allowedLanguages.join(',')}
                                 defaultValue={formData.allowedLanguages[0] || 'es'}
@@ -799,28 +800,34 @@ export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
                             >
                                 <TabsList>
                                     {formData.allowedLanguages.map(lang => (
-                                        <TabsTrigger key={lang} value={lang}>{lang.toUpperCase()}</TabsTrigger>
+                                        <TabsTrigger key={lang} value={lang} className="flex items-center gap-2">
+                                            <span className={`fi fi-${lang === 'en' ? 'gb' : lang} rounded-sm`} />
+                                            {AVAILABLE_LANGUAGES.find(l => l.code === lang)?.label}
+                                        </TabsTrigger>
                                     ))}
                                 </TabsList>
                                 {formData.allowedLanguages.map(lang => (
-                                    <TabsContent key={lang} value={lang} className="space-y-4 border p-4 rounded-lg mt-2">
-                                        {renderContentField(lang, 'title', t('networkCampaigns.form.tabTitle'), t('networkCampaigns.form.placeholderTitle'))}
-                                        {renderContentField(lang, 'description', t('networkCampaigns.form.tabDesc'), t('networkCampaigns.form.placeholderDesc'), true)}
-                                        {renderContentField(lang, 'suggestedText', t('networkCampaigns.form.tabSuggest'), t('networkCampaigns.form.placeholderSuggest'), true)}
+                                    <TabsContent key={lang} value={lang} className="space-y-4 pt-4">
+                                        {renderContentField(lang, 'title', t('networkCampaigns.form.title'), 'Campaign Title')}
+                                        {renderContentField(lang, 'description', t('networkCampaigns.form.description'), 'Short description for the dashboard card', true)}
+                                        {/* Suggested Text Field is now HIDDEN via renderContentField logic above */}
                                     </TabsContent>
                                 ))}
                             </Tabs>
                         </div>
+
                     </CardContent>
-                    <CardFooter className="flex justify-between border-t p-6 bg-slate-50/50 rounded-b-xl">
-                        <Button type="button" variant="outline" onClick={() => setView('list')}>{t('networkCampaigns.form.cancel')}</Button>
-                        <Button type="submit" disabled={submitting || uploading}>
+                    <CardFooter className="flex justify-end gap-2 sticky bottom-0 bg-white p-4 border-t shadow-inner z-10">
+                        <Button type="button" variant="outline" onClick={() => setView('list')}>
+                            {t('common:cancel', 'Cancel')}
+                        </Button>
+                        <Button type="submit" disabled={submitting}>
                             {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                            {editingId ? 'Update Campaign' : t('networkCampaigns.form.submit')}
+                            {editingId ? t('common:update', 'Update Campaign') : t('common:create', 'Create Campaign')}
                         </Button>
                     </CardFooter>
                 </Card>
             </form>
-        </div >
+        </div>
     );
 }

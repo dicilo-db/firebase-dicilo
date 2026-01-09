@@ -101,6 +101,10 @@ async function getSidebarAd() {
   }
 }
 
+import { RecommendationButton } from '@/components/recommendations/recommendation-button';
+
+// ... (existing code)
+
 export default async function ClientPage({
   params,
 }: {
@@ -116,6 +120,7 @@ export default async function ClientPage({
   return (
     <I18nProvider>
       <ClientLandingPage clientData={clientData} ad={sidebarAd} />
+      <RecommendationButton businessId={clientData.id} />
     </I18nProvider>
   );
 }

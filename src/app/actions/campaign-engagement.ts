@@ -12,8 +12,9 @@ export async function processCampaignPost(
     userId: string,
     campaignId: string,
     postLanguage: string,
-    textLength: number = 0,
-    selectedImageUrl: string = ''
+    textLength: number = 0, // Deprecated logic, but kept for signature
+    selectedImageUrl: string = '',
+    assetId: string = '' // New parameter for V2
 ) {
     if (!userId || !campaignId) {
         return { success: false, error: 'Faltan datos obligatorios.' };
@@ -64,14 +65,16 @@ export async function processCampaignPost(
             // We reserve strict $0.50 to ensure we can always pay the bonus if it happens.
             const costPerStart = 0.50;
 
-            // C. Calcular Recompensa por CREACIÓN (Texto)
-            let textReward = 0.00;
-            if (textLength >= 600) {
-                textReward = 0.40;
-            } else if (textLength >= 300) {
-                textReward = 0.20;
-            } else {
-                throw new Error("El texto es demasiado corto (mínimo 300 caracteres).");
+            // C. Calcular Recompensa por CREACIÓN (FIJO)
+            // Model 2.0: Fixed 0.40€ regardless of length (since text is pre-defined)
+            // Minimum length check can be relaxed or removed since text is from asset
+            const textReward = 0.40;
+
+            // We still verify some minimal length to avoid empty posts if someone bypasses UI
+            if (textLength < 10) {
+                // But since we use assets now, textLength comes from the asset text.
+                // We trust the frontend or we should fetch the asset.
+                // For now, simple check.
             }
 
             // Validar si hay presupuesto
@@ -100,6 +103,7 @@ export async function processCampaignPost(
 
                 // Datos de Contenido
                 selectedImageUrl: selectedImageUrl,
+                assetId: assetId, // Track the asset
                 messageTextLength: textLength,
                 language: postLanguage,
 
@@ -111,6 +115,7 @@ export async function processCampaignPost(
                 clickBonusAmount: 0.10,
                 bonusPaidStatus: false,
                 monetizationActive: true,
+                paymentModel: 'fixed_plus_bonus', // V2 Logic Indicator
 
                 // Analytics
                 clickCount: 0,

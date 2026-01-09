@@ -101,9 +101,9 @@ service cloud.firestore {
 
     // Recommendations collection
     match /recommendations/{recommendationId} {
-      allow create: if true;
-      allow read, update: if isAdmin(); // Keeping higher restriction for management? Or Team Office? Prompt implies Team Office on "registros". Recommendations are kind of user records. Let's say Team Office can view/update status.
-      // Actually, let's stick to isAdmin for now unless specified.
+      allow create: if true; // Guest submissions allowed
+      allow read: if resource.data.status == 'approved' || isAdmin(); 
+      allow update: if isAdmin();
       allow delete: if isSuperAdmin();
     }
 

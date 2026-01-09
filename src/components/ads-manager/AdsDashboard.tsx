@@ -82,17 +82,17 @@ export default function AdsDashboard() {
                 </Card>
 
                 {/* Module: Network Campaigns (Active) */}
-                <Card className="border-l-4 border-l-blue-500 shadow-md hover:shadow-lg transition-all">
+                <Card className="border-l-4 border-l-green-600 shadow-md hover:shadow-lg transition-all">
                     <CardHeader>
                         <div className="flex items-start justify-between">
-                            <ShoppingBag className="h-8 w-8 text-blue-500 mb-2" />
-                            <Badge className="bg-blue-500 hover:bg-blue-600">New</Badge>
+                            <ShoppingBag className="h-8 w-8 text-green-600 mb-2" />
+                            <Badge className="bg-green-600 hover:bg-green-700">New</Badge>
                         </div>
                         <CardTitle>{t('adsManager.cards.programs.socialProduct.title')}</CardTitle>
                         <CardDescription>{t('adsManager.cards.programs.socialProduct.description')}</CardDescription>
                     </CardHeader>
                     <CardFooter>
-                        <Button className="w-full group" onClick={() => setCurrentView('network-campaigns')}>
+                        <Button className="w-full group bg-green-600 hover:bg-green-700 text-white" onClick={() => setCurrentView('network-campaigns')}>
                             Manage Campaigns
                             <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                         </Button>
@@ -171,18 +171,18 @@ export default function AdsDashboard() {
                 <ReferralCard />
 
                 {/* Module: Your Prospects (ACTIVE NOW) */}
-                <Card className="bg-blue-50 dark:bg-blue-900/10 border-blue-200">
+                <Card className="bg-green-50 dark:bg-green-900/10 border-green-200">
                     <CardHeader>
                         <div className="flex items-start justify-between">
-                            <Store className="h-8 w-8 text-blue-600 mb-2" />
-                            <Badge className="bg-blue-600 text-white hover:bg-blue-700">{t('adsManager.cards.active')}</Badge>
+                            <Store className="h-8 w-8 text-green-600 mb-2" />
+                            <Badge className="bg-green-600 text-white hover:bg-green-700">{t('adsManager.cards.active')}</Badge>
                         </div>
                         <CardTitle>{t('adsManager.cards.programs.prospects.title')}</CardTitle>
                         <CardDescription>{t('adsManager.cards.programs.prospects.description')}</CardDescription>
                     </CardHeader>
                     <CardFooter>
-                        <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white group" onClick={() => setCurrentView('prospects')}>
-                            Gestionar Prospectos
+                        <Button className="w-full bg-green-600 hover:bg-green-700 text-white group" onClick={() => setCurrentView('prospects')}>
+                            {t('adsManager.cards.programs.prospects.button')}
                             <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                         </Button>
                     </CardFooter>

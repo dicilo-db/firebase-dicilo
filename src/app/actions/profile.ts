@@ -92,8 +92,22 @@ export async function getUserProfileSummary(uid: string) {
             }
         };
 
+
     } catch (error: any) {
         console.error('Error fetching profile summary:', error);
         return { success: false, error: error.message };
+    }
+}
+
+export async function getProfile(uid: string) {
+    try {
+        if (!uid) return null;
+        const docRef = getAdminDb().collection('private_profiles').doc(uid);
+        const doc = await docRef.get();
+        if (!doc.exists) return null;
+        return doc.data();
+    } catch (error) {
+        console.error('Error fetching profile:', error);
+        return null;
     }
 }

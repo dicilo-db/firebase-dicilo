@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useState, useCallback } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { getFirestore, collection, addDoc } from 'firebase/firestore';
@@ -28,6 +28,14 @@ import dynamic from 'next/dynamic';
 import { Skeleton } from '@/components/ui/skeleton';
 import { isValidUrl } from '@/lib/utils';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
+import { BERLIN_NEIGHBORHOODS, HAMBURG_NEIGHBORHOODS } from '@/data/neighborhoods';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 const DiciloMap = dynamic(() => import('@/components/dicilo-map'), {
   ssr: false,
@@ -39,8 +47,12 @@ const businessSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   category: z.string().min(1, 'Category is required'),
   description: z.string().min(1, 'Description is required'),
-  location: z.string().min(1, 'Location is required'),
+  location: z.string().optional(), // Now optional if address/city/zip are used
   address: z.string().optional(),
+  zip: z.string().optional(),
+  city: z.string().min(1, 'City is required'),
+  neighborhood: z.string().optional(),
+  country: z.string().default('Deutschland'),
   phone: z.string().optional(),
   website: z.string().url().optional().or(z.literal('')),
   imageUrl: z
@@ -98,14 +110,19 @@ export default function NewBusinessPage() {
     watch,
     setValue,
     getValues,
+    control,
   } = useForm<BusinessFormData>({
     resolver: zodResolver(businessSchema),
     defaultValues: {
       name: '',
       category: '',
       description: '',
-      location: '',
+      location: '', // Deprecated but kept for backward compatibility if needed
       address: '',
+      zip: '',
+      city: 'Hamburg', // Default or empty
+      neighborhood: '',
+      country: 'Deutschland',
       phone: '',
       website: '',
       imageUrl: '',
@@ -119,6 +136,16 @@ export default function NewBusinessPage() {
 
   const imageUrl = watch('imageUrl');
   const coords = watch('coords');
+  const city = watch('city');
+
+  // Determine available neighborhoods based on city
+  const filteredNeighborhoods = React.useMemo(() => {
+    const normalize = (s: string) => s?.toLowerCase().trim();
+    const c = normalize(city || '');
+    if (c.includes('berlin')) return BERLIN_NEIGHBORHOODS;
+    if (c.includes('hamburg')) return HAMBURG_NEIGHBORHOODS;
+    return [];
+  }, [city]);
 
   const handleGeocode = useCallback(
     async (addressToGeocode: string) => {
@@ -164,8 +191,10 @@ export default function NewBusinessPage() {
 
   const triggerGeocode = useCallback(() => {
     const address = getValues('address');
-    const location = getValues('location');
-    const addressToGeocode = address || location;
+    const city = getValues('city');
+    const zip = getValues('zip');
+    // Construct address for geocoding
+    const addressToGeocode = `${address || ''}, ${zip || ''} ${city || ''}, ${getValues('country') || ''}`;
 
     if (!addressToGeocode) {
       toast({
@@ -337,6 +366,65 @@ export default function NewBusinessPage() {
                       )}
                     </Button>
                   </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="zip">
+                      PLZ (Zip)
+                    </Label>
+                    <Input id="zip" {...register('zip')} placeholder="20095" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="city">
+                      Stadt (City)
+                    </Label>
+                    <Input id="city" {...register('city')} placeholder="Hamburg" />
+                    {errors.city && (
+                      <p className="text-sm text-destructive">{errors.city.message}</p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="neighborhood">
+                    Stadtteil (Neighborhood)
+                  </Label>
+                  {filteredNeighborhoods.length > 0 ? (
+                    <Controller
+                      control={control}
+                      name="neighborhood"
+                      render={({ field }) => (
+                        <Select onValueChange={field.onChange} value={field.value || ''}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Bezirk auswählen..." />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="none">Keine Auswahl</SelectItem>
+                            {filteredNeighborhoods.map((n) => (
+                              <SelectItem key={n.id} value={n.id}>
+                                {n.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      )}
+                    />
+                  ) : (
+                    <Input
+                      id="neighborhood"
+                      {...register('neighborhood')}
+                      placeholder="e.g. Altona, Mitte..."
+                    />
+                  )}
+                  <p className="text-xs text-muted-foreground">
+                    Für Berlin/Hamburg: Bitte den Bezirk/Stadtteil auswählen.
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="country">Land</Label>
+                  <Input id="country" {...register('country')} defaultValue="Deutschland" />
                 </div>
                 {/* Phone */}
                 <div className="space-y-2">

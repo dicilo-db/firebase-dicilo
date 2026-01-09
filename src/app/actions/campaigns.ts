@@ -3,6 +3,7 @@
 import { getAdminDb, getAdminAuth } from '@/lib/firebase-admin';
 import * as admin from 'firebase-admin';
 import { revalidatePath } from 'next/cache';
+import { CampaignAsset } from '@/types/freelancer';
 
 // --- TYPES ---
 
@@ -25,6 +26,7 @@ export interface CreateCampaignData {
         }
     };
     targetUrls: { [lang: string]: string[] }; // Map langCode -> URL[]
+    assets?: CampaignAsset[]; // New in v2
 }
 
 export interface ClientOption {
@@ -138,6 +140,9 @@ export async function createCampaign(idToken: string, data: CreateCampaignData) 
 
             // Destination URLs
             target_urls: data.targetUrls || {},
+
+            // Assets (v2)
+            assets: data.assets || [],
 
             // Meta
             createdBy: user.uid,
@@ -257,6 +262,7 @@ export async function updateCampaign(idToken: string, campaignId: string, data: 
             target_urls: data.targetUrls || {},
 
             images: data.images,
+            assets: data.assets || [], // Update assets
 
             updatedAt: admin.firestore.FieldValue.serverTimestamp()
         };

@@ -6,6 +6,14 @@ export interface CampaignTranslation {
     promo_text?: string;
 }
 
+export interface CampaignAsset {
+    id: string; // Unique ID for the asset
+    imageUrl: string;
+    baseText: string; // The primary text description
+    sourceLanguage: string; // Language of baseText
+    translations: { [langCode: string]: string }; // Map of lang -> text
+}
+
 export interface Campaign {
     id: string;
     clientId: string; // Reference to business/user
@@ -32,7 +40,8 @@ export interface Campaign {
     title: string;
     description: string;
 
-    images: string[];
+    images: string[]; // Deprecated in v2, kept for legacy
+    assets?: CampaignAsset[]; // New in v2: List of available content assets
     categories: string[];
     languages: string[]; // Supported languages codes
     target_locations: string[];

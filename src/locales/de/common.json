@@ -560,7 +560,13 @@
         },
         "prospects": {
           "title": "Ihre Interessenten",
-          "description": "Empfehlen Sie Unternehmen in Ihrer Nähe oder Geschäfte, in denen Sie gerne einkaufen, und verdienen Sie DiciPoints oder Bargeld als Freelancer."
+          "description": "Empfehlen Sie Unternehmen in Ihrer Nähe oder Geschäfte, in denen Sie gerne einkaufen, und verdienen Sie DiciPoints oder Bargeld als Freelancer.",
+          "button": "Interessenten verwalten",
+          "managerTitle": "Meine registrierten Interessenten",
+          "refresh": "Aktualisieren",
+          "managerDescription": "Hier können Sie den Status der von Ihnen empfohlenen Unternehmen einsehen. Sie erhalten 10 Dicipoints, wenn das System den Interessenten validiert.",
+          "emptyState": "Sie haben noch keine Interessenten registriert.",
+          "emptyStateCta": "Empfehlen Sie Unternehmen und verdienen Sie jetzt!"
         },
         "hostess": {
           "title": "Hostessen",

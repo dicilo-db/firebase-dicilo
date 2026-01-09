@@ -122,6 +122,11 @@
         "title": "Private Users",
         "description": "Manage private profiles"
       }
+    },
+    "invite": {
+      "form": {
+        "inviteFriendsButton": "Invite Friends"
+      }
     }
   },
   "dicipoints": {
@@ -471,6 +476,8 @@
       "title": "Title",
       "content": "Content",
       "clientName": "Client Name",
+      "category": "Category",
+      "subcategory": "Subcategory",
       "clientType": "Client Type",
       "clientLogoUrl": "Client Logo URL",
       "clientTitle": "Client Title",
@@ -567,6 +574,19 @@
         "description": "Manage the recommendation form displayed on this client's landing page.",
         "infoBlockPre": "Your friends can get benefits (discounts, giveaways, new offers). We will keep you updated with news and exclusive advantages.",
         "infoBlockRecommend": "No mass emails are sent. Consent is requested from the contact first. By checking, you confirm you understand and accept this flow."
+      },
+      "visibility_settings": {
+        "title": "Visibility & Geographic Reach",
+        "subtitle": "Control where your business profile is visible.",
+        "active_range": "Active Range",
+        "ranges": {
+          "local": "Local (50km)",
+          "regional": "Regional (City)",
+          "national": "National (Country)",
+          "continental": "Continental",
+          "international": "International / Global"
+        },
+        "allowed_continents": "Allowed Continents"
       }
     }
   },
