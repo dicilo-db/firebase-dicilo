@@ -136,24 +136,67 @@ const Header = () => {
             {loading ? (
               <div className="h-10 w-20 animate-pulse rounded bg-muted" />
             ) : user ? (
-              <div className="flex items-center gap-2">
-                <Button asChild variant="ghost">
-                  <Link href="/dashboard">
-                    <UserIcon className="mr-2 h-4 w-4" />
-                    Dashboard
-                  </Link>
-                </Button>
-                <Button variant="outline" onClick={handleLogout}>
-                  {t('header.nav.logout', 'Abmelden')}
-                </Button>
-              </div>
+              <>
+                {/* Full User Menu (Visible on Large Screens) */}
+                <div className="hidden lg:flex items-center gap-2">
+                  <Button asChild variant="ghost">
+                    <Link href="/dashboard">
+                      <UserIcon className="mr-2 h-4 w-4" />
+                      Dashboard
+                    </Link>
+                  </Button>
+                  <Button variant="outline" onClick={handleLogout}>
+                    {t('header.nav.logout', 'Abmelden')}
+                  </Button>
+                  <LanguageSelector />
+                </div>
+
+                {/* Compact User Menu (Visible on Medium Screens, Hidden on Large) */}
+                <div className="flex lg:hidden items-center">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" className="gap-2">
+                        <UserIcon className="h-4 w-4" />
+                        Dashboard
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-48">
+                      <DropdownMenuItem asChild>
+                        <Link href="/dashboard" className="cursor-pointer font-semibold">
+                          Dashboard Home
+                        </Link>
+                      </DropdownMenuItem>
+
+                      <div className="p-2 border-t mt-1">
+                        <p className="text-xs text-muted-foreground mb-2 px-2">{t('header.nav.language', 'Sprache')}</p>
+                        <div className="flex justify-center">
+                          <LanguageSelector />
+                        </div>
+                      </div>
+
+                      <div className="border-t mt-1 pt-1">
+                        <DropdownMenuItem onClick={handleLogout} className="text-red-600 focus:text-red-600 cursor-pointer">
+                          {t('header.nav.logout', 'Abmelden')}
+                        </DropdownMenuItem>
+                      </div>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+              </>
             ) : (
               // Desktop: Solo "Iniciar Sesión" (Login) visible directo según plan
               <Button variant="ghost" asChild>
                 <Link href="/login">{t('header.nav.login')}</Link>
               </Button>
             )}
-            <LanguageSelector />
+
+            {/* Show Language Selector separately only on LG screens (handled inside the block above for users, preventing duplicate) */}
+            {/* But for non-users? Let's add it back for non-users or general usage on LG */}
+            {!user && (
+              <div className="ml-2">
+                <LanguageSelector />
+              </div>
+            )}
           </div>
 
           {/* MOBILE MENU (HAMBURGER) - Hidden on md breakpoint */}
