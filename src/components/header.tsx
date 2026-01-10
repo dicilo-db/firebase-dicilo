@@ -3,8 +3,10 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { Menu, User as UserIcon } from 'lucide-react';
+import { Menu, User as UserIcon, MapPin } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { getFirestore, doc, getDoc } from 'firebase/firestore';
+import { app } from '@/lib/firebase';
 import {
   Sheet,
   SheetContent,
@@ -45,6 +47,37 @@ const Header = () => {
   const { t } = useTranslation('common');
   const { user, loading, logout } = useAuth();
   const pathname = usePathname();
+  const [neighborhoodSlug, setNeighborhoodSlug] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchNeighborhood = async () => {
+      if (!user) {
+        setNeighborhoodSlug(null);
+        return;
+      }
+
+      const db = getFirestore(app);
+      try {
+        // First try private profile
+        const privateRef = doc(db, 'private_profiles', user.uid);
+        const privateSnap = await getDoc(privateRef);
+        if (privateSnap.exists() && privateSnap.data().neighborhood) {
+          setNeighborhoodSlug(privateSnap.data().neighborhood);
+          return;
+        }
+
+        // Then try client profile (if business owner)
+        // Note: This is simplified. Ideally we check 'clients' collection by ownerUid.
+        // But for Header speed, we might rely on a 'claim' or just skip if expensive.
+        // Let's assume most active users in "Barrio" are private users for now, 
+        // or we add a lighter lookup. 
+        // For now, let's Stick to Private Profile as the main entry for "My Neighborhood".
+      } catch (e) {
+        console.error("Error fetching neighborhood", e);
+      }
+    };
+    fetchNeighborhood();
+  }, [user]);
   // We can add hydration check if needed, but simple CSS classes handle responsive display best without flash.
 
   const handleLogout = async () => {
@@ -145,6 +178,14 @@ const Header = () => {
                       Dashboard
                     </Link>
                   </Button>
+                  {neighborhoodSlug && (
+                    <Button asChild variant="ghost">
+                      <Link href={`/barrio/${neighborhoodSlug}`}>
+                        <MapPin className="mr-2 h-4 w-4" />
+                        {t('header.nav.myNeighborhood', 'Mi Barrio')}
+                      </Link>
+                    </Button>
+                  )}
                   <Button variant="outline" onClick={handleLogout}>
                     {t('header.nav.logout', 'Abmelden')}
                   </Button>
@@ -235,6 +276,16 @@ const Header = () => {
                           <Link href="/dashboard"><UserIcon className="mr-2 h-4 w-4" /> Dashboard</Link>
                         </Button>
                       </SheetClose>
+                      {neighborhoodSlug && (
+                        <SheetClose asChild>
+                          <Button asChild variant="outline" className="w-full justify-center py-6 text-lg font-bold shadow-sm">
+                            <Link href={`/barrio/${neighborhoodSlug}`}>
+                              <MapPin className="mr-2 h-4 w-4" />
+                              {t('header.nav.myNeighborhood', 'Mi Barrio')}
+                            </Link>
+                          </Button>
+                        </SheetClose>
+                      )}
                       <SheetClose asChild>
                         <Button variant="ghost" className="w-full justify-start text-destructive" onClick={handleLogout}>
                           {t('header.nav.logout', 'Abmelden')}

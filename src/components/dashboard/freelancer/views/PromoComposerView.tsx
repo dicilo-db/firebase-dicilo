@@ -901,6 +901,7 @@ export function PromoComposerView() {
                                             </div>
                                             <div className="px-4 pb-2 text-sm text-slate-900 dark:text-white whitespace-pre-wrap">
                                                 {currentText}
+                                                <div className="text-blue-600 mt-1">{generatedLink}</div>
                                             </div>
                                             <div className="aspect-[4/5] bg-slate-100 relative w-full">
                                                 <Image src={selectedImageUrl} alt="" fill className="object-cover" />
@@ -970,6 +971,7 @@ export function PromoComposerView() {
 
                                             <div className="px-3 text-xs text-slate-900 dark:text-white mb-2 leading-relaxed whitespace-pre-wrap">
                                                 {currentText}
+                                                <div className="text-blue-600 mt-1 font-semibold">{generatedLink}</div>
                                             </div>
 
                                             <div className="aspect-[1.91/1] w-full relative bg-slate-100">
