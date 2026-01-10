@@ -36,6 +36,14 @@ import {
 import { FreelancerRules } from '@/components/dashboard/freelancer/FreelancerRules';
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 
@@ -108,6 +116,9 @@ export function PromoComposerView() {
     const [generatedLink, setGeneratedLink] = useState('');
     const [draftLinkId, setDraftLinkId] = useState<string>('');
     const debounceTimer = React.useRef<NodeJS.Timeout>();
+
+    // Facebook Modal State
+    const [showFacebookModal, setShowFacebookModal] = useState(false);
 
     // Connections State
     const [connections, setConnections] = useState<SocialConnection[]>([]);
@@ -723,13 +734,7 @@ export function PromoComposerView() {
 
                                                 <DropdownMenuItem onClick={async () => {
                                                     await navigator.clipboard.writeText(`${currentText}\n\n${generatedLink}`);
-                                                    toast({
-                                                        title: "Texto Copiado",
-                                                        description: "Pega el texto (Ctrl+V) en Facebook.",
-                                                        duration: 4000
-                                                    });
-                                                    const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(generatedLink)}`;
-                                                    window.open(url, '_blank', 'width=600,height=600');
+                                                    setShowFacebookModal(true);
                                                 }} className="cursor-pointer">
                                                     <Facebook className="mr-2 h-4 w-4 text-blue-600" />
                                                     Facebook
@@ -1059,6 +1064,47 @@ export function PromoComposerView() {
                     </div>
                 </div>
             </PreviewPanelWrapper>
+
+            {/* FACEBOOK INSTRUCTION MODAL */}
+            <Dialog open={showFacebookModal} onOpenChange={setShowFacebookModal}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Publicar en Facebook</DialogTitle>
+                        <DialogDescription className="space-y-3 pt-2">
+                            <div className="flex items-start gap-3 bg-blue-50 p-3 rounded-lg border border-blue-100 dark:bg-blue-900/20 dark:border-blue-800 text-blue-800 dark:text-blue-200">
+                                <CheckCircle2 className="h-5 w-5 shrink-0 mt-0.5" />
+                                <div className="text-sm">
+                                    <strong>¡Texto copiado!</strong><br />
+                                    Hemos guardado tu mensaje en el portapapeles.
+                                </div>
+                            </div>
+                            <p className="text-sm">
+                                Facebook no permite que escribamos el texto automáticamente.
+                                Cuando se abra la ventana:
+                            </p>
+                            <ol className="list-decimal pl-5 text-sm space-y-1 font-medium">
+                                <li>Haz clic en el campo de texto ("Di algo sobre esto...").</li>
+                                <li>Pega tu mensaje (Click derecho &gt; Pegar o <kbd className="px-1 bg-slate-100 border rounded text-xs">Ctrl+V</kbd>).</li>
+                                <li>Publica tu enlace.</li>
+                            </ol>
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setShowFacebookModal(false)}>Cancelar</Button>
+                        <Button
+                            className="bg-blue-600 hover:bg-blue-700 text-white"
+                            onClick={() => {
+                                const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(generatedLink)}`;
+                                window.open(url, '_blank', 'width=600,height=600');
+                                setShowFacebookModal(false);
+                            }}
+                        >
+                            Ir a Facebook y Pegar
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
         </MainLayout>
     );
 }
