@@ -1,4 +1,5 @@
 'use client';
+import { CityCombobox } from './CityCombobox';
 
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -24,6 +25,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Check, ChevronsUpDown } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { useState, useEffect, useMemo } from 'react';
 import { submitRecommendation } from '@/app/actions/recommendations';
 import { useTranslation } from 'react-i18next';
@@ -44,6 +60,7 @@ const formSchema = z.object({
   comments: z.string().optional(),
   diciloCode: z.string().optional(), // New
   source: z.string().min(1, 'required'), // New
+  neighborhood: z.string().optional(),
 });
 
 type RecommendationFormValues = z.infer<typeof formSchema>;
@@ -113,6 +130,7 @@ export function RecommendationFormContent({ initialBusinessName, onSuccess, onCa
       comments: '',
       diciloCode: '',
       source: '',
+      neighborhood: '',
     },
   });
 
@@ -215,47 +233,94 @@ export function RecommendationFormContent({ initialBusinessName, onSuccess, onCa
       </div>
 
       {/* Country & City */}
+      {/* Country & City - Optimized with Combobox */}
       <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
+        <div className="space-y-2 flex flex-col">
           <Label htmlFor="country">{t('form.countryPlaceholder')}</Label>
           <Controller
             control={form.control}
             name="country"
             render={({ field }) => (
-              <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isSubmitting}>
-                <SelectTrigger className={form.formState.errors.country ? 'border-destructive' : ''}>
-                  <SelectValue placeholder={t('form.selectOption')} />
-                </SelectTrigger>
-                <SelectContent className="z-[1001]">
-                  {countries.map((country) => (
-                    <SelectItem key={country.isoCode} value={country.isoCode}>{country.name}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    className={cn(
+                      "w-full justify-between",
+                      !field.value && "text-muted-foreground",
+                      form.formState.errors.country && "border-destructive"
+                    )}
+                    disabled={isSubmitting}
+                  >
+                    {field.value
+                      ? countries.find((country) => country.isoCode === field.value)?.name
+                      : t('form.selectOption')}
+                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
+                  <Command>
+                    <CommandInput placeholder={t('search_country', 'Buscar país...')} />
+                    <CommandList>
+                      <CommandEmpty>{t('no_results', 'No encontrado.')}</CommandEmpty>
+                      <CommandGroup>
+                        {countries.map((country) => (
+                          <CommandItem
+                            value={country.name}
+                            key={country.isoCode}
+                            onSelect={() => {
+                              form.setValue("country", country.isoCode);
+                            }}
+                          >
+                            <Check
+                              className={cn(
+                                "mr-2 h-4 w-4",
+                                country.isoCode === field.value
+                                  ? "opacity-100"
+                                  : "opacity-0"
+                              )}
+                            />
+                            {country.name}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
             )}
           />
           {form.formState.errors.country && <p className="text-sm text-destructive">{t('form.errors.required')}</p>}
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-2 flex flex-col">
           <Label htmlFor="city">{t('form.cityPlaceholder')}</Label>
           <Controller
             control={form.control}
             name="city"
             render={({ field }) => (
-              <Select onValueChange={field.onChange} disabled={!selectedCountry || isSubmitting} defaultValue={field.value} value={field.value}>
-                <SelectTrigger className={form.formState.errors.city ? 'border-destructive' : ''}>
-                  <SelectValue placeholder={!selectedCountry ? t('form.selectCountryFirst') : t('form.selectOption')} />
-                </SelectTrigger>
-                <SelectContent className="z-[1001]">
-                  {cities.map((city) => (
-                    <SelectItem key={`${city.name}-${city.latitude}`} value={city.name}>{city.name}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <CityCombobox
+                cities={cities}
+                value={field.value}
+                onChange={field.onChange}
+                disabled={!selectedCountry || isSubmitting}
+                t={t}
+              />
             )}
           />
           {form.formState.errors.city && <p className="text-sm text-destructive">{t('form.errors.required')}</p>}
+        </div>
+
+        {/* Neighborhood (New) */}
+        <div className="space-y-2 col-span-2 md:col-span-1">
+          <Label htmlFor="neighborhood">{t('form.neighborhoodPlaceholder', 'Barrio / Distrikt (Opcional)')}</Label>
+          <Input
+            id="neighborhood"
+            {...form.register('neighborhood')}
+            disabled={isSubmitting}
+            placeholder="Ej. Altona, Sternschanze..."
+          />
         </div>
       </div>
 

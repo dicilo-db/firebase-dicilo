@@ -407,6 +407,28 @@ export default function RecommendationsPage() {
                                                             <Pen className="h-4 w-4" />
                                                         </Button>
 
+                                                        <Button
+                                                            size="icon"
+                                                            variant="ghost"
+                                                            onClick={async () => {
+                                                                const newStatus = rec.status === 'approved' ? 'pending' : 'approved';
+                                                                try {
+                                                                    await updateDoc(doc(db, 'recommendations', rec.id), { status: newStatus });
+                                                                    setRecommendations(prev => prev.map(r => r.id === rec.id ? { ...r, status: newStatus } : r));
+                                                                    toast({ title: 'Status Updated', description: `Recommendation is now ${newStatus}.` });
+                                                                } catch (error: any) {
+                                                                    toast({ title: 'Error', description: error.message, variant: 'destructive' });
+                                                                }
+                                                            }}
+                                                            title={rec.status === 'approved' ? "Suspend" : "Approve"}
+                                                        >
+                                                            {rec.status === 'approved' ? (
+                                                                <CheckCircle className="h-4 w-4 text-green-600" />
+                                                            ) : (
+                                                                <CheckCircle className="h-4 w-4 text-gray-300" />
+                                                            )}
+                                                        </Button>
+
                                                         <AlertDialog>
                                                             <AlertDialogTrigger asChild>
                                                                 <Button variant="ghost" size="icon" className="hover:bg-destructive/10">
