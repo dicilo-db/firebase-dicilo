@@ -171,5 +171,4 @@ export default async function RedirectPage({ params, searchParams }: Props) {
     );
 }
 
-// Client Component Wrapper for Logic
-import ClientRedirectLogic from './ClientRedirectLogic';
+
