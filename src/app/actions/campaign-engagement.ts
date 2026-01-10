@@ -12,9 +12,10 @@ export async function processCampaignPost(
     userId: string,
     campaignId: string,
     postLanguage: string,
-    textLength: number = 0, // Deprecated logic, but kept for signature
+    textLength: number = 0,
     selectedImageUrl: string = '',
-    assetId: string = '' // New parameter for V2
+    assetId: string = '',
+    existingLinkId: string = '' // New optional param
 ) {
     if (!userId || !campaignId) {
         return { success: false, error: 'Faltan datos obligatorios.' };
@@ -24,9 +25,9 @@ export async function processCampaignPost(
 
     try {
         const result = await db.runTransaction(async (t) => {
-            // 1. Validaciones Previas (Lecturas)
+            // ... (validations remain same) ...
 
-            // A. Verificar Límite Diario (10 posts por campaña por usuario)
+            // 1. Validaciones Previas (Lecturas)
             const todayStart = new Date();
             todayStart.setHours(0, 0, 0, 0);
 
@@ -34,14 +35,21 @@ export async function processCampaignPost(
                 .where('freelancerId', '==', userId)
                 .where('campaignId', '==', campaignId);
 
-            // OPTIMIZATION: Filter by date in memory to avoid "FAILED_PRECONDITION" (Composite Index Requirement)
-            // Since max posts is 10/day, fetching all campaign links for this user is manageable, 
-            // or we could limit to last 50 and check date. 
-            // For now, fetching all for this campaign-user pair is safe given the scale (1user-1campaign).
             const allLinksSnapshot = await t.get(linksQuery);
-
+            // Count "Active" posts only to enforce limit? Or all?
+            // If we have drafts, we shouldn't count them against the limit unless they are turned into posts.
+            // Drafts usually have status='draft' or monetizationActive=false. 
+            // We should filter 'valid' posts.
+            // Assuming previous logic counted ALL, which might include drafts if we don't differentiate.
+            // Let's filter by timestamps or status if possible.
+            // For now, keep existing logic but be aware drafts might clutter if not careful.
+            // Ideally existing logic checks created_at. Drafts have created_at too.
+            // We should probably filter out status='draft' logic if we want to be precise, 
+            // but let's stick to simple count for now or filter in memory.
             const dailyLinksCount = allLinksSnapshot.docs.filter(doc => {
                 const data = doc.data();
+                // Ignore drafts in daily count? Yes.
+                if (data.status === 'draft') return false;
                 return data.createdAt && data.createdAt.toDate() >= todayStart;
             }).length;
 
@@ -49,7 +57,7 @@ export async function processCampaignPost(
                 throw new Error("Has alcanzado tu límite diario de 10 posts para esta campaña.");
             }
 
-            // B. Obtener Campaña y Verificar Presupuesto
+            // ... (Campaign & Budget Checks remain same) ...
             const campaignRef = db.collection('campaigns').doc(campaignId);
             const campaignDoc = await t.get(campaignRef);
 
@@ -59,71 +67,59 @@ export async function processCampaignPost(
 
             const campaignData = campaignDoc.data();
             const budgetRemaining = campaignData?.budget_remaining || 0;
-
-            // Cost Model: 
-            // Max potential cost = $0.40 (max text) + $0.10 (max bonus) = $0.50
-            // We reserve strict $0.50 to ensure we can always pay the bonus if it happens.
             const costPerStart = 0.50;
-
-            // C. Calcular Recompensa por CREACIÓN (FIJO)
-            // Model 2.0: Fixed 0.40€ regardless of length (since text is pre-defined)
-            // Minimum length check can be relaxed or removed since text is from asset
             const textReward = 0.40;
 
-            // We still verify some minimal length to avoid empty posts if someone bypasses UI
-            if (textLength < 10) {
-                // But since we use assets now, textLength comes from the asset text.
-                // We trust the frontend or we should fetch the asset.
-                // For now, simple check.
-            }
-
-            // Validar si hay presupuesto
             if (budgetRemaining < costPerStart) {
                 throw new Error("El presupuesto de esta campaña se ha agotado.");
             }
 
             // 2. Ejecución (Escrituras)
-
-            // A. Descontar Presupuesto de la Campaña (Reservamos el máximo posible: 0.50)
             t.update(campaignRef, {
                 budget_remaining: admin.firestore.FieldValue.increment(-costPerStart),
                 updatedAt: admin.firestore.FieldValue.serverTimestamp()
             });
 
-            // B. Generar ID de Enlace único
-            // Simple random string for ID (safer than external libs in server actions sometimes)
-            const linkId = Math.random().toString(36).substring(2, 10); // 8 chars
-            const linkRef = db.collection('freelancer_links').doc(linkId);
+            // B. Determine Link ID (Reuse draft or create new)
+            let linkId = existingLinkId;
+            let linkRef;
 
-            // C. Crear registro "Freelancer Link" (La fuente de verdad)
+            if (linkId) {
+                linkRef = db.collection('freelancer_links').doc(linkId);
+                const draftDoc = await t.get(linkRef);
+                // Verify ownership to prevent hijacking
+                if (!draftDoc.exists || draftDoc.data()?.freelancerId !== userId) {
+                    // Fallback to new ID if invalid/hacked
+                    linkId = Math.random().toString(36).substring(2, 10);
+                    linkRef = db.collection('freelancer_links').doc(linkId);
+                }
+            } else {
+                linkId = Math.random().toString(36).substring(2, 10);
+                linkRef = db.collection('freelancer_links').doc(linkId);
+            }
+
+            // C. Create or Update "Freelancer Link" (Activate it)
+            // We use set with merge: true to keep creation time of draft if desired, OR overwrite.
+            // Better to overwrite status but keep ID.
             t.set(linkRef, {
                 linkId: linkId,
                 freelancerId: userId,
                 campaignId: campaignId,
-
-                // Datos de Contenido
                 selectedImageUrl: selectedImageUrl,
-                assetId: assetId, // Track the asset
+                assetId: assetId,
                 messageTextLength: textLength,
                 language: postLanguage,
-
-                // Pago 1: Esfuerzo (Texto)
                 textRewardAmount: textReward,
-                textPaidStatus: true, // Pagado inmediatamente en estapso paso
-
-                // Pago 2: Resultado (Tráfico)
+                textPaidStatus: true,
                 clickBonusAmount: 0.10,
                 bonusPaidStatus: false,
-                monetizationActive: true,
-                paymentModel: 'fixed_plus_bonus', // V2 Logic Indicator
-
-                // Analytics
-                clickCount: 0,
-                // Select language-specific URL if available, otherwise fallback to main URL
-                targetUrl: (campaignData?.[`url_${postLanguage}`] as string) || campaignData?.targetUrl || 'https://dicilo.net',
-
-                createdAt: admin.firestore.FieldValue.serverTimestamp()
-            });
+                monetizationActive: true, // ACTIVATE
+                status: 'active', // ACTIVATE
+                paymentModel: 'fixed_plus_bonus',
+                clickCount: 0, // Reset or keep? Keep if 0.
+                targetUrl: (campaignData?.[`url_${postLanguage}`]) || campaignData?.targetUrl || 'https://dicilo.net',
+                createdAt: admin.firestore.FieldValue.serverTimestamp() // Update timestamp to Post Time
+            }, { merge: true });
 
             // D. Actualizar Billetera del Usuario (Solo pagamos el Text Reward ahora)
             const walletRef = db.collection('wallets').doc(userId);
@@ -139,10 +135,25 @@ export async function processCampaignPost(
                 userId,
                 amount: textReward,
                 type: 'CAMPAIGN_REWARD_TEXT',
-                description: `Creación Contenido: ${campaignData?.name || 'Campaign'} (${textLength} chars)`,
+                description: `Creación Contenido: ${campaignData?.companyName || 'Campaign'}`,
                 campaignId,
                 linkId,
                 timestamp: admin.firestore.FieldValue.serverTimestamp()
+            });
+
+            // F. Registrar Acción para Estadísticas (Dashboard Stats relies on this)
+            const actionRef = db.collection('user_campaign_actions').doc();
+            t.set(actionRef, {
+                userId,
+                campaignId,
+                freelancerId: userId,
+                actionType: 'post_creation_v2',
+                status: 'approved',
+                rewardAmount: textReward,
+                companyName: campaignData?.companyName || 'Unknown',
+                campaignTitle: campaignData?.title || '',
+                linkId: linkId,
+                created_at: admin.firestore.FieldValue.serverTimestamp() // Snake case consistent with stats query
             });
 
             return {

@@ -103,7 +103,13 @@ export function PromoComposerView() {
     const [selectedImageIndex, setSelectedImageIndex] = useState(0);
     const [selectedAssetId, setSelectedAssetId] = useState<string | null>(null); // Track V2 asset
     const [visibleImagesCount, setVisibleImagesCount] = useState(4);
+    const [selectedAssetId, setSelectedAssetId] = useState<string | null>(null); // Track V2 asset
+    const [visibleImagesCount, setVisibleImagesCount] = useState(4);
+
+    // Shortener Logic
     const [generatedLink, setGeneratedLink] = useState('');
+    const [draftLinkId, setDraftLinkId] = useState<string>('');
+    const debounceTimer = React.useRef<NodeJS.Timeout>();
 
     // Connections State
     const [connections, setConnections] = useState<SocialConnection[]>([]);
@@ -200,44 +206,62 @@ export function PromoComposerView() {
         }
     }, [activeCampaign, activeLangTab]);
 
-    // 2. Generate Link
+    // 2. Generate/Update Short Link (Debounced)
     useEffect(() => {
-        if (!activeCampaign) return;
+        if (!activeCampaign || !user) return;
 
-        const legacyId = activeCampaign.id?.substring(0, 8) || 'campaign';
-        const specificTrackingId = activeCampaign.tracking_ids?.[activeLangTab];
+        // Reset if campaign changed (simple check: if draftId exists but campaign differs... 
+        // actually activeCampaign dependency handles re-run, but we need to know if we should create NEW or UPDATE)
+        // We rely on 'draftLinkId' state. If we switch campaign, we should probably reset draftLinkId first?
+        // Let's do a reset effect when campaignId changes.
 
-        // Fallback: Generate one like "xc90_es"
-        const generatedId = specificTrackingId || `${legacyId}_${activeLangTab.toUpperCase()}`;
+        const updateLink = async () => {
+            const legacyId = activeCampaign.id?.substring(0, 8) || 'campaign';
+            // If we have a draftId, use it to update. If not, create new.
 
-        let baseLink = `https://dicilo.net/r/${generatedId}`;
-        const params = new URLSearchParams();
+            try {
+                const res = await fetch('/api/shorten', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        campaignId: activeCampaign.id,
+                        freelancerId: user.uid,
+                        targetUrl: selectedTargetUrl || activeCampaign.target_urls?.[activeLangTab]?.[0] || activeCampaign.targetUrl, // Logic same as before
+                        selectedImageUrl: activeCampaign?.assets?.length
+                            ? activeCampaign.assets[selectedImageIndex].imageUrl
+                            : (activeCampaign.images?.[selectedImageIndex] || activeCampaign.companyLogo),
+                        assetId: selectedAssetId,
+                        language: activeLangTab,
+                        text: texts[activeLangTab], // Send text for dynamic OG
+                        existingId: draftLinkId || undefined
+                    })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    if (!draftLinkId) setDraftLinkId(data.shortId); // Only set if wasn't set (or update matches)
+                    setGeneratedLink(data.shortUrl);
+                }
+            } catch (e) {
+                console.error("Shortener failed", e);
+                // Fallback to long link?
+                // const longLink = `https://dicilo.net/r/${legacyId}_${activeLangTab.toUpperCase()}...`;
+                // setGeneratedLink(longLink);
+            }
+        };
 
-        // 1. Destination
-        if (selectedTargetUrl) {
-            const cleanUrl = selectedTargetUrl.trim().replace(/^\s+|\s+$/g, '');
-            params.set('dest', cleanUrl);
-        }
+        // Debounce (longer for text typing)
+        if (debounceTimer.current) clearTimeout(debounceTimer.current);
+        debounceTimer.current = setTimeout(updateLink, 1000);
 
-        // 2. Open Graph Data (Rich Previews)
-        if (activeCampaign.images && activeCampaign.images.length > selectedImageIndex) {
-            params.set('og_img', activeCampaign.images[selectedImageIndex]);
-        }
-        if (activeCampaign.companyName) {
-            params.set('og_title', activeCampaign.companyName);
-        }
-        const desc = texts[activeLangTab] || activeCampaign.description || '';
-        if (desc) {
-            params.set('og_desc', desc.substring(0, 150));
-        }
+        return () => clearTimeout(debounceTimer.current);
 
-        const paramString = params.toString();
-        if (paramString) {
-            baseLink += `?${paramString}`;
-        }
+    }, [activeCampaign, activeLangTab, selectedTargetUrl, selectedImageIndex, texts, user, selectedAssetId, draftLinkId]);
 
-        setGeneratedLink(baseLink);
-    }, [activeCampaign, activeLangTab, selectedTargetUrl, selectedImageIndex, texts]);
+    // Reset draft ID when campaign changes real change
+    useEffect(() => {
+        setDraftLinkId('');
+        setGeneratedLink(''); // Clear link to show loading state
+    }, [activeCampaign?.id]);
 
     // Update Text when Asset Changes (V2)
     const handleAssetSelection = (index: number) => {
@@ -356,7 +380,8 @@ export function PromoComposerView() {
                 postLang,
                 currentText.length,
                 selectedImageUrl,
-                selectedAssetId || '' // Pass assetId
+                selectedAssetId || '',
+                draftLinkId || '' // Pass the Short ID to activate it
             );
 
             if (!result.success) {
