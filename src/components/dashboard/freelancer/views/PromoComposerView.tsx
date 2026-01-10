@@ -103,8 +103,6 @@ export function PromoComposerView() {
     const [selectedImageIndex, setSelectedImageIndex] = useState(0);
     const [selectedAssetId, setSelectedAssetId] = useState<string | null>(null); // Track V2 asset
     const [visibleImagesCount, setVisibleImagesCount] = useState(4);
-    const [selectedAssetId, setSelectedAssetId] = useState<string | null>(null); // Track V2 asset
-    const [visibleImagesCount, setVisibleImagesCount] = useState(4);
 
     // Shortener Logic
     const [generatedLink, setGeneratedLink] = useState('');
