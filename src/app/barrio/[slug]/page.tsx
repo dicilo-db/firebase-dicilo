@@ -212,8 +212,8 @@ export default async function NeighborhoodPage({ params }: { params: { slug: str
                 <div className="lg:col-span-8 space-y-6">
                     <div className="flex items-center justify-between">
                         <h2 className="text-2xl font-bold text-slate-800">Lo que está pasando</h2>
-                        <Link href="/verzeichnis">
-                            <Badge className="cursor-pointer">Nueva Recomendación +</Badge>
+                        <Link href="/barrio/create">
+                            <Badge className="cursor-pointer hover:bg-green-600 bg-green-500 text-white">Nueva Recomendación +</Badge>
                         </Link>
                     </div>
 

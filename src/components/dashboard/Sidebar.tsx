@@ -140,9 +140,20 @@ export function Sidebar({ userData, onViewChange, currentView }: SidebarProps) {
         }
     }
 
-    // EXPLICIT: Add Community/Barrio Link for everyone (or specifically freelancers/users)
-    // We defaulting to 'hamburg' for now as the main active community, or use a selector if available.
-    navItems.push({ id: 'community', label: 'Tu Comunidad', icon: MapIcon, type: 'link', href: '/barrio/hamburg' });
+    // EXPLICIT: Add Community/Barrio Link - MOVED UP
+    // Insert after 'freelancer' or 'invite' if not found.
+    // User wants it higher. Let's put it after 'freelancer' (2nd pos) or 'overview' (1st).
+    // "Nueva Recomendación" implies activity.
+    // Let's put it after 'invite' (Invitaciones) or 'freelancer'.
+    // Given the emphasis, let's put it high.
+    // Actually, simply pushing to navItems puts it at bottom. I will splice it.
+    const insertIdx = navItems.findIndex(item => item.id === 'freelancer');
+    if (insertIdx !== -1) {
+        navItems.splice(insertIdx + 1, 0, { id: 'community', label: 'Tu Comunidad', icon: Share2, type: 'link', href: '/barrio/hamburg' });
+    } else {
+        // Fallback
+        navItems.push({ id: 'community', label: 'Tu Comunidad', icon: Share2, type: 'link', href: '/barrio/hamburg' });
+    }
 
     // Add Admin conditionally
     if (canSeeAdmin) {
