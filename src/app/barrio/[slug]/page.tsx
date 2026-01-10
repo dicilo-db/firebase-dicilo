@@ -3,8 +3,7 @@ import { app } from '@/lib/firebase';
 import { notFound } from 'next/navigation';
 import { Neighborhood } from '@/data/neighborhoods'; // Asumiendo que existe o lo creamos
 import { HAMBURG_NEIGHBORHOODS } from '@/data/neighborhoods';
-import { Neighborhood } from '@/data/neighborhoods'; // Asumiendo que existe o lo creamos
-import { HAMBURG_NEIGHBORHOODS } from '@/data/neighborhoods';
+
 import { BarometerVisual } from '../components/BarometerVisual';
 import { NeighborhoodFeed } from '../components/NeighborhoodFeed';
 import { Badge } from '@/components/ui/badge';
