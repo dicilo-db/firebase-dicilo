@@ -140,6 +140,10 @@ export function Sidebar({ userData, onViewChange, currentView }: SidebarProps) {
         }
     }
 
+    // EXPLICIT: Add Community/Barrio Link for everyone (or specifically freelancers/users)
+    // We defaulting to 'hamburg' for now as the main active community, or use a selector if available.
+    navItems.push({ id: 'community', label: 'Tu Comunidad', icon: MapIcon, type: 'link', href: '/barrio/hamburg' });
+
     // Add Admin conditionally
     if (canSeeAdmin) {
         navItems.push({ id: 'admin', label: 'Admin Panel', icon: Shield, type: 'link', href: '/admin' });

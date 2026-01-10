@@ -15,7 +15,8 @@ export async function processCampaignPost(
     textLength: number = 0,
     selectedImageUrl: string = '',
     assetId: string = '',
-    existingLinkId: string = '' // New optional param
+    existingLinkId: string = '', // New optional param
+    targetUrl: string = '' // NEW: Explicit target URL selected by user
 ) {
     if (!userId || !campaignId) {
         return { success: false, error: 'Faltan datos obligatorios.' };
@@ -117,7 +118,9 @@ export async function processCampaignPost(
                 status: 'active', // ACTIVATE
                 paymentModel: 'fixed_plus_bonus',
                 clickCount: 0, // Reset or keep? Keep if 0.
-                targetUrl: (campaignData?.[`url_${postLanguage}`]) || campaignData?.targetUrl || 'https://dicilo.net',
+                clickCount: 0, // Reset or keep? Keep if 0.
+                targetUrl: targetUrl || (campaignData?.[`url_${postLanguage}`]) || campaignData?.targetUrl || 'https://dicilo.net',
+                createdAt: admin.firestore.FieldValue.serverTimestamp() // Update timestamp to Post Time
                 createdAt: admin.firestore.FieldValue.serverTimestamp() // Update timestamp to Post Time
             }, { merge: true });
 

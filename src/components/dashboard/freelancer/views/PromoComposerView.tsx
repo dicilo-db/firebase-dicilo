@@ -390,7 +390,8 @@ export function PromoComposerView() {
                 currentText.length,
                 selectedImageUrl,
                 selectedAssetId || '',
-                draftLinkId || '' // Pass the Short ID to activate it
+                draftLinkId || '', // Pass the Short ID to activate it
+                selectedTargetUrl || '' // Pass correct target URL
             );
 
             if (!result.success) {
