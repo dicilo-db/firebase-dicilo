@@ -1,3 +1,5 @@
+'use server';
+
 import { getAdminDb, getAdminStorage } from '@/lib/firebase-admin';
 import { z } from 'zod';
 import { randomUUID } from 'crypto';

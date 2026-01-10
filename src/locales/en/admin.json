@@ -849,6 +849,7 @@
     "newTemplate": "New Template",
     "manage": "Manage",
     "templates": "Templates",
+    "templateCount": "{{count}} Templates",
     "loading": "Loading templates...",
     "noTemplates": "No templates in this category",
     "firstTemplate": "Create First Template",

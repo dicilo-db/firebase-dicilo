@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Plus, Edit, Mail, Users, Megaphone, ArrowLeft, LayoutTemplate } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { getTemplates, EmailTemplate } from '@/actions/email-templates';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
@@ -36,12 +37,28 @@ export default function EmailTemplatesPage() {
     const { t } = useTranslation('admin');
     const [templates, setTemplates] = useState<EmailTemplate[]>([]);
     const [loading, setLoading] = useState(true);
-    const [selectedCategory, setSelectedCategory] = useState<CategoryType | null>(null);
+    const searchParams = useSearchParams();
+    const router = useRouter();
+
+    // Initialize from URL param if valid
+    const initialCategory = searchParams.get('category') as CategoryType;
+    const [selectedCategory, setSelectedCategory] = useState<CategoryType | null>(
+        CATEGORIES.some(c => c.id === initialCategory) ? initialCategory : null
+    );
     const { toast } = useToast();
 
     useEffect(() => {
         loadTemplates();
     }, []);
+
+    // Sync URL when category changes
+    const handleSetCategory = (cat: CategoryType | null) => {
+        setSelectedCategory(cat);
+        const url = cat
+            ? `/admin/email-templates?category=${cat}`
+            : '/admin/email-templates';
+        router.push(url);
+    };
 
     const loadTemplates = async () => {
         try {
@@ -84,7 +101,7 @@ export default function EmailTemplatesPage() {
                 </div>
                 <div className="flex gap-2">
                     {selectedCategory ? (
-                        <Button variant="outline" onClick={() => setSelectedCategory(null)}>
+                        <Button variant="outline" onClick={() => handleSetCategory(null)}>
                             <ArrowLeft className="mr-2 h-4 w-4" />
                             {t('emailTemplates.backToModules')}
                         </Button>
@@ -117,7 +134,7 @@ export default function EmailTemplatesPage() {
                             <Card
                                 key={cat.id}
                                 className={`cursor-pointer transition-all hover:shadow-lg hover:scale-105 border-2 ${cat.color} border-transparent hover:border-current`}
-                                onClick={() => setSelectedCategory(cat.id)}
+                                onClick={() => handleSetCategory(cat.id)}
                             >
                                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                                     <CardTitle className="text-lg font-bold">{cat.title}</CardTitle>

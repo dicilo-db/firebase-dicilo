@@ -151,7 +151,7 @@ export default function EditTemplatePage() {
     return (
         <div className="container mx-auto p-6 space-y-6 max-w-4xl">
             <div className="flex items-center gap-4 mb-6">
-                <Link href="/admin/email-templates">
+                <Link href={`/admin/email-templates${template.category ? `?category=${template.category}` : ''}`}>
                     <Button variant="ghost" size="icon"><ArrowLeft /></Button>
                 </Link>
                 <div>

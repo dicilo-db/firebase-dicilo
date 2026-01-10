@@ -884,6 +884,7 @@
     "newTemplate": "Nueva Plantilla",
     "manage": "Gestionar",
     "templates": "Plantillas",
+    "templateCount": "{{count}} Plantillas",
     "loading": "Cargando plantillas...",
     "noTemplates": "Sin plantillas en esta categoría",
     "firstTemplate": "Crear Primera Plantilla",

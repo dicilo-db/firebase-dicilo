@@ -876,6 +876,7 @@
     "newTemplate": "Neue Vorlage",
     "manage": "Verwalten",
     "templates": "Vorlagen",
+    "templateCount": "{{count}} Vorlagen",
     "loading": "Vorlagen werden geladen...",
     "noTemplates": "Keine Vorlagen in dieser Kategorie",
     "firstTemplate": "Erste Vorlage erstellen",
