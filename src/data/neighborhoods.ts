@@ -27,6 +27,7 @@ export const BERLIN_NEIGHBORHOODS: Neighborhood[] = [
 ];
 
 export const HAMBURG_NEIGHBORHOODS: Neighborhood[] = [
+    { id: 'hamburg', name: 'Hamburg', city: 'Hamburg' },
     { id: 'altona', name: 'Altona', city: 'Hamburg' },
     { id: 'bergedorf', name: 'Bergedorf', city: 'Hamburg' },
     { id: 'eimsbuettel', name: 'Eimsbüttel', city: 'Hamburg' },

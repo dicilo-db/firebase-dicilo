@@ -1,11 +1,10 @@
 import { getFirestore, collection, query, where, getDocs, limit, orderBy } from 'firebase/firestore';
 import { app } from '@/lib/firebase';
 import { notFound } from 'next/navigation';
-import { Neighborhood } from '@/data/neighborhoods'; // Asumiendo que existe o lo creamos
-import { HAMBURG_NEIGHBORHOODS } from '@/data/neighborhoods';
+import { Neighborhood, ALL_NEIGHBORHOODS } from '@/data/neighborhoods';
 
 import { BarometerVisual } from '../components/BarometerVisual';
-import { NeighborhoodFeed } from '../components/NeighborhoodFeed';
+import NeighborhoodFeed from '../components/NeighborhoodFeed';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 
@@ -21,31 +20,40 @@ const db = getFirestore(app);
 
 // Helper para buscar el barrio por slug o ID
 function getNeighborhood(slug: string) {
-    // Normalizar slug
     const normalized = slug.toLowerCase();
-    return HAMBURG_NEIGHBORHOODS.find(n => n.id.toLowerCase() === normalized || n.name.toLowerCase() === normalized);
+    return ALL_NEIGHBORHOODS.find(n => n.id.toLowerCase() === normalized || n.name.toLowerCase() === normalized);
+}
+
+function getCityNeighborhoods(city: string) {
+    return ALL_NEIGHBORHOODS.filter(n => n.city === city && n.name !== city);
 }
 
 // 1. Ranking: Empresas con más recomendaciones aprobadas recientemente (o total)
-// 1. Ranking: Empresas con más recomendaciones (Simulated Score for now if field missing)
 async function getTrendingBusinesses(neighborhoodName: string) {
     try {
+        // Determine search field based on context
+        const isCitySearch = neighborhoodName === 'Hamburg';
+
+        let constraints: any[] = [];
+
+        if (isCitySearch) {
+            constraints.push(where('city', '==', neighborhoodName));
+        } else {
+            constraints.push(where('neighborhood', '==', neighborhoodName));
+        }
+
         const q = query(
-            collection(db, 'clients'), // Changed to clients which holds business profiles
-            where('neighborhood', '==', neighborhoodName),
-            limit(20) // Fetch more to sort in memory if needed
+            collection(db, 'clients'),
+            ...constraints,
+            limit(20)
         );
 
         const snap = await getDocs(q);
         const businesses = snap.docs.map(d => ({ id: d.id, ...d.data() })) as any[];
 
-        // Sort by reputation/score. 
-        // If 'reputationScore' doesn't exist, fall back to a random stable sort or name for now, 
-        // but ideally this field should be incremented via Cloud Functions on new reviews.
-        // For this demo: we mock the sort if score is missing logic.
         return businesses
             .sort((a, b) => (b.reputationScore || 0) - (a.reputationScore || 0))
-            .slice(0, 5); // Start with Top 5
+            .slice(0, 5);
 
     } catch (e) {
         console.error("Error fetching trending", e);
@@ -56,29 +64,32 @@ async function getTrendingBusinesses(neighborhoodName: string) {
 // 2. Calculate Barometer Stats
 async function getBarometerStats(neighborhoodName: string): Promise<BarometerStats> {
     try {
-        // Count posts from last 7 days
-        // Note: For high scale, use Count Aggregation Queries or dedicated counters.
         const sevenDaysAgo = new Date();
         sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
+        let constraints: any[] = [];
+        const isCitySearch = neighborhoodName === 'Hamburg';
+
+        if (isCitySearch) {
+            constraints.push(where('city', '==', neighborhoodName));
+        } else {
+            constraints.push(where('neighborhood', '==', neighborhoodName));
+        }
+
         const q = query(
             collection(db, 'recommendations'),
-            where('neighborhood', '==', neighborhoodName),
+            ...constraints,
             where('createdAt', '>=', sevenDaysAgo)
         );
         const snap = await getDocs(q);
-        const weeklyPosts = snap.size; // This is a read heavy approach, ok for MVP
+        const weeklyPosts = snap.size;
 
-        // Calculate active users (unique authors in last 7 days)
         const uniqueAuthors = new Set(snap.docs.map(d => d.data().userId));
         const activeUsers = uniqueAuthors.size;
 
-        // Formula for Score (0-100)
-        // Simple algo: 1 post = 5 points. 1 user = 10 points. Cap at 100.
         let score = (weeklyPosts * 5) + (activeUsers * 10);
         if (score > 100) score = 100;
 
-        // Determine Level
         let level: BarometerStats['level'] = 'low';
         if (score >= 80) level = 'fire';
         else if (score >= 50) level = 'high';
@@ -92,19 +103,15 @@ async function getBarometerStats(neighborhoodName: string): Promise<BarometerSta
     }
 }
 
-// 2. Feed: Recomendaciones recientes aprobadas en este barrio
-// Esto es complejo porque las recomendaciones tienen businessId, no barrio directo.
-// Opción A: Guardar 'neighborhood' en la recomendación (Denormalización - RECOMENDADO).
-// Opción B: Query de businesses del barrio -> Query de recomendaciones (Inificiente).
-// Vamos a asumir Opción A para el futuro, pero por ahora mostramos un placeholder o todas.
-
 export default async function NeighborhoodPage({ params }: { params: { slug: string } }) {
     const neighborhood = getNeighborhood(params.slug);
 
     if (!neighborhood) {
-        // Fallback o 404
         notFound();
     }
+
+    const isCity = neighborhood.name === neighborhood.city;
+    const subNeighborhoods = isCity ? getCityNeighborhoods(neighborhood.city) : [];
 
     const trending = await getTrendingBusinesses(neighborhood.name);
     const stats = await getBarometerStats(neighborhood.name);
@@ -139,6 +146,24 @@ export default async function NeighborhoodPage({ params }: { params: { slug: str
                         activeUsersCount={stats.activeUsers}
                     />
 
+                    {/* CITY: SUB-NEIGHBORHOODS FILTER */}
+                    {isCity && subNeighborhoods.length > 0 && (
+                        <div className="bg-white rounded-lg shadow-sm border p-4">
+                            <h2 className="text-lg font-bold mb-3 flex items-center gap-2">
+                                🗺️ Barrios de {neighborhood.city}
+                            </h2>
+                            <div className="flex flex-wrap gap-2">
+                                {subNeighborhoods.map(nb => (
+                                    <Link key={nb.id} href={`/barrio/${nb.id}`}>
+                                        <Badge variant="secondary" className="hover:bg-primary hover:text-white cursor-pointer transition-colors">
+                                            {nb.name}
+                                        </Badge>
+                                    </Link>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
                     {/* RANKING CARD */}
                     <div className="bg-white rounded-lg shadow-sm border p-0 overflow-hidden">
                         <div className="p-4 border-b bg-slate-50">
@@ -151,11 +176,11 @@ export default async function NeighborhoodPage({ params }: { params: { slug: str
                             {trending.length > 0 ? trending.map((biz: any, i) => (
                                 <li key={biz.id} className="p-4 flex items-center gap-3 hover:bg-slate-50 transition-colors">
                                     <div className={`
-                                        w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm
-                                        ${i === 0 ? 'bg-yellow-100 text-yellow-700' :
+                                    w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm
+                                    ${i === 0 ? 'bg-yellow-100 text-yellow-700' :
                                             i === 1 ? 'bg-slate-100 text-slate-700' :
                                                 i === 2 ? 'bg-orange-100 text-orange-800' : 'text-slate-500'}
-                                    `}>
+                                `}>
                                         #{i + 1}
                                     </div>
                                     <div className="flex-1 min-w-0">

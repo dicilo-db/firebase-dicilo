@@ -121,7 +121,6 @@ export async function processCampaignPost(
                 clickCount: 0, // Reset or keep? Keep if 0.
                 targetUrl: targetUrl || (campaignData?.[`url_${postLanguage}`]) || campaignData?.targetUrl || 'https://dicilo.net',
                 createdAt: admin.firestore.FieldValue.serverTimestamp() // Update timestamp to Post Time
-                createdAt: admin.firestore.FieldValue.serverTimestamp() // Update timestamp to Post Time
             }, { merge: true });
 
             // D. Actualizar Billetera del Usuario (Solo pagamos el Text Reward ahora)
