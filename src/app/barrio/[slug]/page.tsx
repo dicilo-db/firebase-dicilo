@@ -111,36 +111,37 @@ export default async function NeighborhoodPage({ params }: { params: { slug: str
     const stats = await getBarometerStats(neighborhood.name);
 
     return (
-        {/* Hero Section */ }
-        < div className = "bg-white border-b sticky top-0 z-10 shadow-sm" >
-            <div className="container mx-auto px-4 py-4 flex flex-col md:flex-row items-center justify-between gap-4">
-                <div>
-                    <div className="text-sm uppercase tracking-widest text-muted-foreground mb-1">Tu Comunidad</div>
-                    <h1 className="text-3xl font-bold text-primary">{neighborhood.name}</h1>
-                </div>
-                <div className="flex gap-2">
-                    {/* Actions could go here */}
+        <div className="min-h-screen bg-slate-50">
+            {/* Hero Section */}
+            <div className="bg-white border-b sticky top-0 z-10 shadow-sm">
+                <div className="container mx-auto px-4 py-4 flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div>
+                        <div className="text-sm uppercase tracking-widest text-muted-foreground mb-1">Tu Comunidad</div>
+                        <h1 className="text-3xl font-bold text-primary">{neighborhood.name}</h1>
+                    </div>
+                    <div className="flex gap-2">
+                        {/* Actions could go here */}
+                    </div>
                 </div>
             </div>
-            </div >
 
-        {/* Main Grid */ }
-        < div className = "container mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8" >
+            {/* Main Grid */}
+            <div className="container mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
 
-            {/* Left Col: Info & Ranking (4 cols) */ }
-            < div className = "lg:col-span-4 space-y-6" >
+                {/* Left Col: Info & Ranking (4 cols) */}
+                <div className="lg:col-span-4 space-y-6">
 
-                {/* VISUAL BAROMETER */ }
-                < BarometerVisual
-    neighborhoodName = { neighborhood.name }
-    activityLevel = { stats.level }
-    score = { stats.score }
-    weeklyPostCount = { stats.weeklyPosts }
-    activeUsersCount = { stats.activeUsers }
-        />
+                    {/* VISUAL BAROMETER */}
+                    <BarometerVisual
+                        neighborhoodName={neighborhood.name}
+                        activityLevel={stats.level}
+                        score={stats.score}
+                        weeklyPostCount={stats.weeklyPosts}
+                        activeUsersCount={stats.activeUsers}
+                    />
 
-        {/* RANKING CARD */ }
-        < div className = "bg-white rounded-lg shadow-sm border p-0 overflow-hidden" >
+                    {/* RANKING CARD */}
+                    <div className="bg-white rounded-lg shadow-sm border p-0 overflow-hidden">
                         <div className="p-4 border-b bg-slate-50">
                             <h2 className="text-lg font-bold flex items-center gap-2">
                                 🏆 Top Empresas
@@ -152,9 +153,9 @@ export default async function NeighborhoodPage({ params }: { params: { slug: str
                                 <li key={biz.id} className="p-4 flex items-center gap-3 hover:bg-slate-50 transition-colors">
                                     <div className={`
                                         w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm
-                                        ${i === 0 ? 'bg-yellow-100 text-yellow-700' : 
-                                          i === 1 ? 'bg-slate-100 text-slate-700' : 
-                                          i === 2 ? 'bg-orange-100 text-orange-800' : 'text-slate-500'}
+                                        ${i === 0 ? 'bg-yellow-100 text-yellow-700' :
+                                            i === 1 ? 'bg-slate-100 text-slate-700' :
+                                                i === 2 ? 'bg-orange-100 text-orange-800' : 'text-slate-500'}
                                     `}>
                                         #{i + 1}
                                     </div>
@@ -175,21 +176,21 @@ export default async function NeighborhoodPage({ params }: { params: { slug: str
                                 </div>
                             )}
                         </ul>
-                    </div >
-                </div >
+                    </div>
+                </div>
 
-        {/* Right/Center Col: Live Feed (8 cols) */ }
-        < div className = "lg:col-span-8 space-y-6" >
+                {/* Right/Center Col: Live Feed (8 cols) */}
+                <div className="lg:col-span-8 space-y-6">
                     <div className="flex items-center justify-between">
                         <h2 className="text-2xl font-bold text-slate-800">Lo que está pasando</h2>
-                        <Link href="/verzeichnis"> 
+                        <Link href="/verzeichnis">
                             <Badge className="cursor-pointer">Nueva Recomendación +</Badge>
                         </Link>
                     </div>
 
                     <NeighborhoodFeed neighborhood={neighborhood.name} />
-                </div >
-            </div >
-        </div >
+                </div>
+            </div>
+        </div>
     );
 }
