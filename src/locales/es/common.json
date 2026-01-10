@@ -108,6 +108,14 @@
   },
   "dashboard": {
     "welcomeUser": "¡Bienvenido, {{name}}!",
+    "totalBalance": "Balance Total",
+    "community": "Comunidad",
+    "connectWithNeighbors": "Conecta con tus vecinos",
+    "goToCommunity": "Ir a la Comunidad",
+    "inviteNow": "Invitar Ahora",
+    "welcomeBack": "¡Bienvenido de nuevo",
+    "welcomeDesc": "Explora los negocios locales en tu área y gana recompensas.",
+    "exploreDirectory": "Explorar Directorio",
     "goToWallet": "Ir a la Billetera",
     "promo": {
       "estimatedEarnings": "Ganancia Estimada",

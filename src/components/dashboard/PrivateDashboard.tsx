@@ -221,7 +221,98 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
             case 'overview':
                 return (
                     <div className="space-y-6 animate-in fade-in duration-500">
-                        {/* Replace old cards with Community View */}
+                        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                            <Card>
+                                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                    <CardTitle className="text-sm font-medium">
+                                        {t('dashboard.totalBalance', 'Total Balance')}
+                                    </CardTitle>
+                                    <CreditCard className="h-4 w-4 text-muted-foreground" />
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="text-2xl font-bold">
+                                        {walletData ? `${walletData.balance.toFixed(2)} DICI` : '...'}
+                                    </div>
+                                    <p className="text-xs text-muted-foreground">
+                                        ≈ {walletData ? `€${walletData.valueInEur.toFixed(2)}` : '...'}
+                                    </p>
+                                    <Button variant="link" className="px-0 h-auto mt-2" onClick={() => setActiveView('wallet')}>
+                                        {t('dashboard.viewWallet', 'View Wallet')}
+                                    </Button>
+                                </CardContent>
+                            </Card>
+                            <Card>
+                                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                    <CardTitle className="text-sm font-medium">
+                                        {t('dashboard.community', 'Community')}
+                                    </CardTitle>
+                                    <Users className="h-4 w-4 text-muted-foreground" />
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="text-2xl font-bold">{formData.city || 'Hamburg'}</div>
+                                    <p className="text-xs text-muted-foreground">
+                                        {t('dashboard.connectWithNeighbors', 'Connect with neighbors')}
+                                    </p>
+                                    <Button variant="link" className="px-0 h-auto mt-2" onClick={() => setActiveView('community')}>
+                                        {t('dashboard.goToCommunity', 'Go to Community')}
+                                    </Button>
+                                </CardContent>
+                            </Card>
+                            <Card>
+                                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                    <CardTitle className="text-sm font-medium">
+                                        {t('dashboard.invite', 'Invite Friends')}
+                                    </CardTitle>
+                                    <Gift className="h-4 w-4 text-muted-foreground" />
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="text-2xl font-bold">{formData.referrals?.length || 0}</div>
+                                    <p className="text-xs text-muted-foreground">
+                                        {t('dashboard.friendsInvited', 'Friends Invited')}
+                                    </p>
+                                    <Button variant="link" className="px-0 h-auto mt-2" onClick={() => setActiveView('invite')}>
+                                        {t('dashboard.inviteNow', 'Invite Now')}
+                                    </Button>
+                                </CardContent>
+                            </Card>
+                            <Card>
+                                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                    <CardTitle className="text-sm font-medium">
+                                        DiciCoin
+                                    </CardTitle>
+                                    <Coins className="h-4 w-4 text-muted-foreground" />
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="text-2xl font-bold">Token</div>
+                                    <p className="text-xs text-muted-foreground">
+                                        Manage your assets
+                                    </p>
+                                    <Button variant="link" className="px-0 h-auto mt-2" onClick={() => setActiveView('dicicoin')}>
+                                        View DiciCoin
+                                    </Button>
+                                </CardContent>
+                            </Card>
+                        </div>
+
+                        {/* Welcome Banner / Quick Action */}
+                        <Card className="bg-primary/5 border-primary/20">
+                            <CardHeader>
+                                <CardTitle>{t('dashboard.welcomeBack', 'Welcome back')}, {formData.firstName}!</CardTitle>
+                                <CardDescription>
+                                    {t('dashboard.welcomeDesc', 'Explore the local businesses in your area and earn rewards.')}
+                                </CardDescription>
+                            </CardHeader>
+                            <CardFooter>
+                                <Button onClick={() => window.location.href = '/verzeichnis'}>
+                                    {t('dashboard.exploreDirectory', 'Explore Directory')}
+                                </Button>
+                            </CardFooter>
+                        </Card>
+                    </div>
+                );
+            case 'community':
+                return (
+                    <div className="space-y-6 animate-in fade-in duration-500">
                         <CommunityView defaultNeighborhood={formData.city || 'Hamburg'} />
                     </div>
                 );

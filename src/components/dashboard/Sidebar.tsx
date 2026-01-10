@@ -150,10 +150,10 @@ export function Sidebar({ userData, onViewChange, currentView }: SidebarProps) {
     // Actually, simply pushing to navItems puts it at bottom. I will splice it.
     const insertIdx = navItems.findIndex(item => item.id === 'freelancer');
     if (insertIdx !== -1) {
-        navItems.splice(insertIdx + 1, 0, { id: 'community', label: 'Tu Comunidad', icon: Share2, type: 'link', href: '/barrio/hamburg' });
+        navItems.splice(insertIdx + 1, 0, { id: 'community', label: 'Tu Comunidad', icon: Share2, type: 'view' });
     } else {
         // Fallback
-        navItems.push({ id: 'community', label: 'Tu Comunidad', icon: Share2, type: 'link', href: '/barrio/hamburg' });
+        navItems.push({ id: 'community', label: 'Tu Comunidad', icon: Share2, type: 'view' });
     }
 
     // Add Admin conditionally
