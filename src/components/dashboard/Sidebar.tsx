@@ -22,7 +22,8 @@ import {
     Megaphone,
     ChevronDown,
     ChevronRight,
-    Scan
+    Scan,
+    Share2
 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
