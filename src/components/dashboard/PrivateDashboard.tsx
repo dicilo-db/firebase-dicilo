@@ -28,6 +28,7 @@ import { FreelancerLanding } from './freelancer/FreelancerLanding';
 import { FreelancerCampaignList } from './freelancer/FreelancerCampaignList';
 import FreelancerPromoComposerPage from '@/app/dashboard/freelancer/page';
 import { CommunityView } from './CommunityView';
+import ScannerPro from '../admin/ScannerPro';
 import { StatisticsView } from './freelancer/views/StatisticsView';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
@@ -367,6 +368,12 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
                 return (
                     <div className="space-y-6 animate-in fade-in duration-500">
                         <CommunityView defaultNeighborhood={formData.city || 'Hamburg'} />
+                    </div>
+                );
+            case 'scanner':
+                return (
+                    <div className="animate-in fade-in duration-500">
+                        <ScannerPro recruiterId={user.uid} />
                     </div>
                 );
             case 'wallet':

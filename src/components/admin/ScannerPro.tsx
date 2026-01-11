@@ -2,11 +2,12 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Camera, Search, Check, AlertTriangle, CheckCircle } from 'lucide-react';
+import { Loader2, Camera, Search, Check, AlertTriangle, CheckCircle, Info } from 'lucide-react';
 import { createProspect } from '@/app/actions/prospects';
 import { processBusinessCard } from '@/app/actions/scanner';
 import { Prospect } from '@/types/prospect';
@@ -49,14 +50,6 @@ const FAIRS_DATA = {
     ]
 };
 
-// --- STYLES & ASSETS ---
-const STYLE = {
-    green: '#8cc63f',
-    dark: '#1a1a1a',
-    gray: '#f4f4f4',
-    text: '#333'
-};
-
 export default function ScannerPro({ recruiterId = 'DIC-001' }: { recruiterId?: string }) {
     const { t } = useTranslation('admin');
     const { toast } = useToast();
@@ -83,7 +76,6 @@ export default function ScannerPro({ recruiterId = 'DIC-001' }: { recruiterId?: 
     });
 
     // New Features State
-    // const [cardImageBlob, setCardImageBlob] = useState<Blob | null>(null); // Removed locally as it's processed immediately
     const [interest, setInterest] = useState<string>(''); // Output: Basic, Starter, Minorista, Premium
 
     // Campaign Memory State
@@ -316,7 +308,6 @@ export default function ScannerPro({ recruiterId = 'DIC-001' }: { recruiterId?: 
                 website: '',
                 description: ''
             }));
-            // setCardImageBlob(null); // No longer needed
             setScannedPhotoUrl(null);
             setInterest('');
 
@@ -329,289 +320,339 @@ export default function ScannerPro({ recruiterId = 'DIC-001' }: { recruiterId?: 
 
     // --- UI/UX RENDER ---
     return (
-        <div id="dicilo-scan-app" className="bg-white min-h-screen pb-20 font-sans">
+        <div className="space-y-6">
 
-            {/* Header App Style */}
-            <div className="bg-[#1a1a1a] text-white p-4 text-center border-b-4 border-[#8cc63f] mb-6 shadow-md sticky top-0 z-50">
-                <h1 className="text-xl font-bold tracking-wider">{t('scanner.pro.header', 'DICILOSCAN PRO').replace('PRO', '')}<span className="text-[#8cc63f]">PRO</span></h1>
+            {/* Header */}
+            <div>
+                <h1 className="text-3xl font-bold tracking-tight">{t('scanner.title', 'Dicilo Scanner & Reports')}</h1>
+                <p className="text-muted-foreground">
+                    {t('scanner.subtitle', 'Herramienta unificada para capturar prospectos y generar reportes B2B.')}
+                </p>
             </div>
 
-            {/* Campaign Banner */}
+            {/* Instructions Accordion */}
+            <Accordion type="single" collapsible className="w-full bg-white rounded-lg px-4 border">
+                <AccordionItem value="item-1" className="border-b-0">
+                    <AccordionTrigger className="hover:no-underline hover:text-primary">
+                        <div className="flex items-center gap-2">
+                            <Info className="h-4 w-4" />
+                            <span>{t('scanner.howItWorks.title', '¿Cómo funciona?')}</span>
+                        </div>
+                    </AccordionTrigger>
+                    <AccordionContent>
+                        <div className="grid gap-4 md:grid-cols-3 pt-2">
+                            <div className="space-y-1">
+                                <h4 className="font-semibold">{t('scanner.howItWorks.step1.title', '1. Captura')}</h4>
+                                <p className="text-sm text-muted-foreground">{t('scanner.howItWorks.step1.desc')}</p>
+                            </div>
+                            <div className="space-y-1">
+                                <h4 className="font-semibold">{t('scanner.howItWorks.step2.title', '2. Fusión')}</h4>
+                                <p className="text-sm text-muted-foreground">{t('scanner.howItWorks.step2.desc')}</p>
+                            </div>
+                            <div className="space-y-1">
+                                <h4 className="font-semibold">{t('scanner.howItWorks.step3.title', '3. Reportes')}</h4>
+                                <p className="text-sm text-muted-foreground">{t('scanner.howItWorks.step3.desc')}</p>
+                            </div>
+                        </div>
+                    </AccordionContent>
+                </AccordionItem>
+            </Accordion>
+
+            {/* Campaign Banner - Updated Visuals */}
             {campaignClient && (
-                <div className="w-[90%] mx-auto mb-4 bg-blue-50 border-l-4 border-blue-500 p-3 rounded shadow-sm flex justify-between items-center">
+                <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-md shadow-sm flex justify-between items-center">
                     <div>
-                        <p className="text-xs text-blue-500 font-bold uppercase">CLIENTE ACTIVO</p>
-                        <p className="text-blue-900 font-bold">{campaignClient.name}</p>
+                        <p className="text-xs text-blue-500 font-bold uppercase">CLIENTE ACTIVO (MODO RÁFAGA)</p>
+                        <p className="text-blue-900 font-bold text-lg">{campaignClient.name}</p>
                     </div>
-                    <Button onClick={clearCampaign} variant="ghost" size="sm" className="text-red-500 hover:text-red-700 h-8 text-xs">
-                        Cambiar
+                    <Button onClick={clearCampaign} variant="outline" size="sm" className="text-red-500 border-red-200 hover:bg-red-50 hover:text-red-700">
+                        Cambiar Cliente
                     </Button>
                 </div>
             )}
 
-            {/* Camera Container - WIDER Landscape Mode for Business Cards */}
-            <div className="relative w-full mx-auto mb-6 rounded-2xl overflow-hidden shadow-xl bg-black aspect-[4/3]">
-                <video
-                    ref={videoRef}
-                    autoPlay
-                    playsInline
-                    className="w-full h-full object-cover"
-                />
+            {/* Main Content Grid */}
+            <div className="grid gap-6 lg:grid-cols-2">
 
-                {/* Debug Canvas (Visible if toggled) */}
-                <canvas
-                    ref={canvasRef}
-                    className={`absolute bottom-2 right-2 w-24 h-16 border-2 border-red-500 bg-white ${showDebug ? 'block' : 'hidden'}`}
-                />
+                {/* Left Column: Camera / Scanner */}
+                <div className="space-y-6">
+                    <Card className="overflow-hidden border-2 border-emerald-500/10">
+                        <CardHeader className="bg-emerald-50/50 pb-3">
+                            <CardTitle className="text-lg flex items-center gap-2 text-emerald-700">
+                                <Camera className="h-5 w-5" />
+                                {t('scanner.cardTitle', 'Scanner Pro')}
+                            </CardTitle>
+                            <CardDescription>{t('scanner.cardDesc', 'Encuadra la tarjeta de visita')}</CardDescription>
+                        </CardHeader>
+                        <CardContent className="p-0">
+                            <div className="relative aspect-video bg-black">
+                                <video
+                                    ref={videoRef}
+                                    autoPlay
+                                    playsInline
+                                    className="w-full h-full object-cover"
+                                />
 
-                {/* Visual Guide Overlay - Horizontal Card Shape */}
-                <div className="absolute top-[15%] left-[5%] right-[5%] bottom-[15%] border-2 border-dashed border-[#8cc63f] rounded-lg shadow-[0_0_0_100vmax_rgba(0,0,0,0.6)] pointer-events-none">
-                    <div className="absolute -top-8 left-0 w-full text-center text-white font-bold text-sm tracking-widest drop-shadow-md bg-black/50 py-1 rounded">
-                        {t('scanner.pro.overlay', 'ENCUADRAR TARJETA (HORIZONTAL)')}
-                    </div>
-                </div>
-            </div>
-
-            {/* Debug Toggle */}
-            <div className="flex justify-center mb-2">
-                <button
-                    onClick={() => setShowDebug(!showDebug)}
-                    className="text-[10px] text-gray-500 underline"
-                >
-                    {showDebug ? t('scanner.pro.debug.hide', 'Ocultar visión del robot') : t('scanner.pro.debug.show', 'Ver qué ve el robot (Debug)')}
-                </button>
-            </div>
-
-            {/* Action Buttons */}
-            <button
-                onClick={scanCard}
-                disabled={isProcessing}
-                className="w-full block py-4 bg-[#8cc63f] text-white border-none rounded-full text-lg font-bold uppercase tracking-wide cursor-pointer shadow-lg active:scale-95 transition-transform"
-            >
-                {isProcessing ? (
-                    <span className="flex items-center justify-center gap-2">
-                        <Loader2 className="animate-spin" /> {t('scanner.pro.btn.processing', 'Procesando...')}
-                    </span>
-                ) : (
-                    <span className="flex items-center justify-center gap-2">
-                        <Camera /> {t('scanner.pro.btn.capture', 'Capturar Datos')}
-                    </span>
-                )}
-            </button>
-
-            <p className="text-center text-gray-500 text-sm mt-2 font-medium h-5">{status}</p>
-
-            {/* Result Feedback Card (Success/Duplicate) */}
-            {lastResult && (
-                <div className={`w-full mt-6 p-4 rounded-xl border-l-4 shadow-md animate-in slide-in-from-bottom-5 ${lastResult.status === 'success' ? 'bg-green-50 border-green-500' : 'bg-amber-50 border-amber-500'}`}>
-                    <div className="flex items-start gap-3">
-                        {lastResult.status === 'success' ? <CheckCircle className="text-green-600 w-6 h-6 shrink-0" /> : <AlertTriangle className="text-amber-600 w-6 h-6 shrink-0" />}
-                        <div>
-                            <h3 className={`font-bold ${lastResult.status === 'success' ? 'text-green-800' : 'text-amber-800'}`}>
-                                {lastResult.status === 'success' ? t('scanner.pro.result.success', 'Registro Exitoso') : t('scanner.pro.result.duplicate', 'Empresa Existente')}
-                            </h3>
-                            <p className="text-sm text-gray-700 mt-1">{lastResult.message}</p>
-
-                            <div className="mt-3 bg-white/60 p-2 rounded text-sm">
-                                <p><strong>{t('scanner.pro.result.company', 'Empresa')}:</strong> {lastResult.companyName}</p>
-                                <p><strong>{t('scanner.pro.result.assigned', 'Asignado a')}:</strong> {lastResult.clientName}</p>
-                                <p><strong>{t('scanner.pro.result.status', 'Estado')}:</strong> <span className="bg-gray-200 px-1 rounded text-xs">{t('scanner.pro.result.pending', 'Pendiente Revisión')}</span></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* Form Section */}
-            <div className="w-full mt-6 bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
-                <form onSubmit={handleSubmit}>
-                    <div className="mb-4">
-                        <label className="block text-xs font-bold text-gray-500 uppercase mb-1">{t('scanner.pro.form.name', 'Nombre / Empresa')}</label>
-                        <input
-                            value={formData.businessName}
-                            onChange={e => setFormData({ ...formData, businessName: e.target.value })}
-                            className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-[#8cc63f] focus:bg-white transition-colors"
-                            placeholder={t('scanner.pro.form.placeholder.name', 'Ej. Restaurante Pepe')}
-                            required
-                        />
-                    </div>
-
-                    <div className="flex gap-3 mb-4">
-                        <div className="flex-1">
-                            <label className="block text-xs font-bold text-gray-500 uppercase mb-1">{t('scanner.pro.form.phone', 'Teléfono')}</label>
-                            <input
-                                value={formData.phone}
-                                onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                                className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-[#8cc63f] focus:bg-white transition-colors"
-                                placeholder={t('scanner.pro.form.placeholder.phone', '+34 600...')}
-                            />
-                        </div>
-                        <div className="flex-1">
-                            <label className="block text-xs font-bold text-gray-500 uppercase mb-1">{t('scanner.pro.form.email', 'Email')}</label>
-                            <input
-                                type="email"
-                                value={formData.email}
-                                onChange={e => setFormData({ ...formData, email: e.target.value })}
-                                className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-[#8cc63f] focus:bg-white transition-colors"
-                                placeholder={t('scanner.pro.form.placeholder.email', 'info@...')}
-                            />
-                        </div>
-                    </div>
-
-                    <div className="mb-4">
-                        <label className="block text-xs font-bold text-gray-500 uppercase mb-1">{t('scanner.pro.form.web', 'Web / Dirección')}</label>
-                        <input
-                            value={formData.website}
-                            onChange={e => setFormData({ ...formData, website: e.target.value })}
-                            className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-[#8cc63f] focus:bg-white transition-colors mb-2"
-                            placeholder={t('scanner.pro.form.placeholder.web', 'www.ejemplo.com')}
-                        />
-                        <input
-                            value={formData.address}
-                            onChange={e => setFormData({ ...formData, address: e.target.value })}
-                            className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-[#8cc63f] focus:bg-white transition-colors"
-                            placeholder={t('scanner.pro.form.placeholder.address', 'Calle Principal 1, Madrid')}
-                        />
-                    </div>
-
-                    <div className="mb-6">
-                        <label className="block text-xs font-bold text-gray-500 uppercase mb-1">{t('scanner.pro.form.notes', 'Notas (OCR Raw)')}</label>
-                        <textarea
-                            value={formData.description}
-                            onChange={e => setFormData({ ...formData, description: e.target.value })}
-                            className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-[#8cc63f] focus:bg-white transition-colors min-h-[80px] text-xs font-mono"
-                            placeholder={t('scanner.pro.form.placeholder.notes', 'Texto extraído...')}
-                        />
-                    </div>
-
-                    {/* Meta Data: Recruiter & Event (NEW) */}
-                    <div className="mb-6 grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-50 p-4 rounded-xl">
-                        <div>
-                            <label className="block text-xs font-bold text-gray-500 uppercase mb-1">{t('scanner.pro.form.sender', 'Datos enviados por')}:</label>
-                            <div className="font-mono text-sm font-bold text-gray-800 bg-white p-2 border rounded">
-                                {recruiterId}
-                            </div>
-                        </div>
-                        <div>
-                            <label className="block text-xs font-bold text-gray-500 uppercase mb-1">{t('scanner.pro.form.event', 'Evento / Feria')}:</label>
-                            <Select
-                                value={formData.eventName}
-                                onValueChange={(val) => setFormData({ ...formData, eventName: val })}
-                            >
-                                <SelectTrigger className="w-full bg-white border-gray-200">
-                                    <SelectValue placeholder="Seleccionar Evento" />
-                                </SelectTrigger>
-                                <SelectContent className="max-h-[300px]">
-                                    <SelectItem value="Online (Directo)">🌍 Online / Directo / Otro</SelectItem>
-                                    {Object.entries(FAIRS_DATA).map(([category, events]) => (
-                                        <SelectGroup key={category}>
-                                            <SelectLabel className="bg-gray-100 text-xs font-extrabold uppercase tracking-wide text-gray-600 px-2 py-1 sticky top-0">
-                                                {category}
-                                            </SelectLabel>
-                                            {events.map(event => (
-                                                <SelectItem key={event} value={event} className="text-xs pl-4">
-                                                    {event}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectGroup>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                            <p className="text-[10px] text-gray-400 mt-1">{t('scanner.pro.form.event_notes', 'Selecciona Online si no aplica.')}</p>
-                        </div>
-                    </div>
-
-                    {/* Interest Selector (New) */}
-                    <div className="mb-6 bg-blue-50/50 p-4 rounded-xl border border-blue-100">
-                        <label className="block text-xs font-bold text-[#1a1a1a] uppercase mb-2">
-                            {t('scanner.pro.form.interest', 'Interés Prospecto')}:
-                        </label>
-                        <div className="grid grid-cols-2 gap-2">
-                            {['Basic', 'Starter', 'Minorista', 'Premium'].map((item) => (
-                                <div
-                                    key={item}
-                                    onClick={() => setInterest(item)}
-                                    className={`text-center py-2 rounded-lg text-xs font-bold cursor-pointer transition-all border ${interest === item
-                                        ? 'bg-[#1a1a1a] text-white border-[#1a1a1a] shadow-md'
-                                        : 'bg-white text-gray-500 border-gray-200 hover:border-gray-400'
-                                        }`}
-                                >
-                                    {t(`scanner.pro.interest.${item.toLowerCase()}`, item)}
+                                {/* Visual Guide Overlay */}
+                                <div className="absolute inset-[15%] border-2 border-dashed border-emerald-400 rounded-lg shadow-[0_0_0_9999px_rgba(0,0,0,0.5)] pointer-events-none opacity-80" />
+                                <div className="absolute bottom-4 left-0 right-0 text-center text-white/90 text-sm font-medium drop-shadow-md">
+                                    {t('scanner.pro.overlay', 'ENCUADRAR TARJETA (HORIZONTAL)')}
                                 </div>
-                            ))}
-                        </div>
-                    </div>
 
-                    {/* Assignment Selector (Only if No Campaign Set) */}
-                    {!campaignClient && (
-                        <div className="mb-6 bg-gray-50 p-4 rounded-xl">
-                            <label className="block text-xs font-bold text-[#8cc63f] uppercase mb-2">{t('scanner.pro.assign.label', 'Asignar Lead A')}:</label>
-
-                            <div className="flex gap-2 mb-4">
-                                {['DICILO', 'CLIENTE', 'AMBOS'].map((opt) => (
-                                    <div
-                                        key={opt}
-                                        onClick={() => setFormData({ ...formData, leadDestination: opt })}
-                                        className={`flex-1 text-center py-2 rounded-lg text-xs font-bold cursor-pointer transition-all ${formData.leadDestination === opt
-                                            ? 'bg-white shadow-sm text-[#1a1a1a] ring-1 ring-[#8cc63f]'
-                                            : 'text-gray-400 hover:bg-gray-100'
-                                            }`}
-                                    >
-                                        {opt === 'DICILO' ? t('scanner.pro.assign.dicilo', 'DICILO') : opt === 'CLIENTE' ? t('scanner.pro.assign.client', 'CLIENTE') : t('scanner.pro.assign.both', 'AMBOS')}
-                                    </div>
-                                ))}
+                                {/* Debug Canvas */}
+                                <canvas
+                                    ref={canvasRef}
+                                    className={`absolute bottom-2 right-2 w-24 h-16 border-2 border-red-500 bg-white ${showDebug ? 'block' : 'hidden'}`}
+                                />
                             </div>
 
-                            {(formData.leadDestination === 'CLIENTE' || formData.leadDestination === 'AMBOS') && (
-                                <div className="space-y-3 animate-in fade-in">
-                                    <div className="relative">
-                                        <Search className="absolute left-3 top-3.5 h-4 w-4 text-gray-400" />
-                                        <input
-                                            placeholder="Buscar Cliente..."
-                                            value={searchTerm}
-                                            onChange={e => handleSearch(e.target.value)}
-                                            className="w-full pl-10 p-3 bg-white border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                        />
-                                        {searchResults.length > 0 && (
-                                            <div className="absolute z-10 w-full bg-white border rounded-lg shadow-xl mt-1 max-h-40 overflow-y-auto">
-                                                {searchResults.map(res => (
-                                                    <div
-                                                        key={res.id}
-                                                        className="p-3 hover:bg-blue-50 cursor-pointer text-sm border-b last:border-0"
-                                                        onClick={() => selectCompany(res)}
-                                                    >
-                                                        {res.name}
-                                                    </div>
-                                                ))}
+                            <div className="p-4 space-y-4">
+                                <Button
+                                    onClick={scanCard}
+                                    disabled={isProcessing}
+                                    size="lg"
+                                    className="w-full text-lg font-bold uppercase tracking-wide bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white shadow-md transition-all active:scale-[0.98]"
+                                >
+                                    {isProcessing ? (
+                                        <>
+                                            <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                                            {t('scanner.pro.btn.processing', 'Procesando...')}
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Camera className="mr-2 h-5 w-5" />
+                                            {t('scanner.pro.btn.capture', 'Capturar Datos')}
+                                        </>
+                                    )}
+                                </Button>
+
+                                <div className="flex justify-between items-center text-xs text-muted-foreground">
+                                    <p className="font-medium">{status}</p>
+                                    <button
+                                        onClick={() => setShowDebug(!showDebug)}
+                                        className="underline hover:text-emerald-600"
+                                    >
+                                        {showDebug ? t('scanner.pro.debug.hide') : t('scanner.pro.debug.show')}
+                                    </button>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    {/* Result Feedback Card (Success/Duplicate) */}
+                    {lastResult && (
+                        <Card className={`border-l-4 ${lastResult.status === 'success' ? 'bg-green-50/50 border-l-green-500' : 'bg-amber-50/50 border-l-amber-500'}`}>
+                            <CardContent className="p-4 flex items-start gap-3">
+                                {lastResult.status === 'success' ? <CheckCircle className="text-green-600 w-6 h-6 shrink-0 mt-0.5" /> : <AlertTriangle className="text-amber-600 w-6 h-6 shrink-0 mt-0.5" />}
+                                <div>
+                                    <h3 className={`font-bold ${lastResult.status === 'success' ? 'text-green-800' : 'text-amber-800'}`}>
+                                        {lastResult.status === 'success' ? t('scanner.pro.result.success', 'Registro Exitoso') : t('scanner.pro.result.duplicate', 'Empresa Existente')}
+                                    </h3>
+                                    <p className="text-sm text-foreground/80 mt-1">{lastResult.message}</p>
+                                    <div className="mt-2 text-xs font-mono bg-white/50 p-2 rounded">
+                                        <p>{t('scanner.pro.result.company')}: {lastResult.companyName}</p>
+                                        <p>{t('scanner.pro.result.assigned')}: {lastResult.clientName}</p>
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    )}
+                </div>
+
+                {/* Right Column: Form */}
+                <Card>
+                    <CardHeader>
+                        <CardTitle>{t('scanner.pro.form.title', 'Datos del Prospecto')}</CardTitle>
+                        <CardDescription>{t('scanner.pro.form.desc', 'Revisa y completa la información antes de guardar.')}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <form onSubmit={handleSubmit} className="space-y-4">
+                            <div className="grid gap-2">
+                                <label className="text-sm font-medium uppercase text-muted-foreground">{t('scanner.pro.form.name', 'Nombre / Empresa')}</label>
+                                <Input
+                                    value={formData.businessName}
+                                    onChange={e => setFormData({ ...formData, businessName: e.target.value })}
+                                    placeholder={t('scanner.pro.form.placeholder.name')}
+                                    required
+                                    className="font-medium"
+                                />
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <label className="text-sm font-medium uppercase text-muted-foreground">{t('scanner.pro.form.phone')}</label>
+                                    <Input
+                                        value={formData.phone}
+                                        onChange={e => setFormData({ ...formData, phone: e.target.value })}
+                                        placeholder={t('scanner.pro.form.placeholder.phone')}
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-sm font-medium uppercase text-muted-foreground">{t('scanner.pro.form.email')}</label>
+                                    <Input
+                                        type="email"
+                                        value={formData.email}
+                                        onChange={e => setFormData({ ...formData, email: e.target.value })}
+                                        placeholder={t('scanner.pro.form.placeholder.email')}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="grid gap-4">
+                                <div className="space-y-2">
+                                    <label className="text-sm font-medium uppercase text-muted-foreground">{t('scanner.pro.form.web', 'Web')}</label>
+                                    <Input
+                                        value={formData.website}
+                                        onChange={e => setFormData({ ...formData, website: e.target.value })}
+                                        placeholder={t('scanner.pro.form.placeholder.web')}
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-sm font-medium uppercase text-muted-foreground">{t('scanner.pro.form.address', 'Dirección')}</label>
+                                    <Input
+                                        value={formData.address}
+                                        onChange={e => setFormData({ ...formData, address: e.target.value })}
+                                        placeholder={t('scanner.pro.form.placeholder.address')}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium uppercase text-muted-foreground">{t('scanner.pro.form.notes')}</label>
+                                <Textarea
+                                    value={formData.description}
+                                    onChange={e => setFormData({ ...formData, description: e.target.value })}
+                                    className="min-h-[80px] text-xs font-mono"
+                                    placeholder={t('scanner.pro.form.placeholder.notes')}
+                                />
+                            </div>
+
+                            {/* Meta Data & Event */}
+                            <div className="grid grid-cols-2 gap-4 bg-muted/30 p-3 rounded-lg">
+                                <div className="space-y-1">
+                                    <label className="text-xs font-bold uppercase text-muted-foreground">{t('scanner.pro.form.sender')}:</label>
+                                    <div className="font-mono text-xs font-medium">{recruiterId}</div>
+                                </div>
+                                <div className="space-y-1">
+                                    <label className="text-xs font-bold uppercase text-muted-foreground">{t('scanner.pro.form.event')}:</label>
+                                    <Select
+                                        value={formData.eventName}
+                                        onValueChange={(val) => setFormData({ ...formData, eventName: val })}
+                                    >
+                                        <SelectTrigger className="h-8 text-xs bg-white">
+                                            <SelectValue placeholder="Seleccionar Evento" />
+                                        </SelectTrigger>
+                                        <SelectContent className="max-h-[300px]">
+                                            <SelectItem value="Online (Directo)">🌍 Online / Directo / Otro</SelectItem>
+                                            {Object.entries(FAIRS_DATA).map(([category, events]) => (
+                                                <SelectGroup key={category}>
+                                                    <SelectLabel className="bg-muted text-[10px] font-bold uppercase px-2 py-1 sticky top-0">
+                                                        {category}
+                                                    </SelectLabel>
+                                                    {events.map(event => (
+                                                        <SelectItem key={event} value={event} className="text-xs pl-4">
+                                                            {event}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectGroup>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                            </div>
+
+                            {/* Interest Selector */}
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium uppercase text-muted-foreground">{t('scanner.pro.form.interest')}:</label>
+                                <div className="grid grid-cols-4 gap-2">
+                                    {['Basic', 'Starter', 'Minorista', 'Premium'].map((item) => (
+                                        <div
+                                            key={item}
+                                            onClick={() => setInterest(item)}
+                                            className={`text-center py-2 rounded-md text-xs font-bold cursor-pointer transition-all border ${interest === item
+                                                ? 'bg-primary text-primary-foreground border-primary shadow-sm'
+                                                : 'bg-background hover:bg-muted border-input'
+                                                }`}
+                                        >
+                                            {item}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Assignment Selector (Only if No Campaign Set) */}
+                            {!campaignClient && (
+                                <div className="bg-muted/30 p-4 rounded-lg space-y-3">
+                                    <label className="text-sm font-medium uppercase text-emerald-600">{t('scanner.pro.assign.label', 'Asignar Lead A')}:</label>
+
+                                    <div className="flex gap-2">
+                                        {['DICILO', 'CLIENTE', 'AMBOS'].map((opt) => (
+                                            <div
+                                                key={opt}
+                                                onClick={() => setFormData({ ...formData, leadDestination: opt })}
+                                                className={`flex-1 text-center py-2 rounded-md text-xs font-bold cursor-pointer transition-all border ${formData.leadDestination === opt
+                                                    ? 'bg-white shadow-sm text-foreground ring-1 ring-emerald-500 border-emerald-500'
+                                                    : 'text-muted-foreground border-transparent hover:bg-white/50'
+                                                    }`}
+                                            >
+                                                {opt === 'DICILO' ? 'DICILO' : opt === 'CLIENTE' ? 'CLIENTE' : 'AMBOS'}
                                             </div>
-                                        )}
+                                        ))}
                                     </div>
 
-                                    <div
-                                        className="flex items-center gap-2 cursor-pointer"
-                                        onClick={() => setRememberClient(!rememberClient)}
-                                    >
-                                        <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${rememberClient ? 'bg-[#8cc63f] border-[#8cc63f]' : 'bg-white border-gray-300'}`}>
-                                            {rememberClient && <Check className="w-3 h-3 text-white" />}
+                                    {(formData.leadDestination === 'CLIENTE' || formData.leadDestination === 'AMBOS') && (
+                                        <div className="space-y-2 animate-in fade-in">
+                                            <div className="relative">
+                                                <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                                                <Input
+                                                    placeholder="Buscar Cliente..."
+                                                    value={searchTerm}
+                                                    onChange={e => handleSearch(e.target.value)}
+                                                    className="pl-9 bg-white"
+                                                />
+                                                {searchResults.length > 0 && (
+                                                    <div className="absolute z-10 w-full bg-white border rounded-lg shadow-lg mt-1 max-h-40 overflow-y-auto">
+                                                        {searchResults.map(res => (
+                                                            <div
+                                                                key={res.id}
+                                                                className="p-2 hover:bg-muted cursor-pointer text-sm border-b last:border-0"
+                                                                onClick={() => selectCompany(res)}
+                                                            >
+                                                                {res.name}
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                )}
+                                            </div>
+
+                                            <div
+                                                className="flex items-center gap-2 cursor-pointer"
+                                                onClick={() => setRememberClient(!rememberClient)}
+                                            >
+                                                <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${rememberClient ? 'bg-emerald-500 border-emerald-500' : 'bg-white border-input'}`}>
+                                                    {rememberClient && <Check className="w-3 h-3 text-white" />}
+                                                </div>
+                                                <span className="text-xs text-muted-foreground select-none">{t('scanner.pro.assign.remember_client')}</span>
+                                            </div>
                                         </div>
-                                        <span className="text-xs text-gray-600 font-medium select-none">{t('scanner.pro.assign.remember_client', 'Recordar para escaneo continuo')}</span>
-                                    </div>
+                                    )}
                                 </div>
                             )}
-                        </div>
-                    )}
 
-                    <button
-                        type="submit"
-                        disabled={isProcessing}
-                        className="w-full py-4 bg-[#1a1a1a] text-white rounded-xl font-bold uppercase tracking-widest shadow-lg active:scale-95 transition-transform"
-                    >
-                        {isProcessing ? t('scanner.pro.btn.saving', 'Guardando...') : t('scanner.pro.btn.save', 'Guardar Prospecto')}
-                    </button>
+                            <Button
+                                type="submit"
+                                disabled={isProcessing}
+                                size="lg"
+                                className="w-full text-lg font-bold uppercase tracking-widest mt-4"
+                            >
+                                {isProcessing ? t('scanner.pro.btn.saving', 'Guardando...') : t('scanner.pro.btn.save', 'Guardar Prospecto')}
+                            </Button>
 
-                </form>
+                        </form>
+                    </CardContent>
+                </Card>
+
             </div>
-
         </div>
     );
 }

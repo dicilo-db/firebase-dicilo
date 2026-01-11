@@ -135,9 +135,9 @@ export function Sidebar({ userData, onViewChange, currentView }: SidebarProps) {
         // Find index of 'invite' and insert after it
         const inviteIndex = navItems.findIndex(item => item.id === 'invite');
         if (inviteIndex !== -1) {
-            navItems.splice(inviteIndex + 1, 0, { id: 'scanner', label: 'Scanner Pro', icon: Scan, type: 'link', href: '/admin/scan' });
+            navItems.splice(inviteIndex + 1, 0, { id: 'scanner', label: 'Scanner Pro', icon: Scan, type: 'view' });
         } else {
-            navItems.push({ id: 'scanner', label: 'Scanner Pro', icon: Scan, type: 'link', href: '/admin/scan' });
+            navItems.push({ id: 'scanner', label: 'Scanner Pro', icon: Scan, type: 'view' });
         }
     }
 
