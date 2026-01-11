@@ -3,7 +3,7 @@
 import { genkit } from 'genkit';
 import { googleAI, gemini15Flash } from '@genkit-ai/googleai';
 import { z } from 'zod';
-import { adminStorage } from '@/lib/firebase-admin';
+import { getAdminStorage } from '@/lib/firebase-admin';
 import { createWorker } from 'tesseract.js';
 
 const ai = genkit({
@@ -37,7 +37,7 @@ export async function processBusinessCard(formData: FormData) {
         const dataUrl = `data:${file.type};base64,${base64Image}`;
 
         // 1. Upload to Firebase Storage
-        const bucket = adminStorage.bucket();
+        const bucket = getAdminStorage().bucket();
         const fileName = `scans/${recruiterId}/${Date.now()}_${file.name}`;
         const fileRef = bucket.file(fileName);
 
