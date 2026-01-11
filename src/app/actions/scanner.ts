@@ -1,8 +1,10 @@
 'use server';
 
 import { ai } from '@/ai/genkit';
+import { gemini15Flash } from '@genkit-ai/googleai'; // Use stable model
 import { getAdminDb, getAdminStorage } from '@/lib/firebase-admin';
 import { z } from 'zod';
+import { createWorker } from 'tesseract.js';
 
 const ScanResultSchema = z.object({
     businessName: z.string().optional(),
@@ -22,7 +24,7 @@ export async function processBusinessCard(formData: FormData) {
             throw new Error('No image provided');
         }
 
-        // 1. Upload to Firebase Storage (Server-side)
+        // 1. Upload to Firebase Storage
         const buffer = Buffer.from(await file.arrayBuffer());
         const bucket = getAdminStorage().bucket();
         const filename = `receipts/${recruiterId}/${Date.now()}_${file.name}`;
@@ -34,57 +36,61 @@ export async function processBusinessCard(formData: FormData) {
             },
         });
 
-        // Make public or get signed URL?
-        // For simplicity in this context, we'll get a signed URL valid for 1 hour to pass to Gemini, 
-        // but store the permanent path for the DB.
-        // Actually, making it public is easier if rules allow, but let's use signed URL for security.
-        const [signedUrl] = await fileRef.getSignedUrl({
-            action: 'read',
-            expires: Date.now() + 1000 * 60 * 60, // 1 hour
-        });
-
-        // Durable URL for the database (assuming public access or client SDK usage later)
-        // Constructing specific public URL if the bucket is standard firebase
-        // But better to save the full path or signed URL if private.
-        // Let's assume we want a long-lived public-ish URL or we store the gs:// path.
-        // For the "Photo URL" field in DB, a publicly accessible URL is usually expected by frontend components.
-        // Let's make it public.
+        // Make public or get signed URL
         await fileRef.makePublic();
         const publicUrl = `https://storage.googleapis.com/${bucket.name}/${filename}`;
 
-        // 2. Process with Gemini (AI)
-        // Convert buffer to base64 for Genkit inline usage, or use URL if supported.
-        // Genkit supports data URLs or inline base64 part.
+        // 2. Perform True OCR with Tesseract.js (The "Real OCR Library" requested)
+        console.log("Starting Tesseract OCR...");
+        const worker = await createWorker(['eng', 'spa', 'deu']); // Multi-language support
+        const { data: { text: rawOcrText } } = await worker.recognize(buffer);
+        console.log("OCR Result:", rawOcrText);
+        await worker.terminate();
+
+        // 3. Process with Gemini 1.5 Flash (AI) using BOTH Image and OCR Text
+        // Gemini 1.5 Flash is Multimodal and stable.
         const base64Image = buffer.toString('base64');
         const dataUrl = `data:${file.type};base64,${base64Image}`;
 
+        console.log("Starting Gemini Analysis...");
         const response = await ai.generate({
-            prompt: `
-        Analyze this business card image. Extract the following information in JSON format:
-        - businessName: The name of the company or business.
-        - email: The primary email address.
-        - phone: The primary phone number.
-        - website: The website URL.
-        - address: The physical address.
-        - interest: Infer the potential interest level based on the quality/type of business if possible, otherwise default to 'Basic'. Options: Basic, Starter, Minorista, Premium.
+            model: gemini15Flash,
+            prompt: [
+                { media: { url: dataUrl } },
+                {
+                    text: `
+        Analyze this business card image and the raw OCR text provided below.
         
-        Return ONLY valid JSON.
-      `,
-            model: 'googleai/gemini-2.0-flash',
+        Raw OCR Text (from Tesseract):
+        """
+        ${rawOcrText}
+        """
+
+        Task:
+        1. Correct any OCR errors using the visual context of the image.
+        2. Extract the following information in strict JSON format:
+           - businessName: The name of the company.
+           - email: Primary contact email.
+           - phone: Primary phone number.
+           - website: Website URL.
+           - address: Physical address.
+           - interest: Infer interest level (Basic/Starter/Minorista/Premium). Default to 'Basic' if unsure.
+
+        Return ONLY valid JSON matching the schema.
+                    `
+                }
+            ],
             output: { schema: ScanResultSchema },
             config: {
-                temperature: 0.2 // Reduced creativity for OCR
-            },
-            content: [
-                { media: { url: dataUrl } },
-                { text: "Extract business card data." }
-            ]
+                temperature: 0.1
+            }
         });
 
         return {
             success: true,
-            data: response.output, // Using typed output
-            photoUrl: publicUrl
+            data: response.output,
+            photoUrl: publicUrl,
+            ocrDebug: rawOcrText // Optional: return this if we want to show it in debug
         };
 
     } catch (error: any) {
