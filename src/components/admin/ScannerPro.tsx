@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Camera, Zap, CheckCircle, AlertTriangle, ChevronLeft, RefreshCw } from 'lucide-react';
+import { Loader2, Camera, Zap, CheckCircle, AlertTriangle, ChevronLeft, RefreshCw, Info } from 'lucide-react';
 import { createProspect } from '@/app/actions/prospects';
 import { processBusinessCard } from '@/app/actions/scanner';
 import { useTranslation } from 'react-i18next';
@@ -25,6 +25,7 @@ export default function ScannerPro({ recruiterId = 'DIC-001' }: { recruiterId?: 
     // UI State
     const [status, setStatus] = useState<string>('Iniciando cámara...');
     const [isProcessing, setIsProcessing] = useState(false);
+    const [showHelp, setShowHelp] = useState(false);
     const [scannedPhotoUrl, setScannedPhotoUrl] = useState<string | null>(null);
     const [lastResult, setLastResult] = useState<{ status: 'success' | 'duplicate', message: string, companyName: string } | null>(null);
 
@@ -150,6 +151,11 @@ export default function ScannerPro({ recruiterId = 'DIC-001' }: { recruiterId?: 
 
                 const result = await processBusinessCard(formDataPayload);
 
+                // FIX: Check if result exists basically to avoid "Cannot read properties of undefined"
+                if (!result) {
+                    throw new Error('El servidor no devolvió una respuesta válida.');
+                }
+
                 if (result.success && result.data) {
                     populateForm(result.data, result.photoUrl);
                     setStatus('¡Datos extraídos!');
@@ -159,7 +165,7 @@ export default function ScannerPro({ recruiterId = 'DIC-001' }: { recruiterId?: 
                         companyName: result.data.businessName || 'Desconocido'
                     });
                 } else {
-                    throw new Error(result.error || 'No se pudieron extraer datos');
+                    throw new Error(result.error || 'No se pudieron extraer datos de la imagen.');
                 }
 
             } catch (err: any) {
@@ -288,12 +294,20 @@ export default function ScannerPro({ recruiterId = 'DIC-001' }: { recruiterId?: 
     return (
         <div className="relative w-full h-[85vh] md:h-[600px] bg-black rounded-xl overflow-hidden shadow-2xl flex flex-col">
             {/* Top Bar (Overlay) */}
-            <div className="absolute top-0 left-0 right-0 z-30 p-4 flex justify-between items-start text-white bg-gradient-to-b from-black/70 to-transparent">
-                <div className="flex flex-col">
+            <div className="absolute top-0 left-0 right-0 z-30 p-4 flex justify-between items-start text-white bg-gradient-to-b from-black/70 to-transparent pointer-events-none">
+                <div className="flex flex-col pointer-events-auto">
                     <h1 className="text-lg font-bold drop-shadow-md">Dicilo Scanner</h1>
                     <span className="text-xs opacity-80">{status}</span>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-2 pointer-events-auto">
+                    <Button
+                        size="sm"
+                        variant="ghost"
+                        className="bg-white/10 backdrop-blur-md text-white hover:bg-white/20"
+                        onClick={() => setShowHelp(!showHelp)}
+                    >
+                        <Info className="h-5 w-5" />
+                    </Button>
                     <Button
                         size="sm"
                         variant="secondary"
@@ -305,6 +319,30 @@ export default function ScannerPro({ recruiterId = 'DIC-001' }: { recruiterId?: 
                     </Button>
                 </div>
             </div>
+
+            {/* Help Overlay */}
+            {showHelp && (
+                <div className="absolute inset-0 z-40 bg-black/90 p-6 flex flex-col justify-center animate-in fade-in text-white overflow-y-auto">
+                    <h3 className="text-2xl font-bold mb-4 text-emerald-400">Cómo funciona</h3>
+                    <ul className="space-y-4 text-sm md:text-base opacity-90">
+                        <li className="flex gap-3">
+                            <Camera className="shrink-0 h-6 w-6 text-emerald-400" />
+                            <span><strong>Paso 1:</strong> Enfoca la tarjeta dentro del marco verde.</span>
+                        </li>
+                        <li className="flex gap-3">
+                            <Zap className="shrink-0 h-6 w-6 text-yellow-400" />
+                            <span><strong>Paso 2:</strong> En modo <strong>Auto</strong>, la app detectará el texto y tomará la foto sola. O usa el botón rojo manual.</span>
+                        </li>
+                        <li className="flex gap-3">
+                            <CheckCircle className="shrink-0 h-6 w-6 text-blue-400" />
+                            <span><strong>Paso 3:</strong> Revisa los datos extraídos y guarda el contacto.</span>
+                        </li>
+                    </ul>
+                    <Button className="mt-8 bg-white text-black hover:bg-gray-200" onClick={() => setShowHelp(false)}>
+                        Entendido
+                    </Button>
+                </div>
+            )}
 
             {/* Camera View */}
             <div className="relative flex-grow bg-black">
@@ -346,8 +384,8 @@ export default function ScannerPro({ recruiterId = 'DIC-001' }: { recruiterId?: 
                     disabled={isProcessing}
                     size="icon"
                     className={`rounded-full w-20 h-20 border-4 shadow-xl transition-all active:scale-95 ${isAuto
-                            ? 'bg-transparent border-white/50 hover:bg-white/10' // Ghost button in auto
-                            : 'bg-white border-gray-300 hover:bg-gray-100'        // Solid button in manual
+                        ? 'bg-transparent border-white/50 hover:bg-white/10' // Ghost button in auto
+                        : 'bg-white border-gray-300 hover:bg-gray-100'        // Solid button in manual
                         }`}
                 >
                     {isProcessing ? (
