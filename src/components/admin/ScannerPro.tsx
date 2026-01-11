@@ -260,9 +260,17 @@ export default function ScannerPro({ recruiterId = 'DIC-001' }: { recruiterId?: 
                     setStatus(t('scanner.pro.status.error', '❌ No se pudo leer la tarjeta'));
                 }
 
-            } catch (err) {
-                console.error(err);
-                setStatus('Error de conexión');
+            } catch (err: any) {
+                console.error("Scanner Process Error:", err);
+                const errorMessage = err?.message || 'Error desconocido';
+
+                toast({
+                    title: "Error al procesar",
+                    description: `Fallo: ${errorMessage}. Por favor, intente el modo Manual o verifique su red.`,
+                    variant: "destructive"
+                });
+
+                setStatus(`Error: ${errorMessage.substring(0, 20)}...`);
             } finally {
                 setIsProcessing(false);
                 // If in auto mode, wait a bit before restarting (to avoid loop on same card)
@@ -380,23 +388,43 @@ export default function ScannerPro({ recruiterId = 'DIC-001' }: { recruiterId?: 
         <div className="space-y-6">
 
             {/* Header Moderno */}
-            <div className="flex justify-between items-start">
-                <div>
-                    <h1 className="text-3xl font-bold tracking-tight">{t('scanner.title', 'Dicilo Scanner AI')}</h1>
-                    <p className="text-muted-foreground">{t('scanner.subtitle', 'Captura inteligente de prospectos')}</p>
+            <div className="flex flex-col gap-4">
+                <div className="flex justify-between items-start">
+                    <div>
+                        <h1 className="text-3xl font-bold tracking-tight">{t('scanner.title', 'Dicilo Scanner AI')}</h1>
+                        <p className="text-muted-foreground">{t('scanner.subtitle', 'Captura inteligente de prospectos')}</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <Button
+                            variant={scanMode === 'auto' ? 'default' : 'outline'}
+                            size="sm"
+                            onClick={() => setScanMode(scanMode === 'auto' ? 'manual' : 'auto')}
+                            className="gap-2"
+                        >
+                            {scanMode === 'auto' ? <Zap className="h-4 w-4 fill-yellow-400 text-yellow-400" /> : <Camera className="h-4 w-4" />}
+                            {scanMode === 'auto' ? 'Auto-Scan' : 'Manual'}
+                        </Button>
+                    </div>
                 </div>
-                <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold uppercase text-muted-foreground">Modo:</span>
-                    <Button
-                        variant={scanMode === 'auto' ? 'default' : 'outline'}
-                        size="sm"
-                        onClick={() => setScanMode(scanMode === 'auto' ? 'manual' : 'auto')}
-                        className="gap-2"
-                    >
-                        {scanMode === 'auto' ? <Zap className="h-4 w-4 fill-yellow-400 text-yellow-400" /> : <Camera className="h-4 w-4" />}
-                        {scanMode === 'auto' ? 'Auto-Scan' : 'Manual'}
-                    </Button>
-                </div>
+
+                {/* Restore "How it works" */}
+                <Accordion type="single" collapsible className="w-full bg-white rounded-lg border px-4">
+                    <AccordionItem value="item-1" className="border-b-0">
+                        <AccordionTrigger className="hover:no-underline py-3 text-sm font-semibold text-muted-foreground">
+                            <span className="flex items-center gap-2"><Info className="h-4 w-4" />¿Cómo funciona el Auto-Scan?</span>
+                        </AccordionTrigger>
+                        <AccordionContent className="text-sm text-gray-600 space-y-2 pb-4">
+                            <p>1. <strong>Apunta con la cámara:</strong> Encuadre la tarjeta de visita en el centro.</p>
+                            <p>2. <strong>Espere el enfoque:</strong> El sistema detectará automáticamente cuando el texto sea legible.</p>
+                            <p>3. <strong>Captura Automática:</strong> No necesita pulsar nada. Cuando la confianza sea alta, se capturará sola.</p>
+                            <p>4. <strong>Revisión:</strong> Los datos aparecerán en el formulario para que pueda editarlos antes de guardar.</p>
+                            <div className="bg-blue-50 p-2 rounded text-xs text-blue-700 flex gap-2 items-center mt-2">
+                                <Zap className="h-3 w-3" />
+                                <span>Si tiene problemas, cambie a <strong>Modo Manual</strong> y pulse el botón de cámara.</span>
+                            </div>
+                        </AccordionContent>
+                    </AccordionItem>
+                </Accordion>
             </div>
 
             {/* Campaign Active Banner */}
@@ -514,19 +542,6 @@ export default function ScannerPro({ recruiterId = 'DIC-001' }: { recruiterId?: 
                                 className="h-20 text-xs font-mono"
                             />
 
-                            {/* Interest Tags */}
-                            <div className="flex gap-2">
-                                {['Basic', 'Starter', 'Minorista', 'Premium'].map((tag) => (
-                                    <div
-                                        key={tag}
-                                        onClick={() => setInterest(tag)}
-                                        className={`px-3 py-1 rounded-full text-xs font-bold border cursor-pointer select-none transition-colors ${interest === tag ? 'bg-black text-white border-black' : 'bg-white hover:bg-gray-100'}`}
-                                    >
-                                        {tag}
-                                    </div>
-                                ))}
-                            </div>
-
                             <Button type="submit" disabled={isProcessing} className="w-full font-bold uppercase" size="lg">
                                 {isProcessing ? <Loader2 className="animate-spin" /> : 'Guardar y Seguir'}
                             </Button>
@@ -536,5 +551,5 @@ export default function ScannerPro({ recruiterId = 'DIC-001' }: { recruiterId?: 
             </div>
         </div>
     );
-}
+};
 
