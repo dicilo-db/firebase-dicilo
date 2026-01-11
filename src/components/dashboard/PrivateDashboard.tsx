@@ -52,7 +52,7 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
     const [feedbackRating, setFeedbackRating] = useState(0);
     const [isSubmittingFeedback, setIsSubmittingFeedback] = useState(false);
 
-    const [walletData, setWalletData] = useState<{ balance: number, valueInEur: number } | null>(null);
+    const [walletData, setWalletData] = useState<{ balance: number, valueInEur: number, pointValue: number } | null>(null);
     const [registerUrl, setRegisterUrl] = useState('');
 
     // Fetch wallet data for preview
@@ -221,93 +221,146 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
             case 'overview':
                 return (
                     <div className="space-y-6 animate-in fade-in duration-500">
-                        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                        {/* Header */}
+                        <div>
+                            <h1 className="text-3xl font-bold tracking-tight">
+                                {t('dashboard.welcome', 'Welcome')}, {formData.firstName}!
+                            </h1>
+                            <p className="text-muted-foreground">
+                                {t('dashboard.welcomeDesc', 'Manage your personal profile and preferences.')}
+                            </p>
+                        </div>
+
+                        {/* Top Stats Row */}
+                        <div className="grid gap-4 md:grid-cols-3">
+                            {/* Profile Status */}
                             <Card>
                                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                                     <CardTitle className="text-sm font-medium">
-                                        {t('dashboard.totalBalance', 'Total Balance')}
-                                    </CardTitle>
-                                    <CreditCard className="h-4 w-4 text-muted-foreground" />
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="text-2xl font-bold">
-                                        {walletData ? `${walletData.balance.toFixed(2)} DICI` : '...'}
-                                    </div>
-                                    <p className="text-xs text-muted-foreground">
-                                        ≈ {walletData ? `€${walletData.valueInEur.toFixed(2)}` : '...'}
-                                    </p>
-                                    <Button variant="link" className="px-0 h-auto mt-2" onClick={() => setActiveView('wallet')}>
-                                        {t('dashboard.viewWallet', 'View Wallet')}
-                                    </Button>
-                                </CardContent>
-                            </Card>
-                            <Card>
-                                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                    <CardTitle className="text-sm font-medium">
-                                        {t('dashboard.community', 'Community')}
+                                        {t('dashboard.profileStatus', 'Profile Status')}
                                     </CardTitle>
                                     <Users className="h-4 w-4 text-muted-foreground" />
                                 </CardHeader>
                                 <CardContent>
-                                    <div className="text-2xl font-bold">{formData.city || 'Hamburg'}</div>
+                                    <div className="text-2xl font-bold">{t('dashboard.active', 'Active')}</div>
                                     <p className="text-xs text-muted-foreground">
-                                        {t('dashboard.connectWithNeighbors', 'Connect with neighbors')}
+                                        {t('dashboard.memberSince', 'Member since')} {memberSinceDate}
                                     </p>
-                                    <Button variant="link" className="px-0 h-auto mt-2" onClick={() => setActiveView('community')}>
-                                        {t('dashboard.goToCommunity', 'Go to Community')}
-                                    </Button>
                                 </CardContent>
                             </Card>
-                            <Card>
+
+                            {/* Interests */}
+                            <Card className="cursor-pointer hover:bg-accent/50 transition-colors" onClick={() => setActiveView('settings')}>
                                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                                     <CardTitle className="text-sm font-medium">
-                                        {t('dashboard.invite', 'Invite Friends')}
+                                        {t('dashboard.interests', 'Interests')}
+                                    </CardTitle>
+                                    <Heart className="h-4 w-4 text-muted-foreground" />
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="text-2xl font-bold">{formData.interests?.length || 0}</div>
+                                    <p className="text-xs text-muted-foreground">
+                                        {t('dashboard.yourInterestsDesc', 'Select categories that interest you.')}
+                                    </p>
+                                </CardContent>
+                            </Card>
+
+                            {/* Referrals */}
+                            <Card className="cursor-pointer hover:bg-accent/50 transition-colors" onClick={() => setActiveView('invite')}>
+                                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                    <CardTitle className="text-sm font-medium">
+                                        {t('dashboard.referrals', 'Referrals')}
                                     </CardTitle>
                                     <Gift className="h-4 w-4 text-muted-foreground" />
                                 </CardHeader>
                                 <CardContent>
                                     <div className="text-2xl font-bold">{formData.referrals?.length || 0}</div>
                                     <p className="text-xs text-muted-foreground">
-                                        {t('dashboard.friendsInvited', 'Friends Invited')}
+                                        {t('dashboard.friendsInvited', 'Friends invited')}
                                     </p>
-                                    <Button variant="link" className="px-0 h-auto mt-2" onClick={() => setActiveView('invite')}>
-                                        {t('dashboard.inviteNow', 'Invite Now')}
-                                    </Button>
-                                </CardContent>
-                            </Card>
-                            <Card>
-                                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                    <CardTitle className="text-sm font-medium">
-                                        DiciCoin
-                                    </CardTitle>
-                                    <Coins className="h-4 w-4 text-muted-foreground" />
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="text-2xl font-bold">Token</div>
-                                    <p className="text-xs text-muted-foreground">
-                                        Manage your assets
-                                    </p>
-                                    <Button variant="link" className="px-0 h-auto mt-2" onClick={() => setActiveView('dicicoin')}>
-                                        View DiciCoin
-                                    </Button>
                                 </CardContent>
                             </Card>
                         </div>
 
-                        {/* Welcome Banner / Quick Action */}
-                        <Card className="bg-primary/5 border-primary/20">
-                            <CardHeader>
-                                <CardTitle>{t('dashboard.welcomeBack', 'Welcome back')}, {formData.firstName}!</CardTitle>
-                                <CardDescription>
-                                    {t('dashboard.welcomeDesc', 'Explore the local businesses in your area and earn rewards.')}
-                                </CardDescription>
-                            </CardHeader>
-                            <CardFooter>
-                                <Button onClick={() => window.location.href = '/verzeichnis'}>
-                                    {t('dashboard.exploreDirectory', 'Explore Directory')}
-                                </Button>
-                            </CardFooter>
-                        </Card>
+                        {/* Bottom Section: Quick Actions + Wallets */}
+                        <div className="grid gap-6 lg:grid-cols-3">
+                            {/* Left Column: Quick Actions */}
+                            <div className="lg:col-span-1">
+                                <Card className="h-full">
+                                    <CardHeader>
+                                        <CardTitle>{t('dashboard.quickActions', 'Quick Actions')}</CardTitle>
+                                    </CardHeader>
+                                    <CardContent className="space-y-4">
+                                        <Button variant="outline" className="w-full justify-start h-12" onClick={() => setActiveView('wallet')}>
+                                            <Users className="mr-2 h-4 w-4" />
+                                            {t('dashboard.goToWallet', 'Go to Wallet')}
+                                        </Button>
+                                        <Button variant="outline" className="w-full justify-start h-12" onClick={() => setActiveView('invite')}>
+                                            <Share2 className="mr-2 h-4 w-4" />
+                                            {t('dashboard.inviteFriends', 'Invite Friends')}
+                                        </Button>
+                                    </CardContent>
+                                </Card>
+                            </div>
+
+                            {/* Right Column: Wallets */}
+                            <div className="lg:col-span-2 grid gap-4 md:grid-cols-2">
+                                {/* Dicilo Wallet (Dark Card) */}
+                                <div className="bg-slate-950 text-white rounded-xl p-6 flex flex-col justify-between shadow-lg min-h-[180px]">
+                                    <div>
+                                        <div className="flex justify-between items-start mb-4">
+                                            <div>
+                                                <h3 className="font-semibold text-sm text-slate-400">DICILO WALLET</h3>
+                                                <span className="text-xs bg-slate-800 px-2 py-0.5 rounded-full text-slate-300 mt-1 inline-block">Personal</span>
+                                            </div>
+                                            <CreditCard className="h-5 w-5 text-slate-400" />
+                                        </div>
+                                        <div>
+                                            <div className="text-3xl font-bold">{walletData ? walletData.balance.toFixed(0) : '0'} DP</div>
+                                            <div className="text-sm text-slate-400">≈ {walletData ? (walletData.balance * (walletData.pointValue || 0.10)).toFixed(2) : '0.00'} EUR</div>
+                                        </div>
+                                    </div>
+                                    <Button variant="secondary" className="w-full mt-4 bg-white text-slate-950 hover:bg-slate-200" onClick={handleDownloadQr}>
+                                        <QrCode className="mr-2 h-4 w-4" />
+                                        {t('dashboard.wallet.showQr', 'Show QR to Pay')}
+                                    </Button>
+                                </div>
+
+                                {/* Prepaid Card (Image Background) */}
+                                <div className="rounded-xl overflow-hidden shadow-lg min-h-[180px] relative flex flex-col justify-between p-6 text-white group cursor-pointer transition-transform hover:scale-[1.02]">
+                                    {/* Background Image */}
+                                    <div className="absolute inset-0 z-0">
+                                        <Image
+                                            src="/dicilo-prepaid-bg.png"
+                                            alt="Dicilo Prepaid Card"
+                                            fill
+                                            className="object-cover"
+                                            priority
+                                        />
+                                    </div>
+
+                                    {/* Content Overlay */}
+                                    <div className="relative z-10 flex justify-end items-start w-full h-full">
+                                        <div className="text-right">
+                                            <div className="text-xs text-emerald-100 opacity-90 font-medium">GANANCIAS</div>
+                                            <div className="font-bold text-2xl drop-shadow-md">€ {walletData ? walletData.valueInEur.toFixed(2) : '0.00'}</div>
+                                        </div>
+                                    </div>
+
+                                    <div className="relative z-10 mt-auto">
+                                        {/* Spacer to push content down if needed, chip is in bg image */}
+                                        <div className="h-8"></div>
+
+                                        <div className="font-mono text-lg tracking-widest drop-shadow-sm mb-1 text-shadow">
+                                            •••• •••• •••• 60WA
+                                        </div>
+                                        <div className="text-xs uppercase font-bold tracking-wider opacity-90 drop-shadow-sm">
+                                            {(formData.firstName + ' ' + formData.lastName).toUpperCase() || 'MEMBER'}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 );
             case 'community':
