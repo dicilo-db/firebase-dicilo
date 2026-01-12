@@ -95,8 +95,12 @@ export async function processBusinessCard(formData: FormData) {
             ocrDebug: finalOcrText
         };
 
-    } catch (error) {
+    } catch (error: any) {
         console.error('Scanner Error:', error);
-        return { success: false, error: 'Failed to process card' };
+        // Ensure we return a plain object that can be serialized
+        return {
+            success: false,
+            error: error.message || 'Error desconocido en el servidor de escaneo.'
+        };
     }
 }

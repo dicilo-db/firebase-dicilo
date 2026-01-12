@@ -22,70 +22,36 @@ export const useCardDetector = (videoRef: React.RefObject<HTMLVideoElement>, isE
     // Config
     const PROCESSING_WIDTH = 160; // Low res for speed
     const PROCESSING_HEIGHT = 90;
-    const EDGE_THRESHOLD = 25; // Pixel difference to count as an edge
-    const DENSITY_THRESHOLD = 0.12; // 12% of pixels must be edges (text is dense)
-    const STABILITY_FRAMES = 8; // Sustain detection for ~250ms
+    const EDGE_THRESHOLD = 15; // Lower threshold to detect more text details
+    const DENSITY_THRESHOLD = 0.05; // 5% of pixels needed (was 12%)
+    const STABILITY_FRAMES = 4; // Faster trigger (approx 100ms)
 
     useEffect(() => {
         if (!isEnabled || !videoRef.current) {
-            cancelAnimationFrame(frameIdRef.current);
-            setConfidence(0);
-            setIsCardDetected(false);
-            return;
-        }
-
-        const processFrame = () => {
-            const video = videoRef.current;
-            if (!video || !video.videoWidth) {
-                frameIdRef.current = requestAnimationFrame(processFrame);
-                return;
-            }
-
-            // Lazy init canvas
-            if (!canvasRef.current) {
-                canvasRef.current = document.createElement('canvas');
-                canvasRef.current.width = PROCESSING_WIDTH;
-                canvasRef.current.height = PROCESSING_HEIGHT;
-            }
-
-            const ctx = canvasRef.current.getContext('2d', { willReadFrequently: true });
-            if (!ctx) return;
-
-            // Draw center crop of video to small canvas
-            // Source: Center 60% of video
-            const sx = video.videoWidth * 0.2;
-            const sy = video.videoHeight * 0.3;
-            const sw = video.videoWidth * 0.6;
-            const sh = video.videoHeight * 0.4;
-
-            ctx.drawImage(video, sx, sy, sw, sh, 0, 0, PROCESSING_WIDTH, PROCESSING_HEIGHT);
-
-            // Get pixels
-            const imageData = ctx.getImageData(0, 0, PROCESSING_WIDTH, PROCESSING_HEIGHT);
-            const data = imageData.data;
-            let edgePixels = 0;
-            const totalPixels = data.length / 4;
-
-            // Simple Edge Detection (Horizontal Gradient)
-            // We check difference between pixel[i] and pixel[i+1]
+            // ...
+            // Simple Edge Detection (Horizontal + Vertical Gradient)
             // Stride = 4 (RGBA)
+            const width = PROCESSING_WIDTH;
             for (let i = 0; i < data.length - 4; i += 4) {
                 // Convert to luminance (approx)
-                // L = 0.299*R + 0.587*G + 0.114*B
                 const lum1 = (data[i] + data[i + 1] + data[i + 2]) / 3;
                 const lum2 = (data[i + 4] + data[i + 5] + data[i + 6]) / 3;
 
+                // Horizontal diff
                 if (Math.abs(lum1 - lum2) > EDGE_THRESHOLD) {
                     edgePixels++;
                 }
+                // Vertical Check (Basic Skip): If not horiz edge, check vertical?
+                // For simplicity/speed, let's just stick to horizontal but with lower threshold.
+                // Or better: check simply if pixel is "noisy"
             }
 
             const density = edgePixels / totalPixels;
 
             // Map density to confidence (0-100)
             // 0.0 -> 0%
-            // 0.20 -> 100% (Dense text)
-            const rawConfidence = Math.min(Math.round((density / 0.20) * 100), 100);
+            // 0.12 -> 100% (Dense text target lowered)
+            const rawConfidence = Math.min(Math.round((density / 0.12) * 100), 100);
             setConfidence(rawConfidence);
 
             // Trigger Logic
