@@ -147,6 +147,13 @@ service cloud.firestore {
       allow write: if isAdmin(); 
     }
 
+    // Community Wall
+    match /community_posts/{postId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update, delete: if isAuthenticated() && (resource.data.userId == request.auth.uid || isAdmin());
+    }
+
     // Counters collection for IDs
     match /counters/{counterId} {
       allow read, write: if hasDashboardAccess(); // Needed for generating IDs (Team Office needs this)

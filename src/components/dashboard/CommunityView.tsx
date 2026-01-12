@@ -34,7 +34,11 @@ function getNeighborhood(slugOrName: string) {
     return ALL_NEIGHBORHOODS.find(n => n.id.toLowerCase() === normalized || n.name.toLowerCase() === normalized);
 }
 
-export function CommunityView({ defaultNeighborhood = 'Hamburg' }: { defaultNeighborhood?: string }) {
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { CommunityFeed } from '../community/CommunityFeed';
+import { User } from 'firebase/auth';
+
+export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: { defaultNeighborhood?: string, currentUser: User }) {
     const [neighborhoodName, setNeighborhoodName] = useState(defaultNeighborhood);
     const [stats, setStats] = useState<BarometerStats>({ score: 0, level: 'low', weeklyPosts: 0, activeUsers: 0 });
     const [trending, setTrending] = useState<any[]>([]);
@@ -72,13 +76,11 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg' }: { defaultNeig
                     .slice(0, 5);
                 setTrending(sortedBiz);
 
-                // 2. Barometer Stats
+                // 2. Barometer Stats (Using Community Posts + Recommendations for activity?)
+                // For now keeping logic on recommendations, but could expand.
                 const sevenDaysAgo = new Date();
                 sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-                // Re-use constraints or logic
-                // Note: constraints can't be reused directly if they are objects, but here they are query constraints.
-                // However, we need to rebuild the query for a different collection.
                 let statConstraints: any[] = [];
                 if (isCitySearch) {
                     statConstraints.push(where('city', '==', neighborhoodName));
@@ -142,7 +144,7 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg' }: { defaultNeig
                         </DialogHeader>
                         <div className="mt-4">
                             <RecommendationFormContent
-                                onSuccess={() => setOpen(false)} // We'll need to control state
+                                onSuccess={() => setOpen(false)}
                                 onCancel={() => setOpen(false)}
                             />
                         </div>
@@ -242,16 +244,38 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg' }: { defaultNeig
                     </Card>
                 </div>
 
-                {/* Right Column: Feed */}
-                <div className="lg:col-span-8 space-y-6">
-                    <div className="flex items-center justify-between">
-                        <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
-                            <MessageSquare className="h-5 w-5 text-purple-500" />
-                            Lo que está pasando
-                        </h3>
-                    </div>
+                {/* Right Column: Feed (Tabs) */}
+                <div className="lg:col-span-8">
+                    <Tabs defaultValue="wall" className="space-y-6">
+                        <div className="flex items-center justify-between">
+                            <TabsList className="grid w-full grid-cols-2 lg:w-[400px]">
+                                <TabsTrigger value="wall">
+                                    <MessageSquare className="h-4 w-4 mr-2" />
+                                    Muro Social
+                                </TabsTrigger>
+                                <TabsTrigger value="recommendations">
+                                    <MapPin className="h-4 w-4 mr-2" />
+                                    Recomendaciones
+                                </TabsTrigger>
+                            </TabsList>
+                        </div>
 
-                    <NeighborhoodFeed neighborhood={neighborhoodName} />
+                        <TabsContent value="wall" className="space-y-6 animate-in fade-in slide-in-from-bottom-2">
+                            <CommunityFeed
+                                neighborhood={neighborhoodName}
+                                userId={currentUser.uid}
+                            />
+                        </TabsContent>
+
+                        <TabsContent value="recommendations" className="space-y-6 animate-in fade-in slide-in-from-bottom-2">
+                            <div className="flex items-center justify-between mb-4">
+                                <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+                                    Lo que se comenta en {neighborhoodName}
+                                </h3>
+                            </div>
+                            <NeighborhoodFeed neighborhood={neighborhoodName} />
+                        </TabsContent>
+                    </Tabs>
                 </div>
             </div>
         </div>

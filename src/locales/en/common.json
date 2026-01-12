@@ -301,7 +301,7 @@
     "socialRewards": "Social & Rewards",
     "profileStatus": "Profile Status",
     "active": "Active",
-    "memberSince": "Member since {{date}}",
+    "memberSince": "Member since",
     "referrals": "Referrals",
     "friendsInvited": "Friends invited",
     "quickActions": "Quick Actions",

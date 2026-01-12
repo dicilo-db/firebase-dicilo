@@ -143,7 +143,7 @@
     "socialRewards": "Social y Recompensas",
     "profileStatus": "Estado del Perfil",
     "active": "Activo",
-    "memberSince": "Miembro desde {{date}}",
+    "memberSince": "Miembro desde",
     "referrals": "Referidos",
     "friendsInvited": "Amigos invitados",
     "quickActions": "Acciones Rápidas",

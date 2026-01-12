@@ -367,7 +367,7 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
             case 'community':
                 return (
                     <div className="space-y-6 animate-in fade-in duration-500">
-                        <CommunityView defaultNeighborhood={formData.city || 'Hamburg'} />
+                        <CommunityView defaultNeighborhood={formData.city || 'Hamburg'} currentUser={user} />
                     </div>
                 );
             case 'scanner':

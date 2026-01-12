@@ -33,8 +33,11 @@ export default function NeighborhoodFeed({ neighborhood }: NeighborhoodFeedProps
                 const snap = await getDocs(q);
                 const data = snap.docs.map(d => ({ id: d.id, ...d.data() }));
                 setPosts(data);
-            } catch (error) {
+            } catch (error: any) {
                 console.error("Error loading feed:", error);
+                if (error.code === 'failed-precondition') {
+                    console.error("Missing Index? Check Firestore console.");
+                }
             } finally {
                 setLoading(false);
             }
@@ -76,7 +79,7 @@ export default function NeighborhoodFeed({ neighborhood }: NeighborhoodFeedProps
                             </span>
                         </div>
                         {post.comment && (
-                            <p className="text-gray-700 text-sm italic">"{post.comment}"</p>
+                            <p className="text-gray-700 text-sm italic">&quot;{post.comment}&quot;</p>
                         )}
                         {/* Optional: Show business name linked */}
                     </div>

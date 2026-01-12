@@ -65,6 +65,7 @@
     "date-fns": "^3.6.0",
     "dotenv": "^16.4.5",
     "embla-carousel-react": "^8.1.5",
+    "file-type": "^21.3.0",
     "firebase": "^12.3.0",
     "firebase-admin": "^12.1.1",
     "firebase-functions": "^5.0.1",

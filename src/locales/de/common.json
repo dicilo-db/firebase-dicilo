@@ -315,7 +315,7 @@
     "socialRewards": "Soziales & Belohnungen",
     "profileStatus": "Profilstatus",
     "active": "Aktiv",
-    "memberSince": "Mitglied seit {{date}}",
+    "memberSince": "Mitglied seit",
     "referrals": "Empfehlungen",
     "friendsInvited": "Freunde eingeladen",
     "quickActions": "Schnellaktionen",
