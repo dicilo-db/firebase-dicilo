@@ -12,6 +12,7 @@
       "privacy": "Datenschutz",
       "faq": "FAQ",
       "myNeighborhood": "Mein Kiez",
+      "community": "Community",
       "dicicoin": "DiciCoin",
       "logout": "Abmelden"
     }
@@ -892,7 +893,9 @@
       },
       "index": "Index",
       "posts_week": "Beiträge diese Woche",
-      "active_neighbors": "Aktive Nachbarn"
+      "active_neighbors": "Aktive Nachbarn",
+      "posts": "Beiträge",
+      "neighbors": "Nachbarn"
     },
     "feed": {
       "wall": "Pinnwand",

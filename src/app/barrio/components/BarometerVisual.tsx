@@ -112,11 +112,11 @@ export function BarometerVisual({
                 <div className="flex items-center divide-x divide-slate-100 dark:divide-slate-800">
                     <div className="px-4 text-center">
                         <p className="text-lg font-bold text-slate-700 dark:text-slate-200 leading-none">{weeklyPostCount}</p>
-                        <p className="text-[10px] text-muted-foreground uppercase mt-1">Posts</p>
+                        <p className="text-[10px] text-muted-foreground uppercase mt-1">{t('community.barometer.posts', 'Posts')}</p>
                     </div>
                     <div className="px-4 text-center">
                         <p className="text-lg font-bold text-slate-700 dark:text-slate-200 leading-none">{activeUsersCount}</p>
-                        <p className="text-[10px] text-muted-foreground uppercase mt-1">Vecinos</p>
+                        <p className="text-[10px] text-muted-foreground uppercase mt-1">{t('community.barometer.neighbors', 'Vecinos')}</p>
                     </div>
                 </div>
 

@@ -32,7 +32,8 @@
     "about": "About Us",
     "faq": "FAQ",
     "register": "Register",
-    "myNeighborhood": "My Neighborhood"
+    "myNeighborhood": "My Neighborhood",
+    "community": "Community"
   },
   "search": {
     "title": "Discover Recommended Businesses",
@@ -855,7 +856,9 @@
       },
       "index": "Index",
       "posts_week": "Posts this week",
-      "active_neighbors": "Active neighbors"
+      "active_neighbors": "Active neighbors",
+      "posts": "Posts",
+      "neighbors": "Neighbors"
     },
     "feed": {
       "wall": "Social Wall",

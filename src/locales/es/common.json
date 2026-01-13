@@ -939,7 +939,9 @@
       },
       "index": "Índice",
       "posts_week": "Posts esta semana",
-      "active_neighbors": "Vecinos activos"
+      "active_neighbors": "Vecinos activos",
+      "posts": "Posts",
+      "neighbors": "Vecinos"
     },
     "feed": {
       "wall": "Muro Social",
