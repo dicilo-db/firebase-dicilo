@@ -127,7 +127,8 @@ export async function registerNeighborhood(neighborhoodName: string, userId: str
 
     } catch (error: any) {
         console.error("Error registering neighborhood:", error);
-        return { success: false, error: "Error interno del servidor." };
+        // Expose the real error for debugging purposes
+        return { success: false, error: `Error interno: ${error.message || JSON.stringify(error)}` };
     }
 }
 
