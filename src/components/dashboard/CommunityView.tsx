@@ -87,61 +87,81 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
 
     const isCity = neighborhoodConfig ? neighborhoodConfig.name === neighborhoodConfig.city : false;
 
+
+
+    // Simplified useEffect for fetching neighborhoods
     useEffect(() => {
-        // Fetch neighborhoods from DB
-        const fetchNeighborhoods = async () => {
-            // We want all neighborhoods in the current city
-            const currentCity = isCity ? neighborhoodName : neighborhoodConfig?.city || 'Hamburg';
+        let isMounted = true;
+        let unsubscribe: (() => void) | undefined;
 
-            try {
-                const q = query(
-                    collection(db, 'neighborhoods'),
-                    where('city', '==', currentCity)
-                );
+        const initContext = async () => {
+            let currentCity = 'Hamburg'; // Default fallback
 
-                // Real-time listener for new registrations
-                const unsubscribe = onSnapshot(q, (snapshot) => {
-                    const fetched = snapshot.docs.map(doc => ({
-                        id: doc.id,
-                        name: doc.data().name,
-                        city: doc.data().city
-                    }));
-                    setDbNeighborhoods(fetched);
-                });
-
-                return () => unsubscribe();
-            } catch (e) {
-                console.error("Error fetching neighborhoods", e);
+            // 1. Is it a known city?
+            if (neighborhoodName === 'Hamburg' || neighborhoodName === 'Berlin') {
+                currentCity = neighborhoodName;
             }
+            // 2. Is it a static neighborhood?
+            else {
+                const staticN = ALL_NEIGHBORHOODS.find(n => n.name.toLowerCase() === neighborhoodName.toLowerCase() || n.id === neighborhoodName);
+                if (staticN) {
+                    currentCity = staticN.city;
+                } else {
+                    // 3. Dynamic? Fetch specific Doc to get its City
+                    try {
+                        const qConfig = query(collection(db, 'neighborhoods'), where('slug', '==', neighborhoodName));
+                        const snapConfig = await getDocs(qConfig);
+
+                        if (!snapConfig.empty) {
+                            const data = snapConfig.docs[0].data();
+                            if (data.type === 'ciudad' || data.name === data.city) {
+                                currentCity = data.name;
+                            } else {
+                                currentCity = data.city;
+                            }
+                        } else {
+                            // Fallback: Try query by 'name'
+                            const qName = query(collection(db, 'neighborhoods'), where('name', '==', neighborhoodName));
+                            const snapName = await getDocs(qName);
+                            if (!snapName.empty) {
+                                const data = snapName.docs[0].data();
+                                currentCity = data.city || data.name;
+                            }
+                        }
+                    } catch (e) {
+                        console.error("Error determining context city", e);
+                    }
+                }
+            }
+
+            if (!isMounted) return;
+
+            // Fetch siblings in this city
+            const q = query(
+                collection(db, 'neighborhoods'),
+                where('city', '==', currentCity)
+            );
+
+            unsubscribe = onSnapshot(q, (snapshot) => {
+                if (!isMounted) return;
+                const fetched = snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    name: doc.data().name,
+                    city: doc.data().city || currentCity,
+                    location: doc.data().location,
+                    distance: 0
+                }));
+                setDbNeighborhoods(fetched);
+            });
         };
 
-        const cleanup = fetchNeighborhoods();
-        // Since fetchNeighborhoods is async but returns a cleanup function via promise... 
-        // effectively we need to handle the unsubscription differently or simplified.
-        // Simplified approach below:
-    }, [isCity, neighborhoodName, neighborhoodConfig]);
+        initContext();
 
-    // Correct simplified useEffect for fetching neighborhoods
-    useEffect(() => {
-        const currentCity = isCity ? neighborhoodName : neighborhoodConfig?.city || 'Hamburg';
-        if (!currentCity) return;
-
-        const q = query(
-            collection(db, 'neighborhoods'),
-            where('city', '==', currentCity)
-        );
-
-        const unsubscribe = onSnapshot(q, (snapshot) => {
-            const fetched = snapshot.docs.map(doc => ({
-                id: doc.id,
-                name: doc.data().name,
-                city: doc.data().city
-            }));
-            setDbNeighborhoods(fetched);
-        });
-
-        return () => unsubscribe();
-    }, [isCity, neighborhoodName, neighborhoodConfig]);
+        return () => {
+            isMounted = false;
+            if (unsubscribe) unsubscribe();
+        };
+    }, [neighborhoodName]);
 
 
     const [userLocation, setUserLocation] = useState<{ lat: number, lng: number } | null>(null);
@@ -212,9 +232,16 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
             return merged
                 .map(n => {
                     // DB neighborhoods usually have location: { lat, lng } object from Firestore
+                    // But might be GeoPoint { latitude, longitude } or Google { lat, lng }
                     // Static ones have lat, lng top level properties
-                    const nLat = n.location?.lat || n.lat;
-                    const nLng = n.location?.lng || n.lng;
+                    let nLat = n.lat;
+                    let nLng = n.lng;
+
+                    // Check nested location object
+                    if (n.location) {
+                        nLat = n.location.lat || n.location.latitude || nLat;
+                        nLng = n.location.lng || n.location.longitude || nLng;
+                    }
 
                     if (nLat && nLng) {
                         return { ...n, distance: getDistance(userLocation.lat, userLocation.lng, nLat, nLng) };
@@ -316,29 +343,45 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
 
                 setTrending(sortedBiz);
 
-                // 2. Barometer Stats (Using Community Posts + Recommendations for activity?)
-                // For now keeping logic on recommendations, but could expand.
+                // 2. Barometer Stats (Using Community Posts + Recommendations)
                 const sevenDaysAgo = new Date();
                 sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-                let statConstraints: any[] = [];
+                // Query 1: Recommendations
+                let recConstraints: any[] = [];
                 if (isCitySearch) {
-                    statConstraints.push(where('city', '==', neighborhoodName));
+                    recConstraints.push(where('city', '==', neighborhoodName));
                 } else {
-                    statConstraints.push(where('neighborhood', '==', neighborhoodName));
+                    recConstraints.push(where('neighborhood', '==', neighborhoodName));
                 }
 
-                const qStats = query(
+                const qRecs = query(
                     collection(db, 'recommendations'),
-                    ...statConstraints,
+                    ...recConstraints,
                     where('createdAt', '>=', sevenDaysAgo)
                 );
-                const snapStats = await getDocs(qStats);
-                const weeklyPosts = snapStats.size;
-                const uniqueAuthors = new Set(snapStats.docs.map(d => d.data().userId));
+
+                // Query 2: Community Posts (Always uses 'neighborhood' field)
+                const qPosts = query(
+                    collection(db, 'community_posts'),
+                    where('neighborhood', '==', neighborhoodName),
+                    where('createdAt', '>=', sevenDaysAgo)
+                );
+
+
+                const [snapRecs, snapPosts] = await Promise.all([
+                    getDocs(qRecs),
+                    getDocs(qPosts)
+                ]);
+
+                const totalPosts = snapRecs.size + snapPosts.size;
+                const uniqueAuthors = new Set([
+                    ...snapRecs.docs.map(d => d.data().userId),
+                    ...snapPosts.docs.map(d => d.data().userId)
+                ]);
                 const activeUsers = uniqueAuthors.size;
 
-                let score = (weeklyPosts * 5) + (activeUsers * 10);
+                let score = (totalPosts * 5) + (activeUsers * 10);
                 if (score > 100) score = 100;
 
                 let level: BarometerStats['level'] = 'low';
@@ -346,7 +389,7 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
                 else if (score >= 50) level = 'high';
                 else if (score >= 20) level = 'medium';
 
-                setStats({ score, level, weeklyPosts, activeUsers });
+                setStats({ score, level, weeklyPosts: totalPosts, activeUsers });
 
             } catch (error) {
                 console.error("Error fetching community data", error);
@@ -502,36 +545,60 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
                                         </Button>
                                     )}
 
-                                    {/* List Display */}
+                                    {/* List Display Grouped by City */}
                                     {subNeighborhoods.length > 0 ? (
-                                        <div className="space-y-2">
-                                            <div className="flex flex-wrap gap-2">
-                                                {/* Filter and limit to 20 */}
-                                                {subNeighborhoods
+                                        <div className="space-y-4">
+                                            {/* Group by City (even if mostly one city, covers future expansion) */}
+                                            {(() => {
+                                                const grouped = subNeighborhoods
                                                     .filter(nb => nb.name.toLowerCase().includes(searchTerm.toLowerCase()))
-                                                    .slice(0, 20)
-                                                    .map(nb => (
-                                                        <Badge
-                                                            key={nb.id}
-                                                            variant={nb.name === neighborhoodName ? "default" : "secondary"}
-                                                            className={`
-                                                                cursor-pointer transition-colors px-3 py-1 text-sm flex items-center gap-2
-                                                                ${nb.name === neighborhoodName
-                                                                    ? "bg-slate-900 text-white hover:bg-slate-800"
-                                                                    : "hover:bg-blue-100 hover:text-blue-700"}
-                                                            `}
-                                                            onClick={() => updateNeighborhood(nb.name)}
-                                                        >
-                                                            {nb.name}
-                                                            {nb.distance && nb.distance < 100 && (
-                                                                <span className="text-[10px] opacity-70 font-normal">
-                                                                    {nb.distance < 1 ? `${Math.round(nb.distance * 1000)}m` : `${nb.distance.toFixed(1)}km`}
-                                                                </span>
-                                                            )}
-                                                        </Badge>
-                                                    ))}
-                                            </div>
-                                            {/* Show message if filtered results are empty but total is not */}
+                                                    .reduce((acc, nb) => {
+                                                        const city = nb.city || (isCity ? neighborhoodName : 'Hamburg');
+                                                        if (!acc[city]) acc[city] = [];
+                                                        acc[city].push(nb);
+                                                        return acc;
+                                                    }, {} as Record<string, typeof subNeighborhoods>);
+
+                                                return Object.entries(grouped).map(([city, places]) => (
+                                                    <div key={city} className="space-y-2">
+                                                        {/* City Header */}
+                                                        <div className="flex items-center gap-2 text-sm font-semibold text-muted-foreground uppercase tracking-wider px-2">
+                                                            <Building2 className="h-3 w-3" />
+                                                            {city}
+                                                        </div>
+
+                                                        {/* Neighborhoods List */}
+                                                        <div className="grid grid-cols-1 gap-1">
+                                                            {places.slice(0, 50).map(nb => (
+                                                                <Button
+                                                                    key={nb.id}
+                                                                    variant={nb.name === neighborhoodName ? "secondary" : "ghost"}
+                                                                    className={`
+                                                                        justify-start h-auto py-2 px-3 text-sm font-normal
+                                                                        ${nb.name === neighborhoodName
+                                                                            ? "bg-slate-100 text-slate-900 border-l-4 border-slate-900 font-medium"
+                                                                            : "hover:bg-slate-50 text-slate-600 hover:text-slate-900"}
+                                                                    `}
+                                                                    onClick={() => updateNeighborhood(nb.name)}
+                                                                >
+                                                                    <div className="flex flex-col items-start gap-0.5 w-full">
+                                                                        <div className="flex w-full justify-between items-center">
+                                                                            <span>{nb.name}</span>
+                                                                            {nb.distance && nb.distance < 100 && (
+                                                                                <span className="text-[10px] text-muted-foreground">
+                                                                                    {nb.distance < 1 ? `${Math.round(nb.distance * 1000)}m` : `${nb.distance.toFixed(1)}km`}
+                                                                                </span>
+                                                                            )}
+                                                                        </div>
+                                                                    </div>
+                                                                </Button>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                ));
+                                            })()}
+
+                                            {/* Empty State */}
                                             {searchTerm && subNeighborhoods.filter(nb => nb.name.toLowerCase().includes(searchTerm.toLowerCase())).length === 0 && (
                                                 <p className="text-sm text-muted-foreground text-center py-2">No se encontraron barrios.</p>
                                             )}
