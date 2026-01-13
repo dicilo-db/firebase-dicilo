@@ -62,6 +62,8 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
     const [isRegistering, setIsRegistering] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
 
+    const [dbNeighborhoods, setDbNeighborhoods] = useState<any[]>([]);
+
     // Favorite Logic
     const [isFavorite, setIsFavorite] = useState(false);
 
@@ -71,9 +73,19 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
         router.push(`?neighborhood=${encodeURIComponent(name)}`, { scroll: false });
     };
 
-    const neighborhoodConfig = getNeighborhood(neighborhoodName);
+    // Dynamic Neighborhood Config (merging Static + DB)
+    const neighborhoodConfig = useMemo(() => {
+        const staticConfig = getNeighborhood(neighborhoodName);
+        if (staticConfig) return staticConfig;
+
+        // Check dynamic list
+        const dynamicMatch = dbNeighborhoods.find(n => n.name.toLowerCase() === neighborhoodName.toLowerCase() || n.id === neighborhoodName);
+        if (dynamicMatch) return dynamicMatch;
+
+        return null;
+    }, [neighborhoodName, dbNeighborhoods]);
+
     const isCity = neighborhoodConfig ? neighborhoodConfig.name === neighborhoodConfig.city : false;
-    const [dbNeighborhoods, setDbNeighborhoods] = useState<any[]>([]);
 
     useEffect(() => {
         // Fetch neighborhoods from DB
@@ -132,28 +144,90 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
     }, [isCity, neighborhoodName, neighborhoodConfig]);
 
 
+    const [userLocation, setUserLocation] = useState<{ lat: number, lng: number } | null>(null);
+
+    // Get User Location
+    useEffect(() => {
+        if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    setUserLocation({
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    });
+                },
+                (error) => {
+                    console.log("Geolocation permission denied or error", error);
+                },
+                { timeout: 10000, maximumAge: 60000 } // Don't block too long, use cached if available
+            );
+        }
+    }, []);
+
+    // Helper: Haversine Distance in km
+    function getDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
+        const R = 6371; // Radius of the earth in km
+        const dLat = deg2rad(lat2 - lat1);
+        const dLon = deg2rad(lon2 - lon1);
+        const a =
+            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        const d = R * c; // Distance in km
+        return d;
+    }
+
+    function deg2rad(deg: number) {
+        return deg * (Math.PI / 180);
+    }
+
+
     // Combined Neighborhoods
     const subNeighborhoods = useMemo(() => {
-        // Base list
-        let base = [];
-        if (isCity && neighborhoodConfig) {
-            base = getCityNeighborhoods(neighborhoodConfig.city);
-        } else if (isCity) {
-            // Fallback if config is missing but we are in a 'city' like mode (e.g. from DB)
-            // For now, assume static config is source of truth for "City" definition
-            base = ALL_NEIGHBORHOODS.filter(n => n.city === neighborhoodName);
-        }
+        // Determine City Scope
+        const currentCity = isCity ? neighborhoodName : (neighborhoodConfig?.city || 'Hamburg');
 
-        // Merge with DB (deduplicating by name)
+        // Base list from static config
+        const base = ALL_NEIGHBORHOODS.filter(n => n.city === currentCity && n.name !== currentCity);
+
+        // Ensure static has defaults if needed? Already handled in data.
+
+        // Merge with DB (deduplicating by name) taking DB as priority for lat/lng if available? 
+        // Actually DB might have better fresher data.
         const merged = [...base];
+
         dbNeighborhoods.forEach(dbN => {
-            if (!merged.find(m => m.name.toLowerCase() === dbN.name.toLowerCase())) {
+            const existingIndex = merged.findIndex(m => m.name.toLowerCase() === dbN.name.toLowerCase());
+            if (existingIndex === -1) {
                 merged.push(dbN);
+            } else {
+                // Update existing with DB data (e.g. if DB has better/more props)
+                // merged[existingIndex] = { ...merged[existingIndex], ...dbN };
             }
         });
 
-        return merged;
-    }, [neighborhoodConfig, isCity, dbNeighborhoods, neighborhoodName]);
+        // SORTING: If we have user location, sort by distance
+        if (userLocation) {
+            return merged
+                .map(n => {
+                    // DB neighborhoods usually have location: { lat, lng } object from Firestore
+                    // Static ones have lat, lng top level properties
+                    const nLat = n.location?.lat || n.lat;
+                    const nLng = n.location?.lng || n.lng;
+
+                    if (nLat && nLng) {
+                        return { ...n, distance: getDistance(userLocation.lat, userLocation.lng, nLat, nLng) };
+                    }
+                    return { ...n, distance: 999999 }; // Push to end if no coords
+                })
+                .sort((a, b) => a.distance - b.distance);
+        }
+
+        // Default sort (Validation: maybe alphabetical?)
+        return merged.sort((a, b) => a.name.localeCompare(b.name));
+
+    }, [neighborhoodConfig, isCity, dbNeighborhoods, neighborhoodName, userLocation]);
 
     // Helper for formatting
     const displayNeighborhood = React.useMemo(() => {
@@ -403,8 +477,8 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
                             {/* Neighborhood Search & List */}
                             {(isCity || (neighborhoodConfig && neighborhoodConfig.city)) && (
                                 <div className="space-y-4 mb-4">
-                                    {/* Search Input - Only show if there are subneighborhoods or we are in a city view */}
-                                    {isCity && subNeighborhoods.length > 0 && (
+                                    {/* Search Input - Show always if there are subneighborhoods */}
+                                    {subNeighborhoods.length > 0 && (
                                         <div className="relative">
                                             <Input
                                                 placeholder={t('community.search_neighborhoods', 'Buscar barrios...')}
@@ -429,7 +503,7 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
                                     )}
 
                                     {/* List Display */}
-                                    {isCity && subNeighborhoods.length > 0 ? (
+                                    {subNeighborhoods.length > 0 ? (
                                         <div className="space-y-2">
                                             <div className="flex flex-wrap gap-2">
                                                 {/* Filter and limit to 20 */}
@@ -439,11 +513,21 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
                                                     .map(nb => (
                                                         <Badge
                                                             key={nb.id}
-                                                            variant="secondary"
-                                                            className="hover:bg-blue-100 hover:text-blue-700 cursor-pointer transition-colors px-3 py-1 text-sm"
+                                                            variant={nb.name === neighborhoodName ? "default" : "secondary"}
+                                                            className={`
+                                                                cursor-pointer transition-colors px-3 py-1 text-sm flex items-center gap-2
+                                                                ${nb.name === neighborhoodName
+                                                                    ? "bg-slate-900 text-white hover:bg-slate-800"
+                                                                    : "hover:bg-blue-100 hover:text-blue-700"}
+                                                            `}
                                                             onClick={() => updateNeighborhood(nb.name)}
                                                         >
                                                             {nb.name}
+                                                            {nb.distance && nb.distance < 100 && (
+                                                                <span className="text-[10px] opacity-70 font-normal">
+                                                                    {nb.distance < 1 ? `${Math.round(nb.distance * 1000)}m` : `${nb.distance.toFixed(1)}km`}
+                                                                </span>
+                                                            )}
                                                         </Badge>
                                                     ))}
                                             </div>
