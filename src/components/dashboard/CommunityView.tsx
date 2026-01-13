@@ -137,10 +137,11 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
 
             if (!isMounted) return;
 
-            // Fetch siblings in this city
+            // Fetch all neighborhoods to avoid filtering issues with City names (e.g. Ammersbek vs Hamburg)
+            // Client-side filtering/grouping will handle the rest.
             const q = query(
-                collection(db, 'neighborhoods'),
-                where('city', '==', currentCity)
+                collection(db, 'neighborhoods')
+                // where('city', '==', currentCity) // <-- REMOVED STRICT FILTER
             );
 
             unsubscribe = onSnapshot(q, (snapshot) => {
