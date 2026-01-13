@@ -517,15 +517,8 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-xs text-red-500 mb-2 font-mono">
-                                [DEBUG] Total: {subNeighborhoods.length},
-                                City: {isCity ? neighborhoodName : (neighborhoodConfig?.city || 'Hamburg')},
-                                Config: {neighborhoodConfig ? 'Yes' : 'No'},
-                                Base: {ALL_NEIGHBORHOODS.filter(n => n.city === (isCity ? neighborhoodName : (neighborhoodConfig?.city || 'Hamburg'))).length}
-                            </div>
-
                             {/* Neighborhood Search & List */}
-                            {(isCity || (neighborhoodConfig && neighborhoodConfig.city)) && (
+                            {(subNeighborhoods.length > 0 || isCity || (neighborhoodConfig && neighborhoodConfig.city)) && (
                                 <div className="space-y-4 mb-4">
                                     {/* Search Input - Show always if there are subneighborhoods */}
                                     {subNeighborhoods.length > 0 && (
