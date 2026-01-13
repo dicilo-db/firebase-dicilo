@@ -122,7 +122,7 @@ export async function registerNeighborhood(neighborhoodName: string, userId: str
             name: officialName,
             type: processed.type,
             hierarchy: processed.hierarchy,
-            message: `¡${officialName} registrado exitosamente!`
+            message: `¡${officialName} registrado exitosamente en ${processed.hierarchy.city}, ${processed.hierarchy.country}!`
         };
 
     } catch (error: any) {
