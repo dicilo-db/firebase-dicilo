@@ -152,6 +152,14 @@ service cloud.firestore {
       allow read: if isAuthenticated();
       allow create: if isAuthenticated();
       allow update, delete: if isAuthenticated() && (resource.data.userId == request.auth.uid || isAdmin());
+
+      match /comments/{commentId} {
+        allow read: if isAuthenticated();
+        // Allow create if auth and basic validation? Just auth for now.
+        allow create: if isAuthenticated();
+        // Allow update/delete if owner or admin
+        allow update, delete: if isAuthenticated() && (resource.data.userId == request.auth.uid || isAdmin());
+      }
     }
 
     // Counters collection for IDs

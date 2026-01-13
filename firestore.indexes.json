@@ -63,6 +63,24 @@
                     "order": "DESCENDING"
                 }
             ]
+        },
+        {
+            "collectionGroup": "pricing_plans",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
+                    "fieldPath": "language",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "order",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "__name__",
+                    "order": "ASCENDING"
+                }
+            ]
         }
     ],
     "fieldOverrides": []

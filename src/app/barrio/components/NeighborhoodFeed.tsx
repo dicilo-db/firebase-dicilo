@@ -12,9 +12,15 @@ interface NeighborhoodFeedProps {
     neighborhood: string;
 }
 
+import { useTranslation } from 'react-i18next';
+
 export default function NeighborhoodFeed({ neighborhood }: NeighborhoodFeedProps) {
+    const { t } = useTranslation('common');
     const [posts, setPosts] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+
+    // Capitalize for display
+    const displayNeighborhood = neighborhood.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
 
     useEffect(() => {
         const fetchFeed = async () => {
@@ -48,13 +54,13 @@ export default function NeighborhoodFeed({ neighborhood }: NeighborhoodFeedProps
         }
     }, [neighborhood]);
 
-    if (loading) return <div className="text-center py-10">Cargando actividad...</div>;
+    if (loading) return <div className="text-center py-10">{t('community.feed.loading', 'Cargando actividad...')}</div>;
 
     if (posts.length === 0) {
         return (
             <div className="bg-white rounded-lg p-10 text-center shadow-sm border border-dashed border-gray-200">
-                <p className="text-gray-500 text-lg">Aún no hay actividad reciente en {neighborhood}.</p>
-                <p className="text-gray-400 text-sm mt-2">¡Sé el primero en recomendar un lugar!</p>
+                <p className="text-gray-500 text-lg">{t('community.feed.empty', `Aún no hay actividad reciente en ${displayNeighborhood}.`, { name: displayNeighborhood })}</p>
+                <p className="text-gray-400 text-sm mt-2">{t('community.feed.be_first', '¡Sé el primero en recomendar un lugar!')}</p>
             </div>
         );
     }

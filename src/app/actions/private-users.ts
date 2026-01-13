@@ -217,3 +217,19 @@ export async function getFollowersDetails(uids: string[]) {
         return [];
     }
 }
+
+/**
+ * Sets the favorite neighborhood for a user.
+ */
+export async function setFavoriteNeighborhood(uid: string, neighborhood: string | null) {
+    try {
+        await getAdminDb().collection('private_profiles').doc(uid).update({
+            favoriteNeighborhood: neighborhood,
+            updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        });
+        return { success: true };
+    } catch (error: any) {
+        console.error('Error setting favorite neighborhood:', error);
+        return { success: false, error: error.message };
+    }
+}

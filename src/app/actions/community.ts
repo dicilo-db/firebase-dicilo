@@ -2,16 +2,11 @@
 
 import { getAuth } from 'firebase-admin/auth';
 import { getAdminDb, getAdminStorage } from '@/lib/firebase-admin';
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import { randomUUID } from 'crypto';
 
 const db = getAdminDb();
 const auth = getAuth();
 const storage = getAdminStorage();
-
-// --- Gemini Setup ---
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 export async function createPostAction(prevState: any, formData: FormData) {
     const content = formData.get('content') as string;
@@ -112,20 +107,20 @@ export async function createPostAction(prevState: any, formData: FormData) {
     }
 }
 
+import { ai } from '@/ai/genkit';
+
 export async function translateText(text: string, targetLanguage: string) {
     if (!text) return { success: false, error: 'No text provided' };
 
     try {
-        const prompt = `Translate the following informal social media text to ${targetLanguage}. Keep the tone friendly and casual. Only return the translated text, no explanations.\n\nText: "${text}"`;
+        const response = await ai.generate({
+            prompt: `Translate the following informal social media text to ${targetLanguage}. Keep the tone friendly and casual. Only return the translated text, no explanations. Text: "${text}"`,
+        });
 
-        const result = await model.generateContent(prompt);
-        const response = await result.response;
-        const translatedText = response.text();
-
-        return { success: true, translatedText: translatedText.trim() };
+        return { success: true, translatedText: response.text.trim() };
     } catch (error: any) {
-        console.error("Translation error:", error);
-        return { success: false, error: "Translation failed." };
+        console.error("Translation error details:", JSON.stringify(error, null, 2));
+        return { success: false, error: `Translation failed: ${error.message || 'Unknown error'}` };
     }
 }
 
@@ -150,6 +145,53 @@ export async function toggleLike(postId: string, userId: string) {
         return { success: true, likes: newLikes };
     } catch (error: any) {
         console.error("Like error:", error);
+        return { success: false, error: error.message };
+    }
+}
+
+export async function addComment(postId: string, content: string, userId: string) {
+    if (!content || !postId || !userId) return { success: false, error: 'Datos incompletos' };
+
+    try {
+        // 1. Get User Details
+        let userName = 'Usuario';
+        let userAvatar = '';
+        try {
+            const userRecord = await auth.getUser(userId);
+            userName = userRecord.displayName || 'Usuario';
+            userAvatar = userRecord.photoURL || '';
+        } catch (e) {
+            // Fallback to profile check
+            const profileSnap = await db.collection('private_profiles').doc(userId).get();
+            if (profileSnap.exists) {
+                const d = profileSnap.data();
+                userName = d?.firstName || 'Usuario';
+                userAvatar = d?.imgUrl || '';
+            }
+        }
+
+        const commentData = {
+            postId,
+            userId,
+            userName,
+            userAvatar,
+            content,
+            createdAt: new Date()
+        };
+
+        // 2. Add Comment
+        const commentRef = await db.collection('community_posts').doc(postId).collection('comments').add(commentData);
+
+        // 3. Update Post Comment Count (Atomic Increment)
+        const { FieldValue } = await import('firebase-admin/firestore');
+        await db.collection('community_posts').doc(postId).update({
+            commentCount: FieldValue.increment(1)
+        });
+
+        return { success: true, id: commentRef.id, ...commentData };
+
+    } catch (error: any) {
+        console.error("Error adding comment:", error);
         return { success: false, error: error.message };
     }
 }

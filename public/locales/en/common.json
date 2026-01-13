@@ -194,6 +194,13 @@
       "title": "Data and Opportunities"
     }
   },
+  "community": {
+    "register_neighborhood": "Register Neighborhood",
+    "register_neighborhood_desc": "Can't find your neighborhood? Register it here to start connecting with your neighbors.",
+    "register_neighborhood_btn": "Register Neighborhood",
+    "your_community": "Your Community",
+    "neighborhoods_of": "Neighborhoods of"
+  },
   "common": {
     "yes": "Yes",
     "no": "No",

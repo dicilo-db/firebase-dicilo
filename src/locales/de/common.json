@@ -859,5 +859,63 @@
       "reply_btn": "Antworten",
       "view_comments_btn": "Kommentare ansehen"
     }
+  },
+  "community": {
+    "share": "Teilen",
+    "download": "Foto herunterladen",
+    "share_text": "Sieh dir diesen Beitrag von {{user}} in {{neighborhood}} auf Dicilo an!",
+    "copy_link": "Link kopieren",
+    "link_copied": "Link in die Zwischenablage kopiert",
+    "download_success": "Foto heruntergeladen",
+    "download_error": "Fehler beim Herunterladen",
+    "your_community": "Deine Community",
+    "neighborhoods_of": "Stadtteile von",
+    "explore_desc": "Entdecke, was in deinem Viertel passiert und verbinde dich mit deinen Nachbarn.",
+    "new_recommendation": "Neue Empfehlung",
+    "share_place": "Teile einen Ort, einen Service oder eine Erfahrung mit deinen Nachbarn in {{name}}.",
+    "ranking": {
+      "title": "Top Unternehmen",
+      "subtitle": "Meist empfohlen",
+      "no_data": "Noch nicht genügend Daten für das Ranking."
+    },
+    "barometer": {
+      "title": "Barometer",
+      "level": {
+        "fire": "ON FIRE!",
+        "fire_desc": "Der Kiez brennt!",
+        "high": "Hohe Aktivität",
+        "high_desc": "Viel Beteiligung in letzter Zeit",
+        "medium": "Stetiges Wachstum",
+        "medium_desc": "Im Viertel bewegt sich was",
+        "low": "Ruhig",
+        "low_desc": "Ideal, um den Anfang zu machen"
+      },
+      "index": "Index",
+      "posts_week": "Beiträge diese Woche",
+      "active_neighbors": "Aktive Nachbarn"
+    },
+    "feed": {
+      "wall": "Pinnwand",
+      "recommendations": "Empfehlungen",
+      "whats_happening": "Was ist los in {{name}}?",
+      "loading": "Lade Aktivitäten...",
+      "empty": "Noch keine aktuellen Aktivitäten in {{name}}.",
+      "be_first": "Sei der Erste, der etwas empfiehlt!",
+      "recent": "Gerade eben",
+      "photo_by": "Foto von"
+    },
+    "actions": {
+      "set_favorite": "Als meinen Kiez markieren",
+      "is_favorite": "Mein Kiez"
+    },
+    "post_btn": "Veröffentlichen",
+    "search_neighborhoods": "Stadtteile suchen...",
+    "register_neighborhood": "Nachbarschaft registrieren",
+    "register_neighborhood_desc": "Finden Sie Ihre Nachbarschaft nicht? Registrieren Sie sie hier, um sich mit Ihren Nachbarn zu vernetzen.",
+    "register_neighborhood_btn": "Nachbarschaft registrieren",
+    "read_in": "Lesen auf",
+    "show_original": "Original anzeigen",
+    "translate_ai": "Mit KI übersetzen",
+    "translation_error": "Übersetzung fehlgeschlagen"
   }
 }

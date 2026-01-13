@@ -115,6 +115,13 @@
     "title": "Sobre Nosotros",
     "subtitle": "Conectamos productos de calidad con consumidores exigentes."
   },
+  "community": {
+    "register_neighborhood": "Registrar Barrio",
+    "register_neighborhood_desc": "¿No encuentras tu barrio? Regístralo aquí para empezar a conectar con tus vecinos.",
+    "register_neighborhood_btn": "Registrar Barrio",
+    "your_community": "Tu Comunidad",
+    "neighborhoods_of": "Barrios de"
+  },
   "common": {
     "yes": "Sí",
     "no": "No",

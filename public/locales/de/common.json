@@ -194,6 +194,13 @@
       "title": "Daten und Chancen"
     }
   },
+  "community": {
+    "register_neighborhood": "Nachbarschaft registrieren",
+    "register_neighborhood_desc": "Finden Sie Ihre Nachbarschaft nicht? Registrieren Sie sie hier, um sich mit Ihren Nachbarn zu vernetzen.",
+    "register_neighborhood_btn": "Nachbarschaft registrieren",
+    "your_community": "Deine Community",
+    "neighborhoods_of": "Nachbarschaften von"
+  },
   "common": {
     "yes": "Ja",
     "no": "Nein",

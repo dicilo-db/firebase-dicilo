@@ -15,9 +15,17 @@ interface CommunityFeedProps {
     userId: string;
 }
 
+import { useTranslation } from 'react-i18next';
+
 export function CommunityFeed({ neighborhood, userId }: CommunityFeedProps) {
+    const { t } = useTranslation('common');
     const [posts, setPosts] = useState<CommunityPost[]>([]);
     const [loading, setLoading] = useState(true);
+
+    // Simple Title Case Helper
+    const displayNeighborhood = React.useMemo(() => {
+        return neighborhood.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+    }, [neighborhood]);
 
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -64,7 +72,8 @@ export function CommunityFeed({ neighborhood, userId }: CommunityFeedProps) {
             <div className="w-full max-w-2xl mx-auto space-y-6">
                 <CreatePost
                     userId={userId}
-                    neighborhood={neighborhood}
+                    neighborhood={displayNeighborhood}
+                    neighborhoodId={neighborhood} // Pass original for ID
                     onPostCreated={handlePostCreated}
                 />
                 <div className="bg-red-50 text-red-800 p-4 rounded-md border border-red-200">
@@ -79,7 +88,8 @@ export function CommunityFeed({ neighborhood, userId }: CommunityFeedProps) {
         <div className="w-full max-w-2xl mx-auto space-y-6">
             <CreatePost
                 userId={userId}
-                neighborhood={neighborhood}
+                neighborhood={displayNeighborhood}
+                neighborhoodId={neighborhood} // Pass strict ID for backend
                 onPostCreated={handlePostCreated}
             />
 
@@ -90,8 +100,8 @@ export function CommunityFeed({ neighborhood, userId }: CommunityFeedProps) {
                     </div>
                 ) : posts.length === 0 ? (
                     <div className="text-center py-10 text-muted-foreground bg-slate-50 dark:bg-slate-900 rounded-lg border border-dashed">
-                        <p>No hay publicaciones aún en {neighborhood}.</p>
-                        <p className="text-sm">¡Sé el primero en compartir algo!</p>
+                        <p>{t('community.feed.empty', `Aún no hay actividad reciente en ${displayNeighborhood}.`, { name: displayNeighborhood })}</p>
+                        <p className="text-sm">{t('community.feed.be_first', '¡Sé el primero en compartir algo!')}</p>
                     </div>
                 ) : (
                     posts.map((post) => (

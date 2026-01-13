@@ -9,13 +9,17 @@ import { createPostAction } from '@/app/actions/community';
 import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
 
+import { useTranslation } from 'react-i18next';
+
 interface CreatePostProps {
     userId: string;
-    neighborhood: string;
+    neighborhood: string; // Display Name
+    neighborhoodId?: string; // Query/DB ID
     onPostCreated?: () => void;
 }
 
-export function CreatePost({ userId, neighborhood, onPostCreated }: CreatePostProps) {
+export function CreatePost({ userId, neighborhood, neighborhoodId, onPostCreated }: CreatePostProps) {
+    const { t } = useTranslation('common');
     const { toast } = useToast();
     const [content, setContent] = useState('');
     const [imageFile, setImageFile] = useState<File | null>(null);
@@ -28,7 +32,7 @@ export function CreatePost({ userId, neighborhood, onPostCreated }: CreatePostPr
         if (file) {
             if (file.size > 5 * 1024 * 1024) { // 5MB limit
                 toast({
-                    title: "Archivo muy grande",
+                    title: t('errors.tooLarge', "Archivo muy grande"),
                     description: "La imagen no puede pesar más de 5MB.",
                     variant: "destructive"
                 });
@@ -56,7 +60,8 @@ export function CreatePost({ userId, neighborhood, onPostCreated }: CreatePostPr
         try {
             const formData = new FormData();
             formData.append('content', content);
-            formData.append('neighborhood', neighborhood);
+            // Use ID if available, otherwise fallback to neighborhood (which might be the ID if not passed)
+            formData.append('neighborhood', neighborhoodId || neighborhood);
             formData.append('userId', userId);
             if (imageFile) {
                 formData.append('image', imageFile);
@@ -66,7 +71,7 @@ export function CreatePost({ userId, neighborhood, onPostCreated }: CreatePostPr
 
             if (result.success) {
                 toast({
-                    title: "Publicado",
+                    title: t('success.posted', "Publicado"),
                     description: "Tu mensaje ha sido publicado en el muro.",
                 });
                 setContent('');
@@ -75,7 +80,7 @@ export function CreatePost({ userId, neighborhood, onPostCreated }: CreatePostPr
             } else {
                 console.error("Server Action Error:", result.error);
                 toast({
-                    title: "Error al publicar",
+                    title: t('errors.postFailed', "Error al publicar"),
                     description: result.error || "Hubo un problema al crear la publicación.",
                     variant: "destructive"
                 });
@@ -83,7 +88,7 @@ export function CreatePost({ userId, neighborhood, onPostCreated }: CreatePostPr
         } catch (err) {
             console.error("Submission Error:", err);
             toast({
-                title: "Error inesperado",
+                title: t('errors.unexpected', "Error inesperado"),
                 description: "Ocurrió un error al intentar enviar la publicación.",
                 variant: "destructive"
             });
@@ -97,7 +102,7 @@ export function CreatePost({ userId, neighborhood, onPostCreated }: CreatePostPr
             <CardContent className="pt-6">
                 <form onSubmit={handleSubmit}>
                     <Textarea
-                        placeholder={`¿Qué está pasando en ${neighborhood}?`}
+                        placeholder={t('community.feed.whats_happening', `¿Qué está pasando en ${neighborhood}?`, { name: neighborhood })}
                         value={content}
                         onChange={(e) => setContent(e.target.value)}
                         className="min-h-[100px] border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-900/50 resize-none focus-visible:ring-purple-500 mb-4"
@@ -138,7 +143,7 @@ export function CreatePost({ userId, neighborhood, onPostCreated }: CreatePostPr
                                 onClick={() => fileInputRef.current?.click()}
                             >
                                 <ImageIcon className="h-4 w-4 mr-2" />
-                                Foto
+                                {t('form.photo', 'Foto')}
                             </Button>
                         </div>
                         <Button
@@ -154,7 +159,7 @@ export function CreatePost({ userId, neighborhood, onPostCreated }: CreatePostPr
                             ) : (
                                 <>
                                     <Send className="h-4 w-4 mr-2" />
-                                    Publicar
+                                    {t('community.post_btn', 'Publicar')}
                                 </>
                             )}
                         </Button>

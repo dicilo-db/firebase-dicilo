@@ -822,5 +822,63 @@
       "reply_btn": "Reply",
       "view_comments_btn": "View Comments"
     }
+  },
+  "community": {
+    "share": "Share",
+    "download": "Download photo",
+    "share_text": "Check out this post from {{user}} in {{neighborhood}} on Dicilo!",
+    "copy_link": "Copy Link",
+    "link_copied": "Link copied to clipboard",
+    "download_success": "Image downloaded",
+    "download_error": "Failed to download",
+    "your_community": "Your Community",
+    "neighborhoods_of": "Neighborhoods of",
+    "explore_desc": "Explore what is happening in your neighborhood and connect with neighbors.",
+    "new_recommendation": "New Recommendation",
+    "share_place": "Share a place, service, or experience with your neighbors in {{name}}.",
+    "ranking": {
+      "title": "Top Businesses",
+      "subtitle": "Most recommended",
+      "no_data": "Not enough data for ranking yet."
+    },
+    "barometer": {
+      "title": "Barometer",
+      "level": {
+        "fire": "ON FIRE!",
+        "fire_desc": "The neighborhood is on fire!",
+        "high": "High Activity",
+        "high_desc": "Lots of recent participation",
+        "medium": "Steady Growth",
+        "medium_desc": "Things are moving",
+        "low": "Quiet",
+        "low_desc": "Ideal start for posting"
+      },
+      "index": "Index",
+      "posts_week": "Posts this week",
+      "active_neighbors": "Active neighbors"
+    },
+    "feed": {
+      "wall": "Social Wall",
+      "recommendations": "Recommendations",
+      "whats_happening": "What's happening in {{name}}?",
+      "loading": "Loading activity...",
+      "empty": "No recent activity in {{name}}.",
+      "be_first": "Be the first to recommend a place!",
+      "recent": "Just now",
+      "photo_by": "Photo by"
+    },
+    "actions": {
+      "set_favorite": "Set as my Neighborhood",
+      "is_favorite": "My Neighborhood"
+    },
+    "post_btn": "Post",
+    "search_neighborhoods": "Search neighborhoods...",
+    "register_neighborhood": "Register Neighborhood",
+    "register_neighborhood_desc": "Can't find your neighborhood? Register it here to start connecting with your neighbors.",
+    "register_neighborhood_btn": "Register Neighborhood",
+    "read_in": "Read in",
+    "show_original": "Show original",
+    "translate_ai": "Translate with AI",
+    "translation_error": "Translation failed"
   }
 }
