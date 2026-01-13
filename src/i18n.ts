@@ -41,6 +41,9 @@ import legal_es from './locales/es/legal.json';
 import login_de from './locales/de/login.json';
 import login_en from './locales/en/login.json';
 import login_es from './locales/es/login.json';
+import social_de from './locales/de/social.json';
+import social_en from './locales/en/social.json';
+import social_es from './locales/es/social.json';
 
 const resources = {
   de: {
@@ -56,6 +59,7 @@ const resources = {
     form: form_de,
     legal: legal_de,
     login: login_de,
+    social: social_de,
   },
   en: {
     common: common_en,
@@ -70,6 +74,7 @@ const resources = {
     form: form_en,
     legal: legal_en,
     login: login_en,
+    social: social_en,
   },
   es: {
     common: common_es,
@@ -84,6 +89,7 @@ const resources = {
     form: form_es,
     legal: legal_es,
     login: login_es,
+    social: social_es,
   },
 };
 

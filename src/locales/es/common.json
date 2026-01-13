@@ -16,6 +16,9 @@
       "logout": "Cerrar Sesión"
     }
   },
+  "navigation": {
+    "social_network": "Mi Círculo"
+  },
   "dicipoints": {
     "whatIs": {
       "title": "¿Qué son los Dicipoints?",
@@ -109,7 +112,7 @@
   "dashboard": {
     "welcomeUser": "¡Bienvenido, {{name}}!",
     "totalBalance": "Balance Total",
-    "community": "Comunidad",
+    "communityLabel": "Comunidad",
     "connectWithNeighbors": "Conecta con tus vecinos",
     "goToCommunity": "Ir a la Comunidad",
     "inviteNow": "Invitar Ahora",

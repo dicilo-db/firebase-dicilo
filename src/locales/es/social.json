@@ -1,0 +1,36 @@
+{
+    "social": {
+        "tabs": {
+            "friends": "Mis Vecinos",
+            "chats": "Chats"
+        },
+        "actions": {
+            "send_message": "Enviar",
+            "add_friend": "Agregar a mis Vecinos",
+            "accept_request": "Aceptar",
+            "reject_request": "Rechazar",
+            "start_chat": "Chatear"
+        },
+        "status": {
+            "online": "En línea",
+            "typing": "Escribiendo...",
+            "offline": "Desconectado"
+        },
+        "placeholder": {
+            "search_neighbor": "Buscar vecinos...",
+            "type_message": "Escribe un mensaje..."
+        },
+        "groups": {
+            "create_new": "Crear Grupo"
+        },
+        "headers": {
+            "suggested_neighbors": "Vecinos Sugeridos",
+            "pending_requests": "Solicitudes Pendientes",
+            "no_new_neighbors": "No se encontraron vecinos cercanos nuevos."
+        },
+        "list": {
+            "user_label": "Usuario",
+            "unknown_neighborhood": "Barrio desconocido"
+        }
+    }
+}

@@ -1,4 +1,7 @@
 {
+  "navigation": {
+    "social_network": "Mein Netzwerk"
+  },
   "header": {
     "nav": {
       "benefits": "Vorteile",
@@ -12,7 +15,7 @@
       "privacy": "Datenschutz",
       "faq": "FAQ",
       "myNeighborhood": "Mein Kiez",
-      "community": "Community",
+      "communityLabel": "Community",
       "dicicoin": "DiciCoin",
       "logout": "Abmelden"
     }

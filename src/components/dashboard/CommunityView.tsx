@@ -14,7 +14,7 @@ import { BarometerVisual } from '@/app/barrio/components/BarometerVisual';
 import NeighborhoodFeed from '@/app/barrio/components/NeighborhoodFeed';
 import { RecommendationFormContent } from '@/components/RecommendationForm';
 import { ALL_NEIGHBORHOODS } from '@/data/neighborhoods';
-import { PlusCircle, MapPin, Trophy, ChevronRight, MessageSquare, Building2, Loader2, Heart, Search } from 'lucide-react';
+import { PlusCircle, MapPin, Trophy, ChevronRight, MessageSquare, Building2, Loader2, Heart, Search, Users } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useToast } from "@/hooks/use-toast";
 
@@ -41,6 +41,7 @@ function getNeighborhood(slugOrName: string) {
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CommunityFeed } from '../community/CommunityFeed';
+import { SocialPanel } from './social/SocialPanel';
 import { User } from 'firebase/auth';
 
 export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: { defaultNeighborhood?: string, currentUser: User }) {
@@ -692,7 +693,7 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
                 <div className="lg:col-span-8">
                     <Tabs defaultValue="wall" className="space-y-6">
                         <div className="flex items-center justify-between">
-                            <TabsList className="grid w-full grid-cols-2 lg:w-[400px]">
+                            <TabsList className="grid w-full grid-cols-3 lg:w-[480px]">
                                 <TabsTrigger value="wall">
                                     <MessageSquare className="h-4 w-4 mr-2" />
                                     {t('community.feed.wall', 'Muro Social')}
@@ -700,6 +701,10 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
                                 <TabsTrigger value="recommendations">
                                     <MapPin className="h-4 w-4 mr-2" />
                                     {t('community.feed.recommendations', 'Recomendaciones')}
+                                </TabsTrigger>
+                                <TabsTrigger value="social">
+                                    <Users className="h-4 w-4 mr-2" />
+                                    {t('navigation.social_network', 'Mi Círculo')}
                                 </TabsTrigger>
                             </TabsList>
                         </div>
@@ -719,6 +724,15 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
                                 </h3>
                             </div>
                             <NeighborhoodFeed neighborhood={neighborhoodName} />
+                        </TabsContent>
+
+                        <TabsContent value="social" className="space-y-6 animate-in fade-in slide-in-from-bottom-2">
+                            <div className="flex items-center justify-between mb-4">
+                                <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+                                    {t('navigation.social_network', 'Mi Círculo')}
+                                </h3>
+                            </div>
+                            <SocialPanel />
                         </TabsContent>
                     </Tabs>
                 </div>
