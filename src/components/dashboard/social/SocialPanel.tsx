@@ -38,11 +38,14 @@ export function SocialPanel() {
     // Socket Connection
     useEffect(() => {
         if (user) {
-            chatService.connect('dummy-token'); // Replace with real token logic if needed
+            // NOTE: Real-time connection disabled until Backend (Socket.io) is running on port 4000.
+            // Uncomment the lines below when the server is ready to avoid 'Connection Refused' errors.
 
-            chatService.onMessageReceived((msg) => {
-                setMessages((prev) => [...prev, msg]);
-            });
+            // chatService.connect('dummy-token'); 
+
+            // chatService.onMessageReceived((msg) => {
+            //     setMessages((prev) => [...prev, msg]);
+            // });
 
             return () => {
                 chatService.disconnect();
