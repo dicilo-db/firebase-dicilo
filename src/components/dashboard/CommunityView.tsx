@@ -139,60 +139,63 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
 
             if (!isMounted) return;
 
+            // Parallel Data State
+            let userDocs: any[] = [];
+            let systemDocs: any[] = [];
+
+            const mergeAndSet = () => {
+                const combinedMap = new Map();
+
+                // 1. Add System Locations (Base)
+                systemDocs.forEach(item => combinedMap.set(item.name.toLowerCase(), item));
+
+                // 2. Add User Neighborhoods (Rich Data - overwrites system if name collision)
+                userDocs.forEach(item => combinedMap.set(item.name.toLowerCase(), item));
+
+                setDbNeighborhoods(Array.from(combinedMap.values()));
+            };
+
             // FETCH Source 1: 'neighborhoods' (User registered)
             const q = query(collection(db, 'neighborhoods'));
             unsubscribeNeighborhoods = onSnapshot(q, (snapshot) => {
                 if (!isMounted) return;
-                const fetchedNeighborhoods = snapshot.docs.map(doc => ({
+                userDocs = snapshot.docs.map(doc => ({
                     id: doc.id,
                     name: doc.data().name,
                     city: doc.data().city || currentCity,
                     location: doc.data().location,
                     // source: 'user'
                 }));
+                mergeAndSet();
+            });
 
-                // FETCH Source 2: 'system_locations' (Admin managed)
-                // We do this inside to trigger update once both might be ready or just manage state merging
-                const qSys = query(collection(db, 'system_locations'));
-                unsubscribeSystemLocations = onSnapshot(qSys, (sysSnapshot) => {
-                    if (!isMounted) return;
-                    const fetchedSystem: any[] = [];
-                    console.log("DEBUG: Admin Systems Snapshot Size:", sysSnapshot.size);
+            // FETCH Source 2: 'system_locations' (Admin managed)
+            const qSys = query(collection(db, 'system_locations'));
+            unsubscribeSystemLocations = onSnapshot(qSys, (sysSnapshot) => {
+                if (!isMounted) return;
+                const newSystemDocs: any[] = [];
 
-                    sysSnapshot.docs.forEach(doc => {
-                        const data = doc.data();
-                        // We need to flatten Country -> Cities -> Districts
-                        if (data.cities) {
-                            data.cities.forEach((cityObj: any) => {
-                                console.log("DEBUG: City:", cityObj.name, "Districts:", cityObj.districts);
-                                // Add districts as neighborhoods
-                                if (cityObj.districts) {
-                                    cityObj.districts.forEach((distName: string) => {
-                                        fetchedSystem.push({
-                                            id: distName, // ID is name for system ones usually
-                                            name: distName,
-                                            city: cityObj.name,
-                                            location: null, // Admin doesn't strictly store lat/lng for districts yet, maybe in future
-                                            // source: 'admin'
-                                        });
+                sysSnapshot.docs.forEach(doc => {
+                    const data = doc.data();
+                    // Flatten Country -> Cities -> Districts
+                    if (data.cities) {
+                        data.cities.forEach((cityObj: any) => {
+                            if (cityObj.districts) {
+                                cityObj.districts.forEach((distName: string) => {
+                                    newSystemDocs.push({
+                                        id: distName,
+                                        name: distName,
+                                        city: cityObj.name,
+                                        location: null,
+                                        // source: 'admin'
                                     });
-                                }
-                            });
-                        }
-                    });
-
-                    // MERGE: Neighborhoods collection takes precedence for richer data (location etc)
-                    const combinedMap = new Map();
-
-                    // Add Admin first
-                    fetchedSystem.forEach(item => combinedMap.set(item.name.toLowerCase(), item));
-                    // Overwrite with User (has coords)
-                    fetchedNeighborhoods.forEach(item => combinedMap.set(item.name.toLowerCase(), item));
-
-                    const finalMerged = Array.from(combinedMap.values());
-                    console.log("DEBUG: Final Merged Count:", finalMerged.length);
-                    setDbNeighborhoods(finalMerged);
+                                });
+                            }
+                        });
+                    }
                 });
+                systemDocs = newSystemDocs;
+                mergeAndSet();
             });
         };
 
