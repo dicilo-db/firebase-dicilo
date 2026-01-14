@@ -253,22 +253,28 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
         // Determine City Scope
         const currentCity = isCity ? neighborhoodName : (neighborhoodConfig?.city || 'Hamburg');
 
-        // Base list from static config
+        // Base list from static config (filtered by current city)
         const base = ALL_NEIGHBORHOODS.filter(n => n.city === currentCity && n.name !== currentCity);
 
-        // Ensure static has defaults if needed? Already handled in data.
-
-        // Merge with DB (deduplicating by name) taking DB as priority for lat/lng if available? 
-        // Actually DB might have better fresher data.
+        // Merge with DB (deduplicating by name)
+        // If searching, we want to broaden the scope potentially? 
+        // For now, we still mostly respect the header "Barrios de [City]" but we should include matches if searchTerm is present
         const merged = [...base];
 
         dbNeighborhoods.forEach(dbN => {
-            const existingIndex = merged.findIndex(m => m.name.toLowerCase() === dbN.name.toLowerCase());
-            if (existingIndex === -1) {
-                merged.push(dbN);
-            } else {
-                // Update existing with DB data (e.g. if DB has better/more props)
-                // merged[existingIndex] = { ...merged[existingIndex], ...dbN };
+            // Logic: 
+            // 1. If we are NOT searching, strict filter by city to keep list clean.
+            // 2. If we ARE searching, include anything matching the name, even from other cities? 
+            // User requested: "si no esta hay registrado, lo busque en el modulo de la Gestion de paises"
+
+            const isSameCity = dbN.city === currentCity;
+            const matchesSearch = searchTerm && dbN.name.toLowerCase().includes(searchTerm.toLowerCase());
+
+            if (isSameCity || matchesSearch) {
+                const existingIndex = merged.findIndex(m => m.name.toLowerCase() === dbN.name.toLowerCase());
+                if (existingIndex === -1) {
+                    merged.push(dbN);
+                }
             }
         });
 

@@ -194,7 +194,10 @@ export default function LocationsPage() {
 
     const filteredLocations = locations.filter(l =>
         l.countryName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        l.cities.some(c => c.name.toLowerCase().includes(searchTerm.toLowerCase()))
+        l.cities.some(c =>
+            c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            c.districts.some(d => d.toLowerCase().includes(searchTerm.toLowerCase()))
+        )
     );
 
     return (
@@ -360,78 +363,86 @@ export default function LocationsPage() {
                                                     </TableRow>
                                                 </TableHeader>
                                                 <TableBody>
-                                                    {loc.cities.sort((a, b) => a.name.localeCompare(b.name)).map((city) => (
-                                                        <TableRow key={city.name}>
-                                                            <TableCell className="font-medium">
-                                                                <div className="flex items-center gap-2">
-                                                                    <Building2 className="h-4 w-4 text-muted-foreground" />
-                                                                    {city.name}
-                                                                </div>
-                                                            </TableCell>
-                                                            <TableCell>
-                                                                <div className="flex flex-wrap gap-1">
-                                                                    {city.districts.sort().map(dist => (
-                                                                        <Badge key={dist} variant="outline" className="text-xs">
-                                                                            {dist}
-                                                                            <span
-                                                                                className="ml-1 cursor-pointer hover:text-red-500 font-bold px-1"
-                                                                                onClick={() => handleRemoveDistrict(loc.id, city.name, dist)}
-                                                                            >
-                                                                                ×
-                                                                            </span>
-                                                                        </Badge>
-                                                                    ))}
-                                                                    <Dialog>
-                                                                        <DialogTrigger asChild>
-                                                                            <Button
-                                                                                variant="ghost"
-                                                                                size="sm"
-                                                                                className="h-6 w-6 p-0 rounded-full border border-dashed"
-                                                                                onClick={() => {
-                                                                                    setActiveCityForDistrict({ countryId: loc.id, cityName: city.name });
-                                                                                    setNewDistrictName('');
-                                                                                }}
-                                                                            >
-                                                                                <Plus className="h-3 w-3" />
-                                                                            </Button>
-                                                                        </DialogTrigger>
-                                                                        <DialogContent className="sm:max-w-[425px]">
-                                                                            <DialogHeader>
-                                                                                <DialogTitle>{t('admin.locations.add_district_to', `Agregar Barrio a ${city.name}`, { city: city.name })}</DialogTitle>
-                                                                            </DialogHeader>
-                                                                            <div className="grid gap-4 py-4">
-                                                                                <div className="grid gap-2">
-                                                                                    <Label htmlFor="district-name">{t('admin.locations.district_name', "Nombre del Barrio")}</Label>
-                                                                                    <Input
-                                                                                        id="district-name"
-                                                                                        value={newDistrictName}
-                                                                                        onChange={(e) => setNewDistrictName(e.target.value)}
-                                                                                        placeholder="Ej: Mitte"
-                                                                                        onKeyDown={(e) => {
-                                                                                            if (e.key === 'Enter') handleAddDistrict();
-                                                                                        }}
-                                                                                    />
+                                                    {loc.cities
+                                                        .filter(city =>
+                                                            searchTerm === '' ||
+                                                            loc.countryName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                                            city.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                                            city.districts.some(dist => dist.toLowerCase().includes(searchTerm.toLowerCase()))
+                                                        )
+                                                        .sort((a, b) => a.name.localeCompare(b.name))
+                                                        .map((city) => (
+                                                            <TableRow key={city.name}>
+                                                                <TableCell className="font-medium">
+                                                                    <div className="flex items-center gap-2">
+                                                                        <Building2 className="h-4 w-4 text-muted-foreground" />
+                                                                        {city.name}
+                                                                    </div>
+                                                                </TableCell>
+                                                                <TableCell>
+                                                                    <div className="flex flex-wrap gap-1">
+                                                                        {city.districts.sort().map(dist => (
+                                                                            <Badge key={dist} variant="outline" className="text-xs">
+                                                                                {dist}
+                                                                                <span
+                                                                                    className="ml-1 cursor-pointer hover:text-red-500 font-bold px-1"
+                                                                                    onClick={() => handleRemoveDistrict(loc.id, city.name, dist)}
+                                                                                >
+                                                                                    ×
+                                                                                </span>
+                                                                            </Badge>
+                                                                        ))}
+                                                                        <Dialog>
+                                                                            <DialogTrigger asChild>
+                                                                                <Button
+                                                                                    variant="ghost"
+                                                                                    size="sm"
+                                                                                    className="h-6 w-6 p-0 rounded-full border border-dashed"
+                                                                                    onClick={() => {
+                                                                                        setActiveCityForDistrict({ countryId: loc.id, cityName: city.name });
+                                                                                        setNewDistrictName('');
+                                                                                    }}
+                                                                                >
+                                                                                    <Plus className="h-3 w-3" />
+                                                                                </Button>
+                                                                            </DialogTrigger>
+                                                                            <DialogContent className="sm:max-w-[425px]">
+                                                                                <DialogHeader>
+                                                                                    <DialogTitle>{t('admin.locations.add_district_to', `Agregar Barrio a ${city.name}`, { city: city.name })}</DialogTitle>
+                                                                                </DialogHeader>
+                                                                                <div className="grid gap-4 py-4">
+                                                                                    <div className="grid gap-2">
+                                                                                        <Label htmlFor="district-name">{t('admin.locations.district_name', "Nombre del Barrio")}</Label>
+                                                                                        <Input
+                                                                                            id="district-name"
+                                                                                            value={newDistrictName}
+                                                                                            onChange={(e) => setNewDistrictName(e.target.value)}
+                                                                                            placeholder="Ej: Mitte"
+                                                                                            onKeyDown={(e) => {
+                                                                                                if (e.key === 'Enter') handleAddDistrict();
+                                                                                            }}
+                                                                                        />
+                                                                                    </div>
                                                                                 </div>
-                                                                            </div>
-                                                                            <DialogFooter>
-                                                                                <Button type="button" onClick={handleAddDistrict}>{t('admin.locations.save', "Guardar")}</Button>
-                                                                            </DialogFooter>
-                                                                        </DialogContent>
-                                                                    </Dialog>
-                                                                </div>
-                                                            </TableCell>
-                                                            <TableCell className="text-right">
-                                                                <Button
-                                                                    variant="ghost"
-                                                                    size="icon"
-                                                                    className="h-8 w-8 text-muted-foreground hover:text-red-500"
-                                                                    onClick={() => handleRemoveCity(loc.id, city.name)}
-                                                                >
-                                                                    <Trash2 className="h-4 w-4" />
-                                                                </Button>
-                                                            </TableCell>
-                                                        </TableRow>
-                                                    ))}
+                                                                                <DialogFooter>
+                                                                                    <Button type="button" onClick={handleAddDistrict}>{t('admin.locations.save', "Guardar")}</Button>
+                                                                                </DialogFooter>
+                                                                            </DialogContent>
+                                                                        </Dialog>
+                                                                    </div>
+                                                                </TableCell>
+                                                                <TableCell className="text-right">
+                                                                    <Button
+                                                                        variant="ghost"
+                                                                        size="icon"
+                                                                        className="h-8 w-8 text-muted-foreground hover:text-red-500"
+                                                                        onClick={() => handleRemoveCity(loc.id, city.name)}
+                                                                    >
+                                                                        <Trash2 className="h-4 w-4" />
+                                                                    </Button>
+                                                                </TableCell>
+                                                            </TableRow>
+                                                        ))}
                                                     <TableRow className="bg-slate-50 dark:bg-slate-900/50">
                                                         <TableCell colSpan={3}>
                                                             <div className="flex items-center gap-2">
