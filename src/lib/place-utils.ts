@@ -43,6 +43,9 @@ export const processDiciloPlace = (place: GooglePlaceData): DiciloLocation | nul
     let city = '';
     let neighborhood = '';
 
+    let sublocalityLevel1 = '';
+    let sublocalityLevel2 = '';
+
     // 1. Extract official Google components
     place.address_components.forEach(component => {
         const types = component.types;
@@ -54,15 +57,32 @@ export const processDiciloPlace = (place: GooglePlaceData): DiciloLocation | nul
         if (types.includes('locality') || (types.includes('administrative_area_level_1') && !city)) {
             city = component.long_name;
         }
-        // Neighborhoods or Sub-localities
-        if (types.includes('sublocality') || types.includes('neighborhood') || types.includes('sublocality_level_1')) {
-            neighborhood = component.long_name;
+
+        // Capture specific sub-levels
+        if (types.includes('sublocality_level_1')) {
+            sublocalityLevel1 = component.long_name;
+        }
+        if (types.includes('sublocality_level_2')) {
+            sublocalityLevel2 = component.long_name;
+        }
+        // Fallback or generic neighborhood
+        if (types.includes('neighborhood') || types.includes('sublocality')) {
+            if (!neighborhood) neighborhood = component.long_name;
         }
     });
 
+    // Priority: Level 2 (most specific) > Level 1 (District) > Generic Neighborhood
+    if (sublocalityLevel2) {
+        neighborhood = sublocalityLevel2;
+    } else if (sublocalityLevel1 && (!neighborhood || neighborhood === city)) {
+        // Only use Level 1 if we don't have a generic neighborhood, or if generic is same as city
+        neighborhood = sublocalityLevel1;
+    }
+
     // 2. Dicilo Business Logic: Neighborhood or City?
     // If Google returned a neighborhood, it's a neighborhood. Otherwise assume top level city.
-    const isNeighborhood = neighborhood !== '';
+    // Additional check: If neighborhood name == city name, it's the city.
+    const isNeighborhood = neighborhood !== '' && neighborhood !== city;
 
     // Case: User searches "Hamburg" directly. Google returns name="Hamburg", type="locality" (or admin area), no sublocality.
     // 'city' will be detected as Hamburg. 'neighborhood' empty.

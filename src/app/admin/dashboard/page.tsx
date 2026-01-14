@@ -33,7 +33,8 @@ import {
   Briefcase,
   Megaphone,
   Scan,
-  LifeBuoy
+  LifeBuoy,
+  Globe
 } from 'lucide-react';
 import { useAdminUser, useAuthGuard } from '@/hooks/useAuthGuard';
 import { useServerAction } from '@/hooks/useServerAction';
@@ -726,6 +727,20 @@ const DashboardContent: React.FC = () => {
                   <div className="absolute bottom-4 right-4 text-sm font-mono text-muted-foreground">
                     {formatCount(counts.recommendations)}
                   </div>
+                </CardContent>
+              </Card>
+            </Link>
+
+            {/* Ciudades y Países (NEW MODULE) */}
+            <Link href="/admin/locations" className="group">
+              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Ubicaciones</CardTitle>
+                  <Globe className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">Ciudades y Países</div>
+                  <p className="text-xs text-muted-foreground mt-1">Gestión de lugares del sistema</p>
                 </CardContent>
               </Card>
             </Link>

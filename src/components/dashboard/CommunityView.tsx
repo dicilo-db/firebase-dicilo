@@ -93,9 +93,11 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
     // Simplified useEffect for fetching neighborhoods
     useEffect(() => {
         let isMounted = true;
-        let unsubscribe: (() => void) | undefined;
+        let unsubscribeNeighborhoods: (() => void) | undefined;
+        let unsubscribeSystemLocations: (() => void) | undefined;
 
         const initContext = async () => {
+            // ... existing logic to determine current city context ...
             let currentCity = 'Hamburg'; // Default fallback
 
             // 1. Is it a known city?
@@ -137,23 +139,60 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
 
             if (!isMounted) return;
 
-            // Fetch all neighborhoods to avoid filtering issues with City names (e.g. Ammersbek vs Hamburg)
-            // Client-side filtering/grouping will handle the rest.
-            const q = query(
-                collection(db, 'neighborhoods')
-                // where('city', '==', currentCity) // <-- REMOVED STRICT FILTER
-            );
-
-            unsubscribe = onSnapshot(q, (snapshot) => {
+            // FETCH Source 1: 'neighborhoods' (User registered)
+            const q = query(collection(db, 'neighborhoods'));
+            unsubscribeNeighborhoods = onSnapshot(q, (snapshot) => {
                 if (!isMounted) return;
-                const fetched = snapshot.docs.map(doc => ({
+                const fetchedNeighborhoods = snapshot.docs.map(doc => ({
                     id: doc.id,
                     name: doc.data().name,
                     city: doc.data().city || currentCity,
                     location: doc.data().location,
-                    distance: 0
+                    // source: 'user'
                 }));
-                setDbNeighborhoods(fetched);
+
+                // FETCH Source 2: 'system_locations' (Admin managed)
+                // We do this inside to trigger update once both might be ready or just manage state merging
+                const qSys = query(collection(db, 'system_locations'));
+                unsubscribeSystemLocations = onSnapshot(qSys, (sysSnapshot) => {
+                    if (!isMounted) return;
+                    const fetchedSystem: any[] = [];
+                    console.log("DEBUG: Admin Systems Snapshot Size:", sysSnapshot.size);
+
+                    sysSnapshot.docs.forEach(doc => {
+                        const data = doc.data();
+                        // We need to flatten Country -> Cities -> Districts
+                        if (data.cities) {
+                            data.cities.forEach((cityObj: any) => {
+                                console.log("DEBUG: City:", cityObj.name, "Districts:", cityObj.districts);
+                                // Add districts as neighborhoods
+                                if (cityObj.districts) {
+                                    cityObj.districts.forEach((distName: string) => {
+                                        fetchedSystem.push({
+                                            id: distName, // ID is name for system ones usually
+                                            name: distName,
+                                            city: cityObj.name,
+                                            location: null, // Admin doesn't strictly store lat/lng for districts yet, maybe in future
+                                            // source: 'admin'
+                                        });
+                                    });
+                                }
+                            });
+                        }
+                    });
+
+                    // MERGE: Neighborhoods collection takes precedence for richer data (location etc)
+                    const combinedMap = new Map();
+
+                    // Add Admin first
+                    fetchedSystem.forEach(item => combinedMap.set(item.name.toLowerCase(), item));
+                    // Overwrite with User (has coords)
+                    fetchedNeighborhoods.forEach(item => combinedMap.set(item.name.toLowerCase(), item));
+
+                    const finalMerged = Array.from(combinedMap.values());
+                    console.log("DEBUG: Final Merged Count:", finalMerged.length);
+                    setDbNeighborhoods(finalMerged);
+                });
             });
         };
 
@@ -161,7 +200,8 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
 
         return () => {
             isMounted = false;
-            if (unsubscribe) unsubscribe();
+            if (unsubscribeNeighborhoods) unsubscribeNeighborhoods();
+            if (unsubscribeSystemLocations) unsubscribeSystemLocations();
         };
     }, [neighborhoodName]);
 
