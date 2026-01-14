@@ -13,11 +13,13 @@ const db = getFirestore(app);
 interface CommunityFeedProps {
     neighborhood: string;
     userId: string;
+    mode?: 'public' | 'private';
+    friendIds?: string[];
 }
 
 import { useTranslation } from 'react-i18next';
 
-export function CommunityFeed({ neighborhood, userId }: CommunityFeedProps) {
+export function CommunityFeed({ neighborhood, userId, mode = 'public', friendIds = [] }: CommunityFeedProps) {
     const { t } = useTranslation('common');
     const [posts, setPosts] = useState<CommunityPost[]>([]);
     const [loading, setLoading] = useState(true);
@@ -30,20 +32,64 @@ export function CommunityFeed({ neighborhood, userId }: CommunityFeedProps) {
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
     const fetchPosts = async () => {
-        if (!neighborhood) return;
         setLoading(true);
         setErrorMsg(null);
         try {
-            const q = query(
-                collection(db, 'community_posts'),
-                where('neighborhood', '==', neighborhood),
-                orderBy('createdAt', 'desc'),
-                limit(50)
-            );
+            let q;
+
+            if (mode === 'public') {
+                if (!neighborhood) return;
+                // Public Wall: Location Based
+                q = query(
+                    collection(db, 'community_posts'),
+                    where('neighborhood', '==', neighborhood),
+                    // where('visibility', '!=', 'private'), // Optional: if index exists. 
+                    // For now, we assume neighborhood-linked posts are public.
+                    orderBy('createdAt', 'desc'),
+                    limit(50)
+                );
+            } else {
+                // Private Circle: Friend Graph Based
+                // Logic: Visibility 'private' AND Author in [friends + self]
+
+                // Initialize with friends or empty array
+                const safeFriendIds = friendIds ? friendIds.slice(0, 30) : [];
+
+                // ALWAYS include MY own posts in my private feed
+                if (userId && !safeFriendIds.includes(userId)) {
+                    safeFriendIds.push(userId);
+                }
+
+                q = query(
+                    collection(db, 'community_posts'),
+                    where('visibility', '==', 'private'),
+                    where('userId', 'in', safeFriendIds),
+                    orderBy('createdAt', 'desc'),
+                    limit(50)
+                );
+
+                // Also include MY own posts
+                if (userId && !safeFriendIds.includes(userId)) {
+                    safeFriendIds.push(userId);
+                }
+
+                q = query(
+                    collection(db, 'community_posts'),
+                    where('visibility', '==', 'private'),
+                    where('userId', 'in', safeFriendIds),
+                    orderBy('createdAt', 'desc'),
+                    limit(50)
+                );
+            }
+
             const snapshot = await getDocs(q);
             const fetchedPosts: CommunityPost[] = [];
             snapshot.forEach((doc) => {
-                fetchedPosts.push({ id: doc.id, ...doc.data() } as CommunityPost);
+                const data = doc.data();
+                // Client-side safety double-check
+                if (mode === 'public' && data.visibility === 'private') return;
+
+                fetchedPosts.push({ id: doc.id, ...data } as CommunityPost);
             });
             setPosts(fetchedPosts);
         } catch (error: any) {
@@ -60,7 +106,7 @@ export function CommunityFeed({ neighborhood, userId }: CommunityFeedProps) {
 
     useEffect(() => {
         fetchPosts();
-    }, [neighborhood]);
+    }, [neighborhood, mode, JSON.stringify(friendIds)]);
 
     // Expose fetchPosts to CreatePost for refresh
     const handlePostCreated = () => {
@@ -91,6 +137,7 @@ export function CommunityFeed({ neighborhood, userId }: CommunityFeedProps) {
                 neighborhood={displayNeighborhood}
                 neighborhoodId={neighborhood} // Pass strict ID for backend
                 onPostCreated={handlePostCreated}
+                mode={mode}
             />
 
             <div className="space-y-4">

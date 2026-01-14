@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { User, FriendRequest } from '@/types/social';
 import { useAuth } from '@/context/AuthContext';
-import { getFirestore, collection, query, where, getDocs, addDoc, updateDoc, doc, Timestamp } from 'firebase/firestore';
+import { getFirestore, collection, query, where, getDocs, addDoc, updateDoc, doc, Timestamp, limit } from 'firebase/firestore';
 import { app } from '@/lib/firebase';
 
 export function useFriends() {
@@ -13,7 +13,8 @@ export function useFriends() {
 
     const db = getFirestore(app);
 
-    // 1. Fetch Requests & Neighbors (One-time fetch on mount/user change)
+    // 1. Fetch Requests, Friends & Neighbors
+
     useEffect(() => {
         if (!currentUser?.uid) return;
 
@@ -21,8 +22,6 @@ export function useFriends() {
             setLoading(true);
             try {
                 // A. Fetch Pending Requests
-                // We use getDocs instead of onSnapshot to prevent 'Internal Assertion Failed' crashes
-                // caused by unstable listener states in the current environment.
                 const qRequests = query(
                     collection(db, 'friend_requests'),
                     where('toUserId', '==', currentUser.uid),
@@ -36,20 +35,69 @@ export function useFriends() {
                 });
                 setPendingRequests(reqs);
 
-                // B. Fetch Suggested Neighbors
-                // Logic: Fetch other profiles. Ideally filtered by neighborhood.
-                // For robustness, we simply fetch a limited number of profiles excluding self.
+                // B. Fetch Friends (Accepted Requests)
+                // We need two queries because we could be the sender OR the receiver
+                const qFriendsReceiver = query(
+                    collection(db, 'friend_requests'),
+                    where('toUserId', '==', currentUser.uid),
+                    where('status', '==', 'accepted')
+                );
+                const qFriendsSender = query(
+                    collection(db, 'friend_requests'),
+                    where('fromUserId', '==', currentUser.uid),
+                    where('status', '==', 'accepted')
+                );
+
+                const [receiverSnap, senderSnap] = await Promise.all([
+                    getDocs(qFriendsReceiver),
+                    getDocs(qFriendsSender)
+                ]);
+
+                const friendIds = new Set<string>();
+                receiverSnap.forEach(doc => friendIds.add(doc.data().fromUserId));
+                senderSnap.forEach(doc => friendIds.add(doc.data().toUserId));
+
+                // Fetch Friend Profiles
+                if (friendIds.size > 0) {
+                    // Note: Firestore 'in' limit is 30. For production, batching is needed.
+                    // Here we fetch friends using individual gets or a filtered list for MVP simplicity 
+                    // OR just reuse the 'private_profiles' fetch below to filter.
+                    // Let's assume we fetch all visible neighbors and filter for friends for now to save reads, 
+                    // or fetch specific docs if we had IDs. 
+                    // For now, let's just create dummy User objects if we can't fetch profiles efficiently without ID list,
+                    // BUT actually, we can query profiles where 'uid' in [...friendIds].
+
+                    const ids = Array.from(friendIds).slice(0, 30); // MVP Limit
+                    if (ids.length > 0) {
+                        const qProfiles = query(
+                            collection(db, 'private_profiles'),
+                            where('uid', 'in', ids)
+                        );
+                        const profilesSnap = await getDocs(qProfiles);
+                        const friendsList: User[] = [];
+                        profilesSnap.forEach(doc => {
+                            const data = doc.data();
+                            friendsList.push({
+                                uid: data.uid || doc.id,
+                                displayName: data.firstName ? `${data.firstName} ${data.lastName || ''}`.trim() : 'Amigo',
+                                photoURL: data.photoURL,
+                                neighborhood: data.neighborhood
+                            });
+                        });
+                        setFriends(friendsList);
+                    }
+                }
+
+                // C. Fetch Suggested Neighbors
                 const usersRef = collection(db, 'private_profiles');
-                // Note: '!=' queries can sometimes be restrictive on indexes. 
-                // A safer simple query is often just limit(20) and filter in JS.
-                const qNeighbors = query(usersRef);
+                const qNeighbors = query(usersRef, limit(20)); // Limit for safety
 
                 const userSnapshot = await getDocs(qNeighbors);
                 const neighbors: User[] = [];
                 userSnapshot.forEach(doc => {
                     const data = doc.data();
-                    // Exclude self and ensure minimal data integrity
-                    if (doc.id !== currentUser.uid && (data.uid || doc.id)) {
+                    // Exclude self and ALREADY friends
+                    if (doc.id !== currentUser.uid && !friendIds.has(doc.id) && (data.uid || doc.id)) {
                         neighbors.push({
                             uid: data.uid || doc.id,
                             displayName: data.firstName ? `${data.firstName} ${data.lastName || ''}`.trim() : 'Vecino',
@@ -59,8 +107,7 @@ export function useFriends() {
                     }
                 });
 
-                // Randomize or filter neighbors if needed
-                setSuggestedNeighbors(neighbors.slice(0, 10));
+                setSuggestedNeighbors(neighbors);
 
             } catch (error) {
                 console.error("Error fetching social data:", error);

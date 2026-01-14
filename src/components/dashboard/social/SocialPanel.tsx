@@ -15,7 +15,7 @@ import {
     ConversationHeader,
     Search
 } from '@chatscope/chat-ui-kit-react';
-import { UserPlus, MessageCircle, X, Check } from 'lucide-react';
+import { UserPlus, MessageCircle, X, Check, Send, Image as ImageIcon, Loader2 } from 'lucide-react';
 
 // Hooks & Services
 import { useTranslation } from 'react-i18next';
@@ -24,10 +24,18 @@ import { useFriends } from '@/hooks/useFriends';
 import { chatService } from '@/lib/chat-service';
 import { Message as SocialMessage } from '@/types/social';
 
-export function SocialPanel() {
+import { CommunityFeed } from '../../community/CommunityFeed';
+
+export function SocialPanel({ neighborhood = 'Hamburg' }: { neighborhood?: string }) {
     const { t } = useTranslation('social');
     const { user } = useAuth();
-    const { suggestedNeighbors, pendingRequests, sendFriendRequest, respondToFriendRequest } = useFriends();
+    const { suggestedNeighbors, pendingRequests, sendFriendRequest, respondToFriendRequest, friends } = useFriends();
+
+    // Extract friend IDs for the private feed query
+    const friendIds = React.useMemo(() => {
+        return friends.map(f => f.uid);
+    }, [friends]);
+
 
     // State
     const [activeTab, setActiveTab] = useState<'friends' | 'chats'>('chats');
@@ -85,12 +93,12 @@ export function SocialPanel() {
     };
 
     return (
-        <div style={{ position: "relative", height: "600px" }} className="dicilo-social-wrapper w-full border rounded-lg overflow-hidden bg-white shadow-sm">
+        <div style={{ position: "relative", height: "750px" }} className="dicilo-social-wrapper w-full border rounded-lg overflow-hidden bg-white shadow-sm flex flex-col">
             <MainContainer responsive>
 
                 {/* --- BARRA LATERAL --- */}
                 <Sidebar position="left" scrollable={false}>
-
+                    {/* ... sidebar content remains same ... */}
                     {/* Custom Toggle using Primary Color (Dicilo Green) */}
                     <div className="p-3 bg-primary flex justify-around items-center text-primary-foreground shadow-sm">
                         <button
@@ -200,58 +208,104 @@ export function SocialPanel() {
                     )}
                 </Sidebar>
 
-                {/* --- ÁREA DE CHAT --- */}
-                <ChatContainer>
-                    {activeChatRoom ? (
-                        <>
-                            <ConversationHeader>
-                                <ConversationHeader.Back onClick={() => setActiveChatRoom(null)} />
-                                <Avatar src="https://ui-avatars.com/api/?name=Chat" name="Active" />
-                                <ConversationHeader.Content
-                                    userName="Chat Activo" // In real app, resolved from room ID
-                                    info={t('social.status.online')}
-                                />
-                            </ConversationHeader>
-
-                            <MessageList>
-                                {messages
-                                    .filter(m => m.roomId === activeChatRoom)
-                                    .map((m) => (
-                                        <Message
-                                            key={m.id}
-                                            model={{
-                                                message: m.content,
-                                                sentTime: new Date(m.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                                                sender: m.senderId === user?.uid ? "Me" : "Other", // Chatscope needs "Me" for outgoing
-                                                direction: getDirection(m.senderId),
-                                                position: "single"
-                                            }}
-                                        >
-                                            <Message.CustomContent>
-                                                {/* Optional: Add avatars next to message if group chat */}
-                                            </Message.CustomContent>
-                                        </Message>
-                                    ))}
-                            </MessageList>
-
-                            <MessageInput
-                                placeholder={t('social.placeholder.type_message')}
-                                value={inputText}
-                                onChange={setInputText}
-                                onSend={handleSendMessage}
-                                attachButton={false}
+                {/* --- ÁREA DE CHAT O MURO --- */}
+                {/* --- Main Content Area: CHAT or PRIVATE WALL --- */}
+                {activeChatRoom ? (
+                    <ChatContainer>
+                        <ConversationHeader>
+                            <ConversationHeader.Back onClick={() => setActiveChatRoom(null)} />
+                            <Avatar src="https://ui-avatars.com/api/?name=Chat" name="Active" />
+                            <ConversationHeader.Content
+                                userName="Chat Activo"
+                                info={t('social.status.online')}
                             />
-                        </>
-                    ) : (
-                        <div className="flex flex-col items-center justify-center h-full text-muted-foreground p-6 text-center">
-                            <MessageCircle size={48} className="mb-4 opacity-20" />
-                            <p className="text-lg font-medium">{t('social.tabs.chats')}</p>
-                            <p className="text-sm opacity-60 max-w-xs mt-2">
-                                {t('social.actions.start_chat_prompt', 'Selecciona un chat o busca un vecino para comenzar a conectar.')}
-                            </p>
+                        </ConversationHeader>
+
+                        <MessageList>
+                            {messages
+                                .filter(m => m.roomId === activeChatRoom)
+                                .map((m) => (
+                                    <Message
+                                        key={m.id}
+                                        model={{
+                                            message: m.content,
+                                            sentTime: new Date(m.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                                            sender: m.senderId === user?.uid ? "Me" : "Other",
+                                            direction: getDirection(m.senderId),
+                                            position: "single"
+                                        }}
+                                    />
+                                ))}
+                        </MessageList>
+
+                        {/* Chat Input Area */}
+                        <div className="p-3 bg-white border-t">
+                            {/* ... existing input code ... */}
+                            <div className="space-y-2">
+                                <textarea
+                                    className="w-full p-3 min-h-[80px] text-sm border-slate-200 bg-slate-50 rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-primary/20"
+                                    placeholder={t('social.placeholder.type_message')}
+                                    value={inputText}
+                                    onChange={(e) => setInputText(e.target.value)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter' && !e.shiftKey) {
+                                            e.preventDefault();
+                                            handleSendMessage(inputText);
+                                        }
+                                    }}
+                                />
+                                <div className="flex justify-between items-center">
+                                    <button className="text-muted-foreground hover:text-primary transition-colors p-2 rounded-full hover:bg-slate-100">
+                                        <ImageIcon size={20} />
+                                    </button>
+                                    <button
+                                        onClick={() => handleSendMessage(inputText)}
+                                        disabled={!inputText.trim()}
+                                        className="bg-primary text-primary-foreground px-4 py-2 rounded-md text-sm font-medium hover:bg-primary/90 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        <span>{t('social.actions.send', 'Enviar')}</span>
+                                        <Send size={16} />
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                    )}
-                </ChatContainer>
+                    </ChatContainer>
+                ) : (
+                    /* PRIVATE CIRCLE FEED (Standard View) */
+                    <div className="flex-1 h-full overflow-y-auto bg-slate-50/50 flex flex-col">
+                        {/* Feed Header */}
+                        <div className="p-4 bg-white/80 backdrop-blur-md sticky top-0 z-10 border-b flex justify-between items-center">
+                            <div>
+                                <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+                                    Mi Círculo Privado
+                                    <span className="text-xs bg-amber-100 text-amber-700 font-normal px-2 py-0.5 rounded-full border border-amber-200">
+                                        Solo Amigos
+                                    </span>
+                                </h2>
+                                <p className="text-xs text-muted-foreground">
+                                    Las publicaciones aquí son privadas y solo visibles para tus contactos.
+                                </p>
+                            </div>
+                            {/* Optional: Add "Find Friends" button here if empty */}
+                        </div>
+
+                        {/* Feed Content */}
+                        <div className="p-4 flex-1">
+                            {user ? (
+                                <CommunityFeed
+                                    neighborhood={neighborhood} // Still passed but ignored for visibility, used for "CreatePost" placeholder if needed or as fallback
+                                    userId={user.uid}
+                                    mode="private"
+                                    friendIds={friendIds}
+                                />
+                            ) : (
+                                <div className="flex items-center justify-center h-full">
+                                    <Loader2 className="animate-spin text-primary" />
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                )}
             </MainContainer>
         </div>
     );

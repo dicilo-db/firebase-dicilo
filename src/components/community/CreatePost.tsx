@@ -4,7 +4,7 @@ import React, { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
-import { Image as ImageIcon, Send, Loader2, X } from 'lucide-react';
+import { Image as ImageIcon, Send, Loader2, X, Lock } from 'lucide-react';
 import { createPostAction } from '@/app/actions/community';
 import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
@@ -16,9 +16,10 @@ interface CreatePostProps {
     neighborhood: string; // Display Name
     neighborhoodId?: string; // Query/DB ID
     onPostCreated?: () => void;
+    mode?: 'public' | 'private';
 }
 
-export function CreatePost({ userId, neighborhood, neighborhoodId, onPostCreated }: CreatePostProps) {
+export function CreatePost({ userId, neighborhood, neighborhoodId, onPostCreated, mode = 'public' }: CreatePostProps) {
     const { t } = useTranslation('common');
     const { toast } = useToast();
     const [content, setContent] = useState('');
@@ -26,6 +27,8 @@ export function CreatePost({ userId, neighborhood, neighborhoodId, onPostCreated
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const isPrivate = mode === 'private';
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -63,6 +66,10 @@ export function CreatePost({ userId, neighborhood, neighborhoodId, onPostCreated
             // Use ID if available, otherwise fallback to neighborhood (which might be the ID if not passed)
             formData.append('neighborhood', neighborhoodId || neighborhood);
             formData.append('userId', userId);
+
+            // NEW: Visibility
+            formData.append('visibility', mode);
+
             if (imageFile) {
                 formData.append('image', imageFile);
             }
@@ -72,7 +79,9 @@ export function CreatePost({ userId, neighborhood, neighborhoodId, onPostCreated
             if (result.success) {
                 toast({
                     title: t('success.posted', "Publicado"),
-                    description: "Tu mensaje ha sido publicado en el muro.",
+                    description: isPrivate
+                        ? "Publicado en tu Círculo Privado."
+                        : "Tu mensaje ha sido publicado en el muro.",
                 });
                 setContent('');
                 removeImage();
@@ -98,14 +107,27 @@ export function CreatePost({ userId, neighborhood, neighborhoodId, onPostCreated
     };
 
     return (
-        <Card className="mb-6 border-none shadow-sm bg-gradient-to-br from-white to-slate-50 dark:from-slate-900 dark:to-slate-800">
+        <Card className={`mb-6 border-none shadow-sm ${isPrivate ? 'bg-amber-50/50 dark:bg-amber-900/10 border-amber-200' : 'bg-gradient-to-br from-white to-slate-50 dark:from-slate-900 dark:to-slate-800'}`}>
             <CardContent className="pt-6">
                 <form onSubmit={handleSubmit}>
+                    {/* Private Mode Indicator */}
+                    {isPrivate && (
+                        <div className="flex items-center gap-2 mb-3 text-sm text-amber-700 font-medium">
+                            <span className="bg-amber-100 p-1 rounded-full"><Lock size={12} /></span>
+                            Tu Círculo Privado
+                        </div>
+                    )}
+
                     <Textarea
-                        placeholder={t('community.feed.whats_happening', `¿Qué está pasando en ${neighborhood}?`, { name: neighborhood })}
+                        placeholder={isPrivate
+                            ? t('social.create_post_private', "¿Qué estás pensando? (Solo para tus amigos)")
+                            : t('community.feed.whats_happening', `¿Qué está pasando en ${neighborhood}?`, { name: neighborhood })}
                         value={content}
                         onChange={(e) => setContent(e.target.value)}
-                        className="min-h-[100px] border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-900/50 resize-none focus-visible:ring-purple-500 mb-4"
+                        className={`min-h-[100px] resize-none focus-visible:ring-purple-500 mb-4 ${isPrivate
+                            ? 'border-amber-200 bg-white placeholder:text-amber-700/50'
+                            : 'border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-900/50'
+                            }`}
                     />
 
                     {imagePreview && (
@@ -149,7 +171,7 @@ export function CreatePost({ userId, neighborhood, neighborhoodId, onPostCreated
                         <Button
                             type="submit"
                             disabled={(!content.trim() && !imageFile) || isSubmitting}
-                            className="bg-purple-600 hover:bg-purple-700 text-white"
+                            className={`${isPrivate ? 'bg-amber-600 hover:bg-amber-700' : 'bg-purple-600 hover:bg-purple-700'} text-white`}
                         >
                             {isSubmitting ? (
                                 <>
@@ -158,7 +180,7 @@ export function CreatePost({ userId, neighborhood, neighborhoodId, onPostCreated
                                 </>
                             ) : (
                                 <>
-                                    <Send className="h-4 w-4 mr-2" />
+                                    {isPrivate ? <Lock className="h-3 w-3 mr-2" /> : <Send className="h-4 w-4 mr-2" />}
                                     {t('community.post_btn', 'Publicar')}
                                 </>
                             )}

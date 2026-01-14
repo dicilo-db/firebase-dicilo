@@ -10,4 +10,5 @@ export interface CommunityPost {
     likes: string[];
     language: string;
     commentCount?: number;
+    visibility?: 'public' | 'private';
 }

@@ -153,6 +153,7 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
                     location: doc.data().location,
                     distance: 0
                 }));
+                console.log("CommunityView: Fetched DB Neighborhoods:", fetched);
                 setDbNeighborhoods(fetched);
             });
         };
@@ -450,6 +451,10 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
         }
     };
 
+    const [activeTab, setActiveTab] = useState("wall");
+    // Hide sidebar for both Social Panel (Chats) and Wall (Feed) to provide full width space
+    const isFullWidthTab = activeTab === 'social' || activeTab === 'wall';
+
     return (
         <div className="space-y-8">
             {/* Header Section */}
@@ -500,198 +505,201 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 {/* Left Column: Stats & Meta (Sticky Sidebar style) */}
-                <div className="lg:col-span-4 space-y-8">
-                    <BarometerVisual
-                        neighborhoodName={displayNeighborhood}
-                        activityLevel={stats.level}
-                        score={stats.score}
-                        weeklyPostCount={stats.weeklyPosts}
-                        activeUsersCount={stats.activeUsers}
-                    />
+                {/* Hide Left Column if in Social Tab or Wall Tab to give full width */}
+                {!isFullWidthTab && (
+                    <div className="lg:col-span-4 space-y-8">
+                        <BarometerVisual
+                            neighborhoodName={displayNeighborhood}
+                            activityLevel={stats.level}
+                            score={stats.score}
+                            weeklyPostCount={stats.weeklyPosts}
+                            activeUsersCount={stats.activeUsers}
+                        />
 
-                    {/* Sub-neighborhoods Filter */}
-                    <Card className="border-none shadow-md bg-white/50 backdrop-blur-sm">
-                        <CardHeader className="pb-3 flex flex-row items-center justify-between">
-                            <CardTitle className="text-lg flex items-center gap-2">
-                                <MapPin className="h-5 w-5 text-blue-500" />
-                                {t('community.neighborhoods_of', 'Barrios de')} {isCity ? displayNeighborhood : neighborhoodConfig?.city || 'Hamburg'}
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            {/* Neighborhood Search & List */}
-                            {(subNeighborhoods.length > 0 || isCity || (neighborhoodConfig && neighborhoodConfig.city)) && (
-                                <div className="space-y-4 mb-4">
-                                    {/* Search Input - Show always if there are subneighborhoods */}
-                                    {subNeighborhoods.length > 0 && (
-                                        <div className="relative">
-                                            <Input
-                                                placeholder={t('community.search_neighborhoods', 'Buscar barrios...')}
-                                                className="pl-9"
-                                                value={searchTerm}
-                                                onChange={(e) => setSearchTerm(e.target.value)}
-                                            />
-                                            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                                        </div>
-                                    )}
-
-                                    {/* Link back to City if in a neighborhood */}
-                                    {!isCity && neighborhoodConfig?.city && (
-                                        <Button
-                                            variant="outline"
-                                            className="w-full text-blue-600 hover:text-blue-800 hover:bg-blue-50 mb-2"
-                                            onClick={() => updateNeighborhood(neighborhoodConfig.city)}
-                                        >
-                                            <ChevronRight className="h-4 w-4 rotate-180 mr-2" />
-                                            {t('back', 'Volver a')} {neighborhoodConfig.city}
-                                        </Button>
-                                    )}
-
-                                    {/* List Display Grouped by City */}
-                                    {subNeighborhoods.length > 0 ? (
-                                        <div className="space-y-4">
-                                            {/* Group by City (even if mostly one city, covers future expansion) */}
-                                            {(() => {
-                                                const grouped = subNeighborhoods
-                                                    .filter(nb => nb.name.toLowerCase().includes(searchTerm.toLowerCase()))
-                                                    .reduce((acc, nb) => {
-                                                        const city = nb.city || (isCity ? neighborhoodName : 'Hamburg');
-                                                        if (!acc[city]) acc[city] = [];
-                                                        acc[city].push(nb);
-                                                        return acc;
-                                                    }, {} as Record<string, typeof subNeighborhoods>);
-
-                                                return Object.entries(grouped).map(([city, places]) => (
-                                                    <div key={city} className="space-y-2">
-                                                        {/* City Header */}
-                                                        <div className="flex items-center gap-2 text-sm font-semibold text-muted-foreground uppercase tracking-wider px-2">
-                                                            <Building2 className="h-3 w-3" />
-                                                            {city}
-                                                        </div>
-
-                                                        {/* Neighborhoods List */}
-                                                        <div className="grid grid-cols-1 gap-1">
-                                                            {places.slice(0, 50).map(nb => (
-                                                                <Button
-                                                                    key={nb.id}
-                                                                    variant={nb.name === neighborhoodName ? "secondary" : "ghost"}
-                                                                    className={`
-                                                                        justify-start h-auto py-2 px-3 text-sm font-normal
-                                                                        ${nb.name === neighborhoodName
-                                                                            ? "bg-slate-100 text-slate-900 border-l-4 border-slate-900 font-medium"
-                                                                            : "hover:bg-slate-50 text-slate-600 hover:text-slate-900"}
-                                                                    `}
-                                                                    onClick={() => updateNeighborhood(nb.name)}
-                                                                >
-                                                                    <div className="flex flex-col items-start gap-0.5 w-full">
-                                                                        <div className="flex w-full justify-between items-center">
-                                                                            <span>{nb.name}</span>
-                                                                            {nb.distance && nb.distance < 100 && (
-                                                                                <span className="text-[10px] text-muted-foreground">
-                                                                                    {nb.distance < 1 ? `${Math.round(nb.distance * 1000)}m` : `${nb.distance.toFixed(1)}km`}
-                                                                                </span>
-                                                                            )}
-                                                                        </div>
-                                                                    </div>
-                                                                </Button>
-                                                            ))}
-                                                        </div>
-                                                    </div>
-                                                ));
-                                            })()}
-
-                                            {/* Empty State */}
-                                            {searchTerm && subNeighborhoods.filter(nb => nb.name.toLowerCase().includes(searchTerm.toLowerCase())).length === 0 && (
-                                                <p className="text-sm text-muted-foreground text-center py-2">No se encontraron barrios.</p>
-                                            )}
-                                        </div>
-                                    ) : null}
-                                </div>
-                            )}
-
-                            {/* Register Neighborhood Button */}
-                            <Dialog open={registerOpen} onOpenChange={setRegisterOpen}>
-                                <DialogTrigger asChild>
-                                    <Button variant="ghost" size="sm" className="w-full text-xs text-muted-foreground hover:text-primary border-t pt-4 mt-2">
-                                        <Building2 className="mr-2 h-3 w-3" />
-                                        {t('community.register_neighborhood_btn', 'Registrar Barrio')}
-                                    </Button>
-                                </DialogTrigger>
-                                <DialogContent>
-                                    <DialogHeader>
-                                        <DialogTitle>{t('community.register_neighborhood', 'Registrar Barrio')}</DialogTitle>
-                                        <DialogDescription>
-                                            {t('community.register_neighborhood_desc', '¿No encuentras tu barrio? Regístralo aquí para empezar a conectar con tus vecinos.')}
-                                        </DialogDescription>
-                                    </DialogHeader>
-                                    <div className="space-y-4 py-4">
-                                        <div className="space-y-2">
-                                            <Label>{t('form.neighborhoodName', 'Nombre del Barrio')}</Label>
-                                            <Input
-                                                placeholder="Ej. Sternschanze"
-                                                value={newNeighborhoodName}
-                                                onChange={(e) => setNewNeighborhoodName(e.target.value)}
-                                            />
-                                        </div>
-                                    </div>
-                                    <DialogFooter>
-                                        <Button onClick={handleRegisterNeighborhood} disabled={!newNeighborhoodName || isRegistering}>
-                                            {isRegistering && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                                            {isRegistering ? t('community.verifying', 'Verificando...') : t('community.verify_create', 'Verificar y Crear')}
-                                        </Button>
-                                    </DialogFooter>
-                                </DialogContent>
-                            </Dialog>
-                        </CardContent>
-                    </Card>
-
-
-                    {/* Ranking */}
-                    <Card className="border-none shadow-md overflow-hidden">
-                        <CardHeader className="bg-slate-50/50 pb-4 border-b">
-                            <CardTitle className="flex items-center gap-2">
-                                <Trophy className="h-5 w-5 text-yellow-500" />
-                                {t('community.ranking.title', 'Top Empresas')}
-                            </CardTitle>
-                            <CardDescription>{t('community.ranking.subtitle', 'Negocios más recomendados')}</CardDescription>
-                        </CardHeader>
-                        <CardContent className="p-0">
-                            <ul className="divide-y">
-                                {trending.length > 0 ? trending.map((biz: any, i) => (
-                                    <li key={biz.id} className="p-4 flex items-center gap-3 hover:bg-slate-50 transition-colors group cursor-pointer">
-                                        <div className={`
-                                        w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm shadow-sm
-                                        ${i === 0 ? 'bg-yellow-100 text-yellow-700 border border-yellow-200' :
-                                                i === 1 ? 'bg-slate-100 text-slate-700 border border-slate-200' :
-                                                    i === 2 ? 'bg-orange-100 text-orange-800 border border-orange-200' : 'bg-white text-slate-500 border'}
-                                    `}>
-                                            #{i + 1}
-                                        </div>
-                                        <div className="flex-1 min-w-0">
-                                            <div className="font-semibold truncate text-slate-800 group-hover:text-blue-600 transition-colors">{biz.clientName || biz.name}</div>
-                                            <div className="text-xs text-slate-500 flex items-center gap-1">
-                                                {biz.category}
-                                                {biz.reputationScore && <Badge variant="secondary" className="h-4 px-1 text-[10px] bg-green-50 text-green-700">{biz.reputationScore} pts</Badge>}
+                        {/* Sub-neighborhoods Filter */}
+                        <Card className="border-none shadow-md bg-white/50 backdrop-blur-sm">
+                            <CardHeader className="pb-3 flex flex-row items-center justify-between">
+                                <CardTitle className="text-lg flex items-center gap-2">
+                                    <MapPin className="h-5 w-5 text-blue-500" />
+                                    {t('community.neighborhoods_of', 'Barrios de')} {isCity ? displayNeighborhood : neighborhoodConfig?.city || 'Hamburg'}
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                {/* Neighborhood Search & List */}
+                                {(subNeighborhoods.length > 0 || isCity || (neighborhoodConfig && neighborhoodConfig.city)) && (
+                                    <div className="space-y-4 mb-4">
+                                        {/* Search Input - Show always if there are subneighborhoods */}
+                                        {subNeighborhoods.length > 0 && (
+                                            <div className="relative">
+                                                <Input
+                                                    placeholder={t('community.search_neighborhoods', 'Buscar barrios...')}
+                                                    className="pl-9"
+                                                    value={searchTerm}
+                                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                                />
+                                                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                                             </div>
-                                        </div>
-                                        <Link href={`/client/${biz.slug || biz.id}`}>
-                                            <Button variant="ghost" size="icon" className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                <ChevronRight className="h-4 w-4" />
+                                        )}
+
+                                        {/* Link back to City if in a neighborhood */}
+                                        {!isCity && neighborhoodConfig?.city && (
+                                            <Button
+                                                variant="outline"
+                                                className="w-full text-blue-600 hover:text-blue-800 hover:bg-blue-50 mb-2"
+                                                onClick={() => updateNeighborhood(neighborhoodConfig.city)}
+                                            >
+                                                <ChevronRight className="h-4 w-4 rotate-180 mr-2" />
+                                                {t('back', 'Volver a')} {neighborhoodConfig.city}
                                             </Button>
-                                        </Link>
-                                    </li>
-                                )) : (
-                                    <div className="p-8 text-center text-slate-500 text-sm italic">
-                                        {t('community.ranking.no_data', 'No hay suficientes datos para el ranking aún.')}
+                                        )}
+
+                                        {/* List Display Grouped by City */}
+                                        {subNeighborhoods.length > 0 ? (
+                                            <div className="space-y-4">
+                                                {/* Group by City (even if mostly one city, covers future expansion) */}
+                                                {(() => {
+                                                    const grouped = subNeighborhoods
+                                                        .filter(nb => nb.name.toLowerCase().includes(searchTerm.toLowerCase()))
+                                                        .reduce((acc, nb) => {
+                                                            const city = nb.city || (isCity ? neighborhoodName : 'Hamburg');
+                                                            if (!acc[city]) acc[city] = [];
+                                                            acc[city].push(nb);
+                                                            return acc;
+                                                        }, {} as Record<string, typeof subNeighborhoods>);
+
+                                                    return Object.entries(grouped).map(([city, places]) => (
+                                                        <div key={city} className="space-y-2">
+                                                            {/* City Header */}
+                                                            <div className="flex items-center gap-2 text-sm font-semibold text-muted-foreground uppercase tracking-wider px-2">
+                                                                <Building2 className="h-3 w-3" />
+                                                                {city}
+                                                            </div>
+
+                                                            {/* Neighborhoods List */}
+                                                            <div className="grid grid-cols-1 gap-1">
+                                                                {places.slice(0, 50).map(nb => (
+                                                                    <Button
+                                                                        key={nb.id}
+                                                                        variant={nb.name === neighborhoodName ? "secondary" : "ghost"}
+                                                                        className={`
+                                                                            justify-start h-auto py-2 px-3 text-sm font-normal
+                                                                            ${nb.name === neighborhoodName
+                                                                                ? "bg-slate-100 text-slate-900 border-l-4 border-slate-900 font-medium"
+                                                                                : "hover:bg-slate-50 text-slate-600 hover:text-slate-900"}
+                                                                        `}
+                                                                        onClick={() => updateNeighborhood(nb.name)}
+                                                                    >
+                                                                        <div className="flex flex-col items-start gap-0.5 w-full">
+                                                                            <div className="flex w-full justify-between items-center">
+                                                                                <span>{nb.name}</span>
+                                                                                {nb.distance && nb.distance < 100 && (
+                                                                                    <span className="text-[10px] text-muted-foreground">
+                                                                                        {nb.distance < 1 ? `${Math.round(nb.distance * 1000)}m` : `${nb.distance.toFixed(1)}km`}
+                                                                                    </span>
+                                                                                )}
+                                                                            </div>
+                                                                        </div>
+                                                                    </Button>
+                                                                ))}
+                                                            </div>
+                                                        </div>
+                                                    ));
+                                                })()}
+
+                                                {/* Empty State */}
+                                                {searchTerm && subNeighborhoods.filter(nb => nb.name.toLowerCase().includes(searchTerm.toLowerCase())).length === 0 && (
+                                                    <p className="text-sm text-muted-foreground text-center py-2">No se encontraron barrios.</p>
+                                                )}
+                                            </div>
+                                        ) : null}
                                     </div>
                                 )}
-                            </ul>
-                        </CardContent>
-                    </Card>
-                </div>
+
+                                {/* Register Neighborhood Button */}
+                                <Dialog open={registerOpen} onOpenChange={setRegisterOpen}>
+                                    <DialogTrigger asChild>
+                                        <Button variant="ghost" size="sm" className="w-full text-xs text-muted-foreground hover:text-primary border-t pt-4 mt-2">
+                                            <Building2 className="mr-2 h-3 w-3" />
+                                            {t('community.register_neighborhood_btn', 'Registrar Barrio')}
+                                        </Button>
+                                    </DialogTrigger>
+                                    <DialogContent>
+                                        <DialogHeader>
+                                            <DialogTitle>{t('community.register_neighborhood', 'Registrar Barrio')}</DialogTitle>
+                                            <DialogDescription>
+                                                {t('community.register_neighborhood_desc', '¿No encuentras tu barrio? Regístralo aquí para empezar a conectar con tus vecinos.')}
+                                            </DialogDescription>
+                                        </DialogHeader>
+                                        <div className="space-y-4 py-4">
+                                            <div className="space-y-2">
+                                                <Label>{t('form.neighborhoodName', 'Nombre del Barrio')}</Label>
+                                                <Input
+                                                    placeholder="Ej. Sternschanze"
+                                                    value={newNeighborhoodName}
+                                                    onChange={(e) => setNewNeighborhoodName(e.target.value)}
+                                                />
+                                            </div>
+                                        </div>
+                                        <DialogFooter>
+                                            <Button onClick={handleRegisterNeighborhood} disabled={!newNeighborhoodName || isRegistering}>
+                                                {isRegistering && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                                                {isRegistering ? t('community.verifying', 'Verificando...') : t('community.verify_create', 'Verificar y Crear')}
+                                            </Button>
+                                        </DialogFooter>
+                                    </DialogContent>
+                                </Dialog>
+                            </CardContent>
+                        </Card>
+
+
+                        {/* Ranking */}
+                        <Card className="border-none shadow-md overflow-hidden">
+                            <CardHeader className="bg-slate-50/50 pb-4 border-b">
+                                <CardTitle className="flex items-center gap-2">
+                                    <Trophy className="h-5 w-5 text-yellow-500" />
+                                    {t('community.ranking.title', 'Top Empresas')}
+                                </CardTitle>
+                                <CardDescription>{t('community.ranking.subtitle', 'Negocios más recomendados')}</CardDescription>
+                            </CardHeader>
+                            <CardContent className="p-0">
+                                <ul className="divide-y">
+                                    {trending.length > 0 ? trending.map((biz: any, i) => (
+                                        <li key={biz.id} className="p-4 flex items-center gap-3 hover:bg-slate-50 transition-colors group cursor-pointer">
+                                            <div className={`
+                                            w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm shadow-sm
+                                            ${i === 0 ? 'bg-yellow-100 text-yellow-700 border border-yellow-200' :
+                                                    i === 1 ? 'bg-slate-100 text-slate-700 border border-slate-200' :
+                                                        i === 2 ? 'bg-orange-100 text-orange-800 border border-orange-200' : 'bg-white text-slate-500 border'}
+                                        `}>
+                                                #{i + 1}
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <div className="font-semibold truncate text-slate-800 group-hover:text-blue-600 transition-colors">{biz.clientName || biz.name}</div>
+                                                <div className="text-xs text-slate-500 flex items-center gap-1">
+                                                    {biz.category}
+                                                    {biz.reputationScore && <Badge variant="secondary" className="h-4 px-1 text-[10px] bg-green-50 text-green-700">{biz.reputationScore} pts</Badge>}
+                                                </div>
+                                            </div>
+                                            <Link href={`/client/${biz.slug || biz.id}`}>
+                                                <Button variant="ghost" size="icon" className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                    <ChevronRight className="h-4 w-4" />
+                                                </Button>
+                                            </Link>
+                                        </li>
+                                    )) : (
+                                        <div className="p-8 text-center text-slate-500 text-sm italic">
+                                            {t('community.ranking.no_data', 'No hay suficientes datos para el ranking aún.')}
+                                        </div>
+                                    )}
+                                </ul>
+                            </CardContent>
+                        </Card>
+                    </div>
+                )}
 
                 {/* Right Column: Feed (Tabs) */}
-                <div className="lg:col-span-8">
-                    <Tabs defaultValue="wall" className="space-y-6">
+                <div className={isFullWidthTab ? "lg:col-span-12" : "lg:col-span-8"}>
+                    <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
                         <div className="flex items-center justify-between">
                             <TabsList className="grid w-full grid-cols-3 lg:w-[480px]">
                                 <TabsTrigger value="wall">
@@ -732,7 +740,7 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
                                     {t('navigation.social_network', 'Mi Círculo')}
                                 </h3>
                             </div>
-                            <SocialPanel />
+                            <SocialPanel neighborhood={neighborhoodName} />
                         </TabsContent>
                     </Tabs>
                 </div>
