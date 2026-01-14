@@ -58,12 +58,12 @@ export default function FreelancersPage() {
 
     // --- Derived Filters Data ---
     const uniqueCountries = useMemo(() => {
-        const countries = new Set(freelancers.map(f => f.country).filter(Boolean));
+        const countries = new Set(freelancers.map(f => f.country).filter((c): c is string => !!c));
         return Array.from(countries).sort();
     }, [freelancers]);
 
     const uniqueCities = useMemo(() => {
-        const cities = new Set(freelancers.map(f => f.city).filter(Boolean));
+        const cities = new Set(freelancers.map(f => f.city).filter((c): c is string => !!c));
         return Array.from(cities).sort();
     }, [freelancers]);
 
