@@ -4,6 +4,8 @@ export interface Neighborhood {
     city: string;
     lat?: number;
     lng?: number;
+    location?: { lat?: number; lng?: number; latitude?: number; longitude?: number };
+    distance?: number;
 }
 
 export const BERLIN_NEIGHBORHOODS: Neighborhood[] = [

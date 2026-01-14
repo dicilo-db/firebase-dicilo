@@ -25,6 +25,12 @@ interface BarometerStats {
     activeUsers: number;
 }
 
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { CommunityFeed } from '../community/CommunityFeed';
+import { SocialPanel } from './social/SocialPanel';
+import { User } from 'firebase/auth';
+
 const db = getFirestore(app);
 
 // Helper to find neighborhood/city
@@ -37,12 +43,6 @@ function getNeighborhood(slugOrName: string) {
     const normalized = slugOrName.toLowerCase();
     return ALL_NEIGHBORHOODS.find(n => n.id.toLowerCase() === normalized || n.name.toLowerCase() === normalized);
 }
-
-import { useRouter, useSearchParams } from 'next/navigation';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { CommunityFeed } from '../community/CommunityFeed';
-import { SocialPanel } from './social/SocialPanel';
-import { User } from 'firebase/auth';
 
 export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: { defaultNeighborhood?: string, currentUser: User }) {
     const { t } = useTranslation('common');
@@ -153,7 +153,6 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
                     location: doc.data().location,
                     distance: 0
                 }));
-                console.log("CommunityView: Fetched DB Neighborhoods:", fetched);
                 setDbNeighborhoods(fetched);
             });
         };
@@ -180,7 +179,7 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
                     });
                 },
                 (error) => {
-                    console.log("Geolocation permission denied or error", error);
+                    // console.log("Geolocation permission denied or error", error);
                 },
                 { timeout: 10000, maximumAge: 60000 } // Don't block too long, use cached if available
             );
@@ -302,7 +301,7 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
                 });
             }
         } catch (error) {
-            console.error("Error setting favority", error);
+            // console.error("Error setting favority", error);
             toast({ title: "Error", variant: "destructive" });
         }
     };
