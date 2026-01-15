@@ -21,6 +21,8 @@ import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from 'react-i18next';
 import { CommentSection } from './CommentSection';
+import { useFriends } from '@/hooks/useFriends';
+import { UserPlus, Check } from 'lucide-react';
 
 interface PostCardProps {
     post: CommunityPost;
@@ -50,6 +52,23 @@ export function PostCard({ post, currentUserId }: PostCardProps) {
     const [showTranslated, setShowTranslated] = useState(false);
     const [showComments, setShowComments] = useState(false);
     const [currentTranslationLang, setCurrentTranslationLang] = useState<string | null>(null);
+    const { friends, sendFriendRequest } = useFriends();
+    const [requestSent, setRequestSent] = useState(false);
+
+    const isMe = currentUserId === post.userId;
+    const isFriend = friends.some(f => f.uid === post.userId);
+
+    const handleConnect = async () => {
+        if (requestSent) return;
+
+        // Optimistic UI
+        setRequestSent(true);
+        await sendFriendRequest(post.userId);
+        toast({
+            title: "Solicitud enviada",
+            description: `Has invitado a ${post.userName} a tu círculo.`
+        });
+    };
 
     const isLiked = likes.includes(currentUserId);
     const commentCount = post.commentCount || 0;
@@ -185,8 +204,21 @@ export function PostCard({ post, currentUserId }: PostCardProps) {
                     <AvatarImage src={post.userAvatar} alt={post.userName} />
                     <AvatarFallback>{post.userName?.substring(0, 2).toUpperCase()}</AvatarFallback>
                 </Avatar>
-                <div className="flex flex-col">
-                    <span className="font-semibold text-sm text-slate-900 dark:text-white">{post.userName}</span>
+                <div className="flex flex-col flex-1">
+                    <div className="flex items-center gap-2">
+                        <span className="font-semibold text-sm text-slate-900 dark:text-white">{post.userName}</span>
+                        {/* Invite to Circle - Header Action */}
+                        {!isMe && !isFriend && (
+                            <button
+                                onClick={handleConnect}
+                                disabled={requestSent}
+                                className="text-purple-600 hover:bg-purple-50 p-1 rounded-full transition-colors"
+                                title={requestSent ? "Solicitud enviada" : "Conectar / Agregar a mi Círculo"}
+                            >
+                                {requestSent ? <Check size={16} className="text-green-600" /> : <UserPlus size={16} />}
+                            </button>
+                        )}
+                    </div>
                     <span className="text-xs text-muted-foreground">
                         {formatDistanceToNow(date, { addSuffix: true, locale: es })} • {post.neighborhood}
                     </span>

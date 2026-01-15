@@ -1,5 +1,7 @@
 'use client';
 
+import imageCompression from 'browser-image-compression';
+
 import React, { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -30,20 +32,40 @@ export function CreatePost({ userId, neighborhood, neighborhoodId, onPostCreated
 
     const isPrivate = mode === 'private';
 
-    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
-            if (file.size > 5 * 1024 * 1024) { // 5MB limit
+            // Options for compression
+            const options = {
+                maxSizeMB: 1,
+                maxWidthOrHeight: 1920,
+                useWebWorker: true
+            };
+
+            try {
+                // Show a loading state or just process
+                // Ideally we might want a small "Optimizing..." indicator, but for now we just wait
+                const compressedFile = await imageCompression(file, options);
+
+                // Debug log to verify reduction (can remove later)
+                console.log(`Original: ${(file.size / 1024 / 1024).toFixed(2)} MB, Compressed: ${(compressedFile.size / 1024 / 1024).toFixed(2)} MB`);
+
+                setImageFile(compressedFile);
+                const url = URL.createObjectURL(compressedFile);
+                setImagePreview(url);
+
+            } catch (error) {
+                console.error("Compression error:", error);
+                // Fallback to original if compression fails
                 toast({
-                    title: t('errors.tooLarge', "Archivo muy grande"),
-                    description: "La imagen no puede pesar más de 5MB.",
-                    variant: "destructive"
+                    title: "Nota",
+                    description: "No se pudo optimizar la imagen, se usará la original.",
+                    variant: "default"
                 });
-                return;
+                setImageFile(file);
+                const url = URL.createObjectURL(file);
+                setImagePreview(url);
             }
-            setImageFile(file);
-            const url = URL.createObjectURL(file);
-            setImagePreview(url);
         }
     };
 
