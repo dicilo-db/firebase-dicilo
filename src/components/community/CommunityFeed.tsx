@@ -39,9 +39,9 @@ export function CommunityFeed({ neighborhood, userId, mode = 'public', friendIds
             let q;
 
             if (mode === 'public') {
-                // Determine whether to filter by neighborhood based on viewMode
+                // Determine filter based on viewMode
                 if (viewMode === 'local' && neighborhood) {
-                    // Local View: Strict filter
+                    // Local View: Strict filter for current neighborhood
                     q = query(
                         collection(db, 'community_posts'),
                         where('neighborhood', '==', neighborhood),
@@ -49,10 +49,10 @@ export function CommunityFeed({ neighborhood, userId, mode = 'public', friendIds
                         limit(50)
                     );
                 } else {
-                    // Global View: Universal (No filter)
+                    // Global View: Strict filter for 'Global' channel
                     q = query(
                         collection(db, 'community_posts'),
-                        // No neighborhood filter = Global
+                        where('neighborhood', '==', 'Global'), // Strict "Global" Channel
                         orderBy('createdAt', 'desc'),
                         limit(50)
                     );
@@ -102,8 +102,8 @@ export function CommunityFeed({ neighborhood, userId, mode = 'public', friendIds
             <div className="w-full max-w-2xl mx-auto space-y-6">
                 <CreatePost
                     userId={userId}
-                    neighborhood={displayNeighborhood}
-                    neighborhoodId={neighborhood} // Pass original for ID
+                    neighborhood={viewMode === 'global' ? 'Global' : displayNeighborhood}
+                    neighborhoodId={viewMode === 'global' ? 'Global' : neighborhood} // Pass original for ID
                     onPostCreated={handlePostCreated}
                 />
                 <div className="bg-red-50 text-red-800 p-4 rounded-md border border-red-200">
@@ -118,8 +118,8 @@ export function CommunityFeed({ neighborhood, userId, mode = 'public', friendIds
         <div className="w-full max-w-2xl mx-auto space-y-6">
             <CreatePost
                 userId={userId}
-                neighborhood={displayNeighborhood}
-                neighborhoodId={neighborhood} // Pass strict ID for backend
+                neighborhood={viewMode === 'global' ? 'Global' : displayNeighborhood}
+                neighborhoodId={viewMode === 'global' ? 'Global' : neighborhood} // Pass 'Global' ID for global posts
                 onPostCreated={handlePostCreated}
                 mode={mode}
             />
@@ -140,7 +140,7 @@ export function CommunityFeed({ neighborhood, userId, mode = 'public', friendIds
                         onClick={() => setViewMode('global')}
                         className={`flex-1 pb-3 text-sm font-medium transition-colors relative ${viewMode === 'global' ? 'text-purple-600' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'}`}
                     >
-                        Muro Global
+                        {t('community.global_wall', 'Muro Global')}
                         {viewMode === 'global' && (
                             <div className="absolute bottom-0 left-0 w-full h-0.5 bg-purple-600 rounded-t-full" />
                         )}

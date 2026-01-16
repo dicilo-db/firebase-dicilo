@@ -144,11 +144,11 @@ export async function createPrivateUserProfile(
     }
 
     if (referrerUid) {
-        // Reward Referrer (+20)
+        // Reward Referrer (+50)
         const referrerWalletRef = db.collection('wallets').doc(referrerUid);
         batch.set(referrerWalletRef, {
-            balance: admin.firestore.FieldValue.increment(20),
-            totalEarned: admin.firestore.FieldValue.increment(20),
+            balance: admin.firestore.FieldValue.increment(50),
+            totalEarned: admin.firestore.FieldValue.increment(50),
             updatedAt: admin.firestore.FieldValue.serverTimestamp()
         }, { merge: true });
 
@@ -156,7 +156,7 @@ export async function createPrivateUserProfile(
         const refTrxRef = db.collection('wallet_transactions').doc();
         batch.set(refTrxRef, {
             userId: referrerUid,
-            amount: 20,
+            amount: 50,
             type: 'REFERRAL_REWARD',
             description: 'Referral Reward (User: ' + uniqueCode + ')',
             timestamp: admin.firestore.FieldValue.serverTimestamp()

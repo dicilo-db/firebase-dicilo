@@ -1,6 +1,27 @@
 {
-  "navigation": {
-    "social_network": "My Circle"
+  "community": {
+    "global_wall": "Global Wall",
+    "photo": "Photo",
+    "like": "Like",
+    "comment": "Comment",
+    "comment_verb": "Comment",
+    "share": "Share",
+    "read_in": "Read in",
+    "show_original": "Show original",
+    "translate_ai": "Translate with AI",
+    "download": "Download",
+    "download_success": "Photo downloaded",
+    "download_error": "Download error",
+    "translation_error": "Translation failed. Try again later.",
+    "share_text": "Check out this post by {{user}} in {{neighborhood}}",
+    "link_copied": "Link copied to clipboard",
+    "copy_link": "Copy Link",
+    "feed": {
+      "empty_global": "No activity yet in the {{name}} community.",
+      "be_first": "Be the first to share something!",
+      "whats_happening": "What's happening in {{name}}?"
+    },
+    "post_btn": "Post"
   },
   "header": {
     "nav": {

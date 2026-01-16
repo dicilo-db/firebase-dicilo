@@ -187,7 +187,7 @@ export function CreatePost({ userId, neighborhood, neighborhoodId, onPostCreated
                                 onClick={() => fileInputRef.current?.click()}
                             >
                                 <ImageIcon className="h-4 w-4 mr-2" />
-                                {t('form.photo', 'Foto')}
+                                {t('community.photo', 'Foto')}
                             </Button>
                         </div>
                         <Button

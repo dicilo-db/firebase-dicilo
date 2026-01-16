@@ -300,7 +300,7 @@ export function PostCard({ post, currentUserId }: PostCardProps) {
                         onClick={handleLike}
                     >
                         <Heart className={cn("h-4 w-4", isLiked && "fill-current")} />
-                        <span className="text-xs">{likes.length > 0 ? likes.length : 'Me gusta'}</span>
+                        <span className="text-xs">{likes.length > 0 ? likes.length : t('community.like', 'Me gusta')}</span>
                     </Button>
 
                     <Button
@@ -311,7 +311,7 @@ export function PostCard({ post, currentUserId }: PostCardProps) {
                     >
                         <MessageCircle className="h-4 w-4" />
                         <span className="text-xs">
-                            {commentCount > 0 ? `${commentCount} Coment.` : 'Comentar'}
+                            {commentCount > 0 ? `${commentCount} ${t('community.comment', 'Coment.')}` : t('community.comment_verb', 'Comentar')}
                         </span>
                     </Button>
 
