@@ -38,13 +38,13 @@ export function CommunityFeed({ neighborhood, userId, mode = 'public', friendIds
             let q;
 
             if (mode === 'public') {
-                if (!neighborhood) return;
-                // Public Wall: Location Based
+                // Public Wall: Universal / Global
+                // User Request: "el muro de la Comunidad es universal"
+                // We show ALL posts regardless of neighborhood.
+                // New posts are still tagged with current neighborhood in CreatePost.
                 q = query(
                     collection(db, 'community_posts'),
-                    where('neighborhood', '==', neighborhood),
-                    // where('visibility', '!=', 'private'), // Optional: if index exists. 
-                    // For now, we assume neighborhood-linked posts are public.
+                    // where('neighborhood', '==', neighborhood), // REMOVED to make Universal
                     orderBy('createdAt', 'desc'),
                     limit(50)
                 );
@@ -147,7 +147,7 @@ export function CommunityFeed({ neighborhood, userId, mode = 'public', friendIds
                     </div>
                 ) : posts.length === 0 ? (
                     <div className="text-center py-10 text-muted-foreground bg-slate-50 dark:bg-slate-900 rounded-lg border border-dashed">
-                        <p>{t('community.feed.empty', `Aún no hay actividad reciente en ${displayNeighborhood}.`, { name: displayNeighborhood })}</p>
+                        <p>{t('community.feed.empty_global', 'Aún no hay actividad en la comunidad.', { name: displayNeighborhood })}</p>
                         <p className="text-sm">{t('community.feed.be_first', '¡Sé el primero en compartir algo!')}</p>
                     </div>
                 ) : (
