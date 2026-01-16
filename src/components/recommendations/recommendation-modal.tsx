@@ -17,6 +17,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Loader2, Camera, Upload } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { submitRecommendation } from '@/app/actions/recommendation';
+import { useTranslation } from 'react-i18next';
 
 interface RecommendationModalProps {
     businessId: string;
@@ -93,21 +94,24 @@ export function RecommendationModal({
         }
     };
 
+
+    const { t } = useTranslation('common');
+
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle>Recomendar Negocio</DialogTitle>
+                    <DialogTitle>{t('community.recommend_business', 'Recomendar Negocio')}</DialogTitle>
                     <DialogDescription>
-                        Sube una foto y cuéntanos tu experiencia para ganar puntos.
+                        {t('community.recommend_desc', 'Sube una foto y cuéntanos tu experiencia para ganar puntos.')}
                     </DialogDescription>
                 </DialogHeader>
                 <form ref={formRef} onSubmit={handleSubmit} className="grid gap-4 py-4">
                     <input type="hidden" name="businessId" value={businessId} />
 
                     <div className="grid gap-2">
-                        <Label htmlFor="photo">Foto</Label>
+                        <Label htmlFor="photo">{t('community.photo', 'Foto')}</Label>
                         <div className="flex items-center gap-4">
                             <div className="relative flex h-24 w-24 flex-shrink-0 items-center justify-center rounded-md border border-dashed bg-slate-50">
                                 {photoPreview ? (
@@ -129,28 +133,28 @@ export function RecommendationModal({
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="userName">Tu Nombre</Label>
+                        <Label htmlFor="userName">{t('community.your_name', 'Tu Nombre')}</Label>
                         <Input id="userName" name="userName" placeholder="Juan Pérez" required />
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="userContact">Email o WhatsApp (Opcional)</Label>
+                        <Label htmlFor="userContact">{t('community.email_whatsapp_opt', 'Email o WhatsApp (Opcional)')}</Label>
                         <Input id="userContact" name="userContact" placeholder="Para notificarte de puntos" />
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="comment">Comentario</Label>
+                        <Label htmlFor="comment">{t('community.comment_label', 'Comentario')}</Label>
                         <Textarea
                             id="comment"
                             name="comment"
-                            placeholder="¿Qué te gustó más?"
+                            placeholder={t('community.comment_placeholder', '¿Qué te gustó más?')}
                         />
                     </div>
 
                     <DialogFooter>
                         <Button type="submit" disabled={isSubmitting}>
                             {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                            Enviar Recomendación
+                            {t('community.send_recommendation', 'Enviar Recomendación')}
                         </Button>
                     </DialogFooter>
                 </form>
@@ -158,3 +162,4 @@ export function RecommendationModal({
         </Dialog>
     );
 }
+

@@ -1,5 +1,10 @@
 {
   "community": {
+    "register_neighborhood": "Register Neighborhood",
+    "register_neighborhood_desc": "Can't find your neighborhood? Register it here to start connecting with your neighbors.",
+    "register_neighborhood_btn": "Register Neighborhood",
+    "your_community": "Your Community",
+    "neighborhoods_of": "Neighborhoods of",
     "global_wall": "Global Wall",
     "photo": "Photo",
     "like": "Like",
@@ -21,7 +26,14 @@
       "be_first": "Be the first to share something!",
       "whats_happening": "What's happening in {{name}}?"
     },
-    "post_btn": "Post"
+    "post_btn": "Post",
+    "recommend_business": "Recommend Business",
+    "recommend_desc": "Upload a photo and tell us your experience to earn points.",
+    "your_name": "Your Name",
+    "email_whatsapp_opt": "Email or WhatsApp (Optional)",
+    "comment_label": "Comment",
+    "comment_placeholder": "What did you like most?",
+    "send_recommendation": "Send Recommendation"
   },
   "header": {
     "nav": {

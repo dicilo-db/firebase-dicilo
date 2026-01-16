@@ -1,5 +1,10 @@
 {
   "community": {
+    "register_neighborhood": "Nachbarschaft registrieren",
+    "register_neighborhood_desc": "Finden Sie Ihre Nachbarschaft nicht? Registrieren Sie sie hier, um sich mit Ihren Nachbarn zu vernetzen.",
+    "register_neighborhood_btn": "Nachbarschaft registrieren",
+    "your_community": "Deine Community",
+    "neighborhoods_of": "Nachbarschaften von",
     "global_wall": "Globale Wand",
     "photo": "Foto",
     "like": "Gefällt mir",
@@ -21,7 +26,14 @@
       "be_first": "Seien Sie der Erste, der etwas teilt!",
       "whats_happening": "Was passiert in {{name}}?"
     },
-    "post_btn": "Veröffentlichen"
+    "post_btn": "Veröffentlichen",
+    "recommend_business": "Geschäft empfehlen",
+    "recommend_desc": "Laden Sie ein Foto hoch und erzählen Sie uns von Ihrer Erfahrung, um Punkte zu sammeln.",
+    "your_name": "Ihr Name",
+    "email_whatsapp_opt": "E-Mail oder WhatsApp (Optional)",
+    "comment_label": "Kommentar",
+    "comment_placeholder": "Was hat Ihnen am besten gefallen?",
+    "send_recommendation": "Empfehlung senden"
   },
   "header": {
     "nav": {

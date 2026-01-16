@@ -20,6 +20,11 @@
     "social_network": "Mi Círculo"
   },
   "community": {
+    "register_neighborhood": "Registrar Barrio",
+    "register_neighborhood_desc": "¿No encuentras tu barrio? Regístralo aquí para empezar a conectar con tus vecinos.",
+    "register_neighborhood_btn": "Registrar Barrio",
+    "your_community": "Tu Comunidad",
+    "neighborhoods_of": "Barrios de",
     "global_wall": "Muro Global",
     "photo": "Foto",
     "like": "Me gusta",
@@ -40,7 +45,14 @@
       "be_first": "¡Sé el primero en compartir algo!",
       "whats_happening": "¿Qué está pasando en {{name}}?"
     },
-    "post_btn": "Publicar"
+    "post_btn": "Publicar",
+    "recommend_business": "Recomendar Negocio",
+    "recommend_desc": "Sube una foto y cuéntanos tu experiencia para ganar puntos.",
+    "your_name": "Tu Nombre",
+    "email_whatsapp_opt": "Email o WhatsApp (Opcional)",
+    "comment_label": "Comentario",
+    "comment_placeholder": "¿Qué te gustó más?",
+    "send_recommendation": "Enviar Recomendación"
   },
   "dicipoints": {
     "whatIs": {
