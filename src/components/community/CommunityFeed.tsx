@@ -22,6 +22,8 @@ import { useTranslation } from 'react-i18next';
 export function CommunityFeed({ neighborhood, userId, mode = 'public', friendIds = [] }: CommunityFeedProps) {
     const { t } = useTranslation('common');
     const [viewMode, setViewMode] = useState<'global' | 'local'>(neighborhood ? 'local' : 'global');
+    const [posts, setPosts] = useState<CommunityPost[]>([]);
+    const [loading, setLoading] = useState(true);
 
     // Simple Title Case Helper
     const displayNeighborhood = React.useMemo(() => {
