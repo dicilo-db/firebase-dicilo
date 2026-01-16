@@ -21,12 +21,11 @@ import { useTranslation } from 'react-i18next';
 
 export function CommunityFeed({ neighborhood, userId, mode = 'public', friendIds = [] }: CommunityFeedProps) {
     const { t } = useTranslation('common');
-    const [posts, setPosts] = useState<CommunityPost[]>([]);
-    const [loading, setLoading] = useState(true);
+    const [viewMode, setViewMode] = useState<'global' | 'local'>(neighborhood ? 'local' : 'global');
 
     // Simple Title Case Helper
     const displayNeighborhood = React.useMemo(() => {
-        return neighborhood.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+        return neighborhood ? neighborhood.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') : 'Mi Barrio';
     }, [neighborhood]);
 
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -38,40 +37,28 @@ export function CommunityFeed({ neighborhood, userId, mode = 'public', friendIds
             let q;
 
             if (mode === 'public') {
-                // Public Wall: Universal / Global
-                // User Request: "el muro de la Comunidad es universal"
-                // We show ALL posts regardless of neighborhood.
-                // New posts are still tagged with current neighborhood in CreatePost.
-                q = query(
-                    collection(db, 'community_posts'),
-                    // where('neighborhood', '==', neighborhood), // REMOVED to make Universal
-                    orderBy('createdAt', 'desc'),
-                    limit(50)
-                );
+                // Determine whether to filter by neighborhood based on viewMode
+                if (viewMode === 'local' && neighborhood) {
+                    // Local View: Strict filter
+                    q = query(
+                        collection(db, 'community_posts'),
+                        where('neighborhood', '==', neighborhood),
+                        orderBy('createdAt', 'desc'),
+                        limit(50)
+                    );
+                } else {
+                    // Global View: Universal (No filter)
+                    q = query(
+                        collection(db, 'community_posts'),
+                        // No neighborhood filter = Global
+                        orderBy('createdAt', 'desc'),
+                        limit(50)
+                    );
+                }
             } else {
                 // Private Circle: Friend Graph Based
-                // Logic: Visibility 'private' AND Author in [friends + self]
-
-                // Initialize with friends or empty array
                 const safeFriendIds = friendIds ? friendIds.slice(0, 30) : [];
-
-                // ALWAYS include MY own posts in my private feed
-                if (userId && !safeFriendIds.includes(userId)) {
-                    safeFriendIds.push(userId);
-                }
-
-                q = query(
-                    collection(db, 'community_posts'),
-                    where('visibility', '==', 'private'),
-                    where('userId', 'in', safeFriendIds),
-                    orderBy('createdAt', 'desc'),
-                    limit(50)
-                );
-
-                // Also include MY own posts
-                if (userId && !safeFriendIds.includes(userId)) {
-                    safeFriendIds.push(userId);
-                }
+                if (userId && !safeFriendIds.includes(userId)) safeFriendIds.push(userId);
 
                 q = query(
                     collection(db, 'community_posts'),
@@ -86,27 +73,22 @@ export function CommunityFeed({ neighborhood, userId, mode = 'public', friendIds
             const fetchedPosts: CommunityPost[] = [];
             snapshot.forEach((doc) => {
                 const data = doc.data();
-                // Client-side safety double-check
                 if (mode === 'public' && data.visibility === 'private') return;
-
                 fetchedPosts.push({ id: doc.id, ...data } as CommunityPost);
             });
             setPosts(fetchedPosts);
         } catch (error: any) {
             console.error("Error fetching community posts:", error);
-            if (error.code === 'failed-precondition') {
-                setErrorMsg(`Falta el índice. Copia este enlace: ${error.message}`);
-            } else {
-                setErrorMsg(`Error: ${error.message} (Code: ${error.code})`);
-            }
+            setErrorMsg(`Error loading posts: ${error.message}`);
         } finally {
             setLoading(false);
         }
     };
 
     useEffect(() => {
+        // Correctly depend on viewMode to refetch when toggled
         fetchPosts();
-    }, [neighborhood, mode, JSON.stringify(friendIds)]);
+    }, [neighborhood, mode, viewMode, JSON.stringify(friendIds)]);
 
     // Expose fetchPosts to CreatePost for refresh
     const handlePostCreated = () => {
@@ -139,6 +121,30 @@ export function CommunityFeed({ neighborhood, userId, mode = 'public', friendIds
                 onPostCreated={handlePostCreated}
                 mode={mode}
             />
+
+
+            {mode === 'public' && (
+                <div className="flex border-b border-slate-200 dark:border-slate-700 mb-4">
+                    <button
+                        onClick={() => setViewMode('local')}
+                        className={`flex-1 pb-3 text-sm font-medium transition-colors relative ${viewMode === 'local' ? 'text-purple-600' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'}`}
+                    >
+                        {displayNeighborhood}
+                        {viewMode === 'local' && (
+                            <div className="absolute bottom-0 left-0 w-full h-0.5 bg-purple-600 rounded-t-full" />
+                        )}
+                    </button>
+                    <button
+                        onClick={() => setViewMode('global')}
+                        className={`flex-1 pb-3 text-sm font-medium transition-colors relative ${viewMode === 'global' ? 'text-purple-600' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'}`}
+                    >
+                        Muro Global
+                        {viewMode === 'global' && (
+                            <div className="absolute bottom-0 left-0 w-full h-0.5 bg-purple-600 rounded-t-full" />
+                        )}
+                    </button>
+                </div>
+            )}
 
             <div className="space-y-4">
                 {loading ? (
