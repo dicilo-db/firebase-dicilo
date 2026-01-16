@@ -60,6 +60,7 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
     const [open, setOpen] = useState(false); // Recommendation Dialog
     const [registerOpen, setRegisterOpen] = useState(false); // Register Neighborhood Dialog
     const [newNeighborhoodName, setNewNeighborhoodName] = useState('');
+    const [newCountryName, setNewCountryName] = useState('');
     const [isRegistering, setIsRegistering] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
 
@@ -457,7 +458,7 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
         setIsRegistering(true);
         try {
             const { registerNeighborhood } = await import('@/app/actions/neighborhoods');
-            const result = await registerNeighborhood(newNeighborhoodName, currentUser.uid);
+            const result = await registerNeighborhood(newNeighborhoodName, currentUser.uid, newCountryName);
 
             if (result.success) {
                 if (result.exists) {
@@ -468,6 +469,7 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
                     });
                     setRegisterOpen(false);
                     setNewNeighborhoodName('');
+                    setNewCountryName('');
                     updateNeighborhood(result.slug || result.name); // Redirect
                 } else if (result.created) {
                     toast({
@@ -477,6 +479,7 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
                     });
                     setRegisterOpen(false);
                     setNewNeighborhoodName('');
+                    setNewCountryName('');
                     updateNeighborhood(result.slug || result.name); // Redirect
                 }
             } else {
@@ -685,6 +688,14 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
                                                     placeholder="Ej. Sternschanze"
                                                     value={newNeighborhoodName}
                                                     onChange={(e) => setNewNeighborhoodName(e.target.value)}
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label>{t('form.countryName', 'País (Opcional)')}</Label>
+                                                <Input
+                                                    placeholder="Ej. Alemania"
+                                                    value={newCountryName}
+                                                    onChange={(e) => setNewCountryName(e.target.value)}
                                                 />
                                             </div>
                                         </div>

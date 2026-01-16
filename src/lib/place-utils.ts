@@ -5,6 +5,7 @@ export interface DiciloLocation {
     type: 'barrio' | 'ciudad' | 'pais';
     hierarchy: {
         country: string;
+        countryCode?: string; // Add countryCode
         city: string;
         neighborhood?: string; // Optional
     };
@@ -36,59 +37,54 @@ export interface GooglePlaceData {
     };
 }
 
+// FIX: Regla de Oro Implementada
+// City = ONLY locality or administrative_area_level_2
+// Neighborhood = ONLY sublocality variants
+
 export const processDiciloPlace = (place: GooglePlaceData): DiciloLocation | null => {
     if (!place.address_components || !place.geometry) return null;
 
     let country = '';
+    let countryCode = '';
     let city = '';
     let neighborhood = '';
 
-    let sublocalityLevel1 = '';
-    let sublocalityLevel2 = '';
-
-    // 1. Extract official Google components
+    // 1. Strict Extraction loop
     place.address_components.forEach(component => {
         const types = component.types;
 
         if (types.includes('country')) {
             country = component.long_name;
-        }
-        // In Germany (and others), city can be 'locality' or 'administrative_area_level_1' (for city-states like Hamburg/Berlin)
-        if (types.includes('locality') || (types.includes('administrative_area_level_1') && !city)) {
-            city = component.long_name;
+            countryCode = component.short_name;
         }
 
-        // Capture specific sub-levels
-        if (types.includes('sublocality_level_1')) {
-            sublocalityLevel1 = component.long_name;
+        // STRICT City Logic
+        if (types.includes('locality') || types.includes('administrative_area_level_2')) {
+            // Only overwrite if it's the first one found or specifically 'locality' (usually more accurate)
+            // But the rule says: assign only if type includes these.
+            // We prioritize 'locality' over 'admin_level_2' if both exist.
+            if (!city || types.includes('locality')) {
+                city = component.long_name;
+            }
         }
-        if (types.includes('sublocality_level_2')) {
-            sublocalityLevel2 = component.long_name;
-        }
-        // Fallback or generic neighborhood
-        if (types.includes('neighborhood') || types.includes('sublocality')) {
-            if (!neighborhood) neighborhood = component.long_name;
+
+        // STRICT Neighborhood Logic
+        if (types.includes('sublocality') || types.includes('sublocality_level_1') || types.includes('neighborhood')) {
+            // If we find a sublocality, it IS the neighborhood.
+            // We take the most specific one if multiple exist? Usually sublocality_level_1 is good.
+            neighborhood = component.long_name;
         }
     });
 
-    // Priority: Level 2 (most specific) > Level 1 (District) > Generic Neighborhood
-    if (sublocalityLevel2) {
-        neighborhood = sublocalityLevel2;
-    } else if (sublocalityLevel1 && (!neighborhood || neighborhood === city)) {
-        // Only use Level 1 if we don't have a generic neighborhood, or if generic is same as city
-        neighborhood = sublocalityLevel1;
-    }
+    // 2. Dicilo Business Logic
+    // If we have a neighborhood, we MUST have a parent city.
+    // If Google returned a neighborhood but NO city (Edge Case), we need a fallback.
+    // However, for now we stick to what validPlace returned.
 
-    // 2. Dicilo Business Logic: Neighborhood or City?
-    // If Google returned a neighborhood, it's a neighborhood. Otherwise assume top level city.
-    // Additional check: If neighborhood name == city name, it's the city.
-    const isNeighborhood = neighborhood !== '' && neighborhood !== city;
-
-    // Case: User searches "Hamburg" directly. Google returns name="Hamburg", type="locality" (or admin area), no sublocality.
-    // 'city' will be detected as Hamburg. 'neighborhood' empty.
+    const isNeighborhood = neighborhood !== '';
     const finalName = isNeighborhood ? neighborhood : (city || place.name || '');
 
-    // Normalize coordinates extraction (handle both function and property style)
+    // Normalize coordinates
     let lat = 0;
     let lng = 0;
     if (place.geometry.location) {
@@ -106,10 +102,11 @@ export const processDiciloPlace = (place: GooglePlaceData): DiciloLocation | nul
         name: finalName,
         type: isNeighborhood ? 'barrio' : 'ciudad',
         hierarchy: {
-            country,
-            city, // There must always be a parent city (or itself if it is the city)
-            neighborhood: isNeighborhood ? neighborhood : undefined
-        },
+            country: country || 'Alemania', // Default to Alemania if missing
+            countryCode: countryCode || 'DE',
+            city: city, // Might be empty if it's a pure state search?
+            neighborhood: isNeighborhood ? neighborhood : null // Explicit null for Firestore
+        } as any, // Cast to avoid TS strict null checks if interface expects string | undefined
         coordinates: {
             lat,
             lng
