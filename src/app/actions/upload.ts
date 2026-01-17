@@ -1,13 +1,7 @@
 'use server';
 
 const pdf = require('pdf-parse');
-import { getStorage } from 'firebase-admin/storage';
-import { getApps, initializeApp, cert } from 'firebase-admin/app';
-
-// Ensure Admin is initialized (Server Actions run in Node, not Client)
-if (!getApps().length) {
-    initializeApp();
-}
+import { getAdminStorage } from '@/lib/firebase-admin';
 
 export async function uploadImage(formData: FormData) {
     try {
@@ -19,18 +13,15 @@ export async function uploadImage(formData: FormData) {
         }
 
         const buffer = Buffer.from(await file.arrayBuffer());
-        const storage = getStorage();
+        const storage = getAdminStorage();
         const bucket = storage.bucket();
-        // Note: bucket() might need 'your-bucket-name' if not default. usually default works if configured.
-        // Assuming default bucket.
+        // Uses default bucket from config or the one initialized in firebase-admin.ts
 
         const fileRef = bucket.file(path);
 
         await fileRef.save(buffer, {
             contentType: file.type,
-            public: true, // Make publicly accessible for simplicity in this MVP? Or use signed URL.
-            // Better: just make it publicToken or similar.
-            // For now, let's try standard save.
+            public: true,
         });
 
         // Make it public explicitly if needed or get public URL

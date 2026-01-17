@@ -65,6 +65,7 @@ const businessSchema = z.object({
   coords: z.array(z.number()).length(2).optional(),
   currentOfferUrl: z.string().url().optional().or(z.literal('')),
   mapUrl: z.string().url().optional().or(z.literal('')),
+  tier_level: z.enum(['basic', 'premium']).default('basic'),
 });
 
 type BusinessFormData = z.infer<typeof businessSchema>;
@@ -279,6 +280,59 @@ export default function NewBusinessPage() {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+
+              {/* Membership Type Selector */}
+              <div className="space-y-2 p-4 bg-muted/30 rounded-lg border border-border">
+                <Label className="text-base font-semibold">
+                  {t('businesses.fields.tierLevel', 'Tipo de Membresía')}
+                </Label>
+                <Controller
+                  control={control}
+                  name="tier_level"
+                  render={({ field }) => (
+                    <div className="flex gap-4">
+                      <label className={cn(
+                        "flex-1 cursor-pointer rounded-md border p-4 transition-all hover:bg-accent",
+                        field.value === 'basic' ? "border-primary bg-accent/50 ring-1 ring-primary" : "border-input"
+                      )}>
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="radio"
+                            value="basic"
+                            checked={field.value === 'basic'}
+                            onChange={() => field.onChange('basic')}
+                            className="sr-only"
+                          />
+                          <div className="flex flex-col">
+                            <span className="font-semibold">Básica</span>
+                            <span className="text-xs text-muted-foreground">Gratis, visibilidad estándar.</span>
+                          </div>
+                        </div>
+                      </label>
+
+                      <label className={cn(
+                        "flex-1 cursor-pointer rounded-md border p-4 transition-all hover:bg-yellow-50",
+                        field.value === 'premium' ? "border-yellow-500 bg-yellow-50 ring-1 ring-yellow-500" : "border-input"
+                      )}>
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="radio"
+                            value="premium"
+                            checked={field.value === 'premium'}
+                            onChange={() => field.onChange('premium')}
+                            className="sr-only"
+                          />
+                          <div className="flex flex-col">
+                            <span className="font-semibold text-yellow-700">Premium / Starter</span>
+                            <span className="text-xs text-yellow-600/80">Destacado, galería, verificado.</span>
+                          </div>
+                        </div>
+                      </label>
+                    </div>
+                  )}
+                />
+              </div>
+
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 {/* Name */}
                 <div className="space-y-2">

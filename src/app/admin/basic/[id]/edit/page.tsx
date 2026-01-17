@@ -96,6 +96,7 @@ const businessSchema = z.object({
   mapUrl: z.string().url().optional().or(z.literal('')),
   active: z.boolean().default(true),
   businessCode: z.string().optional(),
+  email: z.string().email().optional().or(z.literal('')),
 });
 
 type BusinessFormData = z.infer<typeof businessSchema>;
@@ -557,6 +558,7 @@ export default function EditBusinessPage() {
               mapUrl: data.mapUrl || '',
               active: data.active !== undefined ? data.active : true,
               businessCode: data.businessCode || '',
+              email: data.email || '',
             };
             reset(formData as BusinessFormData);
 
@@ -1088,6 +1090,23 @@ export default function EditBusinessPage() {
                   )}
                 </div>
 
+                {/* Email */}
+                <div className="space-y-2">
+                  <Label htmlFor="email">
+                    {t('businesses.fields.email')}
+                  </Label>
+                  <Input
+                    id="email"
+                    {...register('email')}
+                    className={errors.email ? 'border-destructive' : ''}
+                  />
+                  {errors.email && (
+                    <p className="text-sm text-destructive">
+                      {errors.email.message}
+                    </p>
+                  )}
+                </div>
+
                 {/* Image URL */}
                 <div className="space-y-2 md:col-span-2">
                   <Label htmlFor="imageUrl">
@@ -1267,6 +1286,8 @@ export default function EditBusinessPage() {
                   name: getValues('name'),
                   coords: coords as [number, number],
                   category: getValues('category'),
+                  location: getValues('location'),
+                  email: getValues('email'),
                   address: getValues('address'),
                   phone: getValues('phone'),
                   website: getValues('website'),

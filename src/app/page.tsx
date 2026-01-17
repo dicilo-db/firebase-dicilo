@@ -43,6 +43,12 @@ function extractCoords(data: any): [number, number] | undefined {
   // 3. Direct Array [lat, lng]
   if (Array.isArray(data) && data.length === 2) return validate(data[0], data[1]);
 
+  // 4. Visibility Settings (Premium Clients Fallback)
+  if (data.visibility_settings?.geo_coordinates) {
+    const { lat, lng } = data.visibility_settings.geo_coordinates;
+    return validate(lat, lng);
+  }
+
   return undefined;
 }
 
@@ -52,20 +58,31 @@ function serializeBusiness(docId: string, data: any): Business {
     imageUrl = `https://placehold.co/128x128.png`;
   }
 
+  if (imageUrl && imageUrl.startsWith('http://')) {
+    imageUrl = imageUrl.replace('http://', 'https://');
+  }
+
   // Return only fields defined in Business interface (no timestamps)
   return {
     id: docId,
     name: data.clientName || data.name || 'Unbekanntes Unternehmen',
     category: data.category || 'Allgemein',
-    description: data.description || data.bodyData?.description || '',
-    description_translations: data.description_translations || undefined,
+    description: data.description || data.bodyData?.description || data.headerData?.welcomeText || '',
+    description_translations: data.description_translations || data.translations || undefined,
     location: data.location || '',
     imageUrl: imageUrl,
+    clientLogoUrl: data.clientLogoUrl || imageUrl,
+    coverImageUrl: data.headerData?.backgroundImage || data.coverImage || imageUrl, // Fallback to logo if no cover
     imageHint: data.imageHint || '',
     coords: extractCoords(data.coordinates) || extractCoords(data),
     address: data.address || '',
     phone: data.phone || '',
-    clientType: (docId === 'E6IUdKlV5OMlv2DWlNxE' || docId === 'Qt9u8Pd1Qi52AM0no2uw') ? 'premium' : (data.clientType || 'retailer'),
+    email: data.email || '',
+    clientType:
+      docId === 'E6IUdKlV5OMlv2DWlNxE' || docId === 'Qt9u8Pd1Qi52AM0no2uw'
+        ? 'premium'
+        : data.clientType || 'retailer',
+    tier_level: data.tier_level || 'basic',
     visibility_settings: data.visibility_settings || undefined,
     website: data.website || '',
     currentOfferUrl: data.currentOfferUrl || '',

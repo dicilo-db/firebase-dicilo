@@ -27,6 +27,9 @@ import { useTranslation } from 'react-i18next';
 import { Header } from '@/components/header';
 import { AdBanner } from '@/components/AdBanner';
 
+import { BasicCard } from './cards/BasicCard';
+import { PremiumCard } from './cards/PremiumCard';
+
 export interface Business {
   id: string;
   name: string;
@@ -38,6 +41,7 @@ export interface Business {
   coords?: [number, number];
   address?: string;
   phone?: string;
+  email?: string;
   website?: string;
   category_key?: string;
   subcategory_key?: string;
@@ -46,6 +50,9 @@ export interface Business {
   clientSlug?: string;
   mapUrl?: string;
   clientType?: 'retailer' | 'premium' | 'starter';
+  tier_level?: 'basic' | 'premium';
+  clientLogoUrl?: string;
+  coverImageUrl?: string;
   visibility_settings?: {
     active_range: 'local' | 'regional' | 'national' | 'continental' | 'international';
     geo_coordinates?: { lat: number; lng: number };
@@ -376,8 +383,12 @@ export default function DiciloSearchPage({
 
     // 2. Sort the result
     if (userLocation) {
-      // Sort by distance if user location is known
+      // Sort by distance if user location is known, BUT prioritize premium clients
       return result.sort((a, b) => {
+        // Boost premium clients
+        if (a.clientType === 'premium' && b.clientType !== 'premium') return -1;
+        if (a.clientType !== 'premium' && b.clientType === 'premium') return 1;
+
         if (!a.coords || a.coords.length !== 2) return 1;
         if (!b.coords || b.coords.length !== 2) return -1;
         const distA = haversineDistance(userLocation, a.coords);
@@ -392,6 +403,10 @@ export default function DiciloSearchPage({
 
       if (primaryResult) {
         return result.sort((a, b) => {
+          // Boost premium clients even in text search
+          if (a.clientType === 'premium' && b.clientType !== 'premium') return -1;
+          if (a.clientType !== 'premium' && b.clientType === 'premium') return 1;
+
           if (a.id === primaryResult.id) return -1;
           if (b.id === primaryResult.id) return 1;
           return a.name.localeCompare(b.name);
@@ -399,8 +414,12 @@ export default function DiciloSearchPage({
       }
     }
 
-    // Default fallback: Alphabetical or kept as is
-    return result; // Or result.sort((a, b) => a.name.localeCompare(b.name));
+    // Default fallback: Always boost premium
+    return result.sort((a, b) => {
+      if (a.clientType === 'premium' && b.clientType !== 'premium') return -1;
+      if (a.clientType !== 'premium' && b.clientType === 'premium') return 1;
+      return a.name.localeCompare(b.name);
+    });
   }, [debouncedQuery, initialBusinesses, searchType, userLocation]);
 
   const sortedAds = useMemo(() => {
@@ -554,7 +573,6 @@ export default function DiciloSearchPage({
             zoom={mapZoom}
             businesses={filteredBusinesses}
             selectedBusinessId={selectedBusinessId}
-            t={t}
           />
         ) : (
           <Skeleton className="h-full w-full" />
@@ -689,6 +707,7 @@ export default function DiciloSearchPage({
                   )
                 }
                 const business = item.data;
+                // Uniform presentation for the list (User request)
                 return (
                   <div key={business.id} className="relative">
                     <DebugBadge />
@@ -779,6 +798,7 @@ export default function DiciloSearchPage({
             businesses={filteredBusinesses}
             selectedBusinessId={selectedBusinessId}
             t={t}
+            locale={locale}
           />
         </div>
       )}

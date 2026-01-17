@@ -415,7 +415,8 @@
       "coords": "Koordinaten (Lat, Lon)",
       "coordsHelp": "Wird durch Geocodierung der Adresse oder Ziehen des Markers auf der Karte festgelegt.",
       "currentOfferUrl": "URL des aktuellen Angebots",
-      "mapUrl": "URL Karte"
+      "mapUrl": "URL Karte",
+      "email": "E-Mail"
     }
   },
   "clients": {

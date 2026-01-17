@@ -417,7 +417,8 @@
       "coords": "Coordinates (Lat, Lon)",
       "coordsHelp": "Set by geocoding the address or dragging the marker on the map.",
       "currentOfferUrl": "Current Offer URL",
-      "mapUrl": "Map URL"
+      "mapUrl": "Map URL",
+      "email": "Email"
     }
   },
   "clients": {
