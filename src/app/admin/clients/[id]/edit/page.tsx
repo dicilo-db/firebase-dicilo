@@ -25,6 +25,11 @@ export interface ClientData {
   graphics?: any[];
   products?: any[];
   translations: any;
+  description_translations?: {
+    es?: string;
+    en?: string;
+    de?: string;
+  };
   slug: string;
   category?: string;
   subcategory?: string;

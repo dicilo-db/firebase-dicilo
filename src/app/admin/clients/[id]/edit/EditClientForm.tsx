@@ -42,7 +42,13 @@ import {
   Send,
   LocateFixed,
   MapPin,
+  Sparkles as SparklesIcon,
 } from 'lucide-react';
+// ... existing imports ...
+
+// ... existing imports ...
+
+
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import {
@@ -688,6 +694,11 @@ const clientSchema = z.object({
   graphics: z.array(graphicSchema).optional(),
   products: z.array(productSchema).optional(),
   translations: z.string().optional(),
+  description_translations: z.object({
+    en: z.string().optional(),
+    es: z.string().optional(),
+    de: z.string().optional(),
+  }).optional(),
   layout: z.array(z.any()).optional(),
   newEmailForUpdate: z.string().email().optional().or(z.literal('')),
   ownerUid: z.string().optional(),
@@ -732,6 +743,56 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
   const [uploadProgress, setUploadProgress] = useState<number | null>(null);
   const [embedCode, setEmbedCode] = useState('');
   const [uniqueCode, setUniqueCode] = useState<string>('');
+  const [isTranslating, setIsTranslating] = useState(false);
+
+  const handleTranslateDescription = async (sourceLang: 'es' | 'en' | 'de' | 'auto', text: string) => {
+    if (!text) return;
+    setIsTranslating(true);
+    try {
+      const targetLanguages = ['es', 'en', 'de'].filter(l => sourceLang === 'auto' ? true : l !== sourceLang);
+
+      const response = await fetch('/api/translate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text, targetLanguages, sourceLanguage: sourceLang }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Translation failed');
+      }
+
+      Object.entries(data.translations).forEach(([lang, translatedText]) => {
+        setValue(`description_translations.${lang}` as any, translatedText as string, {
+          shouldDirty: true,
+          shouldValidate: true,
+          shouldTouch: true
+        });
+      });
+
+      toast({
+        title: "Translation Complete",
+        description: "Description has been translated.",
+      });
+    } catch (error: any) {
+      console.error('Translation error:', error);
+      toast({
+        title: "Translation Error",
+        description: error.message,
+        variant: "destructive"
+      });
+    } finally {
+      setIsTranslating(false);
+    }
+  };
+
+  const slugify = (text: string) =>
+    text
+      .toLowerCase()
+      .replace(/\s+/g, '_')
+      .replace(/[^\w-]+/g, '');
+
   const [isDemoting, setIsDemoting] = useState(false);
   const [showDowngradeDialog, setShowDowngradeDialog] = useState(false);
 
@@ -910,6 +971,11 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
       graphics: [],
       products: [],
       translations: '{}',
+      description_translations: {
+        es: '',
+        en: '',
+        de: '',
+      },
       layout: initialData.layout || [],
       newEmailForUpdate: '',
       ownerUid: initialData.ownerUid || '',
@@ -965,11 +1031,30 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
       ? forcedType
       : 'retailer') as 'retailer' | 'premium' | 'starter';
 
+    // Match Category/Subcategory if they are names instead of IDs
+    let catId = initialData.category || '';
+    let subId = initialData.subcategory || '';
+
+    if (categories.length > 0 && catId && !categories.find((c: any) => c.id === catId)) {
+      const matchedCat = categories.find((c: any) =>
+        (c.name?.de === catId) || (c.name?.es === catId) || (c.name?.en === catId)
+      );
+      if (matchedCat) {
+        catId = matchedCat.id;
+        if (subId) {
+          const matchedSub = matchedCat.subcategories?.find((s: any) =>
+            (s.name?.de === subId) || (s.name?.es === subId) || (s.name?.en === subId)
+          );
+          if (matchedSub) subId = matchedSub.id;
+        }
+      }
+    }
+
     return {
       clientName: initialData.clientName || '',
       slug: initialData.slug || '',
-      category: initialData.category || '',
-      subcategory: initialData.subcategory || '',
+      category: catId,
+      subcategory: subId,
       clientType: validClientType,
       clientLogoUrl: data.clientLogoUrl || '',
       headerData: {
@@ -1048,6 +1133,11 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
       translations: data.translations
         ? JSON.stringify(data.translations, null, 2)
         : '{}',
+      description_translations: data.description_translations || {
+        es: data.bodyData?.description || '',
+        en: '',
+        de: ''
+      },
       layout: data.layout || [],
       galleryImages: data.galleryImages || [],
       ownerUid: data.ownerUid || '',
@@ -1064,7 +1154,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
         allowed_continents: data.visibility_settings?.allowed_continents || [],
       },
     };
-  }, [initialData]);
+  }, [initialData, categories]);
 
   useEffect(() => {
     if (initialData && Object.keys(initialData).length > 0) {
@@ -1142,6 +1232,14 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
       setUploadProgress(null);
     }
   };
+
+  // Sync description_translations.es to bodyData.description for backward compatibility
+  const descriptionEs = watch('description_translations.es');
+  useEffect(() => {
+    if (descriptionEs !== undefined) {
+      setValue('bodyData.description', descriptionEs, { shouldDirty: true });
+    }
+  }, [descriptionEs, setValue]);
 
   const onSubmit = async (data: ClientFormData) => {
     setIsSubmitting(true);
@@ -1415,15 +1513,37 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
 
                     {/* 5. Description (Left) */}
                     <div className="space-y-2">
-                      <Label htmlFor="bodyData.description">
-                        Description
-                      </Label>
-                      <Textarea
-                        id="bodyData.description"
-                        {...register('bodyData.description')}
-                        placeholder="Descripción corta del negocio..."
-                        className="h-24"
-                      />
+                      <Label>Description & Translations</Label>
+                      <Tabs defaultValue="es" className="w-full">
+                        <TabsList className="grid w-full grid-cols-3">
+                          <TabsTrigger value="es">🇪🇸 ES</TabsTrigger>
+                          <TabsTrigger value="en">🇬🇧 EN</TabsTrigger>
+                          <TabsTrigger value="de">🇩🇪 DE</TabsTrigger>
+                        </TabsList>
+
+                        {(['es', 'en', 'de'] as const).map((lang) => (
+                          <TabsContent key={lang} value={lang} className="space-y-2">
+                            <div className="relative">
+                              <Textarea
+                                {...register(`description_translations.${lang}`)}
+                                placeholder={`Description in ${lang.toUpperCase()}...`}
+                                className="min-h-[120px] pr-12"
+                              />
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                className="absolute right-2 top-2 h-8 w-8 text-muted-foreground hover:text-primary"
+                                onClick={() => handleTranslateDescription(lang, watch(`description_translations.${lang}`) || '')}
+                                disabled={isTranslating}
+                                title="Translate with AI"
+                              >
+                                {isTranslating ? <Loader2 className="h-4 w-4 animate-spin" /> : <SparklesIcon className="h-4 w-4" />}
+                              </Button>
+                            </div>
+                          </TabsContent>
+                        ))}
+                      </Tabs>
                     </div>
 
                     {/* 6. Coordinates (Right) */}
