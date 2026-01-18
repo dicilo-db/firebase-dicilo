@@ -5,6 +5,8 @@ import Image from 'next/image';
 import { ClientData } from '@/types/client';
 import { cn } from '@/lib/utils';
 
+import { LanguageSelector } from '../LanguageSelector';
+
 interface PremiumHeroProps {
     clientData: ClientData;
 }
@@ -18,6 +20,10 @@ export const PremiumHero: React.FC<PremiumHeroProps> = ({ clientData }) => {
 
     return (
         <div className="relative h-[60vh] md:h-[70vh] w-full overflow-hidden rounded-b-2xl md:rounded-2xl shadow-lg">
+            {/* Language Switcher */}
+            <div className="absolute top-4 right-4 z-50">
+                <LanguageSelector />
+            </div>
             <div className="absolute inset-0">
                 <Image
                     src={bgImage}

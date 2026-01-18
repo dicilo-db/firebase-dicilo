@@ -16,6 +16,8 @@ import {
 } from '@/components/ui/dialog';
 import { Star, MessageSquare } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
+import { useTranslation } from 'react-i18next';
+import { RecommendationModal } from '../recommendations/recommendation-modal';
 
 interface Recommendation {
     id: string;
@@ -32,6 +34,7 @@ interface PremiumReviewsProps {
 }
 
 export const PremiumReviews: React.FC<PremiumReviewsProps> = ({ clientData }) => {
+    const { t } = useTranslation('client');
     const [reviews, setReviews] = useState<Recommendation[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -62,10 +65,18 @@ export const PremiumReviews: React.FC<PremiumReviewsProps> = ({ clientData }) =>
     if (reviews.length === 0) {
         return (
             <div className="rounded-2xl border bg-white p-6 shadow-sm">
-                <h3 className="mb-4 text-xl font-bold">What others think</h3>
-                <div className="text-center text-gray-500 py-8">
+                <h3 className="mb-4 text-xl font-bold">{t('reviews.title', 'What others think')}</h3>
+                <div className="flex flex-col items-center justify-center py-8 text-center bg-slate-50 rounded-xl border border-dashed">
                     <MessageSquare className="h-10 w-10 mx-auto mb-2 opacity-50" />
-                    <p>Be the first to recommend {clientData.clientName}!</p>
+                    <p className="mb-4">{t('reviews.beTheFirst', 'Be the first to recommend {{name}}!', { name: clientData.clientName })}</p>
+                    <RecommendationModal
+                        businessId={clientData.id}
+                        trigger={
+                            <Button variant="outline" size="sm">
+                                {t('reviews.writeReview', 'Escribir reseña')}
+                            </Button>
+                        }
+                    />
                 </div>
             </div>
         );

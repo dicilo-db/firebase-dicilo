@@ -450,7 +450,18 @@
       "notFoundTitle": "Client Not Found",
       "notFoundDesc": "The requested client does not exist.",
       "fetchErrorTitle": "Loading Error",
-      "fetchErrorDesc": "The client data could not be loaded."
+      "fetchErrorDesc": "The client data could not be loaded.",
+      "dangerZone": {
+        "title": "Danger Zone",
+        "description": "Demote this client back to a Basic Business. This will remove advanced features.",
+        "button": "Downgrade to Basic",
+        "buttonProcessing": "Downgrading...",
+        "dialog": {
+          "title": "Confirm Downgrade",
+          "description": "This will convert the Client back to a Basic Business.\n<br /><br />\n<strong>Warning:</strong> Advanced data like Gallery, Products, and Coupons might be lost if not supported by Basic plan. Basic fields (address, description, translations, coordinates) will be preserved.",
+          "confirm": "Yes, Downgrade"
+        }
+      }
     },
     "new": {
       "title": "Create New Client",
@@ -561,7 +572,8 @@
       "infoCards": {
         "title": "Info Cards (Tabs)",
         "add": "Add Card",
-        "card": "Card"
+        "card": "Card",
+        "content": "Content"
       },
       "graphics": {
         "title": "Graphic Title",

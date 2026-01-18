@@ -15,7 +15,7 @@ import {
   getDocs,
   query,
 } from 'firebase/firestore';
-import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { getStorage, ref, uploadBytes, getDownloadURL, uploadBytesResumable } from 'firebase/storage';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { getAuth } from 'firebase/auth';
 import { app } from '@/lib/firebase';
@@ -43,6 +43,10 @@ import {
   LocateFixed,
   MapPin,
   Sparkles as SparklesIcon,
+  ArrowUp,
+  ArrowDown,
+  Eye,
+  EyeOff,
 } from 'lucide-react';
 // ... existing imports ...
 
@@ -50,6 +54,7 @@ import {
 
 
 import { Badge } from '@/components/ui/badge';
+
 import { cn } from '@/lib/utils';
 import {
   Select,
@@ -688,11 +693,15 @@ const clientSchema = z.object({
       z.object({
         title: z.string().optional(),
         content: z.string().optional(),
+        isActive: z.boolean().default(true),
       })
     )
     .optional(),
   graphics: z.array(graphicSchema).optional(),
   products: z.array(productSchema).optional(),
+  category: z.string().optional(),
+  subcategory: z.string().optional(),
+  neighborhood: z.string().optional(),
   translations: z.string().optional(),
   description_translations: z.object({
     en: z.string().optional(),
@@ -744,6 +753,51 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
   const [embedCode, setEmbedCode] = useState('');
   const [uniqueCode, setUniqueCode] = useState<string>('');
   const [isTranslating, setIsTranslating] = useState(false);
+
+  // Reusable File Upload Handler
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>, onComplete: (url: string) => void) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast({
+        title: 'Error',
+        description: t('clients.fields.header.banner.fileSizeError'),
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setUploadProgress(0);
+    const storageRef = ref(storage, `clients/${id}/headers/${Date.now()}_${file.name}`);
+    const uploadTask = uploadBytesResumable(storageRef, file);
+
+    uploadTask.on(
+      'state_changed',
+      (snapshot) => {
+        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        setUploadProgress(progress);
+      },
+      (error) => {
+        console.error('Upload failed:', error);
+        toast({
+          title: 'Error',
+          description: t('clients.fields.header.banner.uploadError'),
+          variant: 'destructive',
+        });
+        setUploadProgress(null);
+      },
+      async () => {
+        const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+        onComplete(downloadURL);
+        setUploadProgress(null);
+        toast({
+          title: 'Éxito',
+          description: t('clients.fields.header.banner.uploadSuccess'),
+        });
+      }
+    );
+  };
 
   const handleTranslateDescription = async (sourceLang: 'es' | 'en' | 'de' | 'auto', text: string) => {
     if (!text) return;
@@ -987,6 +1041,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
       website: initialData.website || '',
       email: initialData.email || '',
       coordinates: initialData.coordinates || { lat: 0, lng: 0 },
+      neighborhood: initialData.neighborhood || '',
     },
   });
 
@@ -1055,6 +1110,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
       slug: initialData.slug || '',
       category: catId,
       subcategory: subId,
+      neighborhood: initialData.neighborhood || '',
       clientType: validClientType,
       clientLogoUrl: data.clientLogoUrl || '',
       headerData: {
@@ -1170,6 +1226,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
     fields: infoCardFields,
     append: appendInfoCard,
     remove: removeInfoCard,
+    move: moveInfoCard
   } = useFieldArray({ control, name: 'infoCards' });
   const {
     fields: graphicsFields,
@@ -1186,52 +1243,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
   const selectedCategory = watch('category');
   const bannerType = watch('headerData.bannerType');
 
-  const handleFileUpload = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
 
-    setUploadProgress(0);
-    try {
-      const storageRef = ref(storage, `client-banners/${id}/${file.name}`);
-      const uploadTask = await uploadBytes(storageRef, file, {
-        contentType: file.type,
-      });
-
-      const downloadURL = await getDownloadURL(uploadTask.ref);
-
-      const currentWidth = watch('headerData.bannerImageWidth');
-      const currentHeight = watch('headerData.bannerImageHeight');
-
-      setValue(
-        'headerData',
-        {
-          ...watch('headerData'),
-          bannerImageUrl: downloadURL,
-          bannerImageWidth: currentWidth,
-          bannerImageHeight: currentHeight,
-          bannerType: watch('headerData.bannerType') || 'embed',
-        },
-        { shouldValidate: true, shouldDirty: true }
-      );
-
-      toast({
-        title: 'Upload successful',
-        description: 'Banner image has been uploaded.',
-      });
-    } catch (error: any) {
-      console.error('Error uploading file:', error);
-      let description = 'Could not upload the banner image.';
-      if (error.code === 'storage/retry-limit-exceeded') {
-        description =
-          'Upload failed. Please check your internet connection and try again.';
-      }
-      toast({ title: 'Upload failed', description, variant: 'destructive' });
-    } finally {
-      setUploadProgress(null);
-    }
-  };
 
   // Sync description_translations.es to bodyData.description for backward compatibility
   const descriptionEs = watch('description_translations.es');
@@ -1281,21 +1293,16 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
       }
 
       // Clean up arrays
-      newData.infoCards =
-        newData.infoCards?.filter(
-          (card) => card && (card.title || card.content)
-        ) || [];
-      newData.graphics =
-        newData.graphics?.filter(
-          (g) => g && (g.imageUrl || g.targetUrl || g.text)
-        ) || [];
-      newData.products = newData.products?.filter((p) => p && p.name) || [];
-      if (newData.headerData) {
-        newData.headerData.socialLinks =
-          newData.headerData.socialLinks?.filter(
-            (link) => link && (link.icon || link.url)
-          ) || [];
+      // newData.infoCards =
+      //   newData.infoCards?.filter(
+      //     (card) => card && (card.title || card.content)
+      //   ) || [];
+      // KEEP ALL infoCards that have basic data, ensuring isActive is preserved
+      if (newData.infoCards) {
+        newData.infoCards = newData.infoCards.filter(c => c.title || c.content);
       }
+
+      // ... existing code ...
 
       // Sanitize visibility_settings to avoid undefined values (Firestore error)
       if (newData.visibility_settings) {
@@ -1311,8 +1318,16 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
         newData.visibility_settings = {
           active_range: 'national',
           allowed_continents: [],
-          geo_coordinates: null
+          geo_coordinates: null,
         };
+      }
+
+      // Explicitly handle neighborhood to prevent undefined
+      if (newData.neighborhood === undefined) {
+        newData.neighborhood = null;
+      }
+      if (newData.neighborhood === 'none') {
+        newData.neighborhood = null;
       }
 
       const finalPayload = _.merge({}, originalData, newData);
@@ -1322,6 +1337,9 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
       finalPayload.budget_remaining = data.budget_remaining;
       finalPayload.total_invested = data.total_invested;
       finalPayload.clientType = data.clientType;
+
+      // Ensure infoCards are set directly from newData to override merge behavior that might be weird with arrays
+      finalPayload.infoCards = newData.infoCards;
 
       // Wrap updateDoc in a timeout to prevent infinite hanging
       const updatePromise = updateDoc(docRef, finalPayload);
@@ -1335,7 +1353,11 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
         title: 'Cambios guardados',
         description: 'El cliente ha sido actualizado exitosamente.',
       });
-      router.push('/admin/clients');
+      // REMOVED REDIRECT: router.push('/admin/clients');
+      // Instead, maybe refresh data or just stay? 
+      // Since we reset() with preparedData in useEffect when initialData changes, 
+      // we might want to ensure the form stays consistent. 
+      // But typically just staying here is what the user asked.
     } catch (error) {
       console.error('Error saving client:', error);
       if (
@@ -1767,14 +1789,35 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                         </div>
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="headerData.headerBackgroundImageUrl">
-                          {t('clients.fields.header.headerBackgroundImageUrl')}
-                        </Label>
-                        <Input
-                          id="headerData.headerBackgroundImageUrl"
-                          {...register('headerData.headerBackgroundImageUrl')}
-                          placeholder="https://example.com/background.jpg"
-                        />
+                        <div className="space-y-2">
+                          <Label htmlFor="headerData.headerBackgroundImageUrl">
+                            {t('clients.fields.header.headerBackgroundImageUrl')}
+                          </Label>
+                          <div className="flex gap-2">
+                            <Input
+                              id="headerData.headerBackgroundImageUrl"
+                              {...register('headerData.headerBackgroundImageUrl')}
+                              placeholder="https://example.com/background.jpg"
+                            />
+                            <label htmlFor="header-bg-upload" className="cursor-pointer">
+                              <div className="flex h-10 w-10 items-center justify-center rounded-md border bg-secondary hover:bg-secondary/80">
+                                <UploadCloud className="h-4 w-4" />
+                              </div>
+                              <input
+                                id="header-bg-upload"
+                                type="file"
+                                className="hidden"
+                                accept="image/*"
+                                onChange={(e) => handleFileUpload(e, (url) => setValue('headerData.headerBackgroundImageUrl', url, { shouldDirty: true }))}
+                              />
+                            </label>
+                          </div>
+                          {watch('headerData.headerBackgroundImageUrl') && (
+                            <div className="mt-2 h-20 w-full overflow-hidden rounded bg-gray-100">
+                              <img src={watch('headerData.headerBackgroundImageUrl')} className="h-full w-full object-cover" alt="Preview" />
+                            </div>
+                          )}
+                        </div>
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="bodyData.body2BackgroundColor">
@@ -1798,6 +1841,27 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                           <p className="text-sm text-destructive">
                             {errors.headerData.headerImageUrl.message}
                           </p>
+                        )}
+                        <div className="mt-2">
+                          <label htmlFor="header-image-upload" className="cursor-pointer inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2">
+                            <UploadCloud className="mr-2 h-4 w-4" /> Upload Cover Photo
+                            <input
+                              id="header-image-upload"
+                              type="file"
+                              className="hidden"
+                              accept="image/*"
+                              onChange={(e) => handleFileUpload(e, (url) => setValue('headerData.headerImageUrl', url, { shouldDirty: true }))}
+                            />
+                          </label>
+                        </div>
+                        {watch('headerData.headerImageUrl') && (
+                          <div className="mt-2 h-32 w-full overflow-hidden rounded-md border bg-gray-50">
+                            <img
+                              src={watch('headerData.headerImageUrl')}
+                              className="h-full w-full object-cover"
+                              alt="Cover Preview"
+                            />
+                          </div>
                         )}
                       </div>
 
@@ -2001,7 +2065,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                             <Input
                               id="banner-upload"
                               type="file"
-                              onChange={handleFileUpload}
+                              onChange={(e) => handleFileUpload(e, (url) => setValue('headerData.bannerImageUrl', url, { shouldDirty: true }))}
                               accept="image/png, image/jpeg, image/gif, image/webp"
                               className="w-full"
                             />
@@ -2026,6 +2090,63 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                       )}
                     </>
                   )}
+
+                  <Separator className="my-6" />
+
+                  {/* Visibility Settings (Geo Segmentation) */}
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-medium">{t('clients.fields.visibility_settings.title', 'Visibilidad y Alcance Geográfico')}</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label>{t('clients.fields.visibility_settings.active_range', 'Rango Activo')}</Label>
+                        <Controller
+                          control={control}
+                          name="visibility_settings.active_range"
+                          defaultValue="national"
+                          render={({ field }) => (
+                            <Select
+                              onValueChange={field.onChange}
+                              value={field.value || 'national'}
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder={t('clients.fields.visibility_settings.active_range', 'Rango Activo')} />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="local">{t('clients.fields.visibility_settings.ranges.local', 'Local (50km)')}</SelectItem>
+                                <SelectItem value="regional">{t('clients.fields.visibility_settings.ranges.regional', 'Regional (Ciudad)')}</SelectItem>
+                                <SelectItem value="national">{t('clients.fields.visibility_settings.ranges.national', 'Nacional (País)')}</SelectItem>
+                                <SelectItem value="continental">{t('clients.fields.visibility_settings.ranges.continental', 'Continental')}</SelectItem>
+                                <SelectItem value="international">{t('clients.fields.visibility_settings.ranges.international', 'Internacional / Global')}</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          )}
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label>{t('clients.fields.visibility_settings.allowed_continents', 'Continentes Permitidos')}</Label>
+                        <div className="grid grid-cols-2 gap-2 border p-2 rounded max-h-40 overflow-y-auto">
+                          {['Europa', 'Sudamérica', 'Centro América', 'Latinoamérica', 'North America', 'Asia'].map(c => (
+                            <div key={c} className="flex items-center space-x-2">
+                              <Checkbox
+                                checked={watch('visibility_settings.allowed_continents')?.includes(c) || false}
+                                onCheckedChange={(checked) => {
+                                  const current = watch('visibility_settings.allowed_continents') || [];
+                                  if (checked) {
+                                    setValue('visibility_settings.allowed_continents', [...current, c]);
+                                  } else {
+                                    setValue('visibility_settings.allowed_continents', current.filter((x: string) => x !== c));
+                                  }
+                                }}
+                              />
+                              <span className="text-sm">{c}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
                 </TabsContent>
 
                 {/* Layout Builder Tab */}
@@ -2140,72 +2261,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                   />
                 </TabsContent>
 
-                {/* Visibility Settings (Geo Segmentation) */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle>{t('clients.fields.visibility_settings.title', 'Visibilidad y Alcance Geográfico')}</CardTitle>
-                    <CardDescription>
-                      {t('clients.fields.visibility_settings.subtitle', 'Controla dónde es visible tu perfil de negocio.')}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label>{t('clients.fields.visibility_settings.active_range', 'Rango Activo')}</Label>
-                        <Controller
-                          control={control}
-                          name="visibility_settings.active_range"
-                          defaultValue="national"
-                          render={({ field }) => (
-                            <Select
-                              onValueChange={field.onChange}
-                              value={field.value || 'national'}
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder={t('clients.fields.visibility_settings.active_range', 'Rango Activo')} />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="local">{t('clients.fields.visibility_settings.ranges.local', 'Local (50km)')}</SelectItem>
-                                <SelectItem value="regional">{t('clients.fields.visibility_settings.ranges.regional', 'Regional (Ciudad)')}</SelectItem>
-                                <SelectItem value="national">{t('clients.fields.visibility_settings.ranges.national', 'Nacional (País)')}</SelectItem>
-                                <SelectItem value="continental">{t('clients.fields.visibility_settings.ranges.continental', 'Continental')}</SelectItem>
-                                <SelectItem value="international">{t('clients.fields.visibility_settings.ranges.international', 'Internacional / Global')}</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          )}
-                        />
-                      </div>
 
-                      <div className="space-y-2">
-                        <Label>{t('clients.fields.visibility_settings.allowed_continents', 'Continentes Permitidos')}</Label>
-                        <div className="grid grid-cols-2 gap-2 border p-2 rounded max-h-40 overflow-y-auto">
-                          {['Europa', 'Sudamérica', 'Centro América', 'Latinoamérica', 'North America', 'Asia'].map(c => (
-                            <div key={c} className="flex items-center space-x-2">
-                              <Checkbox
-                                checked={watch('visibility_settings.allowed_continents')?.includes(c) || false}
-                                onCheckedChange={(checked) => {
-                                  const current = watch('visibility_settings.allowed_continents') || [];
-                                  if (checked) {
-                                    setValue('visibility_settings.allowed_continents', [...current, c]);
-                                  } else {
-                                    setValue('visibility_settings.allowed_continents', current.filter((x: string) => x !== c));
-                                  }
-                                }}
-                              />
-                              <span className="text-sm">{c}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <LocateFixed className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-xs text-muted-foreground">
-                        Current Base Location: {watch('coordinates.lat')}, {watch('coordinates.lng')}
-                      </span>
-                    </div>
-                  </CardContent>
-                </Card>
 
                 {/* --- Section: User Management --- */}
 
@@ -2645,36 +2701,89 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                   </div>
                   <div className="space-y-4">
                     {infoCardFields.map((field, index) => (
-                      <Card key={field.id}>
+                      <Card key={field.id} className={cn("transition-all duration-200", !watch(`infoCards.${index}.isActive`) && "opacity-60 bg-gray-50")}>
                         <CardContent className="pt-6">
                           <div className="flex items-start gap-4">
                             <div className="grid flex-1 gap-4">
-                              <div className="space-y-2">
-                                <Label>
+                              <div className="flex items-center gap-2">
+                                <Label className="flex-1">
                                   {t('clients.fields.infoCards.title')}
+                                  {!watch(`infoCards.${index}.isActive`) && <span className="ml-2 text-xs font-normal text-muted-foreground">(Inactivo)</span>}
                                 </Label>
-                                <Input
-                                  {...register(`infoCards.${index}.title`)}
-                                />
                               </div>
+                              <Input
+                                {...register(`infoCards.${index}.title`)}
+                                placeholder="Título de la pestaña"
+                              />
                               <div className="space-y-2">
                                 <Label>
                                   {t('clients.fields.infoCards.content')}
                                 </Label>
-                                <Textarea
-                                  {...register(`infoCards.${index}.content`)}
-                                />
+                                <div className="min-h-[200px]">
+                                  <TiptapEditor
+                                    name={`infoCards.${index}.content`}
+                                    control={control}
+                                  />
+                                </div>
                               </div>
                             </div>
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="icon"
-                              className="mt-8"
-                              onClick={() => removeInfoCard(index)}
-                            >
-                              <Trash2 className="h-4 w-4 text-destructive" />
-                            </Button>
+
+                            {/* Actions Column */}
+                            <div className="flex flex-col gap-2 mt-1">
+                              {/* Toggle Active Status */}
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                title={watch(`infoCards.${index}.isActive`) ? "Desactivar" : "Activar"}
+                                onClick={() => {
+                                  const currentVal = watch(`infoCards.${index}.isActive`);
+                                  setValue(`infoCards.${index}.isActive`, !currentVal, { shouldDirty: true });
+                                }}
+                              >
+                                {watch(`infoCards.${index}.isActive`) ? (
+                                  <Eye className="h-4 w-4 text-blue-600" />
+                                ) : (
+                                  <EyeOff className="h-4 w-4 text-gray-400" />
+                                )}
+                              </Button>
+
+                              {/* Move Up */}
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                disabled={index === 0}
+                                onClick={() => moveInfoCard(index, index - 1)}
+                                title="Mover Arriba"
+                              >
+                                <ArrowUp className="h-4 w-4" />
+                              </Button>
+
+                              {/* Move Down */}
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                disabled={index === infoCardFields.length - 1}
+                                onClick={() => moveInfoCard(index, index + 1)}
+                                title="Mover Abajo"
+                              >
+                                <ArrowDown className="h-4 w-4" />
+                              </Button>
+
+                              {/* Delete */}
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                className="text-destructive hover:bg-destructive/10"
+                                onClick={() => removeInfoCard(index)}
+                                title="Eliminar permanentemente"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
                           </div>
                         </CardContent>
                       </Card>
@@ -2903,9 +3012,9 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
       <div className="rounded-md border border-red-200 bg-red-50 p-4 dark:bg-red-900/10 dark:border-red-900/50 mb-8">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-lg font-medium text-red-900 dark:text-red-200">Danger Zone</h3>
+            <h3 className="text-lg font-medium text-red-900 dark:text-red-200">{t('clients.edit.dangerZone.title')}</h3>
             <p className="text-sm text-red-700 dark:text-red-300">
-              Demote this client back to a Basic Business. This will remove advanced features.
+              {t('clients.edit.dangerZone.description')}
             </p>
           </div>
           <Button
@@ -2915,7 +3024,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
             disabled={isDemoting}
           >
             {isDemoting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="mr-2 h-4 w-4" />}
-            Downgrade to Basic
+            {isDemoting ? t('clients.edit.dangerZone.buttonProcessing') : t('clients.edit.dangerZone.button')}
           </Button>
         </div>
       </div>
@@ -2924,18 +3033,15 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
       <AlertDialog open={showDowngradeDialog} onOpenChange={setShowDowngradeDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Confirm Downgrade</AlertDialogTitle>
+            <AlertDialogTitle>{t('clients.edit.dangerZone.dialog.title')}</AlertDialogTitle>
             <AlertDialogDescription>
-              This will convert the Client back to a Basic Business.
-              <br /><br />
-              <strong>Warning:</strong> Advanced data like Gallery, Products, and Coupons might be lost if not supported by Basic plan.
-              Basic fields (address, description, translations, coordinates) will be preserved.
+              <div dangerouslySetInnerHTML={{ __html: t('clients.edit.dangerZone.dialog.description') }} />
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
             <AlertDialogAction onClick={handleDowngrade} className="bg-red-600 hover:bg-red-700">
-              {isDemoting ? 'Downgrading...' : 'Yes, Downgrade'}
+              {isDemoting ? t('clients.edit.dangerZone.buttonProcessing') : t('clients.edit.dangerZone.dialog.confirm')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

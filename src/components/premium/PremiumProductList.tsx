@@ -6,6 +6,7 @@ import { getFirestore, collection, query, orderBy, onSnapshot } from 'firebase/f
 import { app } from '@/lib/firebase';
 import Image from 'next/image';
 import { ShoppingBag } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 // If formatCurrency doesn't exist, I'll fallback gracefully
 const simpleFormatCurrency = (amount: number, currency = 'EUR') => {
@@ -26,6 +27,7 @@ interface PremiumProductListProps {
 }
 
 export const PremiumProductList: React.FC<PremiumProductListProps> = ({ clientData }) => {
+    const { t } = useTranslation('client');
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -60,7 +62,7 @@ export const PremiumProductList: React.FC<PremiumProductListProps> = ({ clientDa
         return (
             <div className="rounded-2xl border bg-white p-8 shadow-sm text-center">
                 <ShoppingBag className="h-12 w-12 mx-auto text-gray-300 mb-2" />
-                <p className="text-gray-500">No products or services listed yet.</p>
+                <p className="text-gray-500">{t('products.noProducts', 'No products or services listed yet.')}</p>
             </div>
         );
     }
@@ -68,7 +70,7 @@ export const PremiumProductList: React.FC<PremiumProductListProps> = ({ clientDa
     return (
         <div className="rounded-2xl border bg-white shadow-sm overflow-hidden flex flex-col h-[600px]">
             <div className="p-4 border-b bg-gray-50">
-                <h3 className="text-lg font-bold">Products & Services ({products.length})</h3>
+                <h3 className="text-lg font-bold">{t('tabs.products', 'Products & Services')} ({products.length})</h3>
             </div>
             <div className="overflow-y-auto flex-1 p-4 space-y-4 scrollbar-thin scrollbar-thumb-gray-300">
                 {products.map((product) => (

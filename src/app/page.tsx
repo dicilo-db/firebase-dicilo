@@ -72,7 +72,7 @@ function serializeBusiness(docId: string, data: any): Business {
     location: data.location || '',
     imageUrl: imageUrl,
     clientLogoUrl: data.clientLogoUrl || imageUrl,
-    coverImageUrl: data.headerData?.backgroundImage || data.coverImage || imageUrl, // Fallback to logo if no cover
+    coverImageUrl: data.headerData?.headerImageUrl || data.headerData?.headerBackgroundImageUrl || data.headerData?.backgroundImage || data.coverImage || imageUrl, // Fallback to logo if no cover
     imageHint: data.imageHint || '',
     coords: extractCoords(data.coordinates) || extractCoords(data),
     address: data.address || '',

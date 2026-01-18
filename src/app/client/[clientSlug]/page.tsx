@@ -15,6 +15,7 @@ import { I18nProvider } from '@/context/i18n-provider';
 import { Metadata } from 'next';
 
 const db = getFirestore(app);
+export const revalidate = 60;
 
 export async function generateStaticParams() {
   try {

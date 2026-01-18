@@ -458,7 +458,18 @@
       "notFoundTitle": "Cliente No Encontrado",
       "notFoundDesc": "El cliente solicitado no existe.",
       "fetchErrorTitle": "Error de Carga",
-      "fetchErrorDesc": "No se pudieron cargar los datos del cliente."
+      "fetchErrorDesc": "No se pudieron cargar los datos del cliente.",
+      "dangerZone": {
+        "title": "Zona de Peligro",
+        "description": "Degradar este cliente a un Negocio Básico. Esto eliminará las funciones avanzadas.",
+        "button": "Degradar a Básico",
+        "buttonProcessing": "Degradando...",
+        "dialog": {
+          "title": "Confirmar Degradación",
+          "description": "Esto convertirá al Cliente de nuevo en un Negocio Básico.\n<br /><br />\n<strong>Advertencia:</strong> Los datos avanzados como Galería, Productos y Cupones podrían perderse si no son soportados por el plan Básico. Se conservarán los campos básicos (dirección, descripción, traducciones, coordenadas).",
+          "confirm": "Sí, Degradar"
+        }
+      }
     },
     "new": {
       "title": "Crear Nuevo Cliente",
@@ -569,7 +580,8 @@
       "infoCards": {
         "title": "Tarjetas de Información (Pestañas)",
         "add": "Añadir Tarjeta",
-        "card": "Tarjeta"
+        "card": "Tarjeta",
+        "content": "Contenido"
       },
       "graphics": {
         "title": "Título del Gráfico",

@@ -149,6 +149,7 @@
     "errorDesc": "There was an issue sending your recommendation. Please try again later."
   },
   "cancel": "Cancel",
+  "save": "Save",
   "delete": "Delete",
   "yes": "Yes",
   "no": "No",

@@ -14,7 +14,7 @@ export function RecommendationButton({ businessId }: RecommendationButtonProps) 
 
     return (
         <>
-            <div className="fixed bottom-6 right-6 z-50">
+            <div className="fixed bottom-6 left-6 z-50">
                 <Button
                     onClick={() => setIsOpen(true)}
                     className="h-14 w-14 rounded-full bg-primary shadow-lg hover:bg-primary/90 hover:scale-105 transition-transform"

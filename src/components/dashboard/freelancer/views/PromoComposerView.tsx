@@ -1084,7 +1084,7 @@ export function PromoComposerView() {
                                 Cuando se abra la ventana:
                             </p>
                             <ol className="list-decimal pl-5 text-sm space-y-1 font-medium">
-                                <li>Haz clic en el campo de texto ("Di algo sobre esto...").</li>
+                                <li>Haz clic en el campo de texto (&quot;Di algo sobre esto...&quot;).</li>
                                 <li>Pega tu mensaje (Click derecho &gt; Pegar o <kbd className="px-1 bg-slate-100 border rounded text-xs">Ctrl+V</kbd>).</li>
                                 <li>Publica tu enlace.</li>
                             </ol>

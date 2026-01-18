@@ -18,7 +18,7 @@ interface PremiumSidebarMapProps {
 }
 
 export const PremiumSidebarMap: React.FC<PremiumSidebarMapProps> = ({ clientData }) => {
-    const { t } = useTranslation('common');
+    const { t } = useTranslation('client');
 
     // Robust Coordinate Extraction
     const getCoords = (): [number, number] => {
@@ -55,7 +55,7 @@ export const PremiumSidebarMap: React.FC<PremiumSidebarMapProps> = ({ clientData
             </div>
             <div className="p-6 space-y-4 relative bg-white z-10">
                 <div>
-                    <h3 className="text-lg font-bold mb-1">Company Address</h3>
+                    <h3 className="text-lg font-bold mb-1">{t('sidebar.address', 'Company Address')}</h3>
                     <div className="flex items-start gap-2 text-gray-600 text-sm">
                         <MapPin className="h-4 w-4 mt-1 flex-shrink-0" />
                         <p>{clientData.address || 'No address provided'}</p>
@@ -64,7 +64,7 @@ export const PremiumSidebarMap: React.FC<PremiumSidebarMapProps> = ({ clientData
 
                 {clientData.phone && (
                     <div>
-                        <h3 className="text-lg font-bold mb-1">Phone</h3>
+                        <h3 className="text-lg font-bold mb-1">{t('sidebar.phone', 'Phone')}</h3>
                         <div className="flex items-center gap-2 text-gray-600 text-sm">
                             <Phone className="h-4 w-4" />
                             <a href={`tel:${clientData.phone}`} className="hover:text-primary transition-colors">{clientData.phone}</a>
@@ -74,7 +74,7 @@ export const PremiumSidebarMap: React.FC<PremiumSidebarMapProps> = ({ clientData
 
                 {clientData.website && (
                     <div>
-                        <h3 className="text-lg font-bold mb-1">Website</h3>
+                        <h3 className="text-lg font-bold mb-1">{t('sidebar.website', 'Website')}</h3>
                         <div className="flex items-center gap-2 text-gray-600 text-sm">
                             <Globe className="h-4 w-4" />
                             <a href={clientData.website} target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors truncate max-w-full block">
@@ -85,7 +85,7 @@ export const PremiumSidebarMap: React.FC<PremiumSidebarMapProps> = ({ clientData
                 )}
 
                 <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white gap-2 mt-2">
-                    <Navigation className="h-4 w-4" /> Get Directions
+                    <Navigation className="h-4 w-4" /> {t('actions.getDirections', 'Get Directions')}
                 </Button>
             </div>
         </div>

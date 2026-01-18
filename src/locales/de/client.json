@@ -1,0 +1,61 @@
+{
+    "tabs": {
+        "about": "Über Uns",
+        "video": "Video",
+        "featured": "Hervorgehoben",
+        "gallery": "Galerie",
+        "website": "Webseite",
+        "products": "Produkte",
+        "offer": "Aktuelles Angebot"
+    },
+    "actions": {
+        "visitWebsite": "Webseite Besuchen",
+        "contact": "Kontakt",
+        "getOffer": "Angebot Ansehen"
+    },
+    "sidebar": {
+        "address": "Firmenadresse",
+        "phone": "Telefon",
+        "website": "Webseite"
+    },
+    "products": {
+        "noProducts": "Noch keine Produkte oder Dienstleistungen gelistet."
+    },
+    "reviews": {
+        "title": "Was andere denken",
+        "beTheFirst": "Seien Sie der Erste, der {{name}} empfiehlt!",
+        "tellUs": "Erzählen Sie uns von Ihrer Erfahrung...",
+        "writeReview": "Bewertung schreiben"
+    },
+    "recommendationForm": {
+        "title": "Hinterlasse eine Empfehlung",
+        "name": "Name",
+        "lastName": "Nachname",
+        "email": "E-Mail-Adresse",
+        "emailPlaceholder": "sie@email.com",
+        "country": "Land",
+        "comment": "Dein Kommentar",
+        "commentPlaceholder": "Erzählen Sie uns von Ihrer Erfahrung...",
+        "submit": "Empfehlung Absenden",
+        "submitting": "Senden...",
+        "success": "Empfehlung erfolgreich gesendet!",
+        "errorMissingFields": "Bitte füllen Sie alle erforderlichen Felder aus.",
+        "errorGeneric": "Fehler beim Senden der Empfehlung. Bitte versuchen Sie es erneut.",
+        "connectTitle": "Verbinden & Teilen",
+        "noLinks": "Keine Kontaktlinks verfügbar."
+    },
+    "recommendationModal": {
+        "title": "Geschäft empfehlen",
+        "description": "Lade ein Foto hoch und erzähle uns von deiner Erfahrung, um Punkte zu sammeln.",
+        "photoLabel": "Foto",
+        "yourName": "Dein Name",
+        "emailOptional": "E-Mail oder WhatsApp (Optional)",
+        "commentLabel": "Kommentar",
+        "commentPlaceholder": "Was hat dir am besten gefallen?",
+        "send": "Empfehlung senden",
+        "successTitle": "Empfehlung gesendet!",
+        "successMessage": "Danke für deinen Beitrag. Er wird in Kürze überprüft.",
+        "errorTitle": "Fehler",
+        "errorGeneric": "Etwas ist schief gelaufen."
+    }
+}

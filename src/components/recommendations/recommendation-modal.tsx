@@ -69,15 +69,15 @@ export function RecommendationModal({
 
             if (result.success) {
                 toast({
-                    title: "Recommendation Sent!",
-                    description: "Thanks for your contribution. It will be reviewed shortly.",
+                    title: t('recommendationModal.successTitle', 'Recommendation Sent!'),
+                    description: t('recommendationModal.successMessage', 'Thanks for your contribution.'),
                 });
                 setIsOpen(false);
                 formRef.current?.reset();
                 setPhotoPreview(null);
             } else {
                 toast({
-                    title: "Error",
+                    title: t('recommendationModal.errorTitle', 'Error'),
                     description: result.message,
                     variant: 'destructive'
                 });
@@ -85,8 +85,8 @@ export function RecommendationModal({
         } catch (error) {
             console.error(error);
             toast({
-                title: "Error",
-                description: "Something went wrong.",
+                title: t('recommendationModal.errorTitle', 'Error'),
+                description: t('recommendationModal.errorGeneric', 'Something went wrong.'),
                 variant: 'destructive'
             });
         } finally {
@@ -95,23 +95,23 @@ export function RecommendationModal({
     };
 
 
-    const { t } = useTranslation('common');
+    const { t } = useTranslation('client');
 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle>{t('community.recommend_business', 'Recomendar Negocio')}</DialogTitle>
+                    <DialogTitle>{t('recommendationModal.title', 'Recomendar Negocio')}</DialogTitle>
                     <DialogDescription>
-                        {t('community.recommend_desc', 'Sube una foto y cuéntanos tu experiencia para ganar puntos.')}
+                        {t('recommendationModal.description', 'Sube una foto y cuéntanos tu experiencia para ganar puntos.')}
                     </DialogDescription>
                 </DialogHeader>
                 <form ref={formRef} onSubmit={handleSubmit} className="grid gap-4 py-4">
                     <input type="hidden" name="businessId" value={businessId} />
 
                     <div className="grid gap-2">
-                        <Label htmlFor="photo">{t('community.photo', 'Foto')}</Label>
+                        <Label htmlFor="photo">{t('recommendationModal.photoLabel', 'Foto')}</Label>
                         <div className="flex items-center gap-4">
                             <div className="relative flex h-24 w-24 flex-shrink-0 items-center justify-center rounded-md border border-dashed bg-slate-50">
                                 {photoPreview ? (
@@ -133,28 +133,28 @@ export function RecommendationModal({
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="userName">{t('community.your_name', 'Tu Nombre')}</Label>
-                        <Input id="userName" name="userName" placeholder="Juan Pérez" required />
+                        <Label htmlFor="userName">{t('recommendationModal.yourName', 'Tu Nombre')}</Label>
+                        <Input id="userName" name="userName" placeholder={t('recommendationForm.name', 'Nombre')} required />
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="userContact">{t('community.email_whatsapp_opt', 'Email o WhatsApp (Opcional)')}</Label>
-                        <Input id="userContact" name="userContact" placeholder="Para notificarte de puntos" />
+                        <Label htmlFor="userContact">{t('recommendationModal.emailOptional', 'Email o WhatsApp (Opcional)')}</Label>
+                        <Input id="userContact" name="userContact" placeholder={t('recommendationForm.emailPlaceholder', 'Email')} />
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="comment">{t('community.comment_label', 'Comentario')}</Label>
+                        <Label htmlFor="comment">{t('recommendationModal.commentLabel', 'Comentario')}</Label>
                         <Textarea
                             id="comment"
                             name="comment"
-                            placeholder={t('community.comment_placeholder', '¿Qué te gustó más?')}
+                            placeholder={t('recommendationModal.commentPlaceholder', '¿Qué te gustó más?')}
                         />
                     </div>
 
                     <DialogFooter>
                         <Button type="submit" disabled={isSubmitting}>
                             {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                            {t('community.send_recommendation', 'Enviar Recomendación')}
+                            {t('recommendationModal.send', 'Enviar Recomendación')}
                         </Button>
                     </DialogFooter>
                 </form>

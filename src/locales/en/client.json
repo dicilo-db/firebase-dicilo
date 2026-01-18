@@ -1,0 +1,61 @@
+{
+    "tabs": {
+        "about": "About Us",
+        "video": "Video",
+        "featured": "Featured",
+        "gallery": "Gallery",
+        "website": "Website",
+        "products": "Products",
+        "offer": "Current Offer"
+    },
+    "actions": {
+        "visitWebsite": "Visit Website",
+        "contact": "Contact",
+        "getOffer": "Get Offer"
+    },
+    "sidebar": {
+        "address": "Company Address",
+        "phone": "Phone",
+        "website": "Website"
+    },
+    "products": {
+        "noProducts": "No products or services listed yet."
+    },
+    "reviews": {
+        "title": "What others think",
+        "beTheFirst": "Be the first to recommend {{name}}!",
+        "tellUs": "Tell us about your experience...",
+        "writeReview": "Write a Review"
+    },
+    "recommendationForm": {
+        "title": "Leave a Recommendation",
+        "name": "Name",
+        "lastName": "Last Name",
+        "email": "Email Address",
+        "emailPlaceholder": "you@email.com",
+        "country": "Country",
+        "comment": "Your Comment",
+        "commentPlaceholder": "Tell us about your experience...",
+        "submit": "Submit Recommendation",
+        "submitting": "Sending...",
+        "success": "Recommendation sent successfully!",
+        "errorMissingFields": "Please fill in all required fields.",
+        "errorGeneric": "Error sending recommendation. Please try again.",
+        "connectTitle": "Connect & Share",
+        "noLinks": "No contact links available."
+    },
+    "recommendationModal": {
+        "title": "Recommend Business",
+        "description": "Upload a photo and tell us about your experience to earn points.",
+        "photoLabel": "Photo",
+        "yourName": "Your Name",
+        "emailOptional": "Email or WhatsApp (Optional)",
+        "commentLabel": "Comment",
+        "commentPlaceholder": "What did you like most?",
+        "send": "Send Recommendation",
+        "successTitle": "Recommendation Sent!",
+        "successMessage": "Thanks for your contribution. It will be reviewed shortly.",
+        "errorTitle": "Error",
+        "errorGeneric": "Something went wrong."
+    }
+}

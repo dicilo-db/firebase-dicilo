@@ -25,7 +25,7 @@ export const DiciCoinInfo = () => {
 
                 <ul className="list-none space-y-2 pl-4">
                     <li>✔ Early access to a growing ecosystem</li>
-                    <li>✔ Limited and individually numbered physical collector's coin</li>
+                    <li>✔ Limited and individually numbered physical collector&apos;s coin</li>
                     <li>✔ Preferential access to defined future opportunities within the Dicilo ecosystem</li>
                     <li>✔ Symbolic belonging with a strategic perspective</li>
                 </ul>

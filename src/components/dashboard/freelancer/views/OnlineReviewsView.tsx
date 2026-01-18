@@ -211,8 +211,8 @@ export function OnlineReviewsView() {
                                                 <MessageSquare className="h-5 w-5 text-primary" />
                                             </div>
                                             <div>
-                                                <div className="text-sm font-semibold mb-1">{t('freelancer_views.online_reviews.new_comment')} "{post.companyName || 'Tu Post'}"</div>
-                                                <p className="text-sm text-zinc-600 mb-2">"¡Me encanta este producto! ¿Dónde puedo conseguirlo?"</p>
+                                                <div className="text-sm font-semibold mb-1">{t('freelancer_views.online_reviews.new_comment')} &quot;{post.companyName || 'Tu Post'}&quot;</div>
+                                                <p className="text-sm text-zinc-600 mb-2">&quot;¡Me encanta este producto! ¿Dónde puedo conseguirlo?&quot;</p>
                                                 <div className="flex items-center gap-4 text-xs text-muted-foreground">
                                                     <span>Hace 2 horas</span>
                                                     <Button variant="link" className="h-auto p-0 text-xs">{t('freelancer_views.online_reviews.reply_btn')}</Button>

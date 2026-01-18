@@ -42,6 +42,7 @@ export interface HeaderData {
 export interface InfoCardData {
     title: string;
     content: string;
+    isActive?: boolean;
 }
 
 export interface GraphicData {

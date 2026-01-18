@@ -100,12 +100,10 @@ const createPopupContent = (
   if (displayImage) {
     content += `<div style="
             position: absolute; 
-            inset: -10px; 
+            inset: 0; 
             background-image: url('${displayImage}'); 
             background-size: cover; 
             background-position: center; 
-            filter: blur(12px) brightness(0.6);
-            transform: scale(1.1);
             z-index: 1;
         "></div>`;
   } else {
@@ -273,7 +271,7 @@ const DiciloMap: React.FC<DiciloMapProps> = ({
   onMarkerDragEnd,
 }) => {
   const { t, i18n } = useTranslation('common');
-  const locale = i18n.language;
+  const locale = i18n.language?.split('-')[0] || 'de';
   const mapRef = useRef<LeafletMap | null>(null);
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const markersRef = useRef<Map<string, L.Marker>>(new Map());

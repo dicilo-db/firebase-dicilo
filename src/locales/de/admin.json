@@ -448,7 +448,18 @@
       "notFoundTitle": "Kunde nicht gefunden",
       "notFoundDesc": "Der angeforderte Kunde existiert nicht.",
       "fetchErrorTitle": "Fehler beim Laden",
-      "fetchErrorDesc": "Die Kundendaten konnten nicht geladen werden."
+      "fetchErrorDesc": "Die Kundendaten konnten nicht geladen werden.",
+      "dangerZone": {
+        "title": "Gefahrenzone",
+        "description": "Kunden auf ein Basis-Geschäft zurückstufen. Erweiterte Funktionen werden entfernt.",
+        "button": "Auf Basic zurückstufen",
+        "buttonProcessing": "Wird zurückgestuft...",
+        "dialog": {
+          "title": "Rückstufung bestätigen",
+          "description": "Dies wandelt den Kunden wieder in ein Basis-Geschäft um.\n<br /><br />\n<strong>Warnung:</strong> Erweiterte Daten wie Galerie, Produkte und Coupons könnten verloren gehen, wenn sie vom Basis-Plan nicht unterstützt werden. Basis-Felder (Adresse, Beschreibung, Übersetzungen, Koordinaten) bleiben erhalten.",
+          "confirm": "Ja, Zurückstufen"
+        }
+      }
     },
     "new": {
       "title": "Neuen Kunden anlegen",
@@ -561,7 +572,8 @@
       "infoCards": {
         "title": "Info-Karten (Reiter)",
         "add": "Karte hinzufügen",
-        "card": "Karte"
+        "card": "Karte",
+        "content": "Inhalt"
       },
       "graphics": {
         "title": "Titel der Grafik",
