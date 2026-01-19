@@ -164,3 +164,44 @@ export async function sendTicketReplyEmail(email: string, ticketId: string, titl
         return { success: false, error };
     }
 }
+
+export async function sendRecommendationNotification(email: string, clientName: string, reviewerName: string, rating: number, comment: string) {
+    const resend = getResend();
+    if (!resend) return { success: false, error: 'Missing API Key' };
+
+    try {
+        const { data, error } = await resend.emails.send({
+            from: 'Dicilo <info@dicilo.net>',
+            to: [email],
+            subject: `Neue Bewertung für ${clientName}`,
+            html: `
+                <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                    <h2 style="color: #333;">Neue Bewertung erhalten</h2>
+                    <p>Hallo ${clientName},</p>
+                    <p>Du hast eine neue Bewertung von <strong>${reviewerName}</strong> erhalten.</p>
+                    
+                    <div style="background-color: #f8fafc; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; margin: 20px 0;">
+                        <div style="font-size: 24px; color: #fbbf24; margin-bottom: 10px;">
+                            ${'★'.repeat(rating)}${'☆'.repeat(5 - rating)}
+                        </div>
+                        <p style="font-style: italic; color: #475569; margin: 0;">"${comment}"</p>
+                    </div>
+
+                    <p>Du kannst die Bewertung in deinem Dashboard einsehen.</p>
+                    
+                    <p>Beste Grüße,<br/>Dein Dicilo Team</p>
+                </div>
+            `,
+        });
+
+        if (error) {
+            console.error('Resend Error:', error);
+            return { success: false, error };
+        }
+
+        return { success: true, data };
+    } catch (error) {
+        console.error('Email Sending Error:', error);
+        return { success: false, error };
+    }
+}

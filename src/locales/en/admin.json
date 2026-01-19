@@ -603,6 +603,41 @@
       }
     }
   },
+  "clientReviews": {
+    "title": "Review Management",
+    "subtitle": "Moderate all client reviews in one place.",
+    "backToDashboard": "Back to Dashboard",
+    "table": {
+      "date": "Date",
+      "client": "Client",
+      "reviewer": "Reviewer",
+      "rating": "Rating",
+      "comment": "Comment",
+      "status": "Status",
+      "actions": "Actions",
+      "empty": "No reviews found.",
+      "loading": "Loading..."
+    },
+    "status": {
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "pending": "Pending"
+    },
+    "actions": {
+      "approve": "Approve",
+      "reject": "Reject",
+      "delete": "Delete",
+      "confirmDelete": "Are you sure you want to delete this review permanently?"
+    },
+    "messages": {
+      "success": "Success",
+      "statusUpdated": "Review {{status}}",
+      "deleted": "Review deleted",
+      "errorFetch": "Error fetching reviews"
+    },
+    "cardBigTitle": "Client Reviews",
+    "cardDesc": "Approve and reject reviews"
+  },
   "feedbacks": {
     "title": "Feedbacks",
     "table": {

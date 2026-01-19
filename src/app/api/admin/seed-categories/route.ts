@@ -5,6 +5,8 @@ import categoriesData from '@/data/categories.json';
 import categoryTranslationsData from '@/data/category_translations.json';
 import subcategoryTranslationsData from '@/data/subcategory_translations.json';
 
+export const dynamic = 'force-dynamic';
+
 // Type definitions for JSON data
 type Translations = Record<string, { de: string; en: string; es: string }>;
 const categoryTranslations = categoryTranslationsData as Translations;

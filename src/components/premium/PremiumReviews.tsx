@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { ClientData } from '@/types/client';
-import { getFirestore, collection, query, orderBy, onSnapshot, limit } from 'firebase/firestore';
+import { getFirestore, collection, query, orderBy, onSnapshot, limit, where } from 'firebase/firestore';
 import { app } from '@/lib/firebase';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -21,12 +21,14 @@ import { RecommendationModal } from '../recommendations/recommendation-modal';
 
 interface Recommendation {
     id: string;
-    name: string;
+    name?: string;     // Legacy
+    userName?: string; // New standard
     lastName?: string;
     comment: string;
     country?: string;
-    rating?: number; // Should be 1-5, default 5 if missing? Start with 5.
+    rating?: number;
     createdAt?: any;
+    status?: string;
 }
 
 interface PremiumReviewsProps {
@@ -41,7 +43,13 @@ export const PremiumReviews: React.FC<PremiumReviewsProps> = ({ clientData }) =>
     useEffect(() => {
         const db = getFirestore(app);
         const reviewsRef = collection(db, 'clients', clientData.id, 'recommendations');
-        const q = query(reviewsRef, orderBy('createdAt', 'desc'), limit(20));
+        // Filter by approved status to ensure only moderated content is shown
+        const q = query(
+            reviewsRef,
+            where('status', '==', 'approved'),
+            orderBy('createdAt', 'desc'),
+            limit(20)
+        );
 
         const unsubscribe = onSnapshot(q, (snapshot) => {
             const fetchedRecommendations: Recommendation[] = [];
@@ -52,6 +60,7 @@ export const PremiumReviews: React.FC<PremiumReviewsProps> = ({ clientData }) =>
             setLoading(false);
         }, (error) => {
             console.error("Error fetching reviews:", error);
+            // If index is missing, it might fail. 
             setLoading(false);
         });
 
@@ -60,8 +69,14 @@ export const PremiumReviews: React.FC<PremiumReviewsProps> = ({ clientData }) =>
 
     if (loading) return <div className="h-40 w-full animate-pulse bg-gray-100 rounded-xl" />;
 
-    // Initial mockup reviews if empty? No, prompt says "What others think", implying real data.
-    // But maybe show a polished empty state.
+    // Helper to get display name
+    const getDisplayName = (r: Recommendation) => {
+        if (r.userName) return r.userName;
+        const first = r.name || 'Anonymous';
+        const last = r.lastName || '';
+        return `${first} ${last}`.trim();
+    };
+
     if (reviews.length === 0) {
         return (
             <div className="rounded-2xl border bg-white p-6 shadow-sm">
@@ -83,72 +98,75 @@ export const PremiumReviews: React.FC<PremiumReviewsProps> = ({ clientData }) =>
     }
 
     return (
-        <div className="rounded-2xl border bg-white shadow-sm overflow-hidden flex flex-col max-h-[500px]">
+        <div className="rounded-2xl border bg-white shadow-sm overflow-hidden flex flex-col max-h-[400px]">
             <div className="p-4 border-b bg-gray-50 flex justify-between items-center">
-                <h3 className="text-xl font-bold">Evaluations</h3>
+                <h3 className="text-xl font-bold">{t('reviews.evaluationsTitle', 'Evaluations')}</h3>
                 <div className="flex items-center gap-1 text-sm font-medium bg-white px-2 py-1 rounded-full border">
                     <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" />
-                    <span>4.8</span>
-                    <span className="text-gray-400">({reviews.length})</span>
+                    <span>{clientData.rating_promedio || '0.0'}</span>
+                    <span className="text-gray-400">({clientData.total_resenas || reviews.length})</span>
                 </div>
             </div>
 
             <div className="overflow-y-auto flex-1 p-4 space-y-4">
-                {reviews.map((review) => (
-                    <div key={review.id} className="border-b last:border-0 pb-4">
-                        <div className="flex justify-between items-start mb-1">
-                            <div className="flex items-center gap-2">
-                                <Avatar className="h-8 w-8">
-                                    <AvatarImage src={`https://api.dicebear.com/7.x/initials/svg?seed=${review.name}`} />
-                                    <AvatarFallback>{review.name[0]}</AvatarFallback>
-                                </Avatar>
-                                <div>
-                                    <p className="text-sm font-bold text-gray-900">{review.name} {review.lastName}</p>
-                                    {review.country && <p className="text-xs text-gray-400">{review.country}</p>}
+                {reviews.map((review) => {
+                    const displayName = getDisplayName(review);
+                    return (
+                        <div key={review.id} className="border-b last:border-0 pb-4">
+                            <div className="flex justify-between items-start mb-1">
+                                <div className="flex items-center gap-2">
+                                    <Avatar className="h-8 w-8">
+                                        <AvatarImage src={`https://api.dicebear.com/7.x/initials/svg?seed=${displayName}`} />
+                                        <AvatarFallback>{displayName[0]}</AvatarFallback>
+                                    </Avatar>
+                                    <div>
+                                        <p className="text-sm font-bold text-gray-900">{displayName}</p>
+                                        {review.country && <p className="text-xs text-gray-400">{review.country}</p>}
+                                    </div>
+                                </div>
+                                <div className="flex gap-0.5">
+                                    {[1, 2, 3, 4, 5].map((star) => (
+                                        <Star
+                                            key={star}
+                                            className={`h-3 w-3 ${star <= (review.rating || 5) ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`}
+                                        />
+                                    ))}
                                 </div>
                             </div>
-                            <div className="flex gap-0.5">
-                                {[1, 2, 3, 4, 5].map((star) => (
-                                    <Star
-                                        key={star}
-                                        className={`h-3 w-3 ${star <= (review.rating || 5) ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`}
-                                    />
-                                ))}
-                            </div>
-                        </div>
 
-                        <p className="text-sm text-gray-600 line-clamp-2">{review.comment}</p>
+                            <p className="text-sm text-gray-600 line-clamp-2">{review.comment}</p>
 
-                        {review.comment.length > 100 && (
-                            <Dialog>
-                                <DialogTrigger asChild>
-                                    <Button variant="link" className="p-0 h-auto text-xs text-primary mt-1">
-                                        Read more
-                                    </Button>
-                                </DialogTrigger>
-                                <DialogContent>
-                                    <DialogHeader>
-                                        <DialogTitle>Review by {review.name}</DialogTitle>
-                                        <DialogDescription className="text-sm text-gray-500">
-                                            {review.createdAt && formatDistanceToNow(review.createdAt.toDate(), { addSuffix: true })}
-                                        </DialogDescription>
-                                    </DialogHeader>
-                                    <div className="mt-4">
-                                        <div className="flex items-center gap-1 mb-4">
-                                            {[1, 2, 3, 4, 5].map((star) => (
-                                                <Star
-                                                    key={star}
-                                                    className={`h-4 w-4 ${star <= (review.rating || 5) ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`}
-                                                />
-                                            ))}
+                            {review.comment.length > 100 && (
+                                <Dialog>
+                                    <DialogTrigger asChild>
+                                        <Button variant="link" className="p-0 h-auto text-xs text-primary mt-1">
+                                            {t('reviews.readMore', 'Read more')}
+                                        </Button>
+                                    </DialogTrigger>
+                                    <DialogContent>
+                                        <DialogHeader>
+                                            <DialogTitle>{t('reviews.reviewBy', { name: displayName })}</DialogTitle>
+                                            <DialogDescription className="text-sm text-gray-500">
+                                                {review.createdAt && formatDistanceToNow(review.createdAt.toDate(), { addSuffix: true })}
+                                            </DialogDescription>
+                                        </DialogHeader>
+                                        <div className="mt-4">
+                                            <div className="flex items-center gap-1 mb-4">
+                                                {[1, 2, 3, 4, 5].map((star) => (
+                                                    <Star
+                                                        key={star}
+                                                        className={`h-4 w-4 ${star <= (review.rating || 5) ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`}
+                                                    />
+                                                ))}
+                                            </div>
+                                            <p className="text-gray-700 leading-relaxed">{review.comment}</p>
                                         </div>
-                                        <p className="text-gray-700 leading-relaxed">{review.comment}</p>
-                                    </div>
-                                </DialogContent>
-                            </Dialog>
-                        )}
-                    </div>
-                ))}
+                                    </DialogContent>
+                                </Dialog>
+                            )}
+                        </div>
+                    );
+                })}
             </div>
         </div>
     );

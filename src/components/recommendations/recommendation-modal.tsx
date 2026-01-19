@@ -14,7 +14,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Loader2, Camera, Upload } from 'lucide-react';
+import { Loader2, Camera, Upload, Star } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { submitRecommendation } from '@/app/actions/recommendation';
 import { useTranslation } from 'react-i18next';
@@ -35,6 +35,7 @@ export function RecommendationModal({
     const { toast } = useToast();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+    const [rating, setRating] = useState(5);
     const formRef = useRef<HTMLFormElement>(null);
 
     // Internal state if uncontrolled
@@ -75,6 +76,7 @@ export function RecommendationModal({
                 setIsOpen(false);
                 formRef.current?.reset();
                 setPhotoPreview(null);
+                setRating(5);
             } else {
                 toast({
                     title: t('recommendationModal.errorTitle', 'Error'),
@@ -143,11 +145,31 @@ export function RecommendationModal({
                     </div>
 
                     <div className="grid gap-2">
+                        <Label>{t('recommendationModal.rate', 'Calificación')}</Label>
+                        <div className="flex gap-1">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                                <button
+                                    key={star}
+                                    type="button"
+                                    onClick={() => setRating(star)}
+                                    className="focus:outline-none"
+                                >
+                                    <Star
+                                        className={`h-6 w-6 ${rating >= star ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`}
+                                    />
+                                </button>
+                            ))}
+                        </div>
+                        <input type="hidden" name="rating" value={rating} />
+                    </div>
+
+                    <div className="grid gap-2">
                         <Label htmlFor="comment">{t('recommendationModal.commentLabel', 'Comentario')}</Label>
                         <Textarea
                             id="comment"
                             name="comment"
                             placeholder={t('recommendationModal.commentPlaceholder', '¿Qué te gustó más?')}
+                            required
                         />
                     </div>
 

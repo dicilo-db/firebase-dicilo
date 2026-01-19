@@ -470,6 +470,8 @@ exports.promoteToClient = (0, https_1.onCall)((request) => __awaiter(void 0, voi
             testimonials: [],
             // Fix: Transfer translations
             translations: businessData.description_translations || {},
+            category: businessData.category || '',
+            subcategory: businessData.subcategory || '',
             clientType: clientType,
             // Fix: Add coordinates
             coordinates: coordinates,
@@ -530,7 +532,8 @@ exports.demoteToBasic = (0, https_1.onCall)((request) => __awaiter(void 0, void 
             description: clientData.description,
             // Fix: Transfer translations back
             description_translations: clientData.translations || {},
-            category: clientData.clientSubtitle || 'Uncategorized', // Fallback
+            category: clientData.category || clientData.clientSubtitle || 'Uncategorized',
+            subcategory: clientData.subcategory || '',
             location: clientData.location || '',
             address: clientData.address || '',
             zip: clientData.zip || '',

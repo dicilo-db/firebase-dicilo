@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Camera } from 'lucide-react';
+import { MessageSquarePlus } from 'lucide-react';
 import { RecommendationModal } from './recommendation-modal';
 
 interface RecommendationButtonProps {
@@ -20,7 +20,7 @@ export function RecommendationButton({ businessId }: RecommendationButtonProps) 
                     className="h-14 w-14 rounded-full bg-primary shadow-lg hover:bg-primary/90 hover:scale-105 transition-transform"
                     size="icon"
                 >
-                    <Camera className="h-6 w-6 text-white" />
+                    <MessageSquarePlus className="h-6 w-6 text-white" />
                     <span className="sr-only">Recomendar</span>
                 </Button>
             </div>

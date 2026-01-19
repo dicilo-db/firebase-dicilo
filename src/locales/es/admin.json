@@ -611,6 +611,41 @@
       }
     }
   },
+  "clientReviews": {
+    "title": "Moderación de Reseñas",
+    "subtitle": "Modera todas las reseñas de clientes en un solo lugar.",
+    "backToDashboard": "Volver al Panel",
+    "table": {
+      "date": "Fecha",
+      "client": "Cliente",
+      "reviewer": "Usuario",
+      "rating": "Calif.",
+      "comment": "Comentario",
+      "status": "Estado",
+      "actions": "Acciones",
+      "empty": "No se encontraron reseñas.",
+      "loading": "Cargando..."
+    },
+    "status": {
+      "approved": "Aprobado",
+      "rejected": "Rechazado",
+      "pending": "Pendiente"
+    },
+    "actions": {
+      "approve": "Aprobar",
+      "reject": "Rechazar",
+      "delete": "Eliminar",
+      "confirmDelete": "¿Estás seguro de que quieres eliminar esta reseña permanentemente?"
+    },
+    "messages": {
+      "success": "Éxito",
+      "statusUpdated": "Reseña {{status}}",
+      "deleted": "Reseña eliminada",
+      "errorFetch": "Error al obtener reseñas"
+    },
+    "cardBigTitle": "Reseñas Clientes",
+    "cardDesc": "Aprobar y rechazar reseñas"
+  },
   "feedbacks": {
     "title": "Comentarios",
     "table": {

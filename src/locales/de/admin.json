@@ -603,6 +603,41 @@
       }
     }
   },
+  "clientReviews": {
+    "title": "Bewertungsmanagement",
+    "subtitle": "Moderieren Sie alle Kundenbewertungen an einem Ort.",
+    "backToDashboard": "Zurück zum Dashboard",
+    "table": {
+      "date": "Datum",
+      "client": "Kunde",
+      "reviewer": "Rezensent",
+      "rating": "Bewertung",
+      "comment": "Kommentar",
+      "status": "Status",
+      "actions": "Aktionen",
+      "empty": "Keine Bewertungen gefunden.",
+      "loading": "Laden..."
+    },
+    "status": {
+      "approved": "Genehmigt",
+      "rejected": "Abgelehnt",
+      "pending": "Ausstehend"
+    },
+    "actions": {
+      "approve": "Genehmigen",
+      "reject": "Ablehnen",
+      "delete": "Löschen",
+      "confirmDelete": "Sind Sie sicher, dass Sie diese Bewertung dauerhaft löschen möchten?"
+    },
+    "messages": {
+      "success": "Erfolg",
+      "statusUpdated": "Bewertung {{status}}",
+      "deleted": "Bewertung gelöscht",
+      "errorFetch": "Fehler beim Abrufen der Bewertungen"
+    },
+    "cardBigTitle": "Kundenbewertungen",
+    "cardDesc": "Bewertungen genehmigen und ablehnen"
+  },
   "feedbacks": {
     "title": "Feedbacks",
     "table": {

@@ -2594,10 +2594,9 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                     <Label htmlFor="bodyData.description_body">
                       {t('clients.fields.body.description')}
                     </Label>
-                    <Textarea
-                      id="bodyData.description_body"
-                      {...register('bodyData.description')}
-                      className="h-32"
+                    <TiptapEditor
+                      name="bodyData.description"
+                      control={control}
                     />
                   </div>
                   <div className="space-y-2">

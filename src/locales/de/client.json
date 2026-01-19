@@ -25,7 +25,10 @@
         "title": "Was andere denken",
         "beTheFirst": "Seien Sie der Erste, der {{name}} empfiehlt!",
         "tellUs": "Erzählen Sie uns von Ihrer Erfahrung...",
-        "writeReview": "Bewertung schreiben"
+        "writeReview": "Bewertung schreiben",
+        "evaluationsTitle": "Bewertungen",
+        "readMore": "Mehr lesen",
+        "reviewBy": "Bewertung von {{name}}"
     },
     "recommendationForm": {
         "title": "Hinterlasse eine Empfehlung",
@@ -45,8 +48,8 @@
         "noLinks": "Keine Kontaktlinks verfügbar."
     },
     "recommendationModal": {
-        "title": "Geschäft empfehlen",
-        "description": "Lade ein Foto hoch und erzähle uns von deiner Erfahrung, um Punkte zu sammeln.",
+        "title": "Hinterlassen Sie Ihre Empfehlung",
+        "description": "Laden Sie ein Foto hoch und erzählen Sie uns von Ihrer Erfahrung mit diesem Unternehmen. (Optional)",
         "photoLabel": "Foto",
         "yourName": "Dein Name",
         "emailOptional": "E-Mail oder WhatsApp (Optional)",

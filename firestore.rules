@@ -99,13 +99,7 @@ service cloud.firestore {
       allow write: if false;
     }
 
-    // Recommendations collection
-    match /recommendations/{recommendationId} {
-      allow create: if true; // Guest submissions allowed
-      allow read: if resource.data.status == 'approved' || isAdmin(); 
-      allow update: if isAdmin();
-      allow delete: if isSuperAdmin();
-    }
+    // Recommendations (moved to nested under /clients)
 
     // AI Knowledge Base (Config - Admin/Superadmin)
     match /ai_knowledge_snippets/{snippetId} {
@@ -165,6 +159,14 @@ service cloud.firestore {
     // Counters collection for IDs
     match /counters/{counterId} {
       allow read, write: if hasDashboardAccess(); // Needed for generating IDs (Team Office needs this)
+    }
+
+    // Recommendations (Collection Group)
+    match /{path=**}/recommendations/{recommendationId} {
+      allow create: if true;
+      allow read: if resource.data.status == 'approved' || isAdmin();
+      allow update: if isAdmin();
+      allow delete: if isSuperAdmin();
     }
 
     // Default deny

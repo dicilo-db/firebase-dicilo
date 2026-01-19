@@ -759,7 +759,22 @@ const DashboardContent: React.FC = () => {
               </Card>
             </Link>
 
-            {/* Feedbacks */}
+
+            {/* Client Reviews (Moderation) */}
+            <Link href="/admin/reviews" className="group">
+              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">{t('clientReviews.title', 'Moderate Reviews')}</CardTitle>
+                  <Star className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{t('clientReviews.cardBigTitle', 'Client Reviews')}</div>
+                  <p className="text-xs text-muted-foreground mt-1">{t('clientReviews.cardDesc', 'Approve and reject reviews')}</p>
+                </CardContent>
+              </Card>
+            </Link>
+
+            {/* Feedbacks (Platform) */}
             <Link href="/admin/feedbacks" className="group">
               <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">

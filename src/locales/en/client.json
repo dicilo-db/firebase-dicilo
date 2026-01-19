@@ -25,7 +25,10 @@
         "title": "What others think",
         "beTheFirst": "Be the first to recommend {{name}}!",
         "tellUs": "Tell us about your experience...",
-        "writeReview": "Write a Review"
+        "writeReview": "Write a Review",
+        "evaluationsTitle": "Evaluations",
+        "readMore": "Read more",
+        "reviewBy": "Review by {{name}}"
     },
     "recommendationForm": {
         "title": "Leave a Recommendation",
@@ -45,8 +48,8 @@
         "noLinks": "No contact links available."
     },
     "recommendationModal": {
-        "title": "Recommend Business",
-        "description": "Upload a photo and tell us about your experience to earn points.",
+        "title": "Leave your recommendation",
+        "description": "Upload a photo and tell us about your experience dealing with this company. (Optional)",
         "photoLabel": "Photo",
         "yourName": "Your Name",
         "emailOptional": "Email or WhatsApp (Optional)",
