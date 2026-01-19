@@ -12,9 +12,27 @@
     "cta": "Register Now"
   },
   "club": {
-    "title": "Join the Dicilo Club",
-    "description": "Join a community where quality and trust come first. Register as a member to receive exclusive benefits and discounts, or list your business to reach a wider audience.",
+    "title": "Welcome to the DICILO Community: Connect, Save, and Grow",
+    "description": "Dicilo is not just a store; it is an innovative digital platform and ecosystem that acts as a bridge between businesses and consumers. Our mission is to connect people, knowledge, and businesses globally, based on trust and transparency.",
     "cta": "Discover our Plans"
+  },
+  "newCards": {
+    "power": {
+      "title": "1. The Power of Our Community\n(Your Global and Local Network)",
+      "description": "By joining Dicilo, you become part of an 'exclusive' and connected community.\n\nReal Connection: We are a network uniting users and entrepreneurs, enabling effective interactions between key players.\n\nTrusted Environment: We eliminate uncertainty in the buying process thanks to real recommendations from genuine users.\n\nGlobal and Local Reach: We offer access to unique offers from both local and international products."
+    },
+    "save": {
+      "title": "2. For Those Who Want to SAVE\n(Smart Consumer)",
+      "description": "Dicilo is the ideal place to discover fascinating products at unbeatable prices.\n\nExclusive Discounts: As a member, you access special discounts with our trusted partners.\n\nPersonalized Alerts: Receive tailored recommendations via email or WhatsApp so you don't miss products matching your interests.\n\nBeta Access: Be the first to try new products and access innovations before they hit the market.\n\nPrizes and Giveaways: Your participation entitles you to enter exclusive annual giveaways with fantastic prizes."
+    },
+    "earn": {
+      "title": "3. For Those Who Want to EARN\n(Entrepreneurs, Recommenders, and Freelancers)",
+      "description": "Dicilo offers concrete tools to monetize your activity, whether you are a business or an active user.\n\nA. As a Recommender:\n\nEarn by Recommending: We transform recommendations into a valuable tool. You can earn rewards ('Referral Bonuses') simply by recommending Dicilo to friends and family.\n\nReal Influence: Your ratings and recommendations are distributed in segmented newsletters, helping others and building trust.\n\nB. As an Entrepreneur or Professional:\n\nGlobal Showcase: Use the platform to position your business and increase your visibility in markets that previously seemed unreachable.\n\nEffective Networking: Register and connect with a global network of other entrepreneurs and potential clients to expand your business.\n\nGrowth Tools: Access statistics, campaign analysis, and strategic support to scale your project."
+    },
+    "communication": {
+      "title": "4. Direct Communication:\nYour Personal Chat and Your Digital Neighborhood",
+      "description": "The platform is consciously designed to facilitate direct interpersonal communication and restore the familiar, personal atmosphere of a real 'neighborhood' in a modern, digital environment.\n\nImmediate Interaction (Human to Human): At Dicilo, you don't speak with anonymous bots. We enable direct and transparent communication between buyer and seller. This way, you can agree on details individually, clarify questions in real-time, and break down barriers – for business as trustworthy as a handshake.\n\nVernacular Community (\"Your Barrio\"): We foster more than just trade; we build a closely knitted community. In this digital ecosystem, users not only discover products but benefit from active exchange. Through honest interactions with brands and neighbors, a network emerges based on mutual help and genuine recommendations.\n\nSeamless Multi-channel Support: We are where you are. Our presence extends across all major channels – from WhatsApp and Telegram to social media. We ensure the conversation never stops and you find support and answers exactly where it is most convenient for you."
+    }
   },
   "weAreDicilo": {
     "title": "We Are Dicilo",

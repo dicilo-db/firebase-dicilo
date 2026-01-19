@@ -18,6 +18,9 @@ import {
   HeartHandshake,
   Eye,
   Recycle,
+  Globe,
+  PiggyBank,
+  MessageCircle,
 } from 'lucide-react';
 import { Header } from '@/components/header';
 import Footer from '@/components/footer';
@@ -42,12 +45,12 @@ const InfoCard = ({
         <div className="mb-4 flex justify-center">
           <div className="rounded-full bg-secondary p-3">{icon}</div>
         </div>
-        <CardTitle className="text-center text-2xl font-bold">
+        <CardTitle className="text-center text-2xl font-bold whitespace-pre-line">
           {t(titleKey)}
         </CardTitle>
       </CardHeader>
       <CardContent className="flex-grow">
-        <p className="text-center text-muted-foreground">{t(descKey)}</p>
+        <p className="text-center text-muted-foreground whitespace-pre-line">{t(descKey)}</p>
       </CardContent>
       {link && ctaKey && (
         <div className="p-6 pt-0">
@@ -85,6 +88,29 @@ function UeberUnsClientContent() {
   return (
     <>
       <ClubCtaCard />
+
+      <div className="grid gap-8 md:grid-cols-2">
+        <InfoCard
+          icon={<Globe className="h-8 w-8 text-primary" />}
+          titleKey="newCards.power.title"
+          descKey="newCards.power.description"
+        />
+        <InfoCard
+          icon={<PiggyBank className="h-8 w-8 text-primary" />}
+          titleKey="newCards.save.title"
+          descKey="newCards.save.description"
+        />
+        <InfoCard
+          icon={<TrendingUp className="h-8 w-8 text-primary" />}
+          titleKey="newCards.earn.title"
+          descKey="newCards.earn.description"
+        />
+        <InfoCard
+          icon={<MessageCircle className="h-8 w-8 text-primary" />}
+          titleKey="newCards.communication.title"
+          descKey="newCards.communication.description"
+        />
+      </div>
 
       <div className="grid gap-8 md:grid-cols-2">
         <InfoCard
