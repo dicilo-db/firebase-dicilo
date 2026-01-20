@@ -1345,6 +1345,20 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
       finalPayload.total_invested = data.total_invested;
       finalPayload.clientType = data.clientType;
 
+      // Explicitly set essential fields to ensure they overwrite originalData regardless of merge behavior
+      finalPayload.phone = data.phone;
+      finalPayload.address = data.address;
+      finalPayload.email = data.email;
+      finalPayload.website = data.website;
+
+      // Ensure bodyData and descriptions are strictly updated
+      if (data.bodyData) {
+        finalPayload.bodyData = data.bodyData;
+      }
+      if (data.description_translations) {
+        finalPayload.description_translations = data.description_translations;
+      }
+
       // Ensure infoCards are set directly from newData to override merge behavior that might be weird with arrays
       finalPayload.infoCards = newData.infoCards;
 
