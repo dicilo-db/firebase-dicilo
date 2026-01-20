@@ -1,0 +1,247 @@
+{
+  "common": {
+    "yes": "Ja",
+    "no": "Nein"
+  },
+  "header": {
+    "nav": {
+      "home": "Startseite",
+      "benefits": "Vorteile",
+      "planes": "Pläne",
+      "directory": "Verzeichnis",
+      "login": "Anmelden",
+      "register": "Registrieren",
+      "language": "Sprache"
+    }
+  },
+  "footer": {
+    "imprint": "Impressum",
+    "privacy": "Datenschutz",
+    "about": "Über uns",
+    "register": "Registrierung"
+  },
+  "search": {
+    "title": "Ihr Portal für Empfehlungen, dem Sie vertrauen können",
+    "description": "Entdecken Sie die besten Produkte und Dienstleistungen, empfohlen von einer vertrauenswürdigen Gemeinschaft.",
+    "business": "Unternehmen",
+    "location": "Standort",
+    "businessPlaceholder": "Name des Unternehmens...",
+    "locationPlaceholder": "Stadt, Region oder Land...",
+    "ariaLabel": "Suche nach Unternehmen oder Standorten",
+    "ariaButtonLabel": "Suche starten",
+    "geolocationAriaLabel": "Meinen Standort verwenden",
+    "businessNotFound": "Unternehmen nicht gefunden",
+    "businessNotFoundDesc": "Für „{query}“ konnten wir kein Unternehmen finden.",
+    "locationNotFound": "Standort nicht gefunden",
+    "locationNotFoundDesc": "Für „{query}“ konnten wir keinen Standort finden.",
+    "error": "Suchfehler",
+    "errorDesc": "Bei der Suche ist ein Fehler aufgetreten.",
+    "geolocationError": "Fehler bei der Geolokalisierung",
+    "geolocationErrorDesc": "Wir konnten deinen Standort nicht abrufen.",
+    "geolocationNotSupported": "Geolokalisierung nicht unterstützt",
+    "geolocationNotSupportedDesc": "Dein Browser unterstützt keine Geolokalisierung.",
+    "tagline": "Ihr Portal für Empfehlungen, dem Sie vertrauen können",
+    "taglineDesc": "Entdecken Sie die besten Produkte und Dienstleistungen, empfohlen von einer vertrauenswürdigen Gemeinschaft.",
+    "recommendationPortal": "Das Empfehlungsportal, dem Sie vertrauen können."
+  },
+  "mapPopup": {
+    "website": "Webseite"
+  },
+  "businessCard": {
+    "currentOffer": "Aktuelles Angebot"
+  },
+  "directory": {
+    "title": "Verzeichnis",
+    "description": "Dies ist die Verzeichnisseite. Der Inhalt wird in Kürze verfügbar sein.",
+    "content": "Willkommen im Verzeichnis. Wir arbeiten daran, Ihnen die besten Informationen zur Verfügung zu stellen. Besuchen Sie uns bald wieder!"
+  },
+  "register": {
+    "title": "Registrieren Sie sich bei Dicilo",
+    "description": "Treten Sie unserer Gemeinschaft bei und entdecken Sie eine Welt von Möglichkeiten. Füllen Sie das Formular aus, um zu beginnen.",
+    "firstName": "Vorname",
+    "lastName": "Nachname",
+    "email": "E-Mail",
+    "whatsapp": "WhatsApp",
+    "registrationType": "Art der Registrierung",
+    "submitButton": "Registrierung abschließen",
+    "loading": "Wird verarbeitet...",
+    "successTitle": "Registrierung erfolgreich!",
+    "successDescription": "Vielen Dank für Ihre Anmeldung. Wir werden uns in Kürze mit Ihnen in Verbindung setzen.",
+    "errorTitle": "Registrierungsfehler",
+    "errorDescription": "Beim Senden Ihrer Daten ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
+    "options": {
+      "private": "Privat",
+      "donor": "Spender",
+      "retailer": "Einzelhändler",
+      "premium": "Premium"
+    },
+    "firstNamePlaceholder": "Ihr Vorname",
+    "lastNamePlaceholder": "Ihr Nachname"
+  },
+  "benefits": {
+    "page_title": "Vorteile der Dicilo-Mitgliedschaft",
+    "page_subtitle": "Entdecken Sie, warum Dicilo die ideale Plattform für Unternehmen und Nutzer ist, die Wert auf Qualität und Vertrauen legen.",
+    "size": {
+      "title": "Wir sind klein",
+      "description": "Das ermöglicht es uns, uns auf jedes Detail zu konzentrieren und jedem Mitglied persönliche Aufmerksamkeit zu schenken."
+    },
+    "experience": {
+      "title": "Wir sind groß",
+      "description": "Wir verfügen über mehr als 25 Jahre Erfahrung in der Welt des Networkings und Marketings, was unseren Erfolg und unsere Zuverlässigkeit garantiert."
+    },
+    "two_reasons": {
+      "title": "Zwei gute Gründe, uns zu wählen",
+      "description": "Wir sind der Treffpunkt, an dem hochwertige Produkte und anspruchsvolle Verbraucher zusammenkommen."
+    },
+    "for_companies": {
+      "title": "Für Unternehmen",
+      "item1": {
+        "title": "Gezielte Sichtbarkeit",
+        "description": "Verbinden Sie sich mit einem Publikum, das wirklich an Ihren Produkten interessiert ist."
+      },
+      "item2": {
+        "title": "Netzwerkerweiterung",
+        "description": "Greifen Sie auf ein globales Netzwerk von Unternehmern und potenziellen Kunden zu."
+      },
+      "item3": {
+        "title": "Markenvertrauen",
+        "description": "Stärken Sie Ihr Image durch authentische Empfehlungen von zufriedenen Kunden."
+      }
+    },
+    "for_users": {
+      "title": "Für Nutzer",
+      "item1": {
+        "title": "Exklusive Angebote",
+        "description": "Greifen Sie auf einzigartige Rabatte auf lokale und internationale Produkte zu."
+      },
+      "item2": {
+        "title": "Zuverlässige Empfehlungen",
+        "description": "Treffen Sie fundierte Entscheidungen dank der Bewertungen einer vertrauenswürdigen Community."
+      },
+      "item3": {
+        "title": "Belohnungen für Ihre Teilnahme",
+        "description": "Profitieren Sie von Ihren Interaktionen und werden Sie zu einem wichtigen Teil des Netzwerks."
+      }
+    },
+    "network": {
+      "title": "Ein einzigartiges Netzwerk in Deutschland",
+      "description": "Dicilo ist nicht nur eine Plattform; es ist ein ganzes Ökosystem, das darauf ausgelegt ist, sowohl Unternehmen als auch Verbrauchern Vorteile zu bieten.",
+      "for_companies": {
+        "title": "Für Unternehmen",
+        "description": "Dicilo ist ein Schaufenster für Ihre Produkte und ein strategischer Partner, der Ihnen hilft zu wachsen. Wir bieten Ihnen die Werkzeuge, um ein breiteres und engagierteres Publikum zu erreichen."
+      },
+      "for_users": {
+        "title": "Für Nutzer",
+        "description": "Als Teil von Dicilo erhalten Sie nicht nur Zugang zu exklusiven Angeboten, sondern werden auch Teil einer Community, in der Ihre Meinung zählt und belohnt wird."
+      },
+      "cta_text": "Sind Sie bereit, Teil der Veränderung zu sein?",
+      "cta_button_company": "Unternehmen registrieren",
+      "cta_button_user": "Als Nutzer beitreten"
+    },
+    "social": {
+      "title": "Folgen Sie uns in unseren Netzwerken",
+      "description": "Verpassen Sie keine unserer Neuigkeiten und Sonderaktionen. Werden Sie Teil unserer digitalen Community auf Ihrer bevorzugten Plattform."
+    }
+  },
+  "pricing_page": {
+    "hero_title": "Unsere Pläne",
+    "hero_subtitle": "Willkommen bei DICILO, dem Portal für Empfehlungen, dem Sie vertrauen können. Finden Sie den Plan, der am besten zu Ihnen passt.",
+    "plans_title": "Unsere Pläne und Preise",
+    "plans_desc_1": "Wir bei DICILO sind davon überzeugt, dass Erfolg durch echte Empfehlungen und eine starke Gemeinschaft erreicht wird. Aus diesem Grund haben wir eine Plattform entwickelt, die Unternehmen und Käufer auf effiziente Weise zusammenbringt. Ganz gleich, ob Sie verkaufen, kaufen oder unbenutzte Gegenstände verschenken möchten – DICILO bietet Ihnen eine kostengünstige und wirkungsvolle Lösung.",
+    "plans_desc_2": "DICILO.net ist eine Plattform, die Unternehmen und Verbraucher über ein digitales Netzwerk von Produkten und Dienstleistungen verbindet. Durch authentische Empfehlungen, direkte Marketingmöglichkeiten und technischen Support hilft DICILO, die Reichweite und Sichtbarkeit Ihrer Produkte zu maximieren.",
+    "plans_desc_3": "Es ist von großem Vorteil, Teil von DICILO.net zu sein, da die Plattform eine hohe Sichtbarkeit gewährleistet, direkte Werbung an interessierte Nutzer ermöglicht und das Unternehmenswachstum durch Empfehlungen in einer globalen Gemeinschaft fördert.",
+    "plans_cta": "Wählen Sie jetzt den für Sie passenden Tarif und kontaktieren Sie uns!",
+    "converter": {
+      "title": "Euro-Konverter",
+      "desc": "Die Preise sind in Euro. Verwenden Sie diesen Konverter, um eine Schätzung in Ihrer Landeswährung zu erhalten. Die Wechselkurse sind Schätzungen und können variieren.",
+      "amount_placeholder": "Betrag in EUR",
+      "button": "Umrechnen",
+      "please_enter_amount": "Bitte geben Sie einen Betrag ein.",
+      "error": "Fehler bei der Umrechnung."
+    },
+    "plans": [
+      {
+        "title": "Privatkunde",
+        "price": "€0",
+        "period": "/Jahr",
+        "features": [
+          "Erhalt des Newsletters mit den aktuellen Angeboten.",
+          "Exklusive Rabatte.",
+          "Keine Kaufbeschränkungen.",
+          "Technischer Support.",
+          "Kontaktieren Sie uns, wenn Sie spezielle Produkte oder Dienstleistungen erwerben möchten",
+          "Jährliche Mitgliedschaft."
+        ],
+        "buttonText": "Kontakt",
+        "popular": false
+      },
+      {
+        "title": "Spender",
+        "price": "€60",
+        "period": "/Jahr",
+        "features": [
+          "Erhalt des Newsletters mit den aktuellen Angeboten.",
+          "Registrieren Sie bis zu 24 Produkte pro Jahr.",
+          "Empfehlungsnewsletter.",
+          "16 Social Media Posts.",
+          "Registrierungsformular.",
+          "E-Mail-Support, Mo. – Fr.",
+          "Jährliche Mitgliedschaft."
+        ],
+        "buttonText": "Kontakt",
+        "popular": false
+      },
+      {
+        "title": "Einzelhändler",
+        "price": "€2.340",
+        "period": "/Jahr",
+        "features": [
+          "Erhalt des Newsletters mit den aktuellen Angeboten.",
+          "Registrieren Sie bis zu 300 Produkte oder Dienstleistungen in maximal 4 Kategorien",
+          "2 x Empfehlungsnewsletter pro Monat an (potenzielle Prospekte)",
+          "Online-Grafiktools",
+          "4 x im Jahr kostenlose K.I.-Kurse besuchen",
+          "1 x pro Monat Statistik über Ihre Landingpage",
+          "60 Social Media Posts monatlich (3 Kanäle)",
+          "Allgemeines Registrierungsformular",
+          "E-Mail-Support, Mo. – Fr.",
+          "Technischer Support",
+          "K.I.-Assistent für (Chatbot)",
+          "Bei jährlicher Mitgliedschaftszahlung (5 % Rabatt)"
+        ],
+        "buttonText": "Kontakt",
+        "popular": false
+      },
+      {
+        "title": "Premium",
+        "price": "€3.900",
+        "period": "/Jahr",
+        "features": [
+          "Erhalt des Newsletters mit den aktuellen Angeboten.",
+          "Registrieren Sie bis zu 600 Produkte oder Dienstleistungen in maximal 14 Kategorien",
+          "2 x Empfehlungsnewsletter pro Monat an (Allgemeine Dicilo-Community)",
+          "Bearbeitung Ihrer Grafiken",
+          "Bearbeitung Ihrer Texte",
+          "1 x pro Monat individuelle K.I.-Kurse",
+          "2 x pro Monat Statistik über Ihre Landingpage",
+          "6 x im Jahr Online-Präsentation",
+          "120 Social Media Posts monatlich verteilt auf 6 Dicilo-Kanäle",
+          "Individuelles Registrierungsformular",
+          "E-Mail-Support, Mo. – Sa.",
+          "WhatsApp-Support, Mo. – Sa.",
+          "Premium Support (Individuell, kein künstlicher Support)",
+          "Individueller K.I.-Assistent auf Ihrer Landingpage",
+          "Bei jährlicher Mitgliedschaft (10 % Rabatt)"
+        ],
+        "buttonText": "Kontakt",
+        "popular": true
+      }
+    ]
+  },
+  "clients": {
+    "fields": {
+      "category": "Kategorie",
+      "subcategory": "Unterkategorie"
+    }
+  }
+}

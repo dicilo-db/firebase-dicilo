@@ -1,0 +1,26 @@
+{
+    "title": "Anmeldung",
+    "description": "Melden Sie sich an, um Ihr Unternehmen zu verwalten",
+    "emailLabel": "E-Mail",
+    "passwordLabel": "Passwort",
+    "loginButton": "Anmelden",
+    "forgotPassword": "Passwort vergessen?",
+    "successTitle": "Willkommen zurück!",
+    "successDescription": "Sie werden zum Dashboard weitergeleitet.",
+    "error": {
+        "title": "Anmeldefehler",
+        "invalidCredentials": "E-Mail oder Passwort falsch",
+        "generic": "Ein Fehler ist aufgetreten."
+    },
+    "reset": {
+        "successTitle": "E-Mail gesendet",
+        "successDescription": "Prüfen Sie Ihren Posteingang.",
+        "errorTitle": "Fehler",
+        "emailRequired": "E-Mail erforderlich",
+        "userNotFound": "Benutzer nicht gefunden",
+        "errorGeneric": "Fehler beim Senden"
+    },
+    "showPassword": "Passwort anzeigen",
+    "logout": "Abmelden",
+    "adminPanel": "Admin Panel"
+}

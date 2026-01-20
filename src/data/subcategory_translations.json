@@ -1,0 +1,2342 @@
+{
+    "Altersvorsorgeberatung": {
+        "de": "Altersvorsorgeberatung",
+        "en": "Retirement Planning",
+        "es": "Planificación de jubilación"
+    },
+    "Arbeitsrechtliche Beratung": {
+        "de": "Arbeitsrechtliche Beratung",
+        "en": "Employment Law Consulting",
+        "es": "Asesoría laboral"
+    },
+    "Baufinanzierungsberatung": {
+        "de": "Baufinanzierungsberatung",
+        "en": "Construction Financing Consulting",
+        "es": "Asesoría en financiación de construcción"
+    },
+    "Bauprojektberatung": {
+        "de": "Bauprojektberatung",
+        "en": "Construction Project Consulting",
+        "es": "Asesoría en proyectos de construcción"
+    },
+    "Betriebliches Gesundheitsmanagement": {
+        "de": "Betriebliches Gesundheitsmanagement",
+        "en": "Corporate Health Management",
+        "es": "Gestión de salud corporativa"
+    },
+    "Betriebshaftpflichtversicherung": {
+        "de": "Betriebshaftpflichtversicherung",
+        "en": "Public Liability Insurance",
+        "es": "Seguro de responsabilidad civil"
+    },
+    "Betriebsunterbrechungsversicherung": {
+        "de": "Betriebsunterbrechungsversicherung",
+        "en": "Business Interruption Insurance",
+        "es": "Seguro de interrupción de negocios"
+    },
+    "Buchhaltungsberatung": {
+        "de": "Buchhaltungsberatung",
+        "en": "Accounting Consulting",
+        "es": "Asesoría contable"
+    },
+    "Change Management": {
+        "de": "Change Management",
+        "en": "Change Management",
+        "es": "Gestión del cambio"
+    },
+    "Cloud-Beratung": {
+        "de": "Cloud-Beratung",
+        "en": "Cloud Consulting",
+        "es": "Consultoría en la nube"
+    },
+    "Coaching-Dienstleistungen": {
+        "de": "Coaching-Dienstleistungen",
+        "en": "Coaching Services",
+        "es": "Servicios de coaching"
+    },
+    "Compliance-Beratung": {
+        "de": "Compliance-Beratung",
+        "en": "Compliance Consulting",
+        "es": "Consultoría de cumplimiento"
+    },
+    "Customer Service-Beratung": {
+        "de": "Customer Service-Beratung",
+        "en": "Customer Service Consulting",
+        "es": "Consultoría de servicio al cliente"
+    },
+    "Datenschutz-Schulungen": {
+        "de": "Datenschutz-Schulungen",
+        "en": "Data Protection Training",
+        "es": "Formación en protección de datos"
+    },
+    "Datenschutzberatung": {
+        "de": "Datenschutzberatung",
+        "en": "Data Protection Consulting",
+        "es": "Consultoría de protección de datos"
+    },
+    "Digitalisierung in der Industrie": {
+        "de": "Digitalisierung in der Industrie",
+        "en": "Industrial Digitalization",
+        "es": "Digitalización industrial"
+    },
+    "Digitale Transformation": {
+        "de": "Digitale Transformation",
+        "en": "Digital Transformation",
+        "es": "Transformación digital"
+    },
+    "E-Commerce-Beratung": {
+        "de": "E-Commerce-Beratung",
+        "en": "E-Commerce Consulting",
+        "es": "Consultoría de comercio electrónico"
+    },
+    "Energieberatung": {
+        "de": "Energieberatung",
+        "en": "Energy Consulting",
+        "es": "Consultoría energética"
+    },
+    "Finanzberatung": {
+        "de": "Finanzberatung",
+        "en": "Financial Consulting",
+        "es": "Asesoría financiera"
+    },
+    "Flottenversicherungsberatung": {
+        "de": "Flottenversicherungsberatung",
+        "en": "Fleet Insurance Consulting",
+        "es": "Asesoría en seguros de flotas"
+    },
+    "Fusions- und Übernahmeberatung": {
+        "de": "Fusions- und Übernahmeberatung",
+        "en": "M&A Consulting",
+        "es": "Consultoría de fusiones y adquisiciones"
+    },
+    "Geschäftsberatung": {
+        "de": "Geschäftsberatung",
+        "en": "Business Consulting",
+        "es": "Consultoría de negocios"
+    },
+    "Haftpflichtversicherungsberatung": {
+        "de": "Haftpflichtversicherungsberatung",
+        "en": "Liability Insurance Consulting",
+        "es": "Asesoría en seguros de responsabilidad"
+    },
+    "Imageberatung": {
+        "de": "Imageberatung",
+        "en": "Image Consulting",
+        "es": "Asesoría de imagen"
+    },
+    "Innovationsberatung": {
+        "de": "Innovationsberatung",
+        "en": "Innovation Consulting",
+        "es": "Consultoría de innovación"
+    },
+    "IT-Beratung": {
+        "de": "IT-Beratung",
+        "en": "IT Consulting",
+        "es": "Consultoría TI"
+    },
+    "IT-Sicherheitsberatung": {
+        "de": "IT-Sicherheitsberatung",
+        "en": "IT Security Consulting",
+        "es": "Consultoría de seguridad TI"
+    },
+    "Kapitalanlageberatung": {
+        "de": "Kapitalanlageberatung",
+        "en": "Investment Consulting",
+        "es": "Asesoría de inversiones"
+    },
+    "Kommunikationsberatung": {
+        "de": "Kommunikationsberatung",
+        "en": "Communications Consulting",
+        "es": "Consultoría de comunicación"
+    },
+    "Kostenoptimierung": {
+        "de": "Kostenoptimierung",
+        "en": "Cost Optimization",
+        "es": "Optimización de costes"
+    },
+    "Krisenmanagement-Beratung": {
+        "de": "Krisenmanagement-Beratung",
+        "en": "Crisis Management Consulting",
+        "es": "Consultoría de gestión de crisis"
+    },
+    "Kulturwandel-Beratung": {
+        "de": "Kulturwandel-Beratung",
+        "en": "Cultural Change Consulting",
+        "es": "Consultoría de cambio cultural"
+    },
+    "Kurierdienste": {
+        "de": "Kurierdienste",
+        "en": "Courier Services",
+        "es": "Servicios de mensajería"
+    },
+    "Krankenversicherungsberatung": {
+        "de": "Krankenversicherungsberatung",
+        "en": "Health Insurance Consulting",
+        "es": "Asesoría de seguros de salud"
+    },
+    "Leitbildentwicklung": {
+        "de": "Leitbildentwicklung",
+        "en": "Mission Statement Development",
+        "es": "Desarrollo de misión corporativa"
+    },
+    "Lebensversicherungsberatung": {
+        "de": "Lebensversicherungsberatung",
+        "en": "Life Insurance Consulting",
+        "es": "Asesoría de seguros de vida"
+    },
+    "Logistikberatung": {
+        "de": "Logistikberatung",
+        "en": "Logistics Consulting",
+        "es": "Consultoría logística"
+    },
+    "Marketingberatung": {
+        "de": "Marketingberatung",
+        "en": "Marketing Consulting",
+        "es": "Consultoría de marketing"
+    },
+    "Nachhaltige Energieprojekte": {
+        "de": "Nachhaltige Energieprojekte",
+        "en": "Sustainable Energy Projects",
+        "es": "Proyectos de energía sostenible"
+    },
+    "Nachhaltigkeitsberatung": {
+        "de": "Nachhaltigkeitsberatung",
+        "en": "Sustainability Consulting",
+        "es": "Consultoría de sostenibilidad"
+    },
+    "Organisationsberatung": {
+        "de": "Organisationsberatung",
+        "en": "Organizational Consulting",
+        "es": "Consultoría organizacional"
+    },
+    "Pflegeversicherungsberatung": {
+        "de": "Pflegeversicherungsberatung",
+        "en": "Care Insurance Consulting",
+        "es": "Asesoría de seguros de cuidado"
+    },
+    "Private Krankenversicherung": {
+        "de": "Private Krankenversicherung",
+        "en": "Private Health Insurance",
+        "es": "Seguro médico privado"
+    },
+    "Produktentwicklung": {
+        "de": "Produktentwicklung",
+        "en": "Product Development",
+        "es": "Desarrollo de productos"
+    },
+    "Produktionsoptimierung": {
+        "de": "Produktionsoptimierung",
+        "en": "Production Optimization",
+        "es": "Optimización de producción"
+    },
+    "Produktionsplanung": {
+        "de": "Produktionsplanung",
+        "en": "Production Planning",
+        "es": "Planificación de producción"
+    },
+    "Prozessoptimierung": {
+        "de": "Prozessoptimierung",
+        "en": "Process Optimization",
+        "es": "Optimización de procesos"
+    },
+    "Projektmanagement-Beratung": {
+        "de": "Projektmanagement-Beratung",
+        "en": "Project Management Consulting",
+        "es": "Consultoría de gestión de proyectos"
+    },
+    "Rechtsschutzversicherungsberatung": {
+        "de": "Rechtsschutzversicherungsberatung",
+        "en": "Legal Protection Insurance Consulting",
+        "es": "Asesoría de seguros de protección legal"
+    },
+    "Reiseversicherungsberatung": {
+        "de": "Reiseversicherungsberatung",
+        "en": "Travel Insurance Consulting",
+        "es": "Asesoría de seguros de viaje"
+    },
+    "Rentenversicherungsberatung": {
+        "de": "Rentenversicherungsberatung",
+        "en": "Pension Insurance Consulting",
+        "es": "Asesoría de seguros de pensiones"
+    },
+    "Risikomanagement-Beratung": {
+        "de": "Risikomanagement-Beratung",
+        "en": "Risk Management Consulting",
+        "es": "Consultoría de gestión de riesgos"
+    },
+    "Schuldenberatung": {
+        "de": "Schuldenberatung",
+        "en": "Debt Counseling",
+        "es": "Asesoría de deudas"
+    },
+    "Steuerberatung": {
+        "de": "Steuerberatung",
+        "en": "Tax Consulting",
+        "es": "Asesoría fiscal"
+    },
+    "Steuerplanung": {
+        "de": "Steuerplanung",
+        "en": "Tax Planning",
+        "es": "Planificación fiscal"
+    },
+    "Strategieberatung": {
+        "de": "Strategieberatung",
+        "en": "Strategy Consulting",
+        "es": "Consultoría estratégica"
+    },
+    "Strategische Marktanalyse": {
+        "de": "Strategische Marktanalyse",
+        "en": "Strategic Market Analysis",
+        "es": "Análisis estratégico de mercado"
+    },
+    "Supply-Chain-Beratung": {
+        "de": "Supply-Chain-Beratung",
+        "en": "Supply Chain Consulting",
+        "es": "Consultoría de cadena de suministro"
+    },
+    "Technologie-Investitionen": {
+        "de": "Technologie-Investitionen",
+        "en": "Technology Investments",
+        "es": "Inversiones tecnológicas"
+    },
+    "Technologieberatung": {
+        "de": "Technologieberatung",
+        "en": "Technology Consulting",
+        "es": "Consultoría tecnológica"
+    },
+    "Todesfallversicherungsberatung": {
+        "de": "Todesfallversicherungsberatung",
+        "en": "Death Benefit Insurance Consulting",
+        "es": "Asesoría de seguros por fallecimiento"
+    },
+    "Umweltberatung": {
+        "de": "Umweltberatung",
+        "en": "Environmental Consulting",
+        "es": "Consultoría ambiental"
+    },
+    "Unternehmensberatung": {
+        "de": "Unternehmensberatung",
+        "en": "Management Consulting",
+        "es": "Consultoría de gestión"
+    },
+    "Unfallversicherungsberatung": {
+        "de": "Unfallversicherungsberatung",
+        "en": "Accident Insurance Consulting",
+        "es": "Asesoría de seguros de accidentes"
+    },
+    "Verhandlungsberatung": {
+        "de": "Verhandlungsberatung",
+        "en": "Negotiation Consulting",
+        "es": "Consultoría de negociación"
+    },
+    "Venture-Capital-Beratung": {
+        "de": "Venture-Capital-Beratung",
+        "en": "Venture Capital Consulting",
+        "es": "Consultoría de capital riesgo"
+    },
+    "Versicherungsberatung": {
+        "de": "Versicherungsberatung",
+        "en": "Insurance Consulting",
+        "es": "Asesoría de seguros"
+    },
+    "Vertriebsberatung": {
+        "de": "Vertriebsberatung",
+        "en": "Sales Consulting",
+        "es": "Consultoría de ventas"
+    },
+    "Vermögensschadenhaftpflichtversicherung": {
+        "de": "Vermögensschadenhaftpflichtversicherung",
+        "en": "Pecuniary Damage Liability Insurance",
+        "es": "Seguro de responsabilidad patrimonial"
+    },
+    "Versorgungskonzept-Beratung": {
+        "de": "Versorgungskonzept-Beratung",
+        "en": "Pension Concept Consulting",
+        "es": "Consultoría de conceptos de previsión"
+    },
+    "Zusatzversicherungsberatung": {
+        "de": "Zusatzversicherungsberatung",
+        "en": "Supplementary Insurance Consulting",
+        "es": "Asesoría de seguros complementarios"
+    },
+    "Zuschussberatung": {
+        "de": "Zuschussberatung",
+        "en": "Grant Consulting",
+        "es": "Asesoría de subvenciones"
+    },
+    "Abenteuercamps": {
+        "de": "Abenteuercamps",
+        "en": "Adventure Camps",
+        "es": "Campamentos de aventura"
+    },
+    "Abenteuertouren": {
+        "de": "Abenteuertouren",
+        "en": "Adventure Tours",
+        "es": "Tours de aventura"
+    },
+    "Aktivurlaub": {
+        "de": "Aktivurlaub",
+        "en": "Active Holidays",
+        "es": "Vacaciones activas"
+    },
+    "All-Inclusive-Pakete": {
+        "de": "All-Inclusive-Pakete",
+        "en": "All-Inclusive Packages",
+        "es": "Paquetes todo incluido"
+    },
+    "Autovermietung": {
+        "de": "Autovermietung",
+        "en": "Car Rental",
+        "es": "Alquiler de coches"
+    },
+    "Backpacking": {
+        "de": "Backpacking",
+        "en": "Backpacking",
+        "es": "Mochileros"
+    },
+    "Bergtouren": {
+        "de": "Bergtouren",
+        "en": "Mountain Tours",
+        "es": "Excursiones de montaña"
+    },
+    "Campingreisen": {
+        "de": "Campingreisen",
+        "en": "Camping Trips",
+        "es": "Viajes de camping"
+    },
+    "Erlebnisreisen": {
+        "de": "Erlebnisreisen",
+        "en": "Experience Travel",
+        "es": "Viajes de experiencia"
+    },
+    "Expeditionen": {
+        "de": "Expeditionen",
+        "en": "Expeditions",
+        "es": "Expediciones"
+    },
+    "Fahrradtouren": {
+        "de": "Fahrradtouren",
+        "en": "Bicycle Tours",
+        "es": "Tours en bicicleta"
+    },
+    "Familienurlaubsreisen": {
+        "de": "Familienurlaubsreisen",
+        "en": "Family Holidays",
+        "es": "Vacaciones familiares"
+    },
+    "Flitterwochen-Reisen": {
+        "de": "Flitterwochen-Reisen",
+        "en": "Honeymoon Trips",
+        "es": "Viajes de luna de miel"
+    },
+    "Flugreservierungen": {
+        "de": "Flugreservierungen",
+        "en": "Flight Reservations",
+        "es": "Reservas de vuelos"
+    },
+    "Flugtouren": {
+        "de": "Flugtouren",
+        "en": "Air Tours",
+        "es": "Tours aéreos"
+    },
+    "Fotoreisen": {
+        "de": "Fotoreisen",
+        "en": "Photography Tours",
+        "es": "Viajes fotográficos"
+    },
+    "Freizeitparks und Resorts": {
+        "de": "Freizeitparks und Resorts",
+        "en": "Theme Parks & Resorts",
+        "es": "Parques temáticos y resorts"
+    },
+    "Geschäftsreisen": {
+        "de": "Geschäftsreisen",
+        "en": "Business Travel",
+        "es": "Viajes de negocios"
+    },
+    "Incentive-Reisen": {
+        "de": "Incentive-Reisen",
+        "en": "Incentive Travel",
+        "es": "Viajes de incentivos"
+    },
+    "Junggesellenabschiedsreisen": {
+        "de": "Junggesellenabschiedsreisen",
+        "en": "Bachelor Party Trips",
+        "es": "Despedidas de soltero/a"
+    },
+    "Koch- und Gourmetreisen": {
+        "de": "Koch- und Gourmetreisen",
+        "en": "Culinary Tours",
+        "es": "Viajes gastronómicos"
+    },
+    "Kreuzfahrten": {
+        "de": "Kreuzfahrten",
+        "en": "Cruises",
+        "es": "Cruceros"
+    },
+    "Kultur- und Kunstreisen": {
+        "de": "Kultur- und Kunstreisen",
+        "en": "Culture & Art Tours",
+        "es": "Viajes culturales y de arte"
+    },
+    "Kulturreisen": {
+        "de": "Kulturreisen",
+        "en": "Cultural Trips",
+        "es": "Viajes culturales"
+    },
+    "Luxusreisen": {
+        "de": "Luxusreisen",
+        "en": "Luxury Travel",
+        "es": "Viajes de lujo"
+    },
+    "Motorradtouren": {
+        "de": "Motorradtouren",
+        "en": "Motorcycle Tours",
+        "es": "Tours en motocicleta"
+    },
+    "Nationalparks-Touren": {
+        "de": "Nationalparks-Touren",
+        "en": "National Park Tours",
+        "es": "Tours a parques nacionales"
+    },
+    "Öko-Luxusreisen": {
+        "de": "Öko-Luxusreisen",
+        "en": "Eco-Luxury Travel",
+        "es": "Viajes de eco-lujo"
+    },
+    "Öko-Touren": {
+        "de": "Öko-Touren",
+        "en": "Eco-Tours",
+        "es": "Eco-tours"
+    },
+    "Ökotourismus-Reisen": {
+        "de": "Ökotourismus-Reisen",
+        "en": "Ecotourism Trips",
+        "es": "Viajes de ecoturismo"
+    },
+    "Reisebüros": {
+        "de": "Reisebüros",
+        "en": "Travel Agencies",
+        "es": "Agencias de viajes"
+    },
+    "Reiseversicherungen": {
+        "de": "Reiseversicherungen",
+        "en": "Travel Insurance",
+        "es": "Seguros de viaje"
+    },
+    "Rucksacktouren": {
+        "de": "Rucksacktouren",
+        "en": "Backpacking Tours",
+        "es": "Excursiones con mochila"
+    },
+    "Rundreisen": {
+        "de": "Rundreisen",
+        "en": "Round Trips",
+        "es": "Circuitos"
+    },
+    "Safari-Reisen": {
+        "de": "Safari-Reisen",
+        "en": "Safari Trips",
+        "es": "Safaris"
+    },
+    "Schiffsreisen": {
+        "de": "Schiffsreisen",
+        "en": "Boat Trips",
+        "es": "Viajes en barco"
+    },
+    "Segelreisen": {
+        "de": "Segelreisen",
+        "en": "Sailing Trips",
+        "es": "Viajes en velero"
+    },
+    "Skireisen": {
+        "de": "Skireisen",
+        "en": "Ski Trips",
+        "es": "Viajes de esquí"
+    },
+    "Sprachreisen": {
+        "de": "Sprachreisen",
+        "en": "Language Trips",
+        "es": "Viajes de idiomas"
+    },
+    "Städtereisen": {
+        "de": "Städtereisen",
+        "en": "City Breaks",
+        "es": "Escapadas urbanas"
+    },
+    "Strandreisen": {
+        "de": "Strandreisen",
+        "en": "Beach Holidays",
+        "es": "Vacaciones en la playa"
+    },
+    "Studienreisen": {
+        "de": "Studienreisen",
+        "en": "Study Trips",
+        "es": "Viajes de estudio"
+    },
+    "Studentenreisen": {
+        "de": "Studentenreisen",
+        "en": "Student Trips",
+        "es": "Viajes de estudiantes"
+    },
+    "Touristische Ausflüge": {
+        "de": "Touristische Ausflüge",
+        "en": "Tourist Excursions",
+        "es": "Excursiones turísticas"
+    },
+    "Wander- und Trekkingreisen": {
+        "de": "Wander- und Trekkingreisen",
+        "en": "Hiking & Trekking Trips",
+        "es": "Senderismo y trekking"
+    },
+    "Wanderreisen": {
+        "de": "Wanderreisen",
+        "en": "Hiking Trips",
+        "es": "Viajes de senderismo"
+    },
+    "Wassersport-Touren": {
+        "de": "Wassersport-Touren",
+        "en": "Water Sports Tours",
+        "es": "Tours de deportes acuáticos"
+    },
+    "Weltreisen": {
+        "de": "Weltreisen",
+        "en": "World Tours",
+        "es": "Vuelta al mundo"
+    },
+    "Wüstentouren": {
+        "de": "Wüstentouren",
+        "en": "Desert Tours",
+        "es": "Tours por el desierto"
+    },
+    "Zugreisen": {
+        "de": "Zugreisen",
+        "en": "Train Journeys",
+        "es": "Viajes en tren"
+    },
+    "Autobusreisen": {
+        "de": "Autobusreisen",
+        "en": "Bus Tours",
+        "es": "Viajes en autobús"
+    },
+    "Autoreparaturdienste": {
+        "de": "Autoreparaturdienste",
+        "en": "Car Repair Services",
+        "es": "Servicios de reparación de automóviles"
+    },
+    "Autovermietung für Touristen": {
+        "de": "Autovermietung für Touristen",
+        "en": "Tourist Car Rental",
+        "es": "Alquiler de coches para turistas"
+    },
+    "Autovermietungen für Langzeit": {
+        "de": "Autovermietungen für Langzeit",
+        "en": "Long-term Car Rental",
+        "es": "Alquiler de coches a largo plazo"
+    },
+    "Bahnreisen": {
+        "de": "Bahnreisen",
+        "en": "Train Travel",
+        "es": "Viajes en tren"
+    },
+    "Binnenschifffahrt": {
+        "de": "Binnenschifffahrt",
+        "en": "Inland Navigation",
+        "es": "Navegación fluvial"
+    },
+    "Busreisen": {
+        "de": "Busreisen",
+        "en": "Bus Travel",
+        "es": "Viajes en autobús"
+    },
+    "Carsharing-Dienste": {
+        "de": "Carsharing-Dienste",
+        "en": "Car Sharing Services",
+        "es": "Servicios de carsharing"
+    },
+    "Containertransporte": {
+        "de": "Containertransporte",
+        "en": "Container Transport",
+        "es": "Transporte de contenedores"
+    },
+    "Elektrofahrzeuge": {
+        "de": "Elektrofahrzeuge",
+        "en": "Electric Vehicles",
+        "es": "Vehículos eléctricos"
+    },
+    "Elektromopedverleih": {
+        "de": "Elektromopedverleih",
+        "en": "Electric Moped Rental",
+        "es": "Alquiler de ciclomotores eléctricos"
+    },
+    "Eisenbahnen": {
+        "de": "Eisenbahnen",
+        "en": "Railways",
+        "es": "Ferrocarriles"
+    },
+    "Fahrradkurierdienste": {
+        "de": "Fahrradkurierdienste",
+        "en": "Bicycle Courier Services",
+        "es": "Servicios de mensajería en bicicleta"
+    },
+    "Fahrradverleih": {
+        "de": "Fahrradverleih",
+        "en": "Bicycle Rental",
+        "es": "Alquiler de bicicletas"
+    },
+    "Fahrdienste für Senioren": {
+        "de": "Fahrdienste für Senioren",
+        "en": "Senior Transport Services",
+        "es": "Servicios de transporte para mayores"
+    },
+    "Fahrzeugvermietung": {
+        "de": "Fahrzeugvermietung",
+        "en": "Vehicle Rental",
+        "es": "Alquiler de vehículos"
+    },
+    "Fährdienste": {
+        "de": "Fährdienste",
+        "en": "Ferry Services",
+        "es": "Servicios de ferry"
+    },
+    "Flughafentransfers": {
+        "de": "Flughafentransfers",
+        "en": "Airport Transfers",
+        "es": "Traslados al aeropuerto"
+    },
+    "Frachttransport": {
+        "de": "Frachttransport",
+        "en": "Freight Transport",
+        "es": "Transporte de carga"
+    },
+    "Güterzugdienste": {
+        "de": "Güterzugdienste",
+        "en": "Freight Train Services",
+        "es": "Servicios de trenes de carga"
+    },
+    "Helikopter-Transfers": {
+        "de": "Helikopter-Transfers",
+        "en": "Helicopter Transfers",
+        "es": "Traslados en helicóptero"
+    },
+    "Kurierlogistik": {
+        "de": "Kurierlogistik",
+        "en": "Courier Logistics",
+        "es": "Logística de mensajería"
+    },
+    "Lastwagenverleih": {
+        "de": "Lastwagenverleih",
+        "en": "Truck Rental",
+        "es": "Alquiler de camiones"
+    },
+    "Lieferwagenvermietung": {
+        "de": "Lieferwagenvermietung",
+        "en": "Van Rental",
+        "es": "Alquiler de furgonetas"
+    },
+    "Limousinenservice": {
+        "de": "Limousinenservice",
+        "en": "Limousine Service",
+        "es": "Servicio de limusina"
+    },
+    "Logistikdienste": {
+        "de": "Logistikdienste",
+        "en": "Logistics Services",
+        "es": "Servicios de logística"
+    },
+    "Luftfrachtlogistik": {
+        "de": "Luftfrachtlogistik",
+        "en": "Air Freight Logistics",
+        "es": "Logística de carga aérea"
+    },
+    "Lufttransport": {
+        "de": "Lufttransport",
+        "en": "Air Transport",
+        "es": "Transporte aéreo"
+    },
+    "Lkw-Logistikdienste": {
+        "de": "Lkw-Logistikdienste",
+        "en": "Truck Logistics Services",
+        "es": "Servicios de logística de camiones"
+    },
+    "Mopedverleih": {
+        "de": "Mopedverleih",
+        "en": "Moped Rental",
+        "es": "Alquiler de ciclomotores"
+    },
+    "Motorradverleih": {
+        "de": "Motorradverleih",
+        "en": "Motorcycle Rental",
+        "es": "Alquiler de motocicletas"
+    },
+    "Parkplatz-Shuttleservices": {
+        "de": "Parkplatz-Shuttleservices",
+        "en": "Parking Shuttle Services",
+        "es": "Servicios de transporte al aparcamiento"
+    },
+    "Privatflugzeugvermietung": {
+        "de": "Privatflugzeugvermietung",
+        "en": "Private Jet Rental",
+        "es": "Alquiler de aviones privados"
+    },
+    "Ride-Sharing-Dienste": {
+        "de": "Ride-Sharing-Dienste",
+        "en": "Ride-Sharing Services",
+        "es": "Servicios de viaje compartido"
+    },
+    "Rikscha-Verleih": {
+        "de": "Rikscha-Verleih",
+        "en": "Rickshaw Rental",
+        "es": "Alquiler de rickshaws"
+    },
+    "Schulbusse": {
+        "de": "Schulbusse",
+        "en": "School Buses",
+        "es": "Autobuses escolares"
+    },
+    "Schultransport": {
+        "de": "Schultransport",
+        "en": "School Transport",
+        "es": "Transporte escolar"
+    },
+    "Schiffsverleih": {
+        "de": "Schiffsverleih",
+        "en": "Boat Rental",
+        "es": "Alquiler de barcos"
+    },
+    "Schnelltransporte": {
+        "de": "Schnelltransporte",
+        "en": "Express Transport",
+        "es": "Transporte urgente"
+    },
+    "Seetransport": {
+        "de": "Seetransport",
+        "en": "Sea Transport",
+        "es": "Transporte marítimo"
+    },
+    "Shuttleservices": {
+        "de": "Shuttleservices",
+        "en": "Shuttle Services",
+        "es": "Servicios de transporte"
+    },
+    "Stadtbusse": {
+        "de": "Stadtbusse",
+        "en": "City Buses",
+        "es": "Autobuses urbanos"
+    },
+    "Straßenbahndienste": {
+        "de": "Straßenbahndienste",
+        "en": "Tram Services",
+        "es": "Servicios de tranvía"
+    },
+    "Taxi-Dienste": {
+        "de": "Taxi-Dienste",
+        "en": "Taxi Services",
+        "es": "Servicios de taxi"
+    },
+    "Transportdienst für Events": {
+        "de": "Transportdienst für Events",
+        "en": "Event Transport Services",
+        "es": "Transporte para eventos"
+    },
+    "Transportdienste für Umzüge": {
+        "de": "Transportdienste für Umzüge",
+        "en": "Moving Transport Services",
+        "es": "Transporte de mudanzas"
+    },
+    "Transporte für Schwerlast": {
+        "de": "Transporte für Schwerlast",
+        "en": "Heavy Load Transport",
+        "es": "Transporte de carga pesada"
+    },
+    "Wassertransporte": {
+        "de": "Wassertransporte",
+        "en": "Water Transport",
+        "es": "Transporte acuático"
+    },
+    "Zugfrachtlogistik": {
+        "de": "Zugfrachtlogistik",
+        "en": "Rail Freight Logistics",
+        "es": "Logística de carga ferroviaria"
+    },
+    "Ätherische Öle für die Küche": {
+        "de": "Ätherische Öle für die Küche",
+        "en": "Essential Oils for Cooking",
+        "es": "Aceites esenciales para cocina"
+    },
+    "Ahornsirup": {
+        "de": "Ahornsirup",
+        "en": "Maple Syrup",
+        "es": "Jarabe de arce"
+    },
+    "Alkoholfreie Getränke": {
+        "de": "Alkoholfreie Getränke",
+        "en": "Non-alcoholic Beverages",
+        "es": "Bebidas sin alcohol"
+    },
+    "Apfelsaft": {
+        "de": "Apfelsaft",
+        "en": "Apple Juice",
+        "es": "Jugo de manzana"
+    },
+    "Aromatische Gewürze": {
+        "de": "Aromatische Gewürze",
+        "en": "Aromatic Spices",
+        "es": "Especias aromáticas"
+    },
+    "Backpulver": {
+        "de": "Backpulver",
+        "en": "Baking Powder",
+        "es": "Polvo de hornear"
+    },
+    "Bäckerei und Konditorei": {
+        "de": "Bäckerei und Konditorei",
+        "en": "Bakery and Confectionery",
+        "es": "Panadería y pastelería"
+    },
+    "Balsamico-Essig": {
+        "de": "Balsamico-Essig",
+        "en": "Balsamic Vinegar",
+        "es": "Vinagre balsámico"
+    },
+    "Bio-Lebensmittel": {
+        "de": "Bio-Lebensmittel",
+        "en": "Organic Food",
+        "es": "Alimentos orgánicos"
+    },
+    "Bohnen": {
+        "de": "Bohnen",
+        "en": "Beans",
+        "es": "Frijoles"
+    },
+    "Chips": {
+        "de": "Chips",
+        "en": "Chips",
+        "es": "Patatas fritas"
+    },
+    "Chutneys": {
+        "de": "Chutneys",
+        "en": "Chutneys",
+        "es": "Chutneys"
+    },
+    "Couscous": {
+        "de": "Couscous",
+        "en": "Couscous",
+        "es": "Cuscús"
+    },
+    "Desserts": {
+        "de": "Desserts",
+        "en": "Desserts",
+        "es": "Postres"
+    },
+    "Eingelegtes Gemüse": {
+        "de": "Eingelegtes Gemüse",
+        "en": "Pickled Vegetables",
+        "es": "Verduras encurtidas"
+    },
+    "Eier": {
+        "de": "Eier",
+        "en": "Eggs",
+        "es": "Huevos"
+    },
+    "Energydrinks": {
+        "de": "Energydrinks",
+        "en": "Energy Drinks",
+        "es": "Bebidas energéticas"
+    },
+    "Essbare Öle": {
+        "de": "Essbare Öle",
+        "en": "Edible Oils",
+        "es": "Aceites comestibles"
+    },
+    "Essig": {
+        "de": "Essig",
+        "en": "Vinegar",
+        "es": "Vinagre"
+    },
+    "Fertiggerichte": {
+        "de": "Fertiggerichte",
+        "en": "Ready Meals",
+        "es": "Comidas preparadas"
+    },
+    "Fisch und Meeresfrüchte": {
+        "de": "Fisch und Meeresfrüchte",
+        "en": "Fish and Seafood",
+        "es": "Pescado y mariscos"
+    },
+    "Fladenbrot": {
+        "de": "Fladenbrot",
+        "en": "Flatbread",
+        "es": "Pan plano"
+    },
+    "Fleisch und Geflügel": {
+        "de": "Fleisch und Geflügel",
+        "en": "Meat and Poultry",
+        "es": "Carne y aves"
+    },
+    "Frische Kräuter": {
+        "de": "Frische Kräuter",
+        "en": "Fresh Herbs",
+        "es": "Hierbas frescas"
+    },
+    "Frisches Obst und Gemüse": {
+        "de": "Frisches Obst und Gemüse",
+        "en": "Fresh Fruit and Vegetables",
+        "es": "Frutas y verduras frescas"
+    },
+    "Fruchtsäfte": {
+        "de": "Fruchtsäfte",
+        "en": "Fruit Juices",
+        "es": "Jugos de frutas"
+    },
+    "Frühstückscerealien": {
+        "de": "Frühstückscerealien",
+        "en": "Breakfast Cereals",
+        "es": "Cereales para el desayuno"
+    },
+    "Gefrorene Beeren": {
+        "de": "Gefrorene Beeren",
+        "en": "Frozen Berries",
+        "es": "Bayas congeladas"
+    },
+    "Gefrorene Snacks": {
+        "de": "Gefrorene Snacks",
+        "en": "Frozen Snacks",
+        "es": "Snacks congelados"
+    },
+    "Gelees": {
+        "de": "Gelees",
+        "en": "Jellies",
+        "es": "Jaleas"
+    },
+    "Getrocknete Kräuter": {
+        "de": "Getrocknete Kräuter",
+        "en": "Dried Herbs",
+        "es": "Hierbas secas"
+    },
+    "Getreide und Körner": {
+        "de": "Getreide und Körner",
+        "en": "Grains and Cereals",
+        "es": "Granos y cereales"
+    },
+    "Gewürze und Kräuter": {
+        "de": "Gewürze und Kräuter",
+        "en": "Spices and Herbs",
+        "es": "Especias y hierbas"
+    },
+    "Glutenfreies Brot": {
+        "de": "Glutenfreies Brot",
+        "en": "Gluten-free Bread",
+        "es": "Pan sin gluten"
+    },
+    "Griechischer Joghurt": {
+        "de": "Griechischer Joghurt",
+        "en": "Greek Yogurt",
+        "es": "Yogur griego"
+    },
+    "Grillsoßen": {
+        "de": "Grillsoßen",
+        "en": "BBQ Sauces",
+        "es": "Salsas barbacoa"
+    },
+    "Haferflocken": {
+        "de": "Haferflocken",
+        "en": "Oatmeal",
+        "es": "Avena"
+    },
+    "Halbfertigprodukte": {
+        "de": "Halbfertigprodukte",
+        "en": "Semi-finished Products",
+        "es": "Productos semielaborados"
+    },
+    "Honig": {
+        "de": "Honig",
+        "en": "Honey",
+        "es": "Miel"
+    },
+    "Instant-Kartoffelpüree": {
+        "de": "Instant-Kartoffelpüree",
+        "en": "Instant Mashed Potatoes",
+        "es": "Puré de patatas instantáneo"
+    },
+    "Instant-Nudeln": {
+        "de": "Instant-Nudeln",
+        "en": "Instant Noodles",
+        "es": "Fideos instantáneos"
+    },
+    "Instant-Suppen": {
+        "de": "Instant-Suppen",
+        "en": "Instant Soups",
+        "es": "Sopas instantáneas"
+    },
+    "Joghurt": {
+        "de": "Joghurt",
+        "en": "Yogurt",
+        "es": "Yogur"
+    },
+    "Kaffee und Tee": {
+        "de": "Kaffee und Tee",
+        "en": "Coffee and Tea",
+        "es": "Café y té"
+    },
+    "Kakao": {
+        "de": "Kakao",
+        "en": "Cocoa",
+        "es": "Cacao"
+    },
+    "Kartoffelpüree": {
+        "de": "Kartoffelpüree",
+        "en": "Mashed Potatoes",
+        "es": "Puré de patatas"
+    },
+    "Kekse und Waffeln": {
+        "de": "Kekse und Waffeln",
+        "en": "Cookies and Waffles",
+        "es": "Galletas y gofres"
+    },
+    "Ketchup": {
+        "de": "Ketchup",
+        "en": "Ketchup",
+        "es": "Kétchup"
+    },
+    "Knäckebrot": {
+        "de": "Knäckebrot",
+        "en": "Crispbread",
+        "es": "Pan crujiente"
+    },
+    "Kokosmilch": {
+        "de": "Kokosmilch",
+        "en": "Coconut Milk",
+        "es": "Leche de coco"
+    },
+    "Konserven": {
+        "de": "Konserven",
+        "en": "Canned Goods",
+        "es": "Conservas"
+    },
+    "Laktosefreie Milchprodukte": {
+        "de": "Laktosefreie Milchprodukte",
+        "en": "Lactose-free Dairy Products",
+        "es": "Productos lácteos sin lactosa"
+    },
+    "Linsen": {
+        "de": "Linsen",
+        "en": "Lentils",
+        "es": "Lentejas"
+    },
+    "Margarine": {
+        "de": "Margarine",
+        "en": "Margarine",
+        "es": "Margarina"
+    },
+    "Marmeladen": {
+        "de": "Marmeladen",
+        "en": "Jams",
+        "es": "Mermeladas"
+    },
+    "Mayonnaise": {
+        "de": "Mayonnaise",
+        "en": "Mayonnaise",
+        "es": "Mayonesa"
+    },
+    "Mehl": {
+        "de": "Mehl",
+        "en": "Flour",
+        "es": "Harina"
+    },
+    "Milchprodukte": {
+        "de": "Milchprodukte",
+        "en": "Dairy Products",
+        "es": "Productos lácteos"
+    },
+    "Müsli": {
+        "de": "Müsli",
+        "en": "Muesli",
+        "es": "Muesli"
+    },
+    "Nudeln": {
+        "de": "Nudeln",
+        "en": "Pasta",
+        "es": "Pasta"
+    },
+    "Nüsse und Mandeln": {
+        "de": "Nüsse und Mandeln",
+        "en": "Nuts and Almonds",
+        "es": "Nueces y almendras"
+    },
+    "Oliven": {
+        "de": "Oliven",
+        "en": "Olives",
+        "es": "Aceitunas"
+    },
+    "Olivenöl": {
+        "de": "Olivenöl",
+        "en": "Olive Oil",
+        "es": "Aceite de oliva"
+    },
+    "Orangensaft": {
+        "de": "Orangensaft",
+        "en": "Orange Juice",
+        "es": "Jugo de naranja"
+    },
+    "Pflanzenöle": {
+        "de": "Pflanzenöle",
+        "en": "Vegetable Oils",
+        "es": "Aceites vegetales"
+    },
+    "Popcorn": {
+        "de": "Popcorn",
+        "en": "Popcorn",
+        "es": "Palomitas de maíz"
+    },
+    "Probiotische Getränke": {
+        "de": "Probiotische Getränke",
+        "en": "Probiotic Drinks",
+        "es": "Bebidas probióticas"
+    },
+    "Proteinriegel": {
+        "de": "Proteinriegel",
+        "en": "Protein Bars",
+        "es": "Barras de proteínas"
+    },
+    "Quinoa": {
+        "de": "Quinoa",
+        "en": "Quinoa",
+        "es": "Quinoa"
+    },
+    "Reis": {
+        "de": "Reis",
+        "en": "Rice",
+        "es": "Arroz"
+    },
+    "Salatdressings": {
+        "de": "Salatdressings",
+        "en": "Salad Dressings",
+        "es": "Aderezos para ensaladas"
+    },
+    "Salz": {
+        "de": "Salz",
+        "en": "Salt",
+        "es": "Sal"
+    },
+    "Saucen und Dressings": {
+        "de": "Saucen und Dressings",
+        "en": "Sauces and Dressings",
+        "es": "Salsas y aderezos"
+    },
+    "Schokolade": {
+        "de": "Schokolade",
+        "en": "Chocolate",
+        "es": "Chocolate"
+    },
+    "Schnellgerichte": {
+        "de": "Schnellgerichte",
+        "en": "Fast Food",
+        "es": "Comida rápida"
+    },
+    "Senf": {
+        "de": "Senf",
+        "en": "Mustard",
+        "es": "Mostaza"
+    },
+    "Sirup": {
+        "de": "Sirup",
+        "en": "Syrup",
+        "es": "Jarabe"
+    },
+    "Snacks": {
+        "de": "Snacks",
+        "en": "Snacks",
+        "es": "Snacks"
+    },
+    "Sojaprodukte": {
+        "de": "Sojaprodukte",
+        "en": "Soy Products",
+        "es": "Productos de soja"
+    },
+    "Speiseeis": {
+        "de": "Speiseeis",
+        "en": "Ice Cream",
+        "es": "Helado"
+    },
+    "Süßkartoffeln": {
+        "de": "Süßkartoffeln",
+        "en": "Sweet Potatoes",
+        "es": "Batatas"
+    },
+    "Süßwaren": {
+        "de": "Süßwaren",
+        "en": "Confectionery",
+        "es": "Confitería"
+    },
+    "Suppen": {
+        "de": "Suppen",
+        "en": "Soups",
+        "es": "Sopas"
+    },
+    "Tacos": {
+        "de": "Tacos",
+        "en": "Tacos",
+        "es": "Tacos"
+    },
+    "Tiefkühlprodukte": {
+        "de": "Tiefkühlprodukte",
+        "en": "Frozen Foods",
+        "es": "Productos congelados"
+    },
+    "Tofu": {
+        "de": "Tofu",
+        "en": "Tofu",
+        "es": "Tofu"
+    },
+    "Tomatensoße": {
+        "de": "Tomatensoße",
+        "en": "Tomato Sauce",
+        "es": "Salsa de tomate"
+    },
+    "Tortillas": {
+        "de": "Tortillas",
+        "en": "Tortillas",
+        "es": "Tortillas"
+    },
+    "Trockenfrüchte": {
+        "de": "Trockenfrüchte",
+        "en": "Dried Fruit",
+        "es": "Frutas secas"
+    },
+    "Vanilleextrakt": {
+        "de": "Vanilleextrakt",
+        "en": "Vanilla Extract",
+        "es": "Extracto de vainilla"
+    },
+    "Vegane Gerichte": {
+        "de": "Vegane Gerichte",
+        "en": "Vegan Dishes",
+        "es": "Platos veganos"
+    },
+    "Vollkornbrot": {
+        "de": "Vollkornbrot",
+        "en": "Whole Wheat Bread",
+        "es": "Pan integral"
+    },
+    "Weine und Spirituosen": {
+        "de": "Weine und Spirituosen",
+        "en": "Wines and Spirits",
+        "es": "Vinos y licores"
+    },
+    "Würzmischungen": {
+        "de": "Würzmischungen",
+        "en": "Spice Mixes",
+        "es": "Mezclas de especias"
+    },
+    "Zartbitterschokolade": {
+        "de": "Zartbitterschokolade",
+        "en": "Dark Chocolate",
+        "es": "Chocolate negro"
+    },
+    "Zucker": {
+        "de": "Zucker",
+        "en": "Sugar",
+        "es": "Azúcar"
+    },
+    "Zuckersirup": {
+        "de": "Zuckersirup",
+        "en": "Sugar Syrup",
+        "es": "Jarabe de azúcar"
+    },
+    "Aquarienfilter": {
+        "de": "Aquarienfilter",
+        "en": "Aquarium Filters",
+        "es": "Filtros de acuario"
+    },
+    "Aquarienwasseraufbereiter": {
+        "de": "Aquarienwasseraufbereiter",
+        "en": "Aquarium Water Conditioners",
+        "es": "Acondicionadores de agua para acuarios"
+    },
+    "Aquarienzubehör": {
+        "de": "Aquarienzubehör",
+        "en": "Aquarium Accessories",
+        "es": "Accesorios para acuarios"
+    },
+    "Automatische Futterspender": {
+        "de": "Automatische Futterspender",
+        "en": "Automatic Feeders",
+        "es": "Comederos automáticos"
+    },
+    "Automatische Haustiertüren": {
+        "de": "Automatische Haustiertüren",
+        "en": "Automatic Pet Doors",
+        "es": "Puertas automáticas para mascotas"
+    },
+    "Automatische Wasserspender": {
+        "de": "Automatische Wasserspender",
+        "en": "Automatic Water Dispensers",
+        "es": "Dispensadores de agua automáticos"
+    },
+    "Biologisch abbaubare Hundekotbeutel": {
+        "de": "Biologisch abbaubare Hundekotbeutel",
+        "en": "Biodegradable Dog Poop Bags",
+        "es": "Bolsas biodegradables para excrementos de perro"
+    },
+    "Einstellbare Geschirre": {
+        "de": "Einstellbare Geschirre",
+        "en": "Adjustable Harnesses",
+        "es": "Arneses ajustables"
+    },
+    "Erste-Hilfe-Sets für Haustiere": {
+        "de": "Erste-Hilfe-Sets für Haustiere",
+        "en": "Pet First Aid Kits",
+        "es": "Botiquines de primeros auxilios para mascotas"
+    },
+    "Fischfutter": {
+        "de": "Fischfutter",
+        "en": "Fish Food",
+        "es": "Comida para peces"
+    },
+    "Futterstationen": {
+        "de": "Futterstationen",
+        "en": "Feeding Stations",
+        "es": "Estaciones de alimentación"
+    },
+    "Gefrorenes Schlangenfutter": {
+        "de": "Gefrorenes Schlangenfutter",
+        "en": "Frozen Snake Food",
+        "es": "Comida congelada para serpientes"
+    },
+    "Haustierbetten": {
+        "de": "Haustierbetten",
+        "en": "Pet Beds",
+        "es": "Camas para mascotas"
+    },
+    "Haustierzubehör": {
+        "de": "Haustierzubehör",
+        "en": "Pet Accessories",
+        "es": "Accesorios para mascotas"
+    },
+    "Hundeleinen und Halsbänder": {
+        "de": "Hundeleinen und Halsbänder",
+        "en": "Dog Leashes and Collars",
+        "es": "Correas y collares para perros"
+    },
+    "Hundesalons": {
+        "de": "Hundesalons",
+        "en": "Dog Grooming",
+        "es": "Peluquería canina"
+    },
+    "Hundesnacks": {
+        "de": "Hundesnacks",
+        "en": "Dog Snacks",
+        "es": "Snacks para perros"
+    },
+    "Hundespazierdienste": {
+        "de": "Hundespazierdienste",
+        "en": "Dog Walking Services",
+        "es": "Servicios de paseo de perros"
+    },
+    "Hundetagesstätten": {
+        "de": "Hundetagesstätten",
+        "en": "Dog Daycare",
+        "es": "Guarderías caninas"
+    },
+    "Hundetraining": {
+        "de": "Hundetraining",
+        "en": "Dog Training",
+        "es": "Adiestramiento canino"
+    },
+    "Hundewesten": {
+        "de": "Hundewesten",
+        "en": "Dog Vests",
+        "es": "Chalecos para perros"
+    },
+    "Hygieneprodukte für Haustiere": {
+        "de": "Hygieneprodukte für Haustiere",
+        "en": "Pet Hygiene Products",
+        "es": "Productos de higiene para mascotas"
+    },
+    "Kauspielzeug": {
+        "de": "Kauspielzeug",
+        "en": "Chew Toys",
+        "es": "Juguetes para masticar"
+    },
+    "Katzensnacks": {
+        "de": "Katzensnacks",
+        "en": "Cat Snacks",
+        "es": "Snacks para gatos"
+    },
+    "Katzenspielzeug": {
+        "de": "Katzenspielzeug",
+        "en": "Cat Toys",
+        "es": "Juguetes para gatos"
+    },
+    "Katzenstreu": {
+        "de": "Katzenstreu",
+        "en": "Cat Litter",
+        "es": "Arena para gatos"
+    },
+    "Katzentoiletten": {
+        "de": "Katzentoiletten",
+        "en": "Litter Boxes",
+        "es": "Cajas de arena"
+    },
+    "Kratzbäume für Katzen": {
+        "de": "Kratzbäume für Katzen",
+        "en": "Cat Scratching Posts",
+        "es": "Rascadores para gatos"
+    },
+    "Nahrungsergänzungsmittel für Haustiere": {
+        "de": "Nahrungsergänzungsmittel für Haustiere",
+        "en": "Pet Supplements",
+        "es": "Suplementos para mascotas"
+    },
+    "Nagernahrung": {
+        "de": "Nagernahrung",
+        "en": "Rodent Food",
+        "es": "Comida para roedores"
+    },
+    "Nagetiere Zubehör": {
+        "de": "Nagetiere Zubehör",
+        "en": "Rodent Accessories",
+        "es": "Accesorios para roedores"
+    },
+    "Nassfutter für Hunde": {
+        "de": "Nassfutter für Hunde",
+        "en": "Wet Dog Food",
+        "es": "Comida húmeda para perros"
+    },
+    "Natürliche Haustiernahrung": {
+        "de": "Natürliche Haustiernahrung",
+        "en": "Natural Pet Food",
+        "es": "Comida natural para mascotas"
+    },
+    "Orthopädische Hundebetten": {
+        "de": "Orthopädische Hundebetten",
+        "en": "Orthopedic Dog Beds",
+        "es": "Camas ortopédicas para perros"
+    },
+    "Ornamentale Fischausrüstung": {
+        "de": "Ornamentale Fischausrüstung",
+        "en": "Ornamental Fish Equipment",
+        "es": "Equipamiento para peces ornamentales"
+    },
+    "Reptilienfutter": {
+        "de": "Reptilienfutter",
+        "en": "Reptile Food",
+        "es": "Comida para reptiles"
+    },
+    "Terrariensubstrate": {
+        "de": "Terrariensubstrate",
+        "en": "Terrarium Substrates",
+        "es": "Sustratos para terrarios"
+    },
+    "Tieradoption": {
+        "de": "Tieradoption",
+        "en": "Pet Adoption",
+        "es": "Adopción de mascotas"
+    },
+    "Tiergeschäfte": {
+        "de": "Tiergeschäfte",
+        "en": "Pet Shops",
+        "es": "Tiendas de mascotas"
+    },
+    "Tierheime": {
+        "de": "Tierheime",
+        "en": "Animal Shelters",
+        "es": "Refugios de animales"
+    },
+    "Tierkleidung": {
+        "de": "Tierkleidung",
+        "en": "Pet Clothing",
+        "es": "Ropa para mascotas"
+    },
+    "Tierkliniken": {
+        "de": "Tierkliniken",
+        "en": "Veterinary Clinics",
+        "es": "Clínicas veterinarias"
+    },
+    "Tiernahrung": {
+        "de": "Tiernahrung",
+        "en": "Pet Food",
+        "es": "Comida para mascotas"
+    },
+    "Tierpflegeprodukte": {
+        "de": "Tierpflegeprodukte",
+        "en": "Pet Care Products",
+        "es": "Productos para el cuidado de mascotas"
+    },
+    "Tier-Spielzeug": {
+        "de": "Tier-Spielzeug",
+        "en": "Pet Toys",
+        "es": "Juguetes para mascotas"
+    },
+    "Transportboxen für Haustiere": {
+        "de": "Transportboxen für Haustiere",
+        "en": "Pet Carriers",
+        "es": "Transportines para mascotas"
+    },
+    "Transportboxen für Vögel": {
+        "de": "Transportboxen für Vögel",
+        "en": "Bird Carriers",
+        "es": "Transportines para pájaros"
+    },
+    "Vogelkäfig-Spiegel": {
+        "de": "Vogelkäfig-Spiegel",
+        "en": "Bird Cage Mirrors",
+        "es": "Espejos para jaulas de pájaros"
+    },
+    "Vogelkäfige": {
+        "de": "Vogelkäfige",
+        "en": "Bird Cages",
+        "es": "Jaulas para pájaros"
+    },
+    "Wärmelampen für Terrarien": {
+        "de": "Wärmelampen für Terrarien",
+        "en": "Heat Lamps for Terrariums",
+        "es": "Lámparas de calor para terrarios"
+    },
+    "Anlageimmobilien": {
+        "de": "Anlageimmobilien",
+        "en": "Investment Properties",
+        "es": "Propiedades de inversión"
+    },
+    "Apartmentkomplexe": {
+        "de": "Apartmentkomplexe",
+        "en": "Apartment Complexes",
+        "es": "Complejos de apartamentos"
+    },
+    "Bewertungsdienste": {
+        "de": "Bewertungsdienste",
+        "en": "Valuation Services",
+        "es": "Servicios de tasación"
+    },
+    "Büroflächenvermietung": {
+        "de": "Büroflächenvermietung",
+        "en": "Office Space Rental",
+        "es": "Alquiler de oficinas"
+    },
+    "Bürogebäudemanagement": {
+        "de": "Bürogebäudemanagement",
+        "en": "Office Building Management",
+        "es": "Gestión de edificios de oficinas"
+    },
+    "Co-Working Spaces": {
+        "de": "Co-Working Spaces",
+        "en": "Co-Working Spaces",
+        "es": "Espacios de coworking"
+    },
+    "Coworking Spaces": {
+        "de": "Coworking Spaces",
+        "en": "Coworking Spaces",
+        "es": "Coworking Spaces"
+    },
+    "Ferienhäuser": {
+        "de": "Ferienhäuser",
+        "en": "Holiday Homes",
+        "es": "Casas de vacaciones"
+    },
+    "Ferienresorts": {
+        "de": "Ferienresorts",
+        "en": "Holiday Resorts",
+        "es": "Resorts vacacionales"
+    },
+    "Ferienwohnungen": {
+        "de": "Ferienwohnungen",
+        "en": "Holiday Apartments",
+        "es": "Apartamentos vacacionales"
+    },
+    "Finanzierung von Immobilienprojekten": {
+        "de": "Finanzierung von Immobilienprojekten",
+        "en": "Real Estate Project Financing",
+        "es": "Financiación de proyectos inmobiliarios"
+    },
+    "Freizeitimmobilien": {
+        "de": "Freizeitimmobilien",
+        "en": "Leisure Properties",
+        "es": "Propiedades de ocio"
+    },
+    "Gewerbeimmobilien": {
+        "de": "Gewerbeimmobilien",
+        "en": "Commercial Real Estate",
+        "es": "Inmuebles comerciales"
+    },
+    "Gewerbeimmobilienleasing": {
+        "de": "Gewerbeimmobilienleasing",
+        "en": "Commercial Real Estate Leasing",
+        "es": "Arrendamiento de inmuebles comerciales"
+    },
+    "Gewerbeobjekte": {
+        "de": "Gewerbeobjekte",
+        "en": "Commercial Properties",
+        "es": "Propiedades comerciales"
+    },
+    "Gewerbeparkentwicklung": {
+        "de": "Gewerbeparkentwicklung",
+        "en": "Business Park Development",
+        "es": "Desarrollo de parques empresariales"
+    },
+    "Grundstücksentwicklung": {
+        "de": "Grundstücksentwicklung",
+        "en": "Land Development",
+        "es": "Desarrollo de terrenos"
+    },
+    "Grundstücksverkäufe": {
+        "de": "Grundstücksverkäufe",
+        "en": "Land Sales",
+        "es": "Venta de terrenos"
+    },
+    "Hausverkäufe": {
+        "de": "Hausverkäufe",
+        "en": "House Sales",
+        "es": "Venta de casas"
+    },
+    "Hausverwalterdienste": {
+        "de": "Hausverwalterdienste",
+        "en": "Property Management Services",
+        "es": "Servicios de administración de propiedades"
+    },
+    "Hausverwaltungsdienste": {
+        "de": "Hausverwaltungsdienste",
+        "en": "Property Management Services",
+        "es": "Servicios de gestión de propiedades"
+    },
+    "Hochhausvermietung": {
+        "de": "Hochhausvermietung",
+        "en": "High-rise Rental",
+        "es": "Alquiler en rascacielos"
+    },
+    "Immobilienagenturen": {
+        "de": "Immobilienagenturen",
+        "en": "Real Estate Agencies",
+        "es": "Agencias inmobiliarias"
+    },
+    "Immobilienentwicklung": {
+        "de": "Immobilienentwicklung",
+        "en": "Real Estate Development",
+        "es": "Desarrollo inmobiliario"
+    },
+    "Immobilieninvestitionen": {
+        "de": "Immobilieninvestitionen",
+        "en": "Real Estate Investments",
+        "es": "Inversiones inmobiliarias"
+    },
+    "Immobilieninvestments": {
+        "de": "Immobilieninvestments",
+        "en": "Real Estate Investments",
+        "es": "Inversiones en bienes raíces"
+    },
+    "Immobilienmakler": {
+        "de": "Immobilienmakler",
+        "en": "Real Estate Agents",
+        "es": "Agentes inmobiliarios"
+    },
+    "Immobilienverwaltung": {
+        "de": "Immobilienverwaltung",
+        "en": "Property Management",
+        "es": "Gestión inmobiliaria"
+    },
+    "Immobilienvermarktung": {
+        "de": "Immobilienvermarktung",
+        "en": "Real Estate Marketing",
+        "es": "Marketing inmobiliario"
+    },
+    "Industrieimmobilien": {
+        "de": "Industrieimmobilien",
+        "en": "Industrial Real Estate",
+        "es": "Inmuebles industriales"
+    },
+    "Industrieparkentwicklungen": {
+        "de": "Industrieparkentwicklungen",
+        "en": "Industrial Park Developments",
+        "es": "Desarrollos de parques industriales"
+    },
+    "Lagerhäuser": {
+        "de": "Lagerhäuser",
+        "en": "Warehouses",
+        "es": "Almacenes"
+    },
+    "Logistikimmobilien": {
+        "de": "Logistikimmobilien",
+        "en": "Logistics Properties",
+        "es": "Inmuebles logísticos"
+    },
+    "Luxusimmobilien": {
+        "de": "Luxusimmobilien",
+        "en": "Luxury Real Estate",
+        "es": "Inmuebles de lujo"
+    },
+    "Luxusvillen": {
+        "de": "Luxusvillen",
+        "en": "Luxury Villas",
+        "es": "Villas de lujo"
+    },
+    "Management von Ferienimmobilien": {
+        "de": "Management von Ferienimmobilien",
+        "en": "Holiday Property Management",
+        "es": "Gestión de propiedades vacacionales"
+    },
+    "Mietmanagement": {
+        "de": "Mietmanagement",
+        "en": "Rental Management",
+        "es": "Gestión de alquileres"
+    },
+    "Mietwohnungen": {
+        "de": "Mietwohnungen",
+        "en": "Rental Apartments",
+        "es": "Apartamentos en alquiler"
+    },
+    "Nachhaltige Immobilienprojekte": {
+        "de": "Nachhaltige Immobilienprojekte",
+        "en": "Sustainable Real Estate Projects",
+        "es": "Proyectos inmobiliarios sostenibles"
+    },
+    "Neubauprojekte": {
+        "de": "Neubauprojekte",
+        "en": "New Construction Projects",
+        "es": "Proyectos de nueva construcción"
+    },
+    "Shopping-Center-Immobilien": {
+        "de": "Shopping-Center-Immobilien",
+        "en": "Shopping Center Real Estate",
+        "es": "Inmuebles de centros comerciales"
+    },
+    "Studentenwohnheime": {
+        "de": "Studentenwohnheime",
+        "en": "Student Dormitories",
+        "es": "Residencias de estudiantes"
+    },
+    "Verwaltung von Büroimmobilien": {
+        "de": "Verwaltung von Büroimmobilien",
+        "en": "Office Property Management",
+        "es": "Gestión de inmuebles de oficinas"
+    },
+    "Verwaltung von Gewerbeimmobilien": {
+        "de": "Verwaltung von Gewerbeimmobilien",
+        "en": "Commercial Property Management",
+        "es": "Gestión de inmuebles comerciales"
+    },
+    "Verwaltung von Luxusimmobilien": {
+        "de": "Verwaltung von Luxusimmobilien",
+        "en": "Luxury Property Management",
+        "es": "Gestión de propiedades de lujo"
+    },
+    "Verkauf von Gewerbegrundstücken": {
+        "de": "Verkauf von Gewerbegrundstücken",
+        "en": "Commercial Land Sales",
+        "es": "Venta de terrenos comerciales"
+    },
+    "Wohngemeinschaften": {
+        "de": "Wohngemeinschaften",
+        "en": "Shared Housing",
+        "es": "Pisos compartidos"
+    },
+    "Wohnungsbau": {
+        "de": "Wohnungsbau",
+        "en": "Housing Construction",
+        "es": "Construcción de viviendas"
+    },
+    "Wohnungsvermietung": {
+        "de": "Wohnungsvermietung",
+        "en": "Apartment Rental",
+        "es": "Alquiler de viviendas"
+    },
+    "Badmintonvereine": {
+        "de": "Badmintonvereine",
+        "en": "Badminton Clubs",
+        "es": "Clubes de bádminton"
+    },
+    "Baseball-Ligen": {
+        "de": "Baseball-Ligen",
+        "en": "Baseball Leagues",
+        "es": "Ligas de béisbol"
+    },
+    "Basketballclubs": {
+        "de": "Basketballclubs",
+        "en": "Basketball Clubs",
+        "es": "Clubes de baloncesto"
+    },
+    "Bogensportzentren": {
+        "de": "Bogensportzentren",
+        "en": "Archery Centers",
+        "es": "Centros de tiro con arco"
+    },
+    "Boxclubs": {
+        "de": "Boxclubs",
+        "en": "Boxing Clubs",
+        "es": "Clubes de boxeo"
+    },
+    "Eissportvereine": {
+        "de": "Eissportvereine",
+        "en": "Ice Sports Clubs",
+        "es": "Clubes de deportes de hielo"
+    },
+    "E-Sport-Wettbewerbe": {
+        "de": "E-Sport-Wettbewerbe",
+        "en": "Esports Competitions",
+        "es": "Competiciones de esports"
+    },
+    "Fahrradgeschäfte": {
+        "de": "Fahrradgeschäfte",
+        "en": "Bicycle Shops",
+        "es": "Tiendas de bicicletas"
+    },
+    "Fechtschulen": {
+        "de": "Fechtschulen",
+        "en": "Fencing Schools",
+        "es": "Escuelas de esgrima"
+    },
+    "Fitnesskurse": {
+        "de": "Fitnesskurse",
+        "en": "Fitness Classes",
+        "es": "Clases de fitness"
+    },
+    "Fitnessstudios": {
+        "de": "Fitnessstudios",
+        "en": "Gyms",
+        "es": "Gimnasios"
+    },
+    "Fußballakademien": {
+        "de": "Fußballakademien",
+        "en": "Football Academies",
+        "es": "Academias de fútbol"
+    },
+    "Fußballvereine": {
+        "de": "Fußballvereine",
+        "en": "Football Clubs",
+        "es": "Clubes de fútbol"
+    },
+    "Golfplätze": {
+        "de": "Golfplätze",
+        "en": "Golf Courses",
+        "es": "Campos de golf"
+    },
+    "Inline-Skating-Clubs": {
+        "de": "Inline-Skating-Clubs",
+        "en": "Inline Skating Clubs",
+        "es": "Clubes de patinaje en línea"
+    },
+    "Judo-Vereine": {
+        "de": "Judo-Vereine",
+        "en": "Judo Clubs",
+        "es": "Clubes de judo"
+    },
+    "Kampfsportakademien": {
+        "de": "Kampfsportakademien",
+        "en": "Martial Arts Academies",
+        "es": "Academias de artes marciales"
+    },
+    "Kanuclubs": {
+        "de": "Kanuclubs",
+        "en": "Canoe Clubs",
+        "es": "Clubes de canoa"
+    },
+    "Kletterhallen": {
+        "de": "Kletterhallen",
+        "en": "Climbing Gyms",
+        "es": "Rocódromos"
+    },
+    "Klettervereine": {
+        "de": "Klettervereine",
+        "en": "Climbing Clubs",
+        "es": "Clubes de escalada"
+    },
+    "Kletterwettbewerbe": {
+        "de": "Kletterwettbewerbe",
+        "en": "Climbing Competitions",
+        "es": "Competiciones de escalada"
+    },
+    "Laufschulen": {
+        "de": "Laufschulen",
+        "en": "Running Schools",
+        "es": "Escuelas de running"
+    },
+    "Laufsportvereine": {
+        "de": "Laufsportvereine",
+        "en": "Running Clubs",
+        "es": "Clubes de running"
+    },
+    "Leichtathletikvereine": {
+        "de": "Leichtathletikvereine",
+        "en": "Athletics Clubs",
+        "es": "Clubes de atletismo"
+    },
+    "Marathons und Rennen": {
+        "de": "Marathons und Rennen",
+        "en": "Marathons and Races",
+        "es": "Maratones y carreras"
+    },
+    "Motorsportvereine": {
+        "de": "Motorsportvereine",
+        "en": "Motorsport Clubs",
+        "es": "Clubes de automovilismo"
+    },
+    "Mountainbike-Rennen": {
+        "de": "Mountainbike-Rennen",
+        "en": "Mountain Bike Races",
+        "es": "Carreras de mountain bike"
+    },
+    "Personal Training": {
+        "de": "Personal Training",
+        "en": "Personal Training",
+        "es": "Entrenamiento personal"
+    },
+    "Radsportwettbewerbe": {
+        "de": "Radsportwettbewerbe",
+        "en": "Cycling Competitions",
+        "es": "Competiciones de ciclismo"
+    },
+    "Reitsportzentren": {
+        "de": "Reitsportzentren",
+        "en": "Equestrian Centers",
+        "es": "Centros ecuestres"
+    },
+    "Rudervereine": {
+        "de": "Rudervereine",
+        "en": "Rowing Clubs",
+        "es": "Clubes de remo"
+    },
+    "Rugbyvereine": {
+        "de": "Rugbyvereine",
+        "en": "Rugby Clubs",
+        "es": "Clubes de rugby"
+    },
+    "Schachvereine": {
+        "de": "Schachvereine",
+        "en": "Chess Clubs",
+        "es": "Clubes de ajedrez"
+    },
+    "Schwimmschulen": {
+        "de": "Schwimmschulen",
+        "en": "Swimming Schools",
+        "es": "Escuelas de natación"
+    },
+    "Segelvereine": {
+        "de": "Segelvereine",
+        "en": "Sailing Clubs",
+        "es": "Clubes de vela"
+    },
+    "Skateboard-Wettbewerbe": {
+        "de": "Skateboard-Wettbewerbe",
+        "en": "Skateboarding Competitions",
+        "es": "Competiciones de skateboarding"
+    },
+    "Skateparks": {
+        "de": "Skateparks",
+        "en": "Skateparks",
+        "es": "Skateparks"
+    },
+    "Sportausrüstung": {
+        "de": "Sportausrüstung",
+        "en": "Sports Equipment",
+        "es": "Equipamiento deportivo"
+    },
+    "Sportförderprogramme": {
+        "de": "Sportförderprogramme",
+        "en": "Sports Promotion Programs",
+        "es": "Programas de promoción deportiva"
+    },
+    "Sporttrainingscamps": {
+        "de": "Sporttrainingscamps",
+        "en": "Sports Training Camps",
+        "es": "Campamentos de entrenamiento deportivo"
+    },
+    "Sportveranstaltungen": {
+        "de": "Sportveranstaltungen",
+        "en": "Sports Events",
+        "es": "Eventos deportivos"
+    },
+    "Surfschulen": {
+        "de": "Surfschulen",
+        "en": "Surf Schools",
+        "es": "Escuelas de surf"
+    },
+    "Tanzschulen": {
+        "de": "Tanzschulen",
+        "en": "Dance Schools",
+        "es": "Escuelas de baile"
+    },
+    "Tennisclubs": {
+        "de": "Tennisclubs",
+        "en": "Tennis Clubs",
+        "es": "Clubes de tenis"
+    },
+    "Tischtennisvereine": {
+        "de": "Tischtennisvereine",
+        "en": "Table Tennis Clubs",
+        "es": "Clubes de tenis de mesa"
+    },
+    "Triathlonwettbewerbe": {
+        "de": "Triathlonwettbewerbe",
+        "en": "Triathlon Competitions",
+        "es": "Competiciones de triatlón"
+    },
+    "Turnhallen": {
+        "de": "Turnhallen",
+        "en": "Sports Halls",
+        "es": "Pabellones deportivos"
+    },
+    "Wassersport": {
+        "de": "Wassersport",
+        "en": "Water Sports",
+        "es": "Deportes acuáticos"
+    },
+    "Wintersportzentren": {
+        "de": "Wintersportzentren",
+        "en": "Winter Sports Centers",
+        "es": "Centros de deportes de invierno"
+    },
+    "Yoga-Zentren": {
+        "de": "Yoga-Zentren",
+        "en": "Yoga Centers",
+        "es": "Centros de yoga"
+    },
+    "Akademische Konferenzen": {
+        "de": "Akademische Konferenzen",
+        "en": "Academic Conferences",
+        "es": "Conferencias académicas"
+    },
+    "Anatomiekurse": {
+        "de": "Anatomiekurse",
+        "en": "Anatomy Courses",
+        "es": "Cursos de anatomía"
+    },
+    "Architekturstudiengänge": {
+        "de": "Architekturstudiengänge",
+        "en": "Architecture Programs",
+        "es": "Estudios de arquitectura"
+    },
+    "Bachelorstudiengänge": {
+        "de": "Bachelorstudiengänge",
+        "en": "Bachelor Programs",
+        "es": "Programas de grado"
+    },
+    "Berufsausbildung": {
+        "de": "Berufsausbildung",
+        "en": "Vocational Training",
+        "es": "Formación profesional"
+    },
+    "Biologiekurse": {
+        "de": "Biologiekurse",
+        "en": "Biology Courses",
+        "es": "Cursos de biología"
+    },
+    "Buchhaltungskurse": {
+        "de": "Buchhaltungskurse",
+        "en": "Accounting Courses",
+        "es": "Cursos de contabilidad"
+    },
+    "Chemiekurse": {
+        "de": "Chemiekurse",
+        "en": "Chemistry Courses",
+        "es": "Cursos de química"
+    },
+    "Coaching-Ausbildung": {
+        "de": "Coaching-Ausbildung",
+        "en": "Coaching Training",
+        "es": "Formación en coaching"
+    },
+    "Digitale Bildungsplattformen": {
+        "de": "Digitale Bildungsplattformen",
+        "en": "Digital Education Platforms",
+        "es": "Plataformas educativas digitales"
+    },
+    "Fernunterricht": {
+        "de": "Fernunterricht",
+        "en": "Distance Learning",
+        "es": "Educación a distancia"
+    },
+    "Film- und Medienkurse": {
+        "de": "Film- und Medienkurse",
+        "en": "Film and Media Courses",
+        "es": "Cursos de cine y medios"
+    },
+    "Fotografiekurse": {
+        "de": "Fotografiekurse",
+        "en": "Photography Courses",
+        "es": "Cursos de fotografía"
+    },
+    "Führungskräfteschulungen": {
+        "de": "Führungskräfteschulungen",
+        "en": "Executive Training",
+        "es": "Formación de ejecutivos"
+    },
+    "Geografieunterricht": {
+        "de": "Geografieunterricht",
+        "en": "Geography Lessons",
+        "es": "Clases de geografía"
+    },
+    "Geschichtskurse": {
+        "de": "Geschichtskurse",
+        "en": "History Courses",
+        "es": "Cursos de historia"
+    },
+    "Gesundheitsbildung": {
+        "de": "Gesundheitsbildung",
+        "en": "Health Education",
+        "es": "Educación para la salud"
+    },
+    "Grafikdesign-Kurse": {
+        "de": "Grafikdesign-Kurse",
+        "en": "Graphic Design Courses",
+        "es": "Cursos de diseño gráfico"
+    },
+    "Grundschulbildung": {
+        "de": "Grundschulbildung",
+        "en": "Primary Education",
+        "es": "Educación primaria"
+    },
+    "IT-Schulungen": {
+        "de": "IT-Schulungen",
+        "en": "IT Training",
+        "es": "Formación en TI"
+    },
+    "Journalismus-Workshops": {
+        "de": "Journalismus-Workshops",
+        "en": "Journalism Workshops",
+        "es": "Talleres de periodismo"
+    },
+    "Kindererziehung": {
+        "de": "Kindererziehung",
+        "en": "Early Childhood Education",
+        "es": "Educación infantil"
+    },
+    "Kochkurse": {
+        "de": "Kochkurse",
+        "en": "Cooking Classes",
+        "es": "Clases de cocina"
+    },
+    "Kunstkurse": {
+        "de": "Kunstkurse",
+        "en": "Art Courses",
+        "es": "Cursos de arte"
+    },
+    "Kurse für Umweltwissenschaften": {
+        "de": "Kurse für Umweltwissenschaften",
+        "en": "Environmental Science Courses",
+        "es": "Cursos de ciencias ambientales"
+    },
+    "Lehrerfortbildung": {
+        "de": "Lehrerfortbildung",
+        "en": "Teacher Training",
+        "es": "Formación docente"
+    },
+    "Leadership-Programme": {
+        "de": "Leadership-Programme",
+        "en": "Leadership Programs",
+        "es": "Programas de liderazgo"
+    },
+    "Management-Workshops": {
+        "de": "Management-Workshops",
+        "en": "Management Workshops",
+        "es": "Talleres de gestión"
+    },
+    "Marketing-Schulungen": {
+        "de": "Marketing-Schulungen",
+        "en": "Marketing Training",
+        "es": "Formación en marketing"
+    },
+    "Masterstudiengänge": {
+        "de": "Masterstudiengänge",
+        "en": "Master Programs",
+        "es": "Programas de máster"
+    },
+    "Mathematikkurse": {
+        "de": "Mathematikkurse",
+        "en": "Mathematics Courses",
+        "es": "Cursos de matemáticas"
+    },
+    "Musikworkshops": {
+        "de": "Musikworkshops",
+        "en": "Music Workshops",
+        "es": "Talleres de música"
+    },
+    "Online-Nachhilfe": {
+        "de": "Online-Nachhilfe",
+        "en": "Online Tutoring",
+        "es": "Tutoría online"
+    },
+    "Online-Universitäten": {
+        "de": "Online-Universitäten",
+        "en": "Online Universities",
+        "es": "Universidades online"
+    },
+    "Pharmaziekurse": {
+        "de": "Pharmaziekurse",
+        "en": "Pharmacy Courses",
+        "es": "Cursos de farmacia"
+    },
+    "Philosophiekurse": {
+        "de": "Philosophiekurse",
+        "en": "Philosophy Courses",
+        "es": "Cursos de filosofía"
+    },
+    "Physikkurse": {
+        "de": "Physikkurse",
+        "en": "Physics Courses",
+        "es": "Cursos de física"
+    },
+    "Programmierungskurse": {
+        "de": "Programmierungskurse",
+        "en": "Programming Courses",
+        "es": "Cursos de programación"
+    },
+    "Psychologiekurse": {
+        "de": "Psychologiekurse",
+        "en": "Psychology Courses",
+        "es": "Cursos de psicología"
+    },
+    "Pädagogik-Kurse": {
+        "de": "Pädagogik-Kurse",
+        "en": "Pedagogy Courses",
+        "es": "Cursos de pedagogía"
+    },
+    "Schreibkurse": {
+        "de": "Schreibkurse",
+        "en": "Writing Courses",
+        "es": "Cursos de escritura"
+    },
+    "Schreibworkshops": {
+        "de": "Schreibworkshops",
+        "en": "Writing Workshops",
+        "es": "Talleres de escritura"
+    },
+    "Seminare und Konferenzen": {
+        "de": "Seminare und Konferenzen",
+        "en": "Seminars and Conferences",
+        "es": "Seminarios y conferencias"
+    },
+    "Sozialwissenschaften": {
+        "de": "Sozialwissenschaften",
+        "en": "Social Sciences",
+        "es": "Ciencias sociales"
+    },
+    "Sprachkurse": {
+        "de": "Sprachkurse",
+        "en": "Language Courses",
+        "es": "Cursos de idiomas"
+    },
+    "Sportpädagogik": {
+        "de": "Sportpädagogik",
+        "en": "Sports Education",
+        "es": "Pedagogía deportiva"
+    },
+    "Technische Schulungen": {
+        "de": "Technische Schulungen",
+        "en": "Technical Training",
+        "es": "Formación técnica"
+    },
+    "Trainings für Soft Skills": {
+        "de": "Trainings für Soft Skills",
+        "en": "Soft Skills Training",
+        "es": "Entrenamiento en habilidades blandas"
+    },
+    "Wirtschaftskurse": {
+        "de": "Wirtschaftskurse",
+        "en": "Economics Courses",
+        "es": "Cursos de economía"
+    },
+    "Sozialpädagogische Ausbildung": {
+        "de": "Sozialpädagogische Ausbildung",
+        "en": "Social Pedagogy Training",
+        "es": "Formación en pedagogía social"
+    }
+}

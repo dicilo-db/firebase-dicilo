@@ -1,0 +1,23 @@
+{
+  "title": "Register with Dicilo",
+  "description": "Join our community and discover a world of possibilities. Fill out the form to get started.",
+  "firstName": "First Name",
+  "lastName": "Last Name",
+  "email": "Email",
+  "whatsapp": "WhatsApp",
+  "registrationType": "Type of Registration",
+  "submitButton": "Complete Registration",
+  "loading": "Processing...",
+  "successTitle": "Registration Successful!",
+  "successDescription": "Thank you for registering. We will be in touch with you shortly.",
+  "errorTitle": "Registration Error",
+  "errorDescription": "An error occurred while submitting your data. Please try again.",
+  "options": {
+    "private": "Private",
+    "donor": "Donor",
+    "retailer": "Retailer",
+    "premium": "Premium"
+  },
+  "firstNamePlaceholder": "Your first name",
+  "lastNamePlaceholder": "Your last name"
+}

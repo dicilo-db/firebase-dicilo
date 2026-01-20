@@ -1,0 +1,23 @@
+{
+  "category": {
+    "health_wellness": "Salud y Bienestar",
+    "travel_tourism": "Viajes y Turismo",
+    "consulting_coaching": "Consultoría y Coaching",
+    "gastronomy_culinary": "Gastronomía y Culinaria",
+    "restaurant": "Restaurante",
+    "cafe_bistro": "Café y Bistro"
+  },
+  "subcategory": {
+    "hearing_systems": "Sistemas Auditivos",
+    "travel_club": "Club de Viajes",
+    "business_consulting": "Consultoría de Negocios",
+    "restaurants": "Restaurantes",
+    "agencies_viajes": "Agencias de Viajes",
+    "german": "Alemán",
+    "mexican": "Mexicano",
+    "indian": "Indio",
+    "french": "Francés",
+    "italian": "Italiano",
+    "fast_food": "Comida Rápida"
+  }
+}

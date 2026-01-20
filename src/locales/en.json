@@ -1,0 +1,80 @@
+{
+  "header": {
+    "nav": {
+      "benefits": "Benefits",
+      "planes": "Plans",
+      "about": "About Us",
+      "directory": "Directory",
+      "login": "Login",
+      "register": "Register",
+      "language": "Language"
+    }
+  },
+  "footer": {
+    "imprint": "Imprint",
+    "privacy": "Privacy",
+    "about": "About Us",
+    "faq": "FAQ",
+    "register": "Register"
+  },
+  "common": {
+    "search": {
+      "title": "Discover Recommended Businesses",
+      "businessType": "Business",
+      "locationType": "Location",
+      "businessPlaceholder": "Business name or keyword...",
+      "locationPlaceholder": "City, region, or country...",
+      "searchLabel": "Search",
+      "useLocationLabel": "Current Location",
+      "locationErrorTitle": "Location Error",
+      "locationErrorDesc": "Address or location unknown.",
+      "geolocationErrorTitle": "GPS Error",
+      "geolocationErrorDesc": "We could not retrieve your location.",
+      "geolocationNotSupportedTitle": "GPS Not Supported",
+      "geolocationNotSupportedDesc": "Your browser does not support location search.",
+      "locationNotFoundTitle": "Location Not Found",
+      "locationNotFoundDesc": "The location '{query}' was not found.",
+      "searchErrorTitle": "Search Error",
+      "searchErrorDesc": "An error occurred during the search.",
+      "noResults": "No results found for '{query}'.",
+      "recommendBusiness": "Recommend a Business"
+    },
+    "businessCard": {
+      "currentOffer": "Current Offer"
+    },
+    "mapPopup": {
+      "website": "Website",
+      "offer": "Offer",
+      "map": "Map"
+    },
+    "form": {
+      "title": "Recommend a Business",
+      "description": "Fill out this form to recommend a business. We will reach out to them to include them in our directory.",
+      "companyNamePlaceholder": "Company Name*",
+      "companyNameRequired": "Company name is required.",
+      "invalidEmail": "Invalid email format.",
+      "contactNamePlaceholder": "Your Name",
+      "emailPlaceholder": "Your Email (optional)",
+      "phonePlaceholder": "Your Phone Number (optional)",
+      "categoryPlaceholder": "Business Category (optional)",
+      "commentsPlaceholder": "Your Comments (optional)",
+      "submitButton": "Send Recommendation",
+      "successTitle": "Recommendation Sent!",
+      "successDesc": "Thank you for your recommendation. We will reach out to the business.",
+      "errorTitle": "Error Sending!",
+      "errorDesc": "There was an issue sending your recommendation. Please try again later."
+    },
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "yes": "Yes",
+    "no": "No",
+    "bestChoice": "Best Choice",
+    "days": {
+      "one": "day",
+      "other": "days"
+    },
+    "share": {
+      "emailSubject": "Check this out!"
+    }
+  }
+}

@@ -1,0 +1,531 @@
+{
+  "common": {
+    "back": "Volver"
+  },
+  "login": {
+    "title": "Acceso de Administrador",
+    "description": "Por favor, introduce tus credenciales para continuar.",
+    "emailLabel": "Correo electrónico",
+    "passwordLabel": "Contraseña",
+    "passwordHint": "Al menos 8 caracteres, incluyendo mayúsculas, minúsculas, números y caracteres especiales.",
+    "loginButton": "Iniciar Sesión",
+    "showPassword": "Mostrar contraseña",
+    "hidePassword": "Ocultar contraseña",
+    "successTitle": "Inicio de Sesión Exitoso",
+    "successDescription": "Bienvenido al panel de administración.",
+    "error": {
+      "title": "Error de Inicio de Sesión",
+      "invalidCredentials": "Correo electrónico o contraseña no válidos. Por favor, inténtalo de nuevo.",
+      "notAdmin": "No tienes permiso para acceder a esta área.",
+      "generic": "Ocurrió un error inesperado.",
+      "unknown": "Ocurrió un error desconocido. Por favor, contacta con soporte."
+    }
+  },
+  "dashboard": {
+    "title": "Panel de Administración",
+    "welcome": "Bienvenido, {{email}}. Tu rol es: {{role}}.",
+    "logout": "Cerrar Sesión",
+    "logoutSuccess": "Sesión cerrada con éxito.",
+    "logoutError": "Error al cerrar sesión",
+    "logoutErrorDescription": "Por favor, inténtalo de nuevo.",
+    "superAdminArea": "Área de Superadministrador",
+    "superAdminDescription": "Acciones disponibles solo para superadministradores.",
+    "seedDatabase": "Poblar Base de Datos",
+    "seedingInProgress": "Poblando datos...",
+    "seedingStartTitle": "Poblado de base de datos iniciado",
+    "seedingStartDesc": "Este proceso puede tardar un momento.",
+    "seedingSuccessTitle": "Base de datos poblada con éxito",
+    "seedingErrorTitle": "Error al Poblar la Base de Datos",
+    "seedingErrorDesc": "Ocurrió un error desconocido.",
+    "accessDenied": "Acceso Denegado",
+    "noAdminRights": "No tienes permiso para acceder a esta página.",
+    "contentManagement": "Gestión de Contenidos",
+    "contentManagementDescription": "Administra los contenidos de la plataforma.",
+    "manageBusinesses": "Gestionar Empresas"
+  },
+  "seed": {
+    "pageTitle": "Configuración de la Cuenta de Superadministrador",
+    "pageSubtitle": "Sigue estos pasos para crear el primer superadministrador para tu proyecto.",
+    "step1Title": "Crear Usuario Superadministrador",
+    "step1Description": "Primero, crea un usuario en la consola de Autenticación de Firebase.",
+    "step1AlertTitle": "Instrucciones",
+    "step1Instruction1": "Ve a la Consola de Firebase > Authentication > Users.",
+    "step1Instruction2": "Haz clic en 'Añadir usuario' y usa las siguientes credenciales:",
+    "emailLabel": "Correo electrónico",
+    "passwordLabel": "Contraseña",
+    "step1Instruction3": "Guarda estas credenciales en un lugar seguro.",
+    "step1NoteTitle": "Nota Importante",
+    "step1NoteDescription": "Este usuario no tendrá privilegios de superadministrador hasta que completes el Paso 2.",
+    "step2Title": "Asignar Rol de Administrador en Firestore",
+    "step2Description": "Crea un documento en Firestore para otorgar a este usuario el rol de superadministrador.",
+    "step2AlertTitle": "Instrucciones",
+    "step2Instruction1": "Ve a la Consola de Firebase > Firestore Database.",
+    "step2Instruction2": "Crea una nueva colección con el ID:",
+    "collectionID": "ID de la Colección",
+    "step2Instruction3": "Crea un nuevo documento con el ID del Documento que coincida con el UID del usuario del Paso 1.",
+    "step2Instruction4": "Añade los siguientes campos a este documento:",
+    "field": "Campo",
+    "value": "Valor",
+    "step3Title": "Iniciar Sesión y Poblar la Base de Datos",
+    "step3Description": "Una vez asignado el rol, inicia sesión en el panel de administración y puebla la base de datos.",
+    "step3Content": "Inicia sesión con las credenciales creadas en el Paso 1. Ve al dashboard y haz clic en el botón 'Poblar Base de Datos'. Esto llenará la base de datos con datos iniciales de empresas.",
+    "backToLogin": "Volver al Inicio de Sesión"
+  },
+  "businesses": {
+    "title": "Gestionar Empresas",
+    "addBusiness": "Añadir Empresa",
+    "reload": "Recargar",
+    "searchPlaceholder": "Buscar por nombre de empresa...",
+    "error": "Error",
+    "errorDescription": "No se pudieron cargar las empresas.",
+    "table": {
+      "name": "Nombre",
+      "category": "Categoría",
+      "location": "Ubicación",
+      "actions": "Acciones"
+    },
+    "confirmDeleteTitle": "Confirmar Eliminación",
+    "confirmDeleteDesc": "¿Estás seguro de que quieres eliminar {{name}}? Esta acción no se puede deshacer.",
+    "deleteSuccessTitle": "Empresa Eliminada",
+    "deleteSuccessDesc": "La empresa ha sido eliminada con éxito.",
+    "deleteErrorTitle": "Error al Eliminar",
+    "deleteErrorDesc": "No se pudo eliminar la empresa.",
+    "noResults": "No se encontraron empresas.",
+    "backToDashboard": "Volver al Panel",
+    "edit": {
+      "title": "Editar Empresa",
+      "back": "Volver a la lista",
+      "cardTitle": "Información de la Empresa",
+      "cardDescription": "Actualiza los detalles de la empresa con ID: {{id}}",
+      "notFoundTitle": "Empresa no encontrada",
+      "notFoundDesc": "La empresa solicitada no existe.",
+      "fetchErrorTitle": "Error de Carga",
+      "fetchErrorDesc": "No se pudieron cargar los datos de la empresa.",
+      "saveSuccessTitle": "Guardado",
+      "saveSuccessDesc": "Los detalles de la empresa se actualizaron con éxito.",
+      "saveErrorTitle": "Error al Guardar",
+      "saveErrorDesc": "No se pudieron guardar los detalles de la empresa.",
+      "updateToClient": "Actualizar a Cliente",
+      "asStarter": "Como Starter",
+      "asRetailer": "Como Retailer",
+      "asPremium": "Como Premium",
+      "logo": {
+        "urlHelp": "Proporciona una URL pública para el logotipo."
+      },
+      "geocode": {
+        "successTitle": "Geocodificación Exitosa",
+        "successDesc": "Nuevas coordenadas establecidas",
+        "dragSuccessDesc": "Coordenadas actualizadas al arrastrar",
+        "notFoundTitle": "Ubicación no encontrada",
+        "notFoundDesc": "La dirección proporcionada no pudo ser geocodificada.",
+        "errorTitle": "Error de Geocodificación",
+        "errorDesc": "No se pudo contactar con el servicio de geocodificación.",
+        "noAddressTitle": "No se proporcionó dirección",
+        "noAddressDesc": "Por favor, proporciona una dirección o ubicación para geocodificar.",
+        "markerTitle": "Posición Actual"
+      }
+    },
+    "new": {
+      "title": "Añadir Nueva Empresa",
+      "back": "Volver a la lista",
+      "cardTitle": "Crear Nueva Empresa",
+      "cardDescription": "Rellena los detalles para añadir una nueva empresa.",
+      "saveSuccessTitle": "Empresa Creada",
+      "saveSuccessDesc": "La nueva empresa se añadió con éxito.",
+      "saveErrorTitle": "Error de Creación",
+      "saveErrorDesc": "No se pudo crear la empresa.",
+      "save": "Guardar Empresa"
+    },
+    "fields": {
+      "name": "Nombre de la Empresa",
+      "category": "Categoría",
+      "subcategory": "Subcategoría",
+      "description": "Descripción",
+      "location": "Ubicación (Ciudad, País)",
+      "address": "Dirección",
+      "phone": "Teléfono",
+      "website": "Sitio Web",
+      "logoUrl": "URL del Logo",
+      "logoUrlPlaceholder": "https://example.com/logo.png",
+      "imageHint": "Pista de Imagen (ej. 'restaurante de pizza')",
+      "rating": "Valoración (0-5)",
+      "coords": "Coordenadas (Lat, Lng)",
+      "coordsHelp": "Las coordenadas se establecen automáticamente geocodificando la dirección o pueden moverse en el mapa.",
+      "currentOfferUrl": "URL de la Oferta Actual"
+    }
+  },
+  "client": {
+    "type": {
+      "retailer": "Comerciante",
+      "premium": "Premium",
+      "starter": "Starter"
+    }
+  },
+  "clients": {
+    "title": "Gestionar Landing Pages",
+    "addClient": "Añadir Página",
+    "reload": "Recargar",
+    "searchPlaceholder": "Buscar por nombre de cliente...",
+    "error": "Error",
+    "errorDescription": "No se pudieron cargar las páginas.",
+    "table": {
+      "name": "Nombre",
+      "title": "Título",
+      "slug": "Slug (URL)",
+      "actions": "Acciones"
+    },
+    "confirmDeleteTitle": "Confirmar Eliminación",
+    "confirmDeleteDesc": "¿Estás seguro de que quieres eliminar {{name}}?",
+    "deleteSuccessTitle": "Página Eliminada",
+    "deleteSuccessDesc": "La página ha sido eliminada con éxito.",
+    "deleteErrorTitle": "Error al Eliminar",
+    "deleteErrorDesc": "No se pudo eliminar la página.",
+    "noResults": "No se encontraron páginas.",
+    "backToDashboard": "Volver al Panel",
+    "new": {
+      "title": "Crear Nueva Landing Page",
+      "back": "Volver",
+      "cardTitle": "Nueva Página",
+      "cardDescription": "Rellena los detalles para la nueva landing page.",
+      "saveSuccessTitle": "Página Creada",
+      "saveSuccessDesc": "La nueva página se añadió con éxito.",
+      "saveErrorTitle": "Error de Creación",
+      "saveErrorDesc": "No se pudo crear la página.",
+      "save": "Guardar Página"
+    },
+    "edit": {
+      "title": "Editar Landing Page",
+      "back": "Volver",
+      "cardTitle": "Detalles de la Página",
+      "cardDescription": "Actualiza los detalles de la página con ID: {{id}}",
+      "saveSuccessTitle": "Guardado",
+      "saveSuccessDesc": "Los detalles de la página se actualizaron con éxito.",
+      "saveErrorTitle": "Error al Guardar",
+      "saveErrorDesc": "No se pudieron guardar los detalles de la página.",
+      "notFoundTitle": "Página no encontrada",
+      "notFoundDesc": "La página solicitada no existe.",
+      "fetchErrorTitle": "Error de Carga",
+      "fetchErrorDesc": "No se pudieron cargar los datos de la página.",
+      "save": "Guardar Cambios"
+    },
+    "fields": {
+      "clientName": "Nombre del Cliente",
+      "slug": "Slug",
+      "category": "Categoría",
+      "subcategory": "Subcategoría",
+      "clientLogoUrl": "URL del Logo",
+      "clientTitle": "Título",
+      "clientSubtitle": "Subtítulo",
+      "socialLinks": "Redes Sociales",
+      "products": "Productos (JSON)",
+      "strengths": "Fortalezas (JSON)",
+      "testimonials": "Testimonios (JSON)",
+      "translations": "Traducciones (Objeto JSON)",
+      "jsonPlaceholder": "Introduce un array de objetos JSON aquí...",
+      "jsonPlaceholderObject": "Introduce un objeto JSON aquí...",
+      "jsonHelp": "Debe ser un array JSON válido. Usa un validador online para comprobarlo.",
+      "jsonHelpObject": "Debe ser un objeto JSON válido. Usa un validador online para comprobarlo.",
+      "clientType": "Tipo de Cliente",
+      "marqueeHeader": {
+        "rightButton1Text": "Texto Botón Derecho 1",
+        "rightButton1Link": "Enlace Botón Derecho 1",
+        "rightButton2Text": "Texto Botón Derecho 2",
+        "rightButton2Link": "Enlace Botón Derecho 2"
+      },
+      "visibility_settings": {
+        "title": "Visibilidad y Alcance Geográfico",
+        "subtitle": "Controla dónde es visible tu perfil de negocio.",
+        "active_range": "Rango Activo",
+        "ranges": {
+          "local": "Local (50km)",
+          "regional": "Regional (Ciudad)",
+          "national": "Nacional (País)",
+          "continental": "Continental",
+          "international": "Internacional / Global"
+        },
+        "allowed_continents": "Continentes Permitidos (Para Alcance Internacional)"
+      }
+    }
+  },
+  "plans": {
+    "title": "Gestionar Planes de Precios",
+    "addPlan": "Añadir Plan",
+    "back": "Volver",
+    "fetchError": "Error al obtener los planes",
+    "confirmDeleteTitle": "Confirmar Eliminación",
+    "confirmDeleteDesc": "¿Estás seguro de que quieres eliminar el plan '{{name}}'?",
+    "deleteSuccessTitle": "Plan Eliminado",
+    "deleteErrorTitle": "Error al Eliminar",
+    "table": {
+      "order": "Orden",
+      "title": "Título",
+      "price": "Precio",
+      "popular": "Popular",
+      "actions": "Acciones",
+      "language": "Idioma"
+    },
+    "new": {
+      "title": "Crear Nuevo Plan de Precios",
+      "cardTitle": "Nuevo Plan",
+      "description": "Rellena los detalles para el nuevo plan de precios.",
+      "saveSuccess": "Plan creado con éxito.",
+      "saveError": "Error al crear el plan.",
+      "saveButton": "Guardar Plan"
+    },
+    "edit": {
+      "title": "Editar Plan de Precios",
+      "description": "Actualiza los detalles de este plan.",
+      "saveSuccess": "Plan actualizado con éxito.",
+      "saveError": "Error al actualizar el plan.",
+      "saveButton": "Guardar Cambios",
+      "notFound": "Plan no encontrado."
+    },
+    "fields": {
+      "title": "Título",
+      "price": "Precio",
+      "period": "Periodo (ej. /mes)",
+      "features": "Características (una por línea)",
+      "featuresHelp": "Cada línea se convertirá en un punto en la lista de características.",
+      "buttonText": "Texto del Botón",
+      "isPopular": "Marcar como popular",
+      "order": "Orden de Visualización",
+      "language": "Idioma",
+      "languagePlaceholder": "Seleccionar idioma"
+    }
+  },
+  "registrations": {
+    "title": "Registros",
+    "tabs": {
+      "all": "Todos",
+      "private": "Particular",
+      "donor": "Donante",
+      "retailer": "Comerciante",
+      "premium": "Premium"
+    },
+    "table": {
+      "name": "Nombre",
+      "email": "Correo",
+      "whatsapp": "WhatsApp",
+      "type": "Tipo",
+      "date": "Fecha"
+    },
+    "noResults": "No se encontraron registros."
+  },
+  "feedbacks": {
+    "title": "Opiniones de Clientes",
+    "table": {
+      "date": "Fecha",
+      "name": "Nombre",
+      "customerType": "Tipo de Cliente",
+      "rating": "Valoración",
+      "message": "Mensaje"
+    },
+    "noResults": "No se encontraron opiniones."
+  },
+  "emailTemplates": {
+    "title": "Gestión de Contenido",
+    "subtitle": "Selecciona un módulo para gestionar sus plantillas.",
+    "managing": "Administrando: {{category}}",
+    "backToModules": "Volver a Módulos",
+    "backToDashboard": "Regresar al Panel",
+    "newTemplate": "Nueva Plantilla",
+    "manage": "Gestionar",
+    "templates": "Plantillas",
+    "loading": "Cargando plantillas...",
+    "noTemplates": "Sin plantillas en esta categoría",
+    "firstTemplate": "Crear Primera Plantilla",
+    "createDescription": "Aún no has creado plantillas para {{category}}.",
+    "edit": "Editar Plantilla",
+    "categories": {
+      "network_campaigns": {
+        "title": "Campañas de Red",
+        "description": "Plantillas para campañas de promoción en la red."
+      },
+      "email_marketing": {
+        "title": "Email Marketing",
+        "description": "Newsletters y correos promocionales masivos."
+      },
+      "referrals": {
+        "title": "Recomienda a amigos",
+        "description": "Correos de invitación y sistema de referidos."
+      }
+    }
+  },
+  "invite": {
+    "form": {
+      "title": "Personalizar Invitación",
+      "description": "Agrega hasta 7 amigos y envíales una invitación personalizada a todos desde acá, solo ingresa los datos y agregalos a la lista y luego envia a todos de una vez.",
+      "yourId": "Tu ID",
+      "yourName": "Tu Nombre",
+      "addFriend": "Agregar Amigo ({{count}}/7)",
+      "addFriendTitle": "Agregar Amigo",
+      "name": "Nombre",
+      "namePlaceholder": "Ej. Martín",
+      "email": "Email",
+      "emailPlaceholder": "email@ejemplo.com",
+      "language": "Idioma",
+      "languages": {
+        "es": "Español",
+        "en": "English",
+        "de": "Deutsch"
+      },
+      "template": "Plantilla",
+      "templates": {
+        "general": "Ahorro (General)",
+        "business": "Trabajo (Negocios)",
+        "crypto": "Cripto (DiciPoints)",
+        "freelancer": "Busqueda (Freelancer)"
+      },
+      "preview": "Vista Previa",
+      "addToList": "Agregar a la lista",
+      "share": "Compartir",
+      "send": "Enviar {{count}} Invitaciones",
+      "sending": "Enviando {{count}} Invitaciones...",
+      "share_whatsapp": "WhatsApp",
+      "share_telegram": "Telegram",
+      "share_facebook": "Facebook",
+      "share_twitter": "X (Twitter)",
+      "share_email": "Email",
+      "share_more": "... Más opciones...",
+      "share_copy": "Copiar Enlace",
+      "id_loading": "Cargando..."
+    },
+    "stats": {
+      "availableSlots": "Espacios Disponibles",
+      "ofInvites": "de {{count}} invitaciones Pioneras",
+      "opened": "Ojeando Propuesta",
+      "openedLabel": "Emails Abiertos",
+      "registered": "Pioneros Cerrados",
+      "registeredLabel": "+50 DP por c/u"
+    },
+    "tracking": {
+      "title": "Seguimiento de Invitaciones",
+      "subtitle": "Monitoriza el estado de tu red en tiempo real.",
+      "visualContacts": "Contactos Visuales",
+      "reach": "Alcance",
+      "followers": "Seguidores",
+      "instagram": "Instagram"
+    },
+    "history": {
+      "title": "Historial de Invitaciones",
+      "empty": "No has enviado invitaciones aún.",
+      "status": {
+        "registered": "Registrado",
+        "sent": "Enviado",
+        "opened": "Visto",
+        "pending": "Pendiente"
+      }
+    }
+  },
+  "ai_chat": {
+    "library_title": "Biblioteca RGA Katei",
+    "library_subtitle": "Base de Conocimiento Central para la Inteligencia del Agente.",
+    "search_title": "Buscador de Biblioteca",
+    "search_placeholder": "Buscar cliente ej. Travel...",
+    "search_label": "Buscar Cliente",
+    "category_label": "Categoría",
+    "all_categories": "Todas las Categorías",
+    "global_knowledge": "Conocimiento Global",
+    "global_desc": "Datos aplicables a TODOS los clientes/sistema.",
+    "view_all_global": "Ver Todo lo Global",
+    "no_clients_found": "No se encontraron clientes con esos filtros.",
+    "open_folder": "Abrir Carpeta RGA",
+    "back_to_library": "Volver a la Biblioteca",
+    "managing_context": "Gestionando Contexto RGA",
+    "snippets_title": "Fragmentos de Conocimiento",
+    "snippets_desc": "Añade hechos, horarios o FAQs específicas. La IA lee esto primero.",
+    "add_fact_label": "Añadir Nuevo Hecho",
+    "fact_placeholder": "ej. 'La empresa ofrece descuento especial los viernes...'",
+    "save_fact": "Guardar Hecho",
+    "saved_facts": "Hechos Guardados",
+    "no_facts_yet": "Aún no hay hechos.",
+    "documents_title": "Documentos y PDFs",
+    "upload_desc": "Sube PDFs o Imágenes. La IA leerá su contenido.",
+    "upload_instruction": "Clic para subir (PDF, IMG)",
+    "view_file": "Ver Archivo",
+    "processing": "Procesando...",
+    "uncategorized": "Sin Categoría"
+  },
+  "scanner": {
+    "title": "Dicilo Scanner & Reports",
+    "subtitle": "Herramienta unificada para capturar prospectos y generar reportes B2B.",
+    "cardTitle": "Scanner Pro",
+    "cardDesc": "Captura tarjetas y asigna leads en tiempo real.",
+    "howItWorks": {
+      "title": "¿Cómo funciona?",
+      "step1": {
+        "title": "1. Captura (Scanner)",
+        "desc": "Apunta la cámara a una tarjeta de visita. La IA extraerá los datos automáticamente. Si estás trabajando para un cliente específico (ej. Travelposting), selecciona \"Recordar\" para escanear en ráfaga."
+      },
+      "step2": {
+        "title": "2. Fusión Inteligente (Smart Merge)",
+        "desc": "Si escaneas una empresa que ya existe, el sistema no la duplicará. En su lugar, completará los datos que falten (ej. si tenías el email pero no el teléfono) y te avisará."
+      },
+      "step3": {
+        "title": "3. Reportes",
+        "desc": "Al final del día, usa el panel de arriba para descargar un Excel con todos los leads capturados para tu cliente. ¡Listo para enviar!"
+      }
+    },
+    "pro": {
+      "header": "DICILOSCAN PRO",
+      "overlay": "ENCUADRAR TARJETA (HORIZONTAL)",
+      "debug": {
+        "show": "Ver qué ve el robot (Debug)",
+        "hide": "Ocultar visión del robot"
+      },
+      "status": {
+        "ready": "Listo para escanear",
+        "optimizing": "Optimizando Imagen...",
+        "reading": "Leyendo Textos...",
+        "success": "Lectura Completada",
+        "error": "Error en lectura",
+        "shortText": "Texto no claro. Mejora luz/enfoque."
+      },
+      "btn": {
+        "processing": "Procesando...",
+        "capture": "Capturar Datos",
+        "save": "Guardar Prospecto",
+        "saving": "Guardando..."
+      },
+      "form": {
+        "name": "Nombre / Empresa",
+        "phone": "Teléfono",
+        "email": "Email",
+        "web": "Web / Dirección",
+        "notes": "Notas (OCR Raw)",
+        "sender": "Datos enviados por",
+        "event": "Evento / Feria",
+        "placeholder": {
+          "name": "Ej. Restaurante Pepe",
+          "phone": "+34 600...",
+          "email": "info@...",
+          "web": "www.ejemplo.com",
+          "address": "Calle Principal 1, Madrid",
+          "notes": "Texto extraído..."
+        },
+        "event_notes": "Selecciona 'Online' si no aplica."
+      },
+      "assign": {
+        "label": "Asignar Lead A",
+        "dicilo": "DICILO",
+        "client": "CLIENTE",
+        "both": "AMBOS"
+      },
+      "result": {
+        "success": "Registro Exitoso",
+        "duplicate": "Empresa Existente",
+        "pending": "Pendiente Revisión",
+        "company": "Empresa",
+        "assigned": "Asignado a",
+        "status": "Estado"
+      }
+    },
+    "reports": {
+      "generate": "Generar Reporte Diario (B2B)",
+      "receivingCompany": "Empresa Receptora",
+      "selectCompany": "Seleccionar Empresa",
+      "date": "Fecha",
+      "download": "Descargar Excel"
+    }
+  }
+}

@@ -1,0 +1,247 @@
+{
+  "common": {
+    "yes": "Yes",
+    "no": "No"
+  },
+  "header": {
+    "nav": {
+      "home": "Home",
+      "benefits": "Benefits",
+      "planes": "Plans",
+      "directory": "Directory",
+      "login": "Login",
+      "register": "Register",
+      "language": "Language"
+    }
+  },
+  "footer": {
+    "imprint": "Imprint",
+    "privacy": "Privacy Policy",
+    "about": "About Us",
+    "register": "Registration"
+  },
+  "search": {
+    "title": "Your Trusted Recommendation Portal",
+    "description": "Discover the best products and services, recommended by a trustworthy community.",
+    "business": "Business",
+    "location": "Location",
+    "businessPlaceholder": "Name of the business...",
+    "locationPlaceholder": "City, region, or country...",
+    "ariaLabel": "Search for businesses or locations",
+    "ariaButtonLabel": "Start search",
+    "geolocationAriaLabel": "Use my location",
+    "businessNotFound": "Business not found",
+    "businessNotFoundDesc": "We couldn't find a business for '{query}'.",
+    "locationNotFound": "Location not found",
+    "locationNotFoundDesc": "We couldn't find a location for '{query}'.",
+    "error": "Search Error",
+    "errorDesc": "An error occurred during the search.",
+    "geolocationError": "Geolocation Error",
+    "geolocationErrorDesc": "We couldn't retrieve your location.",
+    "geolocationNotSupported": "Geolocation not supported",
+    "geolocationNotSupportedDesc": "Your browser does not support geolocation.",
+    "tagline": "Your Trusted Recommendation Portal",
+    "taglineDesc": "Discover the best products and services, recommended by a trustworthy community.",
+    "recommendationPortal": "The recommendation portal you can trust."
+  },
+  "mapPopup": {
+    "website": "Website"
+  },
+  "businessCard": {
+    "currentOffer": "Current Offer"
+  },
+  "directory": {
+    "title": "Directory",
+    "description": "This is the directory page. Content will be available soon.",
+    "content": "Welcome to the directory. We are working to bring you the best information. Check back soon!"
+  },
+  "register": {
+    "title": "Register with Dicilo",
+    "description": "Join our community and discover a world of possibilities. Fill out the form to get started.",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email",
+    "whatsapp": "WhatsApp",
+    "registrationType": "Type of Registration",
+    "submitButton": "Complete Registration",
+    "loading": "Processing...",
+    "successTitle": "Registration Successful!",
+    "successDescription": "Thank you for registering. We will be in touch with you shortly.",
+    "errorTitle": "Registration Error",
+    "errorDescription": "An error occurred while submitting your data. Please try again.",
+    "options": {
+      "private": "Private",
+      "donor": "Donor",
+      "retailer": "Retailer",
+      "premium": "Premium"
+    },
+    "firstNamePlaceholder": "Your first name",
+    "lastNamePlaceholder": "Your last name"
+  },
+  "benefits": {
+    "page_title": "Benefits of Being Part of Dicilo",
+    "page_subtitle": "Discover why Dicilo is the ideal platform for both companies and users who value quality and trust.",
+    "size": {
+      "title": "We are small",
+      "description": "This allows us to focus on every detail and provide personalized attention to each of our members."
+    },
+    "experience": {
+      "title": "We are big",
+      "description": "We have over 25 years of experience in the world of networking and marketing, which ensures our success and reliability."
+    },
+    "two_reasons": {
+      "title": "Two great reasons to choose us",
+      "description": "We are the meeting point where quality products and demanding consumers come together."
+    },
+    "for_companies": {
+      "title": "For Companies",
+      "item1": {
+        "title": "Targeted Visibility",
+        "description": "Connect with an audience that is genuinely interested in what you offer."
+      },
+      "item2": {
+        "title": "Network Expansion",
+        "description": "Access a global network of entrepreneurs and potential customers."
+      },
+      "item3": {
+        "title": "Brand Trust",
+        "description": "Strengthen your image through authentic recommendations from satisfied customers."
+      }
+    },
+    "for_users": {
+      "title": "For Users",
+      "item1": {
+        "title": "Exclusive Offers",
+        "description": "Access unique discounts on local and international products."
+      },
+      "item2": {
+        "title": "Reliable Recommendations",
+        "description": "Make informed decisions thanks to the reviews of a trusted community."
+      },
+      "item3": {
+        "title": "Rewards for Your Participation",
+        "description": "Benefit from your interactions and become a key part of the network."
+      }
+    },
+    "network": {
+      "title": "A Unique Network in Germany",
+      "description": "Dicilo is not just a platform; it's a complete ecosystem designed to benefit both businesses and consumers.",
+      "for_companies": {
+        "title": "For Businesses",
+        "description": "Dicilo is a showcase for your products and a strategic partner to help you grow. We give you the tools to reach a wider and more engaged audience."
+      },
+      "for_users": {
+        "title": "For Users",
+        "description": "Being part of Dicilo not only gives you access to exclusive offers, but also makes you part of a community where your opinion matters and is rewarded."
+      },
+      "cta_text": "Are you ready to be part of the change?",
+      "cta_button_company": "Register your Business",
+      "cta_button_user": "Join as a User"
+    },
+    "social": {
+      "title": "Follow us on our networks",
+      "description": "Don't miss any of our news and special promotions. Join our digital community on your favorite platform."
+    }
+  },
+  "pricing_page": {
+    "hero_title": "Our Plans",
+    "hero_subtitle": "Welcome to DICILO, the recommendation portal you can trust. Find the plan that best suits you.",
+    "plans_title": "Our Plans and Prices",
+    "plans_desc_1": "At DICILO, we are convinced that success is achieved through genuine recommendations and a strong community.",
+    "plans_desc_2": "That is why we have developed a platform that connects companies and buyers efficiently.",
+    "plans_desc_3": "Whether you want to sell, buy, or donate items you no longer use, DICILO offers you a cost-effective and impactful solution.",
+    "plans_cta": "Choose the right plan for you now and contact us!",
+    "converter": {
+      "title": "Euro Converter",
+      "desc": "Prices are in Euros. Use this converter to get an estimate in your local currency. Exchange rates are estimates and may vary.",
+      "amount_placeholder": "Amount in EUR",
+      "button": "Convert",
+      "please_enter_amount": "Please enter an amount.",
+      "error": "Error during conversion."
+    },
+    "plans": [
+      {
+        "title": "Private Customer",
+        "price": "€0",
+        "period": "/year",
+        "features": [
+          "Receive the newsletter with the current offers.",
+          "Exclusive discounts.",
+          "No purchase restrictions.",
+          "Technical support.",
+          "Contact us if you want to purchase special products or services",
+          "Annual membership."
+        ],
+        "buttonText": "Contact",
+        "popular": false
+      },
+      {
+        "title": "Donor",
+        "price": "€60",
+        "period": "/year",
+        "features": [
+          "Receive the newsletter with the current offers.",
+          "Register up to 24 products per year.",
+          "Recommendation newsletter.",
+          "16 Social Media Posts.",
+          "Registration form.",
+          "E-Mail Support, Mon. – Fri.",
+          "Annual membership."
+        ],
+        "buttonText": "Contact",
+        "popular": false
+      },
+      {
+        "title": "Retailer",
+        "price": "€2,340",
+        "period": "/year",
+        "features": [
+          "Receive the newsletter with the current offers.",
+          "Register up to 300 products or services in a maximum of 4 categories",
+          "2 x recommendation newsletter per month to (potential prospects)",
+          "Online graphic tools",
+          "Attend free A.I. courses 4 x a year",
+          "1 x per month statistics about your landing page",
+          "60 social media posts monthly (3 channels)",
+          "General registration form",
+          "E-Mail Support, Mon. – Fri.",
+          "Technical Support",
+          "A.I. assistant for (Chatbot)",
+          "With annual membership payment (5% discount)"
+        ],
+        "buttonText": "Contact",
+        "popular": false
+      },
+      {
+        "title": "Premium",
+        "price": "€3,900",
+        "period": "/year",
+        "features": [
+          "Receive the newsletter with the current offers.",
+          "Register up to 600 products or services in a maximum of 14 categories",
+          "2 x recommendation newsletter per month to (General Dicilo community)",
+          "Editing of your graphics",
+          "Editing of your texts",
+          "1 x per month individual A.I. courses",
+          "2 x per month statistics about your landing page",
+          "6 x per year online presentation",
+          "120 social media posts monthly distributed on 6 Dicilo channels",
+          "Individual registration form",
+          "E-Mail Support, Mon. – Sat.",
+          "WhatsApp Support, Mon. – Sat.",
+          "Premium Support (Individual, no artificial support)",
+          "Individual A.I. assistant on your landing page",
+          "With annual membership (10% discount)"
+        ],
+        "buttonText": "Contact",
+        "popular": true
+      }
+    ]
+  },
+  "clients": {
+    "fields": {
+      "category": "Category",
+      "subcategory": "Subcategory"
+    }
+  }
+}

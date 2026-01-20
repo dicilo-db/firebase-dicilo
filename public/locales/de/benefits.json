@@ -1,0 +1,105 @@
+{
+  "page_title": "Vorteile der Nutzung unserer Plattform",
+  "page_subtitle": "Entdecken Sie, warum Dicilo die beste Wahl für Ihr Unternehmen und für Sie als Verbraucher ist.",
+  "size": {
+    "title": "Unsere Größe",
+    "description": "Wir haben mehr als 15.000 registrierte Nutzer und über 600 Unternehmen in mehr als 100 Kategorien. Wir sind das größte Empfehlungsportal in Deutschland."
+  },
+  "experience": {
+    "title": "Unsere Erfahrung",
+    "description": "Mit über 20 Jahren Erfahrung in den Bereichen Marketing, Vertrieb und Technologie garantieren wir effektive und innovative Lösungen."
+  },
+  "two_reasons": {
+    "title": "Zwei gute Gründe, uns zu vertrauen",
+    "description": "Wir bieten einen doppelten Vorteil, indem wir sowohl Unternehmen als auch Nutzern einen unschätzbaren Mehrwert bieten und so ein für beide Seiten vorteilhaftes Ökosystem schaffen."
+  },
+  "for_companies": {
+    "title": "Für Unternehmen",
+    "item1": {
+      "title": "Erhöhte Sichtbarkeit",
+      "description": "Erreichen Sie Tausende von potenziellen Kunden."
+    },
+    "item2": {
+      "title": "Marketing-Tools",
+      "description": "Nutzen Sie unsere Tools, um Ihre Produkte und Dienstleistungen zu bewerben."
+    },
+    "item3": {
+      "title": "Technischer Support",
+      "description": "Erhalten Sie Hilfe von unseren Experten, um Ihr Geschäft auszubauen."
+    }
+  },
+  "for_users": {
+    "title": "Für Nutzer",
+    "item1": {
+      "title": "Exklusive Angebote",
+      "description": "Greifen Sie auf Sonderangebote und Rabatte zu."
+    },
+    "item2": {
+      "title": "Vielfalt an Optionen",
+      "description": "Finden Sie alles, was Sie brauchen, an einem Ort."
+    },
+    "item3": {
+      "title": "Vertrauenswürdige Community",
+      "description": "Interagieren Sie mit verifizierten Unternehmen und Nutzern."
+    }
+  },
+  "network": {
+    "title": "Ein einzigartiges Netzwerk von Kontakten",
+    "description": "Dicilo ist mehr als nur ein Portal; es ist ein Kontaktnetzwerk, das auf Vertrauen und Gegenseitigkeit basiert und sowohl für Unternehmen als auch für Privatpersonen konzipiert wurde.",
+    "for_companies": {
+      "title": "Für Unternehmen",
+      "description": "Wir bieten eine Plattform zur Förderung Ihrer Produkte und Dienstleistungen sowie die Möglichkeit, mit anderen Unternehmen und potenziellen Kunden in Kontakt zu treten."
+    },
+    "for_users": {
+      "title": "Für Nutzer",
+      "description": "Finden Sie die besten Angebote, entdecken Sie neue Produkte und vernetzen Sie sich mit einer Community, die Ihre Interessen teilt. Sie können auch Artikel spenden, die Sie nicht mehr benötigen."
+    },
+    "cta_text": "Treten Sie unserem Netzwerk bei und entdecken Sie alle Vorteile, die wir zu bieten haben.",
+    "cta_button_company": "Unternehmen registrieren",
+    "cta_button_user": "Nutzer registrieren"
+  },
+  "social": {
+    "title": "Treten Sie unserer Community in sozialen Netzwerken bei",
+    "description": "Seien Sie Teil unserer wachsenden Community. Nehmen Sie an unseren WhatsApp- und Telegram-Gruppen teil, in denen Sie exklusive Angebote finden, Ihre Produkte verkaufen, neue Kontakte knüpfen und vieles mehr können. Folgen Sie uns auch in unseren sozialen Netzwerken, um immer auf dem Laufenden zu bleiben."
+  },
+  "testimonials": {
+    "title": "Was unsere Kunden sagen",
+    "subtitle": "Nimm es nicht nur von uns – lass unsere Kunden für sich sprechen!",
+    "carla": {
+      "name": "Carla M.",
+      "role": "Verkäuferin von handgefertigten Produkten",
+      "quote": "Dicilo war die perfekte Plattform, um mein Geschäft auszubauen. Ich konnte meine Produkte schnell registrieren und neue Kunden gewinnen. Dank der Marketing-Tools und des technischen Supports habe ich meine Verkäufe erheblich gesteigert."
+    },
+    "tomas": {
+      "name": "Tomás R.",
+      "role": "Regelmäßiger Käufer",
+      "quote": "Ich habe fantastische Produkte zu unerwartet günstigen Preisen gefunden. Die Angebote, die ich über die Newsletter und die Instapost erhalte, helfen mir, viel zu sparen und neue Dienstleistungen zu entdecken, die wirklich nützlich sind."
+    },
+    "lucia": {
+      "name": "Lucía G.",
+      "role": "Benutzerin, die Artikel gespendet hat",
+      "quote": "Ich hatte mehrere Artikel, die ich nicht mehr benutzte, und Dicilo hat es mir ermöglicht, sie einfach an Menschen zu verschenken, die sie wirklich brauchen. Die Plattform ist benutzerfreundlich, und ich war begeistert von der Erfahrung."
+    }
+  },
+  "feedback": {
+    "title": "Ihre Meinung ist uns wichtig",
+    "name": "Vollständiger Name",
+    "email": "E-Mail",
+    "country": "Land",
+    "customerType": "Kundentyp",
+    "customerTypePlaceholder": "Wählen Sie einen Typ",
+    "customerTypeOptions": {
+      "private": "Privatperson",
+      "donor": "Spender",
+      "company": "Unternehmen",
+      "premium": "Premium"
+    },
+    "rating": "Bewertung",
+    "message": "Nachricht",
+    "submit": "Feedback senden",
+    "successTitle": "Feedback gesendet",
+    "successDesc": "Vielen Dank für Ihre Meinung!",
+    "errorTitle": "Fehler beim Senden",
+    "errorDesc": "Bitte versuchen Sie es später erneut."
+  }
+}

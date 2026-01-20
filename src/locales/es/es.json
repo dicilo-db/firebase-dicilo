@@ -1,0 +1,7 @@
+{
+  "NotFound": {
+    "title": "Página no encontrada",
+    "description": "La página que buscaba no pudo ser encontrada.",
+    "backToHome": "Volver al Inicio"
+  }
+}

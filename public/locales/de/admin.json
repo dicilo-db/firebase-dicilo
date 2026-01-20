@@ -1,0 +1,511 @@
+{
+  "common": {
+    "back": "Zurück"
+  },
+  "login": {
+    "title": "Admin Login",
+    "description": "Bitte geben Sie Ihre Anmeldedaten ein, um fortzufahren.",
+    "emailLabel": "E-Mail",
+    "passwordLabel": "Passwort",
+    "passwordHint": "Mindestens 8 Zeichen, inklusive Groß- und Kleinbuchstaben, Zahlen und Sonderzeichen.",
+    "loginButton": "Anmelden",
+    "showPassword": "Password anzeigen",
+    "hidePassword": "Password verbergen",
+    "successTitle": "Anmeldung erfolgreich",
+    "successDescription": "Willkommen im Admin-Bereich.",
+    "error": {
+      "title": "Anmeldefehler",
+      "invalidCredentials": "Ungültige E-Mail oder Passwort. Bitte versuchen Sie es erneut.",
+      "notAdmin": "Sie haben keine Berechtigung, auf diesen Bereich zuzugreifen.",
+      "generic": "Ein unerwarteter Fehler ist aufgetreten.",
+      "unknown": "Ein unbekannter Fehler ist aufgetreten. Bitte kontaktieren Sie den Support."
+    }
+  },
+  "dashboard": {
+    "title": "Admin Dashboard",
+    "welcome": "Willkommen, {{email}}. Ihre Rolle ist: {{role}}.",
+    "logout": "Abmelden",
+    "logoutSuccess": "Erfolgreich abgemeldet.",
+    "logoutError": "Fehler beim Abmelden",
+    "logoutErrorDescription": "Bitte versuchen Sie es erneut.",
+    "superAdminArea": "Superadmin-Bereich",
+    "superAdminDescription": "Aktionen, die nur für Superadmins verfügbar sind.",
+    "seedDatabase": "Datenbank mit Seed-Daten füllen",
+    "seedingInProgress": "Daten werden geladen...",
+    "seedingStartTitle": "Datenbank-Seeding gestartet",
+    "seedingStartDesc": "Dieser Vorgang kann einen Moment dauern.",
+    "seedingSuccessTitle": "Datenbank erfolgreich gefüllt",
+    "seedingErrorTitle": "Fehler beim Füllen der Datenbank",
+    "seedingErrorDesc": "Ein unbekannter Fehler ist aufgetreten.",
+    "accessDenied": "Zugriff verweigert",
+    "noAdminRights": "Sie haben keine Berechtigung, auf diese Seite zuzugreifen.",
+    "contentManagement": "Inhaltsverwaltung",
+    "contentManagementDescription": "Verwalten Sie die Inhalte der Plattform.",
+    "manageBusinesses": "Unternehmen verwalten"
+  },
+  "seed": {
+    "pageTitle": "Einrichtung des Superadmin-Kontos",
+    "pageSubtitle": "Befolgen Sie diese Schritte, um den ersten Superadmin für Ihr Projekt zu erstellen.",
+    "step1Title": "Superadmin-Benutzer erstellen",
+    "step1Description": "Erstellen Sie zunächst einen Benutzer in der Firebase Authentication-Konsole.",
+    "step1AlertTitle": "Anweisungen",
+    "step1Instruction1": "Gehen Sie zur Firebase-Konsole > Authentifizierung > Benutzer.",
+    "step1Instruction2": "Klicken Sie auf 'Benutzer hinzufügen' und verwenden Sie die folgenden Anmeldeinformationen:",
+    "emailLabel": "E-Mail",
+    "passwordLabel": "Passwort",
+    "step1Instruction3": "Bewahren Sie diese Anmeldeinformationen sicher auf.",
+    "step1NoteTitle": "Wichtiger Hinweis",
+    "step1NoteDescription": "Dieser Benutzer hat erst dann Superadmin-Berechtigungen, wenn Sie Schritt 2 abgeschlossen haben.",
+    "step2Title": "Administratorrolle in Firestore zuweisen",
+    "step2Description": "Erstellen Sie ein Dokument in Firestore, um diesem Benutzer die Superadmin-Rolle zuzuweisen.",
+    "step2AlertTitle": "Anweisungen",
+    "step2Instruction1": "Gehen Sie zur Firebase-Konsole > Firestore-Datenbank.",
+    "step2Instruction2": "Erstellen Sie eine neue Sammlung mit der ID:",
+    "collectionID": "Sammlungs-ID",
+    "step2Instruction3": "Erstellen Sie ein neues Dokument mit der Dokumenten-ID, die der UID des Benutzers aus Schritt 1 entspricht.",
+    "step2Instruction4": "Fügen Sie diesem Dokument die folgenden Felder hinzu:",
+    "field": "Feld",
+    "value": "Wert",
+    "step3Title": "Anmelden und Datenbank mit Seed-Daten füllen",
+    "step3Description": "Sobald die Rolle zugewiesen ist, melden Sie sich im Admin-Bereich an und füllen Sie die Datenbank.",
+    "step3Content": "Melden Sie sich mit den in Schritt 1 erstellten Anmeldeinformationen an. Gehen Sie zum Dashboard und klicken Sie auf die Schaltfläche 'Datenbank mit Seed-Daten füllen'. Dadurch wird die Datenbank mit den ersten Geschäftsdaten gefüllt.",
+    "backToLogin": "Zurück zum Login"
+  },
+  "businesses": {
+    "title": "Unternehmen verwalten",
+    "addBusiness": "Unternehmen hinzufügen",
+    "reload": "Neu laden",
+    "searchPlaceholder": "Nach Firmennamen suchen...",
+    "error": "Fehler",
+    "errorDescription": "Unternehmen konnten nicht geladen werden.",
+    "table": {
+      "name": "Name",
+      "category": "Kategorie",
+      "location": "Standort",
+      "actions": "Aktionen"
+    },
+    "confirmDeleteTitle": "Löschen bestätigen",
+    "confirmDeleteDesc": "Sind Sie sicher, dass Sie {{name}} löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+    "deleteSuccessTitle": "Unternehmen gelöscht",
+    "deleteSuccessDesc": "Das Unternehmen wurde erfolgreich entfernt.",
+    "deleteErrorTitle": "Fehler beim Löschen",
+    "deleteErrorDesc": "Das Unternehmen konnte nicht gelöscht werden.",
+    "noResults": "Keine Unternehmen gefunden.",
+    "backToDashboard": "Zurück zum Dashboard",
+    "edit": {
+      "title": "Unternehmen bearbeiten",
+      "back": "Zurück zur Liste",
+      "cardTitle": "Geschäftsinformationen",
+      "cardDescription": "Aktualisieren Sie die Details für das Unternehmen mit der ID: {{id}}",
+      "notFoundTitle": "Unternehmen nicht gefunden",
+      "notFoundDesc": "Das angeforderte Unternehmen existiert nicht.",
+      "fetchErrorTitle": "Fehler beim Laden",
+      "fetchErrorDesc": "Die Unternehmensdaten konnten nicht geladen werden.",
+      "saveSuccessTitle": "Gespeichert",
+      "saveSuccessDesc": "Die Unternehmensdaten wurden erfolgreich aktualisiert.",
+      "saveErrorTitle": "Fehler beim Speichern",
+      "saveErrorDesc": "Die Unternehmensdaten konnten nicht gespeichert werden.",
+      "updateToClient": "Update auf Client",
+      "asStarter": "Als Starter",
+      "asRetailer": "Als Retailer",
+      "asPremium": "Als Premium",
+      "logo": {
+        "urlHelp": "Geben Sie eine öffentliche URL zum Logo an."
+      },
+      "geocode": {
+        "successTitle": "Geokodierung erfolgreich",
+        "successDesc": "Neue Koordinaten festgelegt",
+        "dragSuccessDesc": "Koordinaten durch Ziehen aktualisiert",
+        "notFoundTitle": "Standort nicht gefunden",
+        "notFoundDesc": "Die angegebene Adresse konnte nicht geokodiert werden.",
+        "errorTitle": "Geokodierungsfehler",
+        "errorDesc": "Der Geokodierungsdienst konnte nicht erreicht werden.",
+        "noAddressTitle": "Keine Adresse angegeben",
+        "noAddressDesc": "Bitte geben Sie eine Adresse oder einen Ort für die Geokodierung an.",
+        "markerTitle": "Aktuelle Position"
+      }
+    },
+    "new": {
+      "title": "Neues Unternehmen hinzufügen",
+      "back": "Zurück zur Liste",
+      "cardTitle": "Neues Unternehmen erstellen",
+      "cardDescription": "Füllen Sie die Details aus, um ein neues Unternehmen hinzuzufügen.",
+      "saveSuccessTitle": "Unternehmen erstellt",
+      "saveSuccessDesc": "Das neue Unternehmen wurde erfolgreich hinzugefügt.",
+      "saveErrorTitle": "Fehler beim Erstellen",
+      "saveErrorDesc": "Das Unternehmen konnte nicht erstellt werden.",
+      "save": "Unternehmen speichern"
+    },
+    "fields": {
+      "name": "Name des Unternehmens",
+      "category": "Kategorie",
+      "subcategory": "Unterkategorie",
+      "description": "Beschreibung",
+      "location": "Standort (Stadt, Land)",
+      "address": "Adresse",
+      "phone": "Telefon",
+      "website": "Webseite",
+      "logoUrl": "Logo-URL",
+      "logoUrlPlaceholder": "https://example.com/logo.png",
+      "imageHint": "Bild-Hinweis (z.B. 'pizza restaurant')",
+      "rating": "Bewertung (0-5)",
+      "coords": "Koordinaten (Lat, Lng)",
+      "coordsHelp": "Koordinaten werden automatisch durch Geokodierung der Adresse festgelegt oder können auf der Karte verschoben werden.",
+      "currentOfferUrl": "URL des aktuellen Angebots"
+    }
+  },
+  "client": {
+    "type": {
+      "retailer": "Einzelhändler",
+      "premium": "Premium",
+      "starter": "Starter"
+    }
+  },
+  "clients": {
+    "title": "Landingpages verwalten",
+    "addClient": "Seite hinzufügen",
+    "reload": "Neu laden",
+    "searchPlaceholder": "Nach Kundennamen suchen...",
+    "error": "Fehler",
+    "errorDescription": "Seiten konnten nicht geladen werden.",
+    "table": {
+      "name": "Name",
+      "title": "Titel",
+      "slug": "Slug (URL)",
+      "actions": "Aktionen"
+    },
+    "confirmDeleteTitle": "Löschen bestätigen",
+    "confirmDeleteDesc": "Sind Sie sicher, dass Sie {{name}} löschen möchten?",
+    "deleteSuccessTitle": "Seite gelöscht",
+    "deleteSuccessDesc": "Die Seite wurde erfolgreich entfernt.",
+    "deleteErrorTitle": "Fehler beim Löschen",
+    "deleteErrorDesc": "Die Seite konnte nicht gelöscht werden.",
+    "noResults": "Keine Seiten gefunden.",
+    "backToDashboard": "Zurück zum Dashboard",
+    "new": {
+      "title": "Neue Landingpage erstellen",
+      "back": "Zurück",
+      "cardTitle": "Neue Seite",
+      "cardDescription": "Füllen Sie die Details für die neue Landingpage aus.",
+      "saveSuccessTitle": "Seite erstellt",
+      "saveSuccessDesc": "Die neue Seite wurde erfolgreich hinzugefügt.",
+      "saveErrorTitle": "Fehler beim Erstellen",
+      "saveErrorDesc": "Die Seite konnte nicht erstellt werden.",
+      "save": "Seite speichern"
+    },
+    "edit": {
+      "title": "Landingpage bearbeiten",
+      "back": "Zurück",
+      "cardTitle": "Seitendetails",
+      "cardDescription": "Aktualisieren Sie die Details für die Seite mit der ID: {{id}}",
+      "saveSuccessTitle": "Gespeichert",
+      "saveSuccessDesc": "Die Seitendaten wurden erfolgreich aktualisiert.",
+      "saveErrorTitle": "Fehler beim Speichern",
+      "saveErrorDesc": "Die Seitendaten konnten nicht gespeichert werden.",
+      "notFoundTitle": "Seite nicht gefunden",
+      "notFoundDesc": "Die angeforderte Seite existiert nicht.",
+      "fetchErrorTitle": "Fehler beim Laden",
+      "fetchErrorDesc": "Die Seitendaten konnten nicht geladen werden.",
+      "save": "Änderungen speichern"
+    },
+    "fields": {
+      "clientName": "Kundenname",
+      "slug": "Slug",
+      "category": "Kategorie",
+      "subcategory": "Unterkategorie",
+      "clientLogoUrl": "Logo-URL",
+      "clientTitle": "Titel",
+      "clientSubtitle": "Untertitel",
+      "socialLinks": "Soziale Links",
+      "products": "Produkte (JSON)",
+      "strengths": "Stärken (JSON)",
+      "testimonials": "Testimonials (JSON)",
+      "translations": "Übersetzungen (JSON-Objekt)",
+      "jsonPlaceholder": "Geben Sie hier ein JSON-Array von Objekten ein...",
+      "jsonPlaceholderObject": "Geben Sie hier ein JSON-Objekt ein...",
+      "jsonHelp": "Muss ein gültiges JSON-Array sein. Verwenden Sie einen Online-Validator, um dies zu überprüfen.",
+      "jsonHelpObject": "Muss ein gültiges JSON-Objekt sein. Verwenden Sie einen Online-Validator, um dies zu überprüfen."
+    }
+  },
+  "plans": {
+    "title": "Preispläne verwalten",
+    "addPlan": "Plan hinzufügen",
+    "back": "Zurück",
+    "fetchError": "Fehler beim Abrufen der Pläne",
+    "confirmDeleteTitle": "Löschen bestätigen",
+    "confirmDeleteDesc": "Sind Sie sicher, dass Sie den Plan '{{name}}' löschen möchten?",
+    "deleteSuccessTitle": "Plan gelöscht",
+    "deleteErrorTitle": "Fehler beim Löschen",
+    "table": {
+      "order": "Reihenfolge",
+      "title": "Titel",
+      "price": "Preis",
+      "popular": "Beliebt",
+      "actions": "Aktionen",
+      "language": "Sprache"
+    },
+    "new": {
+      "title": "Neuen Preisplan erstellen",
+      "cardTitle": "Neuer Plan",
+      "description": "Füllen Sie die Details für den neuen Preisplan aus.",
+      "saveSuccess": "Plan erfolgreich erstellt.",
+      "saveError": "Fehler beim Erstellen des Plans.",
+      "saveButton": "Plan speichern"
+    },
+    "edit": {
+      "title": "Preisplan bearbeiten",
+      "description": "Aktualisieren Sie die Details für diesen Plan.",
+      "saveSuccess": "Plan erfolgreich aktualisiert.",
+      "saveError": "Fehler beim Aktualisieren des Plans.",
+      "saveButton": "Änderungen speichern",
+      "notFound": "Plan nicht gefunden."
+    },
+    "fields": {
+      "title": "Titel",
+      "price": "Preis",
+      "period": "Zeitraum (z.B. /Monat)",
+      "features": "Merkmale (eines pro Zeile)",
+      "featuresHelp": "Jede Zeile wird zu einem Punkt in der Liste der Merkmale.",
+      "buttonText": "Button-Text",
+      "isPopular": "Als beliebt markieren",
+      "order": "Anzeigereihenfolge",
+      "language": "Sprache",
+      "languagePlaceholder": "Sprache auswählen"
+    }
+  },
+  "registrations": {
+    "title": "Registrierungen",
+    "tabs": {
+      "all": "Alle",
+      "private": "Privat",
+      "donor": "Spender",
+      "retailer": "Händler",
+      "premium": "Premium"
+    },
+    "table": {
+      "name": "Name",
+      "email": "E-Mail",
+      "whatsapp": "WhatsApp",
+      "type": "Typ",
+      "date": "Datum"
+    },
+    "noResults": "Keine Registrierungen gefunden."
+  },
+  "feedbacks": {
+    "title": "Kundenfeedback",
+    "table": {
+      "date": "Datum",
+      "name": "Name",
+      "customerType": "Kundentyp",
+      "rating": "Bewertung",
+      "message": "Nachricht"
+    },
+    "noResults": "Kein Feedback gefunden."
+  },
+  "emailTemplates": {
+    "title": "Inhaltsverwaltung",
+    "subtitle": "Wählen Sie ein Modul aus, um dessen Vorlagen zu verwalten.",
+    "managing": "Verwaltung: {{category}}",
+    "backToModules": "Zurück zu Modulen",
+    "backToDashboard": "Zurück zum Dashboard",
+    "newTemplate": "Neue Vorlage",
+    "manage": "Verwalten",
+    "templates": "Vorlagen",
+    "loading": "Vorlagen werden geladen...",
+    "noTemplates": "Keine Vorlagen in dieser Kategorie",
+    "firstTemplate": "Erste Vorlage erstellen",
+    "createDescription": "Sie haben noch keine Vorlagen für {{category}} erstellt.",
+    "edit": "Vorlage bearbeiten",
+    "categories": {
+      "network_campaigns": {
+        "title": "Netzwerkkampagnen",
+        "description": "Vorlagen für Werbekampagnen im Netzwerk."
+      },
+      "email_marketing": {
+        "title": "E-Mail-Marketing",
+        "description": "Newsletter und Massen-Werbe-E-Mails."
+      },
+      "referrals": {
+        "title": "Freunde werben",
+        "description": "Einladungs-E-Mails und Empfehlungssystem."
+      }
+    }
+  },
+  "invite": {
+    "form": {
+      "title": "Einladung anpassen",
+      "description": "Fügen Sie bis zu 7 Freunde hinzu und senden Sie ihnen allen von hier aus eine personalisierte Einladung. Geben Sie einfach die Daten ein, fügen Sie sie der Liste hinzu und senden Sie sie dann an alle auf einmal.",
+      "yourId": "Deine ID",
+      "yourName": "Dein Name",
+      "addFriend": "Freund hinzufügen ({{count}}/7)",
+      "addFriendTitle": "Freund hinzufügen",
+      "name": "Name",
+      "namePlaceholder": "z.B. Martin",
+      "email": "E-Mail",
+      "emailPlaceholder": "email@beispiel.com",
+      "language": "Sprache",
+      "languages": {
+        "es": "Spanisch",
+        "en": "Englisch",
+        "de": "Deutsch"
+      },
+      "template": "Vorlage",
+      "templates": {
+        "general": "Sparen (Allgemein)",
+        "business": "Arbeit (Business)",
+        "crypto": "Krypto (DiciPoints)",
+        "freelancer": "Suche (Freelancer)"
+      },
+      "preview": "Vorschau",
+      "addToList": "Zur Liste hinzufügen",
+      "share": "Teilen",
+      "send": "{{count}} Einladungen senden",
+      "sending": "Sende {{count}} Einladungen...",
+      "share_whatsapp": "WhatsApp",
+      "share_telegram": "Telegram",
+      "share_facebook": "Facebook",
+      "share_twitter": "X (Twitter)",
+      "share_email": "E-Mail",
+      "share_more": "... Mehr Optionen...",
+      "share_copy": "Link kopieren",
+      "id_loading": "Lädt..."
+    },
+    "stats": {
+      "availableSlots": "Verfügbare Plätze",
+      "ofInvites": "von {{count}} Pionier-Einladungen",
+      "opened": "Vorschlag ansehen",
+      "openedLabel": "Geöffnete E-Mails",
+      "registered": "Abgeschlossene Pioniere",
+      "registeredLabel": "+50 DP pro Person"
+    },
+    "tracking": {
+      "title": "Einladungsverfolgung",
+      "subtitle": "Überwachen Sie den Status Ihres Netzwerks in Echtzeit.",
+      "visualContacts": "Sichtkontakte",
+      "reach": "Reichweite",
+      "followers": "Follower",
+      "instagram": "Instagram"
+    },
+    "history": {
+      "title": "Einladungsverlauf",
+      "empty": "Sie haben noch keine Einladungen versendet.",
+      "status": {
+        "registered": "Registriert",
+        "sent": "Gesendet",
+        "opened": "Geöffnet",
+        "pending": "Ausstehend"
+      }
+    }
+  },
+  "ai_chat": {
+    "library_title": "Katei RGA Bibliothek",
+    "library_subtitle": "Zentrale Wissensdatenbank für Agenten-Intelligenz.",
+    "search_title": "Bibliothek Suche",
+    "search_placeholder": "Kunden suchen z.B. Travel...",
+    "search_label": "Kunde suchen",
+    "category_label": "Kategorie",
+    "all_categories": "Alle Kategorien",
+    "global_knowledge": "Globales Wissen",
+    "global_desc": "Fakten für ALLE Kunden/Systeme.",
+    "view_all_global": "Alle Globalen anzeigen",
+    "no_clients_found": "Keine Kunden mit diesen Filtern gefunden.",
+    "open_folder": "RGA Ordner öffnen",
+    "back_to_library": "Zurück zur Bibliothek",
+    "managing_context": "RGA Kontext verwalten",
+    "snippets_title": "Wissensschnipsel",
+    "snippets_desc": "Fügen Sie Fakten, Öffnungszeiten oder FAQs hinzu. Die KI liest das zuerst.",
+    "add_fact_label": "Neuen Fakt hinzufügen",
+    "fact_placeholder": "z.B. 'Das Unternehmen bietet freitags Rabatt an...'",
+    "save_fact": "Fakt speichern",
+    "saved_facts": "Gespeicherte Fakten",
+    "no_facts_yet": "Noch keine Fakten.",
+    "documents_title": "Dokumente & PDFs",
+    "upload_desc": "PDFs oder Bilder hochladen. Die KI liest den Inhalt.",
+    "upload_instruction": "Klicken zum Hochladen (PDF, IMG)",
+    "view_file": "Datei ansehen",
+    "processing": "Verarbeitung...",
+    "uncategorized": "Ohne Kategorie"
+  },
+  "scanner": {
+    "title": "Dicilo Scanner & Reports",
+    "subtitle": "Einheitliches Tool zur Erfassung von Interessenten und Generierung von B2B-Berichten.",
+    "cardTitle": "Scanner Pro",
+    "cardDesc": "Erfassen Sie Visitenkarten und weisen Sie Leads in Echtzeit zu.",
+    "howItWorks": {
+      "title": "Wie funktioniert es?",
+      "step1": {
+        "title": "1. Erfassung (Scanner)",
+        "desc": "Richten Sie die Kamera auf eine Visitenkarte. Die KI extrahiert die Daten automatisch. Wenn Sie für einen bestimmten Kunden arbeiten (z.B. Travelposting), wählen Sie \"Erinnern\", um in Serie zu scannen."
+      },
+      "step2": {
+        "title": "2. Intelligente Zusammenführung (Smart Merge)",
+        "desc": "Wenn Sie ein Unternehmen scannen, das bereits existiert, wird das System es nicht duplizieren. Stattdessen vervollständigt es fehlende Daten (z.B. wenn Sie die E-Mail hatten, aber nicht die Telefonnummer) und benachrichtigt Sie."
+      },
+      "step3": {
+        "title": "3. Berichte",
+        "desc": "Am Ende des Tages verwenden Sie das obere Panel, um eine Excel-Datei mit allen erfassten Leads für Ihren Kunden herunterzuladen. Bereit zum Senden!"
+      }
+    },
+    "pro": {
+      "header": "DICILOSCAN PRO",
+      "overlay": "VISITENKARTE AUSRICHTEN (HORIZONTAL)",
+      "debug": {
+        "show": "Sehen, was der Roboter sieht (Debug)",
+        "hide": "Robotersicht ausblenden"
+      },
+      "status": {
+        "ready": "Bereit zum Scannen",
+        "optimizing": "Bild wird optimiert...",
+        "reading": "Text wird gelesen...",
+        "success": "Lesevorgang abgeschlossen",
+        "error": "Fehler beim Lesen",
+        "shortText": "Text unklar. Licht/Fokus verbessern."
+      },
+      "btn": {
+        "processing": "Verarbeitung...",
+        "capture": "Daten erfassen",
+        "save": "Interessent speichern",
+        "saving": "Speichern..."
+      },
+      "form": {
+        "name": "Name / Unternehmen",
+        "phone": "Telefon",
+        "email": "E-Mail",
+        "web": "Web / Adresse",
+        "notes": "Notizen (OCR Raw)",
+        "sender": "Daten gesendet von",
+        "event": "Event / Messe",
+        "placeholder": {
+          "name": "z.B. Restaurant Pepe",
+          "phone": "+49 151...",
+          "email": "info@...",
+          "web": "www.beispiel.de",
+          "address": "Hauptstraße 1, Berlin",
+          "notes": "Extrahierter Text..."
+        },
+        "event_notes": "Wählen Sie 'Online', wenn nicht zutreffend."
+      },
+      "assign": {
+        "label": "Lead zuweisen an",
+        "dicilo": "DICILO",
+        "client": "KUNDE",
+        "both": "BEIDE"
+      },
+      "result": {
+        "success": "Erfolgreich registriert",
+        "duplicate": "Unternehmen existiert",
+        "pending": "Ausstehende Überprüfung",
+        "company": "Unternehmen",
+        "assigned": "Zugewiesen an",
+        "status": "Status"
+      }
+    },
+    "reports": {
+      "generate": "Tagesbericht erstellen (B2B)",
+      "receivingCompany": "Empfängerunternehmen",
+      "selectCompany": "Unternehmen auswählen",
+      "date": "Datum",
+      "download": "Excel herunterladen"
+    }
+  }
+}

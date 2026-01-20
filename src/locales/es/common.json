@@ -1,0 +1,1009 @@
+{
+  "header": {
+    "nav": {
+      "benefits": "Ventajas",
+      "planes": "Planes",
+      "about": "Sobre nosotros",
+      "directory": "Directorio",
+      "login": "Iniciar Sesión",
+      "register": "Registrarse",
+      "language": "Idioma",
+      "imprint": "Aviso Legal",
+      "privacy": "Privacidad",
+      "myNeighborhood": "Mi Barrio",
+      "faq": "Preguntas Frecuentes",
+      "dicicoin": "DiciCoin",
+      "logout": "Cerrar Sesión"
+    }
+  },
+  "navigation": {
+    "social_network": "Mi Círculo"
+  },
+  "community": {
+    "register_neighborhood": "Registrar Barrio",
+    "register_neighborhood_desc": "¿No encuentras tu barrio? Regístralo aquí para empezar a conectar con tus vecinos.",
+    "register_neighborhood_btn": "Registrar Barrio",
+    "your_community": "Tu Comunidad",
+    "neighborhoods_of": "Barrios de",
+    "global_wall": "Muro Global",
+    "photo": "Foto",
+    "like": "Me gusta",
+    "comment": "Comentar",
+    "comment_verb": "Comentar",
+    "share": "Compartir",
+    "read_in": "Leer en",
+    "show_original": "Ver original",
+    "translate_ai": "Traducir con AI",
+    "download": "Descargar",
+    "download_success": "Foto descargada",
+    "download_error": "Error al descargar",
+    "translation_error": "Traducción fallida. Inténtalo más tarde.",
+    "share_text": "Mira este post de {{user}} en {{neighborhood}}",
+    "link_copied": "Enlace copiado al portapapeles",
+    "feed": {
+      "empty_global": "Aún no hay actividad en la comunidad de {{name}}.",
+      "be_first": "¡Sé el primero en compartir algo!",
+      "whats_happening": "¿Qué está pasando en {{name}}?"
+    },
+    "post_btn": "Publicar",
+    "recommend_business": "Recomendar Negocio",
+    "recommend_desc": "Sube una foto y cuéntanos tu experiencia para ganar puntos.",
+    "your_name": "Tu Nombre",
+    "email_whatsapp_opt": "Email o WhatsApp (Opcional)",
+    "comment_label": "Comentario",
+    "comment_placeholder": "¿Qué te gustó más?",
+    "send_recommendation": "Enviar Recomendación"
+  },
+  "dicipoints": {
+    "whatIs": {
+      "title": "¿Qué son los Dicipoints?",
+      "description": "Contexto en Dicilo.net: Es el motor de nuestro sistema de fidelización basado en la \"economía de la recomendación\".\n\nLos Dicipoints son puntos de recompensa exclusivos que los miembros de la comunidad Dicilo acumulan al interactuar con la plataforma. Puedes ganarlos realizando recomendaciones auténticas, participando en encuestas de productos o invitando a nuevos miembros a través de nuestro sistema de referidos. Estos puntos pueden canjearse por beneficios especiales, descuentos con socios estratégicos o participaciones adicionales en nuestros sorteos trimestrales."
+    }
+  },
+  "footer": {
+    "imprint": "Aviso Legal",
+    "privacy": "Privacidad",
+    "about": "Sobre nosotros",
+    "faq": "FAQ",
+    "register": "Registrarse"
+  },
+  "search": {
+    "title": "Descubre Negocios Recomendados",
+    "description": "Encuentra los mejores productos y servicios cerca de ti o en tu próximo destino.",
+    "businessType": "Negocio",
+    "locationType": "Ubicación",
+    "businessPlaceholder": "Nombre del negocio o palabra clave...",
+    "locationPlaceholder": "Ciudad, región o país...",
+    "selectOption": "Seleccione una opción",
+    "searchLabel": "Buscar",
+    "useLocationLabel": "Ubicación Actual",
+    "locationErrorTitle": "Error de Ubicación",
+    "locationErrorDesc": "Dirección o ubicación desconocida.",
+    "geolocationErrorTitle": "Error de GPS",
+    "geolocationErrorDesc": "No pudimos obtener tu ubicación.",
+    "geolocationNotSupportedTitle": "GPS no Soportado",
+    "geolocationNotSupportedDesc": "Tu navegador no soporta la búsqueda por ubicación.",
+    "locationNotFoundTitle": "Ubicación no encontrada",
+    "locationNotFoundDesc": "No se encontró la ubicación '{query}'.",
+    "searchErrorTitle": "Error de Búsqueda",
+    "searchErrorDesc": "Ocurrió un error durante la búsqueda.",
+    "noResults": "No se encontraron resultados para '{{query}}'.",
+    "recommendBusiness": "Recomendar un negocio"
+  },
+  "businessCard": {
+    "currentOffer": "Oferta Actual"
+  },
+  "mapPopup": {
+    "website": "Sitio Web",
+    "offer": "Oferta",
+    "map": "Mapa"
+  },
+  "form": {
+    "title": "Recomendar una empresa",
+    "description": "Rellena este formulario para recomendar una empresa. Nos pondremos en contacto con ella para incluirla en nuestro directorio.",
+    "companyNamePlaceholder": "Nombre de la empresa*",
+    "companyNameRequired": "El nombre de la empresa es obligatorio.",
+    "invalidEmail": "Formato de correo electrónico inválido.",
+    "contactNamePlaceholder": "Tu nombre",
+    "emailPlaceholder": "Tu correo electrónico (opcional)",
+    "phonePlaceholder": "Tu número de teléfono (opcional)",
+    "countryPlaceholder": "País de la empresa",
+    "cityPlaceholder": "Ciudad de la empresa",
+    "websitePlaceholder": "Sitio Web de la empresa (opcional)",
+    "categoryPlaceholder": "Categoría de la empresa (Dropdown)",
+    "categoryLabel": "Categoría de la empresa",
+    "selectOption": "Seleccione una opción",
+    "selectCategory": "Por favor seleccione",
+    "selectCountryFirst": "Por favor seleccione un país primero",
+    "commentsPlaceholder": "Tus comentarios (opcional)",
+    "categories": {
+      "consulting": "Consultoría",
+      "education": "Educación",
+      "finance": "Finanzas",
+      "gastronomy": "Gastronomía",
+      "health": "Salud",
+      "hotels": "Hotelería",
+      "real_estate": "Inmobiliaria",
+      "food": "Alimentación",
+      "lifestyle": "Estilo de vida y servicios personales",
+      "music": "Música",
+      "travel": "Viajes",
+      "beauty": "Belleza y Bienestar",
+      "social": "Social",
+      "sports": "Deportes",
+      "technology": "Tecnología",
+      "textile": "Textil",
+      "animals": "Animales",
+      "transport": "Transporte",
+      "environment": "Medio ambiente",
+      "entertainment": "Entretenimiento"
+    },
+    "submitButton": "Enviar recomendación",
+    "successTitle": "¡Recomendación enviada!",
+    "successDesc": "Gracias por tu recomendación. Nos pondremos en contacto con la empresa.",
+    "errorTitle": "¡Error al enviar!",
+    "errorDesc": "Hubo un problema al enviar tu recomendación. Por favor, inténtalo de nuevo más tarde."
+  },
+  "dashboard": {
+    "welcomeUser": "¡Bienvenido, {{name}}!",
+    "totalBalance": "Balance Total",
+    "communityLabel": "Comunidad",
+    "connectWithNeighbors": "Conecta con tus vecinos",
+    "goToCommunity": "Ir a la Comunidad",
+    "inviteNow": "Invitar Ahora",
+    "welcomeBack": "¡Bienvenido de nuevo",
+    "welcomeDesc": "Gestiona tu perfil personal y preferencias.",
+    "exploreDirectory": "Explorar Directorio",
+    "yourPreferences": "Tus Preferencias",
+    "goToWallet": "Ir a la Billetera",
+    "promo": {
+      "estimatedEarnings": "Ganancia Estimada",
+      "trafficBonus": "Bono Tráfico",
+      "unlockBasePay": "Escribe {{chars}} más caracteres para desbloquear el pago base.",
+      "maximizeEarnings": "¡Buen trabajo! Escribe {{chars}} más para maximizar a €0.40.",
+      "earningsMaximized": "¡Excelente! Has maximizado tu tarifa base."
+    },
+    "scanToRegister": "Escanea para registrarte con mi código.",
+    "myCode": "mi código.",
+    "download": "Descargar",
+    "myArea": "Mi Área",
+    "welcome": "¡Bienvenido!",
+    "noCompanyFound": "No pudimos encontrar ninguna empresa vinculada a su cuenta. Por favor contacte al soporte si cree que esto es un error.",
+    "backToDashboard": "Volver al Dashboard",
+    "manageProfile": "Gestiona tu perfil personal y preferencias.",
+    "yourUniqueCode": "Tu Código Único",
+    "overview": "Resumen",
+    "myWallet": "Mi Wallet",
+    "alliesMap": "Mapa de Aliados",
+    "settings": "Ajustes",
+    "personalData": "Datos Personales",
+    "interests": "Intereses",
+    "socialRewards": "Social y Recompensas",
+    "profileStatus": "Estado del Perfil",
+    "active": "Activo",
+    "memberSince": "Miembro desde",
+    "referrals": "Referidos",
+    "friendsInvited": "Amigos invitados",
+    "quickActions": "Acciones Rápidas",
+    "updateInterests": "Actualizar Intereses",
+    "inviteFriends": "Invitar Amigos",
+    "personalInfo": "Información Personal",
+    "personalInfoDesc": "Actualiza tus datos y preferencias de contacto.",
+    "firstName": "Nombre",
+    "lastName": "Apellido",
+    "dateOfBirth": "Fecha de Nacimiento",
+    "birthdayGift": "¡Para enviarte regalos cada año!",
+    "gender": "Género",
+    "selectGender": "Seleccionar género",
+    "male": "Hombre",
+    "female": "Mujer",
+    "diverse": "Diverso",
+    "preferNotToSay": "Prefiero no decirlo",
+    "location": "Ubicación",
+    "channel": "Canal Preferido",
+    "frequency": "Frecuencia",
+    "daily": "Diario",
+    "weekly": "Semanal",
+    "monthly": "Mensual",
+    "importantOnly": "Solo Importante",
+    "newsletter": {
+      "frequencyLabel": "Frecuencia del Newsletter",
+      "weekly": "Semanal",
+      "biweekly": "Quincenal",
+      "monthly": "Mensual",
+      "semiannual": "Cada 6 meses"
+    },
+    "language": {
+      "label": "Idioma de Preferencia",
+      "english": "Inglés",
+      "spanish": "Español",
+      "german": "Alemán"
+    },
+    "yourInterests": "Tus Intereses",
+    "yourInterestsDesc": "Selecciona las categorías que te interesan.",
+    "socialGroups": "Grupos Sociales",
+    "joinCommunity": "¡Únete a nuestra comunidad!",
+    "joinQuestion": "¿Te gustaría unirte a nuestros grupos?",
+    "joinWhatsapp": "Unirse al Grupo de WhatsApp",
+    "joinTelegram": "Unirse al Grupo de Telegram",
+    "preferNotJoin": "Prefiero no unirme",
+    "rewardsFeedback": "Recompensas y Opiniones",
+    "tellUs": "Dinos qué te gusta.",
+    "whatToWin": "¿Qué te gustaría ganar?",
+    "prizes": "Premios",
+    "points": "Puntos",
+    "cash": "Efectivo",
+    "feedback": "Comentarios",
+    "feedbackPlaceholder": "Cuéntanos qué piensas...",
+    "sendFeedback": "Enviar Comentarios",
+    "selectOption": "Seleccione una opción",
+    "save": "Guardar",
+    "saved": "Guardado",
+    "generating": "Generando...",
+    "generateCode": "Generar Código",
+    "pending": "Pendiente...",
+    "successDesc": "Tus cambios han sido guardados.",
+    "errorTitle": "Error",
+    "errorDesc": "No se pudieron guardar los cambios.",
+    "copied": "¡Copiado!",
+    "codeCopied": "Código copiado al portapapeles.",
+    "country": "País",
+    "city": "Ciudad",
+    "communicationPreferences": "Preferencias de Comunicación",
+    "wallet": {
+      "title": "Dicilo Wallet",
+      "personal": "Personal",
+      "showQr": "Mostrar QR para Pagar",
+      "scanToPay": "Escanear para Pagar",
+      "scanDesc": "Muestra este código a un comercio aliado para canjear tus puntos.",
+      "recentTransactions": "Transacciones Recientes",
+      "noTransactions": "Aún no hay transacciones.",
+      "loading": "Cargando billetera...",
+      "error": "Error al cargar billetera"
+    },
+    "dicicoin": {
+      "securityTitle": "Seguridad, Autenticidad y Titularidad",
+      "securityDesc": "Las DICICOIN solo pueden ser adquiridas a través de Agentes Autorizados...",
+      "purchaseHeader": "Adquiere más DICICOIN a través de los canales oficiales...",
+      "purchaseTitle": "Adquiere DICICOIN",
+      "purchaseDesc": "Incrementar tu saldo te permite acceder a mayores beneficios estratégicos...",
+      "historyTitle": "Historial y Certificados",
+      "historyDesc": "Consulta en todo momento el historial completo de tus transacciones...",
+      "howTo": "¿Cómo funciona?",
+      "learnMore": "Aprende sobre DiciCoin",
+      "readGuide": "Leer Guía",
+      "commingSoon": "Próximamente",
+      "readMore": "Leer más",
+      "yourBalance": "Tu Balance",
+      "limit": "El límite máximo permitido es de 2.000 DICICOIN por usuario. Para montos mayores, se requiere una verificación de identidad adicional (KYC) conforme a las regulaciones vigentes.",
+      "walletDescription": "Tu billetera y centro de recompensas."
+    }
+  },
+  "tickets": {
+    "title": "Tickets de Soporte",
+    "createTitle": "Crear nuevo Ticket",
+    "myTickets": "Mis Tickets",
+    "createButton": "Crear Ticket",
+    "status": "Estado",
+    "priority": "Prioridad",
+    "subject": "Asunto",
+    "description": "Descripción",
+    "submit": "Enviar",
+    "noTickets": "No se encontraron tickets.",
+    "statusOpen": "Abierto",
+    "statusInProgress": "En Progreso",
+    "statusClosed": "Cerrado",
+    "priorityLow": "Baja",
+    "priorityMedium": "Media",
+    "priorityHigh": "Alta",
+    "messages": "Mensajes",
+    "newMessage": "Escribir un mensaje...",
+    "send": "Enviar",
+    "successCreated": "Ticket creado con éxito.",
+    "module": "Módulo",
+    "selectModule": "Selecciona un módulo",
+    "list": {
+      "title": "Campañas de Red",
+      "subtitle": "Gestiona tus campañas de red.",
+      "create": "Crear Campaña",
+      "empty": "Selecciona \"Crear Campaña\" para iniciar una nueva Campaña de Red.",
+      "pending": "(Implementación de vista de lista pendiente)"
+    },
+    "modules": {
+      "general": "General",
+      "dashboard": "Panel de Control",
+      "profile": "Perfil",
+      "builder": "Constructor de Páginas",
+      "ads": "Gestor de Anuncios",
+      "content": "Gestión de Contenido",
+      "ai_chat": "Chat IA",
+      "registrations": "Registros",
+      "private_users": "Usuarios Privados",
+      "directory": "Directorio (Empresas)",
+      "statistics": "Estadísticas",
+      "plans": "Planes",
+      "forms": "Formularios",
+      "recommendations": "Recomendaciones",
+      "feedback": "Feedback"
+    }
+  },
+  "cancel": "Cancelar",
+  "save": "Guardar",
+  "delete": "Eliminar",
+  "yes": "Sí",
+  "no": "No",
+  "bestChoice": "Mejor Opción",
+  "days": {
+    "one": "día",
+    "other": "días"
+  },
+  "share": {
+    "emailSubject": "¡Mira esto!"
+  },
+  "noPlansAvailable": "Actualmente no hay planes disponibles para este idioma. Se muestran los planes por defecto.",
+  "plans_tax_disclaimer": "Todos los planes incluyen 19% IVA.",
+  "privateUsersList": "Lista de Usuarios Privados",
+  "whatsappInvite": "Sigue este enlace para unirte a mi grupo de WhatsApp, aquí también recibirás promociones como cupones, descuentos y nuevas infos: https://chat.whatsapp.com/IPFpYXlHJTdH0rZosQGws4",
+  "notFound": {
+    "title": "Página no encontrada",
+    "description": "Lo sentimos, la página que buscabas no se ha podido encontrar.",
+    "backToHome": "Volver al Inicio"
+  },
+  "benefits": {
+    "page_title": "¿Por qué Dicilo?",
+    "page_subtitle": "Somos más que una plataforma de recomendaciones. Somos una comunidad en crecimiento que valora la calidad, la confianza y el beneficio mutuo.",
+    "size": {
+      "title": "El tamaño no lo es todo, la calidad sí",
+      "description": "Nos enfocamos en ofrecer un grupo selecto de negocios en los que puedes confiar, en lugar de una abrumadora cantidad de opciones."
+    },
+    "experience": {
+      "title": "Experiencia que habla por sí misma",
+      "description": "Con más de 30 años de experiencia en marketing y desarrollo de negocios, sabemos cómo conectar empresas y clientes de manera significativa."
+    },
+    "two_reasons": {
+      "title": "Dos grandes razones para ser parte de Dicilo",
+      "description": "Ya seas un negocio que busca crecer o un usuario en busca de calidad, Dicilo te da las herramientas y la comunidad que necesitas."
+    },
+    "for_companies": {
+      "title": "Para Empresas",
+      "item1": {
+        "title": "Acceso directo a clientes comprometidos",
+        "description": "Llega a una audiencia que busca activamente productos y servicios de alta calidad."
+      },
+      "item2": {
+        "title": "Herramientas de marketing potentes",
+        "description": "Desde páginas de destino personalizadas hasta campañas publicitarias dirigidas, te damos todo lo que necesitas para tener éxito."
+      },
+      "item3": {
+        "title": "Fortalece tu marca",
+        "description": "Estar asociado con Dicilo es un sello de calidad que genera confianza y credibilidad entre los consumidores."
+      }
+    },
+    "for_users": {
+      "title": "Para Usuarios",
+      "item1": {
+        "title": "Recomendaciones auténticas y verificadas",
+        "description": "Dile adiós a las reseñas falsas. Cada negocio en Dicilo es cuidadosamente seleccionado."
+      },
+      "item2": {
+        "title": "Beneficios y descuentos exclusivos",
+        "description": "Como miembro del club Dicilo, tendrás acceso a ofertas especiales que no están disponibles en ningún otro lugar."
+      },
+      "item3": {
+        "title": "Sé parte de una comunidad",
+        "description": "Comparte tus experiencias y ayuda a otros a tomar las mejores decisiones, mientras eres recompensado por tu contribución."
+      }
+    },
+    "network": {
+      "title": "Una red que crece contigo",
+      "description": "Nuestra plataforma está diseñada para evolucionar contigo. Cuanto más participas, más beneficios recibes. Crecemos juntos, creando un ecosistema único de confianza y colaboración.",
+      "cta_text": "¿Estás listo para dar el siguiente paso?",
+      "cta_button_company": "Registra tu Negocio",
+      "cta_button_user": "Únete al Club"
+    },
+    "social": {
+      "title": "Únete a nuestra comunidad digital",
+      "description": "Síguenos en las redes sociales para estar al día de las últimas noticias, ofertas exclusivas y eventos de la comunidad.<br/>Estamos en WhatsApp, Telegram, Instagram, Facebook, TikTok, LinkedIn, YouTube, X (Twitter), Twitch y Pinterest."
+    },
+    "testimonials": {
+      "title": "Lo que dicen nuestros miembros",
+      "subtitle": "Opiniones reales de personas reales.",
+      "carla": {
+        "name": "Carla S.",
+        "role": "Miembro Premium",
+        "quote": "Gracias a Dicilo, he descubierto negocios locales únicos que de otro modo nunca habría encontrado. ¡Los descuentos exclusivos son un bono fantástico!"
+      },
+      "tomas": {
+        "name": "Tomás R.",
+        "role": "Dueño de Negocio",
+        "quote": "Mi base de clientes ha crecido significativamente desde que registré mi negocio en Dicilo. La plataforma me ha ayudado a conectar con clientes que realmente valoran lo que hago."
+      },
+      "lucia": {
+        "name": "Lucía M.",
+        "role": "Miembro Donante",
+        "quote": "Es genial ser parte de una comunidad que valora la calidad y la autenticidad. Cada recomendación que encuentro es de primera categoría."
+      }
+    },
+    "feedback": {
+      "title": "Comparte tu opinión",
+      "name": "Nombre",
+      "email": "Correo electrónico",
+      "country": "País",
+      "customerType": "Soy un...",
+      "customerTypePlaceholder": "Selecciona una opción",
+      "customerTypeOptions": {
+        "private": "Cliente Particular",
+        "donor": "Donante / Partidario",
+        "company": "Empresa",
+        "premium": "Cliente Premium"
+      },
+      "rating": "Tu Calificación",
+      "message": "Tu Mensaje",
+      "submit": "Enviar Comentario",
+      "successTitle": "¡Gracias!",
+      "successDesc": "Tu comentario ha sido enviado con éxito.",
+      "errorTitle": "Error",
+      "errorDesc": "Ocurrió un error al enviar tu comentario. Por favor, inténtalo de nuevo."
+    }
+  },
+  "coupons": {
+    "title": "Gestión de Cupones",
+    "description": "Administra las promociones y descuentos de las empresas.",
+    "createTitle": "Crear Nuevo Cupón",
+    "createButton": "Crear Cupón",
+    "assignButton": "Asignar",
+    "company": "Empresa",
+    "benefit": "Cupón / Beneficio",
+    "dates": "Fechas",
+    "status": "Estado",
+    "actions": "Acciones",
+    "active": "Activo",
+    "expired": "Expirado",
+    "scheduled": "Programado",
+    "searchPlaceholder": "Buscar empresa, país o ciudad...",
+    "allMonths": "Todos los meses",
+    "tipsTitle": "Tips",
+    "tipsDesc": "Los cupones se asignan manualmente a usuarios privados. Una vez asignados, aparecerán en la app del usuario.",
+    "assignModalTitle": "Asignar Cupón: {title}",
+    "assignModalDesc": "Busca un usuario privado para asignarle este cupón manualmente.",
+    "searchUserPlaceholder": "Buscar por email o nombre...",
+    "search": "Buscar",
+    "assignSuccess": "Cupón asignado correctamente.",
+    "assignError": "No se pudo asignar el cupón.",
+    "form": {
+      "companyName": "Nombre Empresa",
+      "companyId": "ID Empresa (Ref)",
+      "title": "Título / Beneficio",
+      "description": "Descripción",
+      "startDate": "Fecha Inicio",
+      "expirationDate": "Fecha Expiración",
+      "country": "País",
+      "city": "Ciudad",
+      "cancel": "Cancelar",
+      "create": "Crear Cupón"
+    },
+    "expiration": {
+      "title": "Caducidad / Vencimientos",
+      "expired": "Expirados",
+      "today": "Vence Hoy",
+      "week": "Esta Semana",
+      "month": "Este Mes"
+    }
+  },
+  "currencyConverter": {
+    "title": "Utilice nuestra Calculadora de Divisas DICILO y obtenga un estimado del cambio actual al valor de su moneda.",
+    "amount": "Cantidad",
+    "from": "De",
+    "to": "A",
+    "loading": "Cargando...",
+    "error": "Error al convertir",
+    "disclaimer": "Datos en tiempo real vía ExchangeRate-API"
+  },
+  "pioneer": {
+    "stats": {
+      "availableSlots": "Espacios Disponibles",
+      "totalSlots": "de {{max}} invitaciones Pioneras",
+      "viewingProposal": "Ojeando Propuesta",
+      "emailsOpened": "Emails Abiertos",
+      "referralsClosed": "Pioneros Cerrados",
+      "bonusPerUser": "+50 DP por c/u"
+    },
+    "form": {
+      "title": "Invitar Futuros Pioneros",
+      "description": "Añade a tus candidatos. El sistema enviará invitaciones personalizadas.",
+      "name": "Nombre",
+      "email": "Email",
+      "emailPlaceholder": "email@ejemplo.com",
+      "languages": "Idiomas Disponibles",
+      "imagesLabel": "Gráficas de Campaña",
+      "addImage": "Agregar Gráfica",
+      "maxImages": "Máx 24 imágenes",
+      "noImages": "Aún no hay imágenes.",
+      "uploadHelp": "Sube las gráficas que los freelancers compartirán (hasta 24).",
+      "addRow": "Añadir otra fila",
+      "submitButton": "Confirmar y Enviar a Brevo"
+    },
+    "tracking": {
+      "title": "Seguimiento de Invitaciones",
+      "description": "Monitoriza el estado de tu red en tiempo real.",
+      "emptyState": "Aún no has enviado invitaciones.",
+      "emptyStateSub": "Usa el formulario de arriba para comenzar."
+    },
+    "status": {
+      "registered": "Inversor Confirmado",
+      "seenInterest": "Visto (Interesado)",
+      "sent": "Enviado",
+      "reminder1": "Recordatorio 1",
+      "reminder2": "Recordatorio 2",
+      "manualAction": "Acción Manual",
+      "pending": "Pendiente",
+      "seen": "Visto",
+      "recent": "Reciente"
+    },
+    "actions": {
+      "contact": "Contactar"
+    },
+    "toasts": {
+      "limitReached": "Límite alcanzado",
+      "limitReachedDesc": "Solo puedes invitar a {{max}} pioneros en total.",
+      "incompleteData": "Datos incompletos",
+      "incompleteDataDesc": "Por favor completa al menos un nombre y email válidos.",
+      "excessInvites": "Exceso de invitaciones",
+      "excessInvitesDesc": "Superas el límite de {{max}}.",
+      "sentSuccess": "¡Invitaciones Enviadas!",
+      "sentSuccessDesc": "{{count}} correos están en camino.",
+      "sendError": "Error al enviar",
+      "sendErrorDesc": "Inténtalo de nuevo."
+    }
+  },
+  "adsManager": {
+    "dashboard": {
+      "title": "Ads Campañas Manager",
+      "subtitle": "Centraliza y optimiza tus estrategias de marketing digital y físico.",
+      "seedData": "Cargar Datos Demo",
+      "globalStats": "Resumen Global de Rendimiento",
+      "globalStatsDesc": "Las estadísticas agregadas de todos tus módulos aparecerán aquí.",
+      "loading": "Cargando..."
+    },
+    "cards": {
+      "active": "Activo",
+      "paused": "Pausado",
+      "comingSoon": "Próximamente",
+      "inDevelopment": "En desarrollo",
+      "programs": {
+        "dynamicQr": {
+          "title": "QRs Dinámicos",
+          "description": "Crea códigos QR editables para tus campañas impresas y digitales. Rastrea scans y cambia destinos.",
+          "button": "Gestionar QRs"
+        },
+        "emailMarketing": {
+          "title": "Email Marketing",
+          "description": "Envía newsletters y promociones automatizadas a tus listas de clientes segmentadas."
+        },
+        "displayAds": {
+          "title": "Display Ads",
+          "description": "Gestiona banners publicitarios dentro de la red Dicilo y sitios asociados."
+        },
+        "socialProduct": {
+          "title": "Campañas de Red",
+          "description": "Promociona tus productos a través de nuestra red de freelancers en redes sociales para maximizar su visibilidad."
+        },
+        "bannerRedirect": {
+          "title": "Banners de Redirección",
+          "description": "Crea banners estratégicos dentro de Dicilo.net que redirijan tráfico cualificado directamente a tus ofertas."
+        },
+        "sampling": {
+          "title": "Campañas \"Pruébalo\"",
+          "description": "Ofrece artículos de prueba o muestras gratuitas a la comunidad para obtener reseñas y feedback genuino."
+        },
+        "recommendFriends": {
+          "title": "Recomendienda",
+          "description": "Recomienda amigos y gana 50 DiciPoints con cada amigo tuyo que se registre en dicilo.net con tu enlace unico de afiliado"
+        },
+        "prospects": {
+          "title": "Tus Prospectos",
+          "description": "Recomienda empresas que estan en tu zona o empresas donde te gusta comprar y gana DiciPoints o dinero en efectivo como freelenace.",
+          "button": "Gestionar Prospectos",
+          "managerTitle": "Mis Prospectos Registrados",
+          "refresh": "Actualizar",
+          "managerDescription": "Aquí puedes ver el estado de las empresas que has recomendado. Ganas 10 DiciPoints cuando el sistema valida el prospecto.",
+          "emptyState": "No has registrado ningún prospecto aún.",
+          "emptyStateCta": "¡Recomienda empresas y empieza a ganar!"
+        },
+        "hostess": {
+          "title": "Hostesen",
+          "description": "Conviertete en un Hostesen y gana en efectivo en nuestros eventos presenciales en mercados locales ofreciendo productos o dicilo.net"
+        }
+      }
+    },
+    "qrManager": {
+      "title": "Gestor de QRs Dinámicos",
+      "subtitle": "Crea códigos QR una vez, cambia su destino cuando quieras.",
+      "back": "Volver al Manager",
+      "downloadHistory": "Descargar Historial (CSV)",
+      "newQr": "Nuevo QR",
+      "noCampaigns": "No tienes campañas de QR activas.",
+      "noCampaignsSub": "Crea la primera para empezar a rastrear.",
+      "loading": "Cargando...",
+      "createDialog": {
+        "title": "Crear Nuevo QR Dinámico",
+        "description": "Este QR apuntará a una dirección interna que redirigirá al usuario a donde tú digas.",
+        "nameLabel": "Nombre de Campaña",
+        "namePlaceholder": "Ej: Menú Verano 2025",
+        "targetUrlLabel": "URL Destino (Target)",
+        "targetUrlPlaceholder": "https://tunsitio.com/oferta-especial",
+        "targetUrlHelp": "Puedes cambiar esta URL más tarde sin reimprimir el QR.",
+        "submit": "Crear QR"
+      },
+      "card": {
+        "active": "Activo",
+        "paused": "Pausado",
+        "pointsTo": "Apunta a (Dinámico)",
+        "created": "Creado:",
+        "scans": "Scans",
+        "downloadPng": "PNG"
+      },
+      "toasts": {
+        "loadError": "Error de Carga",
+        "loadErrorDesc": "No se pudieron cargar las campañas. Revisa la consola.",
+        "fetchError": "Error Crítico",
+        "reportError": "Error",
+        "reportErrorDesc": "No se pudo generar el reporte.",
+        "downloadError": "Error al descargar reporte.",
+        "missingData": "Faltan datos",
+        "missingDataDesc": "Nombre y URL son obligatorios.",
+        "created": "Creado",
+        "createdDesc": "Campaña QR creada exitosamente.",
+        "createError": "Error",
+        "createErrorDesc": "No se pudo crear.",
+        "deleteConfirm": "¿Estás seguro de eliminar este QR?",
+        "deleted": "Eliminado",
+        "deletedDesc": "QR eliminado correctamente.",
+        "deleteError": "Error al eliminar.",
+        "updated": "Actualizado",
+        "updatedDesc": "URL de destino actualizada correctamente.",
+        "updateError": "No se pudo actualizar.",
+        "fatalError": "Error Fatal",
+        "error": "Error"
+      }
+    }
+  },
+  "freelancer": {
+    "composer": {
+      "title": "Crear Nueva Promoción",
+      "subtitle": "Personaliza tu mensaje para <1>{{company}}</1> y compártelo.",
+      "activeCampaign": "Campaña Activa",
+      "grayMode": "Modo Gris",
+      "payPerClick": "Pago por Clic",
+      "selectImage": "1. Selecciona la imagen oficial",
+      "noImages": "Esta campaña no tiene imágenes disponibles.",
+      "customRecommendation": "2. Tu Recomendación Personalizada",
+      "placeholder": "Escribe por qué recomiendas a {{company}}...",
+      "generateAI": "Generar con IA ✨",
+      "trackingLink": "3. Link de Seguimiento Único",
+      "connectSchedule": "4. Conectar y Programar",
+      "shareWhatsapp": "Compartir en WhatsApp",
+      "preview": {
+        "title": "Vista Previa Móvil",
+        "mode_label": "Modo Vista Previa",
+        "sponsored": "Patrocinado",
+        "promoted": "Promocionado",
+        "learn_more": "Más información",
+        "learn_more_about_us": "Conoce más sobre nosotros",
+        "like": "Me gusta",
+        "comment": "Comentar",
+        "share": "Compartir",
+        "send": "Enviar",
+        "you": "Tú"
+      },
+      "layout": {
+        "editor_tab": "Editor",
+        "preview_tab": "Vista Previa"
+      },
+      "earnings": {
+        "title": "Tu Ganancia Estimada",
+        "subtitle": "por Clic Efectivo:",
+        "rate": "$0.05 / clic"
+      },
+      "selectCampaign": {
+        "title": "Selecciona una Campaña",
+        "description": "Comienza buscando una campaña activa en la pestaña 'Campañas' para empezar a promocionar."
+      },
+      "toasts": {
+        "linkGenerated": "¡Enlace generado!",
+        "openingWhatsapp": "Abriendo WhatsApp con tu promoción...",
+        "shareError": "Error al compartir",
+        "shareErrorDesc": "No se pudo generar el enlace."
+      },
+      "content_translation_label": "Contenido & Traducción",
+      "link_target_label": "Objetivo del Link",
+      "default_url_placeholder": "URL por Defecto (Campaña)",
+      "select_url_placeholder": "Selecciona URL destino",
+      "translate_to": "Traducir a:",
+      "translate_button": "Traducir",
+      "write_placeholder": "Escribe el copy en {{lang}}...",
+      "grammar_tooltip": "Corregir Gramática con IA",
+      "copy_tooltip": "Copiar",
+      "copy_link_only_title": "Copiar Solo Link",
+      "copy_link_only_success": "Enlace Copiado",
+      "copy_link_only_success_desc": "Solo el enlace ha sido copiado.",
+      "pick_date_placeholder": "Elige una fecha",
+      "share_button": "Compartir",
+      "share_disabled_tooltip": "Campaña sin presupuesto disponible",
+      "share_menu": {
+        "whatsapp": "WhatsApp",
+        "whatsapp_business": "WhatsApp Business",
+        "telegram": "Telegram",
+        "twitter": "X (Twitter)",
+        "facebook": "Facebook",
+        "email": "Email",
+        "more": "Más opciones...",
+        "native_not_supported": "Compartir nativo no soportado en este dispositivo."
+      },
+      "grammar_success_title": "Texto Mejorado ✨",
+      "grammar_success_desc": "Hemos corregido la gramática y el estilo.",
+      "grammar_perfect_title": "¡Perfecto!",
+      "grammar_perfect_desc": "Tu texto ya estaba excelente.",
+      "translation_success_title": "Traducido",
+      "translation_success_desc": "Texto traducido a {{lang}}.",
+      "copy_success_title": "Texto Copiado",
+      "copy_success_desc": "Texto y enlace copiados al portapapeles."
+    }
+  },
+  "networkCampaigns": {
+    "title": "Campañas de Red",
+    "subtitle": "Configura una nueva campaña para la red de freelancers.",
+    "back": "Volver a la Lista",
+    "list": {
+      "title": "Campañas de Red",
+      "subtitle": "Gestiona tus campañas de red.",
+      "create": "Crear Campaña",
+      "empty": "Selecciona \"Crear Campaña\" para iniciar una nueva Campaña de Red.",
+      "pending": "(Implementación de vista de lista pendiente)"
+    },
+    "form": {
+      "cardTitle": "Crear Campaña de Red",
+      "cardDesc": "Configura los detalles, presupuesto y creatividades.",
+      "clientLabel": "Cliente / Empresa",
+      "selectClient": "Seleccionar Cliente",
+      "loading": "Cargando...",
+      "loadError": "Error al cargar clientes.",
+      "dailyLimit": "Límite Diario (por usuario)",
+      "totalBudget": "Presupuesto Total (€)",
+      "freelancerReward": "Recompensa Freelancer (€/acción)",
+      "startDate": "Inicio",
+      "endDate": "Fin",
+      "dates": "Duración de Campaña",
+      "languages": "Idiomas Disponibles",
+      "imagesLabel": "Gráficas de Campaña",
+      "addImage": "Agregar Gráfica",
+      "maxImages": "Máx 24 imágenes",
+      "noImages": "Aún no hay imágenes.",
+      "uploadHelp": "Sube las gráficas que los freelancers compartirán (hasta 24).",
+      "uploading": "Subiendo...",
+      "content": "Contenido de la Campaña",
+      "tabTitle": "Título",
+      "tabDesc": "Descripción",
+      "tabSuggest": "Texto Sugerido (Copy)",
+      "placeholderTitle": "Ej: Oferta de Verano 2025",
+      "placeholderDesc": "Descripción interna para freelancers...",
+      "placeholderSuggest": "El texto que los freelancers copiarán y pegarán...",
+      "cancel": "Cancelar",
+      "submit": "Crear Campaña",
+      "success": "Campaña creada exitosamente.",
+      "validation": {
+        "lang": "Selecciona al menos un idioma.",
+        "image": "La imagen principal es obligatoria."
+      },
+      "ai": {
+        "improve": "Mejorar (IA)",
+        "translateFrom": "Traducir de",
+        "translateTo": "Traducir a",
+        "translating": "Traduciendo...",
+        "correcting": "Mejorando...",
+        "apply": "Aplicar",
+        "autoFixed": "Texto mejorado automáticamente.",
+        "translated": "Traducido a {{lang}}"
+      }
+    }
+  },
+  "rules": {
+    "title": "Tu Oficina es el Mundo: Gana dinero desde casa con Dicilo",
+    "subtitle": "Libertad, Sin Inversión y Sin Riesgos.",
+    "howToEarn": {
+      "title": "¿Cuánto puedo ganar?",
+      "desc": "En Dicilo, tú pones el talento y nosotros la infraestructura. Olvídate de buscar clientes o negociar precios. Nosotros nos encargamos de todo.",
+      "points": {
+        "p1": "Cada campaña es diferente. Tienes la posibilidad de ganar entre <1>0,20 € y 0,50 €</1> por cada post enviado.",
+        "p2": "El dinero se acumula directamente en tu cuenta y lo que ves en la campaña es lo que recibes. Los pagos se realizan al finalizar cada campaña y se reflejan en el Wallet a partir de 50 €."
+      }
+    },
+    "fairPlay": {
+      "title": "Sistema \"Fair Play\" (Límites)",
+      "desc": "Nuestras campañas tienen fondos limitados (\"Pools\") asignados por los clientes. Para asegurar que todos ganen y evitar monopolios:",
+      "points": {
+        "p1": "Límite de 10 Posts por Campaña/Día: Puedes realizar un máximo de 10 envíos diarios por cada campaña.",
+        "p2": "El presupuesto se asigna en tiempo real. ¡El que llega primero, gana!"
+      }
+    },
+    "strategy": {
+      "title": "Estrategia para Ganar Más",
+      "points": {
+        "p1": "¡Diversifica! Si activas 10 campañas diferentes, puedes realizar hasta 100 posts al día.",
+        "p2": "Tu Actividad Importa: Cuanto más exitosas sean tus campañas, más invertirán los clientes y mejores tarifas podremos ofrecerte.",
+        "p3": "Entra, selecciona tus campañas y asegura tu cupo diario hoy."
+      }
+    }
+  },
+  "dicicoinPage": {
+    "title": "¿Qué es DICICOIN?",
+    "intro": "DICICOIN es una moneda física, conmemorativa y coleccionable que representa el nacimiento y la visión del ecosistema Dicilo.\nNo es una criptomoneda ni un producto financiero tradicional, sino un símbolo tangible de pertenencia a una comunidad que está construyendo nuevas formas de conexión, recomendación y crecimiento entre personas y empresas.",
+    "unique": "Cada DICICOIN es una pieza única, numerada y limitada, creada para quienes deciden formar parte del proyecto desde sus primeras etapas.",
+    "specialTitle": "¿Por qué DICICOIN es especial?",
+    "specialDesc": "DICICOIN une el mundo físico con una visión digital de largo plazo.\nPoseer una moneda significa estar presente desde el inicio, apoyar una idea antes de que se convierta en estándar y participar en la construcción de un ecosistema basado en confianza, perseverancia y crecimiento colectivo.\n\nLa moneda no solo se conserva como objeto de colección, sino que también representa una posición estratégica dentro de Dicilo, vinculada a su evolución futura.",
+    "howToTitle": "¿Qué necesito para obtener una DICICOIN?",
+    "howToDesc": "El primer paso es registrarte gratuitamente en Dicilo.\nEl registro permite identificar al titular, garantizar la autenticidad de la moneda y formar parte oficialmente de la comunidad.\n\nUna vez registrado, podrás acceder a la adquisición de DICICOIN a través de los canales oficiales dentro de Dicilo.",
+    "messageTitle": "Un mensaje para quienes miran hacia adelante",
+    "messageDesc": "DICICOIN no es para todos.\nEs para quienes creen en las ideas que se construyen paso a paso, para quienes entienden el valor de estar antes, y para quienes desean formar parte de algo que crece con sentido y propósito.\n\nRegistrarte en Dicilo y adquirir una DICICOIN es una forma sencilla de decir:\n“Yo estuve ahí desde el comienzo.”",
+    "cta": "Regístrate y adquiere tu DiciCoin"
+  },
+  "marketing_plan": {
+    "title": "Tu Calendario de Éxito",
+    "drag_instruction": "Arrastra una campaña al día que quieras publicar",
+    "daily_limit_error": "¡Alto! Máximo 10 posts por día para esta campaña.",
+    "scheduled_status": "Programado",
+    "published_status": "Publicado",
+    "total_posts": "Total Posts",
+    "est_earnings": "Ganancia Est.",
+    "active_campaigns": "Campañas Activas"
+  },
+  "campaign_explorer": {
+    "search_placeholder": "Buscar campañas...",
+    "pool_status_high": "¡Date prisa! Queda poco presupuesto",
+    "copy_text": "Copiar Texto",
+    "translate_btn": "Traducir a...",
+    "grammar_check_btn": "Corregir Ortografía",
+    "view_details": "Ver Detalles",
+    "tabs": {
+      "info": "Información",
+      "rules": "Reglas",
+      "templates": "Plantillas (Vorlagen)"
+    }
+  },
+  "freelancer_menu": {
+    "dashboard": "Inicio",
+    "my_campaigns": "Mis Campañas",
+    "marketing_plan": "Plan de Marketing",
+    "all_campaigns": "Campañas",
+    "templates": "Plantillas",
+    "my_postings": "Mis Publicaciones",
+    "statistics": "Mis Estadísticas",
+    "online_reviews": "Reseña Online",
+    "connections": "Conexiones",
+    "faqs": "Preguntas Frecuentes"
+  },
+  "freelancer_dashboard": {
+    "welcome": "Hola de nuevo,",
+    "overview": "Aquí tienes un resumen de tu actividad hoy.",
+    "total_earnings": "Ganancias Totales",
+    "active_campaigns": "Campañas Activas",
+    "total_reach": "Alcance Total",
+    "your_campaigns": "Tus Campañas Verificadas",
+    "no_campaigns": "Aún no tienes campañas activas.",
+    "explore_btn": "Explorar Campañas",
+    "recent_activity": "Actividad Reciente",
+    "quick_actions": "Acciones Rápidas",
+    "write_post": "Crear Contenido",
+    "marketing_plan": "Plan de Marketing",
+    "connect_socials": "Conectar Canales",
+    "view_all_stats": "Ver Estadísticas",
+    "up_next": "Próximas Tareas"
+  },
+  "freelancer_views": {
+    "my_postings": {
+      "title": "Mis Redes",
+      "subtitle": "Conéctate, comparte y gana. Gestiona todas tus redes sociales desde un solo lugar y visualiza el rendimiento detallado de tus publicaciones por canal.",
+      "breakdown_title": "Desglose por Canal",
+      "breakdown_desc": "Expande cada red para ver tus publicaciones y estadísticas específicas.",
+      "kpi_posts": "Publicaciones Totales",
+      "kpi_views": "Vistas Totales",
+      "kpi_reach": "Alcance Estimado",
+      "kpi_interactions": "Interacciones",
+      "table_post": "Publicación",
+      "table_date": "Fecha",
+      "table_format": "Formato",
+      "table_views": "Vistas",
+      "table_interactions": "Interacciones",
+      "no_posts": "No hay publicaciones en este canal.",
+      "no_activity": "Sin actividad reciente"
+    },
+    "statistics": {
+      "title": "Follower Insights",
+      "subtitle": "Aquí tienes un resumen de tus SEGUIDORES y rendimiento. Con nuestro Content Pool no volverás a preocuparte por tu próximo post.",
+      "accordion_title": "Resumen de Seguidores",
+      "accordion_desc": "Mantén el control sobre el crecimiento de tu audiencia.",
+      "followers": "Seguidores",
+      "since": "desde",
+      "filter_total": "Total",
+      "filter_last_month": "Último Mes",
+      "filter_last_3_months": "Últimos 3 Meses",
+      "published_posts": "Publicaciones",
+      "planned": "Programado",
+      "contacts": "Contactos Visuales",
+      "reach": "Alcance"
+    },
+    "online_reviews": {
+      "title": "Reseñas Online",
+      "subtitle": "Analiza el feedback de tu audiencia y los comentarios en tus publicaciones.",
+      "tab_published": "Publicados",
+      "tab_scheduled": "Programados",
+      "tab_comments": "Comentarios",
+      "active_badge": "Activos",
+      "no_scheduled": "No hay publicaciones programadas actualmente.",
+      "recent_comments": "Comentarios Recientes",
+      "new_comment": "Nuevo comentario en",
+      "reply_btn": "Responder",
+      "view_comments_btn": "Ver Comentarios"
+    }
+  },
+  "community": {
+    "share": "Compartir",
+    "download": "Descargar foto",
+    "share_text": "¡Mira este post de {{user}} en {{neighborhood}} en Dicilo!",
+    "copy_link": "Copiar enlace",
+    "link_copied": "Enlace copiado al portapapeles",
+    "download_success": "Foto descargada",
+    "download_error": "Error al descargar",
+    "your_community": "Tu Comunidad",
+    "neighborhoods_of": "Barrios de",
+    "explore_desc": "Explora lo que sucede en tu barrio y conecta con tus vecinos.",
+    "new_recommendation": "Nueva Recomendación",
+    "share_place": "Comparte un lugar, servicio o experiencia con tus vecinos de {{name}}.",
+    "ranking": {
+      "title": "Top Empresas",
+      "subtitle": "Negocios más recomendados",
+      "no_data": "No hay suficientes datos para el ranking aún."
+    },
+    "barometer": {
+      "title": "Barómetro",
+      "level": {
+        "fire": "¡ON FIRE!",
+        "fire_desc": "El barrio está que arde",
+        "high": "Alta Actividad",
+        "high_desc": "Mucha participación reciente",
+        "medium": "Crecimiento Constante",
+        "medium_desc": "El barrio se está moviendo",
+        "low": "Tranquilo",
+        "low_desc": "Ideal para empezar a publicar"
+      },
+      "index": "Índice",
+      "posts_week": "Posts esta semana",
+      "active_neighbors": "Vecinos activos",
+      "posts": "Posts",
+      "neighbors": "Vecinos"
+    },
+    "feed": {
+      "wall": "Muro Social",
+      "recommendations": "Recomendaciones",
+      "whats_happening": "¿Qué está pasando en {{name}}?",
+      "loading": "Cargando actividad...",
+      "empty": "Aún no hay actividad reciente en {{name}}.",
+      "be_first": "¡Sé el primero en recomendar un lugar!",
+      "recent": "Reciente",
+      "photo_by": "Foto por"
+    },
+    "actions": {
+      "set_favorite": "Marcar como mi Barrio",
+      "is_favorite": "Es mi Barrio"
+    },
+    "post_btn": "Publicar",
+    "search_neighborhoods": "Buscar barrios...",
+    "register_neighborhood": "Registrar Barrio",
+    "register_neighborhood_desc": "¿No encuentras tu barrio? Regístralo aquí para empezar a conectar con tus vecinos.",
+    "register_neighborhood_btn": "Registrar Barrio",
+    "read_in": "Leer en",
+    "show_original": "Ver original",
+    "translate_ai": "Traducir con AI",
+    "translation_error": "Error al traducir"
+  }
+}

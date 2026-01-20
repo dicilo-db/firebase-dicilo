@@ -1,0 +1,157 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 210 40% 98%;
+    --foreground: 215 25% 27%;
+    --card: 210 40% 98%;
+    --card-foreground: 215 25% 27%;
+    --popover: 210 40% 98%;
+    --popover-foreground: 215 25% 27%;
+    --primary: 145 74% 36%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 215 25% 27%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215 20% 45%;
+    --accent: 150 60% 80%;
+    --accent-foreground: 215 25% 27%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 210 40% 91.4%;
+    --input: 210 40% 91.4%;
+    --ring: 145 74% 36%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 215 25% 27%;
+    --foreground: 210 40% 98%;
+    --card: 215 25% 27%;
+    --card-foreground: 210 40% 98%;
+    --popover: 215 25% 27%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 145 74% 36%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 215 28% 17%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 215 28% 17%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 150 60% 80%;
+    --accent-foreground: 215 25% 27%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 215 28% 17%;
+    --input: 215 28% 17%;
+    --ring: 145 74% 36%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'PT Sans', sans-serif;
+  }
+}
+
+/* Leaflet Popup Customization */
+.leaflet-popup-content-wrapper {
+  @apply rounded-lg border border-border bg-card text-card-foreground shadow-lg;
+}
+
+.leaflet-popup-content {
+  @apply text-sm;
+  width: 200px !important;
+}
+
+.leaflet-popup-content h3 {
+  @apply mb-1 text-base font-bold text-primary;
+}
+
+.leaflet-popup-content p {
+  @apply m-0 mb-1 text-muted-foreground;
+}
+
+.leaflet-popup-content a {
+  @apply text-primary hover:underline;
+}
+
+.leaflet-popup-tip {
+  @apply bg-card;
+}
+
+.leaflet-popup-close-button {
+  @apply text-foreground;
+}
+
+/* Client Landing Page Tabs */
+.tabs-container {
+  @apply mx-auto mt-8 w-full max-w-5xl;
+}
+
+.tabs-menu {
+  @apply flex border-b border-gray-300;
+}
+
+.tab {
+  @apply border-b-2 border-transparent bg-transparent px-6 py-3 text-lg font-medium text-gray-500 transition-colors duration-300;
+}
+
+.tab:hover {
+  @apply text-primary;
+}
+
+.tab.active {
+  @apply border-primary text-primary;
+}
+
+.tabs-content {
+  @apply rounded-b-lg bg-white p-6 shadow-md;
+}
+
+.tab-content {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Marquee Header Animation */
+.marquesina-container {
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+
+.marquesina-container:hover .texto-movil {
+  animation-play-state: paused;
+}
+
+.texto-movil {
+  display: inline-block;
+  padding-left: 100%;
+  animation: movertexto 25s linear infinite;
+}
+
+@keyframes movertexto {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(-100%, 0);
+  }
+}

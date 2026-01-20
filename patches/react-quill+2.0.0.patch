@@ -1,0 +1,57 @@
+diff --git a/node_modules/react-quill/lib/index.js b/node_modules/react-quill/lib/index.js
+index 273b8e2..d190184 100644
+--- a/node_modules/react-quill/lib/index.js
++++ b/node_modules/react-quill/lib/index.js
+@@ -2,7 +2,7 @@
+ 
+ var React = require('react');
+ var ReactDOM = require('react-dom');
+-var isEqual = require('lodash/isEqual');
++var isEqual = require('lodash.isequal');
+ var Quill = require('quill');
+ 
+ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+@@ -370,7 +370,7 @@ var ReactQuill = function (_React$Component) {
+ 		}, {
+ 			key: 'getEditingArea',
+ 			value: function getEditingArea() {
+-				return ReactDOM.findDOMNode(this.editingArea);
++				return this.editingArea;
+ 			}
+ 
+ 			/*
+diff --git a/node_modules/react-quill/lib/mixin.js b/node_modules/react-quill/lib/mixin.js
+index b8278a5..816432b 100644
+--- a/node_modules/react-quill/lib/mixin.js
++++ b/node_modules/react-quill/lib/mixin.js
+@@ -1,6 +1,6 @@
+ 'use strict';
+ 
+-var isEqual = require('lodash/isEqual');
++var isEqual = require('lodash.isequal');
+ var Quill = require('quill');
+ 
+ var T = require('prop-types');
+@@ -165,7 +165,7 @@ module.exports = {
+ 	},
+ 
+ 	getEditingArea: function getEditingArea() {
+-		return this.editingArea;
++		return this.editingArea.getDOMNode();
+ 	},
+ 
+ 	/*
+diff --git a/node_modules/react-quill/package.json b/node_modules/react-quill/package.json
+index 54c9c89..d61d19d 100644
+--- a/node_modules/react-quill/package.json
++++ b/node_modules/react-quill/package.json
+@@ -62,7 +62,7 @@
+     "test": "grunt test"
+   },
+   "dependencies": {
+-    "lodash": "^4.17.21",
++    "lodash.isequal": "^4.5.0",
+     "prop-types": "^15.7.2"
+   },
+   "optionalDependencies": {
+
