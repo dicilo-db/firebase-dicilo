@@ -1330,7 +1330,14 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
         newData.neighborhood = null;
       }
 
-      const finalPayload = _.merge({}, originalData, newData);
+      // Use mergeWith to customize how arrays are handled (overwrite instead of merge)
+      const customizer = (objValue: any, srcValue: any) => {
+        if (_.isArray(objValue)) {
+          return srcValue;
+        }
+      };
+
+      const finalPayload = _.mergeWith({}, originalData, newData, customizer);
 
       // Explicitly set wallet values from form data to ensure they are not lost in merge
       // especially if they are 0 or if originalData has them as undefined
