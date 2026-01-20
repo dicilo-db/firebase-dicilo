@@ -160,9 +160,13 @@ export default function DashboardPage() {
                 if (regData.registrationType === 'private' || regData.registrationType === 'donor') {
                     // Initialize Private Profile via API
                     try {
+                        const token = await currentUser.getIdToken();
                         const response = await fetch('/api/private-user/create', {
                             method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${token}`
+                            },
                             body: JSON.stringify({
                                 uid: uid,
                                 email: currentUser.email,
