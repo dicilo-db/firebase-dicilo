@@ -459,6 +459,50 @@ export const consentAccept = onRequest((req, res) => handleConsent(req, res, 'ac
 
 export const consentDecline = onRequest((req, res) => handleConsent(req, res, 'declined'));
 
+export const notifyAdminOnClientRecommendation = onDocumentCreated('clients/{clientId}/recommendations/{recommendationId}', async (event) => {
+  const snapshot = event.data;
+  if (!snapshot) return;
+
+  const data = snapshot.data();
+  const clientId = event.params.clientId;
+  const recommendationId = event.params.recommendationId;
+
+  const adminEmail = 'support@dicilo.net';
+  const subject = `Neue Empfehlung/Anfrage für Client ${clientId}`;
+
+  const html = `
+    <h1>Neue Empfehlung oder Anfrage</h1>
+    <p>Ein Nutzer hat das Formular "Envianos tu comentario o dudas" ausgefüllt.</p>
+    <hr/>
+    <p><strong>Client ID:</strong> ${clientId}</p>
+    <p><strong>Recommendation ID:</strong> ${recommendationId}</p>
+    <br/>
+    <p><strong>Name:</strong> ${data.name} ${data.lastName || ''}</p>
+    <p><strong>Email:</strong> ${data.email}</p>
+    <p><strong>Land:</strong> ${data.country || 'N/A'}</p>
+    <p><strong>Kommentar:</strong><br/>${data.comment}</p>
+    <br/>
+    <p><strong>Zeitpunkt:</strong> ${data.createdAt ? data.createdAt.toDate().toLocaleString() : new Date().toLocaleString()}</p>
+    
+    <br/>
+    <p>Dies ist eine automatische Nachricht von Dicilo Firebase Functions.</p>
+  `;
+
+  try {
+    await sendMail({
+      to: adminEmail,
+      subject: subject,
+      html: html,
+    });
+    logger.info(`Admin notification sent for client recommendation ${recommendationId}`);
+  } catch (error) {
+    logger.error(
+      `Failed to send admin notification for client recommendation ${recommendationId}:`,
+      error
+    );
+  }
+});
+
 // --- Business Tools (v2) ---
 
 // Forced redeploy for promotion fix verification

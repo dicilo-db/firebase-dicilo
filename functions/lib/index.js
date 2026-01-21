@@ -48,7 +48,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.cleanupDuplicates = exports.fixSuperAdmin = exports.seedDatabase = exports.demoteToBasic = exports.promoteToClient = exports.consentDecline = exports.consentAccept = exports.taskWorker = exports.submitRecommendation = exports.syncExistingCustomersToErp = exports.sendWelcomeEmail = exports.notifyAdminOnTopUp = exports.notifyAdminOnRegistration = exports.sendRegistrationToErp = exports.onAdminWrite = void 0;
+exports.cleanupDuplicates = exports.fixSuperAdmin = exports.seedDatabase = exports.demoteToBasic = exports.promoteToClient = exports.notifyAdminOnClientRecommendation = exports.consentDecline = exports.consentAccept = exports.taskWorker = exports.submitRecommendation = exports.syncExistingCustomersToErp = exports.sendWelcomeEmail = exports.notifyAdminOnTopUp = exports.notifyAdminOnRegistration = exports.sendRegistrationToErp = exports.onAdminWrite = void 0;
 /**
  * @fileoverview Cloud Functions for Firebase (Gen 2).
  * Migrated to Gen 2 to support Node 20 and explicit CPU/Memory configuration.
@@ -415,6 +415,44 @@ newStatus) => __awaiter(void 0, void 0, void 0, function* () {
 });
 exports.consentAccept = (0, https_1.onRequest)((req, res) => handleConsent(req, res, 'accepted'));
 exports.consentDecline = (0, https_1.onRequest)((req, res) => handleConsent(req, res, 'declined'));
+exports.notifyAdminOnClientRecommendation = (0, firestore_1.onDocumentCreated)('clients/{clientId}/recommendations/{recommendationId}', (event) => __awaiter(void 0, void 0, void 0, function* () {
+    const snapshot = event.data;
+    if (!snapshot)
+        return;
+    const data = snapshot.data();
+    const clientId = event.params.clientId;
+    const recommendationId = event.params.recommendationId;
+    const adminEmail = 'support@dicilo.net';
+    const subject = `Neue Empfehlung/Anfrage für Client ${clientId}`;
+    const html = `
+    <h1>Neue Empfehlung oder Anfrage</h1>
+    <p>Ein Nutzer hat das Formular "Envianos tu comentario o dudas" ausgefüllt.</p>
+    <hr/>
+    <p><strong>Client ID:</strong> ${clientId}</p>
+    <p><strong>Recommendation ID:</strong> ${recommendationId}</p>
+    <br/>
+    <p><strong>Name:</strong> ${data.name} ${data.lastName || ''}</p>
+    <p><strong>Email:</strong> ${data.email}</p>
+    <p><strong>Land:</strong> ${data.country || 'N/A'}</p>
+    <p><strong>Kommentar:</strong><br/>${data.comment}</p>
+    <br/>
+    <p><strong>Zeitpunkt:</strong> ${data.createdAt ? data.createdAt.toDate().toLocaleString() : new Date().toLocaleString()}</p>
+    
+    <br/>
+    <p>Dies ist eine automatische Nachricht von Dicilo Firebase Functions.</p>
+  `;
+    try {
+        yield (0, email_1.sendMail)({
+            to: adminEmail,
+            subject: subject,
+            html: html,
+        });
+        logger.info(`Admin notification sent for client recommendation ${recommendationId}`);
+    }
+    catch (error) {
+        logger.error(`Failed to send admin notification for client recommendation ${recommendationId}:`, error);
+    }
+}));
 // --- Business Tools (v2) ---
 // Forced redeploy for promotion fix verification
 exports.promoteToClient = (0, https_1.onCall)((request) => __awaiter(void 0, void 0, void 0, function* () {

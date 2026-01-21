@@ -31,7 +31,7 @@
         "reviewBy": "Review by {{name}}"
     },
     "recommendationForm": {
-        "title": "Leave a Recommendation",
+        "title": "Send us your comments or questions.",
         "name": "Name",
         "lastName": "Last Name",
         "email": "Email Address",

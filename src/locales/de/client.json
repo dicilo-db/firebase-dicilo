@@ -31,7 +31,7 @@
         "reviewBy": "Bewertung von {{name}}"
     },
     "recommendationForm": {
-        "title": "Hinterlasse eine Empfehlung",
+        "title": "Senden Sie uns Ihre Kommentare oder Fragen.",
         "name": "Name",
         "lastName": "Nachname",
         "email": "E-Mail-Adresse",
