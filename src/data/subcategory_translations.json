@@ -2338,5 +2338,3735 @@
         "de": "Sozialpädagogische Ausbildung",
         "en": "Social Pedagogy Training",
         "es": "Formación en pedagogía social"
+    },
+    "Afghanische Küche": {
+        "de": "Afghanische Küche",
+        "en": "Afghan Cuisine",
+        "es": "Cocina afgana"
+    },
+    "Afrikanische Restaurants": {
+        "de": "Afrikanische Restaurants",
+        "en": "African Restaurants",
+        "es": "Restaurantes africanos"
+    },
+    "Afrikanische Supermärkte": {
+        "de": "Afrikanische Supermärkte",
+        "en": "African Supermarkets",
+        "es": "Supermercados africanos"
+    },
+    "Asiatische Restaurants": {
+        "de": "Asiatische Restaurants",
+        "en": "Asian Restaurants",
+        "es": "Restaurantes asiáticos"
+    },
+    "Asiatische Supermärkte": {
+        "de": "Asiatische Supermärkte",
+        "en": "Asian Supermarkets",
+        "es": "Supermercados asiáticos"
+    },
+    "Biergärten": {
+        "de": "Biergärten",
+        "en": "Beer Gardens",
+        "es": "Jardines de cerveza"
+    },
+    "Brasilianische Grillrestaurants": {
+        "de": "Brasilianische Grillrestaurants",
+        "en": "Brazilian Steakhouses",
+        "es": "Rodizios brasileños"
+    },
+    "Buffet-Restaurants": {
+        "de": "Buffet-Restaurants",
+        "en": "Buffet Restaurants",
+        "es": "Restaurantes buffet"
+    },
+    "Burgerläden": {
+        "de": "Burgerläden",
+        "en": "Burger Joints",
+        "es": "Hamburgueserías"
+    },
+    "Bäckereien": {
+        "de": "Bäckereien",
+        "en": "Bakeries",
+        "es": "Panaderías"
+    },
+    "Cafés": {
+        "de": "Cafés",
+        "en": "Cafes",
+        "es": "Cafeterías"
+    },
+    "Catering-Dienste": {
+        "de": "Catering-Dienste",
+        "en": "Catering Services",
+        "es": "Servicios de catering"
+    },
+    "Chinesische Küche": {
+        "de": "Chinesische Küche",
+        "en": "Chinese Cuisine",
+        "es": "Cocina china"
+    },
+    "Cocktailbars": {
+        "de": "Cocktailbars",
+        "en": "Cocktail Bars",
+        "es": "Bares de cócteles"
+    },
+    "Crêperien": {
+        "de": "Crêperien",
+        "en": "Creperies",
+        "es": "Creperías"
+    },
+    "Delikatessenläden": {
+        "de": "Delikatessenläden",
+        "en": "Delicatessens",
+        "es": "Delicatessen"
+    },
+    "Dessert-Cafés": {
+        "de": "Dessert-Cafés",
+        "en": "Dessert Cafes",
+        "es": "Cafeterías de postres"
+    },
+    "Discount-Supermärkte": {
+        "de": "Discount-Supermärkte",
+        "en": "Discount Supermarkets",
+        "es": "Supermercados de descuento"
+    },
+    "Eisdielen": {
+        "de": "Eisdielen",
+        "en": "Ice Cream Parlors",
+        "es": "Heladerías"
+    },
+    "Europäische Restaurants": {
+        "de": "Europäische Restaurants",
+        "en": "European Restaurants",
+        "es": "Restaurantes europeos"
+    },
+    "Europäische Supermärkte": {
+        "de": "Europäische Supermärkte",
+        "en": "European Supermarkets",
+        "es": "Supermercados europeos"
+    },
+    "Falafel-Läden": {
+        "de": "Falafel-Läden",
+        "en": "Falafel Shops",
+        "es": "Tiendas de falafel"
+    },
+    "Food Trucks": {
+        "de": "Food Trucks",
+        "en": "Food Trucks",
+        "es": "Camiones de comida"
+    },
+    "Französische Küche": {
+        "de": "Französische Küche",
+        "en": "French Cuisine",
+        "es": "Cocina francesa"
+    },
+    "Fusion-Restaurants": {
+        "de": "Fusion-Restaurants",
+        "en": "Fusion Restaurants",
+        "es": "Restaurantes de fusión"
+    },
+    "Gourmet-Pizzerien": {
+        "de": "Gourmet-Pizzerien",
+        "en": "Gourmet Pizzerias",
+        "es": "Pizzerías gourmet"
+    },
+    "Gourmet-Restaurants": {
+        "de": "Gourmet-Restaurants",
+        "en": "Gourmet Restaurants",
+        "es": "Restaurantes gourmet"
+    },
+    "Griechische Küche": {
+        "de": "Griechische Küche",
+        "en": "Greek Cuisine",
+        "es": "Cocina griega"
+    },
+    "Grillrestaurants": {
+        "de": "Grillrestaurants",
+        "en": "Grill Restaurants",
+        "es": "Restaurantes de parrilla"
+    },
+    "Hot-Dog-Stände": {
+        "de": "Hot-Dog-Stände",
+        "en": "Hot Dog Stands",
+        "es": "Puestos de perritos calientes"
+    },
+    "Indische Küche": {
+        "de": "Indische Küche",
+        "en": "Indian Cuisine",
+        "es": "Cocina india"
+    },
+    "Indische Restaurants": {
+        "de": "Indische Restaurants",
+        "en": "Indian Restaurants",
+        "es": "Restaurantes indios"
+    },
+    "Indische Supermärkte": {
+        "de": "Indische Supermärkte",
+        "en": "Indian Supermarkets",
+        "es": "Supermercados indios"
+    },
+    "Italienische Küche": {
+        "de": "Italienische Küche",
+        "en": "Italian Cuisine",
+        "es": "Cocina italiana"
+    },
+    "Japanische Küche": {
+        "de": "Japanische Küche",
+        "en": "Japanese Cuisine",
+        "es": "Cocina japonesa"
+    },
+    "Kebab-Läden": {
+        "de": "Kebab-Läden",
+        "en": "Kebab Shops",
+        "es": "Tiendas de kebab"
+    },
+    "Koreanische Küche": {
+        "de": "Koreanische Küche",
+        "en": "Korean Cuisine",
+        "es": "Cocina coreana"
+    },
+    "Lateinamerikanische Restaurants": {
+        "de": "Lateinamerikanische Restaurants",
+        "en": "Latin American Restaurants",
+        "es": "Restaurantes latinoamericanos"
+    },
+    "Lateinamerikanische Supermärkte": {
+        "de": "Lateinamerikanische Supermärkte",
+        "en": "Latin American Supermarkets",
+        "es": "Supermercados latinoamericanos"
+    },
+    "Libanesische Restaurants": {
+        "de": "Libanesische Restaurants",
+        "en": "Lebanese Restaurants",
+        "es": "Restaurantes libaneses"
+    },
+    "Mediterrane Küche": {
+        "de": "Mediterrane Küche",
+        "en": "Mediterranean Cuisine",
+        "es": "Cocina mediterránea"
+    },
+    "Meeresfrüchterestaurants": {
+        "de": "Meeresfrüchterestaurants",
+        "en": "Seafood Restaurants",
+        "es": "Marisquerías"
+    },
+    "Mongolische Küche": {
+        "de": "Mongolische Küche",
+        "en": "Mongolian Cuisine",
+        "es": "Cocina mongola"
+    },
+    "Pasta-Restaurants": {
+        "de": "Pasta-Restaurants",
+        "en": "Pasta Restaurants",
+        "es": "Restaurantes de pasta"
+    },
+    "Persische Restaurants": {
+        "de": "Persische Restaurants",
+        "en": "Persian Restaurants",
+        "es": "Restaurantes persas"
+    },
+    "Peruanische Küche": {
+        "de": "Peruanische Küche",
+        "en": "Peruvian Cuisine",
+        "es": "Cocina peruana"
+    },
+    "Pfannkuchenhäuser": {
+        "de": "Pfannkuchenhäuser",
+        "en": "Pancake Houses",
+        "es": "Casas de panqueques"
+    },
+    "Pizzerien": {
+        "de": "Pizzerien",
+        "en": "Pizzerias",
+        "es": "Pizzerías"
+    },
+    "Regionale Küche": {
+        "de": "Regionale Küche",
+        "en": "Regional Cuisine",
+        "es": "Cocina regional"
+    },
+    "Russische Küche": {
+        "de": "Russische Küche",
+        "en": "Russian Cuisine",
+        "es": "Cocina rusa"
+    },
+    "Salatbars": {
+        "de": "Salatbars",
+        "en": "Salad Bars",
+        "es": "Bares de ensaladas"
+    },
+    "Skandinavische Küche": {
+        "de": "Skandinavische Küche",
+        "en": "Scandinavian Cuisine",
+        "es": "Cocina escandinava"
+    },
+    "Spanische Tapas-Bars": {
+        "de": "Spanische Tapas-Bars",
+        "en": "Spanish Tapas Bars",
+        "es": "Bares de tapas españolas"
+    },
+    "Steakhäuser": {
+        "de": "Steakhäuser",
+        "en": "Steakhouses",
+        "es": "Asadores"
+    },
+    "Supermärkte": {
+        "de": "Supermärkte",
+        "en": "Supermarkets",
+        "es": "Supermercados"
+    },
+    "Sushi-Bars": {
+        "de": "Sushi-Bars",
+        "en": "Sushi Bars",
+        "es": "Barras de sushi"
+    },
+    "Taco-Trucks": {
+        "de": "Taco-Trucks",
+        "en": "Taco Trucks",
+        "es": "Camiones de tacos"
+    },
+    "Tapas-Bars": {
+        "de": "Tapas-Bars",
+        "en": "Tapas Bars",
+        "es": "Bares de tapas"
+    },
+    "Tapas-Restaurants": {
+        "de": "Tapas-Restaurants",
+        "en": "Tapas Restaurants",
+        "es": "Restaurantes de tapas"
+    },
+    "Teehäuser": {
+        "de": "Teehäuser",
+        "en": "Tea Houses",
+        "es": "Casas de té"
+    },
+    "Thaiküche": {
+        "de": "Thaiküche",
+        "en": "Thai Cuisine",
+        "es": "Cocina tailandesa"
+    },
+    "Trattorien": {
+        "de": "Trattorien",
+        "en": "Trattorias",
+        "es": "Trattorias"
+    },
+    "Türkische Restaurants": {
+        "de": "Türkische Restaurants",
+        "en": "Turkish Restaurants",
+        "es": "Restaurantes turcos"
+    },
+    "Türkische Supermärkte": {
+        "de": "Türkische Supermärkte",
+        "en": "Turkish Supermarkets",
+        "es": "Supermercados turcos"
+    },
+    "Vegane Restaurants": {
+        "de": "Vegane Restaurants",
+        "en": "Vegan Restaurants",
+        "es": "Restaurantes veganos"
+    },
+    "Vegetarische Restaurants": {
+        "de": "Vegetarische Restaurants",
+        "en": "Vegetarian Restaurants",
+        "es": "Restaurantes vegetarianos"
+    },
+    "Vietnamesische Küche": {
+        "de": "Vietnamesische Küche",
+        "en": "Vietnamese Cuisine",
+        "es": "Cocina vietnamita"
+    },
+    "Weinbars": {
+        "de": "Weinbars",
+        "en": "Wine Bars",
+        "es": "Bares de vinos"
+    },
+    "Airbnb-Dienste": {
+        "de": "Airbnb-Dienste",
+        "en": "Airbnb Services",
+        "es": "Servicios de Airbnb"
+    },
+    "All-Inclusive-Resorts": {
+        "de": "All-Inclusive-Resorts",
+        "en": "All-Inclusive Resorts",
+        "es": "Resorts todo incluido"
+    },
+    "Apart-Hotels": {
+        "de": "Apart-Hotels",
+        "en": "Apart-Hotels",
+        "es": "Apartahoteles"
+    },
+    "Apartmenthotels": {
+        "de": "Apartmenthotels",
+        "en": "Apartment Hotels",
+        "es": "Hoteles de apartamentos"
+    },
+    "Bed & Bike": {
+        "de": "Bed & Bike",
+        "en": "Bed & Bike",
+        "es": "Alojamiento para ciclistas"
+    },
+    "Bed and Breakfast": {
+        "de": "Bed and Breakfast",
+        "en": "Bed and Breakfast",
+        "es": "Bed and Breakfast"
+    },
+    "Berghütten": {
+        "de": "Berghütten",
+        "en": "Mountain Huts",
+        "es": "Refugios de montaña"
+    },
+    "Boutique-Hostels": {
+        "de": "Boutique-Hostels",
+        "en": "Boutique Hostels",
+        "es": "Albergues boutique"
+    },
+    "Boutique-Hotels": {
+        "de": "Boutique-Hotels",
+        "en": "Boutique Hotels",
+        "es": "Hoteles boutique"
+    },
+    "Camping-Resorts": {
+        "de": "Camping-Resorts",
+        "en": "Camping Resorts",
+        "es": "Resorts de camping"
+    },
+    "Campingplätze": {
+        "de": "Campingplätze",
+        "en": "Campsites",
+        "es": "Campings"
+    },
+    "Ecolodges": {
+        "de": "Ecolodges",
+        "en": "Ecolodges",
+        "es": "Ecolodges"
+    },
+    "Feriendomizile": {
+        "de": "Feriendomizile",
+        "en": "Holiday Homes",
+        "es": "Casas de vacaciones"
+    },
+    "Ferienparks": {
+        "de": "Ferienparks",
+        "en": "Holiday Parks",
+        "es": "Parques vacacionales"
+    },
+    "Gasthäuser": {
+        "de": "Gasthäuser",
+        "en": "Guesthouses",
+        "es": "Casas de huéspedes"
+    },
+    "Gasthäuser auf dem Land": {
+        "de": "Gasthäuser auf dem Land",
+        "en": "Country Inns",
+        "es": "Posadas rurales"
+    },
+    "Gästezimmer": {
+        "de": "Gästezimmer",
+        "en": "Guest Rooms",
+        "es": "Habitaciones de huéspedes"
+    },
+    "Glamping": {
+        "de": "Glamping",
+        "en": "Glamping",
+        "es": "Glamping"
+    },
+    "Golf-Resorts": {
+        "de": "Golf-Resorts",
+        "en": "Golf Resorts",
+        "es": "Resorts de golf"
+    },
+    "Günstige Hotels": {
+        "de": "Günstige Hotels",
+        "en": "Budget Hotels",
+        "es": "Hoteles económicos"
+    },
+    "Hostels": {
+        "de": "Hostels",
+        "en": "Hostels",
+        "es": "Albergues"
+    },
+    "Hostels mit privatem Zimmer": {
+        "de": "Hostels mit privatem Zimmer",
+        "en": "Hostels with Private Rooms",
+        "es": "Albergues con habitación privada"
+    },
+    "Jugendherbergen": {
+        "de": "Jugendherbergen",
+        "en": "Youth Hostels",
+        "es": "Albergues juveniles"
+    },
+    "Jugendunterkünfte": {
+        "de": "Jugendunterkünfte",
+        "en": "Youth Accommodations",
+        "es": "Alojamientos para jóvenes"
+    },
+    "Kapselhotels": {
+        "de": "Kapselhotels",
+        "en": "Capsule Hotels",
+        "es": "Hoteles cápsula"
+    },
+    "Klosterhotels": {
+        "de": "Klosterhotels",
+        "en": "Monastery Hotels",
+        "es": "Hoteles monasterio"
+    },
+    "Ländliche Pensionen": {
+        "de": "Ländliche Pensionen",
+        "en": "Rural Pensions",
+        "es": "Pensiones rurales"
+    },
+    "Luxushotels": {
+        "de": "Luxushotels",
+        "en": "Luxury Hotels",
+        "es": "Hoteles de lujo"
+    },
+    "Motels": {
+        "de": "Motels",
+        "en": "Motels",
+        "es": "Moteles"
+    },
+    "Ökohotels": {
+        "de": "Ökohotels",
+        "en": "Eco Hotels",
+        "es": "Ecohoteles"
+    },
+    "Pensionen": {
+        "de": "Pensionen",
+        "en": "Pensions",
+        "es": "Pensiones"
+    },
+    "Residenzhotels": {
+        "de": "Residenzhotels",
+        "en": "Residence Hotels",
+        "es": "Hoteles residencia"
+    },
+    "Resorts in den Bergen": {
+        "de": "Resorts in den Bergen",
+        "en": "Mountain Resorts",
+        "es": "Resorts de montaña"
+    },
+    "Safari-Lodges": {
+        "de": "Safari-Lodges",
+        "en": "Safari Lodges",
+        "es": "Logias de safari"
+    },
+    "Schlosshotels": {
+        "de": "Schlosshotels",
+        "en": "Castle Hotels",
+        "es": "Hoteles castillo"
+    },
+    "Schwimmende Hotels": {
+        "de": "Schwimmende Hotels",
+        "en": "Floating Hotels",
+        "es": "Hoteles flotantes"
+    },
+    "Stadthotels": {
+        "de": "Stadthotels",
+        "en": "City Hotels",
+        "es": "Hoteles urbanos"
+    },
+    "Strandhotels": {
+        "de": "Strandhotels",
+        "en": "Beach Hotels",
+        "es": "Hoteles de playa"
+    },
+    "Touristische Hütten": {
+        "de": "Touristische Hütten",
+        "en": "Tourist Huts",
+        "es": "Cabañas turísticas"
+    },
+    "Übernachtungen im Baumhaus": {
+        "de": "Übernachtungen im Baumhaus",
+        "en": "Treehousestays",
+        "es": "Alojamiento en casas del árbol"
+    },
+    "Übernachtungshütten": {
+        "de": "Übernachtungshütten",
+        "en": "Overnight Huts",
+        "es": "Cabañas para pernoctar"
+    },
+    "Unterkünfte für Langzeitaufenthalte": {
+        "de": "Unterkünfte für Langzeitaufenthalte",
+        "en": "Long-term Accommodations",
+        "es": "Alojamientos de larga estancia"
+    },
+    "Wander-Resorts": {
+        "de": "Wander-Resorts",
+        "en": "Hiking Resorts",
+        "es": "Resorts de senderismo"
+    },
+    "Weinhotels": {
+        "de": "Weinhotels",
+        "en": "Wine Hotels",
+        "es": "Hoteles de vino"
+    },
+    "Wellness-Hotels": {
+        "de": "Wellness-Hotels",
+        "en": "Wellness Hotels",
+        "es": "Hoteles wellness"
+    },
+    "Wohnboot-Unterkünfte": {
+        "de": "Wohnboot-Unterkünfte",
+        "en": "Houseboat Accommodations",
+        "es": "Alojamientos en casa flotante"
+    },
+    "Wohnungen auf Zeit": {
+        "de": "Wohnungen auf Zeit",
+        "en": "Temporary Apartments",
+        "es": "Apartamentos temporales"
+    },
+    "Wohnmobil-Stellplätze": {
+        "de": "Wohnmobil-Stellplätze",
+        "en": "RV Parks",
+        "es": "Áreas de autocaravanas"
+    },
+    "Abfallmanagement": {
+        "de": "Abfallmanagement",
+        "en": "Waste Management",
+        "es": "Gestión de residuos"
+    },
+    "Baumaterialien": {
+        "de": "Baumaterialien",
+        "en": "Building Materials",
+        "es": "Materiales de construcción"
+    },
+    "Aufforstungsprojekte": {
+        "de": "Aufforstungsprojekte",
+        "en": "Reforestation Projects",
+        "es": "Proyectos de reforestación"
+    },
+    "Biokraftstoffe": {
+        "de": "Biokraftstoffe",
+        "en": "Biofuels",
+        "es": "Biocombustibles"
+    },
+    "Biologische Landwirtschaft": {
+        "de": "Biologische Landwirtschaft",
+        "en": "Organic Farming",
+        "es": "Agricultura orgánica"
+    },
+    "Biologisch abbaubare Produkte": {
+        "de": "Biologisch abbaubare Produkte",
+        "en": "Biodegradable Products",
+        "es": "Productos biodegradables"
+    },
+    "CO2-Kompensation": {
+        "de": "CO2-Kompensation",
+        "en": "Carbon Offsetting",
+        "es": "Compensación de CO2"
+    },
+    "Elektrofahrzeug-Infrastruktur": {
+        "de": "Elektrofahrzeug-Infrastruktur",
+        "en": "EV Infrastructure",
+        "es": "Infraestructura para vehículos eléctricos"
+    },
+    "Emissionenhandel": {
+        "de": "Emissionenhandel",
+        "en": "Emissions Trading",
+        "es": "Comercio de emisiones"
+    },
+    "Emissionsreduktionsdienste": {
+        "de": "Emissionsreduktionsdienste",
+        "en": "Emission Reduction Services",
+        "es": "Servicios de reducción de emisiones"
+    },
+    "Energieauditdienste": {
+        "de": "Energieauditdienste",
+        "en": "Energy Audit Services",
+        "es": "Servicios de auditoría energética"
+    },
+    "Energieeffizienzberatung": {
+        "de": "Energieeffizienzberatung",
+        "en": "Energy Efficiency Consulting",
+        "es": "Consultoría de eficiencia energética"
+    },
+    "Erneuerbare Energieprojekte": {
+        "de": "Erneuerbare Energieprojekte",
+        "en": "Renewable Energy Projects",
+        "es": "Proyectos de energía renovable"
+    },
+    "Grüne Technologien": {
+        "de": "Grüne Technologien",
+        "en": "Green Technologies",
+        "es": "Tecnologías verdes"
+    },
+    "Klimaneutrale Unternehmen": {
+        "de": "Klimaneutrale Unternehmen",
+        "en": "Carbon Neutral Companies",
+        "es": "Empresas neutras en carbono"
+    },
+    "Klimaschutzprojekte": {
+        "de": "Klimaschutzprojekte",
+        "en": "Climate Protection Projects",
+        "es": "Proyectos de protección climática"
+    },
+    "Klimawandelanpassung": {
+        "de": "Klimawandelanpassung",
+        "en": "Climate Change Adaptation",
+        "es": "Adaptación al cambio climático"
+    },
+    "Kreislaufwirtschaft": {
+        "de": "Kreislaufwirtschaft",
+        "en": "Circular Economy",
+        "es": "Economía circular"
+    },
+    "Müllvermeidung": {
+        "de": "Müllvermeidung",
+        "en": "Waste Prevention",
+        "es": "Prevención de residuos"
+    },
+    "Naturnahe Wasseraufbereitung": {
+        "de": "Naturnahe Wasseraufbereitung",
+        "en": "Natural Water Treatment",
+        "es": "Tratamiento natural del agua"
+    },
+    "Naturschutzgebiete": {
+        "de": "Naturschutzgebiete",
+        "en": "Nature Reserves",
+        "es": "Reservas naturales"
+    },
+    "Naturschutzorganisationen": {
+        "de": "Naturschutzorganisationen",
+        "en": "Conservation Organizations",
+        "es": "Organizaciones de conservación"
+    },
+    "Nachhaltige Energiequellen": {
+        "de": "Nachhaltige Energiequellen",
+        "en": "Sustainable Energy Sources",
+        "es": "Fuentes de energía sostenible"
+    },
+    "Nachhaltige Fischerei": {
+        "de": "Nachhaltige Fischerei",
+        "en": "Sustainable Fisheries",
+        "es": "Pesca sostenible"
+    },
+    "Nachhaltige Landwirtschaft": {
+        "de": "Nachhaltige Landwirtschaft",
+        "en": "Sustainable Agriculture",
+        "es": "Agricultura sostenible"
+    },
+    "Nachhaltigkeitszertifikate": {
+        "de": "Nachhaltigkeitszertifikate",
+        "en": "Sustainability Certificates",
+        "es": "Certificados de sostenibilidad"
+    },
+    "Öko-Innovationen": {
+        "de": "Öko-Innovationen",
+        "en": "Eco Innovations",
+        "es": "Ecoinnovaciones"
+    },
+    "Öko-Tourismus": {
+        "de": "Öko-Tourismus",
+        "en": "Ecotourism",
+        "es": "Ecoturismo"
+    },
+    "Ökologische Architektur": {
+        "de": "Ökologische Architektur",
+        "en": "Ecological Architecture",
+        "es": "Arquitectura ecológica"
+    },
+    "Ökologische Baufirmen": {
+        "de": "Ökologische Baufirmen",
+        "en": "Ecological Construction Companies",
+        "es": "Empresas de construcción ecológica"
+    },
+    "Ökologische Mode": {
+        "de": "Ökologische Mode",
+        "en": "Eco Fashion",
+        "es": "Moda ecológica"
+    },
+    "Ökologische Produktzertifizierung": {
+        "de": "Ökologische Produktzertifizierung",
+        "en": "Eco Product Certification",
+        "es": "Certificación de productos ecológicos"
+    },
+    "Plastikvermeidung": {
+        "de": "Plastikvermeidung",
+        "en": "Plastic Avoidance",
+        "es": "Evitación de plásticos"
+    },
+    "Recycling": {
+        "de": "Recycling",
+        "en": "Recycling",
+        "es": "Reciclaje"
+    },
+    "Regenwassernutzung": {
+        "de": "Regenwassernutzung",
+        "en": "Rainwater Harvesting",
+        "es": "Recogida de agua de lluvia"
+    },
+    "Saubere Technologien": {
+        "de": "Saubere Technologien",
+        "en": "Clean Technologies",
+        "es": "Tecnologías limpias"
+    },
+    "Schadstoffreduzierung": {
+        "de": "Schadstoffreduzierung",
+        "en": "Pollutant Reduction",
+        "es": "Reducción de contaminantes"
+    },
+    "Solarenergie": {
+        "de": "Solarenergie",
+        "en": "Solar Energy",
+        "es": "Energía solar"
+    },
+    "Tierschutz": {
+        "de": "Tierschutz",
+        "en": "Animal Welfare",
+        "es": "Bienestar animal"
+    },
+    "Umweltfreundliche Landwirtschaft": {
+        "de": "Umweltfreundliche Landwirtschaft",
+        "en": "Eco-friendly Agriculture",
+        "es": "Agricultura ecológica"
+    },
+    "Umweltfreundliche Verpackungen": {
+        "de": "Umweltfreundliche Verpackungen",
+        "en": "Eco-friendly Packaging",
+        "es": "Embalajes ecológicos"
+    },
+    "Umweltmanagementsysteme": {
+        "de": "Umweltmanagementsysteme",
+        "en": "Environmental Management Systems",
+        "es": "Sistemas de gestión ambiental"
+    },
+    "Umwelterziehung": {
+        "de": "Umwelterziehung",
+        "en": "Environmental Education",
+        "es": "Educación ambiental"
+    },
+    "Umweltschutzschulungen": {
+        "de": "Umweltschutzschulungen",
+        "en": "Environmental Protection Training",
+        "es": "Formación en protección ambiental"
+    },
+    "Umweltüberwachungsdienste": {
+        "de": "Umweltüberwachungsdienste",
+        "en": "Environmental Monitoring Services",
+        "es": "Servicios de monitoreo ambiental"
+    },
+    "Umweltrechtliche Beratung": {
+        "de": "Umweltrechtliche Beratung",
+        "en": "Environmental Law Consulting",
+        "es": "Asesoría legal ambiental"
+    },
+    "Waldschutzprojekte": {
+        "de": "Waldschutzprojekte",
+        "en": "Forest Protection Projects",
+        "es": "Proyectos de protección forestal"
+    },
+    "Wasserkraftprojekte": {
+        "de": "Wasserkraftprojekte",
+        "en": "Hydropower Projects",
+        "es": "Proyectos hidroeléctricos"
+    },
+    "Wasseraufbereitung": {
+        "de": "Wasseraufbereitung",
+        "en": "Water Treatment",
+        "es": "Tratamiento de agua"
+    },
+    "Windenergie": {
+        "de": "Windenergie",
+        "en": "Wind Energy",
+        "es": "Energía eólica"
+    },
+    "Animationsdienste": {
+        "de": "Animationsdienste",
+        "en": "Animation Services",
+        "es": "Servicios de animación"
+    },
+    "Architekturführungen": {
+        "de": "Architekturführungen",
+        "en": "Architecture Tours",
+        "es": "Tours de arquitectura"
+    },
+    "Autokinos": {
+        "de": "Autokinos",
+        "en": "Drive-in Cinemas",
+        "es": "Autocines"
+    },
+    "Casinos": {
+        "de": "Casinos",
+        "en": "Casinos",
+        "es": "Casinos"
+    },
+    "Circus-Shows": {
+        "de": "Circus-Shows",
+        "en": "Circus Shows",
+        "es": "Espectáculos de circo"
+    },
+    "Comedy-Abende": {
+        "de": "Comedy-Abende",
+        "en": "Comedy Nights",
+        "es": "Noches de comedia"
+    },
+    "Digitale Kunstshows": {
+        "de": "Digitale Kunstshows",
+        "en": "Digital Art Shows",
+        "es": "Espectáculos de arte digital"
+    },
+    "E-Sports-Wettkämpfe": {
+        "de": "E-Sports-Wettkämpfe",
+        "en": "Esports Competitions",
+        "es": "Competiciones de esports"
+    },
+    "Escape Rooms": {
+        "de": "Escape Rooms",
+        "en": "Escape Rooms",
+        "es": "Escape Rooms"
+    },
+    "Filmfestivals": {
+        "de": "Filmfestivals",
+        "en": "Film Festivals",
+        "es": "Festivales de cine"
+    },
+    "Filmfestspiele": {
+        "de": "Filmfestspiele",
+        "en": "Film Festivals",
+        "es": "Festivales de cine"
+    },
+    "Filmproduktion": {
+        "de": "Filmproduktion",
+        "en": "Film Production",
+        "es": "Producción cinematográfica"
+    },
+    "Filmvorführungen": {
+        "de": "Filmvorführungen",
+        "en": "Film Screenings",
+        "es": "Proyecciones de películas"
+    },
+    "Fitness-Events": {
+        "de": "Fitness-Events",
+        "en": "Fitness Events",
+        "es": "Eventos de fitness"
+    },
+    "Freiluftkonzerte": {
+        "de": "Freiluftkonzerte",
+        "en": "Open-air Concerts",
+        "es": "Conciertos al aire libre"
+    },
+    "Freizeitbootverleih": {
+        "de": "Freizeitbootverleih",
+        "en": "Leisure Boat Rental",
+        "es": "Alquiler de barcos de recreo"
+    },
+    "Freizeitparks": {
+        "de": "Freizeitparks",
+        "en": "Amusement Parks",
+        "es": "Parques de atracciones"
+    },
+    "Gastronomie-Festivals": {
+        "de": "Gastronomie-Festivals",
+        "en": "Food Festivals",
+        "es": "Festivales gastronómicos"
+    },
+    "Hobby-Workshops": {
+        "de": "Hobby-Workshops",
+        "en": "Hobby Workshops",
+        "es": "Talleres de hobbies"
+    },
+    "Kabarett": {
+        "de": "Kabarett",
+        "en": "Cabaret",
+        "es": "Cabaret"
+    },
+    "Karaoke-Dienste": {
+        "de": "Karaoke-Dienste",
+        "en": "Karaoke Services",
+        "es": "Servicios de karaoke"
+    },
+    "Kinos": {
+        "de": "Kinos",
+        "en": "Cinemas",
+        "es": "Cines"
+    },
+    "Konzertsäle": {
+        "de": "Konzertsäle",
+        "en": "Concert Halls",
+        "es": "Salas de conciertos"
+    },
+    "Kulturfestivals": {
+        "de": "Kulturfestivals",
+        "en": "Cultural Festivals",
+        "es": "Festivales culturales"
+    },
+    "Kunstgalerien": {
+        "de": "Kunstgalerien",
+        "en": "Art Galleries",
+        "es": "Galerías de arte"
+    },
+    "Lichtshows": {
+        "de": "Lichtshows",
+        "en": "Light Shows",
+        "es": "Espectáculos de luces"
+    },
+    "Live-Musikveranstaltungen": {
+        "de": "Live-Musikveranstaltungen",
+        "en": "Live Music Events",
+        "es": "Eventos de música en vivo"
+    },
+    "Livestream-Events": {
+        "de": "Livestream-Events",
+        "en": "Livestream Events",
+        "es": "Eventos transmitidos en vivo"
+    },
+    "Messen und Ausstellungen": {
+        "de": "Messen und Ausstellungen",
+        "en": "Fairs and Exhibitions",
+        "es": "Ferias y exposiciones"
+    },
+    "Modenschauen": {
+        "de": "Modenschauen",
+        "en": "Fashion Shows",
+        "es": "Desfiles de moda"
+    },
+    "Musikfestivals": {
+        "de": "Musikfestivals",
+        "en": "Music Festivals",
+        "es": "Festivales de música"
+    },
+    "Musiktheater": {
+        "de": "Musiktheater",
+        "en": "Musical Theater",
+        "es": "Teatro musical"
+    },
+    "Online-Gaming-Dienste": {
+        "de": "Online-Gaming-Dienste",
+        "en": "Online Gaming Services",
+        "es": "Servicios de juegos online"
+    },
+    "Online-Turniere": {
+        "de": "Online-Turniere",
+        "en": "Online Tournaments",
+        "es": "Torneos online"
+    },
+    "Opernhäuser": {
+        "de": "Opernhäuser",
+        "en": "Opera Houses",
+        "es": "Óperas"
+    },
+    "Outdoor-Kinos": {
+        "de": "Outdoor-Kinos",
+        "en": "Outdoor Cinemas",
+        "es": "Cines al aire libre"
+    },
+    "Paintball-Anlagen": {
+        "de": "Paintball-Anlagen",
+        "en": "Paintball Facilities",
+        "es": "Instalaciones de paintball"
+    },
+    "Poesie-Slams": {
+        "de": "Poesie-Slams",
+        "en": "Poetry Slams",
+        "es": "Slams de poesía"
+    },
+    "Pop-up-Events": {
+        "de": "Pop-up-Events",
+        "en": "Pop-up Events",
+        "es": "Eventos pop-up"
+    },
+    "Puppenspieltheater": {
+        "de": "Puppenspieltheater",
+        "en": "Puppet Theaters",
+        "es": "Teatros de marionetas"
+    },
+    "Stand-up-Comedy": {
+        "de": "Stand-up-Comedy",
+        "en": "Stand-up Comedy",
+        "es": "Comedia stand-up"
+    },
+    "Straßenfeste": {
+        "de": "Straßenfeste",
+        "en": "Street Festivals",
+        "es": "Fiestas callejeras"
+    },
+    "Streetfood-Festivals": {
+        "de": "Streetfood-Festivals",
+        "en": "Street Food Festivals",
+        "es": "Festivales de comida callejera"
+    },
+    "Streaming-Plattformen": {
+        "de": "Streaming-Plattformen",
+        "en": "Streaming Platforms",
+        "es": "Plataformas de streaming"
+    },
+    "Tanzwettbewerbe": {
+        "de": "Tanzwettbewerbe",
+        "en": "Dance Competitions",
+        "es": "Competiciones de baile"
+    },
+    "Theater": {
+        "de": "Theater",
+        "en": "Theaters",
+        "es": "Teatros"
+    },
+    "Vergnügungsparks": {
+        "de": "Vergnügungsparks",
+        "en": "Amusement Parks",
+        "es": "Parques de atracciones"
+    },
+    "Zaubershows": {
+        "de": "Zaubershows",
+        "en": "Magic Shows",
+        "es": "Espectáculos de magia"
+    },
+    "Crowdfunding": {
+        "de": "Crowdfunding",
+        "en": "Crowdfunding",
+        "es": "Crowdfunding"
+    },
+    "Investmentbanking": {
+        "de": "Investmentbanking",
+        "en": "Investment Banking",
+        "es": "Banca de inversión"
+    },
+    "Verbraucherkredite": {
+        "de": "Verbraucherkredite",
+        "en": "Consumer Loans",
+        "es": "Préstamos de consumo"
+    },
+    "Dezentrale Finanzen": {
+        "de": "Dezentrale Finanzen",
+        "en": "Decentralized Finance (DeFi)",
+        "es": "Finanzas descentralizadas (DeFi)"
+    },
+    "Vermögensverwaltung": {
+        "de": "Vermögensverwaltung",
+        "en": "Asset Management",
+        "es": "Gestión de activos"
+    },
+    "Hypotheken": {
+        "de": "Hypotheken",
+        "en": "Mortgages",
+        "es": "Hipotecas"
+    },
+    "Persönliche Darlehen": {
+        "de": "Persönliche Darlehen",
+        "en": "Personal Loans",
+        "es": "Préstamos personales"
+    },
+    "Autoversicherungen": {
+        "de": "Autoversicherungen",
+        "en": "Car Insurance",
+        "es": "Seguros de automóvil"
+    },
+    "Lebensversicherungen": {
+        "de": "Lebensversicherungen",
+        "en": "Life Insurance",
+        "es": "Seguros de vida"
+    },
+    "Zahlungsdienste": {
+        "de": "Zahlungsdienste",
+        "en": "Payment Services",
+        "es": "Servicios de pago"
+    },
+    "Kreditkarten": {
+        "de": "Kreditkarten",
+        "en": "Credit Cards",
+        "es": "Tarjetas de crédito"
+    },
+    "Internationale Überweisungen": {
+        "de": "Internationale Überweisungen",
+        "en": "International Transfers",
+        "es": "Transferencias internacionales"
+    },
+    "Bausparverträge": {
+        "de": "Bausparverträge",
+        "en": "Building Saving Contracts",
+        "es": "Contratos de ahorro para la construcción"
+    },
+    "Devisenhandel": {
+        "de": "Devisenhandel",
+        "en": "Foreign Exchange Trading",
+        "es": "Comercio de divisas"
+    },
+    "Rentenversicherungen": {
+        "de": "Rentenversicherungen",
+        "en": "Pension Insurance",
+        "es": "Seguros de pensiones"
+    },
+    "Robo-Advisors": {
+        "de": "Robo-Advisors",
+        "en": "Robo-Advisors",
+        "es": "Robo-Advisors"
+    },
+    "Private Banking": {
+        "de": "Private Banking",
+        "en": "Private Banking",
+        "es": "Banca privada"
+    },
+    "Mikrofinanzierung": {
+        "de": "Mikrofinanzierung",
+        "en": "Microfinance",
+        "es": "Microfinanzas"
+    },
+    "Versicherungsmakler": {
+        "de": "Versicherungsmakler",
+        "en": "Insurance Brokers",
+        "es": "Corredores de seguros"
+    },
+    "Risikomanagement": {
+        "de": "Risikomanagement",
+        "en": "Risk Management",
+        "es": "Gestión de riesgos"
+    },
+    "Fondsverwaltung": {
+        "de": "Fondsverwaltung",
+        "en": "Fund Management",
+        "es": "Gestión de fondos"
+    },
+    "Unternehmensfinanzierung": {
+        "de": "Unternehmensfinanzierung",
+        "en": "Corporate Finance",
+        "es": "Finanzas corporativas"
+    },
+    "Versicherungstechnologie": {
+        "de": "Versicherungstechnologie",
+        "en": "InsurTech",
+        "es": "InsurTech"
+    },
+    "Factoring": {
+        "de": "Factoring",
+        "en": "Factoring",
+        "es": "Factoring"
+    },
+    "Finanzielle Bildung": {
+        "de": "Finanzielle Bildung",
+        "en": "Financial Education",
+        "es": "Educación financiera"
+    },
+    "Finanzplanung": {
+        "de": "Finanzplanung",
+        "en": "Financial Planning",
+        "es": "Planificación financiera"
+    },
+    "Gewerbliche Kreditlinien": {
+        "de": "Gewerbliche Kreditlinien",
+        "en": "Commercial Credit Lines",
+        "es": "Líneas de crédito comercial"
+    },
+    "Kommerzielle Bankgeschäfte": {
+        "de": "Kommerzielle Bankgeschäfte",
+        "en": "Commercial Banking",
+        "es": "Banca comercial"
+    },
+    "Leasing": {
+        "de": "Leasing",
+        "en": "Leasing",
+        "es": "Leasing"
+    },
+    "Immobilienfinanzierung": {
+        "de": "Immobilienfinanzierung",
+        "en": "Real Estate Financing",
+        "es": "Financiación inmobiliaria"
+    },
+    "Pensionskassen": {
+        "de": "Pensionskassen",
+        "en": "Pension Funds",
+        "es": "Fondos de pensiones"
+    },
+    "Schuldensanierung": {
+        "de": "Schuldensanierung",
+        "en": "Debt Restructuring",
+        "es": "Reestructuración de deudas"
+    },
+    "Ratenkredite": {
+        "de": "Ratenkredite",
+        "en": "Installment Loans",
+        "es": "Préstamos a plazos"
+    },
+    "Versicherungskonsortien": {
+        "de": "Versicherungskonsortien",
+        "en": "Insurance Consortia",
+        "es": "Consorcios de seguros"
+    },
+    "ESG-Investitionen": {
+        "de": "ESG-Investitionen",
+        "en": "ESG Investments",
+        "es": "Inversiones ESG"
+    },
+    "RIA Geldtransfer": {
+        "de": "RIA Geldtransfer",
+        "en": "RIA Money Transfer",
+        "es": "RIA Money Transfer"
+    },
+    "Western Union": {
+        "de": "Western Union",
+        "en": "Western Union",
+        "es": "Western Union"
+    },
+    "Banküberweisungen": {
+        "de": "Banküberweisungen",
+        "en": "Bank Transfers",
+        "es": "Transferencias bancarias"
+    },
+    "PayPal-Überweisungen": {
+        "de": "PayPal-Überweisungen",
+        "en": "PayPal Transfers",
+        "es": "Transferencias PayPal"
+    },
+    "Sofortüberweisung": {
+        "de": "Sofortüberweisung",
+        "en": "Instant Transfer",
+        "es": "Transferencia inmediata"
+    },
+    "MoneyGram": {
+        "de": "MoneyGram",
+        "en": "MoneyGram",
+        "es": "MoneyGram"
+    },
+    "Kreditvermittlung": {
+        "de": "Kreditvermittlung",
+        "en": "Credit Broking",
+        "es": "Intermediación de crédito"
+    },
+    "Online-Kredite": {
+        "de": "Online-Kredite",
+        "en": "Online Loans",
+        "es": "Préstamos online"
+    },
+    "Ersparnisse & Anlagestrategien": {
+        "de": "Ersparnisse & Anlagestrategien",
+        "en": "Savings & Investment Strategies",
+        "es": "Estrategias de ahorro e inversión"
+    },
+    "Kontoeröffnungsdienste": {
+        "de": "Kontoeröffnungsdienste",
+        "en": "Account Opening Services",
+        "es": "Servicios de apertura de cuentas"
+    },
+    "Vermögensberatung": {
+        "de": "Vermögensberatung",
+        "en": "Wealth Advisory",
+        "es": "Asesoramiento patrimonial"
+    },
+    "Private Equity": {
+        "de": "Private Equity",
+        "en": "Private Equity",
+        "es": "Capital privado"
+    },
+    "Kapitalmarktfinanzierung": {
+        "de": "Kapitalmarktfinanzierung",
+        "en": "Capital Market Financing",
+        "es": "Financiación del mercado de capitales"
+    },
+    "Fremdwährungsdarlehen": {
+        "de": "Fremdwährungsdarlehen",
+        "en": "Foreign Currency Loans",
+        "es": "Préstamos en moneda extranjera"
+    },
+    "Ratenzahlungsdienste": {
+        "de": "Ratenzahlungsdienste",
+        "en": "Installment Payment Services",
+        "es": "Servicios de pago a plazos"
+    },
+    "Elektronische Geldbörsen": {
+        "de": "Elektronische Geldbörsen",
+        "en": "E-Wallets",
+        "es": "Monederos electrónicos"
+    },
+    "Prepaid-Karten": {
+        "de": "Prepaid-Karten",
+        "en": "Prepaid Cards",
+        "es": "Tarjetas prepago"
+    },
+    "Venture Capital": {
+        "de": "Venture Capital",
+        "en": "Venture Capital",
+        "es": "Capital riesgo"
+    },
+    "Firmenkredite": {
+        "de": "Firmenkredite",
+        "en": "Business Loans",
+        "es": "Préstamos empresariales"
+    },
+    "Kreditversicherungen": {
+        "de": "Kreditversicherungen",
+        "en": "Credit Insurance",
+        "es": "Seguros de crédito"
+    },
+    "Girokonten": {
+        "de": "Girokonten",
+        "en": "Current Accounts",
+        "es": "Cuentas corrientes"
+    },
+    "Finanzielle Risikoberatung": {
+        "de": "Finanzielle Risikoberatung",
+        "en": "Financial Risk Consulting",
+        "es": "Consultoría de riesgos financieros"
+    },
+    "Wertpapierhandel": {
+        "de": "Wertpapierhandel",
+        "en": "Securities Trading",
+        "es": "Comercio de valores"
+    },
+    "Handelsfinanzierung": {
+        "de": "Handelsfinanzierung",
+        "en": "Trade Finance",
+        "es": "Financiación comercial"
+    },
+    "Schuldenmanagement": {
+        "de": "Schuldenmanagement",
+        "en": "Debt Management",
+        "es": "Gestión de deuda"
+    },
+    "Treuhanddienste": {
+        "de": "Treuhanddienste",
+        "en": "Trust Services",
+        "es": "Servicios fiduciarios"
+    },
+    "Rentenplanung": {
+        "de": "Rentenplanung",
+        "en": "Retirement Planning",
+        "es": "Planificación de pensiones"
+    },
+    "Anlagefonds": {
+        "de": "Anlagefonds",
+        "en": "Mutual Funds",
+        "es": "Fondos de inversión"
+    },
+    "Kryptowährungsinvestitionen": {
+        "de": "Kryptowährungsinvestitionen",
+        "en": "Cryptocurrency Investments",
+        "es": "Inversiones en criptomonedas"
+    },
+    "Mobile Zahlungslösungen": {
+        "de": "Mobile Zahlungslösungen",
+        "en": "Mobile Payment Solutions",
+        "es": "Soluciones de pago móvil"
+    },
+    "Studentenkredite": {
+        "de": "Studentenkredite",
+        "en": "Student Loans",
+        "es": "Préstamos estudiantiles"
+    },
+    "Risikokapitalfinanzierung": {
+        "de": "Risikokapitalfinanzierung",
+        "en": "Venture Capital Financing",
+        "es": "Financiación de capital riesgo"
+    },
+    "Kreditlinien": {
+        "de": "Kreditlinien",
+        "en": "Lines of Credit",
+        "es": "Líneas de crédito"
+    },
+    "Devisenoptionen": {
+        "de": "Devisenoptionen",
+        "en": "Forex Options",
+        "es": "Opciones de divisas"
+    },
+    "Termingeschäfte": {
+        "de": "Termingeschäfte",
+        "en": "Futures Trading",
+        "es": "Operaciones de futuros"
+    },
+    "Vermögenssicherung": {
+        "de": "Vermögenssicherung",
+        "en": "Asset Protection",
+        "es": "Protección de activos"
+    },
+    "P2P-Kredite": {
+        "de": "P2P-Kredite",
+        "en": "P2P Lending",
+        "es": "Préstamos P2P"
+    },
+    "Börsenhandel": {
+        "de": "Börsenhandel",
+        "en": "Stock Trading",
+        "es": "Comercio bursátil"
+    },
+    "Schuldscheindarlehen": {
+        "de": "Schuldscheindarlehen",
+        "en": "Promissory Note Loans",
+        "es": "Préstamos con pagaré"
+    },
+    "Anleihen": {
+        "de": "Anleihen",
+        "en": "Bonds",
+        "es": "Bonos"
+    },
+    "Verbindlichkeitenmanagement": {
+        "de": "Verbindlichkeitenmanagement",
+        "en": "Liability Management",
+        "es": "Gestión de pasivos"
+    },
+    "Investmentfonds": {
+        "de": "Investmentfonds",
+        "en": "Investment Funds",
+        "es": "Fondos de inversión"
+    },
+    "Finanzielle Wiederherstellung": {
+        "de": "Finanzielle Wiederherstellung",
+        "en": "Financial Recovery",
+        "es": "Recuperación financiera"
+    },
+    "Exportfinanzierung": {
+        "de": "Exportfinanzierung",
+        "en": "Export Finance",
+        "es": "Financiación de exportaciones"
+    },
+    "Liquiditätsmanagement": {
+        "de": "Liquiditätsmanagement",
+        "en": "Liquidity Management",
+        "es": "Gestión de liquidez"
+    },
+    "Finanztechnologie": {
+        "de": "Finanztechnologie",
+        "en": "FinTech",
+        "es": "Tecnología financiera"
+    },
+    "Ersparniskonten": {
+        "de": "Ersparniskonten",
+        "en": "Savings Accounts",
+        "es": "Cuentas de ahorro"
+    },
+    "Kapitalbeschaffung": {
+        "de": "Kapitalbeschaffung",
+        "en": "Capital Raising",
+        "es": "Captación de capital"
+    },
+    "Finanzmarktforschung": {
+        "de": "Finanzmarktforschung",
+        "en": "Financial Market Research",
+        "es": "Investigación de mercados financieros"
+    },
+    "Kreditüberwachung": {
+        "de": "Kreditüberwachung",
+        "en": "Credit Monitoring",
+        "es": "Monitoreo de crédito"
+    },
+    "Betriebliche Altersvorsorge": {
+        "de": "Betriebliche Altersvorsorge",
+        "en": "Company Pension Schemes",
+        "es": "Planes de pensiones de empresa"
+    },
+    "Versicherungsportfolios": {
+        "de": "Versicherungsportfolios",
+        "en": "Insurance Portfolios",
+        "es": "Carteras de seguros"
+    },
+    "Zinsmanagement": {
+        "de": "Zinsmanagement",
+        "en": "Interest Rate Management",
+        "es": "Gestión de tipos de interés"
+    },
+    "M&A-Beratung": {
+        "de": "M&A-Beratung",
+        "en": "M&A Consulting",
+        "es": "Asesoramiento en fusiones y adquisiciones"
+    },
+    "Strukturierte Finanzierungen": {
+        "de": "Strukturierte Finanzierungen",
+        "en": "Structured Finance",
+        "es": "Financiación estructurada"
+    },
+    "Kreditrating-Dienste": {
+        "de": "Kreditrating-Dienste",
+        "en": "Credit Rating Services",
+        "es": "Servicios de calificación crediticia"
+    },
+    "Bonitätsprüfung": {
+        "de": "Bonitätsprüfung",
+        "en": "Credit Checks",
+        "es": "Verificación de crédito"
+    },
+    "Geldautomaten-Services": {
+        "de": "Geldautomaten-Services",
+        "en": "ATM Services",
+        "es": "Servicios de cajeros automáticos"
+    },
+    "Geldtransfer-Services": {
+        "de": "Geldtransfer-Services",
+        "en": "Money Transfer Services",
+        "es": "Servicios de transferencia de dinero"
+    },
+    "Scheckeinlösungen": {
+        "de": "Scheckeinlösungen",
+        "en": "Check Cashing",
+        "es": "Cobro de cheques"
+    },
+    "Allergologische Praxen": {
+        "de": "Allergologische Praxen",
+        "en": "Allergy Practices",
+        "es": "Consultas de alergología"
+    },
+    "Allgemeine Krankenhäuser": {
+        "de": "Allgemeine Krankenhäuser",
+        "en": "General Hospitals",
+        "es": "Hospitales generales"
+    },
+    "Altenpflegeheime": {
+        "de": "Altenpflegeheime",
+        "en": "Nursing Homes",
+        "es": "Residencias de ancianos"
+    },
+    "Alternative Therapien": {
+        "de": "Alternative Therapien",
+        "en": "Alternative Therapies",
+        "es": "Terapias alternativas"
+    },
+    "Ambulante Operationen": {
+        "de": "Ambulante Operationen",
+        "en": "Outpatient Surgeries",
+        "es": "Cirugías ambulatorias"
+    },
+    "Ambulante Pflege": {
+        "de": "Ambulante Pflege",
+        "en": "Outpatient Care",
+        "es": "Cuidados ambulatorios"
+    },
+    "Angiologische Zentren": {
+        "de": "Angiologische Zentren",
+        "en": "Angiology Centers",
+        "es": "Centros de angiología"
+    },
+    "Anthroposophische Medizin": {
+        "de": "Anthroposophische Medizin",
+        "en": "Anthroposophic Medicine",
+        "es": "Medicina antroposófica"
+    },
+    "Apotheken": {
+        "de": "Apotheken",
+        "en": "Pharmacies",
+        "es": "Farmacias"
+    },
+    "Arztpraxen": {
+        "de": "Arztpraxen",
+        "en": "Medical Practices",
+        "es": "Consultorios médicos"
+    },
+    "Augenkliniken": {
+        "de": "Augenkliniken",
+        "en": "Eye Clinics",
+        "es": "Clínicas oftalmológicas"
+    },
+    "Augenoptiker": {
+        "de": "Augenoptiker",
+        "en": "Opticians",
+        "es": "Ópticas"
+    },
+    "Ayurveda-Zentren": {
+        "de": "Ayurveda-Zentren",
+        "en": "Ayurveda Centers",
+        "es": "Centros de Ayurveda"
+    },
+    "Chiropraktik": {
+        "de": "Chiropraktik",
+        "en": "Chiropractic",
+        "es": "Quiropráctica"
+    },
+    "Chirurgische Zentren": {
+        "de": "Chirurgische Zentren",
+        "en": "Surgical Centers",
+        "es": "Centros quirúrgicos"
+    },
+    "Dermatologische Kliniken": {
+        "de": "Dermatologische Kliniken",
+        "en": "Dermatology Clinics",
+        "es": "Clínicas dermatológicas"
+    },
+    "Diabeteszentren": {
+        "de": "Diabeteszentren",
+        "en": "Diabetes Centers",
+        "es": "Centros de diabetes"
+    },
+    "Endokrinologische Zentren": {
+        "de": "Endokrinologische Zentren",
+        "en": "Endocrinology Centers",
+        "es": "Centros de endocrinología"
+    },
+    "Endoskopiezentren": {
+        "de": "Endoskopiezentren",
+        "en": "Endoscopy Centers",
+        "es": "Centros de endoscopia"
+    },
+    "Ergotherapie": {
+        "de": "Ergotherapie",
+        "en": "Occupational Therapy",
+        "es": "Terapia ocupacional"
+    },
+    "Ernährungsberatung": {
+        "de": "Ernährungsberatung",
+        "en": "Nutritional Counseling",
+        "es": "Asesoramiento nutricional"
+    },
+    "Fertility Clinics": {
+        "de": "Fertility Clinics",
+        "en": "Fertility Clinics",
+        "es": "Clínicas de fertilidad"
+    },
+    "Gastroenterologische Praxen": {
+        "de": "Gastroenterologische Praxen",
+        "en": "Gastroenterology Practices",
+        "es": "Consultas de gastroenterología"
+    },
+    "Gesundheitszentren": {
+        "de": "Gesundheitszentren",
+        "en": "Health Centers",
+        "es": "Centros de salud"
+    },
+    "Hautpflegekliniken": {
+        "de": "Hautpflegekliniken",
+        "en": "Skin Care Clinics",
+        "es": "Clínicas de cuidado de la piel"
+    },
+    "Heilpraktiker": {
+        "de": "Heilpraktiker",
+        "en": "Naturopaths",
+        "es": "Naturopatas"
+    },
+    "Hörgeräteakustik-Geschäft": {
+        "de": "Hörgeräteakustik-Geschäft",
+        "en": "Hearing Aid Shops",
+        "es": "Tiendas de audífonos"
+    },
+    "Hörgerätezentren": {
+        "de": "Hörgerätezentren",
+        "en": "Hearing Aid Centers",
+        "es": "Centros auditivos"
+    },
+    "Impfzentren": {
+        "de": "Impfzentren",
+        "en": "Vaccination Centers",
+        "es": "Centros de vacunación"
+    },
+    "Infektiologiezentren": {
+        "de": "Infektiologiezentren",
+        "en": "Infectious Disease Centers",
+        "es": "Centros de infectología"
+    },
+    "Innere Medizin": {
+        "de": "Innere Medizin",
+        "en": "Internal Medicine",
+        "es": "Medicina interna"
+    },
+    "Internistische Praxen": {
+        "de": "Internistische Praxen",
+        "en": "Internal Medicine Practices",
+        "es": "Consultas de medicina interna"
+    },
+    "Kinderwunschzentren": {
+        "de": "Kinderwunschzentren",
+        "en": "Fertility Centers",
+        "es": "Centros de fertilidad"
+    },
+    "Klinische Labore": {
+        "de": "Klinische Labore",
+        "en": "Clinical Laboratories",
+        "es": "Laboratorios clínicos"
+    },
+    "Knochenmarktransplantationszentren": {
+        "de": "Knochenmarktransplantationszentren",
+        "en": "Bone Marrow Transplant Centers",
+        "es": "Centros de trasplante de médula ósea"
+    },
+    "Logopädiezentren": {
+        "de": "Logopädiezentren",
+        "en": "Speech Therapy Centers",
+        "es": "Centros de logopedia"
+    },
+    "Lungenfacharztpraxen": {
+        "de": "Lungenfacharztpraxen",
+        "en": "Pulmonology Practices",
+        "es": "Consultas de neumología"
+    },
+    "Massagezentren": {
+        "de": "Massagezentren",
+        "en": "Massage Centers",
+        "es": "Centros de masaje"
+    },
+    "Medizinische Versorgungszentren (MVZ)": {
+        "de": "Medizinische Versorgungszentren (MVZ)",
+        "en": "Medical Care Centers",
+        "es": "Centros de atención médica"
+    },
+    "Medizinische Wellness-Zentren": {
+        "de": "Medizinische Wellness-Zentren",
+        "en": "Medical Wellness Centers",
+        "es": "Centros de bienestar médico"
+    },
+    "Naturheilkundliche Praxen": {
+        "de": "Naturheilkundliche Praxen",
+        "en": "Naturopathic Practices",
+        "es": "Consultas de naturopatía"
+    },
+    "Nephrologische Praxen": {
+        "de": "Nephrologische Praxen",
+        "en": "Nephrology Practices",
+        "es": "Consultas de nefrología"
+    },
+    "Neurochirurgische Zentren": {
+        "de": "Neurochirurgische Zentren",
+        "en": "Neurosurgical Centers",
+        "es": "Centros de neurocirugía"
+    },
+    "Neurologische Zentren": {
+        "de": "Neurologische Zentren",
+        "en": "Neurological Centers",
+        "es": "Centros neurológicos"
+    },
+    "Notfallversorgung": {
+        "de": "Notfallversorgung",
+        "en": "Emergency Care",
+        "es": "Atención de urgencias"
+    },
+    "Onkologische Praxen": {
+        "de": "Onkologische Praxen",
+        "en": "Oncology Practices",
+        "es": "Consultas de oncología"
+    },
+    "Onkologische Zentren": {
+        "de": "Onkologische Zentren",
+        "en": "Oncology Centers",
+        "es": "Centros oncológicos"
+    },
+    "Orthopädische Kliniken": {
+        "de": "Orthopädische Kliniken",
+        "en": "Orthopedic Clinics",
+        "es": "Clínicas ortopédicas"
+    },
+    "Osteopathie": {
+        "de": "Osteopathie",
+        "en": "Osteopathy",
+        "es": "Osteopatía"
+    },
+    "Palliativversorgung": {
+        "de": "Palliativversorgung",
+        "en": "Palliative Care",
+        "es": "Cuidados paliativos"
+    },
+    "Physiotherapie": {
+        "de": "Physiotherapie",
+        "en": "Physiotherapy",
+        "es": "Fisioterapia"
+    },
+    "Plastische Chirurgie": {
+        "de": "Plastische Chirurgie",
+        "en": "Plastic Surgery",
+        "es": "Cirugía plástica"
+    },
+    "Podologie": {
+        "de": "Podologie",
+        "en": "Podiatry",
+        "es": "Podología"
+    },
+    "Psychiatrische Kliniken": {
+        "de": "Psychiatrische Kliniken",
+        "en": "Psychiatric Clinics",
+        "es": "Clínicas psiquiátricas"
+    },
+    "Psychologische Dienste": {
+        "de": "Psychologische Dienste",
+        "en": "Psychological Services",
+        "es": "Servicios psicológicos"
+    },
+    "Psychosomatische Kliniken": {
+        "de": "Psychosomatische Kliniken",
+        "en": "Psychosomatic Clinics",
+        "es": "Clínicas psicosomáticas"
+    },
+    "Radiologiedienste": {
+        "de": "Radiologiedienste",
+        "en": "Radiology Services",
+        "es": "Servicios de radiología"
+    },
+    "Radiologische Diagnostik": {
+        "de": "Radiologische Diagnostik",
+        "en": "Radiological Diagnostics",
+        "es": "Diagnóstico radiológico"
+    },
+    "Reha-Sportdienste": {
+        "de": "Reha-Sportdienste",
+        "en": "Rehab Sports Services",
+        "es": "Servicios deportivos de rehabilitación"
+    },
+    "Rehabilitationszentren": {
+        "de": "Rehabilitationszentren",
+        "en": "Rehabilitation Centers",
+        "es": "Centros de rehabilitación"
+    },
+    "Reproduktionsmedizin": {
+        "de": "Reproduktionsmedizin",
+        "en": "Reproductive Medicine",
+        "es": "Medicina reproductiva"
+    },
+    "Rheumatologische Praxen": {
+        "de": "Rheumatologische Praxen",
+        "en": "Rheumatology Practices",
+        "es": "Consultas de reumatología"
+    },
+    "Schlafzentren": {
+        "de": "Schlafzentren",
+        "en": "Sleep Centers",
+        "es": "Centros del sueño"
+    },
+    "Schmerzkliniken": {
+        "de": "Schmerzkliniken",
+        "en": "Pain Clinics",
+        "es": "Clínicas del dolor"
+    },
+    "Schwangerschaftsvorsorge": {
+        "de": "Schwangerschaftsvorsorge",
+        "en": "Prenatal Care",
+        "es": "Atención prenatal"
+    },
+    "Schwindelkliniken": {
+        "de": "Schwindelkliniken",
+        "en": "Vertigo Clinics",
+        "es": "Clínicas de vértigo"
+    },
+    "Schönheitskliniken": {
+        "de": "Schönheitskliniken",
+        "en": "Beauty Clinics",
+        "es": "Clínicas estéticas"
+    },
+    "Shiatsu-Zentren": {
+        "de": "Shiatsu-Zentren",
+        "en": "Shiatsu Centers",
+        "es": "Centros de shiatsu"
+    },
+    "Spa-Zentren": {
+        "de": "Spa-Zentren",
+        "en": "Spa Centers",
+        "es": "Centros de spa"
+    },
+    "Sportmedizin": {
+        "de": "Sportmedizin",
+        "en": "Sports Medicine",
+        "es": "Medicina deportiva"
+    },
+    "Suchtkliniken": {
+        "de": "Suchtkliniken",
+        "en": "Addiction Clinics",
+        "es": "Clínicas de adicciones"
+    },
+    "Tai Chi Schulen": {
+        "de": "Tai Chi Schulen",
+        "en": "Tai Chi Schools",
+        "es": "Escuelas de tai chi"
+    },
+    "Telemedizinische Dienste": {
+        "de": "Telemedizinische Dienste",
+        "en": "Telemedicine Services",
+        "es": "Servicios de telemedicina"
+    },
+    "Traditionelle Chinesische Medizin (TCM)": {
+        "de": "Traditionelle Chinesische Medizin (TCM)",
+        "en": "Traditional Chinese Medicine (TCM)",
+        "es": "Medicina tradicional china (MTC)"
+    },
+    "Traumatologische Zentren": {
+        "de": "Traumatologische Zentren",
+        "en": "Trauma Centers",
+        "es": "Centros de traumatología"
+    },
+    "Tropenmedizinische Zentren": {
+        "de": "Tropenmedizinische Zentren",
+        "en": "Tropical Medicine Centers",
+        "es": "Centros de medicina tropical"
+    },
+    "Urologische Kliniken": {
+        "de": "Urologische Kliniken",
+        "en": "Urology Clinics",
+        "es": "Clínicas urológicas"
+    },
+    "Venenzentren": {
+        "de": "Venenzentren",
+        "en": "Vein Centers",
+        "es": "Centros de venas"
+    },
+    "Wellness-Zentren": {
+        "de": "Wellness-Zentren",
+        "en": "Wellness Centers",
+        "es": "Centros de bienestar"
+    },
+    "Yoga-Studios": {
+        "de": "Yoga-Studios",
+        "en": "Yoga Studios",
+        "es": "Estudios de yoga"
+    },
+    "Zahnärztliche Notdienste": {
+        "de": "Zahnärztliche Notdienste",
+        "en": "Dental Emergency Services",
+        "es": "Servicios dentales de urgencia"
+    },
+    "Zahnkliniken": {
+        "de": "Zahnkliniken",
+        "en": "Dental Clinics",
+        "es": "Clínicas dentales"
+    },
+    "Zahntechniklabore": {
+        "de": "Zahntechniklabore",
+        "en": "Dental Laboratories",
+        "es": "Laboratorios dentales"
+    },
+    "Zentrum für Chinesische Heilkunst": {
+        "de": "Zentrum für Chinesische Heilkunst",
+        "en": "Center for Chinese Healing Arts",
+        "es": "Centro de artes curativas chinas"
+    },
+    "Zentrum für Präventivmedizin": {
+        "de": "Zentrum für Präventivmedizin",
+        "en": "Center for Preventive Medicine",
+        "es": "Centro de medicina preventiva"
+    },
+    "Zentren für Naturheilkunde": {
+        "de": "Zentren für Naturheilkunde",
+        "en": "Centers for Naturopathy",
+        "es": "Centros de naturopatía"
+    },
+    "Zentren für Stressbewältigung": {
+        "de": "Zentren für Stressbewältigung",
+        "en": "Stress Management Centers",
+        "es": "Centros de gestión del estrés"
+    },
+    "Zentren für Traditionelle Heilmethoden": {
+        "de": "Zentren für Traditionelle Heilmethoden",
+        "en": "Centers for Traditional Healing Methods",
+        "es": "Centros de métodos curativos tradicionales"
+    },
+    "Zentren für Gesundheitsförderung": {
+        "de": "Zentren für Gesundheitsförderung",
+        "en": "Centers for Health Promotion",
+        "es": "Centros de promoción de la salud"
+    },
+    "Zentren für ganzheitliche Gesundheit": {
+        "de": "Zentren für ganzheitliche Gesundheit",
+        "en": "Holistic Health Centers",
+        "es": "Centros de salud holística"
+    },
+    "Zentren für berufliche Rehabilitation": {
+        "de": "Zentren für berufliche Rehabilitation",
+        "en": "Centers for Vocational Rehabilitation",
+        "es": "Centros de rehabilitación profesional"
+    },
+    "Zentren für Burnout-Prävention": {
+        "de": "Zentren für Burnout-Prävention",
+        "en": "Burnout Prevention Centers",
+        "es": "Centros de prevención de burnout"
+    },
+    "Zentren für Ergonomie und Gesundheitsförderung": {
+        "de": "Zentren für Ergonomie und Gesundheitsförderung",
+        "en": "Centers for Ergonomics and Health Promotion",
+        "es": "Centros de ergonomía y promoción de la salud"
+    },
+    "Zentren für psychische Gesundheit": {
+        "de": "Zentren für psychische Gesundheit",
+        "en": "Mental Health Centers",
+        "es": "Centros de salud mental"
+    },
+    "Zentren für Präventionsmedizin": {
+        "de": "Zentren für Präventionsmedizin",
+        "en": "Preventive Medicine Centers",
+        "es": "Centros de medicina preventiva"
+    },
+    "Zentren für Rehabilitation nach Sportverletzungen": {
+        "de": "Zentren für Rehabilitation nach Sportverletzungen",
+        "en": "Sports Injury Rehabilitation Centers",
+        "es": "Centros de rehabilitación de lesiones deportivas"
+    },
+    "Zentren für Resilienztraining": {
+        "de": "Zentren für Resilienztraining",
+        "en": "Resilience Training Centers",
+        "es": "Centros de entrenamiento en resiliencia"
+    },
+    "Zentren für traditionell europäische Heilkunst": {
+        "de": "Zentren für traditionell europäische Heilkunst",
+        "en": "Centers for Traditional European Healing Arts",
+        "es": "Centros de artes curativas europeas tradicionales"
+    },
+    "Zentren für Unfallmedizin": {
+        "de": "Zentren für Unfallmedizin",
+        "en": "Accident Medicine Centers",
+        "es": "Centros de medicina de accidentes"
+    },
+    "Zentren für Wohlbefinden": {
+        "de": "Zentren für Wohlbefinden",
+        "en": "Wellbeing Centers",
+        "es": "Centros de bienestar"
+    },
+    "Audio-Mixing-Dienstleistungen": {
+        "de": "Audio-Mixing-Dienstleistungen",
+        "en": "Audio Mixing Services",
+        "es": "Servicios de mezcla de audio"
+    },
+    "Bandaufnahmen": {
+        "de": "Bandaufnahmen",
+        "en": "Band Recordings",
+        "es": "Grabaciones de bandas"
+    },
+    "Chorproben": {
+        "de": "Chorproben",
+        "en": "Choir Rehearsals",
+        "es": "Ensayos de coro"
+    },
+    "Digitaler Musikverkauf": {
+        "de": "Digitaler Musikverkauf",
+        "en": "Digital Music Sales",
+        "es": "Venta de música digital"
+    },
+    "DJ-Dienste": {
+        "de": "DJ-Dienste",
+        "en": "DJ Services",
+        "es": "Servicios de DJ"
+    },
+    "Festival-Tickets": {
+        "de": "Festival-Tickets",
+        "en": "Festival Tickets",
+        "es": "Entradas para festivales"
+    },
+    "Gesangsunterricht": {
+        "de": "Gesangsunterricht",
+        "en": "Singing Lessons",
+        "es": "Clases de canto"
+    },
+    "Gitarrenreparaturen": {
+        "de": "Gitarrenreparaturen",
+        "en": "Guitar Repairs",
+        "es": "Reparación de guitarras"
+    },
+    "Gitarrenunterricht": {
+        "de": "Gitarrenunterricht",
+        "en": "Guitar Lessons",
+        "es": "Clases de guitarra"
+    },
+    "Instrumentenvermietung": {
+        "de": "Instrumentenvermietung",
+        "en": "Instrument Rental",
+        "es": "Alquiler de instrumentos"
+    },
+    "Jazzclubs": {
+        "de": "Jazzclubs",
+        "en": "Jazz Clubs",
+        "es": "Clubes de jazz"
+    },
+    "Karaoke-Veranstaltungen": {
+        "de": "Karaoke-Veranstaltungen",
+        "en": "Karaoke Events",
+        "es": "Eventos de karaoke"
+    },
+    "Klassische Musikaufnahmen": {
+        "de": "Klassische Musikaufnahmen",
+        "en": "Classical Music Recordings",
+        "es": "Grabaciones de música clásica"
+    },
+    "Klavierunterricht": {
+        "de": "Klavierunterricht",
+        "en": "Piano Lessons",
+        "es": "Clases de piano"
+    },
+    "Kompositionsdienste": {
+        "de": "Kompositionsdienste",
+        "en": "Composition Services",
+        "es": "Servicios de composición"
+    },
+    "Konzertaufführungen": {
+        "de": "Konzertaufführungen",
+        "en": "Concert Performances",
+        "es": "Actuaciones de conciertos"
+    },
+    "Konzertorganisation": {
+        "de": "Konzertorganisation",
+        "en": "Concert Organization",
+        "es": "Organización de conciertos"
+    },
+    "Konzertpromotion": {
+        "de": "Konzertpromotion",
+        "en": "Concert Promotion",
+        "es": "Promoción de conciertos"
+    },
+    "Künstleragenturen": {
+        "de": "Künstleragenturen",
+        "en": "Artist Agencies",
+        "es": "Agencias de artistas"
+    },
+    "Künstler-Management-Dienste": {
+        "de": "Künstler-Management-Dienste",
+        "en": "Artist Management Services",
+        "es": "Servicios de gestión de artistas"
+    },
+    "Livestream-Konzerte": {
+        "de": "Livestream-Konzerte",
+        "en": "Livestream Concerts",
+        "es": "Conciertos transmitidos en vivo"
+    },
+    "Live-Konzerte": {
+        "de": "Live-Konzerte",
+        "en": "Live Concerts",
+        "es": "Conciertos en vivo"
+    },
+    "Musik-CD-Verkauf": {
+        "de": "Musik-CD-Verkauf",
+        "en": "Music CD Sales",
+        "es": "Venta de CDs de música"
+    },
+    "Musikalbenproduktion": {
+        "de": "Musikalbenproduktion",
+        "en": "Music Album Production",
+        "es": "Producción de álbumes de música"
+    },
+    "Musikband-Buchungen": {
+        "de": "Musikband-Buchungen",
+        "en": "Music Band Bookings",
+        "es": "Contratación de bandas de música"
+    },
+    "Musikgeschäfte": {
+        "de": "Musikgeschäfte",
+        "en": "Music Shops",
+        "es": "Tiendas de música"
+    },
+    "Musikinstrumente": {
+        "de": "Musikinstrumente",
+        "en": "Musical Instruments",
+        "es": "Instrumentos musicales"
+    },
+    "Musikkurse für Kinder": {
+        "de": "Musikkurse für Kinder",
+        "en": "Music Courses for Children",
+        "es": "Cursos de música para niños"
+    },
+    "Musikmeisterkurse": {
+        "de": "Musikmeisterkurse",
+        "en": "Music Masterclasses",
+        "es": "Clases magistrales de música"
+    },
+    "Musikproduktion": {
+        "de": "Musikproduktion",
+        "en": "Music Production",
+        "es": "Producción musical"
+    },
+    "Musik-Streaming": {
+        "de": "Musik-Streaming",
+        "en": "Music Streaming",
+        "es": "Streaming de música"
+    },
+    "Musiktheorieunterricht": {
+        "de": "Musiktheorieunterricht",
+        "en": "Music Theory Lessons",
+        "es": "Clases de teoría musical"
+    },
+    "Musikverlag": {
+        "de": "Musikverlag",
+        "en": "Music Publishing",
+        "es": "Editoriales musicales"
+    },
+    "Musikverlagsdienste": {
+        "de": "Musikverlagsdienste",
+        "en": "Music Publishing Services",
+        "es": "Servicios de edición musical"
+    },
+    "Musikvermarktung": {
+        "de": "Musikvermarktung",
+        "en": "Music Marketing",
+        "es": "Marketing musical"
+    },
+    "Musik-Workshops": {
+        "de": "Musik-Workshops",
+        "en": "Music Workshops",
+        "es": "Talleres de música"
+    },
+    "Notenverkauf": {
+        "de": "Notenverkauf",
+        "en": "Sheet Music Sales",
+        "es": "Venta de partituras"
+    },
+    "Online-Musikunterricht": {
+        "de": "Online-Musikunterricht",
+        "en": "Online Music Lessons",
+        "es": "Clases de música online"
+    },
+    "Orchesterkonzerte": {
+        "de": "Orchesterkonzerte",
+        "en": "Orchestral Concerts",
+        "es": "Conciertos de orquesta"
+    },
+    "Plattenläden": {
+        "de": "Plattenläden",
+        "en": "Record Stores",
+        "es": "Tiendas de discos"
+    },
+    "Sänger-Buchungen": {
+        "de": "Sänger-Buchungen",
+        "en": "Singer Bookings",
+        "es": "Contratación de cantantes"
+    },
+    "Saxophonunterricht": {
+        "de": "Saxophonunterricht",
+        "en": "Saxophone Lessons",
+        "es": "Clases de saxofón"
+    },
+    "Schlagzeugunterricht": {
+        "de": "Schlagzeugunterricht",
+        "en": "Drum Lessons",
+        "es": "Clases de batería"
+    },
+    "Songwriting-Kurse": {
+        "de": "Songwriting-Kurse",
+        "en": "Songwriting Courses",
+        "es": "Cursos de composición de canciones"
+    },
+    "Sounddesign": {
+        "de": "Sounddesign",
+        "en": "Sound Design",
+        "es": "Diseño de sonido"
+    },
+    "Streaming-Dienste für Künstler": {
+        "de": "Streaming-Dienste für Künstler",
+        "en": "Streaming Services for Artists",
+        "es": "Servicios de streaming para artistas"
+    },
+    "Tonstudios": {
+        "de": "Tonstudios",
+        "en": "Recording Studios",
+        "es": "Estudios de grabación"
+    },
+    "Tontechnik-Dienstleistungen": {
+        "de": "Tontechnik-Dienstleistungen",
+        "en": "Audio Engineering Services",
+        "es": "Servicios de ingeniería de audio"
+    },
+    "Peluquerías": {
+        "de": "Friseure",
+        "en": "Hairdressers",
+        "es": "Peluquerías"
+    },
+    "Barberías": {
+        "de": "Barbiere",
+        "en": "Barbershops",
+        "es": "Barberías"
+    },
+    "Manicura y Pedicura": {
+        "de": "Maniküre und Pediküre",
+        "en": "Manicure and Pedicure",
+        "es": "Manicura y Pedicura"
+    },
+    "Spa y Wellness": {
+        "de": "Spa & Wellness",
+        "en": "Spa & Wellness",
+        "es": "Spa y Wellness"
+    },
+    "Masajes Terapéuticos": {
+        "de": "Therapeutische Massagen",
+        "en": "Therapeutic Massages",
+        "es": "Masajes Terapéuticos"
+    },
+    "Centros de Depilación Láser": {
+        "de": "Laser-Haarentfernungszentren",
+        "en": "Laser Hair Removal Centers",
+        "es": "Centros de Depilación Láser"
+    },
+    "Maquillaje Profesional": {
+        "de": "Professionelles Make-up",
+        "en": "Professional Makeup",
+        "es": "Maquillaje Profesional"
+    },
+    "Estética Avanzada": {
+        "de": "Fortgeschrittene Ästhetik",
+        "en": "Advanced Aesthetics",
+        "es": "Estética Avanzada"
+    },
+    "Clínicas de Botox y Rellenos": {
+        "de": "Botox- und Filler-Kliniken",
+        "en": "Botox and Filler Clinics",
+        "es": "Clínicas de Botox y Rellenos"
+    },
+    "Tratamientos Faciales": {
+        "de": "Gesichtsbehandlungen",
+        "en": "Facial Treatments",
+        "es": "Tratamientos Faciales"
+    },
+    "Centros de Bronceado": {
+        "de": "Bräunungsstudios",
+        "en": "Tanning Salons",
+        "es": "Centros de Bronceado"
+    },
+    "Cuidado de la Piel": {
+        "de": "Hautpflege",
+        "en": "Skin Care",
+        "es": "Cuidado de la Piel"
+    },
+    "Aromaterapia": {
+        "de": "Aromatherapie",
+        "en": "Aromatherapy",
+        "es": "Aromaterapia"
+    },
+    "Centros Ayurveda": {
+        "de": "Ayurveda-Zentren",
+        "en": "Ayurveda Centers",
+        "es": "Centros Ayurveda"
+    },
+    "Centros de Masaje Deportivo": {
+        "de": "Sportmassagezentren",
+        "en": "Sports Massage Centers",
+        "es": "Centros de Masaje Deportivo"
+    },
+    "Tratamientos Antiedad": {
+        "de": "Anti-Aging-Behandlungen",
+        "en": "Anti-Aging Treatments",
+        "es": "Tratamientos Antiedad"
+    },
+    "Cuidado Capilar": {
+        "de": "Haarpflege",
+        "en": "Hair Care",
+        "es": "Cuidado Capilar"
+    },
+    "Tratamientos Corporales": {
+        "de": "Körperbehandlungen",
+        "en": "Body Treatments",
+        "es": "Tratamientos Corporales"
+    },
+    "Salones de Belleza Integral": {
+        "de": "Ganzheitliche Schönheitssalons",
+        "en": "Holistic Beauty Salons",
+        "es": "Salones de Belleza Integral"
+    },
+    "Bienestar Holístico": {
+        "de": "Ganzheitliches Wohlbefinden",
+        "en": "Holistic Wellness",
+        "es": "Bienestar Holístico"
+    },
+    "Alphabetisierungsprogramme – Regional": {
+        "de": "Alphabetisierungsprogramme – Regional",
+        "en": "Literacy Programs – Regional",
+        "es": "Programas de alfabetización – Regional"
+    },
+    "Altenpflegeberatungsdienste – National": {
+        "de": "Altenpflegeberatungsdienste – National",
+        "en": "Elderly Care Consulting Services – National",
+        "es": "Servicios de consultoría de cuidado de ancianos – Nacional"
+    },
+    "Altenpflegezentren – National": {
+        "de": "Altenpflegezentren – National",
+        "en": "Elderly Care Centers – National",
+        "es": "Centros de cuidado de ancianos – Nacional"
+    },
+    "Aufklärungsprojekte zu Menschenhandel – International": {
+        "de": "Aufklärungsprojekte zu Menschenhandel – International",
+        "en": "Human Trafficking Awareness Projects – International",
+        "es": "Proyectos de concienciación sobre la trata de personas – Internacional"
+    },
+    "Beratung für Jugendliche – National": {
+        "de": "Beratung für Jugendliche – National",
+        "en": "Youth Counseling – National",
+        "es": "Consejería para jóvenes – Nacional"
+    },
+    "Berufsausbildungsprogramme – Regional": {
+        "de": "Berufsausbildungsprogramme – Regional",
+        "en": "Vocational Training Programs – Regional",
+        "es": "Programas de formación profesional – Regional"
+    },
+    "Betreuung älterer Menschen – Regional": {
+        "de": "Betreuung älterer Menschen – Regional",
+        "en": "Elderly Care – Regional",
+        "es": "Cuidado de ancianos – Regional"
+    },
+    "Betreuung für pflegebedürftige Menschen – Regional": {
+        "de": "Betreuung für pflegebedürftige Menschen – Regional",
+        "en": "Care for People in Need of Care – Regional",
+        "es": "Cuidado de personas dependientes – Regional"
+    },
+    "Betreuungsdienste für Jugendliche – National": {
+        "de": "Betreuungsdienste für Jugendliche – National",
+        "en": "Youth Care Services – National",
+        "es": "Servicios de cuidado juvenil – Nacional"
+    },
+    "Bildungsprogramme für sozial Benachteiligte – National": {
+        "de": "Bildungsprogramme für sozial Benachteiligte – National",
+        "en": "Education Programs for the Socially Disadvantaged – National",
+        "es": "Programas educativos para desfavorecidos sociales – Nacional"
+    },
+    "Bildung und Teilhabe – National": {
+        "de": "Bildung und Teilhabe – National",
+        "en": "Education and Participation – National",
+        "es": "Educación y participación – Nacional"
+    },
+    "Entwicklungsprogramme für ländliche Gebiete – National": {
+        "de": "Entwicklungsprogramme für ländliche Gebiete – National",
+        "en": "Rural Development Programs – National",
+        "es": "Programas de desarrollo rural – Nacional"
+    },
+    "Erste-Hilfe-Dienste – National": {
+        "de": "Erste-Hilfe-Dienste – National",
+        "en": "First Aid Services – National",
+        "es": "Servicios de primeros auxilios – Nacional"
+    },
+    "Familienunterstützungsdienste – National": {
+        "de": "Familienunterstützungsdienste – National",
+        "en": "Family Support Services – National",
+        "es": "Servicios de apoyo familiar – Nacional"
+    },
+    "Frauenhäuser – National": {
+        "de": "Frauenhäuser – National",
+        "en": "Women's Shelters – National",
+        "es": "Refugios para mujeres – Nacional"
+    },
+    "Frauenunterstützungsdienste – National": {
+        "de": "Frauenunterstützungsdienste – National",
+        "en": "Women's Support Services – National",
+        "es": "Servicios de apoyo a la mujer – Nacional"
+    },
+    "Freiwilligendienstprogramme – International": {
+        "de": "Freiwilligendienstprogramme – International",
+        "en": "Volunteer Service Programs – International",
+        "es": "Programas de servicio voluntario – Internacional"
+    },
+    "Freiwilligenprogramme – International": {
+        "de": "Freiwilligenprogramme – International",
+        "en": "Volunteer Programs – International",
+        "es": "Programas de voluntariado – Internacional"
+    },
+    "Flüchtlingshilfe – International": {
+        "de": "Flüchtlingshilfe – International",
+        "en": "Refugee Aid – International",
+        "es": "Ayuda a refugiados – Internacional"
+    },
+    "Förderprogramme für Behinderte – National": {
+        "de": "Förderprogramme für Behinderte – National",
+        "en": "Support Programs for the Disabled – National",
+        "es": "Programas de apoyo para discapacitados – Nacional"
+    },
+    "Gefängnisreformprogramme – National": {
+        "de": "Gefängnisreformprogramme – National",
+        "en": "Prison Reform Programs – National",
+        "es": "Programas de reforma penitenciaria – Nacional"
+    },
+    "Gemeinnützige Organisationen – National": {
+        "de": "Gemeinnützige Organisationen – National",
+        "en": "Non-Profit Organizations – National",
+        "es": "Organizaciones sin fines de lucro – Nacional"
+    },
+    "Gemeinnützige Stiftungen – National": {
+        "de": "Gemeinnützige Stiftungen – National",
+        "en": "Non-Profit Foundations – National",
+        "es": "Fundaciones sin fines de lucro – Nacional"
+    },
+    "Gemeindezentren – Regional": {
+        "de": "Gemeindezentren – Regional",
+        "en": "Community Centers – Regional",
+        "es": "Centros comunitarios – Regional"
+    },
+    "Gemeinschaftsküchen – Regional": {
+        "de": "Gemeinschaftsküchen – Regional",
+        "en": "Community Kitchens – Regional",
+        "es": "Cocinas comunitarias – Regional"
+    },
+    "Gemeinschaftsprojekte – Regional": {
+        "de": "Gemeinschaftsprojekte – Regional",
+        "en": "Community Projects – Regional",
+        "es": "Proyectos comunitarios – Regional"
+    },
+    "Gesundheitsberatung – National": {
+        "de": "Gesundheitsberatung – National",
+        "en": "Health Counseling – National",
+        "es": "Asesoramiento de salud – Nacional"
+    },
+    "Gesundheitsförderung für Senioren – National": {
+        "de": "Gesundheitsförderung für Senioren – National",
+        "en": "Health Promotion for Seniors – National",
+        "es": "Promoción de la salud para mayores – Nacional"
+    },
+    "Gesundheitsfürsorge für Obdachlose – National": {
+        "de": "Gesundheitsfürsorge für Obdachlose – National",
+        "en": "Healthcare for Homeless – National",
+        "es": "Atención médica para personas sin hogar – Nacional"
+    },
+    "Gewaltpräventionsdienste – National": {
+        "de": "Gewaltpräventionsdienste – National",
+        "en": "Violence Prevention Services – National",
+        "es": "Servicios de prevención de la violencia – Nacional"
+    },
+    "Hilfsaktionen für Kriegsflüchtlinge – International": {
+        "de": "Hilfsaktionen für Kriegsflüchtlinge – International",
+        "en": "Relief Actions for War Refugees – International",
+        "es": "Acciones de ayuda para refugiados de guerra – Internacional"
+    },
+    "Hilfsdienste für Kriegsopfer – International": {
+        "de": "Hilfsdienste für Kriegsopfer – International",
+        "en": "Relief Services for War Victims – International",
+        "es": "Servicios de ayuda para víctimas de guerra – Internacional"
+    },
+    "Hilfsorganisationen – International": {
+        "de": "Hilfsorganisationen – International",
+        "en": "Relief Organizations – International",
+        "es": "Organizaciones de ayuda – Internacional"
+    },
+    "Hilfsprojekte für Kinder – International": {
+        "de": "Hilfsprojekte für Kinder – International",
+        "en": "Aid Projects for Children – International",
+        "es": "Proyectos de ayuda para niños – Internacional"
+    },
+    "Humanitäre Hilfe – International": {
+        "de": "Humanitäre Hilfe – International",
+        "en": "Humanitarian Aid – International",
+        "es": "Ayuda humanitaria – Internacional"
+    },
+    "Inklusionsberatung – National": {
+        "de": "Inklusionsberatung – National",
+        "en": "Inclusion Consulting – National",
+        "es": "Consultoría de inclusión – Nacional"
+    },
+    "Inklusionsprogramme für Migranten – International": {
+        "de": "Inklusionsprogramme für Migranten – International",
+        "en": "Inclusion Programs for Migrants – International",
+        "es": "Programas de inclusión para migrantes – Internacional"
+    },
+    "Inklusionsprojekte für Geflüchtete – International": {
+        "de": "Inklusionsprojekte für Geflüchtete – International",
+        "en": "Inclusion Projects for Refugees – International",
+        "es": "Proyectos de inclusión para refugiados – Internacional"
+    },
+    "Jugendbetreuungsdienste – Regional": {
+        "de": "Jugendbetreuungsdienste – Regional",
+        "en": "Youth Care Services – Regional",
+        "es": "Servicios de cuidado juvenil – Regional"
+    },
+    "Jugendförderungsnetzwerke – International": {
+        "de": "Jugendförderungsnetzwerke – International",
+        "en": "Youth Promotion Networks – International",
+        "es": "Redes de promoción juvenil – Internacional"
+    },
+    "Jugendförderungsprojekte – Regional": {
+        "de": "Jugendförderungsprojekte – Regional",
+        "en": "Youth Promotion Projects – Regional",
+        "es": "Proyectos de promoción juvenil – Regional"
+    },
+    "Jugendsozialarbeit – National": {
+        "de": "Jugendsozialarbeit – National",
+        "en": "Youth Social Work – National",
+        "es": "Trabajo social juvenil – Nacional"
+    },
+    "Katastrophenhilfe – International": {
+        "de": "Katastrophenhilfe – International",
+        "en": "Disaster Relief – International",
+        "es": "Ayuda en desastres – Internacional"
+    },
+    "Katastrophenvorsorge – National": {
+        "de": "Katastrophenvorsorge – National",
+        "en": "Disaster Preparedness – National",
+        "es": "Preparación para desastres – Nacional"
+    },
+    "Kinder- und Jugendfreizeiten – National": {
+        "de": "Kinder- und Jugendfreizeiten – National",
+        "en": "Children and Youth Camps – National",
+        "es": "Campamentos para niños y jóvenes – Nacional"
+    },
+    "Kindergarten – National": {
+        "de": "Kindergarten – National",
+        "en": "Kindergarten – National",
+        "es": "Jardín de infancia – Nacional"
+    },
+    "Kinderschutzdienste – National": {
+        "de": "Kinderschutzdienste – National",
+        "en": "Child Protection Services – National",
+        "es": "Servicios de protección infantil – Nacional"
+    },
+    "Krisenberatungsdienste – National": {
+        "de": "Krisenberatungsdienste – National",
+        "en": "Crisis Counseling Services – National",
+        "es": "Servicios de consejería en crisis – Nacional"
+    },
+    "Krisenintervention – National": {
+        "de": "Krisenintervention – National",
+        "en": "Crisis Intervention – National",
+        "es": "Intervención en crisis – Nacional"
+    },
+    "Lebensmittelbanken – Regional": {
+        "de": "Lebensmittelbanken – Regional",
+        "en": "Food Banks – Regional",
+        "es": "Bancos de alimentos – Regional"
+    },
+    "Migrantenberatungsdienste – National": {
+        "de": "Migrantenberatungsdienste – National",
+        "en": "Migrant Counseling Services – National",
+        "es": "Servicios de consejería para migrantes – Nacional"
+    },
+    "Migrantendienstleistungen – National": {
+        "de": "Migrantendienstleistungen – National",
+        "en": "Migrant Services – National",
+        "es": "Servicios para migrantes – Nacional"
+    },
+    "Minderheitenschutzdienste – National": {
+        "de": "Minderheitenschutzdienste – National",
+        "en": "Minority Protection Services – National",
+        "es": "Servicios de protección de minorías – Nacional"
+    },
+    "Nachbarschaftshilfe – Regional": {
+        "de": "Nachbarschaftshilfe – Regional",
+        "en": "Neighborhood Help – Regional",
+        "es": "Ayuda vecinal – Regional"
+    },
+    "Nachhilfeprogramme – National": {
+        "de": "Nachhilfeprogramme – National",
+        "en": "Tutoring Programs – National",
+        "es": "Programas de tutoría – Nacional"
+    },
+    "Nachsorgeprogramme für Gewaltopfer – National": {
+        "de": "Nachsorgeprogramme für Gewaltopfer – National",
+        "en": "Aftercare Programs for Violence Victims – National",
+        "es": "Programas de cuidado posterior para víctimas de violencia – Nacional"
+    },
+    "Notfallversorgung – National": {
+        "de": "Notfallversorgung – National",
+        "en": "Emergency Care – National",
+        "es": "Atención de urgencias – Nacional"
+    },
+    "Obdachlosenheime – Regional": {
+        "de": "Obdachlosenheime – Regional",
+        "en": "Homeless Shelters – Regional",
+        "es": "Refugios para personas sin hogar – Regional"
+    },
+    "Obdachlosenhilfe – National": {
+        "de": "Obdachlosenhilfe – National",
+        "en": "Homeless Aid – National",
+        "es": "Ayuda a personas sin hogar – Nacional"
+    },
+    "Obdachlosenpflegeprogramme – National": {
+        "de": "Obdachlosenpflegeprogramme – National",
+        "en": "Homeless Care Programs – National",
+        "es": "Programas de cuidado para personas sin hogar – Nacional"
+    },
+    "Obdachlosenunterkünfte – National": {
+        "de": "Obdachlosenunterkünfte – National",
+        "en": "Homeless Accommodation – National",
+        "es": "Alojamiento para personas sin hogar – Nacional"
+    },
+    "Ökologische Sozialprojekte – National": {
+        "de": "Ökologische Sozialprojekte – National",
+        "en": "Ecological Social Projects – National",
+        "es": "Proyectos sociales ecológicos – Nacional"
+    },
+    "Präventionsprogramme – National": {
+        "de": "Präventionsprogramme – National",
+        "en": "Prevention Programs – National",
+        "es": "Programas de prevención – Nacional"
+    },
+    "Projekte zur Förderung von Frauenrechten – National": {
+        "de": "Projekte zur Förderung von Frauenrechten – National",
+        "en": "Projects Promoting Women's Rights – National",
+        "es": "Proyectos de promoción de los derechos de la mujer – Nacional"
+    },
+    "Psychische Gesundheitsdienste – National": {
+        "de": "Psychische Gesundheitsdienste – National",
+        "en": "Mental Health Services – National",
+        "es": "Servicios de salud mental – Nacional"
+    },
+    "Psychosoziale Beratungsdienste – National": {
+        "de": "Psychosoziale Beratungsdienste – National",
+        "en": "Psychosocial Counseling Services – National",
+        "es": "Servicios de consejería psicosocial – Nacional"
+    },
+    "Rehabilitationsprogramme – National": {
+        "de": "Rehabilitationsprogramme – National",
+        "en": "Rehabilitation Programs – National",
+        "es": "Programas de rehabilitación – Nacional"
+    },
+    "Rechtsberatung für Migranten – National": {
+        "de": "Rechtsberatung für Migranten – National",
+        "en": "Legal Advice for Migrants – National",
+        "es": "Asesoramiento legal para migrantes – Nacional"
+    },
+    "Rettungsdienste – National": {
+        "de": "Rettungsdienste – National",
+        "en": "Rescue Services – National",
+        "es": "Servicios de rescate – Nacional"
+    },
+    "Schulbetreuungsprogramme – National": {
+        "de": "Schulbetreuungsprogramme – National",
+        "en": "School Care Programs – National",
+        "es": "Programas de cuidado escolar – Nacional"
+    },
+    "Selbsthilfegruppen – Regional": {
+        "de": "Selbsthilfegruppen – Regional",
+        "en": "Self-help Groups – Regional",
+        "es": "Grupos de autoayuda – Regional"
+    },
+    "Seniorentreffs – Regional": {
+        "de": "Seniorentreffs – Regional",
+        "en": "Senior Meetings – Regional",
+        "es": "Reuniones de mayores – Regional"
+    },
+    "Sicherheitsprogramme für Kinder – National": {
+        "de": "Sicherheitsprogramme für Kinder – National",
+        "en": "Safety Programs for Children – National",
+        "es": "Programas de seguridad para niños – Nacional"
+    },
+    "Soziale Inklusionsdienste – National": {
+        "de": "Soziale Inklusionsdienste – National",
+        "en": "Social Inclusion Services – National",
+        "es": "Servicios de inclusión social – Nacional"
+    },
+    "Soziale Notdienste – National": {
+        "de": "Soziale Notdienste – National",
+        "en": "Social Emergency Services – National",
+        "es": "Servicios de emergencia social – Nacional"
+    },
+    "Soziale Projekte für Randgruppen – Regional": {
+        "de": "Soziale Projekte für Randgruppen – Regional",
+        "en": "Social Projects for Marginalized Groups – Regional",
+        "es": "Proyectos sociales para grupos marginados – Regional"
+    },
+    "Soziale Wohnprojekte – National": {
+        "de": "Soziale Wohnprojekte – National",
+        "en": "Social Housing Projects – National",
+        "es": "Proyectos de vivienda social – Nacional"
+    },
+    "Sozialberatungsdienste – National": {
+        "de": "Sozialberatungsdienste – National",
+        "en": "Social Counseling Services – National",
+        "es": "Servicios de consejería social – Nacional"
+    },
+    "Sozialhilfeprogramme – National": {
+        "de": "Sozialhilfeprogramme – National",
+        "en": "Social Assistance Programs – National",
+        "es": "Programas de asistencia social – Nacional"
+    },
+    "Sterbebegleitungsdienste – National": {
+        "de": "Sterbebegleitungsdienste – National",
+        "en": "Hospice Services – National",
+        "es": "Servicios de cuidados paliativos – Nacional"
+    },
+    "Sterbebegleitungsprogramme – National": {
+        "de": "Sterbebegleitungsprogramme – National",
+        "en": "Hospice Programs – National",
+        "es": "Programas de cuidados paliativos – Nacional"
+    },
+    "Suchtberatungsdienste – National": {
+        "de": "Suchtberatungsdienste – National",
+        "en": "Addiction Counseling Services – National",
+        "es": "Servicios de consejería en adicciones – Nacional"
+    },
+    "Suchthilfeprogramme – National": {
+        "de": "Suchthilfeprogramme – National",
+        "en": "Addiction Aid Programs – National",
+        "es": "Programas de ayuda para adicciones – Nacional"
+    },
+    "Tafeln – Regional": {
+        "de": "Tafeln – Regional",
+        "en": "Food Banks – Regional",
+        "es": "Bancos de alimentos – Regional"
+    },
+    "Tafelarbeit – Regional": {
+        "de": "Tafelarbeit – Regional",
+        "en": "Food Bank Work – Regional",
+        "es": "Trabajo en bancos de alimentos – Regional"
+    },
+    "Telefonseelsorge – National": {
+        "de": "Telefonseelsorge – National",
+        "en": "Telephone Counseling – National",
+        "es": "Consejería telefónica – Nacional"
+    },
+    "Trauerbewältigungsprogramme – National": {
+        "de": "Trauerbewältigungsprogramme – National",
+        "en": "Grief Counseling Programs – National",
+        "es": "Programas de duelo – Nacional"
+    },
+    "Übergangswohndienste für Obdachlose – Regional": {
+        "de": "Übergangswohndienste für Obdachlose – Regional",
+        "en": "Transitional Housing for Homeless – Regional",
+        "es": "Vivienda de transición para personas sin hogar – Regional"
+    },
+    "Unterstützung für Alleinerziehende – National": {
+        "de": "Unterstützung für Alleinerziehende – National",
+        "en": "Support for Single Parents – National",
+        "es": "Apoyo a padres solteros – Nacional"
+    },
+    "Unterstützung für gewaltbetroffene Frauen – National": {
+        "de": "Unterstützung für gewaltbetroffene Frauen – National",
+        "en": "Support for Women Victims of Violence – National",
+        "es": "Apoyo a mujeres víctimas de violencia – Nacional"
+    },
+    "Unterstützung für Langzeitarbeitslose – National": {
+        "de": "Unterstützung für Langzeitarbeitslose – National",
+        "en": "Support for Long-term Unemployed – National",
+        "es": "Apoyo a desempleados de larga duración – Nacional"
+    },
+    "Unterstützung für pflegende Angehörige – National": {
+        "de": "Unterstützung für pflegende Angehörige – National",
+        "en": "Support for Caregiving Relatives – National",
+        "es": "Apoyo a familiares cuidadores – Nacional"
+    },
+    "Unterstützung von Pflegefamilien – Regional": {
+        "de": "Unterstützung von Pflegefamilien – Regional",
+        "en": "Support for Foster Families – Regional",
+        "es": "Apoyo a familias de acogida – Regional"
+    },
+    "Unterstützungsdienste für junge Mütter – National": {
+        "de": "Unterstützungsdienste für junge Mütter – National",
+        "en": "Support Services for Young Mothers – National",
+        "es": "Servicios de apoyo para madres jóvenes – Nacional"
+    },
+    "Verpflegung für Obdachlose – Regional": {
+        "de": "Verpflegung für Obdachlose – Regional",
+        "en": "Catering for Homeless – Regional",
+        "es": "Alimentación para personas sin hogar – Regional"
+    },
+    "Versorgung bedürftiger Familien – Regional": {
+        "de": "Versorgung bedürftiger Familien – Regional",
+        "en": "Provision for Needy Families – Regional",
+        "es": "Provisión para familias necesitadas – Regional"
+    },
+    "Versorgung von Menschen mit HIV/AIDS – National": {
+        "de": "Versorgung von Menschen mit HIV/AIDS – National",
+        "en": "Care for People with HIV/AIDS – National",
+        "es": "Atención a personas con VIH/SIDA – Nacional"
+    },
+    "Vorsorgeprogramme für Jugendliche – National": {
+        "de": "Vorsorgeprogramme für Jugendliche – National",
+        "en": "Prevention Programs for Youth – National",
+        "es": "Programas de prevención para jóvenes – Nacional"
+    },
+    "Wohnberatung für Sozialhilfeempfänger – National": {
+        "de": "Wohnberatung für Sozialhilfeempfänger – National",
+        "en": "Housing Advice for Welfare Recipients – National",
+        "es": "Asesoramiento de vivienda para beneficiarios de asistencia social – Nacional"
+    },
+    "Zivilschutzprogramme – National": {
+        "de": "Zivilschutzprogramme – National",
+        "en": "Civil Protection Programs – National",
+        "es": "Programas de protección civil – Nacional"
+    },
+    "Fotografía Profesional": {
+        "de": "Professionelle Fotografie",
+        "en": "Professional Photography",
+        "es": "Fotografía Profesional"
+    },
+    "Organización de Eventos": {
+        "de": "Eventorganisation",
+        "en": "Event Organization",
+        "es": "Organización de Eventos"
+    },
+    "Wedding Planners": {
+        "de": "Hochzeitsplaner",
+        "en": "Wedding Planners",
+        "es": "Wedding Planners"
+    },
+    "Personal Shoppers": {
+        "de": "Personal Shopper",
+        "en": "Personal Shoppers",
+        "es": "Personal Shoppers"
+    },
+    "Asesores de Imagen": {
+        "de": "Imageberater",
+        "en": "Image Consultants",
+        "es": "Asesores de Imagen"
+    },
+    "Organización del Hogar": {
+        "de": "Hausorganisation",
+        "en": "Home Organization",
+        "es": "Organización del Hogar"
+    },
+    "Servicios de Limpieza": {
+        "de": "Reinigungsdienste",
+        "en": "Cleaning Services",
+        "es": "Servicios de Limpieza"
+    },
+    "Lavanderías": {
+        "de": "Wäschereien",
+        "en": "Laundries",
+        "es": "Lavanderías"
+    },
+    "Tintorerías": {
+        "de": "Reinigungen",
+        "en": "Dry Cleaners",
+        "es": "Tintorerías"
+    },
+    "Costura y Arreglos": {
+        "de": "Näherei und Änderungen",
+        "en": "Sewing and Alterations",
+        "es": "Costura y Arreglos"
+    },
+    "Mudanzas Pequeñas": {
+        "de": "Kleintransporte",
+        "en": "Small Moves",
+        "es": "Mudanzas Pequeñas"
+    },
+    "Cuidado del Hogar": {
+        "de": "Hauspflege",
+        "en": "Home Care",
+        "es": "Cuidado del Hogar"
+    },
+    "Servicios para Influencers": {
+        "de": "Dienstleistungen für Influencer",
+        "en": "Services for Influencers",
+        "es": "Servicios para Influencers"
+    },
+    "Producción de Contenido": {
+        "de": "Content-Produktion",
+        "en": "Content Production",
+        "es": "Producción de Contenido"
+    },
+    "Estudios de Fotografía": {
+        "de": "Fotostudios",
+        "en": "Photography Studios",
+        "es": "Estudios de Fotografía"
+    },
+    "Alquiler de Ropa": {
+        "de": "Kleiderverleih",
+        "en": "Clothing Rental",
+        "es": "Alquiler de Ropa"
+    },
+    "Decoración Interior": {
+        "de": "Inneneinrichtung",
+        "en": "Interior Decoration",
+        "es": "Decoración Interior"
+    },
+    "Organizadores Personales": {
+        "de": "Personal Organizers",
+        "en": "Personal Organizers",
+        "es": "Organizadores Personales"
+    },
+    "Servicios Domésticos": {
+        "de": "Häusliche Dienstleistungen",
+        "en": "Domestic Services",
+        "es": "Servicios Domésticos"
+    },
+    "Consultoría de Lifestyle": {
+        "de": "Lifestyle-Beratung",
+        "en": "Lifestyle Consulting",
+        "es": "Consultoría de Lifestyle"
+    },
+    "Abendkleider": {
+        "de": "Abendkleider",
+        "en": "Evening Dresses",
+        "es": "Vestidos de noche"
+    },
+    "Accessoires für Anzüge": {
+        "de": "Accessoires für Anzüge",
+        "en": "Suit Accessories",
+        "es": "Accesorios para trajes"
+    },
+    "Anzugtaschen": {
+        "de": "Anzugtaschen",
+        "en": "Suit Bags",
+        "es": "Portatrajes"
+    },
+    "Arbeitskleidung": {
+        "de": "Arbeitskleidung",
+        "en": "Workwear",
+        "es": "Ropa de trabajo"
+    },
+    "Babykleidung": {
+        "de": "Babykleidung",
+        "en": "Baby Clothing",
+        "es": "Ropa de bebé"
+    },
+    "Badeanzüge": {
+        "de": "Badeanzüge",
+        "en": "Swimsuits",
+        "es": "Trajes de baño"
+    },
+    "Bademäntel": {
+        "de": "Bademäntel",
+        "en": "Bathrobes",
+        "es": "Albornoces"
+    },
+    "Badehosen": {
+        "de": "Badehosen",
+        "en": "Swim Trunks",
+        "es": "Bañadores"
+    },
+    "Bauernbekleidung": {
+        "de": "Bauernbekleidung",
+        "en": "Traditional Farm Clothing",
+        "es": "Ropa tradicional de campo"
+    },
+    "Bauhelme": {
+        "de": "Bauhelme",
+        "en": "Construction Helmets",
+        "es": "Cascos de obra"
+    },
+    "Baukleidung": {
+        "de": "Baukleidung",
+        "en": "Construction Clothing",
+        "es": "Ropa de construcción"
+    },
+    "Berufsbekleidung": {
+        "de": "Berufsbekleidung",
+        "en": "Professional Clothing",
+        "es": "Ropa profesional"
+    },
+    "Blazer": {
+        "de": "Blazer",
+        "en": "Blazers",
+        "es": "Blazers"
+    },
+    "Blusen": {
+        "de": "Blusen",
+        "en": "Blouses",
+        "es": "Blusas"
+    },
+    "Brautkleider": {
+        "de": "Brautkleider",
+        "en": "Wedding Dresses",
+        "es": "Vestidos de novia"
+    },
+    "Business-Kleidung": {
+        "de": "Business-Kleidung",
+        "en": "Business Attire",
+        "es": "Ropa de negocios"
+    },
+    "Caps": {
+        "de": "Caps",
+        "en": "Caps",
+        "es": "Gorras"
+    },
+    "Damenmode": {
+        "de": "Damenmode",
+        "en": "Women's Fashion",
+        "es": "Moda femenina"
+    },
+    "Designer-Kleidung": {
+        "de": "Designer-Kleidung",
+        "en": "Designer Clothing",
+        "es": "Ropa de diseño"
+    },
+    "Designerhandtaschen": {
+        "de": "Designerhandtaschen",
+        "en": "Designer Handbags",
+        "es": "Bolsos de diseño"
+    },
+    "Dirndl": {
+        "de": "Dirndl",
+        "en": "Dirndl",
+        "es": "Dirndl"
+    },
+    "Festkleidung": {
+        "de": "Festkleidung",
+        "en": "Festive Clothing",
+        "es": "Ropa de fiesta"
+    },
+    "Freizeithemden": {
+        "de": "Freizeithemden",
+        "en": "Casual Shirts",
+        "es": "Camisas casuales"
+    },
+    "Freizeitkleidung": {
+        "de": "Freizeitkleidung",
+        "en": "Casual Wear",
+        "es": "Ropa casual"
+    },
+    "Garderoben": {
+        "de": "Garderoben",
+        "en": "Wardrobes",
+        "es": "Guardarropas"
+    },
+    "Gürtel": {
+        "de": "Gürtel",
+        "en": "Belts",
+        "es": "Cinturones"
+    },
+    "Gürteltaschen": {
+        "de": "Gürteltaschen",
+        "en": "Belt Bags",
+        "es": "Riñoneras"
+    },
+    "Handschuhe": {
+        "de": "Handschuhe",
+        "en": "Gloves",
+        "es": "Guantes"
+    },
+    "Herrenmode": {
+        "de": "Herrenmode",
+        "en": "Men's Fashion",
+        "es": "Moda masculina"
+    },
+    "Hochzeitsanzüge": {
+        "de": "Hochzeitsanzüge",
+        "en": "Wedding Suits",
+        "es": "Trajes de novio"
+    },
+    "Hüte": {
+        "de": "Hüte",
+        "en": "Hats",
+        "es": "Sombreros"
+    },
+    "Jacken": {
+        "de": "Jacken",
+        "en": "Jackets",
+        "es": "Chaquetas"
+    },
+    "Jeans": {
+        "de": "Jeans",
+        "en": "Jeans",
+        "es": "Vaqueros"
+    },
+    "Jogginghosen": {
+        "de": "Jogginghosen",
+        "en": "Jogging Pants",
+        "es": "Pantalones de jogging"
+    },
+    "Kapuzenpullis": {
+        "de": "Kapuzenpullis",
+        "en": "Hoodies",
+        "es": "Sudaderas con capucha"
+    },
+    "Kleider": {
+        "de": "Kleider",
+        "en": "Dresses",
+        "es": "Vestidos"
+    },
+    "Kleidung für Großformate": {
+        "de": "Kleidung für Großformate",
+        "en": "Plus Size Clothing",
+        "es": "Ropa de tallas grandes"
+    },
+    "Kleidung für Senioren": {
+        "de": "Kleidung für Senioren",
+        "en": "Senior Clothing",
+        "es": "Ropa para mayores"
+    },
+    "Kleidung für Schwangerschaft": {
+        "de": "Kleidung für Schwangerschaft",
+        "en": "Maternity Wear",
+        "es": "Ropa premamá"
+    },
+    "Krawatten": {
+        "de": "Krawatten",
+        "en": "Ties",
+        "es": "Corbatas"
+    },
+    "Kinderbekleidung": {
+        "de": "Kinderbekleidung",
+        "en": "Children's Clothing",
+        "es": "Ropa infantil"
+    },
+    "Kinderjacken": {
+        "de": "Kinderjacken",
+        "en": "Children's Jackets",
+        "es": "Chaquetas para niños"
+    },
+    "Kinderkleider": {
+        "de": "Kinderkleider",
+        "en": "Children's Dresses",
+        "es": "Vestidos para niñas"
+    },
+    "Kleidung aus Bio-Baumwolle": {
+        "de": "Kleidung aus Bio-Baumwolle",
+        "en": "Organic Cotton Clothing",
+        "es": "Ropa de algodón orgánico"
+    },
+    "Kleidung für besondere Anlässe": {
+        "de": "Kleidung für besondere Anlässe",
+        "en": "Occasion Wear",
+        "es": "Ropa para ocasiones especiales"
+    },
+    "Lederschuhe": {
+        "de": "Lederschuhe",
+        "en": "Leather Shoes",
+        "es": "Zapatos de cuero"
+    },
+    "Lederjacken": {
+        "de": "Lederjacken",
+        "en": "Leather Jackets",
+        "es": "Chaquetas de cuero"
+    },
+    "Lederwaren": {
+        "de": "Lederwaren",
+        "en": "Leather Goods",
+        "es": "Artículos de cuero"
+    },
+    "Luxus-Bekleidung": {
+        "de": "Luxus-Bekleidung",
+        "en": "Luxury Clothing",
+        "es": "Ropa de lujo"
+    },
+    "Luxusschuhe": {
+        "de": "Luxusschuhe",
+        "en": "Luxury Shoes",
+        "es": "Zapatos de lujo"
+    },
+    "Maßgeschneiderte Anzüge": {
+        "de": "Maßgeschneiderte Anzüge",
+        "en": "Tailor-made Suits",
+        "es": "Trajes a medida"
+    },
+    "Modeaccessoires": {
+        "de": "Modeaccessoires",
+        "en": "Fashion Accessories",
+        "es": "Accesorios de moda"
+    },
+    "Mützen": {
+        "de": "Mützen",
+        "en": "Beanies",
+        "es": "Gorros"
+    },
+    "Nachthemden": {
+        "de": "Nachthemden",
+        "en": "Nightgowns",
+        "es": "Camisones"
+    },
+    "Outdoor-Bekleidung": {
+        "de": "Outdoor-Bekleidung",
+        "en": "Outdoor Clothing",
+        "es": "Ropa de exterior"
+    },
+    "Overalls": {
+        "de": "Overalls",
+        "en": "Overalls",
+        "es": "Overoles"
+    },
+    "Parkas": {
+        "de": "Parkas",
+        "en": "Parkas",
+        "es": "Parkas"
+    },
+    "Regenjacken": {
+        "de": "Regenjacken",
+        "en": "Rain Jackets",
+        "es": "Chaquetas impermeables"
+    },
+    "Regenkleidung": {
+        "de": "Regenkleidung",
+        "en": "Rainwear",
+        "es": "Ropa de lluvia"
+    },
+    "Röcke": {
+        "de": "Röcke",
+        "en": "Skirts",
+        "es": "Faldas"
+    },
+    "Ropa de cama para hospitales": {
+        "de": "Krankenhausbettwäsche",
+        "en": "Hospital Bedding",
+        "es": "Ropa de cama para hospitales"
+    },
+    "Sandalen": {
+        "de": "Sandalen",
+        "en": "Sandals",
+        "es": "Sandalias"
+    },
+    "Schals": {
+        "de": "Schals",
+        "en": "Scarves",
+        "es": "Bufandas"
+    },
+    "Schlafanzüge": {
+        "de": "Schlafanzüge",
+        "en": "Pajamas",
+        "es": "Pijamas"
+    },
+    "Schneebekleidung": {
+        "de": "Schneebekleidung",
+        "en": "Snow Clothing",
+        "es": "Ropa de nieve"
+    },
+    "Schuluniformen": {
+        "de": "Schuluniformen",
+        "en": "School Uniforms",
+        "es": "Uniformes escolares"
+    },
+    "Schuhe für Damen": {
+        "de": "Schuhe für Damen",
+        "en": "Women's Shoes",
+        "es": "Zapatos de mujer"
+    },
+    "Schuhe für Herren": {
+        "de": "Schuhe für Herren",
+        "en": "Men's Shoes",
+        "es": "Zapatos de hombre"
+    },
+    "Schuhe für Kinder": {
+        "de": "Schuhe für Kinder",
+        "en": "Children's Shoes",
+        "es": "Zapatos para niños"
+    },
+    "Schutzkleidung": {
+        "de": "Schutzkleidung",
+        "en": "Protective Clothing",
+        "es": "Ropa de protección"
+    },
+    "Schwimmbekleidung": {
+        "de": "Schwimmbekleidung",
+        "en": "Swimwear",
+        "es": "Ropa de natación"
+    },
+    "Second-Hand-Läden": {
+        "de": "Second-Hand-Läden",
+        "en": "Second Hand Shops",
+        "es": "Tiendas de segunda mano"
+    },
+    "Skianzüge": {
+        "de": "Skianzüge",
+        "en": "Ski Suits",
+        "es": "Trajes de esquí"
+    },
+    "Skibekleidung": {
+        "de": "Skibekleidung",
+        "en": "Ski Clothing",
+        "es": "Ropa de esquí"
+    },
+    "Sommerkleidung": {
+        "de": "Sommerkleidung",
+        "en": "Summer Clothing",
+        "es": "Ropa de verano"
+    },
+    "Sonnenbrillen": {
+        "de": "Sonnenbrillen",
+        "en": "Sunglasses",
+        "es": "Gafas de sol"
+    },
+    "Socken": {
+        "de": "Socken",
+        "en": "Socks",
+        "es": "Calcetines"
+    },
+    "Sportbekleidung": {
+        "de": "Sportbekleidung",
+        "en": "Sportswear",
+        "es": "Ropa deportiva"
+    },
+    "Sportjacken": {
+        "de": "Sportjacken",
+        "en": "Sports Jackets",
+        "es": "Chaquetas deportivas"
+    },
+    "Sportschuhe": {
+        "de": "Sportschuhe",
+        "en": "Sports Shoes",
+        "es": "Zapatillas deportivas"
+    },
+    "Stiefel": {
+        "de": "Stiefel",
+        "en": "Boots",
+        "es": "Botas"
+    },
+    "Strickmode": {
+        "de": "Strickmode",
+        "en": "Knitwear",
+        "es": "Prendas de punto"
+    },
+    "Taschen": {
+        "de": "Taschen",
+        "en": "Bags",
+        "es": "Bolsos"
+    },
+    "Textil-Reinigung": {
+        "de": "Textil-Reinigung",
+        "en": "Textile Cleaning",
+        "es": "Limpieza textil"
+    },
+    "T-Shirts": {
+        "de": "T-Shirts",
+        "en": "T-Shirts",
+        "es": "Camisetas"
+    },
+    "Trachtenbekleidung": {
+        "de": "Trachtenbekleidung",
+        "en": "Traditional Costume",
+        "es": "Trajes regionales"
+    },
+    "Turnschuhe": {
+        "de": "Turnschuhe",
+        "en": "Sneakers",
+        "es": "Zapatillas"
+    },
+    "Umstandsmode": {
+        "de": "Umstandsmode",
+        "en": "Maternity Fashion",
+        "es": "Moda premamá"
+    },
+    "Unterwäsche": {
+        "de": "Unterwäsche",
+        "en": "Underwear",
+        "es": "Ropa interior"
+    },
+    "Vintage-Kleidung": {
+        "de": "Vintage-Kleidung",
+        "en": "Vintage Clothing",
+        "es": "Ropa vintage"
+    },
+    "Winterschuhe": {
+        "de": "Winterschuhe",
+        "en": "Winter Shoes",
+        "es": "Zapatos de invierno"
+    },
+    "Wintermäntel": {
+        "de": "Wintermäntel",
+        "en": "Winter Coats",
+        "es": "Abrigos de invierno"
+    },
+    "Wintersportkleidung": {
+        "de": "Wintersportkleidung",
+        "en": "Winter Sports Clothing",
+        "es": "Ropa de deportes de invierno"
+    },
+    "Wollmäntel": {
+        "de": "Wollmäntel",
+        "en": "Wool Coats",
+        "es": "Abrigos de lana"
+    },
+    "Workwear": {
+        "de": "Workwear",
+        "en": "Workwear",
+        "es": "Ropa de trabajo"
+    },
+    "Yoga-Kleidung": {
+        "de": "Yoga-Kleidung",
+        "en": "Yoga Clothing",
+        "es": "Ropa de yoga"
+    },
+    "Zubehör für Bekleidung": {
+        "de": "Zubehör für Bekleidung",
+        "en": "Clothing Accessories",
+        "es": "Accesorios de ropa"
+    },
+    "Zusätzliche Extra-Tallgrößen": {
+        "de": "Zusätzliche Extra-Tallgrößen",
+        "en": "Extra Tall Sizes",
+        "es": "Tallas extra altas"
+    },
+    "Öko-Kleidung": {
+        "de": "Öko-Kleidung",
+        "en": "Eco Clothing",
+        "es": "Ropa ecológica"
+    },
+    "Ropa de cama de hospital": {
+        "de": "Krankenhausbettwäsche",
+        "en": "Hospital Bedding",
+        "es": "Ropa de cama de hospital"
+    },
+    "Ropa protectora": {
+        "de": "Schutzkleidung",
+        "en": "Protective Clothing",
+        "es": "Ropa protectora"
+    },
+    "Ropa casual para oficina": {
+        "de": "Business Casual",
+        "en": "Business Casual",
+        "es": "Ropa casual para oficina"
+    },
+    "Ropa tradicional": {
+        "de": "Traditionelle Kleidung",
+        "en": "Traditional Clothing",
+        "es": "Ropa tradicional"
+    },
+    "5G-Technologien": {
+        "de": "5G-Technologien",
+        "en": "5G Technologies",
+        "es": "Tecnologías 5G"
+    },
+    "App-Entwicklung": {
+        "de": "App-Entwicklung",
+        "en": "App Development",
+        "es": "Desarrollo de aplicaciones"
+    },
+    "Big-Data-Dienste": {
+        "de": "Big-Data-Dienste",
+        "en": "Big Data Services",
+        "es": "Servicios de Big Data"
+    },
+    "Blockchain-Technologie": {
+        "de": "Blockchain-Technologie",
+        "en": "Blockchain Technology",
+        "es": "Tecnología Blockchain"
+    },
+    "Cloud-Backup-Dienste": {
+        "de": "Cloud-Backup-Dienste",
+        "en": "Cloud Backup Services",
+        "es": "Servicios de copia de seguridad en la nube"
+    },
+    "Cloud-Computing-Dienste": {
+        "de": "Cloud-Computing-Dienste",
+        "en": "Cloud Computing Services",
+        "es": "Servicios de computación en la nube"
+    },
+    "Cloud-Hosting": {
+        "de": "Cloud-Hosting",
+        "en": "Cloud Hosting",
+        "es": "Alojamiento en la nube"
+    },
+    "Computergeräte": {
+        "de": "Computergeräte",
+        "en": "Computer Devices",
+        "es": "Dispositivos informáticos"
+    },
+    "Computerreparatur": {
+        "de": "Computerreparatur",
+        "en": "Computer Repair",
+        "es": "Reparación de ordenadores"
+    },
+    "Cyberkriminalitätsabwehr": {
+        "de": "Cyberkriminalitätsabwehr",
+        "en": "Cybercrime Defense",
+        "es": "Defensa contra el cibercrimen"
+    },
+    "Cybersicherheit": {
+        "de": "Cybersicherheit",
+        "en": "Cybersecurity",
+        "es": "Ciberseguridad"
+    },
+    "Datenanalyse": {
+        "de": "Datenanalyse",
+        "en": "Data Analysis",
+        "es": "Análisis de datos"
+    },
+    "Datenbankmanagement": {
+        "de": "Datenbankmanagement",
+        "en": "Database Management",
+        "es": "Gestión de bases de datos"
+    },
+    "Datensicherheitsdienste": {
+        "de": "Datensicherheitsdienste",
+        "en": "Data Security Services",
+        "es": "Servicios de seguridad de datos"
+    },
+    "Datenspeicherdienste": {
+        "de": "Datenspeicherdienste",
+        "en": "Data Storage Services",
+        "es": "Servicios de almacenamiento de datos"
+    },
+    "Datenvisualisierung": {
+        "de": "Datenvisualisierung",
+        "en": "Data Visualization",
+        "es": "Visualización de datos"
+    },
+    "Digitalisierungsdienste": {
+        "de": "Digitalisierungsdienste",
+        "en": "Digitization Services",
+        "es": "Servicios de digitalización"
+    },
+    "Edge Computing": {
+        "de": "Edge Computing",
+        "en": "Edge Computing",
+        "es": "Edge Computing"
+    },
+    "E-Commerce-Entwicklung": {
+        "de": "E-Commerce-Entwicklung",
+        "en": "E-commerce Development",
+        "es": "Desarrollo de comercio electrónico"
+    },
+    "Enterprise IT-Beratung": {
+        "de": "Enterprise IT-Beratung",
+        "en": "Enterprise IT Consulting",
+        "es": "Consultoría de TI empresarial"
+    },
+    "Innovationsmanagement": {
+        "de": "Innovationsmanagement",
+        "en": "Innovation Management",
+        "es": "Gestión de la innovación"
+    },
+    "Internet der Dinge": {
+        "de": "Internet der Dinge",
+        "en": "Internet of Things (IoT)",
+        "es": "Internet de las cosas (IoT)"
+    },
+    "IT-Infrastrukturmanagement": {
+        "de": "IT-Infrastrukturmanagement",
+        "en": "IT Infrastructure Management",
+        "es": "Gestión de infraestructura de TI"
+    },
+    "IT-Outsourcing": {
+        "de": "IT-Outsourcing",
+        "en": "IT Outsourcing",
+        "es": "Outsourcing de TI"
+    },
+    "Künstliche Intelligenz": {
+        "de": "Künstliche Intelligenz",
+        "en": "Artificial Intelligence",
+        "es": "Inteligencia Artificial"
+    },
+    "Machine Learning": {
+        "de": "Machine Learning",
+        "en": "Machine Learning",
+        "es": "Aprendizaje automático"
+    },
+    "Mobile Technologie": {
+        "de": "Mobile Technologie",
+        "en": "Mobile Technology",
+        "es": "Tecnología móvil"
+    },
+    "Netzwerkinfrastruktur": {
+        "de": "Netzwerkinfrastruktur",
+        "en": "Network Infrastructure",
+        "es": "Infraestructura de red"
+    },
+    "Rechenzentrumslösungen": {
+        "de": "Rechenzentrumslösungen",
+        "en": "Data Center Solutions",
+        "es": "Soluciones de centro de datos"
+    },
+    "Robotertechnologie": {
+        "de": "Robotertechnologie",
+        "en": "Robotics Technology",
+        "es": "Tecnología robótica"
+    },
+    "SaaS-Dienste": {
+        "de": "SaaS-Dienste",
+        "en": "SaaS Services",
+        "es": "Servicios SaaS"
+    },
+    "Smart City-Technologien": {
+        "de": "Smart City-Technologien",
+        "en": "Smart City Technologies",
+        "es": "Tecnologías de Smart City"
+    },
+    "Smart Home-Lösungen": {
+        "de": "Smart Home-Lösungen",
+        "en": "Smart Home Solutions",
+        "es": "Soluciones de Smart Home"
+    },
+    "Software-Automatisierung": {
+        "de": "Software-Automatisierung",
+        "en": "Software Automation",
+        "es": "Automatización de software"
+    },
+    "Softwareentwicklung": {
+        "de": "Softwareentwicklung",
+        "en": "Software Development",
+        "es": "Desarrollo de software"
+    },
+    "Softwareverkauf": {
+        "de": "Softwareverkauf",
+        "en": "Software Sales",
+        "es": "Venta de software"
+    },
+    "Soziale Netzwerke": {
+        "de": "Soziale Netzwerke",
+        "en": "Social Networks",
+        "es": "Redes sociales"
+    },
+    "Systemintegration": {
+        "de": "Systemintegration",
+        "en": "System Integration",
+        "es": "Integración de sistemas"
+    },
+    "Technischer Support": {
+        "de": "Technischer Support",
+        "en": "Technical Support",
+        "es": "Soporte técnico"
+    },
+    "Technologische Automatisierung": {
+        "de": "Technologische Automatisierung",
+        "en": "Technological Automation",
+        "es": "Automatización tecnológica"
+    },
+    "Technologische Lösungen für Unternehmen": {
+        "de": "Technologische Lösungen für Unternehmen",
+        "en": "Technological Solutions for Businesses",
+        "es": "Soluciones tecnológicas para empresas"
+    },
+    "Technologietrends": {
+        "de": "Technologietrends",
+        "en": "Technology Trends",
+        "es": "Tendencias tecnológicas"
+    },
+    "Technologisches Innovationsmanagement": {
+        "de": "Technologisches Innovationsmanagement",
+        "en": "Technological Innovation Management",
+        "es": "Gestión de la innovación tecnológica"
+    },
+    "Virtualisierungstechnologien": {
+        "de": "Virtualisierungstechnologien",
+        "en": "Virtualization Technologies",
+        "es": "Tecnologías de virtualización"
+    },
+    "VR/AR-Technologie": {
+        "de": "VR/AR-Technologie",
+        "en": "VR/AR Technology",
+        "es": "Tecnología VR/AR"
+    },
+    "Webentwicklung": {
+        "de": "Webentwicklung",
+        "en": "Web Development",
+        "es": "Desarrollo web"
     }
 }

@@ -114,6 +114,16 @@ export default function CategoriesPage() {
                 const data = doc.data() as any;
                 // Ensure subcategories exists
                 if (!data.subcategories) data.subcategories = [];
+
+                // Sort subcategories alphabetically by German name
+                if (Array.isArray(data.subcategories)) {
+                    data.subcategories.sort((a: Subcategory, b: Subcategory) => {
+                        const nameA = a.name?.de || '';
+                        const nameB = b.name?.de || '';
+                        return nameA.localeCompare(nameB);
+                    });
+                }
+
                 cats.push(data as Category);
             });
             setCategories(cats);
