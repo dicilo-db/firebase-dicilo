@@ -65,9 +65,9 @@ export default function AdminReviewsPage() {
                 const data = doc.data();
                 fetched.push({
                     id: doc.id,
-                    refPath: doc.ref.path, // Store full path for updates
+                    refPath: doc.ref.path,
                     clientName: data.clientName || 'Unknown Client',
-                    userName: data.userName || 'Anonymous',
+                    userName: data.name ? `${data.name} ${data.lastName || ''}`.trim() : 'Anonymous',
                     rating: data.rating || 5,
                     comment: data.comment || '',
                     status: data.status || 'pending',

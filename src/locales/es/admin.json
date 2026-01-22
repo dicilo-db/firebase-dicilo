@@ -845,7 +845,8 @@
     "currentBudgetHelp": "Saldo actual para anuncios. Se reduce con las vistas.",
     "totalInvested": "Total Invertido (€)",
     "totalInvestedHelp": "Suma histórica de todos los depósitos.",
-    "preview": "Vista Previa para el Cliente"
+    "preview": "Vista Previa para el Cliente",
+    "manualAdjustmentInstruction": "Introduzca el nuevo saldo aquí y haga clic en Guardar en la parte inferior de la página para aplicar. Este saldo disminuirá en 0.05€ por clic en el banner."
   },
   "walletCard": {
     "title": "Presupuesto de Anuncios (Wallet)",
@@ -856,7 +857,7 @@
     "low": "¡Casi vacío!",
     "totalInvested": "Total invertido",
     "remainingViews": "Vistas restantes",
-    "costPerView": "Coste por vista",
+    "costPerView": "Coste por clic",
     "lowBalanceAlert": "Su saldo es bajo. Sus anuncios se pausarán pronto.",
     "topUpButton": "Cargar Saldo",
     "dialogTitle": "Cargar Saldo",

@@ -837,7 +837,8 @@
     "currentBudgetHelp": "Aktuelles Guthaben für Anzeigen. Wird durch Views reduziert.",
     "totalInvested": "Gesamt Investiert (€)",
     "totalInvestedHelp": "Historische Summe aller Einzahlungen.",
-    "preview": "Vorschau für Kunde"
+    "preview": "Vorschau für Kunde",
+    "manualAdjustmentInstruction": "Geben Sie hier das neue Guthaben ein und klicken Sie unten auf der Seite auf Speichern, um es anzuwenden. Dieses Guthaben verringert sich um 0,05€ pro Banner-Klick."
   },
   "walletCard": {
     "title": "Werbe-Budget (Wallet)",
@@ -848,7 +849,7 @@
     "low": "Fast leer!",
     "totalInvested": "Gesamt investiert",
     "remainingViews": "Verbleibende Views",
-    "costPerView": "Kosten pro View",
+    "costPerView": "Kosten pro Klick",
     "lowBalanceAlert": "Ihr Guthaben ist niedrig. Ihre Anzeigen werden bald pausiert.",
     "topUpButton": "Guthaben aufladen",
     "dialogTitle": "Guthaben aufladen",

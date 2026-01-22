@@ -1324,10 +1324,12 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
 
       // Explicitly handle neighborhood to prevent undefined
       if (newData.neighborhood === undefined) {
-        newData.neighborhood = null;
+        // newData.neighborhood = null; // TS Error
+        delete newData.neighborhood;
       }
       if (newData.neighborhood === 'none') {
-        newData.neighborhood = null;
+        // newData.neighborhood = null; // TS Error
+        delete newData.neighborhood;
       }
 
       // Use mergeWith to customize how arrays are handled (overwrite instead of merge)
@@ -1708,20 +1710,8 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
 
                     {/* No duplicate Phone field here! */}
 
-                    <div className="space-y-2">
-                      <Label htmlFor="budget_remaining">Budget Remaining (EUR)</Label>
-                      <Input
-                        id="budget_remaining"
-                        type="number"
-                        step="0.01"
-                        {...register('budget_remaining', { valueAsNumber: true })}
-                        placeholder="0.00"
-                      />
-                      <p className="text-xs text-muted-foreground">
-                        Use this to manually top-up budget for ads (0.05€ per click).
-                      </p>
-                    </div>
-                  </div>
+                  </div> {/* Closing the first grid */}
+
                   <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                     <div className="space-y-2">
                       <Label htmlFor="clientLogoUrl">
@@ -2712,7 +2702,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                       variant="outline"
                       size="sm"
                       onClick={() =>
-                        appendInfoCard({ title: '', content: '' })
+                        appendInfoCard({ title: '', content: '', isActive: true })
                       }
                     >
                       <PlusCircle className="mr-2 h-4 w-4" />
@@ -2961,6 +2951,26 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                       currentBudget={watch('budget_remaining') || 0}
                       totalInvested={watch('total_invested') || 0}
                     />
+
+                    <div className="rounded-lg border p-4 bg-muted/50 mt-4">
+                      <h4 className="font-semibold mb-2">Manual Balance Adjustment (Admin)</h4>
+                      <div className="space-y-2">
+                        <Label htmlFor="budget_remaining">Budget Remaining (EUR)</Label>
+                        <div className="flex gap-2">
+                          <Input
+                            id="budget_remaining"
+                            type="number"
+                            step="0.01"
+                            {...register('budget_remaining', { valueAsNumber: true })}
+                            placeholder="0.00"
+                            className="text-lg font-mono font-bold"
+                          />
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                          {t('wallet.manualAdjustmentInstruction')}
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </TabsContent>
 

@@ -13,6 +13,12 @@ import { Lang, getEmailI18n, render } from './i18n';
 import { sendMail } from './email';
 import _ from 'lodash';
 import * as businessesToSeed from './seed-data.json';
+import * as nodemailer from 'nodemailer';
+
+// Data for Seeding
+import * as categoriesData from './data/categories.json';
+import * as categoryTranslationsData from './data/category_translations.json';
+import * as subcategoryTranslationsData from './data/subcategory_translations.json';
 
 // Initialize Firebase Admin SDK
 try {
@@ -489,12 +495,42 @@ export const notifyAdminOnClientRecommendation = onDocumentCreated('clients/{cli
   `;
 
   try {
-    await sendMail({
-      to: adminEmail,
-      subject: subject,
-      html: html,
-    });
-    logger.info(`Admin notification sent for client recommendation ${recommendationId}`);
+    const smtpHost = process.env.SMTP_HOST;
+    const smtpPort = parseInt(process.env.SMTP_PORT || '465');
+    const smtpUser = process.env.SMTP_USER;
+    const smtpPass = process.env.SMTP_PASS;
+
+    if (smtpHost && smtpUser && smtpPass) {
+      // Isolated SMTP Transport
+      const transporter = nodemailer.createTransport({
+        host: smtpHost,
+        port: smtpPort,
+        secure: smtpPort === 465, // true for 465, false for other ports
+        auth: {
+          user: smtpUser,
+          pass: smtpPass,
+        },
+      });
+
+      const mailOptions = {
+        from: `"Dicilo Support" <${smtpUser}>`,
+        to: adminEmail,
+        subject: subject,
+        html: html,
+      };
+
+      await transporter.sendMail(mailOptions);
+      logger.info(`Admin notification sent via SMTP for client recommendation ${recommendationId}`);
+
+    } else {
+      logger.warn('SMTP credentials missing in .env (SMTP_HOST, SMTP_USER, SMTP_PASS). Falling back to generic sendMail (likely to fail if not configured).');
+      await sendMail({
+        to: adminEmail,
+        subject: subject,
+        html: html,
+      });
+    }
+
   } catch (error) {
     logger.error(
       `Failed to send admin notification for client recommendation ${recommendationId}:`,
@@ -786,6 +822,94 @@ export const seedDatabase = onRequest({ timeoutSeconds: 540, memory: '512MiB' },
   } catch (error: any) {
     logger.error('Error seeding database:', error);
     res.status(500).send(`Error seeding database: ${error.message}`);
+  }
+});
+
+export const seedCategories = onRequest({ timeoutSeconds: 540, memory: '512MiB' }, async (req, res) => {
+  const batch = db.batch();
+  const collectionRef = db.collection('categories');
+  const categories: any[] = (categoriesData as any).default || categoriesData;
+  const subTrans: Record<string, any> = (subcategoryTranslationsData as any).default || subcategoryTranslationsData;
+  const catTrans: Record<string, any> = (categoryTranslationsData as any).default || categoryTranslationsData;
+
+  // Icon Mapping
+  const ICON_MAPPING: Record<string, string> = {
+    'Beratung & Coaching': 'Briefcase',
+    'Bildung & Karriere': 'GraduationCap',
+    'Finanzdienstleistung & Vorsorge': 'Wallet',
+    'Gastronomie & Kulinarik': 'Utensils',
+    'Gesundheit & Wellness': 'Heart',
+    'Hotellerie & Gastgewerbe': 'Hotel',
+    'Immobilien & Wohnraum': 'Building',
+    'Lebensmittel & Feinkost': 'ShoppingBasket',
+    'Textil & Mode': 'Shirt',
+    'Musik & Events': 'Music',
+    'Soziales & Engagement': 'Users',
+    'Sport & Fitness': 'Trophy',
+    'Reise & Tourismus': 'Bus',
+    'Technologie & Innovation': 'Bot',
+    'Tier & Haustierbedarf': 'PawPrint',
+    'Transport & Mobilität': 'Bus',
+    'Umwelt & Nachhaltigkeit': 'Trees',
+    'Unterhaltung & Freizeit': 'Tv',
+  };
+
+  const LEGACY_ID_MAPPING: Record<string, string> = {
+    'Beratung & Coaching': 'beratung',
+    'Bildung & Karriere': 'bildung',
+    'Finanzdienstleistung & Vorsorge': 'finanzen',
+    'Gastronomie & Kulinarik': 'gastronomie',
+    'Gesundheit & Wellness': 'gesundheit',
+    'Hotellerie & Gastgewerbe': 'hotellerie',
+    'Immobilien & Wohnraum': 'immobilien',
+    'Lebensmittel & Feinkost': 'lebensmittel',
+    'Textil & Mode': 'textil',
+    'Musik & Events': 'musik',
+    'Soziales & Engagement': 'soziales',
+    'Sport & Fitness': 'sport',
+    'Reise & Tourismus': 'reise',
+    'Technologie & Innovation': 'technologie',
+    'Tier & Haustierbedarf': 'tier',
+    'Transport & Mobilität': 'transport',
+    'Umwelt & Nachhaltigkeit': 'umwelt',
+    'Unterhaltung & Freizeit': 'unterhaltung'
+  };
+
+  const slugify = (text: string) => text.toLowerCase().replace(/&/g, 'und').replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
+
+  try {
+    let count = 0;
+    for (const cat of categories) {
+      const catId = LEGACY_ID_MAPPING[cat.categoria] || slugify(cat.categoria);
+      const ref = collectionRef.doc(catId);
+
+      const subs = cat.subcategorias.map((subName: string) => {
+        const subId = slugify(subName);
+        const trans = subTrans[subName] || { de: subName, en: subName, es: subName };
+        return {
+          id: subId,
+          name: trans,
+          businessCount: 0
+        };
+      });
+
+      const cTrans = catTrans[cat.categoria] || { de: cat.categoria, en: cat.categoria, es: cat.categoria };
+      const iconName = ICON_MAPPING[cat.categoria] || 'HelpCircle';
+
+      batch.set(ref, {
+        id: catId,
+        name: cTrans,
+        icon: iconName,
+        subcategories: subs
+      }, { merge: true });
+      count++;
+    }
+
+    await batch.commit();
+    res.status(200).send(`Seeding complete. Processed ${count} categories.`);
+  } catch (error: any) {
+    logger.error('Error seeding categories:', error);
+    res.status(500).send(`Error: ${error.message}`);
   }
 });
 

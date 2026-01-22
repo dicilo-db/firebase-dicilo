@@ -69,6 +69,7 @@ export const AdBanner = ({ ad, className, showBadge = true, rank }: AdBannerProp
             fetch('/api/ads/click', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
+                keepalive: true,
                 body: JSON.stringify({
                     adId: ad.id,
                     clientId: ad.clientId,
@@ -92,6 +93,7 @@ export const AdBanner = ({ ad, className, showBadge = true, rank }: AdBannerProp
             fetch('/api/ads/click', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
+                keepalive: true,
                 body: JSON.stringify({
                     adId: ad.id,
                     clientId: ad.clientId,
@@ -200,7 +202,7 @@ export const AdBanner = ({ ad, className, showBadge = true, rank }: AdBannerProp
                                     <Mail className="h-4 w-4 text-gray-600" />
                                     <span>Email</span>
                                 </DropdownMenuItem>
-                                {typeof navigator !== 'undefined' && navigator.share && (
+                                {typeof navigator !== 'undefined' && 'share' in navigator && (
                                     <DropdownMenuItem onClick={() => handleSocialShare('native')} className="cursor-pointer gap-2">
                                         <Share2 className="h-4 w-4 text-black" />
                                         <span>{t('ad.moreOptions', 'Mehr Optionen...')}</span>

@@ -48,7 +48,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.cleanupDuplicates = exports.fixSuperAdmin = exports.seedDatabase = exports.demoteToBasic = exports.promoteToClient = exports.notifyAdminOnClientRecommendation = exports.consentDecline = exports.consentAccept = exports.taskWorker = exports.submitRecommendation = exports.syncExistingCustomersToErp = exports.sendWelcomeEmail = exports.notifyAdminOnTopUp = exports.notifyAdminOnRegistration = exports.sendRegistrationToErp = exports.onAdminWrite = void 0;
+exports.cleanupDuplicates = exports.fixSuperAdmin = exports.seedCategories = exports.seedDatabase = exports.demoteToBasic = exports.promoteToClient = exports.notifyAdminOnClientRecommendation = exports.consentDecline = exports.consentAccept = exports.taskWorker = exports.submitRecommendation = exports.syncExistingCustomersToErp = exports.sendWelcomeEmail = exports.notifyAdminOnTopUp = exports.notifyAdminOnRegistration = exports.sendRegistrationToErp = exports.onAdminWrite = void 0;
 /**
  * @fileoverview Cloud Functions for Firebase (Gen 2).
  * Migrated to Gen 2 to support Node 20 and explicit CPU/Memory configuration.
@@ -61,6 +61,11 @@ const axios_1 = __importDefault(require("axios"));
 const logger = __importStar(require("firebase-functions/logger"));
 const i18n_1 = require("./i18n");
 const email_1 = require("./email");
+const nodemailer = __importStar(require("nodemailer"));
+// Data for Seeding
+const categoriesData = __importStar(require("./data/categories.json"));
+const categoryTranslationsData = __importStar(require("./data/category_translations.json"));
+const subcategoryTranslationsData = __importStar(require("./data/subcategory_translations.json"));
 // Initialize Firebase Admin SDK
 try {
     admin.initializeApp();
@@ -442,12 +447,38 @@ exports.notifyAdminOnClientRecommendation = (0, firestore_1.onDocumentCreated)('
     <p>Dies ist eine automatische Nachricht von Dicilo Firebase Functions.</p>
   `;
     try {
-        yield (0, email_1.sendMail)({
-            to: adminEmail,
-            subject: subject,
-            html: html,
-        });
-        logger.info(`Admin notification sent for client recommendation ${recommendationId}`);
+        const smtpHost = process.env.SMTP_HOST;
+        const smtpPort = parseInt(process.env.SMTP_PORT || '465');
+        const smtpUser = process.env.SMTP_USER;
+        const smtpPass = process.env.SMTP_PASS;
+        if (smtpHost && smtpUser && smtpPass) {
+            // Isolated SMTP Transport
+            const transporter = nodemailer.createTransport({
+                host: smtpHost,
+                port: smtpPort,
+                secure: smtpPort === 465, // true for 465, false for other ports
+                auth: {
+                    user: smtpUser,
+                    pass: smtpPass,
+                },
+            });
+            const mailOptions = {
+                from: `"Dicilo Support" <${smtpUser}>`,
+                to: adminEmail,
+                subject: subject,
+                html: html,
+            };
+            yield transporter.sendMail(mailOptions);
+            logger.info(`Admin notification sent via SMTP for client recommendation ${recommendationId}`);
+        }
+        else {
+            logger.warn('SMTP credentials missing in .env (SMTP_HOST, SMTP_USER, SMTP_PASS). Falling back to generic sendMail (likely to fail if not configured).');
+            yield (0, email_1.sendMail)({
+                to: adminEmail,
+                subject: subject,
+                html: html,
+            });
+        }
     }
     catch (error) {
         logger.error(`Failed to send admin notification for client recommendation ${recommendationId}:`, error);
@@ -678,6 +709,86 @@ exports.seedDatabase = (0, https_1.onRequest)({ timeoutSeconds: 540, memory: '51
     catch (error) {
         logger.error('Error seeding database:', error);
         res.status(500).send(`Error seeding database: ${error.message}`);
+    }
+}));
+exports.seedCategories = (0, https_1.onRequest)({ timeoutSeconds: 540, memory: '512MiB' }, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const batch = db.batch();
+    const collectionRef = db.collection('categories');
+    const categories = categoriesData.default || categoriesData;
+    const subTrans = subcategoryTranslationsData.default || subcategoryTranslationsData;
+    const catTrans = categoryTranslationsData.default || categoryTranslationsData;
+    // Icon Mapping
+    const ICON_MAPPING = {
+        'Beratung & Coaching': 'Briefcase',
+        'Bildung & Karriere': 'GraduationCap',
+        'Finanzdienstleistung & Vorsorge': 'Wallet',
+        'Gastronomie & Kulinarik': 'Utensils',
+        'Gesundheit & Wellness': 'Heart',
+        'Hotellerie & Gastgewerbe': 'Hotel',
+        'Immobilien & Wohnraum': 'Building',
+        'Lebensmittel & Feinkost': 'ShoppingBasket',
+        'Textil & Mode': 'Shirt',
+        'Musik & Events': 'Music',
+        'Soziales & Engagement': 'Users',
+        'Sport & Fitness': 'Trophy',
+        'Reise & Tourismus': 'Bus',
+        'Technologie & Innovation': 'Bot',
+        'Tier & Haustierbedarf': 'PawPrint',
+        'Transport & Mobilität': 'Bus',
+        'Umwelt & Nachhaltigkeit': 'Trees',
+        'Unterhaltung & Freizeit': 'Tv',
+    };
+    const LEGACY_ID_MAPPING = {
+        'Beratung & Coaching': 'beratung',
+        'Bildung & Karriere': 'bildung',
+        'Finanzdienstleistung & Vorsorge': 'finanzen',
+        'Gastronomie & Kulinarik': 'gastronomie',
+        'Gesundheit & Wellness': 'gesundheit',
+        'Hotellerie & Gastgewerbe': 'hotellerie',
+        'Immobilien & Wohnraum': 'immobilien',
+        'Lebensmittel & Feinkost': 'lebensmittel',
+        'Textil & Mode': 'textil',
+        'Musik & Events': 'musik',
+        'Soziales & Engagement': 'soziales',
+        'Sport & Fitness': 'sport',
+        'Reise & Tourismus': 'reise',
+        'Technologie & Innovation': 'technologie',
+        'Tier & Haustierbedarf': 'tier',
+        'Transport & Mobilität': 'transport',
+        'Umwelt & Nachhaltigkeit': 'umwelt',
+        'Unterhaltung & Freizeit': 'unterhaltung'
+    };
+    const slugify = (text) => text.toLowerCase().replace(/&/g, 'und').replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
+    try {
+        let count = 0;
+        for (const cat of categories) {
+            const catId = LEGACY_ID_MAPPING[cat.categoria] || slugify(cat.categoria);
+            const ref = collectionRef.doc(catId);
+            const subs = cat.subcategorias.map((subName) => {
+                const subId = slugify(subName);
+                const trans = subTrans[subName] || { de: subName, en: subName, es: subName };
+                return {
+                    id: subId,
+                    name: trans,
+                    businessCount: 0
+                };
+            });
+            const cTrans = catTrans[cat.categoria] || { de: cat.categoria, en: cat.categoria, es: cat.categoria };
+            const iconName = ICON_MAPPING[cat.categoria] || 'HelpCircle';
+            batch.set(ref, {
+                id: catId,
+                name: cTrans,
+                icon: iconName,
+                subcategories: subs
+            }, { merge: true });
+            count++;
+        }
+        yield batch.commit();
+        res.status(200).send(`Seeding complete. Processed ${count} categories.`);
+    }
+    catch (error) {
+        logger.error('Error seeding categories:', error);
+        res.status(500).send(`Error: ${error.message}`);
     }
 }));
 exports.fixSuperAdmin = (0, https_1.onRequest)({ timeoutSeconds: 60, memory: '256MiB' }, (req, res) => __awaiter(void 0, void 0, void 0, function* () {

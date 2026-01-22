@@ -369,16 +369,26 @@ export async function adminProcessManualPayment(
     if (profileSnap.exists) {
         userData = profileSnap.data();
     } else {
-        // B. Try Lookup by Unique Code
-        const codeSnap = await db.collection('private_profiles')
-            .where('uniqueCode', '==', targetUid)
-            .limit(1)
-            .get();
+        // A2. Try Direct Lookup in 'clients' (Business Profile)
+        const clientSnap = await db.collection('clients').doc(targetUid).get();
+        if (clientSnap.exists) {
+            userData = clientSnap.data();
+            // Map client fields if necessary to match expected userData structure (e.g. name)
+            if (!userData.name && userData.clientName) userData.name = userData.clientName;
+        }
 
-        if (!codeSnap.empty) {
-            const doc = codeSnap.docs[0];
-            userData = doc.data();
-            finalUid = doc.id; // Correct UID found via Code
+        // B. Try Lookup by Unique Code
+        if (!userData) {
+            const codeSnap = await db.collection('private_profiles')
+                .where('uniqueCode', '==', targetUid)
+                .limit(1)
+                .get();
+
+            if (!codeSnap.empty) {
+                const doc = codeSnap.docs[0];
+                userData = doc.data();
+                finalUid = doc.id; // Correct UID found via Code
+            }
         }
     }
 

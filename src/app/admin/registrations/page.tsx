@@ -44,6 +44,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { ManualWalletTopUpModal } from '@/components/admin/ManualWalletTopUpModal';
+import { DollarSign } from 'lucide-react';
 
 const db = getFirestore(app);
 
@@ -91,48 +93,61 @@ const ActionButton = ({ registration }: { registration: Registration }) => {
   };
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="h-8 w-8 p-0">
-          <span className="sr-only">Open menu</span>
-          <MoreHorizontal className="h-4 w-4" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuLabel>{t('Actions')}</DropdownMenuLabel>
+    <div className="flex items-center justify-end gap-2">
+      {registration.clientId && (
+        <ManualWalletTopUpModal
+          clientId={registration.clientId}
+          clientEmail={registration.email}
+          triggerButton={
+            <Button variant="ghost" className="h-8 w-8 p-0 text-green-600 hover:text-green-800 hover:bg-green-50" title="Cargar Saldo">
+              <DollarSign className="h-4 w-4" />
+            </Button>
+          }
+        />
+      )}
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" className="h-8 w-8 p-0">
+            <span className="sr-only">Open menu</span>
+            <MoreHorizontal className="h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuLabel>{t('Actions')}</DropdownMenuLabel>
 
-        {/* EDIT CLIENT (For Companies) */}
-        {registration.clientId && (
-          <DropdownMenuItem asChild>
-            <Link href={`/admin/clients/${registration.clientId}/edit`} className="flex items-center cursor-pointer">
-              <Edit className="mr-2 h-4 w-4" />
-              {t('registrations.table.manageClient')}
-            </Link>
-          </DropdownMenuItem>
-        )}
-
-        {/* PRIVATE USER ACTIONS */}
-        {registration.registrationType === 'private' && (
-          <>
-            <DropdownMenuItem onClick={handleStatusToggle} className="cursor-pointer">
-              {registration.status === 'paused' ? (
-                <><Play className="mr-2 h-4 w-4 text-green-600" /> Activate Account</>
-              ) : (
-                <><Pause className="mr-2 h-4 w-4 text-yellow-600" /> Pause Account</>
-              )}
+          {/* EDIT CLIENT (For Companies) */}
+          {registration.clientId && (
+            <DropdownMenuItem asChild>
+              <Link href={`/admin/clients/${registration.clientId}/edit`} className="flex items-center cursor-pointer">
+                <Edit className="mr-2 h-4 w-4" />
+                {t('registrations.table.manageClient')}
+              </Link>
             </DropdownMenuItem>
-          </>
-        )}
+          )}
 
-        <DropdownMenuSeparator />
+          {/* PRIVATE USER ACTIONS */}
+          {registration.registrationType === 'private' && (
+            <>
+              <DropdownMenuItem onClick={handleStatusToggle} className="cursor-pointer">
+                {registration.status === 'paused' ? (
+                  <><Play className="mr-2 h-4 w-4 text-green-600" /> Activate Account</>
+                ) : (
+                  <><Pause className="mr-2 h-4 w-4 text-yellow-600" /> Pause Account</>
+                )}
+              </DropdownMenuItem>
+            </>
+          )}
 
-        {/* DELETE (All Types) */}
-        <DropdownMenuItem onClick={handleDelete} className="text-red-600 cursor-pointer">
-          <Trash className="mr-2 h-4 w-4" />
-          Delete Registration
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+          <DropdownMenuSeparator />
+
+          {/* DELETE (All Types) */}
+          <DropdownMenuItem onClick={handleDelete} className="text-red-600 cursor-pointer">
+            <Trash className="mr-2 h-4 w-4" />
+            Delete Registration
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
   );
 };
 

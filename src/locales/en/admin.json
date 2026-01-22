@@ -810,7 +810,8 @@
     "currentBudgetHelp": "Current ad balance. Reduced by views.",
     "totalInvested": "Total Invested (€)",
     "totalInvestedHelp": "Historical sum of all deposits.",
-    "preview": "Client Preview"
+    "preview": "Client Preview",
+    "manualAdjustmentInstruction": "Enter the new balance here and click Save at the bottom of the page to apply. This balance will decrease by 0.05€ per banner click."
   },
   "walletCard": {
     "title": "Ads Budget (Wallet)",
@@ -821,7 +822,7 @@
     "low": "Almost empty!",
     "totalInvested": "Total Invested",
     "remainingViews": "Remaining Views",
-    "costPerView": "Cost per View",
+    "costPerView": "Cost per Click",
     "lowBalanceAlert": "Your balance is low. Ads will be paused soon.",
     "topUpButton": "Top Up Balance",
     "dialogTitle": "Top Up Balance",

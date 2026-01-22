@@ -79,6 +79,11 @@ export interface ClientData {
     bodyData?: BodyData;
     infoCards?: InfoCardData[];
     graphics?: GraphicData[];
+    description_translations?: {
+        en?: string;
+        es?: string;
+        de?: string;
+    };
     translations: any;
     slug: string;
     category?: string;

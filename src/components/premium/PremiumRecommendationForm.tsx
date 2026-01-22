@@ -41,6 +41,8 @@ export const PremiumRecommendationForm: React.FC<PremiumRecommendationFormProps>
             // Note: Assuming path is clients/{docId}/recommendations
             await addDoc(collection(db, 'clients', clientData.id, 'recommendations'), {
                 ...formData,
+                clientName: clientData.clientName || 'Unknown Business',
+                clientId: clientData.id,
                 createdAt: serverTimestamp(),
             });
             toast({ title: t('recommendationForm.success', 'Recomendación enviada con éxito!') });

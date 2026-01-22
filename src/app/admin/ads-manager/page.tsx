@@ -38,6 +38,7 @@ import Link from 'next/link';
 import AdsForm from './AdsForm';
 import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
+import { ManualWalletTopUpModal } from '@/components/admin/ManualWalletTopUpModal';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
@@ -348,6 +349,19 @@ export default function AdsManagerPage() {
                                         >
                                             <Trash2 className="h-4 w-4" />
                                         </Button>
+                                        <ManualWalletTopUpModal
+                                            clientId={ad.clientId || 'unknown'}
+                                            triggerButton={
+                                                <Button
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    className="text-green-600 hover:text-green-800 hover:bg-green-50"
+                                                    title="Cargar Saldo Manual"
+                                                >
+                                                    <span className="font-bold text-lg">$</span>
+                                                </Button>
+                                            }
+                                        />
                                     </div>
                                 </div>
                             </CardContent>

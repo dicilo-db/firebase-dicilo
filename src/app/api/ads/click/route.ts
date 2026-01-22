@@ -39,6 +39,9 @@ export async function POST(request: NextRequest) {
             console.error('Geo lookup failed:', e);
         }
 
+        // Determine Client ID (from body or fallback to ad document)
+        const finalClientId = clientId || adData?.clientId;
+
         // Atomic increment of clicks/shares AND Cost
         const batch = db.batch();
 
@@ -52,6 +55,17 @@ export async function POST(request: NextRequest) {
                 clicks: FieldValue.increment(1),
                 totalCost: FieldValue.increment(0.05)
             });
+        }
+
+        // DECREMENT CLIENT BUDGET
+        if (finalClientId) {
+            const clientRef = db.collection('clients').doc(finalClientId);
+            batch.update(clientRef, {
+                budget_remaining: FieldValue.increment(-0.05),
+                total_invested: FieldValue.increment(0.05)
+            });
+        } else {
+            console.warn(`Ad Click: No clientId found for adId ${adId}. Budget not deducted.`);
         }
 
         // 2. Log to analyticsEvents
