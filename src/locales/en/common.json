@@ -332,6 +332,8 @@
     "yourUniqueCode": "Your Unique Code",
     "overview": "Overview",
     "myWallet": "My Wallet",
+    "alliesMapNav": "My Interests",
+    "freelancer_nav": "Freelancer",
     "alliesMap": "Allies Map",
     "settings": "Settings",
     "personalData": "Personal Data",
@@ -408,6 +410,13 @@
     "country": "Country",
     "city": "City",
     "communicationPreferences": "Communication Preferences",
+    "alliesMap": {
+      "title": "Allies Map",
+      "noInterestsTitle": "Personalize Your Experience",
+      "noInterestsDesc": "Please choose your interests to enjoy a list of them.",
+      "goToSettings": "Select Interests",
+      "searchPlaceholder": "Search by name..."
+    },
     "wallet": {
       "title": "Dicilo Wallet",
       "personal": "Personal",

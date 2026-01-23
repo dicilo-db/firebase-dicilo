@@ -30,6 +30,7 @@ import FreelancerPromoComposerPage from '@/app/dashboard/freelancer/page';
 import { CommunityView } from './CommunityView';
 import ScannerPro from '../admin/ScannerPro';
 import { StatisticsView } from './freelancer/views/StatisticsView';
+import { AlliesMap } from './AlliesMap';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
@@ -390,15 +391,10 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
                 return <FreelancerPromoComposerPage />;
             case 'map':
                 return (
-                    <div className="flex flex-col items-center justify-center h-[400px] text-center space-y-4">
-                        <div className="p-6 bg-secondary/20 rounded-full">
-                            <Users className="h-12 w-12 text-muted-foreground" />
-                        </div>
-                        <h2 className="text-2xl font-bold">Map Coming Soon</h2>
-                        <p className="text-muted-foreground max-w-sm">
-                            We are working on visualizing all our allied partners on an interactive map. Stay tuned!
-                        </p>
-                    </div>
+                    <AlliesMap
+                        userInterests={formData.interests || []}
+                        onNavigateToSettings={() => setActiveView('settings')}
+                    />
                 );
             case 'settings':
                 return (

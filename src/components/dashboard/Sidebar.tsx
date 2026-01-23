@@ -116,12 +116,12 @@ export function Sidebar({ userData, onViewChange, currentView }: SidebarProps) {
     // Explicitly type the array to avoid discriminated union inference issues
     const navItems: NavItem[] = [
         { id: 'overview', label: t('dashboard.overview'), icon: Home, type: 'view' },
-        { id: 'freelancer', label: 'Freelancer / Representante', icon: Briefcase, type: 'view' },
+        { id: 'freelancer', label: t('dashboard.freelancer_nav'), icon: Briefcase, type: 'view' },
         { id: 'ads-manager', label: 'Ads Manager', icon: Megaphone, type: 'view' },
         { id: 'wallet', label: t('dashboard.myWallet'), icon: Wallet, type: 'view' },
         { id: 'invite', label: t('dashboard.inviteFriends'), icon: Users, type: 'view' },
         // Scanner Pro will be inserted here if allowed
-        { id: 'map', label: t('dashboard.alliesMap'), icon: MapIcon, type: 'view' },
+        { id: 'map', label: t('dashboard.alliesMapNav'), icon: MapIcon, type: 'view' },
         { id: 'settings', label: t('dashboard.settings'), icon: Settings, type: 'view' },
         // Added items from header - NOW VIEWS for SPA
         { id: 'dicicoin', label: 'DiciCoin', icon: Coins, type: 'view' },

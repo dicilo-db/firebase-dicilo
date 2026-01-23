@@ -174,7 +174,8 @@
     "yourUniqueCode": "Tu Código Único",
     "overview": "Resumen",
     "myWallet": "Mi Wallet",
-    "alliesMap": "Mapa de Aliados",
+    "alliesMapNav": "Mis intereses",
+    "freelancer_nav": "Freelancer",
     "settings": "Ajustes",
     "personalData": "Datos Personales",
     "interests": "Intereses",
@@ -247,9 +248,16 @@
     "errorDesc": "No se pudieron guardar los cambios.",
     "copied": "¡Copiado!",
     "codeCopied": "Código copiado al portapapeles.",
-    "country": "País",
-    "city": "Ciudad",
     "communicationPreferences": "Preferencias de Comunicación",
+    "alliesMap": {
+      "title": "Mapa de Aliados",
+      "noInterestsTitle": "Personaliza tu Experiencia",
+      "noInterestsDesc": "Por favor, escoja sus intereses para que disfrute de una lista con los mismos.",
+      "goToSettings": "Seleccionar Intereses",
+      "searchPlaceholder": "Buscar por nombre...",
+      "showAll": "Ver todos de todos modos",
+      "showAllDesc": "Mostrar todos (ignorar mis intereses)"
+    },
     "wallet": {
       "title": "Dicilo Wallet",
       "personal": "Personal",
@@ -946,64 +954,17 @@
       "view_comments_btn": "Ver Comentarios"
     }
   },
-  "community": {
-    "share": "Compartir",
-    "download": "Descargar foto",
-    "share_text": "¡Mira este post de {{user}} en {{neighborhood}} en Dicilo!",
-    "copy_link": "Copiar enlace",
-    "link_copied": "Enlace copiado al portapapeles",
-    "download_success": "Foto descargada",
-    "download_error": "Error al descargar",
-    "your_community": "Tu Comunidad",
-    "neighborhoods_of": "Barrios de",
-    "explore_desc": "Explora lo que sucede en tu barrio y conecta con tus vecinos.",
-    "new_recommendation": "Nueva Recomendación",
-    "share_place": "Comparte un lugar, servicio o experiencia con tus vecinos de {{name}}.",
-    "ranking": {
-      "title": "Top Empresas",
-      "subtitle": "Negocios más recomendados",
-      "no_data": "No hay suficientes datos para el ranking aún."
-    },
-    "barometer": {
-      "title": "Barómetro",
-      "level": {
-        "fire": "¡ON FIRE!",
-        "fire_desc": "El barrio está que arde",
-        "high": "Alta Actividad",
-        "high_desc": "Mucha participación reciente",
-        "medium": "Crecimiento Constante",
-        "medium_desc": "El barrio se está moviendo",
-        "low": "Tranquilo",
-        "low_desc": "Ideal para empezar a publicar"
-      },
-      "index": "Índice",
-      "posts_week": "Posts esta semana",
-      "active_neighbors": "Vecinos activos",
-      "posts": "Posts",
-      "neighbors": "Vecinos"
-    },
-    "feed": {
-      "wall": "Muro Social",
-      "recommendations": "Recomendaciones",
-      "whats_happening": "¿Qué está pasando en {{name}}?",
-      "loading": "Cargando actividad...",
-      "empty": "Aún no hay actividad reciente en {{name}}.",
-      "be_first": "¡Sé el primero en recomendar un lugar!",
-      "recent": "Reciente",
-      "photo_by": "Foto por"
-    },
-    "actions": {
-      "set_favorite": "Marcar como mi Barrio",
-      "is_favorite": "Es mi Barrio"
-    },
-    "post_btn": "Publicar",
-    "search_neighborhoods": "Buscar barrios...",
-    "register_neighborhood": "Registrar Barrio",
-    "register_neighborhood_desc": "¿No encuentras tu barrio? Regístralo aquí para empezar a conectar con tus vecinos.",
-    "register_neighborhood_btn": "Registrar Barrio",
-    "read_in": "Leer en",
-    "show_original": "Ver original",
-    "translate_ai": "Traducir con AI",
-    "translation_error": "Error al traducir"
-  }
+  "actions": {
+    "set_favorite": "Marcar como mi Barrio",
+    "is_favorite": "Es mi Barrio"
+  },
+  "post_btn": "Publicar",
+  "search_neighborhoods": "Buscar barrios...",
+  "register_neighborhood": "Registrar Barrio",
+  "register_neighborhood_desc": "¿No encuentras tu barrio? Regístralo aquí para empezar a conectar con tus vecinos.",
+  "register_neighborhood_btn": "Registrar Barrio",
+  "read_in": "Leer en",
+  "show_original": "Ver original",
+  "translate_ai": "Traducir con AI",
+  "translation_error": "Error al traducir"
 }
