@@ -123,15 +123,35 @@ export default function PrivateUsersPage() {
         fetchUsers();
     }, []);
 
-    const filteredUsers = users.filter(user =>
-        (user.firstName?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-        (user.lastName?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-        (user.email?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-        (user.uniqueCode?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-        (user.country?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-        (user.city?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-        (Array.isArray(user.interests) && user.interests.some((i: string) => i.toLowerCase().includes(searchTerm.toLowerCase())))
-    );
+    // Filters
+    const [filterDate, setFilterDate] = useState<Date | undefined>(undefined);
+    const [filterCountry, setFilterCountry] = useState('');
+    const [filterCity, setFilterCity] = useState('');
+
+    const filteredUsers = users.filter(user => {
+        const matchesSearch =
+            (user.firstName?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+            (user.lastName?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+            (user.email?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+            (user.uniqueCode?.toLowerCase() || '').includes(searchTerm.toLowerCase());
+
+        const matchesCountry = !filterCountry || (user.country?.toLowerCase() || '').includes(filterCountry.toLowerCase());
+        const matchesCity = !filterCity || (user.city?.toLowerCase() || '').includes(filterCity.toLowerCase());
+
+        let matchesDate = true;
+        if (filterDate) {
+            if (!user.createdAt) {
+                matchesDate = false;
+            } else {
+                const userDate = new Date(user.createdAt.seconds * 1000);
+                matchesDate = userDate.getDate() === filterDate.getDate() &&
+                    userDate.getMonth() === filterDate.getMonth() &&
+                    userDate.getFullYear() === filterDate.getFullYear();
+            }
+        }
+
+        return matchesSearch && matchesCountry && matchesCity && matchesDate;
+    });
 
     const csvData = filteredUsers.map(user => ({
         FirstName: user.firstName,
@@ -149,9 +169,9 @@ export default function PrivateUsersPage() {
         <div className="flex min-h-screen flex-col bg-background">
 
             <main className="container mx-auto flex-grow p-8">
-                <div className="mb-8 flex items-center justify-between">
+                <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <h1 className="text-3xl font-bold">{t('common:privateUsersList')}</h1>
-                    <div className="flex gap-2">
+                    <div className="flex flex-wrap gap-2">
                         <Button variant="outline" asChild>
                             <Link href="/admin/dashboard">
                                 <LayoutDashboard className="mr-2 h-4 w-4" />
@@ -216,15 +236,74 @@ export default function PrivateUsersPage() {
                 <Card>
                     <CardHeader>
                         <CardTitle>{t('common:privateUsersList')}</CardTitle>
-                        <div className="flex items-center space-x-2">
-                            <Search className="h-4 w-4 text-muted-foreground" />
-                            <Input
-                                placeholder="Suche nach Name, E-Mail oder Code..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                className="max-w-sm"
-                            />
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-4 pt-4">
+                            {/* Filter: Search */}
+                            <div className="flex flex-col gap-2">
+                                <Label className="text-xs font-semibold">Buscar (Nombre/Email/Code)</Label>
+                                <div className="relative">
+                                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                                    <Input
+                                        placeholder="Buscar..."
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                        className="pl-9"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Filter: Country */}
+                            <div className="flex flex-col gap-2">
+                                <Label className="text-xs font-semibold">{t('common:dashboard.country') || 'Land'}</Label>
+                                <Input
+                                    placeholder="Filter by Country..."
+                                    value={filterCountry}
+                                    onChange={(e) => setFilterCountry(e.target.value)}
+                                />
+                            </div>
+
+                            {/* Filter: City */}
+                            <div className="flex flex-col gap-2">
+                                <Label className="text-xs font-semibold">{t('common:dashboard.city') || 'Stadt'}</Label>
+                                <Input
+                                    placeholder="Filter by City..."
+                                    value={filterCity}
+                                    onChange={(e) => setFilterCity(e.target.value)}
+                                />
+                            </div>
+
+                            {/* Filter: Date */}
+                            <div className="flex flex-col gap-2">
+                                <Label className="text-xs font-semibold">Fecha de Registro</Label>
+                                <Input
+                                    type="date"
+                                    value={filterDate ? filterDate.toISOString().split('T')[0] : ''}
+                                    onChange={(e) => {
+                                        const val = e.target.valueAsDate;
+                                        setFilterDate(val || undefined);
+                                    }}
+                                    className="w-full"
+                                />
+                            </div>
                         </div>
+                        {/* Clear Filters Button */}
+                        {(searchTerm || filterCountry || filterCity || filterDate) && (
+                            <div className="flex justify-end pt-2">
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => {
+                                        setSearchTerm('');
+                                        setFilterCountry('');
+                                        setFilterCity('');
+                                        setFilterDate(undefined);
+                                    }}
+                                    className="text-muted-foreground hover:text-foreground h-8"
+                                >
+                                    <X className="mr-2 h-3 w-3" />
+                                    Limpiar Filtros
+                                </Button>
+                            </div>
+                        )}
                     </CardHeader>
                     <CardContent>
                         {isLoading ? (
