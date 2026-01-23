@@ -699,8 +699,6 @@ const clientSchema = z.object({
     .optional(),
   graphics: z.array(graphicSchema).optional(),
   products: z.array(productSchema).optional(),
-  category: z.string().optional(),
-  subcategory: z.string().optional(),
   neighborhood: z.string().optional(),
   translations: z.string().optional(),
   description_translations: z.object({
@@ -1531,7 +1529,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
 
                     {/* 3. Address (Left) */}
                     <div className="space-y-2">
-                      <Label htmlFor="address">Address</Label>
+                      <Label htmlFor="address">{t('clients.fields.address')}</Label>
                       <div className="flex gap-2">
                         <Input id="address" {...register('address')} placeholder="Calle Principal 123, Madrid" />
                         <Button
@@ -1545,20 +1543,20 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                           ) : (
                             <MapPin className="h-4 w-4" />
                           )}
-                          <span className="ml-2 hidden sm:inline">Locate</span>
+                          <span className="ml-2 hidden sm:inline">{t('clients.fields.locate')}</span>
                         </Button>
                       </div>
                     </div>
 
                     {/* 4. Phone (Right) - Moved from bottom */}
                     <div className="space-y-2">
-                      <Label htmlFor="phone">Phone</Label>
+                      <Label htmlFor="phone">{t('clients.fields.phone')}</Label>
                       <Input id="phone" {...register('phone')} placeholder="+34 600 000 000" />
                     </div>
 
                     {/* 5. Description (Left) */}
                     <div className="space-y-2">
-                      <Label>Description & Translations</Label>
+                      <Label>{t('clients.fields.descriptionTranslations')}</Label>
                       <Tabs defaultValue="es" className="w-full">
                         <TabsList className="grid w-full grid-cols-3">
                           <TabsTrigger value="es">🇪🇸 ES</TabsTrigger>
@@ -1674,7 +1672,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
 
                     {/* Neighborhood (Left) - New */}
                     <div className="space-y-2">
-                      <Label>Neighborhood (Kiez)</Label>
+                      <Label>{t('clients.fields.neighborhood')}</Label>
                       <Controller
                         control={control}
                         name="neighborhood"
@@ -1704,7 +1702,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
 
                     {/* 10. Public Email (Right) */}
                     <div className="space-y-2">
-                      <Label htmlFor="email">Public Email</Label>
+                      <Label htmlFor="email">{t('clients.fields.publicEmail')}</Label>
                       <Input id="email" {...register('email')} placeholder="contact@example.com" />
                     </div>
 
@@ -1832,7 +1830,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="bodyData.body2BackgroundColor">
-                          Hintergrundfarbe de body 2
+                          {t('clients.fields.body2BackgroundColor')}
                         </Label>
                         <Input
                           id="bodyData.body2BackgroundColor"
@@ -3024,13 +3022,13 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                 type="button"
                 onClick={() => router.push('/admin/clients')}
               >
-                {t('common.cancel')}
+                {t('cancel', { ns: 'common' })}
               </Button>
               <Button type="submit" disabled={isSubmitting}>
                 {isSubmitting && (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 )}
-                {t('common.save')}
+                {t('save', { ns: 'common' })}
               </Button>
             </CardFooter>
           </Card>
@@ -3069,7 +3067,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+            <AlertDialogCancel>{t('cancel', { ns: 'common' })}</AlertDialogCancel>
             <AlertDialogAction onClick={handleDowngrade} className="bg-red-600 hover:bg-red-700">
               {isDemoting ? t('clients.edit.dangerZone.buttonProcessing') : t('clients.edit.dangerZone.dialog.confirm')}
             </AlertDialogAction>

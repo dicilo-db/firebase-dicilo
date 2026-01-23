@@ -485,6 +485,13 @@
       "translations": "Translations"
     },
     "fields": {
+      "address": "Address",
+      "locate": "Locate",
+      "phone": "Phone",
+      "descriptionTranslations": "Description & Translations",
+      "publicEmail": "Public Email",
+      "neighborhood": "Neighborhood (Kiez)",
+      "body2BackgroundColor": "Body 2 Background Color",
       "title": "Title",
       "content": "Content",
       "clientName": "Client Name",

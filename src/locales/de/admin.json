@@ -484,6 +484,13 @@
       "coupons": "Coupons"
     },
     "fields": {
+      "address": "Adresse",
+      "locate": "Standort finden",
+      "phone": "Telefon",
+      "descriptionTranslations": "Beschreibung & Übersetzungen",
+      "publicEmail": "Öffentliche E-Mail",
+      "neighborhood": "Kiez (Nachbarschaft)",
+      "body2BackgroundColor": "Hintergrundfarbe Body 2",
       "title": "Titel",
       "content": "Inhalt",
       "clientName": "Kundenname",

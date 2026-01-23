@@ -493,6 +493,13 @@
       "translations": "Traducciones"
     },
     "fields": {
+      "address": "Dirección",
+      "locate": "Ubicar",
+      "phone": "Teléfono",
+      "descriptionTranslations": "Descripción y Traducciones",
+      "publicEmail": "Email Público",
+      "neighborhood": "Barrio (Kiez)",
+      "body2BackgroundColor": "Color de fondo Body 2",
       "title": "Título",
       "content": "Contenido",
       "clientName": "Nombre del Cliente",
