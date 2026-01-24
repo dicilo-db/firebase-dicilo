@@ -13,6 +13,7 @@ interface DiciloMapProps {
   businesses: Business[];
   selectedBusinessId?: string | null;
   onMarkerDragEnd?: (newCoords: [number, number]) => void;
+  onMarkerClick?: (id: string) => void;
 }
 
 const DEFAULT_CENTER: LatLngTuple = [50.1109, 8.6821];
@@ -169,8 +170,8 @@ const createPopupContent = (
   content += `<div style="display: flex; align-items: flex-start; gap: 10px;">
         <span style="font-size: 15px; min-width: 18px;">📍</span> 
         <div style="flex: 1;">
-            <span style="font-weight: 600; color: #333;">${business.location}</span>
-            ${business.address ? `<div style="color: #666; font-size: 12px; margin-top: 2px;">${business.address}</div>` : ''}
+            <span style="font-weight: 600; color: #333;">${business.location || business.address || ''}</span>
+            ${(business.address && business.location && business.address !== business.location) ? `<div style="color: #666; font-size: 12px; margin-top: 2px;">${business.address}</div>` : ''}
         </div>
     </div>`;
 
@@ -269,6 +270,7 @@ const DiciloMap: React.FC<DiciloMapProps> = ({
   businesses,
   selectedBusinessId,
   onMarkerDragEnd,
+  onMarkerClick,
 }) => {
   const { t, i18n } = useTranslation('common');
   const locale = i18n.language?.split('-')[0] || 'de';
@@ -368,10 +370,17 @@ const DiciloMap: React.FC<DiciloMapProps> = ({
             onMarkerDragEnd([newLatLng.lat, newLatLng.lng]);
           });
         }
+
+        if (onMarkerClick) {
+          marker.on('click', () => {
+            onMarkerClick(business.id);
+          });
+        }
+
         markersRef.current.set(business.id, marker);
       }
     });
-  }, [businessesWithCoords, onMarkerDragEnd, t, locale]);
+  }, [businessesWithCoords, onMarkerDragEnd, onMarkerClick, t, locale]);
 
   useEffect(() => {
     const map = mapRef.current;

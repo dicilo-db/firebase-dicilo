@@ -19,7 +19,7 @@ interface DashboardLayoutProps {
 
 export function DashboardLayout({ userData, currentView, onViewChange, children }: DashboardLayoutProps) {
     const [isMobileOpen, setIsMobileOpen] = useState(false);
-    const { signOut, user } = useAuth();
+    const { user } = useAuth();
 
     // Check if user is admin (simple check, or use useAuthGuard logic if available)
     // For now assuming userData might have role or we check checks
@@ -98,11 +98,11 @@ export function DashboardLayout({ userData, currentView, onViewChange, children 
 
                 <main className={cn(
                     "flex-1 overflow-auto",
-                    currentView === 'freelancer' ? "p-0" : "p-4 md:p-8"
+                    (currentView === 'freelancer' || currentView === 'map') ? "!p-0" : "p-4 md:p-8"
                 )}>
                     <div className={cn(
                         "mx-auto",
-                        currentView === 'freelancer' ? "h-full max-w-none" : "max-w-5xl"
+                        (currentView === 'freelancer' || currentView === 'map') ? "h-full !max-w-none !w-full" : "max-w-5xl"
                     )}>
                         {children}
                     </div>

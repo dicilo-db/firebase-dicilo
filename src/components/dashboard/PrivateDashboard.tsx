@@ -393,6 +393,7 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
                 return (
                     <AlliesMap
                         userInterests={formData.interests || []}
+                        userId={user.uid}
                         onNavigateToSettings={() => setActiveView('settings')}
                     />
                 );
