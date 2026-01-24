@@ -26,6 +26,12 @@ import { RecommendationForm } from './RecommendationForm';
 import { useTranslation } from 'react-i18next';
 import { Header } from '@/components/header';
 import { AdBanner } from '@/components/AdBanner';
+import { useAuth } from '@/context/AuthContext';
+import { getFirestore, doc, getDoc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
+import { app } from '@/lib/firebase';
+import { useRouter } from 'next/navigation';
+import { ToastAction } from '@/components/ui/toast';
+import { Heart } from 'lucide-react';
 
 import { BasicCard } from './cards/BasicCard';
 import { PremiumCard } from './cards/PremiumCard';
@@ -143,7 +149,65 @@ export default function DiciloSearchPage({
   const { toast } = useToast();
   const { t, i18n } = useTranslation('common');
   const locale = i18n.language;
+  const { user } = useAuth();
+  const router = useRouter();
+  const db = getFirestore(app);
   const [isMounted, setIsMounted] = useState(false);
+  const [favorites, setFavorites] = useState<string[]>([]);
+
+  // Load favorites
+  useEffect(() => {
+    const loadFavorites = async () => {
+      if (!user?.uid) {
+        setFavorites([]);
+        return;
+      }
+      try {
+        const docRef = doc(db, 'private_profiles', user.uid);
+        const snap = await getDoc(docRef);
+        if (snap.exists()) {
+          setFavorites(snap.data().favorites || []);
+        }
+      } catch (error) {
+        console.error("Error loading favorites:", error);
+      }
+    };
+    loadFavorites();
+  }, [user, db]);
+
+  const toggleFavorite = async (e: React.MouseEvent, businessId: string) => {
+    e.stopPropagation(); // Prevent card click
+    if (!user) {
+      toast({
+        title: t('auth.requiredTitle', "Cuenta requerida"),
+        description: t('auth.favoritesLoginDesc', "Por favor, regístrate en Dicilo para guardar favoritos."),
+        action: (
+          <ToastAction altText="Registrarse" onClick={() => router.push('/register')}>
+            Registrarse
+          </ToastAction>
+        ),
+      });
+      return;
+    }
+
+    const isFav = favorites.includes(businessId);
+    // Optimistic Update
+    setFavorites(prev => isFav ? prev.filter(id => id !== businessId) : [...prev, businessId]);
+
+    try {
+      const userRef = doc(db, 'private_profiles', user.uid);
+      if (isFav) {
+        await updateDoc(userRef, { favorites: arrayRemove(businessId) });
+      } else {
+        await updateDoc(userRef, { favorites: arrayUnion(businessId) });
+      }
+    } catch (err) {
+      console.error("Fav error:", err);
+      toast({ title: "Error", description: "No se pudo actualizar.", variant: "destructive" });
+      // Rollback
+      setFavorites(prev => isFav ? [...prev, businessId] : prev.filter(id => id !== businessId));
+    }
+  };
 
   const [isGeocoding, setIsGeocoding] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -714,12 +778,24 @@ export default function DiciloSearchPage({
                     <div
                       onClick={() => handleBusinessCardClick(business)}
                       className={cn(
-                        'w-full cursor-pointer overflow-hidden rounded-xl bg-card p-4 shadow-md transition-all duration-200',
+                        'w-full cursor-pointer overflow-hidden rounded-xl bg-card p-4 shadow-md transition-all duration-200 relative', // Ensure relative for absolute child
                         selectedBusinessId === business.id
                           ? 'border-2 border-primary ring-2 ring-primary/20'
                           : 'border'
                       )}
                     >
+                      {/* FAVORITE BUTTON */}
+                      <button
+                        onClick={(e) => toggleFavorite(e, business.id)}
+                        className="absolute bottom-4 right-4 z-10 p-2 rounded-full hover:bg-slate-100 transition-colors"
+                      >
+                        <Heart
+                          className={cn(
+                            "h-5 w-5 transition-all duration-300",
+                            favorites.includes(business.id) ? "fill-red-500 text-red-500 scale-110" : "text-slate-400 hover:text-slate-600"
+                          )}
+                        />
+                      </button>
                       <div className="flex items-start gap-4">
                         <Image
                           className="h-16 w-16 rounded-full border-2 border-green-100 object-cover bg-green-100 p-1"
@@ -797,8 +873,6 @@ export default function DiciloSearchPage({
             zoom={mapZoom}
             businesses={filteredBusinesses}
             selectedBusinessId={selectedBusinessId}
-            t={t}
-            locale={locale}
           />
         </div>
       )}
