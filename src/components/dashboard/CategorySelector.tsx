@@ -8,7 +8,7 @@ interface CategorySelectorProps {
     onChange: (categories: string[]) => void;
 }
 
-const CATEGORIES = [
+export const CATEGORIES = [
     'Consulting',
     'Education',
     'Finance',

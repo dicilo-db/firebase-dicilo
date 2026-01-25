@@ -9,10 +9,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { MapPin, Search, Heart, Star } from 'lucide-react';
+import { MapPin, Search, Heart, Star, Ticket } from 'lucide-react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
+import { getAllCoupons } from '@/app/actions/coupons';
 
 const DiciloMap = dynamic(() => import('@/components/dicilo-map'), {
     ssr: false,
@@ -38,16 +39,18 @@ export function AlliesMap({ userInterests, userId, onNavigateToSettings }: Allie
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
+    // Coupon Search Logic
+    const [showCouponsOnly, setShowCouponsOnly] = useState(false);
+    const [couponBusinessIds, setCouponBusinessIds] = useState<string[]>([]);
+    const [isLoadingCoupons, setIsLoadingCoupons] = useState(false);
+
     useEffect(() => {
         const fetchData = async () => {
             setIsLoading(true);
             try {
                 // 1. Cargar favoritos del usuario
                 if (userId) {
-                    const userDoc = await getDoc(doc(db, 'private_profiles', userId)); // Note: Usually 'private_profiles' or 'users' depending on DB schema. Assuming 'users' as per code provided.
-                    // If the user uses 'private_profiles' collection in other parts, we might need to check that.
-                    // The PrivateDashboard uses 'private_profiles'. 
-                    // However, I must stick to the USER PROVIDED code.
+                    const userDoc = await getDoc(doc(db, 'private_profiles', userId));
                     if (userDoc.exists()) setFavoriteIds(userDoc.data().favorites || []);
                 }
 
@@ -70,8 +73,7 @@ export function AlliesMap({ userInterests, userId, onNavigateToSettings }: Allie
                         ...data,
                         name: data.clientName || data.name || 'Empresa sin nombre',
                         position: coords,
-                        coords: coords, // IMPORTANT: DiciloMap expects 'coords', not just 'position'
-                        // Normalizamos la categoría para que el match no falle por mayúsculas o espacios
+                        coords: coords,
                         categoryNormalized: String(data.category || '').toLowerCase().trim()
                     };
                 });
@@ -85,9 +87,38 @@ export function AlliesMap({ userInterests, userId, onNavigateToSettings }: Allie
         fetchData();
     }, [userId]);
 
+    // Función para manejar el filtro de cupones
+    const toggleCouponFilter = async () => {
+        const newValue = !showCouponsOnly;
+        setShowCouponsOnly(newValue);
+
+        if (newValue && couponBusinessIds.length === 0) {
+            setIsLoadingCoupons(true);
+            toast({ description: "Buscando aliados con cupones activos..." });
+            try {
+                const res = await getAllCoupons({ status: 'active' });
+                if (res.success && res.coupons) {
+                    // Extract unique company IDs from active coupons
+                    const ids = Array.from(new Set(res.coupons.map((c: any) => c.companyId)));
+                    setCouponBusinessIds(ids as string[]);
+                    if (ids.length === 0) {
+                        toast({ description: "No se encontraron cupones activos en este momento." });
+                    } else {
+                        toast({ description: `Se encontraron ${ids.length} aliados con ofertas.` });
+                    }
+                }
+            } catch (error) {
+                console.error("Error fetching coupons:", error);
+                toast({ title: "Error", description: "No se pudieron cargar los cupones.", variant: "destructive" });
+            } finally {
+                setIsLoadingCoupons(false);
+            }
+        }
+    };
+
     // Función para dar "Me gusta"
     const toggleFavorite = async (e: React.MouseEvent, businessId: string) => {
-        e.stopPropagation(); // Evita centrar el mapa al dar click al corazón
+        e.stopPropagation();
         if (!userId) return;
 
         const isFavorite = favoriteIds.includes(businessId);
@@ -102,8 +133,6 @@ export function AlliesMap({ userInterests, userId, onNavigateToSettings }: Allie
                 setFavoriteIds(prev => [...prev, businessId]);
             }
         } catch (error) {
-            // It might fail if the doc doesn't exist in 'users' but in 'private_profiles'.
-            // I will implement as requested.
             console.error(error);
             toast({ title: "Error", description: "No se pudo guardar en favoritos." });
         }
@@ -112,14 +141,12 @@ export function AlliesMap({ userInterests, userId, onNavigateToSettings }: Allie
     const getCategoryName = (identifier: string) => {
         if (!identifier) return '';
         const norm = identifier.toLowerCase().trim();
-        // Buscar coincidencia en CUALQUIER campo (ID, EN, ES, DE)
         const cat = categoriesData.find(c =>
             c.id.toLowerCase() === norm ||
             (c.name?.en && c.name.en.toLowerCase() === norm) ||
             (c.name?.es && c.name.es.toLowerCase() === norm) ||
             (c.name?.de && c.name.de.toLowerCase() === norm)
         );
-        // Devolver siempre español si existe
         return cat?.name?.es || cat?.name?.en || identifier;
     };
 
@@ -128,11 +155,20 @@ export function AlliesMap({ userInterests, userId, onNavigateToSettings }: Allie
         const interestsNormalized = userInterests.map(i => i.toLowerCase().trim());
 
         return allBusinesses.filter(b => {
-            // Regla de Oro: Mostrar si está en intereses O si es favorito
-            const isMatchInterest = interestsNormalized.includes(b.categoryNormalized);
-            const isFavorite = favoriteIds.includes(b.id);
+            // 0. Filtro de Cupones (Prioridad Alta)
+            if (showCouponsOnly) {
+                if (!couponBusinessIds.includes(b.id)) return false;
+            }
 
-            if (!isMatchInterest && !isFavorite) return false;
+            // Regla de Oro: Mostrar si está en intereses O si es favorito (Solo si NO estamos filtrando por cupones exclusivamente)
+            // Si estamos en modo cupones, ya filtramos arriba. Si queremos que respete intereses DENTRO de cupones, descomentar logica.
+            // Asumo que "Buscar Cupones" es un modo global "Ver ofertas".
+
+            if (!showCouponsOnly) {
+                const isMatchInterest = interestsNormalized.includes(b.categoryNormalized);
+                const isFavorite = favoriteIds.includes(b.id);
+                if (!isMatchInterest && !isFavorite) return false;
+            }
 
             // Filtros adicionales de UI
             if (selectedCategory !== 'all' && b.categoryNormalized !== selectedCategory.toLowerCase()) return false;
@@ -141,12 +177,11 @@ export function AlliesMap({ userInterests, userId, onNavigateToSettings }: Allie
             }
             return true;
         });
-    }, [allBusinesses, userInterests, favoriteIds, selectedCategory, searchTerm]);
+    }, [allBusinesses, userInterests, favoriteIds, selectedCategory, searchTerm, showCouponsOnly, couponBusinessIds]);
 
     if (isLoading) return <div className="h-screen w-full flex items-center justify-center">Cargando ecosistema Dicilo...</div>;
 
     return (
-        /* Layout Ajustado: Ocupar 100% del contenedor padre (DashboardLayout main) */
         <div className="flex flex-col md:flex-row h-full w-full bg-white overflow-hidden relative">
 
             {/* LISTA LATERAL */}
@@ -163,25 +198,50 @@ export function AlliesMap({ userInterests, userId, onNavigateToSettings }: Allie
                         className="bg-white"
                     />
 
-                    <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                        <SelectTrigger className="bg-white">
-                            <SelectValue placeholder="Filtrar por interés" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="all">Todos mis intereses</SelectItem>
-                            {userInterests.map(cat => (
-                                <SelectItem key={cat} value={cat}>{getCategoryName(cat)}</SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
+                    <div className="flex gap-2">
+                        <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                            <SelectTrigger className="bg-white flex-1">
+                                <SelectValue placeholder="Filtrar por interés" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="all">Todos mis intereses</SelectItem>
+                                {userInterests.map(cat => (
+                                    <SelectItem key={cat} value={cat}>{getCategoryName(cat)}</SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+
+                    {/* BUTTON RESTORED */}
+                    <Button
+                        variant={showCouponsOnly ? "default" : "secondary"}
+                        className={cn(
+                            "w-full shadow-sm transition-all",
+                            showCouponsOnly
+                                ? "bg-gradient-to-r from-amber-500 to-orange-600 text-white hover:from-amber-600 hover:to-orange-700"
+                                : "bg-white border hover:bg-slate-50 text-slate-700"
+                        )}
+                        onClick={toggleCouponFilter}
+                        disabled={isLoadingCoupons}
+                    >
+                        <Ticket className={cn("mr-2 h-4 w-4", showCouponsOnly && "fill-current")} />
+                        {isLoadingCoupons ? "Buscando..." : (showCouponsOnly ? "Viendo Ofertas Activas" : "Ticket / Cupones")}
+                    </Button>
+
                 </div>
 
                 <ScrollArea className="flex-1">
                     <div className="p-4 space-y-3">
                         {filteredBusinesses.length === 0 && (
                             <div className="text-center p-8 text-slate-400">
-                                <p>No hay empresas que coincidan con tus intereses actuales.</p>
-                                <Button variant="link" onClick={onNavigateToSettings}>Ajustar mis intereses</Button>
+                                {showCouponsOnly ? (
+                                    <p>No se encontraron aliados con cupones activos.</p>
+                                ) : (
+                                    <>
+                                        <p>No hay empresas que coincidan con tus intereses actuales.</p>
+                                        <Button variant="link" onClick={onNavigateToSettings}>Ajustar mis intereses</Button>
+                                    </>
+                                )}
                             </div>
                         )}
                         {filteredBusinesses.map(b => (
@@ -190,7 +250,6 @@ export function AlliesMap({ userInterests, userId, onNavigateToSettings }: Allie
                                 onClick={() => {
                                     setMapCenter(b.position);
                                     setSelectedBusinessId(b.id);
-                                    // Feedback visual de selección
                                     toast({ description: `Ubicando: ${b.name}` });
                                 }}
                                 className={cn(
@@ -211,7 +270,11 @@ export function AlliesMap({ userInterests, userId, onNavigateToSettings }: Allie
                                     )}
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                    <h4 className="font-bold truncate pr-6">{b.name}</h4>
+                                    <h4 className="font-bold truncate pr-6 flex items-center gap-2">
+                                        {b.name}
+                                        {/* Badge de Oferta si aplica */}
+                                        {showCouponsOnly && <Ticket className="h-3 w-3 text-amber-500 fill-amber-500" />}
+                                    </h4>
                                     <p className="text-xs text-primary font-semibold">{getCategoryName(b.category)}</p>
                                 </div>
                                 <button

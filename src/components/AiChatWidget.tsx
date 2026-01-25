@@ -173,7 +173,7 @@ export function AiChatWidget() {
     };
 
     return (
-        <div className="fixed bottom-4 right-4 z-40 flex flex-col items-end gap-2">
+        <div className="fixed bottom-4 right-4 z-[9999] flex flex-col items-end gap-2">
             {isOpen && (
                 <Card className="w-[calc(100vw-2rem)] sm:w-[350px] h-[80vh] sm:h-[500px] flex flex-col shadow-xl border-primary/20 animate-in slide-in-from-bottom-10 fade-in duration-200">
                     <CardHeader className="flex flex-row items-center justify-between p-4 border-b bg-primary/5">

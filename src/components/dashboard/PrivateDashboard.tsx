@@ -17,7 +17,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Copy, Share2, Gift, Users, Heart, Settings, Star, CreditCard, Info, Download, QrCode, Coins } from 'lucide-react';
-import { CategorySelector } from './CategorySelector';
+import { CategorySelector, CATEGORIES } from './CategorySelector';
 import { useTranslation } from 'react-i18next';
 import { DashboardLayout } from './DashboardLayout';
 import { WalletSection } from './WalletSection';
@@ -260,7 +260,11 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
                                     <Heart className="h-4 w-4 text-muted-foreground" />
                                 </CardHeader>
                                 <CardContent>
-                                    <div className="text-2xl font-bold">{formData.interests?.length || 0}</div>
+                                    <div className="text-2xl font-bold">
+                                        {formData.interests
+                                            ? [...new Set(formData.interests)].filter((i: any) => CATEGORIES.includes(i)).length
+                                            : 0}
+                                    </div>
                                     <p className="text-xs text-muted-foreground">
                                         {t('dashboard.yourInterestsDesc', 'Select categories that interest you.')}
                                     </p>
