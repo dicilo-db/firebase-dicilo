@@ -640,12 +640,17 @@ export default function EditBusinessPage() {
                   id: 'edit-marker',
                   coords: coords as [number, number],
                   name: getValues('name'),
+                  category: getValues('category'),
+                  description: getValues('description'),
+                  location: getValues('location') || '',
+                  imageUrl: getValues('imageUrl') || '',
+                  imageHint: getValues('imageHint') || '',
                 },
               ]}
               selectedBusinessId="edit-marker"
               onMarkerDragEnd={handleMapDragEnd}
               zoom={15}
-              t={t}
+
             />
           )}
         </div>

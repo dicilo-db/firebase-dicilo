@@ -1286,7 +1286,10 @@ export default function EditBusinessPage() {
                   name: getValues('name'),
                   coords: coords as [number, number],
                   category: getValues('category'),
-                  location: getValues('location'),
+                  description: getValues('description'),
+                  imageUrl: getValues('imageUrl') || '',
+                  imageHint: getValues('imageHint') || '',
+                  location: getValues('location') || '',
                   email: getValues('email'),
                   address: getValues('address'),
                   phone: getValues('phone'),
@@ -1297,7 +1300,7 @@ export default function EditBusinessPage() {
               ]}
               selectedBusinessId={id}
               onMarkerDragEnd={handleMapDragEnd}
-              t={t}
+
             />
           ) : (
             <div className="flex h-full w-full flex-col items-center justify-center p-6 text-center text-muted-foreground">

@@ -26,7 +26,8 @@ import { ArrowLeft, Loader2, LocateFixed } from 'lucide-react';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { Skeleton } from '@/components/ui/skeleton';
-import { isValidUrl } from '@/lib/utils';
+import { cn, isValidUrl } from '@/lib/utils';
+
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { BERLIN_NEIGHBORHOODS, HAMBURG_NEIGHBORHOODS } from '@/data/neighborhoods';
 import {
@@ -639,6 +640,11 @@ export default function NewBusinessPage() {
                     id: 'new-marker',
                     coords: coords as [number, number],
                     name: getValues('name'),
+                    category: getValues('category'),
+                    description: getValues('description'),
+                    location: getValues('location') || '',
+                    imageUrl: getValues('imageUrl') || '',
+                    imageHint: getValues('imageHint') || '',
                   },
                 ]
                 : []
@@ -646,7 +652,7 @@ export default function NewBusinessPage() {
             selectedBusinessId={coords ? 'new-marker' : null}
             onMarkerDragEnd={handleMapDragEnd}
             zoom={coords ? 15 : 12}
-            t={t}
+
           />
         </div>
       </div>
