@@ -35,11 +35,10 @@ interface CouponFormProps {
     onClose: () => void;
     onSuccess: () => void;
     category: string; // Pre-filled category
-    fixedCompanyId?: string;
-    fixedCompanyName?: string;
+    initialData?: any; // For editing
 }
 
-export function CouponForm({ isOpen, onClose, onSuccess, category, fixedCompanyId, fixedCompanyName }: CouponFormProps) {
+export function CouponForm({ isOpen, onClose, onSuccess, category, fixedCompanyId, fixedCompanyName, initialData }: CouponFormProps) {
     const { t } = useTranslation('admin');
     const { toast } = useToast();
     const [isLoading, setIsLoading] = useState(false);
@@ -70,26 +69,46 @@ export function CouponForm({ isOpen, onClose, onSuccess, category, fixedCompanyI
 
     const discountType = form.watch('discountType');
 
-    // Reset when opening
+    // Reset or Load Initial Data when opening
     useEffect(() => {
         if (isOpen) {
-            form.reset({
-                category,
-                startDate: new Date().toISOString().split('T')[0],
-                endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-                country: 'Deutschland',
-                city: '',
-                companyId: fixedCompanyId || '',
-                companyName: fixedCompanyName || '',
-                title: '',
-                description: '',
-                discountType: 'text',
-                discountValue: ''
-            });
-            setSearchTerm('');
-            setSearchResults([]);
+            if (initialData) {
+                // Formatting dates if necessary (removing T if exists)
+                const start = initialData.startDate ? new Date(initialData.startDate).toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
+                const end = initialData.endDate ? new Date(initialData.endDate).toISOString().split('T')[0] : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+
+                form.reset({
+                    companyId: initialData.companyId || fixedCompanyId,
+                    companyName: initialData.companyName || fixedCompanyName,
+                    category: initialData.category || category,
+                    title: initialData.title || '',
+                    description: initialData.description || '',
+                    startDate: start,
+                    endDate: end,
+                    country: initialData.country || 'Deutschland',
+                    city: initialData.city || '',
+                    discountType: initialData.discountType || 'text',
+                    discountValue: initialData.discountValue || ''
+                });
+            } else {
+                form.reset({
+                    category,
+                    startDate: new Date().toISOString().split('T')[0],
+                    endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+                    country: 'Deutschland',
+                    city: '',
+                    companyId: fixedCompanyId || '',
+                    companyName: fixedCompanyName || '',
+                    title: '',
+                    description: '',
+                    discountType: 'text',
+                    discountValue: ''
+                });
+                setSearchTerm('');
+                setSearchResults([]);
+            }
         }
-    }, [isOpen, category, form, fixedCompanyId, fixedCompanyName]);
+    }, [isOpen, category, form, fixedCompanyId, fixedCompanyName, initialData]);
 
     // Handle outside click to close results
     useEffect(() => {
@@ -174,10 +193,12 @@ export function CouponForm({ isOpen, onClose, onSuccess, category, fixedCompanyI
                 className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto"
                 onKeyDown={handleKeyDown}
             >
+
+            >
                 <DialogHeader>
-                    <DialogTitle>{t('contracts.coupons.createTitle', 'Crear Nuevo Cupón')}</DialogTitle>
+                    <DialogTitle>{initialData ? t('contracts.coupons.editTitle', 'Editar Cupón') : t('contracts.coupons.createTitle', 'Crear Nuevo Cupón')}</DialogTitle>
                     <DialogDescription>
-                        {t('contracts.coupons.createDescription', { category })}
+                        {initialData ? 'Edita los detalles para actualizar o reactivar este cupón.' : t('contracts.coupons.createDescription', { category })}
                     </DialogDescription>
                 </DialogHeader>
 
@@ -423,7 +444,7 @@ export function CouponForm({ isOpen, onClose, onSuccess, category, fixedCompanyI
                                 {t('contracts.coupons.cancelButton', 'Cancelar')}
                             </Button>
                             <Button type="button" onClick={handleManualSubmit} disabled={isLoading}>
-                                {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : t('contracts.coupons.createButton', 'Crear Cupón')}
+                                {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : (initialData ? 'Guardar Cambios' : t('contracts.coupons.createButton', 'Crear Cupón'))}
                             </Button>
                         </DialogFooter>
                     </div>

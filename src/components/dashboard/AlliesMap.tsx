@@ -58,9 +58,22 @@ export function AlliesMap({ userInterests, userId, onNavigateToSettings }: Allie
                 const catSnapshot = await getDocs(collection(db, 'categories'));
                 setCategoriesData(catSnapshot.docs.map(d => ({ id: d.id, ...d.data() })));
 
-                // 3. Cargar Clientes con limpieza de datos profunda
-                const snapshot = await getDocs(collection(db, 'clients'));
-                const results = snapshot.docs.map(doc => {
+                // 3. Cargar Clientes y Cupones en paralelo
+                const [clientSnapshot, couponRes] = await Promise.all([
+                    getDocs(collection(db, 'clients')),
+                    getAllCoupons({ status: 'active' })
+                ]);
+
+                // Map Coupons by CompanyId
+                const couponsByCompany: Record<string, any[]> = {};
+                if (couponRes.success && couponRes.coupons) {
+                    couponRes.coupons.forEach((c: any) => {
+                        if (!couponsByCompany[c.companyId]) couponsByCompany[c.companyId] = [];
+                        couponsByCompany[c.companyId].push(c);
+                    });
+                }
+
+                const results = clientSnapshot.docs.map(doc => {
                     const data = doc.data();
                     let coords: [number, number] = [51.505, -0.09]; // Fallback
                     if (data.coordinates) {
@@ -74,7 +87,8 @@ export function AlliesMap({ userInterests, userId, onNavigateToSettings }: Allie
                         name: data.clientName || data.name || 'Empresa sin nombre',
                         position: coords,
                         coords: coords,
-                        categoryNormalized: String(data.category || '').toLowerCase().trim()
+                        categoryNormalized: String(data.category || '').toLowerCase().trim(),
+                        activeCoupons: couponsByCompany[doc.id] || []
                     };
                 });
                 setAllBusinesses(results);
@@ -290,7 +304,7 @@ export function AlliesMap({ userInterests, userId, onNavigateToSettings }: Allie
             </div>
 
             {/* MAPA FULL WIDTH */}
-            <div className="flex-1 h-full w-full relative">
+            <div className="flex-1 h-full w-full relative z-0">
                 <DiciloMap
                     center={mapCenter}
                     zoom={14}

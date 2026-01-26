@@ -243,6 +243,40 @@ const createPopupContent = (
       ">${t('businessCard.currentOffer')}</a>`;
   }
 
+  // Coupons Section
+  if (business.activeCoupons && business.activeCoupons.length > 0) {
+    content += `<div style="margin-bottom: 20px; border-top: 1px dashed #e5e7eb; padding-top: 16px;">`;
+    content += `<div style="font-size: 11px; font-weight: 700; color: #d97706; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px;">${t('mapPopup.activeCoupons', 'Active Coupons')}</div>`;
+
+    business.activeCoupons.forEach(coupon => {
+      const discountDisplay = coupon.discountType === 'percent' ? `-${coupon.discountValue}%` :
+        coupon.discountType === 'euro' ? `-${coupon.discountValue}€` :
+          'OFFER';
+
+      content += `<div style="
+            background: #fffbeb; 
+            border: 1px dashed #f59e0b; 
+            border-radius: 6px; 
+            padding: 10px; 
+            margin-bottom: 8px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+        ">`;
+      content += `<div style="flex: 1; margin-right: 8px;">
+            <div style="font-size: 13px; font-weight: 700; color: #92400e; line-height: 1.2;">${coupon.title}</div>
+            <div style="font-size: 10px; color: #b45309; margin-top: 2px;">${coupon.description ? coupon.description.substring(0, 50) + (coupon.description.length > 50 ? '...' : '') : ''}</div>
+        </div>`;
+      content += `<div style="text-align: right;">
+            <div style="font-size: 14px; font-weight: 800; color: #d97706;">${discountDisplay}</div>
+            <div style="font-size: 10px; font-family: monospace; background: #fff; padding: 2px 4px; border-radius: 3px; border: 1px solid #fcd34d; margin-top: 2px; color: #78350f;">${coupon.code}</div>
+        </div>`;
+      content += `</div>`;
+    });
+
+    content += `</div>`;
+  }
+
   content += `</div>`; // End buttons
   content += `</div></div>`; // End body & container
 

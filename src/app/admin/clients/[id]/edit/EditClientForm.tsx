@@ -2996,6 +2996,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                     companyId={id}
                     companyName={watch('clientName')}
                     category={watch('category') || ''}
+                    clientLogoUrl={watch('clientLogoUrl') || ''}
                   />
                 </TabsContent>
 

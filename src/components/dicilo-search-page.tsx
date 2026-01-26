@@ -69,6 +69,7 @@ export interface Business {
     es?: string;
     de?: string;
   };
+  activeCoupons?: any[];
 }
 
 export interface Ad {
