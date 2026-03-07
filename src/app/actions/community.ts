@@ -71,16 +71,22 @@ export async function createPostAction(prevState: any, formData: FormData) {
 
                         if (type && allowedMimes.includes(type.mime)) {
                             contentType = type.mime;
-                            // Try Sharp Optimization
-                            try {
-                                const sharp = (await import('sharp')).default;
-                                finalBuffer = await sharp(fileBuffer)
-                                    .resize({ width: 1200, withoutEnlargement: true })
-                                    .webp({ quality: 80 })
-                                    .toBuffer();
-                                contentType = 'image/webp';
-                            } catch (sharpError) {
-                                console.warn("Sharp optimization failed:", sharpError);
+                            
+                            // Skip sharp if already optimized WebP (efficiency)
+                            if (contentType === 'image/webp') {
+                                // Already optimized by client, move to upload
+                            } else {
+                                // Try Sharp Optimization for other formats
+                                try {
+                                    const sharp = (await import('sharp')).default;
+                                    finalBuffer = await sharp(fileBuffer)
+                                        .resize({ width: 1200, withoutEnlargement: true })
+                                        .webp({ quality: 80 })
+                                        .toBuffer();
+                                    contentType = 'image/webp';
+                                } catch (sharpError) {
+                                    console.warn("Sharp optimization failed:", sharpError);
+                                }
                             }
                         }
                     } catch (dependencyError) {

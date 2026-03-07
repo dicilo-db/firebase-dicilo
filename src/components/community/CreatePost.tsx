@@ -110,10 +110,10 @@ export function CreatePost({ userId, neighborhood, neighborhoodId, onPostCreated
                 };
                 itemsToAdd.push(newItem);
 
-                // Options for compression
+                // Options for compression - Lower target for better mobile reliability
                 const options = {
-                    maxSizeMB: 0.8,
-                    maxWidthOrHeight: 1600,
+                    maxSizeMB: 0.4,
+                    maxWidthOrHeight: 1280,
                     useWebWorker: true,
                     fileType: 'image/webp' as any
                 };
@@ -189,11 +189,19 @@ export function CreatePost({ userId, neighborhood, neighborhoodId, onPostCreated
                     variant: "destructive"
                 });
             }
-        } catch (err) {
-            console.error("Submission Error:", err);
+        } catch (err: any) {
+            console.error("Submission Error Details:", err);
+            // More specific error message for the user
+            let errorMsg = "Ocurrió un error al intentar enviar la publicación.";
+            if (err.message?.includes('Network') || !navigator.onLine) {
+                errorMsg = "Error de red: Comprueba tu conexión a internet.";
+            } else if (err.status === 413) {
+                errorMsg = "El contenido es demasiado grande para subirlo.";
+            }
+
             toast({
                 title: t('errors.unexpected', "Error inesperado"),
-                description: "Ocurrió un error al intentar enviar la publicación.",
+                description: `${errorMsg} (${err.name || 'Error'})`,
                 variant: "destructive"
             });
         } finally {

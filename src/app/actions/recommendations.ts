@@ -44,17 +44,22 @@ export async function submitRecommendation(formData: FormData) {
                 let contentType = file.type;
 
                 if (isImage) {
-                    try {
-                        uploadBuffer = await sharp(buffer)
-                            .webp({ quality: 80 })
-                            .resize(1200, 1200, { fit: 'inside', withoutEnlargement: true })
-                            .toBuffer();
+                    if (file.type === 'image/webp') {
                         finalPath = `recommendations/images/${fileName}.webp`;
                         contentType = 'image/webp';
-                    } catch (err) {
-                        console.error("Sharp processing failed, uploading original:", err);
-                        const ext = file.name.split('.').pop() || 'jpg';
-                        finalPath = `recommendations/images/${fileName}.${ext}`;
+                    } else {
+                        try {
+                            uploadBuffer = await sharp(buffer)
+                                .webp({ quality: 80 })
+                                .resize(1200, 1200, { fit: 'inside', withoutEnlargement: true })
+                                .toBuffer();
+                            finalPath = `recommendations/images/${fileName}.webp`;
+                            contentType = 'image/webp';
+                        } catch (err) {
+                            console.error("Sharp processing failed, uploading original:", err);
+                            const ext = file.name.split('.').pop() || 'jpg';
+                            finalPath = `recommendations/images/${fileName}.${ext}`;
+                        }
                     }
                 } else if (isVideo) {
                     const ext = file.name.split('.').pop() || 'mp4';

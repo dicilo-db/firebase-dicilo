@@ -28,12 +28,34 @@ export async function submitUGCRecommendation(formData: FormData) {
                 const isVideo = contentType.startsWith('video/');
                 const mediaType = isVideo ? 'video' : 'image';
                 
-                const extension = contentType.split('/')[1] || (isVideo ? 'mp4' : 'img');
+                let uploadBuffer = buffer;
+                let finalContentType = contentType;
+                let extension = contentType.split('/')[1] || (isVideo ? 'mp4' : 'img');
+
+                // Image optimization
+                if (mediaType === 'image') {
+                    if (contentType === 'image/webp') {
+                        // Already optimized by client
+                    } else {
+                        try {
+                            const sharp = (await import('sharp')).default;
+                            uploadBuffer = await sharp(buffer)
+                                .webp({ quality: 80 })
+                                .resize(1200, 1200, { fit: 'inside', withoutEnlargement: true })
+                                .toBuffer();
+                            finalContentType = 'image/webp';
+                            extension = 'webp';
+                        } catch (sharpError) {
+                            console.warn("Sharp optimization failed in UGC:", sharpError);
+                        }
+                    }
+                }
+
                 const filePath = `recommendations/${businessId}/${uuidv4()}.${extension}`;
                 const fileRef = storage.bucket().file(filePath);
 
-                await fileRef.save(buffer, {
-                    metadata: { contentType: contentType },
+                await fileRef.save(uploadBuffer, {
+                    metadata: { contentType: finalContentType },
                     public: true,
                 });
 
