@@ -110,11 +110,21 @@ interface RecommendationFormContentProps {
   onCancel?: () => void;
 }
 
+import { Camera, X, Film, Loader2 } from 'lucide-react';
+import imageCompression from 'browser-image-compression';
+
+interface MediaFile {
+  file: File;
+  preview: string;
+  type: 'image' | 'video';
+}
+
 export function RecommendationFormContent({ initialBusinessName, onSuccess, onCancel }: RecommendationFormContentProps) {
   const { t } = useTranslation('common');
   const { toast } = useToast();
   const { user } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [media, setMedia] = useState<MediaFile[]>([]);
 
   const form = useForm<RecommendationFormValues>({
     resolver: zodResolver(formSchema),
@@ -134,14 +144,97 @@ export function RecommendationFormContent({ initialBusinessName, onSuccess, onCa
     },
   });
 
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+
+    for (const file of files) {
+      if (file.type.startsWith('image/')) {
+        try {
+          const options = {
+            maxSizeMB: 1,
+            maxWidthOrHeight: 1200,
+            useWebWorker: true,
+            fileType: 'image/webp'
+          };
+          const compressedFile = await imageCompression(file, options);
+          const preview = URL.createObjectURL(compressedFile);
+          setMedia(prev => [...prev, { file: compressedFile, preview, type: 'image' }]);
+        } catch (error) {
+          console.error("Compression error:", error);
+          const preview = URL.createObjectURL(file);
+          setMedia(prev => [...prev, { file, preview, type: 'image' }]);
+        }
+      } else if (file.type.startsWith('video/')) {
+        if (file.size > 50 * 1024 * 1024) {
+          toast({ title: t('error'), description: 'Video too large (max 50MB)', variant: 'destructive' });
+          continue;
+        }
+        const preview = URL.createObjectURL(file);
+        setMedia(prev => [...prev, { file, preview, type: 'video' }]);
+      }
+    }
+  };
+
+  const removeMedia = (index: number) => {
+    setMedia(prev => {
+      const newMedia = [...prev];
+      URL.revokeObjectURL(newMedia[index].preview);
+      newMedia.splice(index, 1);
+      return newMedia;
+    });
+  };
+
+  const onSubmit = async (values: RecommendationFormValues) => {
+    setIsSubmitting(true);
+    try {
+      const formData = new FormData();
+      Object.entries(values).forEach(([key, value]) => {
+        if (value) formData.append(key, value);
+      });
+
+      const countryData = Country.getCountryByCode(values.country);
+      formData.set('country', countryData ? countryData.name : values.country);
+      formData.append('countryCode', values.country);
+      if (user?.uid) formData.append('userId', user.uid);
+
+      media.forEach(m => {
+        formData.append('media', m.file);
+      });
+
+      const result = await submitRecommendation(formData);
+
+      if (!result.success) throw new Error(result.error);
+      
+      toast({
+        title: t('form.successTitle'),
+        description: t('form.successDesc'),
+      });
+
+      media.forEach(m => URL.revokeObjectURL(m.preview));
+      setMedia([]);
+      form.reset();
+      if (onSuccess) onSuccess();
+    } catch (error: any) {
+      console.error('Error sending recommendation:', error);
+      toast({
+        title: t('form.errorTitle'),
+        description: error.message || t('form.errorDesc'),
+        variant: 'destructive',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const selectedCountry = form.watch('country');
+  const countries = Country.getAllCountries();
 
   const cities = useMemo(() => {
     if (!selectedCountry) return [];
     return City.getCitiesOfCountry(selectedCountry) || [];
   }, [selectedCountry]);
 
-  // Reset city when country changes
   useEffect(() => {
     form.setValue('city', '');
   }, [selectedCountry, form]);
@@ -152,44 +245,40 @@ export function RecommendationFormContent({ initialBusinessName, onSuccess, onCa
     }
   }, [initialBusinessName, form]);
 
-  const onSubmit = async (values: RecommendationFormValues) => {
-    setIsSubmitting(true);
-    try {
-      // Get country name from ISO code
-      const countryData = Country.getCountryByCode(values.country);
-      const countryName = countryData ? countryData.name : values.country;
-
-      const result = await submitRecommendation({
-        ...values,
-        country: countryName,
-        countryCode: values.country,
-        userId: user?.uid, // Link to freelancer
-      });
-
-      if (!result.success) throw new Error(result.error);
-      toast({
-        title: t('form.successTitle'),
-        description: t('form.successDesc'),
-      });
-      form.reset();
-      if (onSuccess) onSuccess();
-    } catch (error) {
-      console.error('Error sending recommendation:', error);
-      toast({
-        title: t('form.errorTitle'),
-        description: t('form.errorDesc'),
-        variant: 'destructive',
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const countries = Country.getAllCountries();
-
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-4">
-      {/* Company Name */}
+      {/* Media Upload */}
+      <div className="space-y-3">
+        <Label>{t('community.add_media', 'Agregar Fotos/Vídeos')}</Label>
+        <div className="grid grid-cols-3 gap-2">
+          {media.map((item, index) => (
+            <div key={index} className="relative aspect-square rounded-lg overflow-hidden bg-slate-100 group">
+              {item.type === 'image' ? (
+                <img src={item.preview} alt="preview" className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-slate-200">
+                  <Film className="h-8 w-8 text-slate-400" />
+                </div>
+              )}
+              <button
+                type="button"
+                onClick={() => removeMedia(index)}
+                className="absolute top-1 right-1 p-1 bg-black/50 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity"
+              >
+                <X className="h-3 w-3" />
+              </button>
+            </div>
+          ))}
+          {media.length < 5 && (
+            <label className="aspect-square flex flex-col items-center justify-center border-2 border-dashed border-slate-200 rounded-lg cursor-pointer hover:border-purple-400 hover:bg-purple-50 transition-all">
+              <Camera className="h-6 w-6 text-slate-400" />
+              <span className="text-[10px] text-slate-500 mt-1">{t('upload', 'Subir')}</span>
+              <input type="file" className="hidden" accept="image/*,video/*" multiple onChange={handleFileChange} />
+            </label>
+          )}
+        </div>
+      </div>
+
       <div className="space-y-2">
         <Label htmlFor="companyName">{t('form.companyNamePlaceholder')}</Label>
         <Input
@@ -233,7 +322,6 @@ export function RecommendationFormContent({ initialBusinessName, onSuccess, onCa
       </div>
 
       {/* Country & City */}
-      {/* Country & City - Optimized with Combobox */}
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2 flex flex-col">
           <Label htmlFor="country">{t('form.countryPlaceholder')}</Label>

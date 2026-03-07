@@ -14,16 +14,23 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Loader2, Camera, Upload, Star } from 'lucide-react';
+import { Loader2, Camera, Upload, Star, X, Film } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { submitRecommendation } from '@/app/actions/recommendation';
 import { useTranslation } from 'react-i18next';
+import imageCompression from 'browser-image-compression';
 
 interface RecommendationModalProps {
     businessId: string;
     trigger?: React.ReactNode;
     open?: boolean;
     onOpenChange?: (open: boolean) => void;
+}
+
+interface MediaFile {
+    file: File;
+    preview: string;
+    type: 'image' | 'video';
 }
 
 export function RecommendationModal({
@@ -34,7 +41,7 @@ export function RecommendationModal({
 }: RecommendationModalProps) {
     const { toast } = useToast();
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+    const [media, setMedia] = useState<MediaFile[]>([]);
     const [rating, setRating] = useState(5);
     const formRef = useRef<HTMLFormElement>(null);
 
@@ -44,17 +51,45 @@ export function RecommendationModal({
     const isOpen = isControlled ? open : internalOpen;
     const setIsOpen = isControlled ? onOpenChange! : setInternalOpen;
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setPhotoPreview(reader.result as string);
-            };
-            reader.readAsDataURL(file);
-        } else {
-            setPhotoPreview(null);
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = Array.from(e.target.files || []);
+        if (files.length === 0) return;
+
+        for (const file of files) {
+            if (file.type.startsWith('image/')) {
+                try {
+                    const options = {
+                        maxSizeMB: 1,
+                        maxWidthOrHeight: 1200,
+                        useWebWorker: true,
+                        fileType: 'image/webp'
+                    };
+                    const compressedFile = await imageCompression(file, options);
+                    const preview = URL.createObjectURL(compressedFile);
+                    setMedia(prev => [...prev, { file: compressedFile, preview, type: 'image' }]);
+                } catch (error) {
+                    console.error("Compression error:", error);
+                    const preview = URL.createObjectURL(file);
+                    setMedia(prev => [...prev, { file, preview, type: 'image' }]);
+                }
+            } else if (file.type.startsWith('video/')) {
+                if (file.size > 50 * 1024 * 1024) {
+                    toast({ title: 'Error', description: 'Video too large (max 50MB)', variant: 'destructive' });
+                    continue;
+                }
+                const preview = URL.createObjectURL(file);
+                setMedia(prev => [...prev, { file, preview, type: 'video' }]);
+            }
         }
+    };
+
+    const removeMedia = (index: number) => {
+        setMedia(prev => {
+            const newMedia = [...prev];
+            URL.revokeObjectURL(newMedia[index].preview);
+            newMedia.splice(index, 1);
+            return newMedia;
+        });
     };
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -65,6 +100,9 @@ export function RecommendationModal({
             const formData = new FormData(event.currentTarget);
             // Append businessId manually if not in a hidden input, but verify hidden input presence
             // We will use hidden input in JSX
+            media.forEach(m => {
+                formData.append('media', m.file);
+            });
 
             const result = await submitRecommendation(null, formData);
 
@@ -75,7 +113,8 @@ export function RecommendationModal({
                 });
                 setIsOpen(false);
                 formRef.current?.reset();
-                setPhotoPreview(null);
+                media.forEach(m => URL.revokeObjectURL(m.preview));
+                setMedia([]);
                 setRating(5);
             } else {
                 toast({
@@ -106,31 +145,40 @@ export function RecommendationModal({
                 <DialogHeader>
                     <DialogTitle>{t('recommendationModal.title', 'Recomendar Negocio')}</DialogTitle>
                     <DialogDescription>
-                        {t('recommendationModal.description', 'Sube una foto y cuéntanos tu experiencia para ganar puntos.')}
+                        {t('recommendationModal.description', 'Sube fotos o vídeos y cuéntanos tu experiencia.')}
                     </DialogDescription>
                 </DialogHeader>
                 <form ref={formRef} onSubmit={handleSubmit} className="grid gap-4 py-4">
                     <input type="hidden" name="businessId" value={businessId} />
 
                     <div className="grid gap-2">
-                        <Label htmlFor="photo">{t('recommendationModal.photoLabel', 'Foto')}</Label>
-                        <div className="flex items-center gap-4">
-                            <div className="relative flex h-24 w-24 flex-shrink-0 items-center justify-center rounded-md border border-dashed bg-slate-50">
-                                {photoPreview ? (
-                                    <img src={photoPreview} alt="Preview" className="h-full w-full object-cover rounded-md" />
-                                ) : (
-                                    <Camera className="h-8 w-8 text-slate-300" />
-                                )}
-                            </div>
-                            <Input
-                                id="photo"
-                                name="photo"
-                                type="file"
-                                accept="image/*"
-                                onChange={handleFileChange}
-                                required
-                                className="flex-1"
-                            />
+                        <Label>{t('recommendationModal.photoLabel', 'Media (Fotos/Vídeos)')}</Label>
+                        <div className="grid grid-cols-4 gap-2">
+                            {media.map((item, index) => (
+                                <div key={index} className="relative aspect-square rounded-md overflow-hidden bg-slate-100 group">
+                                    {item.type === 'image' ? (
+                                        <img src={item.preview} alt="preview" className="w-full h-full object-cover" />
+                                    ) : (
+                                        <div className="w-full h-full flex items-center justify-center bg-slate-200">
+                                            <Film className="h-6 w-6 text-slate-400" />
+                                        </div>
+                                    )}
+                                    <button
+                                        type="button"
+                                        onClick={() => removeMedia(index)}
+                                        className="absolute top-0.5 right-0.5 p-0.5 bg-black/50 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                                    >
+                                        <X className="h-2 w-2" />
+                                    </button>
+                                </div>
+                            ))}
+                            {media.length < 4 && (
+                                <label className="aspect-square flex flex-col items-center justify-center border border-dashed border-slate-300 rounded-md cursor-pointer hover:bg-slate-50 transition-colors">
+                                    <Upload className="h-5 w-5 text-slate-400" />
+                                    <span className="text-[8px] text-slate-500 mt-1">{t('upload', 'Subir')}</span>
+                                    <input type="file" className="hidden" accept="image/*,video/*" multiple onChange={handleFileChange} />
+                                </label>
+                            )}
                         </div>
                     </div>
 
@@ -184,4 +232,3 @@ export function RecommendationModal({
         </Dialog>
     );
 }
-
