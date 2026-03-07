@@ -9,29 +9,43 @@ const storage = getAdminStorage();
 
 export async function submitUGCRecommendation(formData: FormData) {
     try {
-        const file = formData.get('photo') as File;
+        const mediaFiles = formData.getAll('media') as File[];
         const comment = formData.get('comment') as string;
         const businessId = formData.get('businessId') as string;
         const userId = formData.get('userId') as string;
         const userName = formData.get('userName') as string;
 
-        if (!file || !businessId || !userId) {
+        if (mediaFiles.length === 0 || !businessId || !userId) {
             throw new Error('Missing required fields');
         }
 
-        // 1. Upload Photo to Firebase Storage
-        const buffer = Buffer.from(await file.arrayBuffer());
-        const filePath = `recommendations/${businessId}/${uuidv4()}_${file.name}`;
-        const fileRef = storage.bucket().file(filePath);
+        const mediaItems: { type: 'image' | 'video', url: string }[] = [];
+        let firstImageUrl = null;
 
-        await fileRef.save(buffer, {
-            metadata: {
-                contentType: file.type,
-            },
-            public: true, // or use signed URLs if preferred, public for MVP
-        });
+        for (const file of mediaFiles) {
+            if (!file || file.size === 0) continue;
 
-        const photoUrl = `https://storage.googleapis.com/${storage.bucket().name}/${filePath}`;
+            const buffer = Buffer.from(await file.arrayBuffer() as any);
+            const contentType = file.type;
+            const isVideo = contentType.startsWith('video/');
+            const mediaType = isVideo ? 'video' : 'image';
+            
+            const extension = contentType.split('/')[1] || (isVideo ? 'mp4' : 'img');
+            const filePath = `recommendations/${businessId}/${uuidv4()}.${extension}`;
+            const fileRef = storage.bucket().file(filePath);
+
+            await fileRef.save(buffer, {
+                metadata: { contentType: contentType },
+                public: true,
+            });
+
+            const publicUrl = `https://storage.googleapis.com/${storage.bucket().name}/${filePath}`;
+            mediaItems.push({ type: mediaType, url: publicUrl });
+            
+            if (mediaType === 'image' && !firstImageUrl) {
+                firstImageUrl = publicUrl;
+            }
+        }
 
         // 2. Create Recommendation Document in Firestore
         const recommendationId = uuidv4();
@@ -40,7 +54,8 @@ export async function submitUGCRecommendation(formData: FormData) {
             businessId,
             userId,
             userName,
-            photoUrl,
+            photoUrl: firstImageUrl || (mediaItems.length > 0 ? mediaItems[0].url : ''),
+            media: mediaItems,
             comment: comment || '',
             status: 'pending', // Pending n8n validation
             createdAt: new Date(),
@@ -49,12 +64,9 @@ export async function submitUGCRecommendation(formData: FormData) {
         await db.collection('recommendations').doc(recommendationId).set(recommendationData);
 
         // 3. Trigger n8n Webhook (Fire and Forget)
-        // We will read the Webhook URL from env or use a placeholder
         const n8nWebhookUrl = process.env.N8N_WEBHOOK_RECOMMENDATION;
 
         if (n8nWebhookUrl) {
-            // We don't await this to keep UI snappy, or maybe we do to confirm?
-            // For MVP let's await to ensure it reached n8n? No, async is better.
             fetch(n8nWebhookUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },

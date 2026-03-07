@@ -169,61 +169,80 @@ export function ReferralCard() {
 
         setIsLoading(true);
 
-        const enrichedFriends = friends.map(friend => {
-            // Removed deprecated CONTENT_PREVIEWS logic
-            // const langContent = CONTENT_PREVIEWS[friend.language] || CONTENT_PREVIEWS['es'];
-            // const tmplContent = langContent[friend.template] || langContent['general'];
+        try {
+            // 1. Create Invitations in Firestore first to get IDs
+            const { sendPioneerInvitations } = await import('@/app/actions/invite');
+            const result = await sendPioneerInvitations(
+                uniqueCode || currentUser.uid,
+                referrerName,
+                friends.map(f => ({
+                    name: f.name,
+                    email: f.email,
+                    lang: f.language as 'es' | 'de' | 'en',
+                    template: f.templateId
+                }))
+            );
 
-            const inviteUrl = `https://dicilo.net/registrieren?ref=${uniqueCode || currentUser?.uid}`;
-
-            // FETCH CONTENT FROM TEMPLATE ID or FALLBACK
-            let subject = "";
-            let body = "";
-
-            const dbTemplate = templates.find(t => t.id === friend.templateId);
-            if (dbTemplate) {
-                const ver = dbTemplate.versions[friend.language] || dbTemplate.versions['es'] || dbTemplate.versions['en'];
-                subject = ver?.subject || "";
-                body = ver?.body || "";
-            } else {
-                // Fallback
-                const fallback = FALLBACK_TEMPLATES['es']['general']; // Absolute safe fallback
-                subject = fallback.subject;
-                body = fallback.body;
+            if (!result.success || !result.inviteIds) {
+                throw new Error(result.error || 'Failed to create invitations');
             }
 
-            // 1. Process Body
-            body = body
-                .replace(/\[Name\]|\[Nombre\]|\{\{Nombre\}\}|\{\{Name\}\}/g, friend.name)
-                .replace(/\[Tu Nombre\]|\{\{Tu Nombre\}\}|\{\{Your Name\}\}|\{\{Dein Name\}\}/g, referrerName)
-                .replace(/\[RefCode\]|\{\{RefCode\}\}/g, uniqueCode || currentUser?.uid)
-                .replace(/\[(BOTÓN|BUTTON):.*?\]/g, `\n👉 ${inviteUrl}\n`);
+            const inviteIds = result.inviteIds;
 
-            // 2. Process Subject
-            // Handle various placeholder formats including {{}}
-            subject = subject
-                .replace(/\{\{.*?\}\}/g, friend.name)
-                .replace(/\[Name\]|\[Nombre\]/g, friend.name);
+            // 2. Prepare Payload with unique links per friend
+            const enrichedFriends = friends.map((friend, index) => {
+                const inviteId = inviteIds[index];
+                // Append inviteId to the URL for tracking
+                const inviteUrl = `https://dicilo.net/registrieren?ref=${uniqueCode || currentUser?.uid}&inviteId=${inviteId}`;
 
-            return {
-                ...friend,
-                generated_subject: subject,
-                generated_body: body
+                // FETCH CONTENT FROM TEMPLATE ID or FALLBACK
+                let subject = "";
+                let body = "";
+
+                const dbTemplate = templates.find(t => t.id === friend.templateId);
+                if (dbTemplate) {
+                    const ver = dbTemplate.versions[friend.language] || dbTemplate.versions['es'] || dbTemplate.versions['en'];
+                    subject = ver?.subject || "";
+                    body = ver?.body || "";
+                } else {
+                    // Fallback
+                    const fallback = FALLBACK_TEMPLATES['es']['general']; // Absolute safe fallback
+                    subject = fallback.subject;
+                    body = fallback.body;
+                }
+
+                // Process Body
+                body = body
+                    .replace(/\[Name\]|\[Nombre\]|\{\{Nombre\}\}|\{\{Name\}\}/g, friend.name)
+                    .replace(/\[Tu Nombre\]|\{\{Tu Nombre\}\}|\{\{Your Name\}\}|\{\{Dein Name\}\}/g, referrerName)
+                    .replace(/\[RefCode\]|\{\{RefCode\}\}/g, uniqueCode || currentUser?.uid)
+                    .replace(/\[(BOTÓN|BUTTON):.*?\]/g, `\n👉 ${inviteUrl}\n`);
+
+                // Process Subject
+                subject = subject
+                    .replace(/\{\{.*?\}\}/g, friend.name)
+                    .replace(/\[Name\]|\[Nombre\]/g, friend.name);
+
+                return {
+                    ...friend,
+                    generated_subject: subject,
+                    generated_body: body,
+                    inviteId: inviteId // Pass ID to webhook if needed
+                };
+            });
+
+            const payload = {
+                referrer_id: uniqueCode || currentUser.uid,
+                referrer_name: referrerName,
+                referrer_email: currentUser.email,
+                friends: enrichedFriends,
+                timestamp: new Date().toISOString()
             };
-        });
 
-        const payload = {
-            referrer_id: uniqueCode || currentUser.uid,
-            referrer_name: referrerName,
-            referrer_email: currentUser.email,
-            friends: enrichedFriends,
-            timestamp: new Date().toISOString()
-        };
-
-        try {
             const webhookUrl = process.env.NEXT_PUBLIC_N8N_REFERRAL_WEBHOOK;
             if (!webhookUrl) throw new Error("Webhook URL not configured");
 
+            // 3. Send to Webhook (Email Sending)
             const response = await fetch(webhookUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -238,13 +257,13 @@ export function ReferralCard() {
                 setIsOpen(false);
                 setFriends([]);
             } else {
-                throw new Error('Failed to send');
+                throw new Error('Failed to send emails');
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error(error);
             toast({
                 title: "Error",
-                description: "Hubo un error al enviar. Inténtalo más tarde.",
+                description: error.message || "Hubo un error al enviar. Inténtalo más tarde.",
                 variant: "destructive"
             });
         } finally {

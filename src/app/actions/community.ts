@@ -12,9 +12,14 @@ export async function createPostAction(prevState: any, formData: FormData) {
     const content = formData.get('content') as string;
     const neighborhood = formData.get('neighborhood') as string;
     const userId = formData.get('userId') as string;
-    const file = formData.get('image') as File | null;
+    const visibility = (formData.get('visibility') as string) || 'public';
+    const mediaFiles = formData.getAll('media') as File[];
 
-    if (!content || !neighborhood || !userId) {
+    if (!content && mediaFiles.length === 0) {
+        return { success: false, error: 'La publicación debe tener contenido o imágenes.' };
+    }
+
+    if (!neighborhood || !userId) {
         return { success: false, error: 'Faltan datos obligatorios.' };
     }
 
@@ -28,7 +33,7 @@ export async function createPostAction(prevState: any, formData: FormData) {
             userName = userRecord.displayName || 'Vecino';
             userAvatar = userRecord.photoURL || '';
         } catch (e) {
-            console.warn("Auth getUser failed (likely permission issue), falling back to Firestore profile.", e);
+            console.warn("Auth getUser failed", e);
         }
 
         try {
@@ -46,48 +51,48 @@ export async function createPostAction(prevState: any, formData: FormData) {
             console.warn("Profile fetch failed", e);
         }
 
-        // 2. Upload Image (Securely)
-        let publicUrl = null;
-        if (file && file.size > 0) {
+        // 2. Upload Media Files
+        const mediaItems: { type: 'image' | 'video', url: string }[] = [];
+        let firstImageUrl = null;
+
+        for (const file of mediaFiles) {
+            if (!file || file.size === 0) continue;
+
             try {
                 const buffer = await file.arrayBuffer();
-                const fileBuffer = Buffer.from(buffer);
+                const fileBuffer = Buffer.from(buffer as any);
                 let finalBuffer = fileBuffer;
                 let contentType = file.type;
+                let mediaType: 'image' | 'video' = contentType.startsWith('video/') ? 'video' : 'image';
 
-                // Attempt Native Image Processing (Sharp + FileType)
-                // This might fail in some serverless environments if binaries are missing
-                try {
-                    // Dynamic import to avoid build-time crashes if modules missing
-                    const { fileTypeFromBuffer } = await import('file-type');
-                    const type = await fileTypeFromBuffer(fileBuffer);
-                    const allowedMimes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+                // Image processing (only for images)
+                if (mediaType === 'image') {
+                    try {
+                        const { fileTypeFromBuffer } = await import('file-type');
+                        const type = await fileTypeFromBuffer(fileBuffer);
+                        const allowedMimes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 
-                    if (!type || !allowedMimes.includes(type.mime)) {
-                        console.error("Security Block: Invalid file signature.", type?.mime);
-                        // Return error immediately if security check fails
-                        return { success: false, error: 'Formato de archivo no permitido. Solo imágenes.' };
+                        if (type && allowedMimes.includes(type.mime)) {
+                            contentType = type.mime;
+                            // Try Sharp Optimization
+                            try {
+                                const sharp = (await import('sharp')).default;
+                                finalBuffer = await sharp(fileBuffer)
+                                    .resize({ width: 1200, withoutEnlargement: true })
+                                    .webp({ quality: 80 })
+                                    .toBuffer();
+                                contentType = 'image/webp';
+                            } catch (sharpError) {
+                                console.warn("Sharp optimization failed:", sharpError);
+                            }
+                        }
+                    } catch (dependencyError) {
+                        console.warn("Image processing fallback:", dependencyError);
                     }
-                    contentType = type.mime;
-
-                    // Try Sharp Optimization
-                    const sharp = (await import('sharp')).default;
-                    finalBuffer = await sharp(fileBuffer)
-                        .resize({ width: 1200, withoutEnlargement: true })
-                        .webp({ quality: 80 })
-                        .toBuffer();
-                    contentType = 'image/webp';
-
-                } catch (dependencyError) {
-                    console.warn("Image processing fallback (Sharp/FileType failed):", dependencyError);
-                    // Fallback: If strict security tools fail, we trust the file extension/type from client 
-                    // BUT only if we absolutely have to. Ideally we shouldn't.
-                    // For now, let's proceed with the original buffer if Sharp fails, assuming client-side compression did its job.
-                    // We basically bypass server-side re-compression if the server module is broken.
                 }
 
-                // Upload
-                const extension = contentType.split('/')[1] || 'img';
+                // Upload to Firebase Storage
+                const extension = contentType.split('/')[1] || (mediaType === 'video' ? 'mp4' : 'img');
                 const filename = `community/${neighborhood}/${randomUUID()}.${extension}`;
                 const bucket = storage.bucket();
                 const fileRef = bucket.file(filename);
@@ -97,25 +102,31 @@ export async function createPostAction(prevState: any, formData: FormData) {
                 });
 
                 await fileRef.makePublic();
-                publicUrl = fileRef.publicUrl();
+                const publicUrl = fileRef.publicUrl();
 
-            } catch (uploadError: any) {
-                console.error("Upload error:", uploadError);
-                return { success: false, error: "Error al subir la imagen. Intenta sin foto." };
+                mediaItems.push({ type: mediaType, url: publicUrl });
+                if (mediaType === 'image' && !firstImageUrl) {
+                    firstImageUrl = publicUrl;
+                }
+
+            } catch (uploadError) {
+                console.error("Single file upload error:", uploadError);
             }
         }
 
         // 3. Create Post
-        const newPost = {
+        const newPost: any = {
             content: content,
             neighborhood: neighborhood,
-            imageUrl: publicUrl,
+            imageUrl: firstImageUrl || (mediaItems.length > 0 ? mediaItems[0].url : null),
+            media: mediaItems,
             userId: userId,
             userName: userName,
             userAvatar: userAvatar,
-            createdAt: new Date(), // Using native Date, Firestore Admin SDK converts to Timestamp
+            visibility: visibility,
+            createdAt: new Date(),
             likes: [],
-            language: 'es', // Default, ideally we'd detect this
+            language: 'es',
             commentCount: 0
         };
 

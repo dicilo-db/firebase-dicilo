@@ -2,6 +2,7 @@
 'use client';
 
 import { Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { RegistrationForm, RegistrationFormSkeleton } from './RegistrationForm';
 import {
   Card,
@@ -37,11 +38,30 @@ const RecommendationFormSkeleton = () => (
 );
 
 
+function TrackingWrapper() {
+  const searchParams = useSearchParams();
+  const inviteId = searchParams.get('inviteId');
+
+  React.useEffect(() => {
+    if (inviteId) {
+      import('@/app/actions/track').then(({ markInviteAsOpened }) => {
+        markInviteAsOpened(inviteId);
+      });
+    }
+  }, [inviteId]);
+
+  return null;
+}
+
+
 export default function RegistrierenPage() {
   const { t } = useTranslation('register');
 
   return (
     <>
+      <Suspense fallback={null}>
+        <TrackingWrapper />
+      </Suspense>
       <Header />
       <main className="container mx-auto flex-grow px-4 py-12">
         <div className="mx-auto max-w-4xl">

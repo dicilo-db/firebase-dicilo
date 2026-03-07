@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { Recommendation } from '@/types/recommendation';
 import { getFirestore, collection, query, where, orderBy, limit, getDocs } from 'firebase/firestore';
 import { app } from '@/lib/firebase';
+import { Film } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
 
@@ -69,13 +70,39 @@ export default function NeighborhoodFeed({ neighborhood }: NeighborhoodFeedProps
         <div className="space-y-6">
             {posts.map((post) => (
                 <div key={post.id} className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
-                    <div className="aspect-video relative bg-gray-100">
-                        <Image
-                            src={post.photoUrl}
-                            alt={`Foto por ${post.userName}`}
-                            fill
-                            className="object-cover"
-                        />
+                    <div className="aspect-video relative bg-slate-100 dark:bg-slate-800">
+                        {post.media && post.media.length > 0 ? (
+                            post.media[0].type === 'image' ? (
+                                <Image
+                                    src={post.media[0].url}
+                                    alt={`Foto por ${post.userName}`}
+                                    fill
+                                    className="object-cover"
+                                />
+                            ) : (
+                                <video
+                                    src={post.media[0].url}
+                                    controls
+                                    className="w-full h-full object-contain bg-black"
+                                />
+                            )
+                        ) : post.photoUrl ? (
+                            <Image
+                                src={post.photoUrl}
+                                alt={`Foto por ${post.userName}`}
+                                fill
+                                className="object-cover"
+                            />
+                        ) : (
+                            <div className="w-full h-full flex items-center justify-center text-slate-400">
+                                <Film className="h-10 w-10 opacity-20" />
+                            </div>
+                        )}
+                        {post.media && post.media.length > 1 && (
+                            <div className="absolute bottom-2 right-2 bg-black/60 text-white text-[10px] px-2 py-0.5 rounded-full backdrop-blur-sm">
+                                +{post.media.length - 1}
+                            </div>
+                        )}
                     </div>
                     <div className="p-4">
                         <div className="flex items-center justify-between mb-2">

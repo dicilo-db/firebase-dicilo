@@ -229,9 +229,68 @@ export function PostCard({ post, currentUserId }: PostCardProps) {
                     {showTranslated ? translatedContent : post.content}
                 </p>
 
-                {post.imageUrl && (
+                {post.media && post.media.length > 0 ? (
+                    <div className={cn(
+                        "grid gap-2 mt-2",
+                        post.media.length === 1 ? "grid-cols-1" : 
+                        post.media.length === 2 ? "grid-cols-2" : 
+                        "grid-cols-2" // We'll show first few or a scrollable list? For now simple grid
+                    )}>
+                        {post.media.map((item, index) => (
+                            <div key={index} className={cn(
+                                "relative rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-800",
+                                post.media!.length === 1 ? "h-80" : "h-48"
+                            )}>
+                                {item.type === 'image' ? (
+                                    <>
+                                        <Image
+                                            src={item.url}
+                                            alt={`Post media ${index}`}
+                                            fill
+                                            className="object-cover"
+                                        />
+                                        <Button
+                                            variant="secondary"
+                                            size="icon"
+                                            className="absolute top-2 right-2 h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity bg-black/50 hover:bg-black/70 text-white border-none"
+                                            onClick={() => {
+                                                // Existing handleDownload logic adapted for specific URL
+                                                const handleSingleDownload = async (url: string) => {
+                                                    try {
+                                                        const proxyUrl = `/api/proxy-image?url=${encodeURIComponent(url)}`;
+                                                        const response = await fetch(proxyUrl);
+                                                        if (!response.ok) throw new Error('Download failed');
+                                                        const blob = await response.blob();
+                                                        const blobUrl = window.URL.createObjectURL(blob);
+                                                        const link = document.createElement('a');
+                                                        link.href = blobUrl;
+                                                        link.download = `dicilo-${post.id}-${index}.webp`;
+                                                        document.body.appendChild(link);
+                                                        link.click();
+                                                        document.body.removeChild(link);
+                                                        window.URL.revokeObjectURL(blobUrl);
+                                                    } catch (e) { console.error(e); }
+                                                };
+                                                handleSingleDownload(item.url);
+                                            }}
+                                            title={t('community.download', 'Descargar')}
+                                        >
+                                            <Download className="h-4 w-4" />
+                                        </Button>
+                                    </>
+                                ) : (
+                                    <video
+                                        src={item.url}
+                                        controls
+                                        className="w-full h-full object-contain bg-black"
+                                    />
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                ) : post.imageUrl ? (
                     <div className="relative group">
-                        <div className="relative w-full h-64 rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-800 mt-2">
+                        <div className="relative w-full h-80 rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-800 mt-2">
                             <Image
                                 src={post.imageUrl}
                                 alt="Post image"
@@ -250,7 +309,7 @@ export function PostCard({ post, currentUserId }: PostCardProps) {
                             <Download className="h-4 w-4" />
                         </Button>
                     </div>
-                )}
+                ) : null}
 
                 {/* Translation Control */}
                 {(translatedContent || post.content.length > 5) && (

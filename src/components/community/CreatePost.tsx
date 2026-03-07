@@ -21,80 +21,116 @@ interface CreatePostProps {
     mode?: 'public' | 'private';
 }
 
+interface MediaFile {
+    file: File;
+    preview: string;
+    type: 'image' | 'video';
+}
+
 export function CreatePost({ userId, neighborhood, neighborhoodId, onPostCreated, mode = 'public' }: CreatePostProps) {
     const { t } = useTranslation('common');
     const { toast } = useToast();
     const [content, setContent] = useState('');
-    const [imageFile, setImageFile] = useState<File | null>(null);
-    const [imagePreview, setImagePreview] = useState<string | null>(null);
+    const [mediaItems, setMediaItems] = useState<MediaFile[]>([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const isPrivate = mode === 'private';
 
-    const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            // Options for compression
-            const options = {
-                maxSizeMB: 1,
-                maxWidthOrHeight: 1920,
-                useWebWorker: true
-            };
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const selectedFiles = Array.from(e.target.files || []);
+        if (selectedFiles.length === 0) return;
 
-            try {
-                // Show a loading state or just process
-                // Ideally we might want a small "Optimizing..." indicator, but for now we just wait
-                const compressedFile = await imageCompression(file, options);
+        const newMediaItems: MediaFile[] = [];
 
-                // Debug log to verify reduction (can remove later)
-                console.log(`Original: ${(file.size / 1024 / 1024).toFixed(2)} MB, Compressed: ${(compressedFile.size / 1024 / 1024).toFixed(2)} MB`);
+        for (const file of selectedFiles) {
+            const isVideo = file.type.startsWith('video/');
+            const isImage = file.type.startsWith('image/');
 
-                setImageFile(compressedFile);
-                const url = URL.createObjectURL(compressedFile);
-                setImagePreview(url);
-
-            } catch (error) {
-                console.error("Compression error:", error);
-                // Fallback to original if compression fails
+            if (!isImage && !isVideo) {
                 toast({
-                    title: "Nota",
-                    description: "No se pudo optimizar la imagen, se usará la original.",
-                    variant: "default"
+                    title: "Archivo no soportado",
+                    description: `${file.name} no es una imagen ni un vídeo válido.`,
+                    variant: "destructive"
                 });
-                setImageFile(file);
-                const url = URL.createObjectURL(file);
-                setImagePreview(url);
+                continue;
+            }
+
+            if (isVideo) {
+                // Limit video size (e.g., 50MB)
+                if (file.size > 50 * 1024 * 1024) {
+                    toast({
+                        title: "Vídeo demasiado grande",
+                        description: "El tamaño máximo permitido para vídeos es de 50MB.",
+                        variant: "destructive"
+                    });
+                    continue;
+                }
+                newMediaItems.push({
+                    file,
+                    preview: URL.createObjectURL(file),
+                    type: 'video'
+                });
+            } else if (isImage) {
+                // Options for compression
+                const options = {
+                    maxSizeMB: 0.8,
+                    maxWidthOrHeight: 1600,
+                    useWebWorker: true,
+                    fileType: 'image/webp' as any // Explicitly request WebP
+                };
+
+                try {
+                    const compressedFile = await imageCompression(file, options);
+                    
+                    // Create a new file object with the same name but .webp extension if needed
+                    const fileName = file.name.replace(/\.[^/.]+$/, "") + ".webp";
+                    const webpFile = new File([compressedFile], fileName, { type: 'image/webp' });
+
+                    newMediaItems.push({
+                        file: webpFile,
+                        preview: URL.createObjectURL(webpFile),
+                        type: 'image'
+                    });
+                } catch (error) {
+                    console.error("Compression error:", error);
+                    newMediaItems.push({
+                        file,
+                        preview: URL.createObjectURL(file),
+                        type: 'image'
+                    });
+                }
             }
         }
+
+        setMediaItems(prev => [...prev, ...newMediaItems]);
+        if (fileInputRef.current) fileInputRef.current.value = '';
     };
 
-    const removeImage = () => {
-        setImageFile(null);
-        if (imagePreview) URL.revokeObjectURL(imagePreview);
-        setImagePreview(null);
-        if (fileInputRef.current) fileInputRef.current.value = '';
+    const removeMedia = (index: number) => {
+        setMediaItems(prev => {
+            const item = prev[index];
+            if (item.preview) URL.revokeObjectURL(item.preview);
+            return prev.filter((_, i) => i !== index);
+        });
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!content.trim() && !imageFile) return;
+        if (!content.trim() && mediaItems.length === 0) return;
 
         setIsSubmitting(true);
 
         try {
             const formData = new FormData();
             formData.append('content', content);
-            // Use ID if available, otherwise fallback to neighborhood (which might be the ID if not passed)
             formData.append('neighborhood', neighborhoodId || neighborhood);
             formData.append('userId', userId);
-
-            // NEW: Visibility
             formData.append('visibility', mode);
 
-            if (imageFile) {
-                formData.append('image', imageFile);
-            }
+            mediaItems.forEach(item => {
+                formData.append('media', item.file);
+            });
 
             const result = await createPostAction(null, formData);
 
@@ -106,10 +142,11 @@ export function CreatePost({ userId, neighborhood, neighborhoodId, onPostCreated
                         : "Tu mensaje ha sido publicado en el muro.",
                 });
                 setContent('');
-                removeImage();
+                // Clear all previews
+                mediaItems.forEach(item => URL.revokeObjectURL(item.preview));
+                setMediaItems([]);
                 if (onPostCreated) onPostCreated();
             } else {
-                console.error("Server Action Error:", result.error);
                 toast({
                     title: t('errors.postFailed', "Error al publicar"),
                     description: result.error || "Hubo un problema al crear la publicación.",
@@ -152,32 +189,51 @@ export function CreatePost({ userId, neighborhood, neighborhoodId, onPostCreated
                             }`}
                     />
 
-                    {imagePreview && (
-                        <div className="relative w-full h-48 mb-4 rounded-md overflow-hidden bg-slate-100">
-                            <Image
-                                src={imagePreview}
-                                alt="Preview"
-                                fill
-                                className="object-cover"
-                            />
-                            <button
-                                type="button"
-                                onClick={removeImage}
-                                className="absolute top-2 right-2 bg-black/50 hover:bg-black/70 text-white p-1 rounded-full transition-colors"
-                            >
-                                <X className="h-4 w-4" />
-                            </button>
+                    {mediaItems.length > 0 && (
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-4">
+                            {mediaItems.map((item, index) => (
+                                <div key={index} className="relative aspect-square rounded-md overflow-hidden bg-slate-100 group">
+                                    {item.type === 'image' ? (
+                                        <Image
+                                            src={item.preview}
+                                            alt={`Preview ${index}`}
+                                            fill
+                                            className="object-cover"
+                                        />
+                                    ) : (
+                                        <video
+                                            src={item.preview}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    )}
+                                    <button
+                                        type="button"
+                                        onClick={() => removeMedia(index)}
+                                        className="absolute top-1 right-1 bg-black/50 hover:bg-black/70 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                                    >
+                                        <X className="h-3 w-3" />
+                                    </button>
+                                    {item.type === 'video' && (
+                                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                            <div className="bg-black/30 p-2 rounded-full">
+                                                <div className="w-0 h-0 border-t-[6px] border-t-transparent border-l-[10px] border-l-white border-b-[6px] border-b-transparent ml-1" />
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
                         </div>
                     )}
 
                     <div className="flex justify-between items-center">
-                        <div>
+                        <div className="flex gap-2">
                             <input
                                 type="file"
-                                accept="image/*"
+                                accept="image/*,video/*"
+                                multiple
                                 ref={fileInputRef}
                                 className="hidden"
-                                onChange={handleImageChange}
+                                onChange={handleFileChange}
                             />
                             <Button
                                 type="button"
@@ -185,20 +241,21 @@ export function CreatePost({ userId, neighborhood, neighborhoodId, onPostCreated
                                 size="sm"
                                 className="text-muted-foreground hover:text-purple-600 dark:hover:text-purple-400"
                                 onClick={() => fileInputRef.current?.click()}
+                                disabled={isSubmitting}
                             >
                                 <ImageIcon className="h-4 w-4 mr-2" />
-                                {t('community.photo', 'Foto')}
+                                {t('community.media', 'Multimedia')}
                             </Button>
                         </div>
                         <Button
                             type="submit"
-                            disabled={(!content.trim() && !imageFile) || isSubmitting}
+                            disabled={(!content.trim() && mediaItems.length === 0) || isSubmitting}
                             className={`${isPrivate ? 'bg-amber-600 hover:bg-amber-700' : 'bg-purple-600 hover:bg-purple-700'} text-white`}
                         >
                             {isSubmitting ? (
                                 <>
                                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                                    {imageFile ? 'Analizando seguridad...' : 'Publicando...'}
+                                    {mediaItems.some(i => i.type === 'image') ? 'Procesando...' : 'Publicando...'}
                                 </>
                             ) : (
                                 <>

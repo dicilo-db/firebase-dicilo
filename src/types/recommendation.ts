@@ -1,4 +1,5 @@
 import { Timestamp } from 'firebase/firestore';
+import { MediaItem } from './community';
 
 export interface Recommendation {
     id: string;
@@ -7,7 +8,8 @@ export interface Recommendation {
     userName: string;   // Denormalized for display
     userAvatar?: string;
 
-    photoUrl: string;   // The uploaded photo path in Storage
+    photoUrl: string;   // The uploaded photo path in Storage (Legacy/Fallback)
+    media?: MediaItem[];
     comment?: string;
 
     status: 'pending' | 'approved' | 'rejected';

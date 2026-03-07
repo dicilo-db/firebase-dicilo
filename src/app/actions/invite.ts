@@ -14,6 +14,7 @@ interface InviteFriend {
 interface SendInvitationResult {
     success: boolean;
     sentCount?: number;
+    inviteIds?: string[];
     error?: string;
 }
 
@@ -37,8 +38,12 @@ export async function sendPioneerInvitations(
             return { success: false, error: 'Limit reached (Max 15)' };
         }
 
+        const generatedIds: string[] = [];
+
         for (const friend of friends) {
             const newDocRef = referralsRef.doc();
+            generatedIds.push(newDocRef.id);
+
             batch.set(newDocRef, {
                 referrerId,
                 referrerName,
@@ -55,10 +60,7 @@ export async function sendPioneerInvitations(
 
         await batch.commit();
 
-        // TODO: Trigger Email Sending here (e.g. via Brevo API or triggers)
-        // For now, we assume the trigger happens on Firestore create or we implement sending logic later.
-
-        return { success: true, sentCount: friends.length };
+        return { success: true, sentCount: friends.length, inviteIds: generatedIds };
     } catch (error: any) {
         console.error('Error sending invitations:', error);
         return { success: false, error: error.message };
