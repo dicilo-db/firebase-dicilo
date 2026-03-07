@@ -8,6 +8,7 @@ import { app } from '@/lib/firebase';
 import { Film } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { MediaLightbox } from '@/components/community/MediaLightbox';
 
 interface NeighborhoodFeedProps {
     neighborhood: string;
@@ -19,6 +20,9 @@ export default function NeighborhoodFeed({ neighborhood }: NeighborhoodFeedProps
     const { t } = useTranslation('common');
     const [posts, setPosts] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [lightboxOpen, setLightboxOpen] = useState(false);
+    const [selectedPostMedia, setSelectedPostMedia] = useState<any[]>([]);
+    const [selectedMediaIndex, setSelectedMediaIndex] = useState(0);
 
     // Capitalize for display
     const displayNeighborhood = neighborhood.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
@@ -70,7 +74,14 @@ export default function NeighborhoodFeed({ neighborhood }: NeighborhoodFeedProps
         <div className="space-y-6">
             {posts.map((post) => (
                 <div key={post.id} className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
-                    <div className="aspect-video relative bg-slate-100 dark:bg-slate-800">
+                    <div className="aspect-video relative bg-slate-100 dark:bg-slate-800 cursor-pointer" onClick={() => {
+                        const media = post.media && post.media.length > 0 ? post.media : (post.photoUrl ? [{ type: 'image', url: post.photoUrl }] : []);
+                        if (media.length > 0) {
+                            setSelectedPostMedia(media);
+                            setSelectedMediaIndex(0);
+                            setLightboxOpen(true);
+                        }
+                    }}>
                         {post.media && post.media.length > 0 ? (
                             post.media[0].type === 'image' ? (
                                 <Image
@@ -118,6 +129,13 @@ export default function NeighborhoodFeed({ neighborhood }: NeighborhoodFeedProps
                     </div>
                 </div>
             ))}
+            
+            <MediaLightbox 
+                isOpen={lightboxOpen}
+                onClose={() => setLightboxOpen(false)}
+                media={selectedPostMedia}
+                initialIndex={selectedMediaIndex}
+            />
         </div>
     );
 }

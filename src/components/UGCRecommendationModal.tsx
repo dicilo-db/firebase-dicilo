@@ -16,11 +16,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Camera, Star, X, Film } from 'lucide-react';
+import { Loader2, Camera, Star, X, Film, PlusCircle } from 'lucide-react';
 import { submitUGCRecommendation } from '@/app/actions/ugc-recommendation';
 import { useTranslation } from 'react-i18next';
 import imageCompression from 'browser-image-compression';
 import Image from 'next/image';
+import { nanoid } from 'nanoid';
+import { compressVideo } from '@/lib/video-utils';
+import { Progress } from '@/components/ui/progress';
 
 interface UGCRecommendationModalProps {
     businessId: string;
@@ -28,9 +31,13 @@ interface UGCRecommendationModalProps {
 }
 
 interface MediaFile {
+    id: string;
     file: File;
     preview: string;
     type: 'image' | 'video';
+    status?: 'processing' | 'ready' | 'error';
+    progress?: number;
+    statusText?: string;
 }
 
 export function UGCRecommendationModal({
@@ -49,11 +56,12 @@ export function UGCRecommendationModal({
         const selectedFiles = Array.from(e.target.files || []);
         if (selectedFiles.length === 0) return;
 
-        const newMediaItems: MediaFile[] = [];
+        const itemsToAdd: MediaFile[] = [];
 
         for (const file of selectedFiles) {
             const isVideo = file.type.startsWith('video/');
             const isImage = file.type.startsWith('image/');
+            const id = nanoid();
 
             if (!isImage && !isVideo) {
                 toast({
@@ -65,20 +73,51 @@ export function UGCRecommendationModal({
             }
 
             if (isVideo) {
-                if (file.size > 50 * 1024 * 1024) {
-                    toast({
-                        title: "Vídeo demasiado grande",
-                        description: "Máximo 50MB.",
-                        variant: "destructive"
-                    });
-                    continue;
-                }
-                newMediaItems.push({
+                const needsCompression = file.size > 50 * 1024 * 1024;
+                const newItem: MediaFile = {
+                    id,
                     file,
                     preview: URL.createObjectURL(file),
-                    type: 'video'
-                });
+                    type: 'video',
+                    status: needsCompression ? 'processing' : 'ready',
+                    progress: 0,
+                    statusText: needsCompression ? 'Comprimiendo...' : ''
+                };
+                itemsToAdd.push(newItem);
+
+                if (needsCompression) {
+                    compressVideo(file, 50, (p) => {
+                        setMediaItems(prev => prev.map(item => 
+                            item.id === id ? { ...item, progress: p.percentage, statusText: p.status } : item
+                        ));
+                    }).then(compressedFile => {
+                        const newPreview = URL.createObjectURL(compressedFile);
+                        setMediaItems(prev => prev.map(item => {
+                            if (item.id === id) {
+                                if (item.preview) URL.revokeObjectURL(item.preview);
+                                return { ...item, file: compressedFile, preview: newPreview, status: 'ready', progress: 100, statusText: '' };
+                            }
+                            return item;
+                        }));
+                    }).catch(error => {
+                        console.error("Video compression failed:", error);
+                        setMediaItems(prev => prev.map(item => 
+                            item.id === id ? { ...item, status: 'ready', statusText: 'Error en compresión' } : item
+                        ));
+                    });
+                }
             } else if (isImage) {
+                const newItem: MediaFile = {
+                    id,
+                    file,
+                    preview: URL.createObjectURL(file),
+                    type: 'image',
+                    status: 'processing',
+                    progress: 0,
+                    statusText: 'Comprimiendo...'
+                };
+                itemsToAdd.push(newItem);
+
                 const options = {
                     maxSizeMB: 0.8,
                     maxWidthOrHeight: 1600,
@@ -86,28 +125,28 @@ export function UGCRecommendationModal({
                     fileType: 'image/webp' as any
                 };
 
-                try {
-                    const compressedFile = await imageCompression(file, options);
+                imageCompression(file, options).then(compressedFile => {
                     const fileName = file.name.replace(/\.[^/.]+$/, "") + ".webp";
                     const webpFile = new File([compressedFile], fileName, { type: 'image/webp' });
-
-                    newMediaItems.push({
-                        file: webpFile,
-                        preview: URL.createObjectURL(webpFile),
-                        type: 'image'
-                    });
-                } catch (error) {
-                    console.error("Compression error:", error);
-                    newMediaItems.push({
-                        file,
-                        preview: URL.createObjectURL(file),
-                        type: 'image'
-                    });
-                }
+                    const newPreview = URL.createObjectURL(webpFile);
+                    
+                    setMediaItems(prev => prev.map(item => {
+                        if (item.id === id) {
+                            if (item.preview) URL.revokeObjectURL(item.preview);
+                            return { ...item, file: webpFile, preview: newPreview, status: 'ready', progress: 100, statusText: '' };
+                        }
+                        return item;
+                    }));
+                }).catch(error => {
+                    console.error("Image compression failed:", error);
+                    setMediaItems(prev => prev.map(item => 
+                        item.id === id ? { ...item, status: 'ready', statusText: '' } : item
+                    ));
+                });
             }
         }
 
-        setMediaItems(prev => [...prev, ...newMediaItems]);
+        setMediaItems(prev => [...prev, ...itemsToAdd]);
         e.target.value = '';
     };
 
@@ -179,8 +218,16 @@ export function UGCRecommendationModal({
                         <Label>Fotos y Vídeos</Label>
                         <div className="grid grid-cols-3 gap-2 mt-2">
                             {mediaItems.map((item, index) => (
-                                <div key={index} className="relative aspect-square rounded-md overflow-hidden bg-slate-100 group">
-                                    {item.type === 'image' ? (
+                                <div key={item.id} className="relative aspect-square rounded-md overflow-hidden bg-slate-100 group">
+                                    {item.status === 'processing' ? (
+                                        <div className="absolute inset-0 bg-slate-100 dark:bg-slate-800 flex flex-col items-center justify-center p-2">
+                                            <Loader2 className="h-4 w-4 animate-spin text-purple-500 mb-1" />
+                                            <span className="text-[8px] text-center text-slate-500 font-medium">{item.statusText}</span>
+                                            {item.progress !== undefined && item.progress > 0 && (
+                                                <Progress value={item.progress} className="h-1 mt-1 w-full max-w-[80%]" />
+                                            )}
+                                        </div>
+                                    ) : item.type === 'image' ? (
                                         <Image src={item.preview} alt="Preview" fill className="object-cover" />
                                     ) : (
                                         <div className="w-full h-full flex items-center justify-center bg-slate-200">
@@ -190,7 +237,7 @@ export function UGCRecommendationModal({
                                     <button
                                         type="button"
                                         onClick={() => removeMedia(index)}
-                                        className="absolute top-1 right-1 bg-black/50 text-white p-0.5 rounded-full"
+                                        className="absolute top-1 right-1 bg-black/50 text-white p-0.5 rounded-full z-10"
                                     >
                                         <X className="h-3 w-3" />
                                     </button>

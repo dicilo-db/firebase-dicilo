@@ -193,8 +193,6 @@ export function CouponForm({ isOpen, onClose, onSuccess, category, fixedCompanyI
                 className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto"
                 onKeyDown={handleKeyDown}
             >
-
-            >
                 <DialogHeader>
                     <DialogTitle>{initialData ? t('contracts.coupons.editTitle', 'Editar Cupón') : t('contracts.coupons.createTitle', 'Crear Nuevo Cupón')}</DialogTitle>
                     <DialogDescription>

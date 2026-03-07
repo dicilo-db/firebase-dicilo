@@ -23,6 +23,7 @@ import { useTranslation } from 'react-i18next';
 import { CommentSection } from './CommentSection';
 import { useFriends } from '@/hooks/useFriends';
 import { UserPlus, Check } from 'lucide-react';
+import { MediaLightbox } from './MediaLightbox';
 
 interface PostCardProps {
     post: CommunityPost;
@@ -50,6 +51,8 @@ export function PostCard({ post, currentUserId }: PostCardProps) {
     const [isTranslating, setIsTranslating] = useState(false);
     const [translatedContent, setTranslatedContent] = useState<string | null>(null);
     const [showTranslated, setShowTranslated] = useState(false);
+    const [lightboxOpen, setLightboxOpen] = useState(false);
+    const [selectedMediaIndex, setSelectedMediaIndex] = useState(0);
     const [showComments, setShowComments] = useState(false);
     const [currentTranslationLang, setCurrentTranslationLang] = useState<string | null>(null);
     const { friends, sendFriendRequest } = useFriends();
@@ -238,9 +241,12 @@ export function PostCard({ post, currentUserId }: PostCardProps) {
                     )}>
                         {post.media.map((item, index) => (
                             <div key={index} className={cn(
-                                "relative rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-800",
+                                "relative rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-800 cursor-pointer group",
                                 post.media!.length === 1 ? "h-80" : "h-48"
-                            )}>
+                            )} onClick={() => {
+                                setSelectedMediaIndex(index);
+                                setLightboxOpen(true);
+                            }}>
                                 {item.type === 'image' ? (
                                     <>
                                         <Image
@@ -289,7 +295,10 @@ export function PostCard({ post, currentUserId }: PostCardProps) {
                         ))}
                     </div>
                 ) : post.imageUrl ? (
-                    <div className="relative group">
+                    <div className="relative group cursor-pointer" onClick={() => {
+                        setSelectedMediaIndex(0);
+                        setLightboxOpen(true);
+                    }}>
                         <div className="relative w-full h-80 rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-800 mt-2">
                             <Image
                                 src={post.imageUrl}
@@ -303,13 +312,24 @@ export function PostCard({ post, currentUserId }: PostCardProps) {
                             variant="secondary"
                             size="icon"
                             className="absolute top-2 right-2 h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity bg-black/50 hover:bg-black/70 text-white border-none"
-                            onClick={handleDownload}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                handleDownload();
+                            }}
                             title={t('community.download', 'Descargar')}
                         >
                             <Download className="h-4 w-4" />
                         </Button>
                     </div>
                 ) : null}
+
+                {/* Lightbox */}
+                <MediaLightbox 
+                    isOpen={lightboxOpen}
+                    onClose={() => setLightboxOpen(false)}
+                    media={post.media && post.media.length > 0 ? post.media : (post.imageUrl ? [{ type: 'image', url: post.imageUrl }] : [])}
+                    initialIndex={selectedMediaIndex}
+                />
 
                 {/* Translation Control */}
                 {(translatedContent || post.content.length > 5) && (

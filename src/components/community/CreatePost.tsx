@@ -7,11 +7,14 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
 import { Image as ImageIcon, Send, Loader2, X, Lock } from 'lucide-react';
+import { nanoid } from 'nanoid';
 import { createPostAction } from '@/app/actions/community';
 import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
 
 import { useTranslation } from 'react-i18next';
+import { compressVideo } from '@/lib/video-utils';
+import { Progress } from '@/components/ui/progress';
 
 interface CreatePostProps {
     userId: string;
@@ -22,9 +25,13 @@ interface CreatePostProps {
 }
 
 interface MediaFile {
+    id: string;
     file: File;
     preview: string;
     type: 'image' | 'video';
+    status?: 'processing' | 'ready' | 'error';
+    progress?: number;
+    statusText?: string;
 }
 
 export function CreatePost({ userId, neighborhood, neighborhoodId, onPostCreated, mode = 'public' }: CreatePostProps) {
@@ -41,11 +48,12 @@ export function CreatePost({ userId, neighborhood, neighborhoodId, onPostCreated
         const selectedFiles = Array.from(e.target.files || []);
         if (selectedFiles.length === 0) return;
 
-        const newMediaItems: MediaFile[] = [];
+        const itemsToAdd: MediaFile[] = [];
 
         for (const file of selectedFiles) {
             const isVideo = file.type.startsWith('video/');
             const isImage = file.type.startsWith('image/');
+            const id = nanoid();
 
             if (!isImage && !isVideo) {
                 toast({
@@ -57,53 +65,81 @@ export function CreatePost({ userId, neighborhood, neighborhoodId, onPostCreated
             }
 
             if (isVideo) {
-                // Limit video size (e.g., 50MB)
-                if (file.size > 50 * 1024 * 1024) {
-                    toast({
-                        title: "Vídeo demasiado grande",
-                        description: "El tamaño máximo permitido para vídeos es de 50MB.",
-                        variant: "destructive"
-                    });
-                    continue;
-                }
-                newMediaItems.push({
+                const needsCompression = file.size > 50 * 1024 * 1024;
+                const newItem: MediaFile = {
+                    id,
                     file,
                     preview: URL.createObjectURL(file),
-                    type: 'video'
-                });
+                    type: 'video',
+                    status: needsCompression ? 'processing' : 'ready',
+                    progress: 0,
+                    statusText: needsCompression ? 'Comprimiendo...' : ''
+                };
+                itemsToAdd.push(newItem);
+
+                if (needsCompression) {
+                    compressVideo(file, 50, (p) => {
+                        setMediaItems(prev => prev.map(item => 
+                            item.id === id ? { ...item, progress: p.percentage, statusText: p.status } : item
+                        ));
+                    }).then(compressedFile => {
+                        const newPreview = URL.createObjectURL(compressedFile);
+                        setMediaItems(prev => prev.map(item => {
+                            if (item.id === id) {
+                                if (item.preview) URL.revokeObjectURL(item.preview);
+                                return { ...item, file: compressedFile, preview: newPreview, status: 'ready', progress: 100, statusText: '' };
+                            }
+                            return item;
+                        }));
+                    }).catch(error => {
+                        console.error("Video compression failed:", error);
+                        setMediaItems(prev => prev.map(item => 
+                            item.id === id ? { ...item, status: 'ready', statusText: 'Error en compresión' } : item
+                        ));
+                    });
+                }
             } else if (isImage) {
+                const newItem: MediaFile = {
+                    id,
+                    file,
+                    preview: URL.createObjectURL(file), // Temporary preview
+                    type: 'image',
+                    status: 'processing',
+                    progress: 0,
+                    statusText: 'Comprimiendo...'
+                };
+                itemsToAdd.push(newItem);
+
                 // Options for compression
                 const options = {
                     maxSizeMB: 0.8,
                     maxWidthOrHeight: 1600,
                     useWebWorker: true,
-                    fileType: 'image/webp' as any // Explicitly request WebP
+                    fileType: 'image/webp' as any
                 };
 
-                try {
-                    const compressedFile = await imageCompression(file, options);
-                    
-                    // Create a new file object with the same name but .webp extension if needed
+                imageCompression(file, options).then(compressedFile => {
                     const fileName = file.name.replace(/\.[^/.]+$/, "") + ".webp";
                     const webpFile = new File([compressedFile], fileName, { type: 'image/webp' });
-
-                    newMediaItems.push({
-                        file: webpFile,
-                        preview: URL.createObjectURL(webpFile),
-                        type: 'image'
-                    });
-                } catch (error) {
-                    console.error("Compression error:", error);
-                    newMediaItems.push({
-                        file,
-                        preview: URL.createObjectURL(file),
-                        type: 'image'
-                    });
-                }
+                    const newPreview = URL.createObjectURL(webpFile);
+                    
+                    setMediaItems(prev => prev.map(item => {
+                        if (item.id === id) {
+                            if (item.preview) URL.revokeObjectURL(item.preview);
+                            return { ...item, file: webpFile, preview: newPreview, status: 'ready', progress: 100, statusText: '' };
+                        }
+                        return item;
+                    }));
+                }).catch(error => {
+                    console.error("Image compression failed:", error);
+                    setMediaItems(prev => prev.map(item => 
+                        item.id === id ? { ...item, status: 'ready', statusText: '' } : item
+                    ));
+                });
             }
         }
 
-        setMediaItems(prev => [...prev, ...newMediaItems]);
+        setMediaItems(prev => [...prev, ...itemsToAdd]);
         if (fileInputRef.current) fileInputRef.current.value = '';
     };
 
@@ -192,8 +228,16 @@ export function CreatePost({ userId, neighborhood, neighborhoodId, onPostCreated
                     {mediaItems.length > 0 && (
                         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-4">
                             {mediaItems.map((item, index) => (
-                                <div key={index} className="relative aspect-square rounded-md overflow-hidden bg-slate-100 group">
-                                    {item.type === 'image' ? (
+                                <div key={item.id} className="relative aspect-square rounded-md overflow-hidden bg-slate-100 group">
+                                    {item.status === 'processing' ? (
+                                        <div className="absolute inset-0 bg-slate-100 dark:bg-slate-800 flex flex-col items-center justify-center p-2">
+                                            <Loader2 className="h-6 w-6 animate-spin text-purple-500 mb-2" />
+                                            <span className="text-[10px] text-center text-slate-500 font-medium">{item.statusText}</span>
+                                            {item.progress !== undefined && item.progress > 0 && (
+                                                <Progress value={item.progress} className="h-1 mt-2 w-full max-w-[80%]" />
+                                            )}
+                                        </div>
+                                    ) : item.type === 'image' ? (
                                         <Image
                                             src={item.preview}
                                             alt={`Preview ${index}`}
@@ -209,11 +253,11 @@ export function CreatePost({ userId, neighborhood, neighborhoodId, onPostCreated
                                     <button
                                         type="button"
                                         onClick={() => removeMedia(index)}
-                                        className="absolute top-1 right-1 bg-black/50 hover:bg-black/70 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                                        className="absolute top-1 right-1 bg-black/50 hover:bg-black/70 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity z-10"
                                     >
                                         <X className="h-3 w-3" />
                                     </button>
-                                    {item.type === 'video' && (
+                                    {item.status === 'ready' && item.type === 'video' && (
                                         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                                             <div className="bg-black/30 p-2 rounded-full">
                                                 <div className="w-0 h-0 border-t-[6px] border-t-transparent border-l-[10px] border-l-white border-b-[6px] border-b-transparent ml-1" />

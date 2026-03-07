@@ -8,7 +8,11 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2 } from 'lucide-react';
+import { Check, ChevronsUpDown, Camera, X, Film, Loader2, PlusCircle } from 'lucide-react';
+import { nanoid } from 'nanoid';
+import { compressVideo } from '@/lib/video-utils';
+import { Progress } from '@/components/ui/progress';
+import imageCompression from 'browser-image-compression';
 import {
   Dialog,
   DialogContent,
@@ -38,7 +42,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Check, ChevronsUpDown } from "lucide-react";
+
 import { cn } from "@/lib/utils";
 import { useState, useEffect, useMemo } from 'react';
 import { submitRecommendation } from '@/app/actions/recommendations';
@@ -110,13 +114,15 @@ interface RecommendationFormContentProps {
   onCancel?: () => void;
 }
 
-import { Camera, X, Film, Loader2 } from 'lucide-react';
-import imageCompression from 'browser-image-compression';
 
 interface MediaFile {
+  id: string;
   file: File;
   preview: string;
   type: 'image' | 'video';
+  status?: 'processing' | 'ready' | 'error';
+  progress?: number;
+  statusText?: string;
 }
 
 export function RecommendationFormContent({ initialBusinessName, onSuccess, onCancel }: RecommendationFormContentProps) {
@@ -148,32 +154,91 @@ export function RecommendationFormContent({ initialBusinessName, onSuccess, onCa
     const files = Array.from(e.target.files || []);
     if (files.length === 0) return;
 
+    const itemsToAdd: MediaFile[] = [];
+
     for (const file of files) {
-      if (file.type.startsWith('image/')) {
-        try {
-          const options = {
-            maxSizeMB: 1,
-            maxWidthOrHeight: 1200,
-            useWebWorker: true,
-            fileType: 'image/webp'
-          };
-          const compressedFile = await imageCompression(file, options);
-          const preview = URL.createObjectURL(compressedFile);
-          setMedia(prev => [...prev, { file: compressedFile, preview, type: 'image' }]);
-        } catch (error) {
-          console.error("Compression error:", error);
-          const preview = URL.createObjectURL(file);
-          setMedia(prev => [...prev, { file, preview, type: 'image' }]);
+      const isVideo = file.type.startsWith('video/');
+      const isImage = file.type.startsWith('image/');
+      const id = nanoid();
+
+      if (!isImage && !isVideo) continue;
+
+      if (isVideo) {
+        const needsCompression = file.size > 50 * 1024 * 1024;
+        const newItem: MediaFile = {
+          id,
+          file,
+          preview: URL.createObjectURL(file),
+          type: 'video',
+          status: needsCompression ? 'processing' : 'ready',
+          progress: 0,
+          statusText: needsCompression ? 'Comprimiendo...' : ''
+        };
+        itemsToAdd.push(newItem);
+
+        if (needsCompression) {
+          compressVideo(file, 50, (p) => {
+            setMedia(prev => prev.map(item => 
+              item.id === id ? { ...item, progress: p.percentage, statusText: p.status } : item
+            ));
+          }).then(compressedFile => {
+            const newPreview = URL.createObjectURL(compressedFile);
+            setMedia(prev => prev.map(item => {
+              if (item.id === id) {
+                if (item.preview) URL.revokeObjectURL(item.preview);
+                return { ...item, file: compressedFile, preview: newPreview, status: 'ready', progress: 100, statusText: '' };
+              }
+              return item;
+            }));
+          }).catch(error => {
+            console.error("Video compression failed:", error);
+            setMedia(prev => prev.map(item => 
+              item.id === id ? { ...item, status: 'ready', statusText: 'Error en compresión' } : item
+            ));
+          });
         }
-      } else if (file.type.startsWith('video/')) {
-        if (file.size > 50 * 1024 * 1024) {
-          toast({ title: t('error'), description: 'Video too large (max 50MB)', variant: 'destructive' });
-          continue;
-        }
-        const preview = URL.createObjectURL(file);
-        setMedia(prev => [...prev, { file, preview, type: 'video' }]);
+      } else if (isImage) {
+        const newItem: MediaFile = {
+          id,
+          file,
+          preview: URL.createObjectURL(file),
+          type: 'image',
+          status: 'processing',
+          progress: 0,
+          statusText: 'Comprimiendo...'
+        };
+        itemsToAdd.push(newItem);
+
+        const options = {
+          maxSizeMB: 0.8,
+          maxWidthOrHeight: 1600,
+          useWebWorker: true,
+          fileType: 'image/webp' as any
+        };
+
+        imageCompression(file, options).then(compressedFile => {
+          const fileName = file.name.replace(/\.[^/.]+$/, "") + ".webp";
+          const webpFile = new File([compressedFile], fileName, { type: 'image/webp' });
+          const newPreview = URL.createObjectURL(webpFile);
+          
+          setMedia(prev => prev.map(item => {
+            if (item.id === id) {
+              if (item.preview) URL.revokeObjectURL(item.preview);
+              return { ...item, file: webpFile, preview: newPreview, status: 'ready', progress: 100, statusText: '' };
+            }
+            return item;
+          }));
+        }).catch(error => {
+          console.error("Image compression failed:", error);
+          setMedia(prev => prev.map(item => 
+            item.id === id ? { ...item, status: 'ready', statusText: '' } : item
+          ));
+        });
       }
     }
+
+    setMedia(prev => [...prev, ...itemsToAdd]);
+    e.target.value = '';
   };
 
   const removeMedia = (index: number) => {
@@ -252,8 +317,16 @@ export function RecommendationFormContent({ initialBusinessName, onSuccess, onCa
         <Label>{t('community.add_media', 'Agregar Fotos/Vídeos')}</Label>
         <div className="grid grid-cols-3 gap-2">
           {media.map((item, index) => (
-            <div key={index} className="relative aspect-square rounded-lg overflow-hidden bg-slate-100 group">
-              {item.type === 'image' ? (
+            <div key={item.id} className="relative aspect-square rounded-lg overflow-hidden bg-slate-100 group">
+              {item.status === 'processing' ? (
+                <div className="absolute inset-0 bg-slate-100 dark:bg-slate-800 flex flex-col items-center justify-center p-2">
+                  <Loader2 className="h-4 w-4 animate-spin text-purple-500 mb-1" />
+                  <span className="text-[8px] text-center text-slate-500 font-medium">{item.statusText}</span>
+                  {item.progress !== undefined && item.progress > 0 && (
+                    <Progress value={item.progress} className="h-1 mt-1 w-full max-w-[80%]" />
+                  )}
+                </div>
+              ) : item.type === 'image' ? (
                 <img src={item.preview} alt="preview" className="w-full h-full object-cover" />
               ) : (
                 <div className="w-full h-full flex items-center justify-center bg-slate-200">
@@ -263,7 +336,7 @@ export function RecommendationFormContent({ initialBusinessName, onSuccess, onCa
               <button
                 type="button"
                 onClick={() => removeMedia(index)}
-                className="absolute top-1 right-1 p-1 bg-black/50 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                className="absolute top-1 right-1 p-1 bg-black/50 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity z-10"
               >
                 <X className="h-3 w-3" />
               </button>
@@ -271,7 +344,7 @@ export function RecommendationFormContent({ initialBusinessName, onSuccess, onCa
           ))}
           {media.length < 5 && (
             <label className="aspect-square flex flex-col items-center justify-center border-2 border-dashed border-slate-200 rounded-lg cursor-pointer hover:border-purple-400 hover:bg-purple-50 transition-all">
-              <Camera className="h-6 w-6 text-slate-400" />
+              <PlusCircle className="h-6 w-6 text-slate-400" />
               <span className="text-[10px] text-slate-500 mt-1">{t('upload', 'Subir')}</span>
               <input type="file" className="hidden" accept="image/*,video/*" multiple onChange={handleFileChange} />
             </label>

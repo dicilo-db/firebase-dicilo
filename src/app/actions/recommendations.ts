@@ -1,3 +1,5 @@
+'use server';
+
 import { getAdminDb, getAdminStorage } from '@/lib/firebase-admin';
 import * as admin from 'firebase-admin';
 import { registerNewProspect } from './dicipoints';
@@ -32,7 +34,7 @@ export async function submitRecommendation(formData: FormData) {
         for (const file of mediaFiles) {
             if (file.size === 0) continue;
 
-            const buffer = Buffer.from(await file.arrayBuffer());
+            const buffer = Buffer.from(await file.arrayBuffer() as any);
             const fileName = `${randomUUID()}`;
             const isImage = file.type.startsWith('image/');
             const isVideo = file.type.startsWith('video/');
