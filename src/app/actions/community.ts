@@ -51,12 +51,9 @@ export async function createPostAction(prevState: any, formData: FormData) {
             console.warn("Profile fetch failed", e);
         }
 
-        // 2. Upload Media Files
-        const mediaItems: { type: 'image' | 'video', url: string }[] = [];
-        let firstImageUrl = null;
-
-        for (const file of mediaFiles) {
-            if (!file || file.size === 0) continue;
+        // 2. Upload Media Files in Parallel
+        const uploadPromises = mediaFiles.map(async (file) => {
+            if (!file || file.size === 0) return null;
 
             try {
                 const buffer = await file.arrayBuffer();
@@ -104,15 +101,17 @@ export async function createPostAction(prevState: any, formData: FormData) {
                 await fileRef.makePublic();
                 const publicUrl = fileRef.publicUrl();
 
-                mediaItems.push({ type: mediaType, url: publicUrl });
-                if (mediaType === 'image' && !firstImageUrl) {
-                    firstImageUrl = publicUrl;
-                }
+                return { type: mediaType, url: publicUrl };
 
             } catch (uploadError) {
                 console.error("Single file upload error:", uploadError);
+                return null;
             }
-        }
+        });
+
+        const uploadResults = await Promise.all(uploadPromises);
+        const mediaItems = uploadResults.filter((item): item is { type: 'image' | 'video', url: string } => item !== null);
+        const firstImageUrl = mediaItems.find(item => item.type === 'image')?.url || null;
 
         // 3. Create Post
         const newPost: any = {

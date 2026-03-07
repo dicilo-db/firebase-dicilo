@@ -19,33 +19,35 @@ export async function submitUGCRecommendation(formData: FormData) {
             throw new Error('Missing required fields');
         }
 
-        const mediaItems: { type: 'image' | 'video', url: string }[] = [];
-        let firstImageUrl = null;
+        const uploadPromises = mediaFiles.map(async (file) => {
+            if (!file || file.size === 0) return null;
 
-        for (const file of mediaFiles) {
-            if (!file || file.size === 0) continue;
+            try {
+                const buffer = Buffer.from(await file.arrayBuffer() as any);
+                const contentType = file.type;
+                const isVideo = contentType.startsWith('video/');
+                const mediaType = isVideo ? 'video' : 'image';
+                
+                const extension = contentType.split('/')[1] || (isVideo ? 'mp4' : 'img');
+                const filePath = `recommendations/${businessId}/${uuidv4()}.${extension}`;
+                const fileRef = storage.bucket().file(filePath);
 
-            const buffer = Buffer.from(await file.arrayBuffer() as any);
-            const contentType = file.type;
-            const isVideo = contentType.startsWith('video/');
-            const mediaType = isVideo ? 'video' : 'image';
-            
-            const extension = contentType.split('/')[1] || (isVideo ? 'mp4' : 'img');
-            const filePath = `recommendations/${businessId}/${uuidv4()}.${extension}`;
-            const fileRef = storage.bucket().file(filePath);
+                await fileRef.save(buffer, {
+                    metadata: { contentType: contentType },
+                    public: true,
+                });
 
-            await fileRef.save(buffer, {
-                metadata: { contentType: contentType },
-                public: true,
-            });
-
-            const publicUrl = `https://storage.googleapis.com/${storage.bucket().name}/${filePath}`;
-            mediaItems.push({ type: mediaType, url: publicUrl });
-            
-            if (mediaType === 'image' && !firstImageUrl) {
-                firstImageUrl = publicUrl;
+                const publicUrl = `https://storage.googleapis.com/${storage.bucket().name}/${filePath}`;
+                return { type: mediaType, url: publicUrl } as { type: 'image' | 'video', url: string };
+            } catch (err) {
+                console.error("Single file upload error in UGC:", err);
+                return null;
             }
-        }
+        });
+
+        const uploadResults = await Promise.all(uploadPromises);
+        const mediaItems = uploadResults.filter((item): item is { type: 'image' | 'video', url: string } => item !== null);
+        const firstImageUrl = mediaItems.find(item => item.type === 'image')?.url || null;
 
         // 2. Create Recommendation Document in Firestore
         const recommendationId = uuidv4();

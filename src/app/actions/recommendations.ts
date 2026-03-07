@@ -29,51 +29,58 @@ export async function submitRecommendation(formData: FormData) {
         const userId = formData.get('userId') as string;
 
         const mediaFiles = formData.getAll('media') as File[];
-        const media: { type: 'image' | 'video'; url: string }[] = [];
+        
+        const uploadPromises = mediaFiles.map(async (file) => {
+            if (file.size === 0) return null;
 
-        for (const file of mediaFiles) {
-            if (file.size === 0) continue;
+            try {
+                const buffer = Buffer.from(await file.arrayBuffer() as any);
+                const fileName = `${randomUUID()}`;
+                const isImage = file.type.startsWith('image/');
+                const isVideo = file.type.startsWith('video/');
 
-            const buffer = Buffer.from(await file.arrayBuffer() as any);
-            const fileName = `${randomUUID()}`;
-            const isImage = file.type.startsWith('image/');
-            const isVideo = file.type.startsWith('video/');
+                let uploadBuffer = buffer;
+                let finalPath = '';
+                let contentType = file.type;
 
-            let uploadBuffer = buffer;
-            let finalPath = '';
-            let contentType = file.type;
-
-            if (isImage) {
-                try {
-                    uploadBuffer = await sharp(buffer)
-                        .webp({ quality: 80 })
-                        .resize(1200, 1200, { fit: 'inside', withoutEnlargement: true })
-                        .toBuffer();
-                    finalPath = `recommendations/images/${fileName}.webp`;
-                    contentType = 'image/webp';
-                } catch (err) {
-                    console.error("Sharp processing failed, uploading original:", err);
-                    const ext = file.name.split('.').pop() || 'jpg';
-                    finalPath = `recommendations/images/${fileName}.${ext}`;
+                if (isImage) {
+                    try {
+                        uploadBuffer = await sharp(buffer)
+                            .webp({ quality: 80 })
+                            .resize(1200, 1200, { fit: 'inside', withoutEnlargement: true })
+                            .toBuffer();
+                        finalPath = `recommendations/images/${fileName}.webp`;
+                        contentType = 'image/webp';
+                    } catch (err) {
+                        console.error("Sharp processing failed, uploading original:", err);
+                        const ext = file.name.split('.').pop() || 'jpg';
+                        finalPath = `recommendations/images/${fileName}.${ext}`;
+                    }
+                } else if (isVideo) {
+                    const ext = file.name.split('.').pop() || 'mp4';
+                    finalPath = `recommendations/videos/${fileName}.${ext}`;
+                } else {
+                    return null; // Skip unknown types
                 }
-            } else if (isVideo) {
-                const ext = file.name.split('.').pop() || 'mp4';
-                finalPath = `recommendations/videos/${fileName}.${ext}`;
-            } else {
-                continue; // Skip unknown types
+
+                const fileRef = bucket.file(finalPath);
+                await fileRef.save(uploadBuffer, {
+                    metadata: { contentType },
+                });
+
+                await fileRef.makePublic();
+                return {
+                    type: (isImage ? 'image' : 'video') as 'image' | 'video',
+                    url: fileRef.publicUrl()
+                };
+            } catch (err) {
+                console.error("Single file upload error in recommendation:", err);
+                return null;
             }
+        });
 
-            const fileRef = bucket.file(finalPath);
-            await fileRef.save(uploadBuffer, {
-                metadata: { contentType },
-            });
-
-            await fileRef.makePublic();
-            media.push({
-                type: isImage ? 'image' : 'video',
-                url: fileRef.publicUrl()
-            });
-        }
+        const uploadResults = await Promise.all(uploadPromises);
+        const media = uploadResults.filter((item): item is { type: 'image' | 'video'; url: string } => item !== null);
 
         const recommendationData: any = {
             companyName,
