@@ -30,7 +30,9 @@
         },
         "list": {
             "user_label": "Usuario",
-            "unknown_neighborhood": "Barrio desconocido"
+            "unknown_neighborhood": "Barrio desconocido",
+            "request_from": "Solicitud de:",
+            "pending_badge": "Pendiente"
         }
     }
 }

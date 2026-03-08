@@ -25,6 +25,7 @@ import { chatService } from '@/lib/chat-service';
 import { Message as SocialMessage } from '@/types/social';
 
 import { CommunityFeed } from '../../community/CommunityFeed';
+import { NotificationBell } from '../../notifications/NotificationBell';
 
 export function SocialPanel({ neighborhood = 'Hamburg' }: { neighborhood?: string }) {
     const { t } = useTranslation('social');
@@ -100,19 +101,27 @@ export function SocialPanel({ neighborhood = 'Hamburg' }: { neighborhood?: strin
                 <Sidebar position="left" scrollable={false}>
                     {/* ... sidebar content remains same ... */}
                     {/* Custom Toggle using Primary Color (Dicilo Green) */}
-                    <div className="p-3 bg-primary flex justify-around items-center text-primary-foreground shadow-sm">
-                        <button
-                            onClick={() => setActiveTab('chats')}
-                            className={`py-1 px-3 rounded-full text-sm transition-colors ${activeTab === 'chats' ? 'bg-white/20 font-bold' : 'hover:bg-white/10'}`}
-                        >
-                            {t('social.tabs.chats')}
-                        </button>
-                        <button
-                            onClick={() => setActiveTab('friends')}
-                            className={`py-1 px-3 rounded-full text-sm transition-colors ${activeTab === 'friends' ? 'bg-white/20 font-bold' : 'hover:bg-white/10'}`}
-                        >
-                            {t('social.tabs.friends')}
-                        </button>
+                    <div className="p-3 bg-primary flex justify-between items-center text-primary-foreground shadow-sm">
+                        <div className="flex gap-2">
+                            <button
+                                onClick={() => setActiveTab('chats')}
+                                className={`py-1 px-3 rounded-full text-sm transition-colors ${activeTab === 'chats' ? 'bg-white/20 font-bold' : 'hover:bg-white/10'}`}
+                            >
+                                {t('social.tabs.chats')}
+                            </button>
+                            <button
+                                onClick={() => setActiveTab('friends')}
+                                className={`py-1 px-3 rounded-full text-sm transition-colors relative ${activeTab === 'friends' ? 'bg-white/20 font-bold' : 'hover:bg-white/10'}`}
+                            >
+                                {t('social.tabs.friends')}
+                                {pendingRequests.length > 0 && (
+                                    <span className="absolute -top-1 -right-1 flex h-3 w-3 items-center justify-center rounded-full bg-red-500 animate-pulse border border-white" />
+                                )}
+                            </button>
+                        </div>
+                        <div className="flex items-center">
+                            <NotificationBell />
+                        </div>
                     </div>
 
                     {/* Sidebar Content based on Tab */}
@@ -137,7 +146,17 @@ export function SocialPanel({ neighborhood = 'Hamburg' }: { neighborhood?: strin
                                     <div className="space-y-3">
                                         {pendingRequests.map(req => (
                                             <div key={req.id} className="bg-white p-3 rounded-md shadow-sm border flex items-center justify-between">
-                                                <span className="text-sm font-medium text-gray-700">{t('social.list.user_label')} {req.fromUserId}</span>
+                                                <div className="flex flex-col gap-0.5 overflow-hidden">
+                                                    <p className="text-xs font-bold text-primary flex items-center gap-1">
+                                                        {t('social.list.request_from')}
+                                                    </p>
+                                                    <p className="text-sm font-semibold text-gray-800 truncate">
+                                                        {req.fromUserName || t('social.list.user_label')}
+                                                    </p>
+                                                    <p className="text-[10px] text-muted-foreground truncate">
+                                                        {req.fromUserEmail}
+                                                    </p>
+                                                </div>
                                                 <div className="flex gap-1">
                                                     <button
                                                         className="p-1.5 text-red-600 hover:bg-red-50 rounded-full transition-colors"

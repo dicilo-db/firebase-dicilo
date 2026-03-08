@@ -137,6 +137,46 @@ export async function createPostAction(prevState: any, formData: FormData) {
 
         const res = await db.collection('community_posts').add(newPost);
 
+        // 4. Trigger Notifications for Friends
+        try {
+            // Find friends (Accepted requests where current user is either sender or receiver)
+            const [sentRequests, receivedRequests] = await Promise.all([
+                db.collection('friend_requests')
+                    .where('fromUserId', '==', userId)
+                    .where('status', '==', 'accepted')
+                    .get(),
+                db.collection('friend_requests')
+                    .where('toUserId', '==', userId)
+                    .where('status', '==', 'accepted')
+                    .get()
+            ]);
+
+            const friendIds = new Set<string>();
+            sentRequests.forEach(doc => friendIds.add(doc.data().toUserId));
+            receivedRequests.forEach(doc => friendIds.add(doc.data().fromUserId));
+
+            if (friendIds.size > 0) {
+                const batch = db.batch();
+                friendIds.forEach(fId => {
+                    const notifRef = db.collection('notifications').doc();
+                    batch.set(notifRef, {
+                        toUserId: fId,
+                        fromUserId: userId,
+                        fromUserName: userName,
+                        fromUserAvatar: userAvatar,
+                        type: 'new_post',
+                        postId: res.id,
+                        neighborhood: neighborhood,
+                        read: false,
+                        createdAt: new Date()
+                    });
+                });
+                await batch.commit();
+            }
+        } catch (notifError) {
+            console.error("Failed to trigger friend notifications:", notifError);
+        }
+
         return { success: true, id: res.id };
 
     } catch (error: any) {

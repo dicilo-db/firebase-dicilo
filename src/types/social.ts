@@ -10,6 +10,8 @@ export type FriendRequestStatus = 'pending' | 'accepted' | 'rejected';
 export interface FriendRequest {
     id: string;
     fromUserId: string;
+    fromUserName?: string;
+    fromUserEmail?: string;
     toUserId: string;
     status: FriendRequestStatus;
     createdAt: number;

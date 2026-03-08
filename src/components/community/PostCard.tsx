@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { CommunityPost } from '@/types/community';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -44,9 +45,10 @@ const LANGUAGES = [
     { code: 'ja', name: 'Japanese', label: 'Japanese' }
 ];
 
-export function PostCard({ post, currentUserId }: PostCardProps) {
+export function PostCard({ post, currentUserId, readOnly = false }: PostCardProps) {
     const { t, i18n } = useTranslation(['common', 'admin']);
     const { toast } = useToast();
+    const router = useRouter();
     const [likes, setLikes] = useState<string[]>(post.likes || []);
     const [isTranslating, setIsTranslating] = useState(false);
     const [translatedContent, setTranslatedContent] = useState<string | null>(null);
@@ -62,6 +64,10 @@ export function PostCard({ post, currentUserId }: PostCardProps) {
     const isFriend = friends.some(f => f.uid === post.userId);
 
     const handleConnect = async () => {
+        if (readOnly) {
+            toast({ title: t('common:login.required', 'Inicio de sesión requerido'), description: t('common:community.login_to_interact', 'Regístrate para conectar con vecinos.') });
+            return;
+        }
         if (requestSent) return;
 
         // Optimistic UI
@@ -77,6 +83,10 @@ export function PostCard({ post, currentUserId }: PostCardProps) {
     const commentCount = post.commentCount || 0;
 
     const handleLike = async () => {
+        if (readOnly) {
+            toast({ title: t('common:login.required', 'Inicio de sesión requerido'), description: t('common:community.login_to_interact', 'Regístrate para dar Like.') });
+            return;
+        }
         const newLikes = isLiked
             ? likes.filter(id => id !== currentUserId)
             : [...likes, currentUserId];
@@ -121,8 +131,9 @@ export function PostCard({ post, currentUserId }: PostCardProps) {
     };
 
     const handleSocialShare = async (platform: string) => {
-        // Construct a cleaner URL if possible, or use current
-        const url = window.location.href;
+        // Unique post URL
+        const domain = window.location.origin;
+        const url = `${domain}/post/${post.id}`;
         const text = t('community.share_text', {
             user: post.userName,
             neighborhood: post.neighborhood
@@ -386,7 +397,13 @@ export function PostCard({ post, currentUserId }: PostCardProps) {
                         variant="ghost"
                         size="sm"
                         className={cn("flex gap-2 hover:text-blue-500", showComments && "text-blue-600 bg-blue-50")}
-                        onClick={() => setShowComments(!showComments)}
+                        onClick={() => {
+                            if (readOnly) {
+                                toast({ title: t('common:login.required', 'Inicio de sesión requerido'), description: t('common:community.login_to_interact', 'Regístrate para ver comentarios e interactuar.') });
+                                return;
+                            }
+                            setShowComments(!showComments);
+                        }}
                     >
                         <MessageCircle className="h-4 w-4" />
                         <span className="text-xs">

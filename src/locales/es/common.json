@@ -52,7 +52,15 @@
     "email_whatsapp_opt": "Email o WhatsApp (Opcional)",
     "comment_label": "Comentario",
     "comment_placeholder": "¿Qué te gustó más?",
-    "send_recommendation": "Enviar Recomendación"
+    "send_recommendation": "Enviar Recomendación",
+    "notifications": "Notificaciones",
+    "mark_all_read": "Marcar todo como leído",
+    "no_notifications": "No tienes notificaciones por ahora.",
+    "just_now": "Hace un momento",
+    "showing_recent": "Mostrando últimas 10 actualizaciones",
+    "notif_new_post": "ha publicado en {{neighborhood}}.",
+    "notif_new_post_generic": "ha publicado en la comunidad.",
+    "notif_friend_request": "te ha enviado una solicitud de amistad."
   },
   "dicipoints": {
     "whatIs": {

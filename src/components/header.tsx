@@ -25,6 +25,7 @@ import { LanguageSelector } from './LanguageSelector';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import { usePathname } from 'next/navigation';
+import { NotificationBell } from './notifications/NotificationBell';
 
 // Desktop visible links
 const desktopLinks = [
@@ -202,11 +203,13 @@ const Header = () => {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-48">
-                      <DropdownMenuItem asChild>
-                        <Link href="/dashboard" className="cursor-pointer font-semibold">
-                          Dashboard Home
-                        </Link>
-                      </DropdownMenuItem>
+                      <div className="flex items-center justify-between px-2 py-1">
+                        <DropdownMenuItem asChild>
+                          <Link href="/dashboard" className="cursor-pointer font-semibold flex-1">
+                            Dashboard Home
+                          </Link>
+                        </DropdownMenuItem>
+                      </div>
 
                       <div className="p-2 border-t mt-1">
                         <p className="text-xs text-muted-foreground mb-2 px-2">{t('header.nav.language', 'Sprache')}</p>

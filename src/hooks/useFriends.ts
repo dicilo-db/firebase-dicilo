@@ -30,9 +30,37 @@ export function useFriends() {
 
                 const reqSnapshot = await getDocs(qRequests);
                 const reqs: FriendRequest[] = [];
+                const fromUserIds = new Set<string>();
+                
                 reqSnapshot.forEach(doc => {
-                    reqs.push({ id: doc.id, ...doc.data() } as FriendRequest);
+                    const data = doc.data();
+                    reqs.push({ id: doc.id, ...data } as FriendRequest);
+                    fromUserIds.add(data.fromUserId);
                 });
+
+                // Fetch profiles for all senders to get names and emails
+                if (fromUserIds.size > 0) {
+                    const ids = Array.from(fromUserIds).slice(0, 30);
+                    const qProfiles = query(
+                        collection(db, 'private_profiles'),
+                        where('uid', 'in', ids)
+                    );
+                    const profilesSnap = await getDocs(qProfiles);
+                    const profileMap = new Map<string, any>();
+                    profilesSnap.forEach(doc => {
+                        profileMap.set(doc.data().uid, doc.data());
+                    });
+
+                    // Enrich requests
+                    reqs.forEach(req => {
+                        const profile = profileMap.get(req.fromUserId);
+                        if (profile) {
+                            req.fromUserName = profile.firstName ? `${profile.firstName} ${profile.lastName || ''}`.trim() : 'Usuario';
+                            req.fromUserEmail = profile.email || 'No email';
+                        }
+                    });
+                }
+
                 setPendingRequests(reqs);
 
                 // B. Fetch Friends (Accepted Requests)
@@ -122,14 +150,13 @@ export function useFriends() {
     const sendFriendRequest = async (toUserId: string) => {
         if (!currentUser?.uid) return;
         try {
-            await addDoc(collection(db, 'friend_requests'), {
-                fromUserId: currentUser.uid,
-                toUserId,
-                status: 'pending',
-                createdAt: Date.now()
-            });
-            // Optional: Optimistically update UI or re-fetch
-            console.log('Friend request sent!');
+            const { sendFriendRequestAction } = await import('@/app/actions/social');
+            const result = await sendFriendRequestAction(currentUser.uid, toUserId);
+            if (result.success) {
+                console.log('Friend request sent via server action!');
+            } else {
+                console.error('Error sending friend request:', result.error);
+            }
         } catch (error) {
             console.error('Error sending friend request:', error);
         }
@@ -137,16 +164,14 @@ export function useFriends() {
 
     const respondToFriendRequest = async (requestId: string, status: 'accepted' | 'rejected') => {
         try {
-            await updateDoc(doc(db, 'friend_requests', requestId), {
-                status,
-                updatedAt: Date.now()
-            });
-
-            // Remove from local state immediately
-            setPendingRequests(prev => prev.filter(req => req.id !== requestId));
-
-            if (status === 'accepted') {
-                // Logic to add to friends list would go here
+            const { respondToFriendRequestAction } = await import('@/app/actions/social');
+            const result = await respondToFriendRequestAction(requestId, status);
+            
+            if (result.success) {
+                // Remove from local state immediately
+                setPendingRequests(prev => prev.filter(req => req.id !== requestId));
+            } else {
+                console.error('Error responding to friend request:', result.error);
             }
         } catch (error) {
             console.error('Error responding to friend request:', error);
