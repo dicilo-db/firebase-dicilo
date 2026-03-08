@@ -38,6 +38,7 @@ export default function PrivateUsersPage() {
     const [users, setUsers] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
+    const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest');
 
     // Permissions Management State
     // Permissions & Referrer State
@@ -151,6 +152,10 @@ export default function PrivateUsersPage() {
         }
 
         return matchesSearch && matchesCountry && matchesCity && matchesDate;
+    }).sort((a, b) => {
+        const dateA = a.createdAt?.seconds ? a.createdAt.seconds : 0;
+        const dateB = b.createdAt?.seconds ? b.createdAt.seconds : 0;
+        return sortOrder === 'newest' ? dateB - dateA : dateA - dateB;
     });
 
     const csvData = filteredUsers.map(user => ({
@@ -283,6 +288,20 @@ export default function PrivateUsersPage() {
                                     }}
                                     className="w-full"
                                 />
+                            </div>
+
+                            {/* Filter: Sort Order */}
+                            <div className="flex flex-col gap-2">
+                                <Label className="text-xs font-semibold">Orden (Registro)</Label>
+                                <Select value={sortOrder} onValueChange={(val: any) => setSortOrder(val)}>
+                                    <SelectTrigger className="w-full">
+                                        <SelectValue placeholder="Ordenar por..." />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="newest">Nuevos registros</SelectItem>
+                                        <SelectItem value="oldest">Viejos registros</SelectItem>
+                                    </SelectContent>
+                                </Select>
                             </div>
                         </div>
                         {/* Clear Filters Button */}

@@ -190,6 +190,7 @@ const Header = () => {
                   <Button variant="outline" onClick={handleLogout}>
                     {t('header.nav.logout', 'Abmelden')}
                   </Button>
+                  <NotificationBell />
                   <LanguageSelector />
                 </div>
 
@@ -213,7 +214,8 @@ const Header = () => {
 
                       <div className="p-2 border-t mt-1">
                         <p className="text-xs text-muted-foreground mb-2 px-2">{t('header.nav.language', 'Sprache')}</p>
-                        <div className="flex justify-center">
+                        <div className="flex justify-center gap-2">
+                          <NotificationBell />
                           <LanguageSelector />
                         </div>
                       </div>
@@ -244,7 +246,8 @@ const Header = () => {
           </div>
 
           {/* MOBILE MENU (HAMBURGER) - Hidden on md breakpoint */}
-          <div className="md:hidden">
+          <div className="flex items-center gap-2 md:hidden">
+            {user && <NotificationBell />}
             <Sheet>
               <SheetTrigger asChild>
                 <Button variant="outline" size="icon">
@@ -331,7 +334,10 @@ const Header = () => {
                     <h3 className="mb-2 text-sm font-semibold uppercase text-muted-foreground">
                       {t('header.nav.language')}
                     </h3>
-                    <LanguageSelector />
+                    <div className="flex items-center gap-4">
+                      <NotificationBell />
+                      <LanguageSelector />
+                    </div>
                   </div>
                 </div>
               </SheetContent>
