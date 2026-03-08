@@ -44,7 +44,11 @@ export default function FreelancerPage() {
     // So:
     // - If Role=Freelancer -> Access Granted via role check.
     // - If Role=User + Permission='freelancer_tool' -> Access Granted via Permission Check.
-    useAuthGuard(['admin', 'superadmin', 'freelancer', 'team_office'], 'freelancer_tool');
+    const allowedRoles = React.useMemo<('admin' | 'superadmin' | 'team_office' | 'freelancer')[]>(() => 
+        ['admin', 'superadmin', 'freelancer', 'team_office'], 
+    []);
+
+    useAuthGuard(allowedRoles, 'freelancer_tool');
 
     const searchParams = useSearchParams();
     const currentTab = searchParams.get('tab') || 'dashboard';
