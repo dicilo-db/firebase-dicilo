@@ -108,7 +108,14 @@ export async function translateText(text: string, targetLang: string) {
             `,
         });
 
-        const result = response.text.trim();
+        let result = response.text.trim();
+        
+        // Remove common AI noise/prefixes if they appear
+        result = result.replace(/^(\[TRANSLATED to [a-zA-Z]+\]:?|Translation:|Result:)/i, '').trim();
+        
+        // Final fallback: if AI returned nothing or just the prefix, return original
+        if (!result) return text;
+
         console.log(`[AI Translation] Result for ${targetLangName}: "${result.substring(0, 50)}..."`);
         return result;
     } catch (error: any) {

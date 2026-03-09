@@ -90,8 +90,24 @@ export default function EditTemplatePage() {
             const fetchTpl = async () => {
                 try {
                     const data = await getTemplate(id);
-                    if (data) setTemplate(data);
-                    else {
+                    if (data) {
+                        // Migration & Initialization: Ensure images array exists and all expected langs have values
+                        const migratedTemplate = {
+                            ...data,
+                            images: data.images || (data.imageUrl ? [data.imageUrl] : []),
+                            versions: {
+                                // Default placeholders to avoid hydration/undefined issues
+                                'es': { subject: '', body: '' },
+                                'en': { subject: '', body: '' },
+                                'de': { subject: '', body: '' },
+                                'fr': { subject: '', body: '' },
+                                'pt': { subject: '', body: '' },
+                                'it': { subject: '', body: '' },
+                                ...data.versions
+                            }
+                        };
+                        setTemplate(migratedTemplate);
+                    } else {
                         toast({ title: t("emailTemplates.editor.error"), description: t("emailTemplates.editor.notFound"), variant: "destructive" });
                         router.push('/admin/email-templates');
                     }
@@ -143,13 +159,15 @@ export default function EditTemplatePage() {
         const source = template.versions[sourceLang];
         if (!source.subject && !source.body) return;
 
-        const targetLangs = ['en', 'de'].filter(l => l !== sourceLang);
+        // Auto translate to all other active languages
+        const targetLangs = ['en', 'de', 'fr', 'pt', 'it'].filter(l => l !== sourceLang);
 
-        setSaving(true); // blocking UI with saving state for simplicity
+        setSaving(true);
         try {
             const newVersions = { ...template.versions };
 
             for (const target of targetLangs) {
+                // If subject exists but no translation, or if force re-translate
                 if (source.subject) {
                     newVersions[target].subject = await translateText(source.subject, target);
                 }
@@ -265,13 +283,16 @@ export default function EditTemplatePage() {
 
                 <div className="md:col-span-2">
                     <Tabs defaultValue="es" className="w-full">
-                        <TabsList className="grid w-full grid-cols-3">
-                            <TabsTrigger value="es">Español (ES)</TabsTrigger>
-                            <TabsTrigger value="en">English (EN)</TabsTrigger>
-                            <TabsTrigger value="de">Deutsch (DE)</TabsTrigger>
+                        <TabsList className="grid w-full grid-cols-6 h-auto flex-wrap">
+                            {['es', 'en', 'de', 'fr', 'pt', 'it'].map(lang => (
+                                <TabsTrigger key={lang} value={lang} className="text-[10px] py-1">
+                                    {lang.toUpperCase()}
+                                    {template.versions[lang]?.subject && <span className="ml-1 w-1 h-1 bg-green-500 rounded-full" />}
+                                </TabsTrigger>
+                            ))}
                         </TabsList>
 
-                        {['es', 'en', 'de'].map((lang) => (
+                        {['es', 'en', 'de', 'fr', 'pt', 'it'].map((lang) => (
                             <TabsContent key={lang} value={lang} className="space-y-4 mt-4 border p-4 rounded-md">
                                 <div className="space-y-2">
                                     <Label>{t('emailTemplates.editor.subject')} ({lang.toUpperCase()})</Label>
