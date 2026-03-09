@@ -6,10 +6,26 @@ import * as admin from 'firebase-admin';
 export async function translateText(text: string, targetLanguage: string = 'Spanish') {
     try {
         const response = await ai.generate({
-            prompt: `Translate the following text into ${targetLanguage}. Return ONLY the translated text, nothing else. Text: "${text}"`,
+            prompt: `
+            ROLE: Professional Translator.
+            TARGET LANGUAGE: ${targetLanguage}.
+            
+            TASK: Translate the content within <TO_TRANSLATE> tags to ${targetLanguage}.
+            
+            STRICT RULES:
+            1. Output ONLY the translated text.
+            2. ABSOLUTELY NO metadata, NO headers, NO explanations, NO original Spanish.
+            3. Preserve all curly brace variables like {{Name}}, {{Amount}} etc. EXACTLY.
+            4. Preserve all HTML structure if present.
+            5. MANDATORY: The result MUST BE in ${targetLanguage}.
+            
+            <TO_TRANSLATE>
+            ${text}
+            </TO_TRANSLATE>
+            `,
         });
 
-        return { success: true, translation: response.text };
+        return { success: true, translation: response.text.trim() };
     } catch (error: any) {
         console.error('Translation Error:', error);
         return { success: false, error: 'Translation failed. Please try again.' };

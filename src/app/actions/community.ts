@@ -192,7 +192,22 @@ export async function translateText(text: string, targetLanguage: string) {
 
     try {
         const response = await ai.generate({
-            prompt: `Translate the following informal social media text to ${targetLanguage}. Keep the tone friendly and casual. Only return the translated text, no explanations. Text: "${text}"`,
+            prompt: `
+            ROLE: Professional Social Media Translator.
+            TARGET LANGUAGE: ${targetLanguage}.
+            
+            TASK: Translate the following informal social media text into ${targetLanguage}.
+            
+            STRICT RULES:
+            1. Keep the tone friendly, casual, and appropriate for a community social wall.
+            2. Output ONLY the translated text.
+            3. ABSOLUTELY NO metadata, NO headers, NO explanations, NO intro/outro.
+            4. MANDATORY: The result MUST BE in ${targetLanguage}.
+            
+            <TO_TRANSLATE>
+            ${text}
+            </TO_TRANSLATE>
+            `,
         });
 
         return { success: true, translatedText: response.text.trim() };
