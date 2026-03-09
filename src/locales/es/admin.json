@@ -324,17 +324,35 @@
       "error": "Error al cargar el reporte."
     }
   },
-  "privateUsers": {
+    "privateUsers": {
     "title": "Usuarios Privados",
     "exportCSV": "Exportar CSV",
     "userList": "Lista de Usuarios",
     "searchPlaceholder": "Buscar por nombre, email o código...",
+    "filters": {
+      "search": "Buscar (Nombre/Email/Code)",
+      "country": "País",
+      "countryPlaceholder": "Filtrar por País...",
+      "city": "Ciudad",
+      "cityPlaceholder": "Filtrar por Ciudad...",
+      "date": "Fecha",
+      "sort": "Registros",
+      "sortPlaceholder": "Ordenar por...",
+      "newest": "Nuevos registros",
+      "oldest": "Viejos registros",
+      "clear": "Limpiar Filtros"
+    },
     "table": {
       "code": "Código",
       "name": "Nombre",
       "email": "Email",
+      "country": "País",
+      "city": "Ciudad",
+      "role": "Rol",
       "interests": "Intereses",
-      "joined": "Unido",
+      "invitedBy": "Invitado por",
+      "joined": "Fecha Registro",
+      "actions": "Acciones",
       "selected": "seleccionado"
     },
     "noResults": "No se encontraron usuarios."

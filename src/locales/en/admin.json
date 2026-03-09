@@ -322,12 +322,30 @@
     "exportCSV": "Export CSV",
     "userList": "User List",
     "searchPlaceholder": "Search by name, email or code...",
+    "filters": {
+      "search": "Search (Name/Email/Code)",
+      "country": "Country",
+      "countryPlaceholder": "Filter by Country...",
+      "city": "City",
+      "cityPlaceholder": "Filter by City...",
+      "date": "Date",
+      "sort": "Records",
+      "sortPlaceholder": "Sort by...",
+      "newest": "Newest Records",
+      "oldest": "Oldest Records",
+      "clear": "Clear Filters"
+    },
     "table": {
       "code": "Code",
       "name": "Name",
       "email": "Email",
+      "country": "Country",
+      "city": "City",
+      "role": "Role",
       "interests": "Interests",
-      "joined": "Joined",
+      "invitedBy": "Invited by",
+      "joined": "Registration Date",
+      "actions": "Actions",
       "selected": "selected"
     },
     "noResults": "No users found."

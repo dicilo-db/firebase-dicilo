@@ -241,14 +241,14 @@ export default function PrivateUsersPage() {
                 <Card>
                     <CardHeader>
                         <CardTitle>{t('common:privateUsersList')}</CardTitle>
-                        <div className="grid grid-cols-1 gap-4 md:grid-cols-4 pt-4">
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-5 pt-4">
                             {/* Filter: Search */}
                             <div className="flex flex-col gap-2">
-                                <Label className="text-xs font-semibold">Buscar (Nombre/Email/Code)</Label>
+                                <Label className="text-xs font-semibold">{t('privateUsers.filters.search')}</Label>
                                 <div className="relative">
                                     <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                                     <Input
-                                        placeholder="Buscar..."
+                                        placeholder={t('privateUsers.filters.searchPlaceholder') || "Buscar..."}
                                         value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)}
                                         className="pl-9"
@@ -258,9 +258,9 @@ export default function PrivateUsersPage() {
 
                             {/* Filter: Country */}
                             <div className="flex flex-col gap-2">
-                                <Label className="text-xs font-semibold">{t('common:dashboard.country') || 'Land'}</Label>
+                                <Label className="text-xs font-semibold">{t('privateUsers.filters.country')}</Label>
                                 <Input
-                                    placeholder="Filter by Country..."
+                                    placeholder={t('privateUsers.filters.countryPlaceholder') || "Filtrar por País..."}
                                     value={filterCountry}
                                     onChange={(e) => setFilterCountry(e.target.value)}
                                 />
@@ -268,9 +268,9 @@ export default function PrivateUsersPage() {
 
                             {/* Filter: City */}
                             <div className="flex flex-col gap-2">
-                                <Label className="text-xs font-semibold">{t('common:dashboard.city') || 'Stadt'}</Label>
+                                <Label className="text-xs font-semibold">{t('privateUsers.filters.city')}</Label>
                                 <Input
-                                    placeholder="Filter by City..."
+                                    placeholder={t('privateUsers.filters.cityPlaceholder') || "Filtrar por Ciudad..."}
                                     value={filterCity}
                                     onChange={(e) => setFilterCity(e.target.value)}
                                 />
@@ -278,7 +278,7 @@ export default function PrivateUsersPage() {
 
                             {/* Filter: Date */}
                             <div className="flex flex-col gap-2">
-                                <Label className="text-xs font-semibold">Fecha de Registro</Label>
+                                <Label className="text-xs font-semibold">{t('privateUsers.filters.date')}</Label>
                                 <Input
                                     type="date"
                                     value={filterDate ? filterDate.toISOString().split('T')[0] : ''}
@@ -292,14 +292,14 @@ export default function PrivateUsersPage() {
 
                             {/* Filter: Sort Order */}
                             <div className="flex flex-col gap-2">
-                                <Label className="text-xs font-semibold">Orden (Registro)</Label>
+                                <Label className="text-xs font-semibold">{t('privateUsers.filters.sort')}</Label>
                                 <Select value={sortOrder} onValueChange={(val: any) => setSortOrder(val)}>
                                     <SelectTrigger className="w-full">
-                                        <SelectValue placeholder="Ordenar por..." />
+                                        <SelectValue placeholder={t('privateUsers.filters.sortPlaceholder') || "Ordenar por..."} />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="newest">Nuevos registros</SelectItem>
-                                        <SelectItem value="oldest">Viejos registros</SelectItem>
+                                        <SelectItem value="newest">{t('privateUsers.filters.newest')}</SelectItem>
+                                        <SelectItem value="oldest">{t('privateUsers.filters.oldest')}</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
@@ -319,7 +319,7 @@ export default function PrivateUsersPage() {
                                     className="text-muted-foreground hover:text-foreground h-8"
                                 >
                                     <X className="mr-2 h-3 w-3" />
-                                    Limpiar Filtros
+                                    {t('privateUsers.filters.clear')}
                                 </Button>
                             </div>
                         )}
@@ -333,16 +333,16 @@ export default function PrivateUsersPage() {
                             <Table>
                                 <TableHeader>
                                     <TableRow>
-                                        <TableHead>Code</TableHead>
-                                        <TableHead>Name</TableHead>
-                                        <TableHead>E-Mail</TableHead>
-                                        <TableHead>{t('common:dashboard.country') || 'Land'}</TableHead>
-                                        <TableHead>{t('common:dashboard.city') || 'Stadt'}</TableHead>
-                                        <TableHead>Rol (Rollen)</TableHead>
-                                        <TableHead>Interessen</TableHead>
-                                        <TableHead>Invitado Por</TableHead>
-                                        <TableHead>Beigetreten</TableHead>
-                                        <TableHead>Aktionen</TableHead>
+                                        <TableHead>{t('privateUsers.table.code')}</TableHead>
+                                        <TableHead>{t('privateUsers.table.name')}</TableHead>
+                                        <TableHead>{t('privateUsers.table.email')}</TableHead>
+                                        <TableHead>{t('privateUsers.table.country')}</TableHead>
+                                        <TableHead>{t('privateUsers.table.city')}</TableHead>
+                                        <TableHead>{t('privateUsers.table.role')}</TableHead>
+                                        <TableHead>{t('privateUsers.table.interests')}</TableHead>
+                                        <TableHead>{t('privateUsers.table.invitedBy')}</TableHead>
+                                        <TableHead>{t('privateUsers.table.joined')}</TableHead>
+                                        <TableHead>{t('privateUsers.table.actions')}</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>

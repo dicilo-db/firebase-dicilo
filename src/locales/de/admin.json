@@ -35,12 +35,30 @@
     "exportCSV": "CSV Exportieren",
     "userList": "Benutzerliste",
     "searchPlaceholder": "Suche nach Name, E-Mail oder Code...",
+    "filters": {
+      "search": "Suche (Name/E-Mail/Code)",
+      "country": "Land",
+      "countryPlaceholder": "Nach Land filtern...",
+      "city": "Stadt",
+      "cityPlaceholder": "Nach Stadt filtern...",
+      "date": "Datum",
+      "sort": "Datensätze",
+      "sortPlaceholder": "Sortieren nach...",
+      "newest": "Neueste Datensätze",
+      "oldest": "Älteste Datensätze",
+      "clear": "Filter löschen"
+    },
     "table": {
       "code": "Code",
       "name": "Name",
       "email": "E-Mail",
+      "country": "Land",
+      "city": "Stadt",
+      "role": "Rolle",
       "interests": "Interessen",
-      "joined": "Beigetreten",
+      "invitedBy": "Eingeladen von",
+      "joined": "Registrierungsdatum",
+      "actions": "Aktionen",
       "selected": "ausgewählt"
     },
     "noResults": "Keine Benutzer gefunden."
