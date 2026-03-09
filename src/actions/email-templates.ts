@@ -79,7 +79,10 @@ export async function translateText(text: string, targetLang: string) {
     const langNames: Record<string, string> = {
         'es': 'Spanish',
         'en': 'English',
-        'de': 'German'
+        'de': 'German',
+        'fr': 'French',
+        'pt': 'Portuguese',
+        'it': 'Italian'
     };
     const targetLangName = langNames[targetLang] || targetLang;
 
@@ -87,20 +90,18 @@ export async function translateText(text: string, targetLang: string) {
         console.log(`[AI Translation] Translating to ${targetLangName}: "${text.substring(0, 50)}..."`);
         const response = await ai.generate({
             prompt: `
-            ROLE: Professional Translator.
+            ROLE: Professional, Fluent ${targetLangName} Translator.
             SOURCE LANGUAGE: Spanish.
             TARGET LANGUAGE: ${targetLangName}.
             
-            TASK: Translate the content within <TO_TRANSLATE> tags to ${targetLangName}.
+            TASK: Translate the content within <TO_TRANSLATE> tags from Spanish to ${targetLangName} accurately and professionally.
             
-            STRICT RULES:
-            1. Output ONLY the translated text.
-            2. ABSOLUTELY NO metadata, NO headers, NO explanations, NO original Spanish.
-            3. Provide a high-quality, professional email marketing translation.
-            4. Preserve all curly brace variables like {{Name}}, {{RefCode}}, {{Amount}} etc. EXACTLY.
-            5. Preserve all HTML structure (<p>, <br>, <a> tags) and line breaks.
-            6. If you find the input is already in ${targetLangName}, return it as is. 
-            7. MANDATORY: The result MUST BE in ${targetLangName}.
+            STRICT OUTPUT RULES:
+            1. Output ONLY the translated content in ${targetLangName}.
+            2. DO NOT include any prefixes, headers, notes, or meta-comments.
+            3. DO NOT include strings like "[TRANSLATED to ...]", "Translation:", or "Here is the translation:".
+            4. If you cannot translate, return the original text as is, without any added messages.
+            5. Preserve all {{variable}} tags and HTML structure exactly.
             
             <TO_TRANSLATE>
             ${text}
@@ -110,14 +111,35 @@ export async function translateText(text: string, targetLang: string) {
 
         let result = response.text.trim();
         
-        // Remove common AI noise/prefixes if they appear
-        result = result.replace(/^(\[TRANSLATED to [a-zA-Z]+\]:?|Translation:|Result:)/i, '').trim();
-        
-        // Final fallback: if AI returned nothing or just the prefix, return original
-        if (!result) return text;
+        // Super aggressive cleaning of common AI noise patterns
+        const noisePatterns = [
+            /^\[TRANSLATED to [a-zA-Z\s]+\]:?\s*/i,
+            /^Translation in [a-zA-Z\s]+:?\s*/i,
+            /^Translation:?\s*/i,
+            /^Result:?\s*/i,
+            /^Here is the translated text:?\s*/i,
+            /^Subject:?\s*/i,
+            /^Body:?\s*/i
+        ];
 
-        console.log(`[AI Translation] Result for ${targetLangName}: "${result.substring(0, 50)}..."`);
-        return result;
+        let cleaned = result;
+        let changed = true;
+        while (changed) {
+            changed = false;
+            for (const pattern of noisePatterns) {
+                const newCleaned = cleaned.replace(pattern, '').trim();
+                if (newCleaned !== cleaned) {
+                    cleaned = newCleaned;
+                    changed = true;
+                }
+            }
+        }
+        
+        // If the AI just returned empty space or failed miserably
+        if (!cleaned) return text;
+
+        console.log(`[AI Translation] Cleaned Result for ${targetLangName}: "${cleaned.substring(0, 50)}..."`);
+        return cleaned;
     } catch (error: any) {
         console.error("[AI Translation] Error:", error);
         return text;
