@@ -1,6 +1,7 @@
 'use server';
 
 import { getAdminDb } from '@/lib/firebase-admin';
+import { ai } from '@/ai/genkit';
 
 const db = getAdminDb();
 
@@ -71,12 +72,21 @@ export async function saveTemplate(template: EmailTemplate) {
 }
 
 export async function translateText(text: string, targetLang: string) {
-    // MOCK TRANSLATION FOR NOW - or use real API if key available.
-    // User asked to use Google API. Since I don't have the key in env var context explicitly confirmed,
-    // I will placeholder this or try to fetch a public/free endpoint? 
-    // Secure approach: Return "Translated [text] to [targetLang]" dummy, 
-    // OR if env var GOOGLE_TRANSLATE_API_KEY exists, use it.
+    if (!text) return '';
+    
+    try {
+        const response = await ai.generate({
+            prompt: `Translate the following email content to ${targetLang}. 
+            Keep all variables between double curly braces like {{Name}} or {{RefCode}} exactly as they are. 
+            Maintain the HTML structure if present.
+            Only return the translated text, no explanations or prefixes.
+            Text: "${text}"`,
+        });
 
-    // For this step I will mock to ensure UI flow works, then detailed implementation can follow.
-    return `[TRANSLATED to ${targetLang}]: ${text}`;
+        return response.text.trim();
+    } catch (error: any) {
+        console.error("Translation error:", error);
+        // Fallback to original text if translation fails
+        return text;
+    }
 }
