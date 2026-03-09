@@ -363,3 +363,35 @@ export async function getFreelancerReportData(uniqueCode: string, email: string,
     }
 }
 
+/**
+ * Awards 10 DP for sharing a marketing campaign.
+ */
+export async function awardMarketingSharePoints(userId: string, campaignId: string) {
+    const db = getAdminDb();
+    const POINTS = 10;
+
+    try {
+        await db.runTransaction(async (t) => {
+            const walletRef = db.collection('wallets').doc(userId);
+            t.set(walletRef, {
+                balance: admin.firestore.FieldValue.increment(POINTS),
+                totalEarned: admin.firestore.FieldValue.increment(POINTS),
+                updatedAt: admin.firestore.FieldValue.serverTimestamp()
+            }, { merge: true });
+
+            const trxRef = db.collection('wallet_transactions').doc();
+            t.set(trxRef, {
+                userId: userId,
+                amount: POINTS,
+                type: 'MARKETING_SHARE_REWARD',
+                description: `Recompensa por compartir campaña de marketing (ID: ${campaignId})`,
+                timestamp: admin.firestore.FieldValue.serverTimestamp()
+            });
+        });
+        return { success: true };
+    } catch (e) {
+        console.error("Failed to award marketing share points", e);
+        return { success: false };
+    }
+}
+

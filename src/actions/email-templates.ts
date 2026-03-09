@@ -17,6 +17,7 @@ export type EmailTemplate = {
     };
     variables: string[];
     imageUrl?: string;
+    images?: string[];
     createdAt?: string;
     updatedAt?: string;
 };

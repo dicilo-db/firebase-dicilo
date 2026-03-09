@@ -44,14 +44,23 @@ export default function EditTemplatePage() {
     });
 
     const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
-            const file = e.target.files[0];
+        if (e.target.files && e.target.files.length > 0) {
             setUploadingImage(true);
             try {
-                const storageRef = ref(storage, `email-templates/${Date.now()}_${file.name}`);
-                await uploadBytes(storageRef, file);
-                const url = await getDownloadURL(storageRef);
-                handleChange('imageUrl', url);
+                const newImages = [...(template.images || [])];
+                
+                for (let i = 0; i < e.target.files.length; i++) {
+                    const file = e.target.files[i];
+                    const storageRef = ref(storage, `email-templates/${Date.now()}_${file.name}`);
+                    await uploadBytes(storageRef, file);
+                    const url = await getDownloadURL(storageRef);
+                    newImages.push(url);
+                }
+
+                handleChange('images', newImages);
+                if (!template.imageUrl && newImages.length > 0) {
+                    handleChange('imageUrl', newImages[0]);
+                }
                 toast({ title: t("emailTemplates.editor.imageUploaded"), description: t("emailTemplates.editor.imageSuccess") });
             } catch (error) {
                 console.error("Upload error:", error);
@@ -60,6 +69,20 @@ export default function EditTemplatePage() {
                 setUploadingImage(false);
             }
         }
+    };
+
+    const removeImage = (index: number) => {
+        const newImages = (template.images || []).filter((_, i) => i !== index);
+        handleChange('images', newImages);
+        // If we removed the primary image, update it to the first available or empty
+        if (template.imageUrl === (template.images || [])[index]) {
+            handleChange('imageUrl', newImages.length > 0 ? newImages[0] : '');
+        }
+    };
+
+    const setPrimaryImage = (url: string) => {
+        handleChange('imageUrl', url);
+        toast({ title: "Imagen Principal", description: "Esta imagen se usará como portada." });
     };
 
     useEffect(() => {
@@ -187,36 +210,55 @@ export default function EditTemplatePage() {
                             {t('emailTemplates.editor.categoryLocked')}
                         </p>
                     </div>
-                    <div className="space-y-2">
-                        <Label>{t('emailTemplates.editor.headerImage')}</Label>
-                        <div className="flex flex-col gap-4">
-                            {template.imageUrl && (
-                                <div className="relative w-full h-40 bg-gray-100 rounded-md overflow-hidden border">
-                                    <img src={template.imageUrl} alt="Preview" className="w-full h-full object-cover" />
-                                    <Button
-                                        variant="destructive"
-                                        size="sm"
-                                        className="absolute top-2 right-2"
-                                        onClick={() => handleChange('imageUrl', '')}
-                                    >
-                                        <Trash2 className="h-4 w-4" />
-                                    </Button>
+                    <div className="space-y-3">
+                        <Label>{t('emailTemplates.editor.headerImage')} (Galería)</Label>
+                        <div className="grid grid-cols-2 gap-2">
+                            {(template.images || (template.imageUrl ? [template.imageUrl] : [])).map((img, i) => (
+                                <div key={i} className={cn(
+                                    "relative aspect-square bg-gray-100 rounded-md overflow-hidden border-2 transition-all",
+                                    template.imageUrl === img ? "border-purple-600" : "border-transparent"
+                                )}>
+                                    <img src={img} alt="Preview" className="w-full h-full object-cover" />
+                                    <div className="absolute top-1 right-1 flex flex-col gap-1">
+                                        <Button
+                                            variant="destructive"
+                                            size="icon"
+                                            className="h-6 w-6"
+                                            onClick={() => removeImage(i)}
+                                        >
+                                            <Trash2 className="h-3 w-3" />
+                                        </Button>
+                                    </div>
+                                    {template.imageUrl !== img && (
+                                        <div 
+                                            className="absolute inset-0 bg-black/5 flex items-end p-1 opacity-0 hover:opacity-100 cursor-pointer"
+                                            onClick={() => setPrimaryImage(img)}
+                                        >
+                                            <span className="text-[10px] bg-white/90 px-1 rounded font-bold">Usar como Principal</span>
+                                        </div>
+                                    )}
+                                    {template.imageUrl === img && (
+                                        <div className="absolute bottom-1 left-1 bg-purple-600 text-white text-[8px] px-1 rounded font-bold">
+                                            PRINCIPAL
+                                        </div>
+                                    )}
                                 </div>
-                            )}
+                            ))}
+                        </div>
+                        
+                        <div className="space-y-2 pt-2 border-t">
                             <div className="flex items-center gap-2">
                                 <Input
                                     type="file"
+                                    multiple
                                     accept="image/*"
                                     onChange={handleImageUpload}
                                     disabled={uploadingImage}
+                                    className="h-8 text-xs"
                                 />
                                 {uploadingImage && <Loader2 className="h-4 w-4 animate-spin" />}
                             </div>
-                            <Input
-                                placeholder={t('emailTemplates.editor.imageUrlPlaceholder')}
-                                value={template.imageUrl || ''}
-                                onChange={(e) => handleChange('imageUrl', e.target.value)}
-                            />
+                            <p className="text-[10px] text-muted-foreground italic">Puedes subir varias imágenes a la vez.</p>
                         </div>
                     </div>
                 </div>
