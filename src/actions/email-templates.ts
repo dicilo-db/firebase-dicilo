@@ -74,19 +74,26 @@ export async function saveTemplate(template: EmailTemplate) {
 export async function translateText(text: string, targetLang: string) {
     if (!text) return '';
     
+    // Map codes to full names for better AI reliability
+    const langNames: Record<string, string> = {
+        'es': 'Spanish',
+        'en': 'English',
+        'de': 'German'
+    };
+    const targetLangName = langNames[targetLang] || targetLang;
+
     try {
         const response = await ai.generate({
-            prompt: `Translate the following email content to ${targetLang}. 
+            prompt: `Translate the following email content to ${targetLangName}. 
             Keep all variables between double curly braces like {{Name}} or {{RefCode}} exactly as they are. 
             Maintain the HTML structure if present.
-            Only return the translated text, no explanations or prefixes.
-            Text: "${text}"`,
+            Only return the translated text (the result of translating to ${targetLangName}), no explanations, meta-talk or prefixes.
+            Text to translate: "${text}"`,
         });
 
         return response.text.trim();
     } catch (error: any) {
         console.error("Translation error:", error);
-        // Fallback to original text if translation fails
         return text;
     }
 }
