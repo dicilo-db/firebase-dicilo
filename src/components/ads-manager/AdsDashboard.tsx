@@ -99,19 +99,20 @@ export default function AdsDashboard() {
                     </CardFooter>
                 </Card>
 
-                {/* Module: Email Marketing */}
-                <Card className="opacity-75 border-dashed">
+                {/* Module: Email Marketing (ACTIVE) */}
+                <Card className="border-l-4 border-l-purple-600 shadow-md hover:shadow-lg transition-all">
                     <CardHeader>
                         <div className="flex items-start justify-between">
-                            <Mail className="h-8 w-8 text-muted-foreground mb-2" />
-                            <Badge variant="outline">{t('adsManager.cards.comingSoon')}</Badge>
+                            <Mail className="h-8 w-8 text-purple-600 mb-2" />
+                            <Badge className="bg-purple-600 text-white hover:bg-purple-700">{t('adsManager.cards.active')}</Badge>
                         </div>
                         <CardTitle>{t('adsManager.cards.programs.emailMarketing.title')}</CardTitle>
                         <CardDescription>{t('adsManager.cards.programs.emailMarketing.description')}</CardDescription>
                     </CardHeader>
                     <CardFooter>
-                        <Button variant="secondary" disabled className="w-full">
-                            {t('adsManager.cards.inDevelopment')}
+                        <Button className="w-full group bg-purple-600 hover:bg-purple-700 text-white" onClick={() => window.location.href = '/admin/email-templates?category=email_marketing'}>
+                            {t('adsManager.cards.manage', 'Gestionar')}
+                            <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                         </Button>
                     </CardFooter>
                 </Card>
