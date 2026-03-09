@@ -64,8 +64,7 @@ export function FreelancerSidebar({ className, onViewChange, onMobileClose }: Fr
                 {
                     id: 'templates',
                     label: t('freelancer_menu.templates', 'Vorlagen'),
-                    icon: LayoutTemplate,
-                    needsCampaign: true
+                    icon: LayoutTemplate
                 }
             ]
         },
@@ -160,20 +159,17 @@ export function FreelancerSidebar({ className, onViewChange, onMobileClose }: Fr
                                         <div className="ml-4 pl-2 border-l border-muted space-y-1 animate-in slide-in-from-top-1 duration-200">
                                             {item.children?.map(child => {
                                                 const isChildActive = currentTab === child.id;
-                                                const isDisabled = child.needsCampaign && !selectedCampaignId;
 
                                                 return (
                                                     <button
                                                         key={child.id}
-                                                        disabled={isDisabled}
                                                         onClick={(e) => {
                                                             e.stopPropagation();
                                                             handleNavigation(child.id);
                                                         }}
                                                         className={cn(
                                                             "w-full flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors",
-                                                            isChildActive ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-foreground",
-                                                            isDisabled && "opacity-50 cursor-not-allowed"
+                                                            isChildActive ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-foreground"
                                                         )}
                                                     >
                                                         <child.icon className="mr-2 h-3.5 w-3.5" />

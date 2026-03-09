@@ -81,12 +81,15 @@ import { processCampaignPost } from '@/app/actions/campaign-engagement';
 import { translateUserText } from '@/app/actions/translate';
 import { correctText } from '@/app/actions/grammar';
 import { getUserSocialConnections, SocialConnection } from '@/app/actions/social-connections';
+import { exploreCampaigns, ExplorableCampaign } from '@/app/actions/campaign-explorer';
 import { Campaign } from '@/types/freelancer';
+import { useRouter } from 'next/navigation';
 
 export function PromoComposerView() {
     const { t } = useTranslation('common');
     const { toast } = useToast();
     const { user } = useAuth();
+    const router = useRouter();
     const searchParams = useSearchParams();
     const campaignId = searchParams?.get('campaignId');
 
@@ -94,6 +97,11 @@ export function PromoComposerView() {
     const [isLoading, setIsLoading] = useState(false);
     const [isSharing, setIsSharing] = useState(false);
     const [isTranslating, setIsTranslating] = useState(false);
+
+    // Campaign Exploration State (for empty state)
+    const [explorableCampaigns, setExplorableCampaigns] = useState<ExplorableCampaign[]>([]);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [isExploring, setIsExploring] = useState(false);
 
     // Multi-language Text State
     const [texts, setTexts] = useState<{ [key: string]: string }>({
@@ -201,6 +209,31 @@ export function PromoComposerView() {
         }
         loadData();
     }, [campaignId, user?.uid]);
+
+    // Load Explorable Campaigns for selection
+    useEffect(() => {
+        async function loadExplorer() {
+            if (activeCampaign) return;
+            setIsExploring(true);
+            const res = await exploreCampaigns();
+            if (res.success && res.campaigns) {
+                setExplorableCampaigns(res.campaigns);
+            }
+            setIsExploring(false);
+        }
+        loadExplorer();
+    }, [activeCampaign]);
+
+    const filteredCampaigns = explorableCampaigns.filter(c =>
+        c.companyName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        c.description?.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    const handleSelectCampaign = (id: string) => {
+        const params = new URLSearchParams(searchParams.toString());
+        params.set('campaignId', id);
+        router.push(`/dashboard/freelancer?${params.toString()}`);
+    };
 
     // 1. Auto-select default URL
     useEffect(() => {
@@ -425,10 +458,83 @@ export function PromoComposerView() {
 
     if (!activeCampaign) {
         return (
-            <div className="flex flex-col h-full items-center justify-center text-center p-8 text-muted-foreground">
-                <Search className="h-12 w-12 mb-4 opacity-20" />
-                <h2 className="text-xl font-semibold text-foreground">{t('freelancer.composer.selectCampaign.title')}</h2>
-                <p>{t('freelancer.composer.selectCampaign.description')}</p>
+            <div className="p-6 md:p-8 space-y-8 bg-slate-50/50 dark:bg-black/10 min-h-full overflow-y-auto custom-scrollbar">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div>
+                        <h1 className="text-3xl font-bold tracking-tight">{t('freelancer.composer.selectCampaign.title', 'Selecciona una Campaña')}</h1>
+                        <p className="text-muted-foreground">{t('freelancer.composer.selectCampaign.description', 'Elige una campaña para ver sus plantillas y empezar a compartir.')}</p>
+                    </div>
+                    <div className="relative w-full md:w-80">
+                        <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                        <Input
+                            placeholder={t('campaign_explorer.search_placeholder', 'Buscar por nombre o descripción')}
+                            className="pl-9 h-10 shadow-sm"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                        />
+                    </div>
+                </div>
+
+                {isExploring ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        {Array.from({ length: 8 }).map((_, i) => (
+                            <Card key={i} className="overflow-hidden border-0 shadow-sm">
+                                <Skeleton className="h-40 w-full" />
+                                <div className="p-4 space-y-2">
+                                    <Skeleton className="h-4 w-2/3" />
+                                    <Skeleton className="h-3 w-1/2" />
+                                </div>
+                            </Card>
+                        ))}
+                    </div>
+                ) : filteredCampaigns.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center py-20 text-muted-foreground">
+                        <Search className="h-12 w-12 mb-4 opacity-20" />
+                        <p>No se encontraron campañas compatibles.</p>
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        {filteredCampaigns.map((campaign) => (
+                            <Card
+                                key={campaign.id}
+                                onClick={() => handleSelectCampaign(campaign.id)}
+                                className="group cursor-pointer hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden border-0 shadow-sm ring-1 ring-slate-200 dark:ring-slate-800 bg-white dark:bg-slate-950"
+                            >
+                                <div className="relative h-40 overflow-hidden">
+                                    {(campaign.images?.length || 0) > 0 ? (
+                                        <Image
+                                            src={campaign.images![0]}
+                                            alt={campaign.companyName}
+                                            fill
+                                            className="object-cover group-hover:scale-105 transition-transform duration-500"
+                                        />
+                                    ) : (
+                                        <div className="flex items-center justify-center h-full bg-slate-100 italic text-muted-foreground text-xs uppercase tracking-widest">
+                                            {campaign.companyName}
+                                        </div>
+                                    )}
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent p-4 flex flex-col justify-end">
+                                        <h3 className="text-white font-bold truncate">{campaign.companyName}</h3>
+                                        <p className="text-white/80 text-[10px] truncate">{campaign.title}</p>
+                                    </div>
+                                </div>
+                                <CardContent className="p-3">
+                                    <div className="flex justify-between items-center mb-2">
+                                        <Badge variant="outline" className="text-[10px] px-1.5 h-5">
+                                            {campaign.languages?.slice(0, 2).join(', ').toUpperCase() || 'ALL'}
+                                        </Badge>
+                                        <span className="text-xs font-bold text-green-600">
+                                            €{(campaign.reward_per_action || 0.10).toFixed(2)}
+                                        </span>
+                                    </div>
+                                    <Button variant="default" className="w-full h-8 text-xs font-bold bg-primary hover:bg-primary/90 text-white shadow-sm">
+                                        Seleccionar Plantilla
+                                    </Button>
+                                </CardContent>
+                            </Card>
+                        ))}
+                    </div>
+                )}
             </div>
         );
     }
@@ -461,13 +567,26 @@ export function PromoComposerView() {
                                 {activeCampaign.companyName.substring(0, 2).toUpperCase()}
                             </div>
                         )}
-                        <div className="min-w-0">
+                        <div className="min-w-0 flex-1">
                             <h1 className="text-xl font-bold truncate">{activeCampaign.companyName}</h1>
                             <div className="flex gap-2 mt-1 flex-wrap">
                                 <Badge variant="secondary" className="text-[10px] px-1.5 h-5">{activeCampaign.status}</Badge>
                                 {activeCampaign.categories?.slice(0, 2).map(c => <Badge key={c} variant="outline" className="text-[10px] px-1.5 h-5">{c}</Badge>)}
                             </div>
                         </div>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                                const params = new URLSearchParams(searchParams.toString());
+                                params.delete('campaignId');
+                                router.push(`/dashboard/freelancer?${params.toString()}`);
+                            }}
+                            className="h-8 text-xs gap-1 shrink-0"
+                        >
+                            <Repeat className="h-3.5 w-3.5" />
+                            <span className="hidden sm:inline">{t('freelancer.composer.change_campaign', 'Cambiar Campaña')}</span>
+                        </Button>
                     </div>
 
                     <Tabs defaultValue="templates" className="w-full">
