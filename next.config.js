@@ -46,7 +46,7 @@ const nextConfig = {
   },
   experimental: {
     serverActions: {
-      bodySizeLimit: '20mb',
+      bodySizeLimit: '30mb',
     },
     serverComponentsExternalPackages: [
       'require-in-the-middle',

@@ -65,7 +65,7 @@ export function CreatePost({ userId, neighborhood, neighborhoodId, onPostCreated
             }
 
             if (isVideo) {
-                const needsCompression = file.size > 50 * 1024 * 1024;
+                const needsCompression = file.size > 15 * 1024 * 1024;
                 const newItem: MediaFile = {
                     id,
                     file,
@@ -155,6 +155,17 @@ export function CreatePost({ userId, neighborhood, neighborhoodId, onPostCreated
         e.preventDefault();
         if (!content.trim() && mediaItems.length === 0) return;
 
+        // Check platform upload limits
+        const totalSize = mediaItems.reduce((acc, item) => acc + item.file.size, 0);
+        if (totalSize > 25 * 1024 * 1024) { // 25MB safety buffer (Server limit is 30MB)
+            toast({
+                title: t('errors.too_large', "Archivos demasiado pesados"),
+                description: "El tamaño total de tu publicación supera el límite de 25MB para evitar cortes de red. Por favor, selecciona un video más corto o comprimido.",
+                variant: "destructive"
+            });
+            return;
+        }
+
         setIsSubmitting(true);
 
         try {
@@ -193,8 +204,8 @@ export function CreatePost({ userId, neighborhood, neighborhoodId, onPostCreated
             console.error("Submission Error Details:", err);
             // More specific error message for the user
             let errorMsg = "Ocurrió un error al intentar enviar la publicación.";
-            if (err.message?.includes('Network') || !navigator.onLine) {
-                errorMsg = "Error de red: Comprueba tu conexión a internet.";
+            if (err.message?.includes('Network') || err.message?.includes('fetch') || !navigator.onLine) {
+                errorMsg = "Error de red: La conexión al servidor se interrumpió o el archivo es demasiado grande.";
             } else if (err.status === 413) {
                 errorMsg = "El contenido es demasiado grande para subirlo.";
             }
