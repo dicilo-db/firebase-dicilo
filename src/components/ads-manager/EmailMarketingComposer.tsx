@@ -109,6 +109,7 @@ export function EmailMarketingComposer({ template, onBack, uniqueCode: propUniqu
 
     const [previewNetwork, setPreviewNetwork] = useState('instagram');
     const [scheduledDate, setScheduledDate] = useState<Date | undefined>(undefined);
+    const [rewardAmount, setRewardAmount] = useState<number>(template.rewardAmount || 10);
 
     // Shortener / Link Logic
     const generatedLink = `https://dicilo.net?ref=${propUniqueCode || user?.uid || 'promo'}`;
@@ -167,7 +168,8 @@ export function EmailMarketingComposer({ template, onBack, uniqueCode: propUniqu
                         return acc;
                     }, {} as { [key: string]: { subject: string, body: string } })
                 },
-                images: allImages // Save current images state if needed
+                images: allImages, // Save current images state if needed
+                rewardAmount: rewardAmount
             };
 
             await saveTemplate(updatedTemplate);
@@ -317,7 +319,7 @@ export function EmailMarketingComposer({ template, onBack, uniqueCode: propUniqu
 
 
     return (
-        <div className="mx-auto max-w-5xl px-4 py-8 animate-in fade-in slide-in-from-right-4">
+        <div className="w-full px-4 py-8 animate-in fade-in slide-in-from-right-4">
             {/* Header / Navigation */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                 <div className="flex items-center gap-4">
@@ -344,16 +346,26 @@ export function EmailMarketingComposer({ template, onBack, uniqueCode: propUniqu
                 {!isMobile && (
                     <div className="flex gap-3">
                          <div className="flex items-center gap-2 bg-purple-50 px-4 py-2 rounded-xl border border-purple-100">
-                            <span className="text-sm font-bold text-purple-700">+10 DP</span>
-                            <span className="text-xs text-purple-600/80 font-medium">por envío</span>
+                            <span className="text-sm font-bold text-purple-700 flex items-center">
+                                +
+                                <Input 
+                                    type="number" 
+                                    value={rewardAmount} 
+                                    onChange={(e) => setRewardAmount(Number(e.target.value) || 0)}
+                                    className="w-16 h-6 px-1 py-0 mx-1 text-center bg-white border-purple-200 text-purple-700 font-bold hide-arrows"
+                                    min="0"
+                                />
+                                DP
+                            </span>
+                            <span className="text-xs text-purple-600/80 font-medium whitespace-nowrap">por envío</span>
                         </div>
                     </div>
                 )}
             </div>
 
-            <div className="flex flex-col lg:grid lg:grid-cols-12 gap-8 items-start pb-24">
+            <div className="flex flex-col lg:grid lg:grid-cols-12 gap-10 items-start pb-24">
                 {/* Main Form Area */}
-                <div className="lg:col-span-7 space-y-6 w-full">
+                <div className="lg:col-span-7 space-y-6 w-full min-w-0">
                     {/* 1. Multimedia Card */}
                     <Card className="shadow-sm border-slate-200 overflow-hidden">
                         <div className="bg-slate-50/50 px-6 py-4 border-b flex items-center justify-between">
@@ -504,10 +516,10 @@ export function EmailMarketingComposer({ template, onBack, uniqueCode: propUniqu
                             <h3 className="text-sm font-bold uppercase tracking-wider text-slate-700">3. Configuración del Enlace</h3>
                         </div>
                         <CardContent className="p-6 space-y-6">
-                            <div className="flex flex-col md:flex-row gap-4">
-                                <div className="flex-1 space-y-2">
+                            <div className="flex flex-col xl:flex-row gap-4">
+                                <div className="flex-1 space-y-2 min-w-0">
                                     <Label className="text-xs font-bold text-slate-500 uppercase">Tu enlace de afiliado</Label>
-                                    <div className="flex items-center gap-2 bg-slate-50 p-1.5 rounded-xl border border-slate-200 shadow-inner group transition-colors hover:border-purple-200">
+                                    <div className="flex items-center gap-2 bg-slate-50 p-1.5 rounded-xl border border-slate-200 shadow-inner group transition-colors hover:border-purple-200 overflow-hidden">
                                         <div className="px-4 text-xs font-mono text-slate-600 select-all truncate flex-1 h-9 flex items-center">
                                             {generatedLink}
                                         </div>
@@ -522,14 +534,14 @@ export function EmailMarketingComposer({ template, onBack, uniqueCode: propUniqu
                                     </div>
                                     <p className="text-[10px] text-muted-foreground px-1 italic">Este enlace trackeará todas las conversiones automáticamente.</p>
                                 </div>
-                                <div className="space-y-2">
+                                <div className="space-y-2 xl:w-[220px] shrink-0">
                                     <Label className="text-xs font-bold text-slate-500 uppercase">Programar envío (Opcional)</Label>
                                     <Popover>
                                         <PopoverTrigger asChild>
                                             <Button 
                                                 variant="outline" 
                                                 className={cn(
-                                                    "w-full md:w-[200px] h-12 justify-start font-normal bg-white rounded-xl border-slate-200 transition-all hover:bg-slate-50 shadow-sm", 
+                                                    "w-full h-12 justify-start font-normal bg-white rounded-xl border-slate-200 transition-all hover:bg-slate-50 shadow-sm", 
                                                     !scheduledDate && "text-muted-foreground"
                                                 )}
                                             >
@@ -548,7 +560,7 @@ export function EmailMarketingComposer({ template, onBack, uniqueCode: propUniqu
                 </div>
 
                 {/* Sidebar Preview Area */}
-                <div className="lg:col-span-5 space-y-6 w-full">
+                <div className="lg:col-span-5 space-y-6 w-full min-w-0">
                     <div className="sticky top-8">
                          <div className="mb-4 flex items-center justify-between px-2">
                             <h3 className="text-xs font-bold uppercase tracking-widest text-slate-500">Vista Previa Real</h3>
@@ -558,15 +570,15 @@ export function EmailMarketingComposer({ template, onBack, uniqueCode: propUniqu
                         </div>
 
                         {/* Integrated Preview Frame (Compact Version) */}
-                        <div className="bg-slate-950 rounded-[2.5rem] p-3 shadow-2xl border-4 border-slate-800/20 max-w-[340px] mx-auto scale-[0.9] origin-top md:scale-100">
+                        <div className="bg-slate-900 rounded-[3rem] p-2 shadow-2xl border-2 border-slate-800/30 max-w-[380px] mx-auto mb-8 relative">
                              {/* Speaker/Camera Notch */}
-                            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-5 bg-slate-950 rounded-b-xl z-20"></div>
+                            <div className="absolute top-2 left-1/2 -translate-x-1/2 w-20 h-4 bg-slate-900 rounded-b-xl z-20"></div>
                             
-                            <div className="w-full aspect-[9/18.5] bg-white rounded-[2rem] overflow-hidden relative flex flex-col shadow-inner">
+                            <div className="w-full aspect-[9/18.5] bg-slate-50 rounded-[2.5rem] overflow-hidden relative flex flex-col shadow-inner border border-slate-200">
                                 {/* Preview Scrollable Area */}
                                 <div className="flex-1 overflow-y-auto custom-scrollbar">
                                     {/* App-like status bar */}
-                                    <div className="h-10 flex items-center justify-between px-6 pt-3 text-[10px] font-bold text-slate-900">
+                                    <div className="h-10 flex items-center justify-between px-6 pt-3 text-[10px] font-bold text-slate-900 bg-white">
                                         <span>9:41</span>
                                         <div className="flex gap-1.5 items-center">
                                             <div className="w-3.5 h-3.5 rounded-full border-2 border-slate-200"></div>
@@ -574,22 +586,33 @@ export function EmailMarketingComposer({ template, onBack, uniqueCode: propUniqu
                                         </div>
                                     </div>
 
-                                    {/* Mail App Mockup */}
-                                    <div className="p-4 border-b flex items-center justify-between bg-white sticky top-0 z-10">
+                                    {/* App Header Bar (New) */}
+                                    <div className="bg-slate-100 border-b px-4 py-2 flex items-center justify-between shadow-sm z-10 sticky top-0">
                                         <div className="flex items-center gap-2">
-                                            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-white font-bold text-xs ring-2 ring-purple-100">D</div>
-                                            <div>
-                                                <div className="text-[10px] font-bold">Dicilo Ofertas</div>
-                                                <div className="text-[8px] text-slate-400">para: mis_amigos@red.com</div>
-                                            </div>
+                                            <Mail className="h-4 w-4 text-slate-500" />
+                                            <span className="text-[10px] font-bold text-slate-700">App de Correo</span>
                                         </div>
-                                        <div className="text-[8px] text-slate-400">Ahora</div>
+                                        <MoreHorizontal className="h-4 w-4 text-slate-400" />
                                     </div>
 
-                                    <div className="p-4 space-y-4">
-                                        <h2 className="text-sm font-bold leading-tight">{currentData.subject || "Nueva Promoción Especial"}</h2>
+                                    {/* Mail Subject/Sender Mockup */}
+                                    <div className="p-4 border-b flex items-center justify-between bg-white">
+                                        <div className="flex items-center gap-3 w-full">
+                                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm ring-2 ring-purple-100 flex-shrink-0">D</div>
+                                            <div className="flex-1 min-w-0">
+                                                <div className="flex justify-between items-baseline">
+                                                    <div className="text-[11px] font-bold text-slate-900 truncate">Dicilo Ofertas</div>
+                                                    <div className="text-[9px] text-slate-400">10:42 AM</div>
+                                                </div>
+                                                <div className="text-[9px] text-slate-500 truncate">Para: mis_amigos@red.com</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="p-5 space-y-5 bg-white flex-1">
+                                        <h2 className="text-base font-bold leading-tight text-slate-900 border-b pb-3">{currentData.subject || "Nueva Promoción Especial"}</h2>
                                         
-                                        <div className="aspect-video relative rounded-xl overflow-hidden shadow-md ring-1 ring-black/5 bg-slate-100">
+                                        <div className="aspect-[4/3] relative rounded-lg overflow-hidden shadow-sm bg-slate-100">
                                             <Image src={selectedImageUrl} alt="" fill className="object-cover transition-all" />
                                             <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
                                         </div>
@@ -633,7 +656,7 @@ export function EmailMarketingComposer({ template, onBack, uniqueCode: propUniqu
 
             {/* Sticky Action Bar */}
             <div className="fixed bottom-0 left-0 right-0 h-20 bg-white/80 backdrop-blur-md border-t z-[40] flex items-center">
-                <div className="mx-auto max-w-5xl w-full px-6 flex items-center justify-between">
+                <div className="w-full px-6 flex items-center justify-between">
                     <div className="hidden md:block">
                         <p className="text-sm font-bold text-slate-700">{template.name}</p>
                         <p className="text-xs text-muted-foreground">Última edición hoy a las {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
@@ -687,9 +710,17 @@ export function EmailMarketingComposer({ template, onBack, uniqueCode: propUniqu
                 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
                 .custom-scrollbar::-webkit-scrollbar { width: 4px; }
                 .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-                .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 20px; }
+                .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 20px; }
                 .animate-pulse-slow { animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
                 @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .7; } }
+                .hide-arrows::-webkit-outer-spin-button,
+                .hide-arrows::-webkit-inner-spin-button {
+                    -webkit-appearance: none;
+                    margin: 0;
+                }
+                .hide-arrows[type=number] {
+                    -moz-appearance: textfield;
+                }
             `}</style>
         </div>
     );

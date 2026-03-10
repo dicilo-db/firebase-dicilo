@@ -185,33 +185,24 @@ export function MarketingShareCard({ onManage }: MarketingShareCardProps) {
 
 
     return (
-        <Card className="border-purple-200 shadow-sm hover:shadow-md transition-all group relative overflow-hidden">
+        <Card className="border-emerald-200 shadow-sm hover:shadow-md transition-all group relative overflow-hidden flex flex-col h-full">
             <div className="absolute top-0 right-0 p-3">
-                <Badge className="bg-purple-600 text-white hover:bg-purple-700">
+                <Badge className="bg-emerald-600 text-white hover:bg-emerald-700">
                     {t('admin:dashboard.cards.active', 'Activo')}
                 </Badge>
             </div>
             
-            <CardHeader className="pb-2">
-                <div className="bg-purple-50 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                    <MailSearch className="h-6 w-6 text-purple-600" />
+            <CardHeader className="flex-1 pb-4">
+                <div className="mb-4 group-hover:scale-110 transition-transform origin-left">
+                    <MailSearch className="h-10 w-10 text-emerald-600 drop-shadow-sm" strokeWidth={1.5} />
                 </div>
-                <CardTitle className="text-xl">{t('adsManager.cards.programs.emailMarketing.title')}</CardTitle>
-                <CardDescription>
-                    {t('adsManager.cards.programs.emailMarketing.description')}
+                <CardTitle className="text-xl">{t('adsManager.cards.programs.emailMarketing.title', 'Email Marketing')}</CardTitle>
+                <CardDescription className="leading-relaxed mt-2">
+                    {t('adsManager.cards.programs.emailMarketing.description', 'Envía ofertas y promociones a empresas. Gana 10 DiciPoints por cada campaña compartida.')}
                 </CardDescription>
             </CardHeader>
 
-            <CardContent>
-                <div className="flex items-center gap-2 p-3 bg-purple-50/50 rounded-lg border border-purple-100">
-                    <div className="bg-white p-1.5 rounded-md shadow-sm">
-                        <Badge variant="outline" className="border-purple-200 text-purple-700">+10 DP</Badge>
-                    </div>
-                    <span className="text-xs text-purple-800 font-medium">Recompensa por envío</span>
-                </div>
-            </CardContent>
-
-            <CardFooter>
+            <CardFooter className="pt-2">
                 <Button 
                     onClick={() => {
                         const selectedTemplate = templates.find(t => t.id === currentTemplateId) || templates[0];
@@ -219,7 +210,7 @@ export function MarketingShareCard({ onManage }: MarketingShareCardProps) {
                             onManage(selectedTemplate);
                         }
                     }} 
-                    className="w-full bg-purple-600 hover:bg-purple-700 text-white shadow-sm h-11"
+                    className="w-full bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm h-11"
                 >
                     Gestionar Campaña
                     <Send className="ml-2 h-4 w-4" />

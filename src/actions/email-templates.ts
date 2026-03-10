@@ -18,6 +18,7 @@ export type EmailTemplate = {
     variables: string[];
     imageUrl?: string;
     images?: string[];
+    rewardAmount?: number;
     createdAt?: string;
     updatedAt?: string;
 };
@@ -97,49 +98,36 @@ export async function translateText(text: string, targetLang: string) {
             TASK: Translate the content within <TO_TRANSLATE> tags from Spanish to ${targetLangName} accurately and professionally.
             
             STRICT OUTPUT RULES:
-            1. Output ONLY the translated content in ${targetLangName}.
-            2. DO NOT include any prefixes, headers, notes, or meta-comments.
-            3. DO NOT include strings like "[TRANSLATED to ...]", "Translation:", or "Here is the translation:".
-            4. If you cannot translate, return the original text as is, without any added messages.
-            5. Preserve all {{variable}} tags and HTML structure exactly.
+            1. You MUST translate the text into ${targetLangName}. Do NOT return Spanish.
+            2. Preserve all {{variable}} tags and HTML structure exactly.
+            3. Return ONLY a valid JSON object matching this schema:
+               { "translatedText": "your translation here" }
+            4. Do not include markdown code blocks or any other wrapping text.
             
             <TO_TRANSLATE>
             ${text}
             </TO_TRANSLATE>
             `,
-        });
-
-        let result = response.text.trim();
-        
-        // Super aggressive cleaning of common AI noise patterns
-        const noisePatterns = [
-            /^\[TRANSLATED to [a-zA-Z\s]+\]:?\s*/i,
-            /^Translation in [a-zA-Z\s]+:?\s*/i,
-            /^Translation:?\s*/i,
-            /^Result:?\s*/i,
-            /^Here is the translated text:?\s*/i,
-            /^Subject:?\s*/i,
-            /^Body:?\s*/i
-        ];
-
-        let cleaned = result;
-        let changed = true;
-        while (changed) {
-            changed = false;
-            for (const pattern of noisePatterns) {
-                const newCleaned = cleaned.replace(pattern, '').trim();
-                if (newCleaned !== cleaned) {
-                    cleaned = newCleaned;
-                    changed = true;
+            output: {
+                format: "json",
+                schema: {
+                    type: "object",
+                    properties: {
+                        translatedText: { type: "string" }
+                    },
+                    required: ["translatedText"]
                 }
             }
-        }
-        
-        // If the AI just returned empty space or failed miserably
-        if (!cleaned) return text;
+        });
 
-        console.log(`[AI Translation] Cleaned Result for ${targetLangName}: "${cleaned.substring(0, 50)}..."`);
-        return cleaned;
+        const data = response.output();
+        if (data && typeof data.translatedText === 'string' && data.translatedText.trim() !== '') {
+            console.log(`[AI Translation] Success for ${targetLangName}`);
+            return data.translatedText.trim();
+        }
+
+        console.log(`[AI Translation] Fallback reached for ${targetLangName}`);
+        return text;
     } catch (error: any) {
         console.error("[AI Translation] Error:", error);
         return text;
