@@ -14,7 +14,21 @@ function initFirebaseAdmin() {
         if (process.env.FIREBASE_SERVICE_ACCOUNT_KEY) {
             let serviceAccount;
             try {
-                serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
+                let keyStr = process.env.FIREBASE_SERVICE_ACCOUNT_KEY.trim();
+                // Next.js build sometimes preserves surrounding quotes
+                if ((keyStr.startsWith("'") && keyStr.endsWith("'")) || (keyStr.startsWith('"') && keyStr.endsWith('"'))) {
+                    keyStr = keyStr.slice(1, -1);
+                }
+                
+                // Some environments double-escape the newlines
+                keyStr = keyStr.replace(/\\\\n/g, '\\n');
+
+                serviceAccount = JSON.parse(keyStr);
+
+                // Ensure private key has actual newlines
+                if (serviceAccount.private_key) {
+                    serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, '\n');
+                }
             } catch (e) {
                 console.error("Failed to parse FIREBASE_SERVICE_ACCOUNT_KEY:", e);
                 // Fallback to default if JSON parsing fails, though this is risky
