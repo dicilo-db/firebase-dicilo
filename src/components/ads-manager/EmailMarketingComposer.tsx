@@ -190,12 +190,13 @@ export function EmailMarketingComposer({ template, onBack, uniqueCode: propUniqu
     };
 
     const handleTranslate = async () => {
-        const sourceText = texts[activeLangTab].body;
-        const sourceSubject = texts[activeLangTab].subject;
-        if (!sourceText && !sourceSubject) return;
-
-        if (activeLangTab === targetLanguage) {
-            toast({ title: "Info", description: "Selecciona un idioma diferente al actual." });
+        // Fallback to 'es' if current tab is empty, which makes UX much smoother
+        // when users click an empty language tab and then click "Traducir".
+        const sourceText = texts[activeLangTab]?.body || texts['es']?.body || '';
+        const sourceSubject = texts[activeLangTab]?.subject || texts['es']?.subject || '';
+        
+        if (!sourceText && !sourceSubject) {
+            toast({ title: "Atención", description: "No hay texto base en Español para traducir." });
             return;
         }
 
@@ -441,7 +442,10 @@ export function EmailMarketingComposer({ template, onBack, uniqueCode: propUniqu
                             </div>
                         </div>
                         <CardContent className="p-0">
-                            <Tabs value={activeLangTab} onValueChange={setActiveLangTab} className="w-full">
+                            <Tabs value={activeLangTab} onValueChange={(val) => {
+                                setActiveLangTab(val);
+                                setTargetLanguage(val);
+                            }} className="w-full">
                                 <div className="border-b px-2 bg-slate-50/30">
                                     <TabsList className="bg-transparent h-12 gap-0 overflow-x-auto no-scrollbar justify-start">
                                         {['es', 'en', 'de', 'fr', 'pt', 'it'].map(lang => (

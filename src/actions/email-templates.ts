@@ -92,38 +92,26 @@ export async function translateText(text: string, targetLang: string) {
         const response = await ai.generate({
             prompt: `
             ROLE: Professional, Fluent ${targetLangName} Translator.
-            SOURCE LANGUAGE: Spanish.
             TARGET LANGUAGE: ${targetLangName}.
             
-            TASK: Translate the content within <TO_TRANSLATE> tags from Spanish to ${targetLangName} accurately and professionally.
+            TASK: Translate the content within <TO_TRANSLATE> tags to ${targetLangName} accurately and professionally.
             
-            STRICT OUTPUT RULES:
-            1. You MUST translate the text into ${targetLangName}. Do NOT return Spanish.
+            STRICT RULES:
+            1. Output ONLY the translated text. Do NOT include any markdown formatting, explanations, or original text.
             2. Preserve all {{variable}} tags and HTML structure exactly.
-            3. Return ONLY a valid JSON object matching this schema:
-               { "translatedText": "your translation here" }
-            4. Do not include markdown code blocks or any other wrapping text.
+            3. Do NOT return Spanish. The result MUST BE in ${targetLangName}.
             
             <TO_TRANSLATE>
             ${text}
             </TO_TRANSLATE>
-            `,
-            output: {
-                format: "json",
-                schema: {
-                    type: "object",
-                    properties: {
-                        translatedText: { type: "string" }
-                    },
-                    required: ["translatedText"]
-                }
-            }
+            `
         });
 
-        const data = response.output();
-        if (data && typeof data.translatedText === 'string' && data.translatedText.trim() !== '') {
+        const translated = response.text?.trim();
+        if (translated) {
             console.log(`[AI Translation] Success for ${targetLangName}`);
-            return data.translatedText.trim();
+            // Remove markdown code blocks if the AI accidentally adds them
+            return translated.replace(/^```[a-z]*\n/g, '').replace(/```$/g, '').trim();
         }
 
         console.log(`[AI Translation] Fallback reached for ${targetLangName}`);
@@ -131,5 +119,6 @@ export async function translateText(text: string, targetLang: string) {
     } catch (error: any) {
         console.error("[AI Translation] Error:", error);
         return text;
+
     }
 }
