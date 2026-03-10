@@ -88,8 +88,10 @@ export function ReferralCard() {
             setLoadingTemplates(true);
             try {
                 const fetched = await getTemplates();
-                // Filter only 'referrals'
-                setTemplates(fetched.filter(t => t.category === 'referrals'));
+                // Allow user to select from referals, general network campaigns, and email marketing
+                setTemplates(fetched.filter(t => 
+                    ['referrals', 'network_campaigns', 'email_marketing'].includes(t.category)
+                ));
             } catch (e) {
                 console.error("Failed to fetch templates", e);
             } finally {

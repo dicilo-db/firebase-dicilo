@@ -191,18 +191,19 @@ export async function translateText(text: string, targetLanguage: string) {
     if (!text) return { success: false, error: 'No text provided' };
 
     try {
+        console.log(`[Community Translation] Translating to ${targetLanguage}: "${text.substring(0, 50)}..."`);
         const response = await ai.generate({
             prompt: `
             ROLE: Professional Social Media Translator.
             TARGET LANGUAGE: ${targetLanguage}.
             
-            TASK: Translate the following informal social media text into ${targetLanguage}.
+            TASK: Translate the following informal social media text into ${targetLanguage} accurately.
             
             STRICT RULES:
             1. Keep the tone friendly, casual, and appropriate for a community social wall.
-            2. Output ONLY the translated text.
+            2. Output ONLY the translated text. Do NOT include markdown blocks (\`\`\`).
             3. ABSOLUTELY NO metadata, NO headers, NO explanations, NO intro/outro.
-            4. MANDATORY: The result MUST BE in ${targetLanguage}.
+            4. Do NOT return Spanish. The result MUST BE in ${targetLanguage}.
             
             <TO_TRANSLATE>
             ${text}
@@ -210,9 +211,17 @@ export async function translateText(text: string, targetLanguage: string) {
             `,
         });
 
-        return { success: true, translatedText: response.text.trim() };
+        const translated = response.text?.trim();
+        if (translated) {
+            console.log(`[Community Translation] Success for ${targetLanguage}`);
+            const cleaned = translated.replace(/^```[a-z]*\n/g, '').replace(/```$/g, '').trim();
+            return { success: true, translatedText: cleaned };
+        }
+
+        console.log(`[Community Translation] Fallback reached for ${targetLanguage}`);
+        return { success: false, error: 'La IA devolvió un resultado vacío.' };
     } catch (error: any) {
-        console.error("Translation error details:", JSON.stringify(error, null, 2));
+        console.error("[Community Translation] Error:", error);
         return { success: false, error: `Translation failed: ${error.message || 'Unknown error'}` };
     }
 }
@@ -285,6 +294,70 @@ export async function addComment(postId: string, content: string, userId: string
 
     } catch (error: any) {
         console.error("Error adding comment:", error);
+        return { success: false, error: error.message };
+    }
+}
+
+export async function deletePostAction(postId: string, userId: string) {
+    if (!postId || !userId) return { success: false, error: 'Faltan parámetros' };
+
+    try {
+        const postRef = db.collection('community_posts').doc(postId);
+        const postSnap = await postRef.get();
+
+        if (!postSnap.exists) {
+            return { success: false, error: 'La publicación no existe' };
+        }
+
+        const postData = postSnap.data();
+        if (postData?.userId !== userId) {
+            return { success: false, error: 'No tienes permiso para eliminar esta publicación' };
+        }
+
+        // Optional: We could delete associated media from storage here, 
+        // but for now we just delete the document to keep it simple.
+        await postRef.delete();
+
+        return { success: true };
+    } catch (error: any) {
+        console.error("Error deleting post:", error);
+        return { success: false, error: error.message };
+    }
+}
+
+export async function editPostAction(postId: string, newContent: string, userId: string) {
+    if (!postId || !newContent || !userId) return { success: false, error: 'Datos incompletos' };
+
+    try {
+        const postRef = db.collection('community_posts').doc(postId);
+        const postSnap = await postRef.get();
+
+        if (!postSnap.exists) {
+            return { success: false, error: 'La publicación no existe' };
+        }
+
+        const postData = postSnap.data();
+        if (postData?.userId !== userId) {
+            return { success: false, error: 'No tienes permiso para editar esta publicación' };
+        }
+
+        // Verify the 12-hour limit
+        const createdAt = postData?.createdAt?.toDate ? postData.createdAt.toDate().getTime() : new Date(postData?.createdAt).getTime();
+        const now = Date.now();
+        const twelveHoursInMs = 12 * 60 * 60 * 1000;
+
+        if (now - createdAt > twelveHoursInMs) {
+            return { success: false, error: 'Solo puedes editar una publicación dentro de las primeras 12 horas.' };
+        }
+
+        await postRef.update({
+            content: newContent,
+            updatedAt: new Date()
+        });
+
+        return { success: true };
+    } catch (error: any) {
+        console.error("Error editing post:", error);
         return { success: false, error: error.message };
     }
 }

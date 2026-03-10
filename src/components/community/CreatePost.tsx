@@ -238,7 +238,7 @@ export function CreatePost({ userId, neighborhood, neighborhoodId, onPostCreated
                             : t('community.feed.whats_happening', `¿Qué está pasando en ${neighborhood}?`, { name: neighborhood })}
                         value={content}
                         onChange={(e) => setContent(e.target.value)}
-                        className={`min-h-[100px] resize-none focus-visible:ring-purple-500 mb-4 ${isPrivate
+                        className={`min-h-[100px] resize-y focus-visible:ring-purple-500 mb-4 ${isPrivate
                             ? 'border-amber-200 bg-white placeholder:text-amber-700/50'
                             : 'border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-900/50'
                             }`}

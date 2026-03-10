@@ -6,7 +6,7 @@ import { CommunityPost } from '@/types/community';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Heart, MessageCircle, Share2, Globe, Loader2, Download, Facebook, Mail, Copy, Twitter, Send } from 'lucide-react';
+import { Heart, MessageCircle, Share2, Globe, Loader2, Download, Facebook, Mail, Copy, Twitter, Send, Edit, Trash2, MoreHorizontal } from 'lucide-react';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -17,9 +17,10 @@ import {
 import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
 import Image from 'next/image';
-import { toggleLike, translateText } from '@/app/actions/community';
+import { toggleLike, translateText, deletePostAction, editPostAction } from '@/app/actions/community';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
+import { Textarea } from '@/components/ui/textarea';
 import { useTranslation } from 'react-i18next';
 import { CommentSection } from './CommentSection';
 import { useFriends } from '@/hooks/useFriends';
@@ -60,8 +61,18 @@ export function PostCard({ post, currentUserId, readOnly = false }: PostCardProp
     const { friends, sendFriendRequest } = useFriends();
     const [requestSent, setRequestSent] = useState(false);
 
+    const [requestSent, setRequestSent] = useState(false);
+    
+    // Edit & Delete State
+    const [isEditing, setIsEditing] = useState(false);
+    const [editContent, setEditContent] = useState(post.content);
+    const [isSavingEdit, setIsSavingEdit] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
+
     const isMe = currentUserId === post.userId;
     const isFriend = friends.some(f => f.uid === post.userId);
+    const date = post.createdAt?.toDate ? post.createdAt.toDate() : new Date(post.createdAt);
+    const isWithin12Hours = (Date.now() - date.getTime()) <= 12 * 60 * 60 * 1000;
 
     const handleConnect = async () => {
         if (readOnly) {
@@ -127,6 +138,40 @@ export function PostCard({ post, currentUserId, readOnly = false }: PostCardProp
                 description: t('community.translation_error', 'Traducción fallida. Inténtalo más tarde.'),
                 variant: "destructive"
             });
+        }
+    };
+
+    };
+
+    const handleDelete = async () => {
+        if (!confirm("¿Estás seguro de que deseas eliminar esta publicación? Esta acción no se puede deshacer.")) return;
+        
+        setIsDeleting(true);
+        const result = await deletePostAction(post.id, currentUserId);
+        setIsDeleting(false);
+
+        if (result.success) {
+            toast({ title: "Publicación eliminada", description: "Tu publicación ha sido borrada." });
+            // Ideally we should trigger a refresh here, but for now we reload or the parent handles it if we had a callback
+            window.location.reload(); 
+        } else {
+            toast({ title: "Error", description: result.error || "No se pudo eliminar", variant: "destructive" });
+        }
+    };
+
+    const handleSaveEdit = async () => {
+        if (!editContent.trim()) return;
+
+        setIsSavingEdit(true);
+        const result = await editPostAction(post.id, editContent, currentUserId);
+        setIsSavingEdit(false);
+
+        if (result.success) {
+            toast({ title: "Publicación actualizada" });
+            post.content = editContent; // Optimistic local update
+            setIsEditing(false);
+        } else {
+            toast({ title: "Error", description: result.error || "No se pudo editar", variant: "destructive" });
         }
     };
 
@@ -212,7 +257,7 @@ export function PostCard({ post, currentUserId, readOnly = false }: PostCardProp
     const date = post.createdAt?.toDate ? post.createdAt.toDate() : new Date(post.createdAt);
 
     return (
-        <Card className="border-none shadow-sm mb-4 overflow-hidden bg-white dark:bg-card">
+        <Card className={`border-none shadow-sm mb-4 overflow-hidden bg-white dark:bg-card ${isDeleting ? 'opacity-50 pointer-events-none' : ''}`}>
             <CardHeader className="flex flex-row items-center gap-4 p-4 pb-2">
                 <Avatar className="h-10 w-10">
                     <AvatarImage src={post.userAvatar} alt={post.userName} />
@@ -237,11 +282,60 @@ export function PostCard({ post, currentUserId, readOnly = false }: PostCardProp
                         {formatDistanceToNow(date, { addSuffix: true, locale: es })} • {post.neighborhood}
                     </span>
                 </div>
+                
+                {/* Options Menu for Post Owner */}
+                {isMe && !readOnly && (
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-8 w-8 ml-auto text-slate-500 hover:text-slate-900 dark:hover:text-white">
+                                <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuItem 
+                                onClick={() => setIsEditing(true)} 
+                                disabled={!isWithin12Hours}
+                                className="cursor-pointer gap-2"
+                            >
+                                <Edit className="h-4 w-4" />
+                                <span>{isWithin12Hours ? "Editar" : "Edición expirada (+12h)"}</span>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem 
+                                onClick={handleDelete} 
+                                className="cursor-pointer text-red-600 focus:text-red-700 gap-2"
+                            >
+                                <Trash2 className="h-4 w-4" />
+                                <span>Eliminar</span>
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                )}
             </CardHeader>
             <CardContent className="p-4 pt-0 space-y-3">
-                <p className="text-slate-800 dark:text-slate-200 text-sm leading-relaxed whitespace-pre-wrap">
-                    {showTranslated ? translatedContent : post.content}
-                </p>
+                {isEditing ? (
+                    <div className="space-y-2 mt-2">
+                        <Textarea 
+                            value={editContent} 
+                            onChange={(e) => setEditContent(e.target.value)}
+                            className="w-full resize-y min-h-[100px]"
+                            placeholder="Edita tu publicación..."
+                        />
+                        <div className="flex justify-end gap-2">
+                            <Button variant="outline" size="sm" onClick={() => setIsEditing(false)} disabled={isSavingEdit}>
+                                Cancelar
+                            </Button>
+                            <Button size="sm" onClick={handleSaveEdit} disabled={isSavingEdit || !editContent.trim()} className="bg-purple-600 hover:bg-purple-700">
+                                {isSavingEdit && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+                                Guardar
+                            </Button>
+                        </div>
+                    </div>
+                ) : (
+                    <p className="text-slate-800 dark:text-slate-200 text-sm leading-relaxed whitespace-pre-wrap">
+                        {showTranslated ? translatedContent : post.content}
+                        {post.updatedAt && !showTranslated && <span className="text-[10px] text-muted-foreground ml-2">(Editado)</span>}
+                    </p>
+                )}
 
                 {post.media && post.media.length > 0 ? (
                     <div className={cn(
