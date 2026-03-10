@@ -61,11 +61,13 @@ export function PostCard({ post, currentUserId, readOnly = false }: PostCardProp
     const { friends, sendFriendRequest } = useFriends();
     const [requestSent, setRequestSent] = useState(false);
 
-    const [requestSent, setRequestSent] = useState(false);
     
     // Edit & Delete State
     const [isEditing, setIsEditing] = useState(false);
     const [editContent, setEditContent] = useState(post.content);
+    const [editMedia, setEditMedia] = useState<{type: string, url: string}[]>(
+        post.media || (post.imageUrl ? [{ type: 'image', url: post.imageUrl }] : [])
+    );
     const [isSavingEdit, setIsSavingEdit] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
 
@@ -135,12 +137,10 @@ export function PostCard({ post, currentUserId, readOnly = false }: PostCardProp
             console.error("Translation failed:", result.error);
             toast({
                 title: "Error",
-                description: t('community.translation_error', 'Traducción fallida. Inténtalo más tarde.'),
+                description: result.error ? `Error: ${result.error}` : t('community.translation_error', 'Traducción fallida. Inténtalo más tarde.'),
                 variant: "destructive"
             });
         }
-    };
-
     };
 
     const handleDelete = async () => {
@@ -160,15 +160,18 @@ export function PostCard({ post, currentUserId, readOnly = false }: PostCardProp
     };
 
     const handleSaveEdit = async () => {
-        if (!editContent.trim()) return;
+        if (!editContent.trim() && editMedia.length === 0) return;
 
         setIsSavingEdit(true);
-        const result = await editPostAction(post.id, editContent, currentUserId);
+        const result = await editPostAction(post.id, editContent, currentUserId, editMedia);
         setIsSavingEdit(false);
 
         if (result.success) {
             toast({ title: "Publicación actualizada" });
             post.content = editContent; // Optimistic local update
+            post.media = editMedia;
+            if (editMedia.length === 0) post.imageUrl = null;
+            else if (editMedia.length > 0 && editMedia[0].type === 'image') post.imageUrl = editMedia[0].url;
             setIsEditing(false);
         } else {
             toast({ title: "Error", description: result.error || "No se pudo editar", variant: "destructive" });
@@ -254,8 +257,6 @@ export function PostCard({ post, currentUserId, readOnly = false }: PostCardProp
         }
     };
 
-    const date = post.createdAt?.toDate ? post.createdAt.toDate() : new Date(post.createdAt);
-
     return (
         <Card className={`border-none shadow-sm mb-4 overflow-hidden bg-white dark:bg-card ${isDeleting ? 'opacity-50 pointer-events-none' : ''}`}>
             <CardHeader className="flex flex-row items-center gap-4 p-4 pb-2">
@@ -320,11 +321,35 @@ export function PostCard({ post, currentUserId, readOnly = false }: PostCardProp
                             className="w-full resize-y min-h-[100px]"
                             placeholder="Edita tu publicación..."
                         />
+                        {editMedia.length > 0 && (
+                            <div className="flex gap-2 mt-2 overflow-x-auto">
+                                {editMedia.map((m, idx) => (
+                                    <div key={idx} className="relative w-20 h-20 shrink-0 rounded-md overflow-hidden bg-slate-100 dark:bg-slate-800">
+                                        {m.type === 'video' ? (
+                                            <video src={m.url} className="w-full h-full object-cover" />
+                                        ) : (
+                                            <img src={m.url} className="w-full h-full object-cover" />
+                                        )}
+                                        <button 
+                                            onClick={() => setEditMedia(prev => prev.filter((_, i) => i !== idx))}
+                                            className="absolute top-1 right-1 bg-black/50 hover:bg-black/70 text-white rounded-full p-1 transition-colors"
+                                            title="Eliminar media"
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                         <div className="flex justify-end gap-2">
-                            <Button variant="outline" size="sm" onClick={() => setIsEditing(false)} disabled={isSavingEdit}>
+                            <Button variant="outline" size="sm" onClick={() => {
+                                setIsEditing(false);
+                                setEditContent(post.content);
+                                setEditMedia(post.media || (post.imageUrl ? [{ type: 'image', url: post.imageUrl }] : []));
+                            }} disabled={isSavingEdit}>
                                 Cancelar
                             </Button>
-                            <Button size="sm" onClick={handleSaveEdit} disabled={isSavingEdit || !editContent.trim()} className="bg-purple-600 hover:bg-purple-700">
+                            <Button size="sm" onClick={handleSaveEdit} disabled={isSavingEdit || (!editContent.trim() && editMedia.length === 0)} className="bg-purple-600 hover:bg-purple-700">
                                 {isSavingEdit && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
                                 Guardar
                             </Button>

@@ -90,6 +90,7 @@ export async function translateText(text: string, targetLang: string) {
     try {
         console.log(`[AI Translation] Translating to ${targetLangName}: "${text.substring(0, 50)}..."`);
         const response = await ai.generate({
+            model: 'googleai/gemini-2.5-flash',
             prompt: `
             ROLE: Professional, Fluent ${targetLangName} Translator.
             TARGET LANGUAGE: ${targetLangName}.

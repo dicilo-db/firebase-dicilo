@@ -193,6 +193,7 @@ export async function translateText(text: string, targetLanguage: string) {
     try {
         console.log(`[Community Translation] Translating to ${targetLanguage}: "${text.substring(0, 50)}..."`);
         const response = await ai.generate({
+            model: 'googleai/gemini-2.5-flash',
             prompt: `
             ROLE: Professional Social Media Translator.
             TARGET LANGUAGE: ${targetLanguage}.
@@ -325,7 +326,7 @@ export async function deletePostAction(postId: string, userId: string) {
     }
 }
 
-export async function editPostAction(postId: string, newContent: string, userId: string) {
+export async function editPostAction(postId: string, newContent: string, userId: string, updatedMedia?: any[]) {
     if (!postId || !newContent || !userId) return { success: false, error: 'Datos incompletos' };
 
     try {
@@ -350,10 +351,21 @@ export async function editPostAction(postId: string, newContent: string, userId:
             return { success: false, error: 'Solo puedes editar una publicación dentro de las primeras 12 horas.' };
         }
 
-        await postRef.update({
+        const updates: any = {
             content: newContent,
             updatedAt: new Date()
-        });
+        };
+
+        if (updatedMedia !== undefined) {
+            updates.media = updatedMedia;
+            if (updatedMedia.length === 0) {
+                updates.imageUrl = null;
+            } else if (updatedMedia.length > 0 && updatedMedia[0].type === 'image') {
+                updates.imageUrl = updatedMedia[0].url;
+            }
+        }
+
+        await postRef.update(updates);
 
         return { success: true };
     } catch (error: any) {
