@@ -20,7 +20,7 @@ import {
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from "@/select";
+} from "@/components/ui/select";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -39,13 +39,16 @@ import { getTemplates, EmailTemplate } from '@/actions/email-templates';
 import { awardMarketingSharePoints } from '@/app/actions/dicipoints';
 import { EmailMarketingComposer } from './EmailMarketingComposer';
 
-export function MarketingShareCard() {
+interface MarketingShareCardProps {
+    onManage?: (template: EmailTemplate) => void;
+}
+
+export function MarketingShareCard({ onManage }: MarketingShareCardProps) {
     const { t, i18n } = useTranslation(['common', 'admin']);
     const { toast } = useToast();
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    const [isOpen, setIsOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
@@ -178,19 +181,8 @@ export function MarketingShareCard() {
         }
     };
 
-    if (isOpen) {
-        const selectedTemplate = templates.find(t => t.id === currentTemplateId) || templates[0];
-        if (selectedTemplate) {
-            return (
-                <EmailMarketingComposer 
-                    template={selectedTemplate} 
-                    onBack={() => setIsOpen(false)} 
-                    uniqueCode={uniqueCode}
-                    referrerName={referrerName}
-                />
-            );
-        }
-    }
+    // Removed internal onOpen check to move navigation to AdsDashboard
+
 
     return (
         <Card className="border-purple-200 shadow-sm hover:shadow-md transition-all group relative overflow-hidden">
@@ -220,7 +212,15 @@ export function MarketingShareCard() {
             </CardContent>
 
             <CardFooter>
-                <Button onClick={() => setIsOpen(true)} className="w-full bg-purple-600 hover:bg-purple-700 text-white shadow-sm h-11">
+                <Button 
+                    onClick={() => {
+                        const selectedTemplate = templates.find(t => t.id === currentTemplateId) || templates[0];
+                        if (selectedTemplate && onManage) {
+                            onManage(selectedTemplate);
+                        }
+                    }} 
+                    className="w-full bg-purple-600 hover:bg-purple-700 text-white shadow-sm h-11"
+                >
                     Gestionar Campaña
                     <Send className="ml-2 h-4 w-4" />
                 </Button>

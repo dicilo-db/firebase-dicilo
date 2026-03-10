@@ -13,14 +13,17 @@ import { QrManager } from './QrManager';
 import { ProspectsManager } from './ProspectsManager';
 import { ReferralCard } from '@/components/dashboard/ReferralCard';
 import { MarketingShareCard } from './MarketingShareCard';
+import { EmailMarketingComposer } from './EmailMarketingComposer';
+import { EmailTemplate } from '@/actions/email-templates';
 
-type View = 'overview' | 'qr-codes' | 'network-campaigns' | 'prospects';
+type View = 'overview' | 'qr-codes' | 'network-campaigns' | 'prospects' | 'email-marketing';
 
 export default function AdsDashboard() {
     const { toast } = useToast();
     const { t } = useTranslation('common');
     const [isSeeding, setIsSeeding] = useState(false);
     const [currentView, setCurrentView] = useState<View>('overview');
+    const [selectedTemplate, setSelectedTemplate] = useState<EmailTemplate | null>(null);
 
     const handleSeedData = async () => {
         setIsSeeding(true);
@@ -48,6 +51,18 @@ export default function AdsDashboard() {
 
     if (currentView === 'prospects') {
         return <ProspectsManager onBack={() => setCurrentView('overview')} />;
+    }
+
+    if (currentView === 'email-marketing' && selectedTemplate) {
+        return (
+            <EmailMarketingComposer 
+                template={selectedTemplate} 
+                onBack={() => {
+                    setCurrentView('overview');
+                    setSelectedTemplate(null);
+                }} 
+            />
+        );
     }
 
     return (
@@ -101,7 +116,12 @@ export default function AdsDashboard() {
                 </Card>
 
                 {/* Module: Email Marketing (ACTIVE & INTERACTIVE) */}
-                <MarketingShareCard />
+                <MarketingShareCard 
+                    onManage={(template) => {
+                        setSelectedTemplate(template);
+                        setCurrentView('email-marketing');
+                    }} 
+                />
 
                 {/* Module: Display Ads */}
                 <Card className="opacity-75 border-dashed">
