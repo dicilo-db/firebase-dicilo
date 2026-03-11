@@ -342,7 +342,7 @@ const DashboardContent: React.FC = () => {
   return (
     <div className="flex min-h-screen flex-col bg-slate-50 dark:bg-slate-900">
 
-      <main className="flex-grow p-8 container mx-auto max-w-7xl">
+      <main className="flex-grow p-4 md:p-8 container mx-auto w-full">
         <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100">

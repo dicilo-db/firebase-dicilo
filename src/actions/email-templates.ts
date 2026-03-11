@@ -91,28 +91,31 @@ export async function translateText(text: string, targetLang: string) {
         console.log(`[AI Translation] Translating to ${targetLangName}: "${text.substring(0, 50)}..."`);
         const response = await ai.generate({
             model: 'googleai/gemini-2.5-flash',
+            output: { format: 'json' },
             prompt: `
             ROLE: Professional, Fluent ${targetLangName} Translator.
             TARGET LANGUAGE: ${targetLangName}.
             
-            TASK: Translate the content within <TO_TRANSLATE> tags to ${targetLangName} accurately and professionally.
+            TASK: Translate the content exactly to ${targetLangName}.
             
             STRICT RULES:
-            1. Output ONLY the translated text. Do NOT include any markdown formatting, explanations, or original text.
+            1. Output ONLY a valid JSON object with a single key "translatedText" containing the translation.
             2. Preserve all {{variable}} tags and HTML structure exactly.
             3. Do NOT return Spanish. The result MUST BE in ${targetLangName}.
             
-            <TO_TRANSLATE>
+            TEXT TO TRANSLATE:
             ${text}
-            </TO_TRANSLATE>
             `
         });
 
-        const translated = response.text?.trim();
-        if (translated) {
-            console.log(`[AI Translation] Success for ${targetLangName}`);
-            // Remove markdown code blocks if the AI accidentally adds them
-            return translated.replace(/^```[a-z]*\n/g, '').replace(/```$/g, '').trim();
+        try {
+            const parsed = JSON.parse(response.text || '{}');
+            if (parsed.translatedText) {
+                console.log(`[AI Translation] Success for ${targetLangName}`);
+                return parsed.translatedText;
+            }
+        } catch (parseError) {
+            console.error("[AI Translation] JSON Parse Error:", parseError, "Raw output:", response.text);
         }
 
         console.log(`[AI Translation] Fallback reached for ${targetLangName}`);

@@ -65,7 +65,8 @@ import {
     Linkedin,
     Youtube,
     Twitter,
-    MoreHorizontal
+    MoreHorizontal,
+    Trash2
 } from 'lucide-react';
 
 // Context & Actions
@@ -73,6 +74,12 @@ import { useAuth } from '@/context/AuthContext';
 import { translateText, EmailTemplate, saveTemplate } from '@/actions/email-templates';
 import { correctText } from '@/app/actions/grammar';
 import { awardMarketingSharePoints } from '@/app/actions/dicipoints';
+
+type Friend = {
+    name: string;
+    email: string;
+    language: string;
+};
 
 interface EmailMarketingComposerProps {
     template: EmailTemplate;
@@ -110,6 +117,13 @@ export function EmailMarketingComposer({ template, onBack, uniqueCode: propUniqu
     const [previewNetwork, setPreviewNetwork] = useState('instagram');
     const [scheduledDate, setScheduledDate] = useState<Date | undefined>(undefined);
     const [rewardAmount, setRewardAmount] = useState<number>(template.rewardAmount || 10);
+
+    // Personalizar Invitación State
+    const [friends, setFriends] = useState<Friend[]>([]);
+    const [currentName, setCurrentName] = useState('');
+    const [currentEmail, setCurrentEmail] = useState('');
+    const [currentLanguage, setCurrentLanguage] = useState('es');
+    const [isSendingPersonalized, setIsSendingPersonalized] = useState(false);
 
     // Shortener / Link Logic
     const generatedLink = `https://dicilo.net?ref=${propUniqueCode || user?.uid || 'promo'}`;
@@ -315,6 +329,132 @@ export function EmailMarketingComposer({ template, onBack, uniqueCode: propUniqu
             } catch (e) {
                 console.error("Points error", e);
             }
+        }
+    };
+
+    const addFriend = () => {
+        if (!currentName.trim() || !currentEmail.trim()) {
+            toast({ title: "Faltan datos", description: "Completa nombre y email", variant: "destructive" });
+            return;
+        }
+        if (friends.length >= 7) {
+            toast({ title: "Límite alcanzado", description: "Máximo 7 amigos por envío", variant: "destructive" });
+            return;
+        }
+        setFriends([...friends, {
+            name: currentName,
+            email: currentEmail,
+            language: currentLanguage
+        }]);
+        setCurrentName('');
+        setCurrentEmail('');
+    };
+
+    const removeFriend = (index: number) => {
+        const newFriends = [...friends];
+        newFriends.splice(index, 1);
+        setFriends(newFriends);
+    };
+
+    const handleSendInvitations = async () => {
+        if (friends.length === 0) {
+            toast({ title: "Error", description: "Agrega al menos un contacto a la lista", variant: "destructive" });
+            return;
+        }
+
+        const currentUser = user;
+        if (!currentUser) {
+            toast({ title: "Error", description: "No estás autenticado", variant: "destructive" });
+            return;
+        }
+
+        setIsSendingPersonalized(true);
+
+        try {
+            // 1. Create Invitations in Firestore
+            const { sendPioneerInvitations } = await import('@/app/actions/invite');
+            const result = await sendPioneerInvitations(
+                propUniqueCode || currentUser.uid,
+                currentUser.displayName || 'Usuario',
+                friends.map(f => ({
+                    name: f.name,
+                    email: f.email,
+                    lang: f.language as 'es' | 'de' | 'en',
+                    template: template.id || 'email_marketing'
+                }))
+            );
+
+            if (!result.success || !result.inviteIds) {
+                throw new Error(result.error || 'Failed to create invitations');
+            }
+
+            const inviteIds = result.inviteIds;
+
+            // 2. Prepare Payload
+            const enrichedFriends = friends.map((friend, index) => {
+                const inviteId = inviteIds[index];
+                const inviteUrl = `https://dicilo.net/registrieren?ref=${propUniqueCode || currentUser.uid}&inviteId=${inviteId}`;
+
+                let subject = texts[friend.language]?.subject || texts['es']?.subject || texts['en']?.subject || '';
+                let body = texts[friend.language]?.body || texts['es']?.body || texts['en']?.body || '';
+
+                // Replace tags
+                body = body
+                    .replace(/\[Name\]|\[Nombre\]|\{\{Nombre\}\}|\{\{Name\}\}/g, friend.name)
+                    .replace(/\[Tu Nombre\]|\{\{Tu Nombre\}\}|\{\{Your Name\}\}|\{\{Dein Name\}\}/g, currentUser.displayName || 'Tu Contacto')
+                    .replace(/\[RefCode\]|\{\{RefCode\}\}/g, propUniqueCode || currentUser.uid)
+                    .replace(/\[(BOTÓN|BUTTON):.*?\]/g, `\n👉 ${inviteUrl}\n`);
+
+                subject = subject
+                    .replace(/\{\{.*?\}\}/g, friend.name)
+                    .replace(/\[Name\]|\[Nombre\]/g, friend.name);
+
+                return {
+                    ...friend,
+                    generated_subject: subject,
+                    generated_body: body,
+                    inviteId: inviteId
+                };
+            });
+
+            const payload = {
+                referrer_id: propUniqueCode || currentUser.uid,
+                referrer_name: currentUser.displayName || 'Usuario',
+                referrer_email: currentUser.email,
+                friends: enrichedFriends,
+                timestamp: new Date().toISOString()
+            };
+
+            const webhookUrl = process.env.NEXT_PUBLIC_N8N_REFERRAL_WEBHOOK;
+            if (!webhookUrl) throw new Error("Webhook URL not configured");
+
+            // 3. Send to Webhook
+            const response = await fetch(webhookUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) throw new Error("Webhook failed");
+
+            setFriends([]);
+            toast({
+                title: "¡Enviado exitosamente!",
+                description: `Se han enviado ${friends.length} invitaciones a tus contactos.`,
+                className: "bg-green-600 text-white"
+            });
+
+            // Reward
+            try {
+                await awardMarketingSharePoints(currentUser.uid, template.id || '');
+            } catch (e) {
+                console.error("Points error", e);
+            }
+
+        } catch (error) {
+            toast({ title: "Error", description: "Ocurrió un problema al enviar los correos.", variant: "destructive" });
+        } finally {
+            setIsSendingPersonalized(false);
         }
     };
 
@@ -561,6 +701,137 @@ export function EmailMarketingComposer({ template, onBack, uniqueCode: propUniqu
                             </div>
                         </CardContent>
                     </Card>
+
+                    {/* 4. Personalizar Invitación Múltiple Card */}
+                    <Card id="personalizar-invitacion" className="shadow-sm border-slate-200 border-l-4 border-l-blue-500 overflow-hidden mt-6">
+                        <div className="bg-blue-50/50 px-6 py-4 border-b">
+                            <h3 className="text-sm font-bold uppercase tracking-wider text-blue-800">4. Personalizar Invitación Múltiple</h3>
+                            <p className="text-xs text-muted-foreground">Agrega hasta 7 amigos y envíales una invitación personalizada de esta campaña.</p>
+                        </div>
+                        <CardContent className="p-6">
+                            <div className="space-y-6">
+                                {/* Sender Info */}
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <Label className="text-xs font-bold text-slate-500 uppercase">Tu ID (Referido)</Label>
+                                        <div className="h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl flex items-center text-sm font-mono text-slate-500">
+                                            {propUniqueCode || user?.uid?.substring(0, 8)}
+                                        </div>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label className="text-xs font-bold text-slate-500 uppercase">Tu Nombre</Label>
+                                        <div className="h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl flex items-center text-sm font-medium text-slate-700">
+                                            {user?.displayName || 'Usuario'}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="h-px bg-slate-100" />
+
+                                {/* Add Friend Form */}
+                                <div className="space-y-4">
+                                    <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
+                                        <div className="space-y-2 md:col-span-4">
+                                            <Label className="text-xs font-bold text-slate-500 uppercase">Nombre</Label>
+                                            <Input
+                                                placeholder="Ej: Laura"
+                                                value={currentName}
+                                                onChange={(e) => setCurrentName(e.target.value)}
+                                                className="h-10 border-slate-200 focus-visible:ring-blue-500 bg-white"
+                                            />
+                                        </div>
+                                        <div className="space-y-2 md:col-span-4">
+                                            <Label className="text-xs font-bold text-slate-500 uppercase">Email</Label>
+                                            <Input
+                                                type="email"
+                                                placeholder="laura@ejemplo.com"
+                                                value={currentEmail}
+                                                onChange={(e) => setCurrentEmail(e.target.value)}
+                                                onKeyDown={(e) => e.key === 'Enter' && addFriend()}
+                                                className="h-10 border-slate-200 focus-visible:ring-blue-500 bg-white"
+                                            />
+                                        </div>
+                                        <div className="space-y-2 md:col-span-3">
+                                            <Label className="text-xs font-bold text-slate-500 uppercase">Idioma</Label>
+                                            <Select value={currentLanguage} onValueChange={setCurrentLanguage}>
+                                                <SelectTrigger className="h-10 border-slate-200 bg-white text-slate-700">
+                                                    <SelectValue />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="es">Español</SelectItem>
+                                                    <SelectItem value="en">English</SelectItem>
+                                                    <SelectItem value="de">Deutsch</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                        <div className="md:col-span-1">
+                                            <Button
+                                                variant="outline"
+                                                size="icon"
+                                                onClick={addFriend}
+                                                disabled={friends.length >= 7 || !currentName.trim() || !currentEmail.trim()}
+                                                className="h-10 w-full border-blue-200 text-blue-600 hover:bg-blue-50"
+                                            >
+                                                <Plus className="h-5 w-5" />
+                                            </Button>
+                                        </div>
+                                    </div>
+
+                                    {/* Friends List */}
+                                    <div className="space-y-2 mt-4">
+                                        <div className="flex justify-between items-center px-1">
+                                            <span className="text-xs font-bold text-slate-500 uppercase">Contactos Agregados</span>
+                                            <span className="text-xs font-bold bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">{friends.length} / 7</span>
+                                        </div>
+                                        {friends.length === 0 ? (
+                                            <div className="text-center p-6 border-2 border-dashed border-slate-200 rounded-xl bg-slate-50 text-slate-400 text-sm">
+                                                Aún no has agregado contactos.
+                                            </div>
+                                        ) : (
+                                            <div className="grid gap-2">
+                                                {friends.map((f, i) => (
+                                                    <div key={i} className="flex items-center justify-between p-3 bg-white border border-slate-200 rounded-xl shadow-sm animate-in slide-in-from-left-2">
+                                                        <div className="flex items-center gap-3 overflow-hidden">
+                                                            <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold shrink-0 text-xs">
+                                                                {f.name.charAt(0).toUpperCase()}
+                                                            </div>
+                                                            <div className="min-w-0">
+                                                                <p className="text-sm font-bold text-slate-900 truncate">{f.name}</p>
+                                                                <p className="text-xs text-slate-500 truncate">{f.email}</p>
+                                                            </div>
+                                                        </div>
+                                                        <div className="flex items-center gap-2 shrink-0 ml-2">
+                                                            <Badge variant="secondary" className="text-[10px] bg-slate-100">{f.language.toUpperCase()}</Badge>
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="icon"
+                                                                onClick={() => removeFriend(i)}
+                                                                className="h-8 w-8 text-rose-500 hover:bg-rose-50 hover:text-rose-600 -mr-2"
+                                                            >
+                                                                <Trash2 className="h-4 w-4" />
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                    
+                                    {/* Submit Action */}
+                                    <div className="pt-4 flex justify-end">
+                                        <Button 
+                                            onClick={handleSendInvitations} 
+                                            disabled={friends.length === 0 || isSendingPersonalized}
+                                            className="w-full md:w-auto h-11 px-8 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-500/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                                        >
+                                            {isSendingPersonalized ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Send className="h-4 w-4 mr-2" />}
+                                            {isSendingPersonalized ? 'Enviando...' : `Enviar ${friends.length} Invitaciones`}
+                                        </Button>
+                                    </div>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
                 </div>
 
                 {/* Sidebar Preview Area */}
@@ -574,11 +845,11 @@ export function EmailMarketingComposer({ template, onBack, uniqueCode: propUniqu
                         </div>
 
                         {/* Integrated Preview Frame (Compact Version) */}
-                        <div className="bg-slate-900 rounded-[3rem] p-2 shadow-2xl border-2 border-slate-800/30 max-w-[380px] mx-auto mb-8 relative">
+                        <div className="bg-slate-800 rounded-[2.5rem] p-1.5 shadow-2xl border border-slate-700/50 max-w-[340px] mx-auto mb-8 relative">
                              {/* Speaker/Camera Notch */}
-                            <div className="absolute top-2 left-1/2 -translate-x-1/2 w-20 h-4 bg-slate-900 rounded-b-xl z-20"></div>
+                            <div className="absolute top-1.5 left-1/2 -translate-x-1/2 w-16 h-4 bg-slate-800 rounded-b-xl z-20"></div>
                             
-                            <div className="w-full aspect-[9/18.5] bg-slate-50 rounded-[2.5rem] overflow-hidden relative flex flex-col shadow-inner border border-slate-200">
+                            <div className="w-full aspect-[9/18.5] bg-slate-50 rounded-[2.2rem] overflow-hidden relative flex flex-col shadow-inner border border-slate-200">
                                 {/* Preview Scrollable Area */}
                                 <div className="flex-1 overflow-y-auto custom-scrollbar">
                                     {/* App-like status bar */}
@@ -687,8 +958,8 @@ export function EmailMarketingComposer({ template, onBack, uniqueCode: propUniqu
                                     <DropdownMenuItem onClick={() => handleShare('facebook')} className="cursor-pointer rounded-xl gap-3 py-3">
                                         <Facebook className="h-5 w-5 text-blue-600" /> Facebook
                                     </DropdownMenuItem>
-                                    <DropdownMenuItem onClick={() => handleShare('email')} className="cursor-pointer rounded-xl gap-3 py-3">
-                                        <Mail className="h-5 w-5 text-slate-500" /> Vía Email
+                                    <DropdownMenuItem onClick={() => document.getElementById('personalizar-invitacion')?.scrollIntoView({ behavior: 'smooth', block: 'center' })} className="cursor-pointer rounded-xl gap-3 py-3">
+                                        <Mail className="h-5 w-5 text-slate-500" /> Vía Email Múltiple
                                     </DropdownMenuItem>
                                     <DropdownMenuSeparator />
                                     <DropdownMenuItem onClick={() => handleShare('copy')} className="cursor-pointer rounded-xl gap-3 py-3 font-bold text-purple-600">
