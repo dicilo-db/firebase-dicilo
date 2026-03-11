@@ -1,14 +1,18 @@
 const fs = require('fs');
-const content = fs.readFileSync('.env.local', 'utf8');
+const content = fs.readFileSync('.env.local', 'utf-8');
 const lines = content.split('\n');
-let newLines = [];
-for (let line of lines) {
-    if (line.match(/^[A-Z_]+=/)) {
-        newLines.push(line);
-    } else if (newLines.length > 0 && newLines[newLines.length - 1].startsWith("FIREBASE_SERVICE_ACCOUNT_KEY")) {
-        newLines[newLines.length - 1] += line;
-    } else {
-        newLines.push(line);
-    }
+
+let startIdx = lines.findIndex(l => l.startsWith('FIREBASE_SERVICE_ACCOUNT_KEY='));
+let endIdx = startIdx;
+while (endIdx < lines.length && !lines[endIdx].endsWith("}'")) {
+    endIdx++;
 }
-fs.writeFileSync('.env.local', newLines.join('\n'), 'utf8');
+
+console.log("Found key from line", startIdx, "to", endIdx);
+const keyLines = lines.slice(startIdx, endIdx + 1);
+let rawKey = keyLines.join('\n').replace(/^FIREBASE_SERVICE_ACCOUNT_KEY='/, '').replace(/'$/, '');
+let singleLine = rawKey.replace(/\n/g, '\\n');
+
+lines.splice(startIdx, endIdx - startIdx + 1, "FIREBASE_SERVICE_ACCOUNT_KEY='" + singleLine + "'");
+fs.writeFileSync('.env.local', lines.join('\n'));
+console.log("Fixed!");

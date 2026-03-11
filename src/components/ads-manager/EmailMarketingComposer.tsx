@@ -124,6 +124,7 @@ export function EmailMarketingComposer({ template, onBack, uniqueCode: propUniqu
     const [currentEmail, setCurrentEmail] = useState('');
     const [currentLanguage, setCurrentLanguage] = useState('es');
     const [isSendingPersonalized, setIsSendingPersonalized] = useState(false);
+    const [customSenderName, setCustomSenderName] = useState('');
 
     // Shortener / Link Logic
     const generatedLink = `https://dicilo.net?ref=${propUniqueCode || user?.uid || 'promo'}`;
@@ -371,11 +372,13 @@ export function EmailMarketingComposer({ template, onBack, uniqueCode: propUniqu
         setIsSendingPersonalized(true);
 
         try {
+            const effectiveSenderName = customSenderName.trim() || currentUser.displayName || 'Usuario';
+
             // 1. Create Invitations in Firestore
             const { sendPioneerInvitations } = await import('@/app/actions/invite');
             const result = await sendPioneerInvitations(
                 propUniqueCode || currentUser.uid,
-                currentUser.displayName || 'Usuario',
+                effectiveSenderName,
                 friends.map(f => ({
                     name: f.name,
                     email: f.email,
@@ -401,7 +404,7 @@ export function EmailMarketingComposer({ template, onBack, uniqueCode: propUniqu
                 // Replace tags
                 body = body
                     .replace(/\[Name\]|\[Nombre\]|\{\{Nombre\}\}|\{\{Name\}\}/g, friend.name)
-                    .replace(/\[Tu Nombre\]|\{\{Tu Nombre\}\}|\{\{Your Name\}\}|\{\{Dein Name\}\}/g, currentUser.displayName || 'Tu Contacto')
+                    .replace(/\[Tu Nombre\]|\{\{Tu Nombre\}\}|\{\{Your Name\}\}|\{\{Dein Name\}\}/g, effectiveSenderName)
                     .replace(/\[RefCode\]|\{\{RefCode\}\}/g, propUniqueCode || currentUser.uid)
                     .replace(/\[(BOTÓN|BUTTON):.*?\]/g, `\n👉 ${inviteUrl}\n`);
 
@@ -419,7 +422,7 @@ export function EmailMarketingComposer({ template, onBack, uniqueCode: propUniqu
 
             const payload = {
                 referrer_id: propUniqueCode || currentUser.uid,
-                referrer_name: currentUser.displayName || 'Usuario',
+                referrer_name: effectiveSenderName,
                 referrer_email: currentUser.email,
                 friends: enrichedFriends,
                 timestamp: new Date().toISOString()
@@ -720,9 +723,12 @@ export function EmailMarketingComposer({ template, onBack, uniqueCode: propUniqu
                                     </div>
                                     <div className="space-y-2">
                                         <Label className="text-xs font-bold text-slate-500 uppercase">Tu Nombre</Label>
-                                        <div className="h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl flex items-center text-sm font-medium text-slate-700">
-                                            {user?.displayName || 'Usuario'}
-                                        </div>
+                                        <Input
+                                            placeholder={user?.displayName || 'Usuario'}
+                                            value={customSenderName}
+                                            onChange={(e) => setCustomSenderName(e.target.value)}
+                                            className="h-10 border-slate-200 focus-visible:ring-blue-500 bg-white shadow-sm"
+                                        />
                                     </div>
                                 </div>
 
@@ -734,7 +740,7 @@ export function EmailMarketingComposer({ template, onBack, uniqueCode: propUniqu
                                         <div className="space-y-2 md:col-span-4">
                                             <Label className="text-xs font-bold text-slate-500 uppercase">Nombre</Label>
                                             <Input
-                                                placeholder="Ej: Laura"
+                                                placeholder="Ej: Juan"
                                                 value={currentName}
                                                 onChange={(e) => setCurrentName(e.target.value)}
                                                 className="h-10 border-slate-200 focus-visible:ring-blue-500 bg-white"
