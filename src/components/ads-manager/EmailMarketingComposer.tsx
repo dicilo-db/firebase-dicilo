@@ -387,8 +387,8 @@ export function EmailMarketingComposer({ template, onBack, uniqueCode: propUniqu
                 }))
             );
 
-            if (!result.success || !result.inviteIds) {
-                throw new Error(result.error || 'Failed to create invitations');
+            if (!result || !result.success || !result.inviteIds) {
+                throw new Error(result?.error || 'No se pudieron crear las invitaciones en el servidor.');
             }
 
             const inviteIds = result.inviteIds;
@@ -432,8 +432,9 @@ export function EmailMarketingComposer({ template, onBack, uniqueCode: propUniqu
             const { sendBulkMarketingEmails } = await import('@/app/actions/marketing-emails');
             const mailResult = await sendBulkMarketingEmails(payload);
 
-            if (!mailResult.success) {
-                throw new Error("SMTP Sending Failed: " + (mailResult.details?.[0]?.error || "Unknown error"));
+            if (!mailResult || !mailResult.success) {
+                const mailError = mailResult?.details?.[0]?.error || "Error desconocido en el servidor de correo.";
+                throw new Error("Fallo en el envío SMTP: " + mailError);
             }
 
             setFriends([]);
@@ -450,8 +451,14 @@ export function EmailMarketingComposer({ template, onBack, uniqueCode: propUniqu
                 console.error("Points error", e);
             }
 
-        } catch (error) {
-            toast({ title: "Error", description: "Ocurrió un problema al enviar los correos.", variant: "destructive" });
+        } catch (error: any) {
+            console.error("Personalized invite error:", error);
+            const errorMessage = error.message || "Ocurrió un problema al enviar los correos.";
+            toast({ 
+                title: "Error", 
+                description: errorMessage, 
+                variant: "destructive" 
+            });
         } finally {
             setIsSendingPersonalized(false);
         }

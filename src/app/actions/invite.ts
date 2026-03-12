@@ -32,10 +32,10 @@ export async function sendPioneerInvitations(
         const batch = db.batch();
         const referralsRef = db.collection('referrals_pioneers');
 
-        // Check limit
+        // Check limit (increased from 15 to 100 to allow more marketing activity)
         const existingDocs = await referralsRef.where('referrerId', '==', referrerId).get();
-        if (existingDocs.size + friends.length > 15) {
-            return { success: false, error: 'Limit reached (Max 15)' };
+        if (existingDocs.size + friends.length > 100) {
+            return { success: false, error: 'Limit reached (Max 100)' };
         }
 
         const generatedIds: string[] = [];

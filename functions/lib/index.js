@@ -61,7 +61,6 @@ const axios_1 = __importDefault(require("axios"));
 const logger = __importStar(require("firebase-functions/logger"));
 const i18n_1 = require("./i18n");
 const email_1 = require("./email");
-const nodemailer = __importStar(require("nodemailer"));
 // Data for Seeding
 const categoriesData = __importStar(require("./data/categories.json"));
 const categoryTranslationsData = __importStar(require("./data/category_translations.json"));
@@ -447,38 +446,12 @@ exports.notifyAdminOnClientRecommendation = (0, firestore_1.onDocumentCreated)('
     <p>Dies ist eine automatische Nachricht von Dicilo Firebase Functions.</p>
   `;
     try {
-        const smtpHost = process.env.SMTP_HOST;
-        const smtpPort = parseInt(process.env.SMTP_PORT || '465');
-        const smtpUser = process.env.SMTP_USER;
-        const smtpPass = process.env.SMTP_PASS;
-        if (smtpHost && smtpUser && smtpPass) {
-            // Isolated SMTP Transport
-            const transporter = nodemailer.createTransport({
-                host: smtpHost,
-                port: smtpPort,
-                secure: smtpPort === 465, // true for 465, false for other ports
-                auth: {
-                    user: smtpUser,
-                    pass: smtpPass,
-                },
-            });
-            const mailOptions = {
-                from: `"Dicilo Support" <${smtpUser}>`,
-                to: adminEmail,
-                subject: subject,
-                html: html,
-            };
-            yield transporter.sendMail(mailOptions);
-            logger.info(`Admin notification sent via SMTP for client recommendation ${recommendationId}`);
-        }
-        else {
-            logger.warn('SMTP credentials missing in .env (SMTP_HOST, SMTP_USER, SMTP_PASS). Falling back to generic sendMail (likely to fail if not configured).');
-            yield (0, email_1.sendMail)({
-                to: adminEmail,
-                subject: subject,
-                html: html,
-            });
-        }
+        yield (0, email_1.sendMail)({
+            to: adminEmail,
+            subject: subject,
+            html: html,
+        });
+        logger.info(`Admin notification sent for client recommendation ${recommendationId}`);
     }
     catch (error) {
         logger.error(`Failed to send admin notification for client recommendation ${recommendationId}:`, error);

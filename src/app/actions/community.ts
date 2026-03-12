@@ -19,6 +19,10 @@ export async function createPostAction(prevState: any, formData: FormData) {
         return { success: false, error: 'La publicación debe tener contenido o imágenes.' };
     }
 
+    if (mediaFiles.length > 10) {
+        return { success: false, error: 'No puedes subir más de 10 archivos en una sola publicación.' };
+    }
+
     if (!neighborhood || !userId) {
         return { success: false, error: 'Faltan datos obligatorios.' };
     }

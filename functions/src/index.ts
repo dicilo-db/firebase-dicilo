@@ -495,42 +495,12 @@ export const notifyAdminOnClientRecommendation = onDocumentCreated('clients/{cli
   `;
 
   try {
-    const smtpHost = process.env.SMTP_HOST;
-    const smtpPort = parseInt(process.env.SMTP_PORT || '465');
-    const smtpUser = process.env.SMTP_USER;
-    const smtpPass = process.env.SMTP_PASS;
-
-    if (smtpHost && smtpUser && smtpPass) {
-      // Isolated SMTP Transport
-      const transporter = nodemailer.createTransport({
-        host: smtpHost,
-        port: smtpPort,
-        secure: smtpPort === 465, // true for 465, false for other ports
-        auth: {
-          user: smtpUser,
-          pass: smtpPass,
-        },
-      });
-
-      const mailOptions = {
-        from: `"Dicilo Support" <${smtpUser}>`,
-        to: adminEmail,
-        subject: subject,
-        html: html,
-      };
-
-      await transporter.sendMail(mailOptions);
-      logger.info(`Admin notification sent via SMTP for client recommendation ${recommendationId}`);
-
-    } else {
-      logger.warn('SMTP credentials missing in .env (SMTP_HOST, SMTP_USER, SMTP_PASS). Falling back to generic sendMail (likely to fail if not configured).');
-      await sendMail({
-        to: adminEmail,
-        subject: subject,
-        html: html,
-      });
-    }
-
+    await sendMail({
+      to: adminEmail,
+      subject: subject,
+      html: html,
+    });
+    logger.info(`Admin notification sent for client recommendation ${recommendationId}`);
   } catch (error) {
     logger.error(
       `Failed to send admin notification for client recommendation ${recommendationId}:`,

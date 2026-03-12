@@ -48,6 +48,16 @@ export function CreatePost({ userId, neighborhood, neighborhoodId, onPostCreated
         const selectedFiles = Array.from(e.target.files || []);
         if (selectedFiles.length === 0) return;
 
+        // Limit to 10 items total
+        if (mediaItems.length + selectedFiles.length > 10) {
+            toast({
+                title: "Límite superado",
+                description: "Solo puedes subir hasta 10 fotos o vídeos en una sola publicación.",
+                variant: "destructive"
+            });
+            return;
+        }
+
         const itemsToAdd: MediaFile[] = [];
 
         for (const file of selectedFiles) {
@@ -65,7 +75,8 @@ export function CreatePost({ userId, neighborhood, neighborhoodId, onPostCreated
             }
 
             if (isVideo) {
-                const needsCompression = file.size > 15 * 1024 * 1024;
+                // Compress almost everything (> 1MB) to ensure efficiency as per user request
+                const needsCompression = file.size > 1 * 1024 * 1024;
                 const newItem: MediaFile = {
                     id,
                     file,
@@ -157,10 +168,10 @@ export function CreatePost({ userId, neighborhood, neighborhoodId, onPostCreated
 
         // Check platform upload limits
         const totalSize = mediaItems.reduce((acc, item) => acc + item.file.size, 0);
-        if (totalSize > 25 * 1024 * 1024) { // 25MB safety buffer (Server limit is 30MB)
+        if (totalSize > 100 * 1024 * 1024) { // 100MB limit
             toast({
                 title: t('errors.too_large', "Archivos demasiado pesados"),
-                description: "El tamaño total de tu publicación supera el límite de 25MB para evitar cortes de red. Por favor, selecciona un video más corto o comprimido.",
+                description: "El tamaño total de tu publicación supera el límite de 100MB. Por favor, reduce la calidad o cantidad de los videos.",
                 variant: "destructive"
             });
             return;
