@@ -34,8 +34,8 @@ export async function sendBulkMarketingEmails(payload: MarketingPayload) {
             results.push({
                 email: friend.email,
                 success: res.success,
-                messageId: res.messageId,
-                error: res.error
+                messageId: res.messageId || null,
+                error: res.error ? String(res.error) : null
             });
             
             console.log(`Email result for ${friend.email}:`, res.success ? 'Success' : 'Failed');
@@ -44,7 +44,7 @@ export async function sendBulkMarketingEmails(payload: MarketingPayload) {
             results.push({
                 email: friend.email,
                 success: false,
-                error: String(error)
+                error: error instanceof Error ? error.message : String(error)
             });
         }
     }
@@ -55,6 +55,7 @@ export async function sendBulkMarketingEmails(payload: MarketingPayload) {
         success: successCount > 0,
         totalSent: successCount,
         totalRecipients: payload.friends.length,
-        details: results
+        // Ensure the entire object is serializable
+        details: JSON.parse(JSON.stringify(results))
     };
 }
