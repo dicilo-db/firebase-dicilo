@@ -241,17 +241,11 @@ export function ReferralCard() {
                 timestamp: new Date().toISOString()
             };
 
-            const webhookUrl = process.env.NEXT_PUBLIC_N8N_REFERRAL_WEBHOOK;
-            if (!webhookUrl) throw new Error("Webhook URL not configured");
+            // 3. Send via SMTP Server Action
+            const { sendBulkMarketingEmails } = await import('@/app/actions/marketing-emails');
+            const mailResult = await sendBulkMarketingEmails(payload);
 
-            // 3. Send to Webhook (Email Sending)
-            const response = await fetch(webhookUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-
-            if (response.ok) {
+            if (mailResult.success) {
                 toast({
                     title: t('referrals.successTitle', '¡Envíos completados!'),
                     description: t('referrals.successDesc', `Se han procesado ${friends.length} envíos.`),
@@ -259,7 +253,7 @@ export function ReferralCard() {
                 setIsOpen(false);
                 setFriends([]);
             } else {
-                throw new Error('Failed to send emails');
+                throw new Error('Failed to send emails via SMTP');
             }
         } catch (error: any) {
             console.error(error);

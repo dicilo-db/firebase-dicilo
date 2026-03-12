@@ -428,17 +428,13 @@ export function EmailMarketingComposer({ template, onBack, uniqueCode: propUniqu
                 timestamp: new Date().toISOString()
             };
 
-            const webhookUrl = process.env.NEXT_PUBLIC_N8N_REFERRAL_WEBHOOK;
-            if (!webhookUrl) throw new Error("Webhook URL not configured");
+            // 3. Send via SMTP Server Action
+            const { sendBulkMarketingEmails } = await import('@/app/actions/marketing-emails');
+            const mailResult = await sendBulkMarketingEmails(payload);
 
-            // 3. Send to Webhook
-            const response = await fetch(webhookUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-
-            if (!response.ok) throw new Error("Webhook failed");
+            if (!mailResult.success) {
+                throw new Error("SMTP Sending Failed: " + (mailResult.details?.[0]?.error || "Unknown error"));
+            }
 
             setFriends([]);
             toast({

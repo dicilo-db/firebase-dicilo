@@ -51,10 +51,43 @@ export function InviteForm({ uniqueCode, userName, onSuccess, availableSlots }: 
 
         setIsSending(true);
         try {
-            // Map 'general' template to actual text if needed in backend, or send as ID
+            // 1. Save to Firestore
             const result = await sendPioneerInvitations(user?.uid || '', name, validFriends as any[]);
 
-            if (result.success) {
+            if (result.success && result.inviteIds) {
+                // 2. Send Emails via SMTP
+                const { sendBulkMarketingEmails } = await import('@/app/actions/marketing-emails');
+                
+                // For InviteForm, we'll use base templates
+                const enrichedFriends = (validFriends as any[]).map((f, idx) => {
+                    const inviteId = result.inviteIds![idx];
+                    const inviteUrl = `https://dicilo.net/registrieren?ref=${uniqueCode || user?.uid}&inviteId=${inviteId}`;
+                    
+                    // Simple default templates for now to ensure delivery
+                    const subject = f.lang === 'es' ? `${name}, te guardé esta invitación 🚀` :
+                                   f.lang === 'de' ? `${name}, ich habe diese Einladung für dich reserviert 🚀` : 
+                                   `${name}, I saved this invitation for you 🚀`;
+                    
+                    const body = f.lang === 'es' ? 
+                        `Hola ${f.name},\n\nTe invito a formar parte de Dicilo.net, un ecosistema de recomendación donde puedes ganar puntos y recompensas.\n\nRegístrate aquí:\n👉 ${inviteUrl}\n\nUn saludo,\n${name}` :
+                        `Hallo ${f.name},\n\nich lade dich ein, Teil von Dicilo.net zu werden, einem Empfehlungs-Ökosystem, in dem du Punkte und Belohnungen verdienen kannst.\n\nRegistriere dich hier:\n👉 ${inviteUrl}\n\nBeste Grüße,\n${name}`;
+
+                    return {
+                        name: f.name,
+                        email: f.email,
+                        lang: f.lang,
+                        generated_subject: subject,
+                        generated_body: body,
+                        inviteId: inviteId
+                    };
+                });
+
+                await sendBulkMarketingEmails({
+                    referrer_id: uniqueCode || user?.uid || '',
+                    referrer_name: name,
+                    friends: enrichedFriends
+                });
+
                 toast({ title: 'Invitations Sent', description: `Successfully sent ${result.sentCount} invitations.` });
                 setFriends([{ name: '', email: '', lang: 'es', template: 'general' }]);
                 onSuccess();
