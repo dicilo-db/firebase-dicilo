@@ -23,7 +23,7 @@ import {
     Facebook, Instagram, Twitter, Linkedin,
     Image as ImageIcon, Youtube,
     MessageCircle, Send, Pin, Twitch,
-    BarChart3, Users,
+    BarChart3, Users, Building2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -97,6 +97,7 @@ export function StatisticsView() {
                 <KpiCard icon={Eye} label={t('freelancer_views.statistics.contacts')} value={totalViews} />
                 <KpiCard icon={Share2} label={t('freelancer_views.statistics.reach')} value={totalReach} />
 
+                <KpiCard icon={Building2} label={t('adsManager.cards.programs.prospects.managerTitle', 'Empresas Registradas')} value={stats?.totalBusinessesRegistered || 0} />
                 <KpiCard icon={ThumbsUp} label={t('freelancer_menu.connections')} value={totalInteractions} />
                 <KpiCard icon={Facebook} label="Facebook" value="121" />
                 <KpiCard icon={Instagram} label="Instagram" value="79" />

@@ -3,6 +3,7 @@
 import { getAdminDb, getAdminStorage } from '@/lib/firebase-admin';
 import * as admin from 'firebase-admin';
 import { registerNewProspect } from './dicipoints';
+import { sendBusinessRecommendationEmail } from '@/lib/email';
 import sharp from 'sharp';
 import { randomUUID } from 'crypto';
 
@@ -27,6 +28,8 @@ export async function submitRecommendation(formData: FormData) {
         const source = formData.get('source') as string;
         const neighborhood = formData.get('neighborhood') as string;
         const userId = formData.get('userId') as string;
+        const campaignId = formData.get('campaignId') as string; // New field
+        const lang = (formData.get('lang') as any) || 'es'; // Language for the email
 
         const mediaFiles = formData.getAll('media') as File[];
         
@@ -107,7 +110,9 @@ export async function submitRecommendation(formData: FormData) {
             status: 'approved', // Auto-approved for this flow
             timestamp: admin.firestore.FieldValue.serverTimestamp(),
             createdAt: admin.firestore.FieldValue.serverTimestamp(),
-            pointsPaid: false
+            pointsPaid: false,
+            campaignId: campaignId || null, // Shared Campaign ID logic
+            referrerName: formData.get('referrerName') || 'Un usuario de Dicilo'
         };
 
         const ref = await db.collection('recommendations').add(recommendationData);
@@ -115,6 +120,17 @@ export async function submitRecommendation(formData: FormData) {
         // AUTOMATIC PAYMENT
         if (userId) {
             await registerNewProspect(userId, ref.id);
+        }
+
+        // BUSINESS NOTIFICATION EMAIL
+        if (email && companyName) {
+            const referrerName = (formData.get('referrerName') as string) || 'Un usuario de Dicilo';
+            await sendBusinessRecommendationEmail(
+                email,
+                companyName,
+                referrerName,
+                lang as 'es' | 'en' | 'de'
+            );
         }
 
         return { success: true };

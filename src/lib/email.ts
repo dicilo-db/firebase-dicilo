@@ -205,3 +205,64 @@ export async function sendRecommendationNotification(email: string, clientName: 
         return { success: false, error };
     }
 }
+
+/**
+ * Sends a prefabricated, multi-language email to a business when recommended by a freelancer.
+ */
+export async function sendBusinessRecommendationEmail(
+    email: string,
+    businessName: string,
+    referrerName: string,
+    lang: 'es' | 'en' | 'de' = 'es'
+) {
+    const resend = getResend();
+    if (!resend) return { success: false, error: 'Missing API Key' };
+
+    const content = {
+        es: {
+            subject: `¡Su empresa ha sido recomendada en Dicilo!`,
+            body: `Hola ${businessName},<br/><br/>Le escribimos para informarle que su empresa ha sido recomendada en el portal <strong>dicilo.net</strong> por <strong>${referrerName}</strong>.<br/><br/>Dicilo es la plataforma líder para recomendaciones auténticas de negocios locales. Le invitamos a visitar nuestro portal y descubrir cómo podemos ayudarle a crecer.`
+        },
+        en: {
+            subject: `Your business has been recommended on Dicilo!`,
+            body: `Hello ${businessName},<br/><br/>We are writing to inform you that your business has been recommended on the <strong>dicilo.net</strong> portal by <strong>${referrerName}</strong>.<br/><br/>Dicilo is the leading platform for authentic local business recommendations. We invite you to visit our portal and discover how we can help you grow.`
+        },
+        de: {
+            subject: `Ihr Unternehmen wurde auf Dicilo empfohlen!`,
+            body: `Hallo ${businessName},<br/><br/>wir freuen uns, Ihnen mitteilen zu können, dass Ihr Unternehmen von <strong>${referrerName}</strong> auf dem Portal <strong>dicilo.net</strong> empfohlen wurde.<br/><br/>Dicilo ist die führende Plattform für authentische Empfehlungen lokaler Unternehmen. Wir laden Sie ein, unser Portal zu besuchen und zu entdecken, wie wir Sie beim Wachsen unterstützen können.`
+        }
+    };
+
+    const t = content[lang] || content.es;
+
+    try {
+        const { data, error } = await resend.emails.send({
+            from: 'Dicilo <info@dicilo.net>',
+            to: [email],
+            subject: t.subject,
+            html: `
+                <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <h1 style="color: #0f172a; margin: 0;">Dicilo.net</h1>
+                    </div>
+                    <h2 style="color: #0f172a; border-bottom: 2px solid #3b82f6; padding-bottom: 10px;">${t.subject}</h2>
+                    <p style="color: #475569; font-size: 16px; line-height: 1.6;">${t.body}</p>
+                    <div style="margin-top: 30px; text-align: center;">
+                        <a href="https://dicilo.net" style="background-color: #3b82f6; color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: bold; display: inline-block;">${lang === 'es' ? 'Visitar Dicilo.net' : lang === 'de' ? 'Dicilo.net besuchen' : 'Visit Dicilo.net'}</a>
+                    </div>
+                    <p style="margin-top: 30px; color: #94a3b8; font-size: 12px; text-align: center;">© ${new Date().getFullYear()} Dicilo Netzwerk</p>
+                </div>
+            `,
+        });
+
+        if (error) {
+            console.error('Resend Error:', error);
+            return { success: false, error };
+        }
+
+        return { success: true, data };
+    } catch (error) {
+        console.error('Email Sending Error:', error);
+        return { success: false, error };
+    }
+}

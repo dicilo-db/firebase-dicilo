@@ -9,6 +9,7 @@ export interface FreelancerStats {
     paidPayout: number;
     totalPosts: number;
     totalClicks: number;
+    totalBusinessesRegistered: number;
     recentTransactions: Transaction[];
     performanceByCampaign: { campaignName: string, earnings: number, posts: number }[];
 }
@@ -93,6 +94,12 @@ export async function getFreelancerStats(userId: string): Promise<{ success: boo
 
         const pendingPayout = totalEarnings - paidPayout;
 
+        // 3. Fetch Registered Businesses (Recommendations/Prospects)
+        const prospectsSnap = await db.collection('recommendations')
+            .where('userId', '==', userId)
+            .get();
+        const totalBusinessesRegistered = prospectsSnap.size;
+
         return {
             success: true,
             stats: {
@@ -100,7 +107,8 @@ export async function getFreelancerStats(userId: string): Promise<{ success: boo
                 pendingPayout,
                 paidPayout,
                 totalPosts,
-                totalClicks, // Placeholder or real
+                totalClicks, 
+                totalBusinessesRegistered,
                 recentTransactions,
                 performanceByCampaign: Array.from(campaignMap.values())
             }

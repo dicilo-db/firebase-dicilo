@@ -18,7 +18,8 @@ import {
     ChevronRight,
     ChevronDown,
     LayoutTemplate,
-    ArrowLeft
+    ArrowLeft,
+    Mail
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -60,6 +61,18 @@ export function FreelancerSidebar({ className, onViewChange, onMobileClose }: Fr
             id: 'all_campaigns',
             label: t('freelancer_menu.all_campaigns', 'Campaign'),
             icon: Globe,
+            children: [
+                {
+                    id: 'templates',
+                    label: t('freelancer_menu.templates', 'Vorlagen'),
+                    icon: LayoutTemplate
+                }
+            ]
+        },
+        {
+            id: 'marketing_emails',
+            label: t('freelancer_menu.email_marketing', 'Email - Marketing'),
+            icon: Mail,
             children: [
                 {
                     id: 'templates',
