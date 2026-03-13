@@ -412,7 +412,86 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
                         </TabsList>
 
                         {/* Re-using existing content logic for settings sub-tabs */}
-                        <TabsContent value="personal">
+                        <TabsContent value="personal" className="space-y-6">
+                            {/* Dicilo ID & QR Section */}
+                            <Card className="border-slate-200 shadow-sm overflow-hidden bg-white">
+                                <CardHeader className="bg-slate-50 border-b">
+                                    <div className="flex justify-between items-center">
+                                        <div>
+                                            <CardTitle className="text-lg flex items-center gap-2">
+                                                <QrCode className="h-5 w-5 text-emerald-600" />
+                                                Dicilo ID & QR
+                                            </CardTitle>
+                                            <CardDescription>
+                                                Tu identificación única y código de recomendación.
+                                            </CardDescription>
+                                        </div>
+                                        <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200">
+                                            Activo
+                                        </Badge>
+                                    </div>
+                                </CardHeader>
+                                <CardContent className="pt-6">
+                                    <div className="grid gap-6 md:grid-cols-2">
+                                        {/* ID Details */}
+                                        <div className="space-y-4">
+                                            <div className="space-y-1">
+                                                <Label className="text-xs text-muted-foreground uppercase tracking-wider">ID de Dicilo</Label>
+                                                <div className="flex items-center gap-2 bg-slate-100 p-3 rounded-lg font-mono text-lg font-bold">
+                                                    {formData.uniqueCode || '---'}
+                                                    <Button variant="ghost" size="icon" className="ml-auto h-8 w-8" onClick={() => copyToClipboard(formData.uniqueCode)}>
+                                                        <Copy className="h-4 w-4" />
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                            
+                                            <div className="space-y-1">
+                                                <Label className="text-xs text-muted-foreground uppercase tracking-wider">Nombre Completo</Label>
+                                                <p className="font-semibold text-slate-800">{formData.firstName} {formData.lastName}</p>
+                                            </div>
+
+                                            {formData.phone && (
+                                                <div className="space-y-1">
+                                                    <Label className="text-xs text-muted-foreground uppercase tracking-wider">WhatsApp</Label>
+                                                    <p className="font-semibold text-slate-800">{formData.phone}</p>
+                                                </div>
+                                            )}
+
+                                            <div className="flex flex-col sm:flex-row gap-2 pt-2">
+                                                <Button className="flex-1 bg-emerald-600 hover:bg-emerald-700" onClick={handleDownloadQr}>
+                                                    <Download className="mr-2 h-4 w-4" />
+                                                    Descargar QR
+                                                </Button>
+                                                <Button variant="outline" className="flex-1" onClick={handleShareQr}>
+                                                    <Share2 className="mr-2 h-4 w-4" />
+                                                    Compartir
+                                                </Button>
+                                            </div>
+                                        </div>
+
+                                        {/* QR Image */}
+                                        <div className="flex flex-col items-center justify-center p-4 bg-slate-50 rounded-xl border border-dashed border-slate-300">
+                                            {registerUrl ? (
+                                                <div className="bg-white p-3 rounded-lg shadow-sm">
+                                                    <img 
+                                                        src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(registerUrl)}`}
+                                                        alt="Referral QR"
+                                                        className="w-[150px] h-[150px]"
+                                                    />
+                                                </div>
+                                            ) : (
+                                                <div className="w-[150px] h-[150px] bg-slate-200 animate-pulse rounded-lg flex items-center justify-center text-slate-400">
+                                                    <QrCode className="h-10 w-10" />
+                                                </div>
+                                            )}
+                                            <p className="text-[10px] text-muted-foreground mt-4 text-center">
+                                                Escanea para registrarte con mi enlace de referencia
+                                            </p>
+                                        </div>
+                                    </div>
+                                </CardContent>
+                            </Card>
+
                             <Card>
                                 <CardHeader>
                                     <CardTitle>{t('dashboard.personalInfo')}</CardTitle>
@@ -422,11 +501,11 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
                                     <div className="grid gap-4 md:grid-cols-2">
                                         <div className="space-y-2">
                                             <Label>{t('dashboard.firstName')}</Label>
-                                            <Input value={formData.firstName} disabled />
+                                            <Input value={formData.firstName || ''} onChange={(e) => setFormData({...formData, firstName: e.target.value})} onBlur={() => handleUpdate('firstName', {firstName: formData.firstName})} />
                                         </div>
                                         <div className="space-y-2">
                                             <Label>{t('dashboard.lastName')}</Label>
-                                            <Input value={formData.lastName} disabled />
+                                            <Input value={formData.lastName || ''} onChange={(e) => setFormData({...formData, lastName: e.target.value})} onBlur={() => handleUpdate('lastName', {lastName: formData.lastName})} />
                                         </div>
                                         <div className="space-y-2">
                                             <Label>{t('dashboard.dateOfBirth')}</Label>
