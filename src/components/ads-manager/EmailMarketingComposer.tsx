@@ -450,7 +450,7 @@ export function EmailMarketingComposer({ template, onBack, uniqueCode: propUniqu
 
             // Reward
             try {
-                await awardMarketingSharePoints(currentUser.uid, template.id || '');
+                await awardMarketingSharePoints(currentUser.uid, template.id || '', friends.length);
             } catch (e) {
                 console.error("Points error", e);
             }

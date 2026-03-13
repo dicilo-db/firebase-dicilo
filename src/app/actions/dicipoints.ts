@@ -366,29 +366,32 @@ export async function getFreelancerReportData(uniqueCode: string, email: string,
 /**
  * Awards 10 DP for sharing a marketing campaign.
  */
-export async function awardMarketingSharePoints(userId: string, campaignId: string) {
+export async function awardMarketingSharePoints(userId: string, campaignId: string, count: number = 1) {
     const db = getAdminDb();
-    const POINTS = 10;
+    const POINTS_PER_SEND = 10;
+    const totalPoints = POINTS_PER_SEND * count;
+
+    if (totalPoints <= 0) return { success: true };
 
     try {
         await db.runTransaction(async (t) => {
             const walletRef = db.collection('wallets').doc(userId);
             t.set(walletRef, {
-                balance: admin.firestore.FieldValue.increment(POINTS),
-                totalEarned: admin.firestore.FieldValue.increment(POINTS),
+                balance: admin.firestore.FieldValue.increment(totalPoints),
+                totalEarned: admin.firestore.FieldValue.increment(totalPoints),
                 updatedAt: admin.firestore.FieldValue.serverTimestamp()
             }, { merge: true });
 
             const trxRef = db.collection('wallet_transactions').doc();
             t.set(trxRef, {
                 userId: userId,
-                amount: POINTS,
+                amount: totalPoints,
                 type: 'MARKETING_SHARE_REWARD',
-                description: `Recompensa por compartir campaña de marketing (ID: ${campaignId})`,
+                description: `Recompensa por compartir campaña de marketing (ID: ${campaignId}) a ${count} destinatarios`,
                 timestamp: admin.firestore.FieldValue.serverTimestamp()
             });
         });
-        return { success: true };
+        return { success: true, pointsAwarded: totalPoints };
     } catch (e) {
         console.error("Failed to award marketing share points", e);
         return { success: false };
