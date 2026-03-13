@@ -24,6 +24,7 @@
     --input: 210 40% 91.4%;
     --ring: 145 74% 36%;
     --radius: 0.5rem;
+    --sidebar-width: 256px;
   }
 
   .dark {

@@ -12,6 +12,7 @@ import { OnlineReviewsView } from '@/components/dashboard/freelancer/views/Onlin
 import { ConnectionsView } from '@/components/dashboard/freelancer/views/ConnectionsView';
 import { FaqsView } from '@/components/dashboard/freelancer/views/FaqsView';
 import { PromoComposerView } from '@/components/dashboard/freelancer/views/PromoComposerView'; // "Templates/Composer"
+import { MarketingTemplatesView } from '@/components/dashboard/freelancer/views/MarketingTemplatesView';
 
 // Mapping of tabs to components
 const VIEWS: Record<string, React.ComponentType> = {
@@ -20,6 +21,7 @@ const VIEWS: Record<string, React.ComponentType> = {
     'marketing_plan': MarketingPlanView,
     'all_campaigns': AllCampaignsView,
     'templates': PromoComposerView,
+    'marketing_templates': MarketingTemplatesView,
     'my_postings': MyPostingsView,
     'statistics': StatisticsView,
     'online_reviews': OnlineReviewsView,

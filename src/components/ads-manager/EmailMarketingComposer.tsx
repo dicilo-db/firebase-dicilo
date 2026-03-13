@@ -466,7 +466,7 @@ export function EmailMarketingComposer({ template, onBack, uniqueCode: propUniqu
 
 
     return (
-        <div className="w-full px-4 py-8 animate-in fade-in slide-in-from-right-4">
+        <div className="w-full px-4 py-8 pb-32 animate-in fade-in slide-in-from-right-4 min-h-screen">
             {/* Header / Navigation */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                 <div className="flex items-center gap-4">
