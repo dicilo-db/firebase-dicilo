@@ -401,6 +401,10 @@ export function EmailMarketingComposer({ template, onBack, uniqueCode: propUniqu
                 let subject = texts[friend.language]?.subject || texts['es']?.subject || texts['en']?.subject || '';
                 let body = texts[friend.language]?.body || texts['es']?.body || texts['en']?.body || '';
 
+                // Add selected image to the top of the body
+                const imageHtml = selectedImageUrl ? `<div style="margin-bottom: 20px;"><img src="${selectedImageUrl}" alt="" style="max-width: 100%; height: auto; border-radius: 12px; display: block;" /></div>` : '';
+                body = imageHtml + body;
+
                 // Replace tags
                 body = body
                     .replace(/\[Name\]|\[Nombre\]|\{\{Nombre\}\}|\{\{Name\}\}/g, friend.name)
