@@ -192,7 +192,6 @@ export async function POST(request: Request) {
     }
 
     // 2. Logic: ID & Referrer
-    const isCompany = ['retailer', 'premium', 'donor'].includes(registrationType);
 
     // A. Generate Unique User Code (EMDC for companies)
     const userCode = generateUserCode(registrationType, ownerUid || 'TEMP' + Math.random());
