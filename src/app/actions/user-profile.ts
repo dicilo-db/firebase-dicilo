@@ -13,7 +13,10 @@ export async function getPrivateProfile(uid: string) {
         if (!doc.exists) {
             return { success: false, error: 'Profile not found.' };
         }
-        return { success: true, profile: doc.data() };
+        return { 
+            success: true, 
+            profile: JSON.parse(JSON.stringify(doc.data())) 
+        };
     } catch (error: any) {
         console.error('Error fetching private profile:', error);
         return { success: false, error: error.message };

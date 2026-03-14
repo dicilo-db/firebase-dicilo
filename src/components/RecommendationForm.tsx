@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { Check, ChevronsUpDown, Camera, X, Film, Loader2, PlusCircle, Building2, User, Mail, Phone, Globe, MapPin, Tag, Share2, MessageSquare } from 'lucide-react';
+import { Check, ChevronsUpDown, Camera, X, Film, Loader2, PlusCircle, Building2, User, Mail, Phone, Globe, MapPin, Tag, Share2, MessageSquare, Sparkles, CheckCircle2 } from 'lucide-react';
 import { nanoid } from 'nanoid';
 import { compressVideo } from '@/lib/video-utils';
 import { Progress } from '@/components/ui/progress';
@@ -49,6 +49,7 @@ import { submitRecommendation } from '@/app/actions/recommendations';
 import { getPrivateProfile } from '@/app/actions/user-profile';
 import { useTranslation } from 'react-i18next';
 import { Label } from './ui/label';
+import { Badge } from '@/components/ui/badge';
 import { Country, City } from 'country-state-city';
 import { useAuth } from '@/context/AuthContext';
 import countries from 'i18n-iso-countries';
@@ -143,6 +144,7 @@ export function RecommendationFormContent({ initialBusinessName, onSuccess, onCa
   const [media, setMedia] = useState<MediaFile[]>([]);
   const [countrySearch, setCountrySearch] = useState("");
   const [isCountryOpen, setIsCountryOpen] = useState(false);
+  const [rewardAmount, setRewardAmount] = useState(10);
 
   const form = useForm<RecommendationFormValues>({
     resolver: zodResolver(formSchema),
@@ -278,6 +280,8 @@ export function RecommendationFormContent({ initialBusinessName, onSuccess, onCa
       media.forEach(m => {
         formData.append('media', m.file);
       });
+
+      formData.append('rewardAmount', rewardAmount.toString());
 
       const result = await submitRecommendation(formData);
 
@@ -430,11 +434,19 @@ export function RecommendationFormContent({ initialBusinessName, onSuccess, onCa
             <User className="h-5 w-5 text-blue-500" />
             <h3 className="font-semibold text-slate-800">{t('form.yourContact', 'Tu Contacto')}</h3>
           </div>
-          {userProfile?.uniqueCode && (
-             <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 font-mono text-[10px]">
-                ID: {userProfile.uniqueCode}
-             </Badge>
-          )}
+          <div className="flex items-center gap-2">
+            {userProfile && (
+              <Badge variant="secondary" className="bg-emerald-50 text-emerald-700 border-emerald-100 text-[10px] font-medium flex items-center gap-1">
+                <CheckCircle2 className="h-3 w-3" />
+                {t('freelancer.logged_in', 'Freelancer Activo')}
+              </Badge>
+            )}
+            {userProfile?.uniqueCode && (
+               <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 font-mono text-[10px]">
+                  ID: {userProfile.uniqueCode}
+               </Badge>
+            )}
+          </div>
         </div>
 
         {/* Contact Name */}
@@ -722,6 +734,28 @@ export function RecommendationFormContent({ initialBusinessName, onSuccess, onCa
             className="bg-white min-h-[100px] transition-all focus:ring-2 focus:ring-orange-400 focus:border-transparent"
             disabled={isSubmitting} 
           />
+        </div>
+
+        {/* DP Reward Module (Manual Value) */}
+        <div className="pt-2">
+            <div className="flex items-center justify-between p-3 rounded-xl bg-purple-50 border border-purple-100 shadow-sm">
+                <div className="flex items-center gap-2">
+                    <Sparkles className="h-4 w-4 text-purple-600" />
+                    <span className="text-xs font-bold text-purple-800 uppercase tracking-wider">{t('form.reward_label', 'Recompensa por envío')}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                    <span className="text-sm font-bold text-purple-700">+</span>
+                    <Input 
+                        type="number" 
+                        value={rewardAmount} 
+                        onChange={(e) => setRewardAmount(Number(e.target.value) || 0)}
+                        className="w-16 h-7 px-1 py-0 text-center bg-white border-purple-200 text-purple-700 font-bold hide-arrows focus:ring-purple-400"
+                        min="0"
+                    />
+                    <span className="text-sm font-bold text-purple-700">DP</span>
+                    <span className="text-[10px] text-purple-600/70 font-medium ml-1">por envío</span>
+                </div>
+            </div>
         </div>
       </div>
 

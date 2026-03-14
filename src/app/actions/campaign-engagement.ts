@@ -16,7 +16,8 @@ export async function processCampaignPost(
     selectedImageUrl: string = '',
     assetId: string = '',
     existingLinkId: string = '', // New optional param
-    targetUrl: string = '' // NEW: Explicit target URL selected by user
+    targetUrl: string = '', // NEW: Explicit target URL selected by user
+    manualReward?: number // NEW: Manual reward amount allowed
 ) {
     if (!userId || !campaignId) {
         return { success: false, error: 'Faltan datos obligatorios.' };
@@ -69,7 +70,7 @@ export async function processCampaignPost(
             const campaignData = campaignDoc.data();
             const budgetRemaining = campaignData?.budget_remaining || 0;
             const costPerStart = 0.50;
-            const textReward = 0.40;
+            const textReward = manualReward !== undefined ? manualReward : 0.40;
 
             if (budgetRemaining < costPerStart) {
                 throw new Error("El presupuesto de esta campaña se ha agotado.");
@@ -117,7 +118,6 @@ export async function processCampaignPost(
                 monetizationActive: true, // ACTIVATE
                 status: 'active', // ACTIVATE
                 paymentModel: 'fixed_plus_bonus',
-                clickCount: 0, // Reset or keep? Keep if 0.
                 clickCount: 0, // Reset or keep? Keep if 0.
                 targetUrl: targetUrl || (campaignData?.[`url_${postLanguage}`]) || campaignData?.targetUrl || 'https://dicilo.net',
                 createdAt: admin.firestore.FieldValue.serverTimestamp() // Update timestamp to Post Time

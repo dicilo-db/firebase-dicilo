@@ -130,10 +130,11 @@ export async function submitRecommendation(formData: FormData) {
         };
 
         const ref = await db.collection('recommendations').add(recommendationData);
+        const rewardAmount = parseInt(formData.get('rewardAmount') as string || '10');
 
         // AUTOMATIC PAYMENT
         if (userId) {
-            await registerNewProspect(userId, ref.id);
+            await registerNewProspect(userId, ref.id, rewardAmount);
         }
 
         // BUSINESS NOTIFICATION EMAIL

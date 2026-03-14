@@ -39,6 +39,7 @@ export interface Campaign {
     // Legacy/Display fields (can be populated from default translation)
     title: string;
     description: string;
+    targetUrl?: string; // Legacy/Fallback target URL
 
     images: string[]; // Deprecated in v2, kept for legacy
     assets?: CampaignAsset[]; // New in v2: List of available content assets

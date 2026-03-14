@@ -413,7 +413,8 @@ export function PromoComposerView() {
                 selectedImageUrl,
                 selectedAssetId || '',
                 draftLinkId || '',
-                selectedTargetUrl || ''
+                selectedTargetUrl || '',
+                rewardAmount / 100
             );
 
             if (!result.success) {

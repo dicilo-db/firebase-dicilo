@@ -128,12 +128,12 @@ export async function auditRetroactivePoints(email: string, uniqueCode: string, 
 }
 
 /**
- * Register a new prospect automatically with +10 points.
+ * Register a new prospect automatically with specified points (default +10).
  * Call this when a new recommendation is created.
  */
-export async function registerNewProspect(userId: string, prospectId: string) {
+export async function registerNewProspect(userId: string, prospectId: string, points: number = 10) {
     const db = getAdminDb();
-    const POINTS = 10;
+    const POINTS = points;
 
     try {
         await db.runTransaction(async (t) => {

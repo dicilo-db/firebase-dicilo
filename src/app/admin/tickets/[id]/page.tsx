@@ -78,7 +78,7 @@ export default function AdminTicketDetailPage() {
             if (res.success && res.ticket) {
                 setTicket(res.ticket);
             } else {
-                toast({ title: "Error", description: res.error || "Ticket not found", variant: "destructive" });
+                toast({ title: "Error", description: res.error || t('tickets.notFound', 'Ticket not found'), variant: "destructive" });
             }
         } catch (error) {
             console.error(error);
@@ -114,7 +114,7 @@ export default function AdminTicketDetailPage() {
         try {
             const res = await editTicketMessage(ticket.id, messageId, editText);
             if (res.success) {
-                toast({ title: "Success", description: "Message updated" });
+                toast({ title: t('tickets.success', 'Success'), description: t('tickets.messageUpdated', 'Message updated') });
                 setEditingMessageId(null);
                 fetchTicket();
             } else {
@@ -131,7 +131,10 @@ export default function AdminTicketDetailPage() {
             const res = await updateTicketStatus(ticket.id, status);
             if (res.success) {
                 setTicket({ ...ticket, status });
-                toast({ title: "Status Updated", description: `Ticket is now ${status}` });
+                toast({ 
+                    title: t('tickets.statusUpdated', 'Status Updated'), 
+                    description: t('tickets.statusMarkedAs', { status: t(`tickets.${status}`, status) }) 
+                });
             } else {
                 toast({ title: "Error", description: res.error, variant: "destructive" });
             }
@@ -193,7 +196,10 @@ export default function AdminTicketDetailPage() {
             const result = await assignTicketRoles(ticket.id, user.uid, newRoles);
             if (result.success) {
                 setTicket({ ...ticket, assignedRoles: newRoles });
-                toast({ title: "Access Updated", description: `Role ${role} ${checked ? 'added' : 'removed'}.` });
+                toast({ 
+                    title: t('tickets.accessUpdated', 'Access Updated'), 
+                    description: checked ? t('tickets.roleAdded', { role }) : t('tickets.roleRemoved', { role })
+                });
             } else {
                 toast({ title: "Error", description: result.error, variant: "destructive" });
             }
@@ -415,11 +421,11 @@ export default function AdminTicketDetailPage() {
                                     </Select>
                                 </div>
                             </div>
-                            <div>
+                             <div>
                                 <label className="text-xs font-medium text-muted-foreground">{t('tickets.priority')}</label>
                                 <div className="mt-1">
                                     <Badge variant={ticket.priority === 'high' ? 'destructive' : 'secondary'}>
-                                        {ticket.priority.toUpperCase()}
+                                        {t(`tickets.priority${ticket.priority.charAt(0).toUpperCase() + ticket.priority.slice(1)}`, ticket.priority.toUpperCase())}
                                     </Badge>
                                 </div>
                             </div>

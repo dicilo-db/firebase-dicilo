@@ -68,9 +68,23 @@ export default function AdminTicketsPage() {
         try {
             await updateDoc(doc(db, 'tickets', ticketId), { status: newStatus });
             setTickets(tickets.map(t => t.id === ticketId ? { ...t, status: newStatus as any } : t));
-            toast({ title: "Status Updated", description: `Ticket marked as ${newStatus}` });
+            toast({ 
+                title: t('tickets.statusUpdated', 'Status Updated'), 
+                description: t('tickets.statusMarkedAs', { status: t(`tickets.${newStatus}`, newStatus) }) 
+            });
         } catch (error) {
             toast({ title: "Error", description: "Failed to update status", variant: "destructive" });
+        }
+    };
+
+    const formatDate = (date: any) => {
+        if (!date) return '';
+        try {
+            // Handle Firestore Timestamp or Date string
+            const d = date.toDate ? date.toDate() : new Date(date);
+            return format(d, 'PP p');
+        } catch (e) {
+            return String(date);
         }
     };
 
@@ -89,20 +103,20 @@ export default function AdminTicketsPage() {
         <div className="container mx-auto p-6 space-y-6">
             <div className="flex justify-between items-center">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Ticket System (Central)</h1>
-                    <p className="text-muted-foreground">Manage support tickets from all users.</p>
+                    <h1 className="text-3xl font-bold tracking-tight">{t('tickets.systemTitle', 'Ticket System (Central)')}</h1>
+                    <p className="text-muted-foreground">{t('tickets.manageDescription', 'Manage support tickets from all users.')}</p>
                 </div>
                 <Button variant="outline" asChild className="gap-2">
                     <Link href="/admin">
                         <LayoutDashboard className="h-4 w-4" />
-                        {t('dashboard.backToDashboard', 'Zurück zum Dashboard')}
+                        {t('businesses.backToDashboard', 'Volver al Panel')}
                     </Link>
                 </Button>
             </div>
 
             <div className="grid gap-4">
                 {tickets.length === 0 ? (
-                    <div className="text-center py-12 text-muted-foreground">No tickets found.</div>
+                    <div className="text-center py-12 text-muted-foreground">{t('tickets.noTickets', 'No tickets found.')}</div>
                 ) : (
                     tickets.map((ticket) => (
                         <Card key={ticket.id} className="text-left">
@@ -112,11 +126,11 @@ export default function AdminTicketsPage() {
                                         <CardTitle className="text-lg">{ticket.title}</CardTitle>
                                         <Badge variant="outline">{ticket.module}</Badge>
                                         <Badge variant={ticket.priority === 'high' ? 'destructive' : 'secondary'}>
-                                            {ticket.priority.toUpperCase()}
+                                            {t(`tickets.priority${ticket.priority.charAt(0).toUpperCase() + ticket.priority.slice(1)}`, ticket.priority.toUpperCase())}
                                         </Badge>
                                     </div>
                                     <CardDescription className="mt-1">
-                                        By {ticket.userName} ({ticket.userEmail}) • {format(ticket.createdAt, 'PP p')}
+                                        {t('tickets.by', 'By')} {ticket.userName} ({ticket.userEmail}) • {formatDate(ticket.createdAt)}
                                     </CardDescription>
                                 </div>
                                 <div className="flex items-center gap-2">
@@ -128,9 +142,9 @@ export default function AdminTicketsPage() {
                                             <SelectValue />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="open">Open</SelectItem>
-                                            <SelectItem value="in_progress">In Progress</SelectItem>
-                                            <SelectItem value="closed">Closed</SelectItem>
+                                            <SelectItem value="open">{t('tickets.open', 'Open')}</SelectItem>
+                                            <SelectItem value="in_progress">{t('tickets.inProgress', 'In Progress')}</SelectItem>
+                                            <SelectItem value="closed">{t('tickets.closed', 'Closed')}</SelectItem>
                                         </SelectContent>
                                     </Select>
                                 </div>
@@ -140,7 +154,7 @@ export default function AdminTicketsPage() {
                                 <div className="mt-4 flex justify-end">
                                     <Button asChild size="sm" variant="outline">
                                         <Link href={`/admin/tickets/${ticket.id}`}>
-                                            View Ticket & Reply
+                                            {t('tickets.viewTicket', 'View Ticket & Reply')}
                                         </Link>
                                     </Button>
                                 </div>
