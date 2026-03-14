@@ -1,4 +1,6 @@
 {
+  "search_country": "Search country...",
+  "search_city": "Search city...",
   "header": {
     "nav": {
       "benefits": "Benefits",
@@ -79,11 +81,7 @@
     "cityPlaceholder": "Business City",
     "websitePlaceholder": "Business Website (optional)",
     "categoryPlaceholder": "Business Category (Dropdown)",
-    "categoryLabel": "Business Category",
-    "selectOption": "Select an option",
-    "selectCategory": "Please select",
     "selectCountryFirst": "Please select a country first",
-    "commentsPlaceholder": "Your Comments (optional)",
     "categories": {
       "consulting": "Consulting",
       "education": "Education",
@@ -106,11 +104,43 @@
       "environment": "Environment",
       "entertainment": "Entertainment"
     },
+    "companyInfo": "Company Information",
+    "yourContact": "Your Contact",
+    "locationInfo": "Location Info",
+    "additionalInfo": "Additional Details",
+    "selectOption": "Please select",
+    "selectCategory": "Select category",
+    "categoryLabel": "Category*",
+    "commentsPlaceholder": "Comments or additional details...",
+    "errors": {
+      "invalid_url": "Please enter a valid URL",
+      "required": "This field is required"
+    },
     "submitButton": "Send Recommendation",
     "successTitle": "Recommendation Sent!",
     "successDesc": "Thank you for your recommendation. We will reach out to the business.",
     "errorTitle": "Error Sending!",
-    "errorDesc": "There was an issue sending your recommendation. Please try again later."
+    "errorDesc": "There was an issue sending your recommendation. Please try again later.",
+    "diciloCodePlaceholder": "DICILO Code (optional)",
+    "neighborhoodPlaceholder": "Neighborhood / District (Optional)",
+    "neighborhoodHint": "e.g. Altona, Brooklyn...",
+    "sourceLabel": "How did you hear about us?*",
+    "sourcePlaceholder": "Please select",
+    "sources": {
+      "customer": "I am a customer",
+      "facebook": "Facebook",
+      "instagram": "Instagram",
+      "telegram": "Telegram",
+      "youtube": "YouTube",
+      "twitter": "Twitter / X",
+      "linkedin": "LinkedIn",
+      "tiktok": "TikTok",
+      "recommendation": "Friend recommendation",
+      "googleads": "Google Ads",
+      "dicilo": "Dicilo Network",
+      "mhc": "MHC",
+      "other": "Other"
+    }
   },
   "cancel": "Cancel",
   "save": "Save",
@@ -768,7 +798,9 @@
     "statistics": "My Stats",
     "online_reviews": "Online Reviews",
     "connections": "Connections",
-    "faqs": "FAQs"
+    "faqs": "FAQs",
+    "recommendation_section": "Recommend Companies",
+    "new_recommendation": "New Recommendation"
   },
   "freelancer_dashboard": {
     "welcome": "Welcome back,",

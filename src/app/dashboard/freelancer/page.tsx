@@ -13,6 +13,7 @@ import { ConnectionsView } from '@/components/dashboard/freelancer/views/Connect
 import { FaqsView } from '@/components/dashboard/freelancer/views/FaqsView';
 import { PromoComposerView } from '@/components/dashboard/freelancer/views/PromoComposerView'; // "Templates/Composer"
 import { MarketingTemplatesView } from '@/components/dashboard/freelancer/views/MarketingTemplatesView';
+import { RecommendCompanyView } from '@/components/dashboard/freelancer/views/RecommendCompanyView';
 
 // Mapping of tabs to components
 const VIEWS: Record<string, React.ComponentType> = {
@@ -26,7 +27,8 @@ const VIEWS: Record<string, React.ComponentType> = {
     'statistics': StatisticsView,
     'online_reviews': OnlineReviewsView,
     'connections': ConnectionsView,
-    'faqs': FaqsView
+    'faqs': FaqsView,
+    'recommend_company': RecommendCompanyView
 };
 
 import { useAuthGuard } from '@/hooks/useAuthGuard';

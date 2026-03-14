@@ -442,17 +442,22 @@ export function EmailMarketingComposer({ template, onBack, uniqueCode: propUniqu
             }
 
             setFriends([]);
+            const successCount = mailResult.totalSent || 0;
             toast({
-                title: "¡Enviado exitosamente!",
-                description: `Se han enviado ${friends.length} invitaciones a tus contactos.`,
-                className: "bg-green-600 text-white"
+                title: successCount > 0 ? "¡Enviado exitosamente!" : "Fallo en el envío",
+                description: successCount > 0 
+                    ? `Se han enviado ${successCount} invitaciones a tus contactos.`
+                    : "No se pudo enviar ninguna invitación. Revisa los correos.",
+                className: successCount > 0 ? "bg-green-600 text-white" : "bg-destructive text-white"
             });
 
-            // Reward
-            try {
-                await awardMarketingSharePoints(currentUser.uid, template.id || '', friends.length);
-            } catch (e) {
-                console.error("Points error", e);
+            // Reward - Only award points for successful sends
+            if (successCount > 0) {
+                try {
+                    await awardMarketingSharePoints(currentUser.uid, template.id || '', successCount);
+                } catch (e) {
+                    console.error("Points error", e);
+                }
             }
 
         } catch (error: any) {
@@ -470,7 +475,7 @@ export function EmailMarketingComposer({ template, onBack, uniqueCode: propUniqu
 
 
     return (
-        <div className="w-full px-4 py-8 pb-32 animate-in fade-in slide-in-from-right-4 min-h-screen">
+        <div className="w-full px-4 py-8 pb-32 animate-in fade-in slide-in-from-right-4 h-full">
             {/* Header / Navigation */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                 <div className="flex items-center gap-4">

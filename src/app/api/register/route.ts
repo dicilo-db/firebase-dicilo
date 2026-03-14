@@ -128,6 +128,8 @@ async function resolveReferrer(db: admin.firestore.Firestore, code: string | und
 }
 
 
+import { checkBusinessDuplicate } from '@/app/actions/business-utils';
+
 export async function POST(request: Request) {
   try {
     const body = await request.json(); // Read body once
@@ -149,6 +151,23 @@ export async function POST(request: Request) {
 
     const db = getAdminDb();
     const auth = getAdminAuth();
+
+    // --- DUPLICATE BUSINESS CHECK ---
+    const isCompany = ['retailer', 'premium', 'donor'].includes(registrationType);
+    if (isCompany && businessName) {
+        // According to user: Check Name, Address, Phone.
+        // Use 'address' or 'location' as address factor.
+        const businessAddress = address || location;
+        const dupCheck = await checkBusinessDuplicate(businessName, businessAddress, phone);
+        
+        if (dupCheck.isDuplicate) {
+            return NextResponse.json(
+                { message: 'Esta empresa ya está registrada con el mismo nombre, dirección y teléfono. Si es una filial, por favor ajusta la dirección.' },
+                { status: 409 }
+            );
+        }
+    }
+    // ---------------------------------
 
     // 1. Create Authentication User
     let ownerUid = null;

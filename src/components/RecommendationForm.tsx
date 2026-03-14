@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { Check, ChevronsUpDown, Camera, X, Film, Loader2, PlusCircle } from 'lucide-react';
+import { Check, ChevronsUpDown, Camera, X, Film, Loader2, PlusCircle, Building2, User, Mail, Phone, Globe, MapPin, Tag, Share2, MessageSquare } from 'lucide-react';
 import { nanoid } from 'nanoid';
 import { compressVideo } from '@/lib/video-utils';
 import { Progress } from '@/components/ui/progress';
@@ -44,12 +44,20 @@ import {
 } from "@/components/ui/popover";
 
 import { cn } from "@/lib/utils";
-import { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { submitRecommendation } from '@/app/actions/recommendations';
 import { useTranslation } from 'react-i18next';
 import { Label } from './ui/label';
 import { Country, City } from 'country-state-city';
 import { useAuth } from '@/context/AuthContext';
+import countries from 'i18n-iso-countries';
+import enLocale from 'i18n-iso-countries/langs/en.json';
+import esLocale from 'i18n-iso-countries/langs/es.json';
+import deLocale from 'i18n-iso-countries/langs/de.json';
+
+countries.registerLocale(enLocale);
+countries.registerLocale(esLocale);
+countries.registerLocale(deLocale);
 
 // Schema
 const formSchema = z.object({
@@ -126,11 +134,13 @@ interface MediaFile {
 }
 
 export function RecommendationFormContent({ initialBusinessName, onSuccess, onCancel }: RecommendationFormContentProps) {
-  const { t } = useTranslation('common');
+  const { t, i18n } = useTranslation('common');
   const { toast } = useToast();
   const { user } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [media, setMedia] = useState<MediaFile[]>([]);
+  const [countrySearch, setCountrySearch] = useState("");
+  const [isCountryOpen, setIsCountryOpen] = useState(false);
 
   const form = useForm<RecommendationFormValues>({
     resolver: zodResolver(formSchema),
@@ -293,7 +303,15 @@ export function RecommendationFormContent({ initialBusinessName, onSuccess, onCa
   };
 
   const selectedCountry = form.watch('country');
-  const countries = Country.getAllCountries();
+  
+  const allCountries = useMemo(() => {
+    const lang = i18n.language.split('-')[0] || 'es';
+    return Country.getAllCountries().map(c => ({
+      ...c,
+      localizedName: countries.getName(c.isoCode, lang, { select: 'official' }) || c.name
+    })).sort((a, b) => a.localizedName.localeCompare(b.localizedName));
+  }, [i18n.language]);
+
 
   const cities = useMemo(() => {
     if (!selectedCountry) return [];
@@ -352,211 +370,342 @@ export function RecommendationFormContent({ initialBusinessName, onSuccess, onCa
         </div>
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="companyName">{t('form.companyNamePlaceholder')}</Label>
-        <Input
-          id="companyName"
-          {...form.register('companyName')}
-          className={form.formState.errors.companyName ? 'border-destructive' : ''}
-          disabled={isSubmitting}
-        />
-        {form.formState.errors.companyName && (
-          <p className="text-sm text-destructive">{t(`form.${form.formState.errors.companyName.message}`)}</p>
-        )}
-      </div>
-
-      {/* Contact Name */}
-      <div className="space-y-2">
-        <Label htmlFor="contactName">{t('form.contactNamePlaceholder')}</Label>
-        <Input
-          id="contactName"
-          {...form.register('contactName')}
-          className={form.formState.errors.contactName ? 'border-destructive' : ''}
-          disabled={isSubmitting}
-        />
-        {form.formState.errors.contactName && (
-          <p className="text-sm text-destructive">{t('form.errors.required')}</p>
-        )}
-      </div>
-
-      {/* Email */}
-      <div className="space-y-2">
-        <Label htmlFor="email">{t('form.emailPlaceholder')}</Label>
-        <Input id="email" {...form.register('email')} type="email" disabled={isSubmitting} />
-        {form.formState.errors.email && (
-          <p className="text-sm text-destructive">{t(`form.${form.formState.errors.email.message}`)}</p>
-        )}
-      </div>
-
-      {/* Phone */}
-      <div className="space-y-2">
-        <Label htmlFor="phone">{t('form.phonePlaceholder')}</Label>
-        <Input id="phone" {...form.register('phone')} type="tel" disabled={isSubmitting} />
-      </div>
-
-      {/* Country & City */}
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2 flex flex-col">
-          <Label htmlFor="country">{t('form.countryPlaceholder')}</Label>
-          <Controller
-            control={form.control}
-            name="country"
-            render={({ field }) => (
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    role="combobox"
-                    className={cn(
-                      "w-full justify-between",
-                      !field.value && "text-muted-foreground",
-                      form.formState.errors.country && "border-destructive"
-                    )}
-                    disabled={isSubmitting}
-                  >
-                    {field.value
-                      ? countries.find((country) => country.isoCode === field.value)?.name
-                      : t('form.selectOption')}
-                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
-                  <Command>
-                    <CommandInput placeholder={t('search_country', 'Buscar país...')} />
-                    <CommandList>
-                      <CommandEmpty>{t('no_results', 'No encontrado.')}</CommandEmpty>
-                      <CommandGroup>
-                        {countries.map((country) => (
-                          <CommandItem
-                            value={country.name}
-                            key={country.isoCode}
-                            onSelect={() => {
-                              form.setValue("country", country.isoCode);
-                            }}
-                          >
-                            <Check
-                              className={cn(
-                                "mr-2 h-4 w-4",
-                                country.isoCode === field.value
-                                  ? "opacity-100"
-                                  : "opacity-0"
-                              )}
-                            />
-                            {country.name}
-                          </CommandItem>
-                        ))}
-                      </CommandGroup>
-                    </CommandList>
-                  </Command>
-                </PopoverContent>
-              </Popover>
-            )}
-          />
-          {form.formState.errors.country && <p className="text-sm text-destructive">{t('form.errors.required')}</p>}
+      <div className="space-y-4 p-4 rounded-xl bg-slate-50/50 border border-slate-100 shadow-sm">
+        <div className="flex items-center gap-2 mb-2">
+          <Building2 className="h-5 w-5 text-purple-500" />
+          <h3 className="font-semibold text-slate-800">{t('form.companyInfo', 'Información de la Empresa')}</h3>
         </div>
-
-        <div className="space-y-2 flex flex-col">
-          <Label htmlFor="city">{t('form.cityPlaceholder')}</Label>
-          <Controller
-            control={form.control}
-            name="city"
-            render={({ field }) => (
-              <CityCombobox
-                cities={cities}
-                value={field.value}
-                onChange={field.onChange}
-                disabled={!selectedCountry || isSubmitting}
-                t={t}
-              />
-            )}
-          />
-          {form.formState.errors.city && <p className="text-sm text-destructive">{t('form.errors.required')}</p>}
-        </div>
-
-        {/* Neighborhood (New) */}
-        <div className="space-y-2 col-span-2 md:col-span-1">
-          <Label htmlFor="neighborhood">{t('form.neighborhoodPlaceholder', 'Barrio / Distrikt (Opcional)')}</Label>
+        
+        <div className="space-y-2">
+          <Label htmlFor="companyName" className="flex items-center gap-2">
+            {t('form.companyNamePlaceholder')}
+          </Label>
           <Input
-            id="neighborhood"
-            {...form.register('neighborhood')}
+            id="companyName"
+            {...form.register('companyName')}
+            className={cn(
+              "bg-white transition-all focus:ring-2 focus:ring-purple-400 focus:border-transparent",
+              form.formState.errors.companyName ? 'border-destructive' : ''
+            )}
             disabled={isSubmitting}
-            placeholder="Ej. Altona, Sternschanze..."
           />
-        </div>
-      </div>
-
-      {/* Website */}
-      <div className="space-y-2">
-        <Label htmlFor="website">{t('form.websitePlaceholder')}</Label>
-        <Input id="website" {...form.register('website')} disabled={isSubmitting} />
-        {form.formState.errors.website && <p className="text-sm text-destructive">{t(`form.errors.invalid_url`)}</p>}
-      </div>
-
-      {/* Category */}
-      <div className="space-y-2">
-        <Label htmlFor="category">{t('form.categoryLabel')}</Label>
-        <Controller
-          control={form.control}
-          name="category"
-          render={({ field }) => (
-            <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isSubmitting}>
-              <SelectTrigger className={form.formState.errors.category ? 'border-destructive' : ''}>
-                <SelectValue placeholder={t('form.selectCategory')} />
-              </SelectTrigger>
-              <SelectContent className="z-[1001]">
-                {CATEGORIES.map((cat) => (
-                  <SelectItem key={cat} value={cat}>{t(`form.categories.${cat}`)}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          {form.formState.errors.companyName && (
+            <p className="text-sm text-destructive">{t(`form.${form.formState.errors.companyName.message}`)}</p>
           )}
-        />
-        {form.formState.errors.category && <p className="text-sm text-destructive">{t('form.errors.required')}</p>}
+        </div>
       </div>
 
-      {/* Dicilo Code & Source - Responsive Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="diciloCode">{t('form.diciloCodePlaceholder')}</Label>
-          <Input id="diciloCode" {...form.register('diciloCode')} disabled={isSubmitting} />
+      <div className="space-y-4 p-4 rounded-xl bg-slate-50/50 border border-slate-100 shadow-sm">
+        <div className="flex items-center gap-2 mb-2">
+          <User className="h-5 w-5 text-blue-500" />
+          <h3 className="font-semibold text-slate-800">{t('form.yourContact', 'Tu Contacto')}</h3>
         </div>
 
+        {/* Contact Name */}
         <div className="space-y-2">
-          <Label htmlFor="source">{t('form.sourceLabel')}</Label>
+          <Label htmlFor="contactName" className="flex items-center gap-2">
+            {t('form.contactNamePlaceholder')}
+          </Label>
+          <Input
+            id="contactName"
+            {...form.register('contactName')}
+            className={cn(
+              "bg-white transition-all focus:ring-2 focus:ring-blue-400 focus:border-transparent",
+              form.formState.errors.contactName ? 'border-destructive' : ''
+            )}
+            disabled={isSubmitting}
+          />
+          {form.formState.errors.contactName && (
+            <p className="text-sm text-destructive">{t('form.errors.required')}</p>
+          )}
+        </div>
+
+        {/* Email & Phone Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="email" className="flex items-center gap-2">
+              <Mail className="h-3.5 w-3.5 text-slate-400" />
+              {t('form.emailPlaceholder')}
+            </Label>
+            <Input 
+              id="email" 
+              {...form.register('email')} 
+              type="email" 
+              className="bg-white transition-all focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+              disabled={isSubmitting} 
+            />
+            {form.formState.errors.email && (
+              <p className="text-sm text-destructive">{t(`form.${form.formState.errors.email.message}`)}</p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="phone" className="flex items-center gap-2">
+              <Phone className="h-3.5 w-3.5 text-slate-400" />
+              {t('form.phonePlaceholder')}
+            </Label>
+            <Input 
+              id="phone" 
+              {...form.register('phone')} 
+              type="tel" 
+              className="bg-white transition-all focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+              disabled={isSubmitting} 
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="space-y-4 p-4 rounded-xl bg-slate-50/50 border border-slate-100 shadow-sm">
+        <div className="flex items-center gap-2 mb-2">
+          <MapPin className="h-5 w-5 text-emerald-500" />
+          <h3 className="font-semibold text-slate-800">{t('form.locationInfo', 'Ubicación')}</h3>
+        </div>
+
+        {/* Country & City */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2 flex flex-col">
+            <Label htmlFor="country" className="flex items-center gap-2">
+              <Globe className="h-3.5 w-3.5 text-slate-400" />
+              {t('form.countryPlaceholder')}
+            </Label>
+            <Controller
+              control={form.control}
+              name="country"
+              render={({ field }) => (
+                <Popover open={isCountryOpen} onOpenChange={setIsCountryOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      className={cn(
+                        "w-full justify-between bg-white transition-all hover:bg-slate-50",
+                        !field.value && "text-muted-foreground",
+                        form.formState.errors.country && "border-destructive"
+                      )}
+                      disabled={isSubmitting}
+                    >
+                      {field.value
+                        ? allCountries.find((country) => country.isoCode === field.value)?.localizedName
+                        : t('form.selectOption')}
+                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[--radix-popover-trigger-width] p-0 shadow-xl border-slate-200">
+                    <Command shouldFilter={true}>
+                      <CommandInput 
+                        placeholder={t('search_country')} 
+                        className="h-10 border-none focus:ring-0"
+                      />
+                      <CommandList className="max-h-[300px]">
+                        <CommandEmpty>{t('no_results', 'No encontrado.')}</CommandEmpty>
+                        <CommandGroup>
+                          {allCountries.map((country) => (
+                            <CommandItem
+                              value={country.localizedName}
+                              key={country.isoCode}
+                              onSelect={() => {
+                                form.setValue("country", country.isoCode);
+                                setIsCountryOpen(false);
+                              }}
+                              onMouseDown={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                form.setValue("country", country.isoCode);
+                                setIsCountryOpen(false);
+                              }}
+                              onPointerDown={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                              }}
+                              className="cursor-pointer hover:bg-emerald-50 w-full"
+                            >
+                              <Check
+                                className={cn(
+                                  "mr-2 h-4 w-4 text-emerald-500",
+                                  country.isoCode === field.value
+                                    ? "opacity-100"
+                                    : "opacity-0"
+                                )}
+                              />
+                              {country.localizedName}
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+              )}
+            />
+            {form.formState.errors.country && <p className="text-sm text-destructive">{t('form.errors.required')}</p>}
+          </div>
+
+          <div className="space-y-2 flex flex-col">
+            <Label htmlFor="city" className="flex items-center gap-2">
+              <Building2 className="h-3.5 w-3.5 text-slate-400" />
+              {t('form.cityPlaceholder')}
+            </Label>
+            <Controller
+              control={form.control}
+              name="city"
+              render={({ field }) => (
+                <CityCombobox
+                  cities={cities}
+                  value={field.value}
+                  onChange={field.onChange}
+                  disabled={!selectedCountry || isSubmitting}
+                  t={t}
+                />
+              )}
+            />
+            {form.formState.errors.city && <p className="text-sm text-destructive">{t('form.errors.required')}</p>}
+          </div>
+
+          {/* Neighborhood */}
+          <div className="space-y-2 col-span-1 md:col-span-2">
+            <Label htmlFor="neighborhood" className="flex items-center gap-2">
+              <MapPin className="h-3.5 w-3.5 text-slate-400" />
+              {t('form.neighborhoodPlaceholder')}
+            </Label>
+            <Input
+              id="neighborhood"
+              {...form.register('neighborhood')}
+              className="bg-white transition-all focus:ring-2 focus:ring-emerald-400 focus:border-transparent"
+              disabled={isSubmitting}
+              placeholder={t('form.neighborhoodHint', 'Ej. Altona, Sternschanze...')}
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="space-y-4 p-4 rounded-xl bg-slate-50/50 border border-slate-100 shadow-sm">
+        <div className="flex items-center gap-2 mb-2">
+          <Tag className="h-5 w-5 text-orange-500" />
+          <h3 className="font-semibold text-slate-800">{t('form.additionalInfo')}</h3>
+        </div>
+
+        {/* Website */}
+        <div className="space-y-2">
+          <Label htmlFor="website" className="flex items-center gap-2">
+            <Globe className="h-3.5 w-3.5 text-slate-400" />
+            {t('form.websitePlaceholder')}
+          </Label>
+          <Input 
+            id="website" 
+            {...form.register('website')} 
+            className="bg-white transition-all focus:ring-2 focus:ring-orange-400 focus:border-transparent"
+            disabled={isSubmitting} 
+          />
+          {form.formState.errors.website && <p className="text-sm text-destructive">{t(`form.errors.invalid_url`)}</p>}
+        </div>
+
+        {/* Category */}
+        <div className="space-y-2">
+          <Label htmlFor="category" className="flex items-center gap-2">
+            <Tag className="h-3.5 w-3.5 text-slate-400" />
+            {t('form.categoryLabel')}
+          </Label>
           <Controller
             control={form.control}
-            name="source"
+            name="category"
             render={({ field }) => (
               <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isSubmitting}>
-                <SelectTrigger className={form.formState.errors.source ? 'border-destructive' : ''}>
-                  <SelectValue placeholder={t('form.sourcePlaceholder')} />
+                <SelectTrigger className={cn(
+                  "bg-white transition-all hover:bg-slate-50",
+                  form.formState.errors.category ? 'border-destructive' : ''
+                )}>
+                  <SelectValue placeholder={t('form.selectCategory')} />
                 </SelectTrigger>
                 <SelectContent className="z-[1001]">
-                  {SOURCES.map((source) => (
-                    <SelectItem key={source} value={source}>{t(`form.sources.${source}`)}</SelectItem>
+                  {CATEGORIES.map((cat) => (
+                    <SelectItem key={cat} value={cat} className="cursor-pointer">
+                      {t(`form.categories.${cat}`)}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             )}
           />
-          {form.formState.errors.source && <p className="text-sm text-destructive">{t('form.errors.required')}</p>}
+          {form.formState.errors.category && <p className="text-sm text-destructive">{t('form.errors.required')}</p>}
+        </div>
+
+        {/* Dicilo Code & Source - Responsive Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="diciloCode" className="flex items-center gap-2">
+              <Share2 className="h-3.5 w-3.5 text-slate-400" />
+              {t('form.diciloCodePlaceholder')}
+            </Label>
+            <Input 
+              id="diciloCode" 
+              {...form.register('diciloCode')} 
+              className="bg-white transition-all focus:ring-2 focus:ring-orange-400 focus:border-transparent"
+              disabled={isSubmitting} 
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="source" className="flex items-center gap-2">
+              <Share2 className="h-3.5 w-3.5 text-slate-400" />
+              {t('form.sourceLabel')}
+            </Label>
+            <Controller
+              control={form.control}
+              name="source"
+              render={({ field }) => (
+                <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isSubmitting}>
+                  <SelectTrigger className={cn(
+                    "bg-white transition-all hover:bg-slate-50",
+                    form.formState.errors.source ? 'border-destructive' : ''
+                  )}>
+                    <SelectValue placeholder={t('form.sourcePlaceholder')} />
+                  </SelectTrigger>
+                  <SelectContent className="z-[1001]">
+                    {SOURCES.map((source) => (
+                      <SelectItem key={source} value={source} className="cursor-pointer">
+                        {t(`form.sources.${source}`)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
+            {form.formState.errors.source && <p className="text-sm text-destructive">{t('form.errors.required')}</p>}
+          </div>
+        </div>
+
+        {/* Comments */}
+        <div className="space-y-2">
+          <Label htmlFor="comments" className="flex items-center gap-2">
+            <MessageSquare className="h-3.5 w-3.5 text-slate-400" />
+            {t('form.commentsPlaceholder')}
+          </Label>
+          <Textarea 
+            id="comments" 
+            {...form.register('comments')} 
+            className="bg-white min-h-[100px] transition-all focus:ring-2 focus:ring-orange-400 focus:border-transparent"
+            disabled={isSubmitting} 
+          />
         </div>
       </div>
 
-
-      {/* Comments */}
-      <div className="space-y-2">
-        <Label htmlFor="comments">{t('form.commentsPlaceholder')}</Label>
-        <Textarea id="comments" {...form.register('comments')} disabled={isSubmitting} />
-      </div>
-
-      <div className="flex justify-end gap-2 pt-4">
+      <div className="flex justify-end gap-3 pt-6 border-t">
         {onCancel && (
-          <Button type="button" variant="secondary" disabled={isSubmitting} onClick={onCancel}>
+          <Button 
+            type="button" 
+            variant="ghost" 
+            disabled={isSubmitting} 
+            onClick={onCancel}
+            className="hover:bg-slate-100"
+          >
             {t('cancel')}
           </Button>
         )}
-        <Button type="submit" disabled={isSubmitting}>
+        <Button 
+          type="submit" 
+          disabled={isSubmitting}
+          className="bg-gradient-to-r from-purple-600 to-emerald-600 hover:from-purple-700 hover:to-emerald-700 text-white px-8 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-md"
+        >
           {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : t('form.submitButton')}
         </Button>
       </div>

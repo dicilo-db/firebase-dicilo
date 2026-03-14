@@ -23,6 +23,8 @@
       "hesitate": "Don't hesitate any longer!"
     },
     "form": {
+      "recommendTab": "Recommend",
+      "registerTab": "Register",
       "title": "Recommend a company to dicilo.net and win prizes",
       "description": "Register your company or recommend your preferred company and win prizes! Recommend a friendly company and secure prizes ranging from discount coupons to cash prizes.",
       "recommenderSection": "Your Contact",
@@ -45,7 +47,9 @@
       "submitButton": "Send Recommendation Now!",
       "laughingRegister": "( laughing Register Now )",
       "successTitle": "Recommendation Sent!",
-      "successDescription": "Your recommendation has been submitted successfully."
+      "successDescription": "Your recommendation has been submitted successfully.",
+      "registerButton": "Register",
+      "registerDescription": "Register for free and without obligation on our Dicilo portal. Your registration—whether as 'Starter', 'Retailer', or 'Premium'—will initially be created as Basic. This secures you a place on the landing page. After your registration, we will contact you to explain all the benefits of our Starter, Retailer, and Premium packages."
     },
     "errors": {
       "required": "This field is required.",
@@ -81,12 +85,19 @@
       "welcomeText": "Welcome Text",
       "headerImageUrl": "Header Image URL",
       "instagramUrl": "Instagram URL",
-      "facebookUrl": "Facebook URL"
+      "facebookUrl": "Facebook URL",
+      "businessInfo": "Business Information",
+      "businessName": "Business Name",
+      "category": "Category",
+      "categoryPlaceholder": "Main Category / Subcategory",
+      "description": "Description",
+      "location": "Location",
+      "address": "Address",
+      "phone": "Phone",
+      "website": "Website",
+      "logoUrl": "Logo URL",
+      "currentOfferUrl": "Current Offer URL"
     },
-    "submitButton": "Register",
-    "registerSuccessTitle": "Registration successful!",
-    "registerSuccessDescription": "Your registration has been successfully submitted.",
-    "registerDescription": "Register for free and without obligation on our Dicilo portal. Your registration—whether as 'Starter', 'Retailer', or 'Premium'—will initially be created as Basic. This secures you a place on the landing page. After your registration, we will contact you to explain all the benefits of our Starter, Retailer, and Premium packages.",
     "errorTitle": "Error",
     "submitError": "An error occurred while submitting your registration."
   },

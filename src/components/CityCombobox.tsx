@@ -16,18 +16,8 @@ import {
 import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-// Helper Component for Optimized City Search
 export function CityCombobox({ cities, value, onChange, disabled, t }: { cities: any[], value: string, onChange: (val: string) => void, disabled: boolean, t: any }) {
     const [open, setOpen] = useState(false);
-    const [search, setSearch] = useState("");
-
-    // Filter cities based on search term, THEN slice
-    const filteredCities = useMemo(() => {
-        if (!search) return cities.slice(0, 50);
-        return cities
-            .filter(c => c.name.toLowerCase().includes(search.toLowerCase()))
-            .slice(0, 50);
-    }, [cities, search]);
 
     return (
         <Popover open={open} onOpenChange={setOpen}>
@@ -49,23 +39,32 @@ export function CityCombobox({ cities, value, onChange, disabled, t }: { cities:
                 </Button>
             </PopoverTrigger>
             <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
-                <Command shouldFilter={false}>
+                <Command shouldFilter={true}>
                     <CommandInput
-                        placeholder={t('search_city', 'Buscar ciudad...')}
-                        value={search}
-                        onValueChange={setSearch}
+                        placeholder={t('search_city')}
                     />
                     <CommandList>
                         <CommandEmpty>{t('no_results', 'No encontrada.')}</CommandEmpty>
                         <CommandGroup>
-                            {filteredCities.map((city) => (
+                            {cities.map((city) => (
                                 <CommandItem
                                     key={`${city.name}-${city.latitude}`}
                                     value={city.name}
-                                    onSelect={(currentValue) => {
+                                    onSelect={() => {
                                         onChange(city.name);
                                         setOpen(false);
                                     }}
+                                    onMouseDown={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        onChange(city.name);
+                                        setOpen(false);
+                                    }}
+                                    onPointerDown={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                    }}
+                                    className="cursor-pointer w-full"
                                 >
                                     <Check
                                         className={cn(

@@ -1,4 +1,6 @@
 {
+  "search_country": "Buscar país...",
+  "search_city": "Buscar ciudad...",
   "header": {
     "nav": {
       "benefits": "Ventajas",
@@ -119,11 +121,7 @@
     "cityPlaceholder": "Ciudad de la empresa",
     "websitePlaceholder": "Sitio Web de la empresa (opcional)",
     "categoryPlaceholder": "Categoría de la empresa (Dropdown)",
-    "categoryLabel": "Categoría de la empresa",
-    "selectOption": "Seleccione una opción",
-    "selectCategory": "Por favor seleccione",
     "selectCountryFirst": "Por favor seleccione un país primero",
-    "commentsPlaceholder": "Tus comentarios (opcional)",
     "categories": {
       "consulting": "Consultoría",
       "education": "Educación",
@@ -146,11 +144,43 @@
       "environment": "Medio ambiente",
       "entertainment": "Entretenimiento"
     },
+    "companyInfo": "Información de la Empresa",
+    "yourContact": "Tu Contacto",
+    "locationInfo": "Ubicación",
+    "additionalInfo": "Detalles Adicionales",
+    "selectOption": "Por favor seleccione",
+    "selectCategory": "Seleccionar categoría",
+    "categoryLabel": "Categoría*",
+    "commentsPlaceholder": "Comentarios o detalles adicionales...",
+    "errors": {
+      "invalid_url": "Por favor ingresa una URL válida",
+      "required": "Este campo es obligatorio"
+    },
     "submitButton": "Enviar recomendación",
     "successTitle": "¡Recomendación enviada!",
     "successDesc": "Gracias por tu recomendación. Nos pondremos en contacto con la empresa.",
     "errorTitle": "¡Error al enviar!",
-    "errorDesc": "Hubo un problema al enviar tu recomendación. Por favor, inténtalo de nuevo más tarde."
+    "errorDesc": "Hubo un problema al enviar tu recomendación. Por favor, inténtalo de nuevo más tarde.",
+    "diciloCodePlaceholder": "Código DICILO (opcional)",
+    "neighborhoodPlaceholder": "Barrio / Distrito (Opcional)",
+    "neighborhoodHint": "Ej. Altona, Sternschanze...",
+    "sourceLabel": "¿Cómo nos conoció?*",
+    "sourcePlaceholder": "Por favor seleccione",
+    "sources": {
+      "customer": "Soy cliente",
+      "facebook": "Facebook",
+      "instagram": "Instagram",
+      "telegram": "Telegram",
+      "youtube": "YouTube",
+      "twitter": "Twitter / X",
+      "linkedin": "LinkedIn",
+      "tiktok": "TikTok",
+      "recommendation": "Recomendación de amigos",
+      "googleads": "Publicidad en Google",
+      "dicilo": "Red Dicilo",
+      "mhc": "MHC",
+      "other": "Otro"
+    }
   },
   "dashboard": {
     "welcomeUser": "¡Bienvenido, {{name}}!",
@@ -897,7 +927,9 @@
     "statistics": "Mis Estadísticas",
     "online_reviews": "Reseña Online",
     "connections": "Conexiones",
-    "faqs": "Preguntas Frecuentes"
+    "faqs": "Preguntas Frecuentes",
+    "recommendation_section": "Recomienda empresas",
+    "new_recommendation": "Nueva Recomendación"
   },
   "freelancer_dashboard": {
     "welcome": "Hola de nuevo,",

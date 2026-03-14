@@ -19,7 +19,8 @@ import {
     ChevronDown,
     LayoutTemplate,
     ArrowLeft,
-    Mail
+    Mail,
+    Building2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -106,6 +107,16 @@ export function FreelancerSidebar({ className, onViewChange, onMobileClose }: Fr
             label: t('freelancer_menu.faqs', 'FAQs'),
             icon: HelpCircle
         },
+        {
+            id: 'section_recommendation',
+            label: t('freelancer_menu.recommendation_section', 'Recomienda empresas'),
+            isHeading: true
+        },
+        {
+            id: 'recommend_company',
+            label: t('freelancer_menu.new_recommendation', 'Nueva Recomendación'),
+            icon: Building2
+        }
     ];
 
     const handleNavigation = (tabId: string) => {
@@ -120,7 +131,7 @@ export function FreelancerSidebar({ className, onViewChange, onMobileClose }: Fr
     };
 
     return (
-        <div className={cn("pb-12 w-64 flex-shrink-0 bg-card border-r h-screen overflow-y-auto flex flex-col", className)}>
+        <div className={cn("pb-12 w-64 flex-shrink-0 bg-card border-r h-full overflow-y-auto flex flex-col", className)}>
 
 
 
@@ -156,12 +167,16 @@ export function FreelancerSidebar({ className, onViewChange, onMobileClose }: Fr
                                         onClick={() => handleNavigation(item.id)}
                                         className={cn(
                                             "w-full flex items-center justify-between rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors",
-                                            isActive ? "bg-accent text-accent-foreground" : "transparent"
+                                            isActive ? "bg-accent text-accent-foreground" : "transparent",
+                                            item.isHeading && "hover:bg-transparent cursor-default mt-4 mb-1 px-0"
                                         )}
+                                        disabled={item.isHeading}
                                     >
                                         <div className="flex items-center">
-                                            <item.icon className="mr-2 h-4 w-4" />
-                                            <span>{item.label}</span>
+                                            {item.icon && <item.icon className="mr-2 h-4 w-4" />}
+                                            <span className={cn(item.isHeading && "font-bold text-slate-900 dark:text-slate-100 uppercase text-[11px] tracking-wider")}>
+                                                {item.label}
+                                            </span>
                                         </div>
                                         {hasChildren && (
                                             isExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />

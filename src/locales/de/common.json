@@ -1,4 +1,6 @@
 {
+  "search_country": "Land suchen...",
+  "search_city": "Stadt suchen...",
   "community": {
     "register_neighborhood": "Nachbarschaft registrieren",
     "register_neighborhood_desc": "Finden Sie Ihre Nachbarschaft nicht? Registrieren Sie sie hier, um sich mit Ihren Nachbarn zu vernetzen.",
@@ -111,11 +113,7 @@
     "cityPlaceholder": "Stadt des Unternehmens*",
     "websitePlaceholder": "Webseite des Unternehmens (optional)",
     "categoryPlaceholder": "Kategorie des Unternehmens (Dropdown)*",
-    "categoryLabel": "Kategorie des Unternehmens*",
-    "selectOption": "Bitte wählen",
-    "selectCategory": "Bitte wählen",
     "selectCountryFirst": "Bitte wählen Sie zuerst ein Land",
-    "commentsPlaceholder": "Ihre Kommentare (optional)",
     "categories": {
       "consulting": "Beratung",
       "education": "Bildung",
@@ -138,11 +136,25 @@
       "environment": "Umwelt",
       "entertainment": "Unterhaltung"
     },
+    "companyInfo": "Unternehmensinformationen",
+    "yourContact": "Ihr Kontakt",
+    "locationInfo": "Standortinformationen",
+    "additionalInfo": "Zusätzliche Details",
+    "selectOption": "Bitte auswählen",
+    "selectCategory": "Kategorie auswählen",
+    "categoryLabel": "Kategorie*",
+    "commentsPlaceholder": "Kommentare oder zusätzliche Details...",
+    "errors": {
+      "invalid_url": "Bitte geben Sie eine gültige URL ein",
+      "required": "Dieses Feld ist erforderlich"
+    },
     "submitButton": "Empfehlung senden",
     "successTitle": "Empfehlung gesendet!",
     "successDesc": "Vielen Dank für Ihre Empfehlung. Wir werden uns mit dem Unternehmen in Verbindung setzen.",
     "errorTitle": "Fehler beim Senden!",
     "errorDesc": "Es gab ein Problem beim Senden Ihrer Empfehlung. Bitte versuchen Sie es später noch einmal.",
+    "neighborhoodPlaceholder": "Nachbarschaft / Kiez (Optional)",
+    "neighborhoodHint": "z.B. Altona, Sternschanze...",
     "diciloCodePlaceholder": "DICILO Code (optional)",
     "sourceLabel": "Wie haben Sie von uns erfahren?*",
     "sourcePlaceholder": "Bitte auswählen",
@@ -841,7 +853,9 @@
     "statistics": "Meine Statistiken",
     "online_reviews": "Online-Bewertungen",
     "connections": "Verbindungen",
-    "faqs": "Häufige Fragen"
+    "faqs": "Häufige Fragen",
+    "recommendation_section": "Unternehmen empfehlen",
+    "new_recommendation": "Neue Empfehlung"
   },
   "freelancer_dashboard": {
     "welcome": "Willkommen zurück,",

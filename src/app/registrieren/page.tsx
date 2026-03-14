@@ -68,9 +68,11 @@ export default function RegistrierenPage() {
           <Tabs defaultValue="register" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="recommend">
-                {t('register.form.title')}
+                {t('register.form.recommendTab', 'Recomiende')}
               </TabsTrigger>
-              <TabsTrigger value="register">{t('register.form.registerButton')}</TabsTrigger>
+              <TabsTrigger value="register">
+                {t('register.form.registerTab', 'Registro')}
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="recommend">

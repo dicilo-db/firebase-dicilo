@@ -23,6 +23,8 @@
       "hesitate": "Zögern Sie nicht länger!"
     },
     "form": {
+      "recommendTab": "Empfehlen",
+      "registerTab": "Registrieren",
       "title": "Empfehlen Sie ein Unternehmen an dicilo.net und gewinnen Sie Preise",
       "description": "Registrieren Sie Ihr Unternehmen oder empfehlen Sie Ihr bevorzugtes Unternehmen und gewinnen Sie Preise! Empfehlen Sie ein befreundetes Unternehmen und sichern Sie sich Preise von Rabattgutscheinen bis hin zu Geldpreisen.",
       "recommenderSection": "Ihr Kontakt",
@@ -88,21 +90,17 @@
       "headerImageUrl": "Header Bild URL",
       "instagramUrl": "Instagram URL",
       "facebookUrl": "Facebook URL",
+      "businessInfo": "Unternehmensinformationen",
       "businessName": "Firmenname",
       "category": "Kategorie",
+      "categoryPlaceholder": "Hauptkategorie / Unterkategorie",
       "description": "Beschreibung",
       "location": "Standort",
       "address": "Adresse",
       "phone": "Telefon",
       "website": "Webseite",
       "logoUrl": "Logo URL",
-      "logoUrlPlaceholder": "https://example.com/logo.png",
-      "imageHint": "Bild-Hinweis (für KI)",
-      "rating": "Bewertung (0-5)",
-      "coords": "Koordinaten (Lat, Lon)",
-      "coordsHelp": "Wird durch Geocodierung der Adresse oder Ziehen des Markers auf der Karte festgelegt.",
-      "currentOfferUrl": "URL des aktuellen Angebots",
-      "mapUrl": "URL Karte"
+      "currentOfferUrl": "URL des aktuellen Angebots"
     }
   },
   "form": {

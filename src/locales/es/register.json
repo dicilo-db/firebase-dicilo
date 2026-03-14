@@ -23,6 +23,8 @@
       "hesitate": "¡No lo dudes más!"
     },
     "form": {
+      "recommendTab": "Recomiende",
+      "registerTab": "Registro",
       "title": "Recomiende una empresa a dicilo.net y gane premios",
       "description": "¡Registre su empresa o recomiende la empresa de su preferencia y gane premios! Recomienda una empresa amiga y asegure premios que van desde cupones de descuento hasta premios en efectivo.",
       "recommenderSection": "Tu Contacto",
@@ -45,7 +47,9 @@
       "submitButton": "¡Enviar recomendación ahora!",
       "laughingRegister": "( laughing Registrarse ahora )",
       "successTitle": "¡Recomendación Enviada!",
-      "successDescription": "Su recomendación ha sido enviada con éxito."
+      "successDescription": "Su recomendación ha sido enviada con éxito.",
+      "registerButton": "Registrarse",
+      "registerDescription": "Regístrese gratis y sin compromiso en nuestro portal Dicilo. Su registro, ya sea como 'Starter', 'Minorista' o 'Premium', se creará inicialmente como Básico. Esto le asegura un lugar en la página de aterrizaje. Después de su registro, le contactaremos para explicarle todos los beneficios de los paquetes Starter, Minorista y Premium."
     },
     "errors": {
       "required": "Este campo es obligatorio.",
@@ -81,12 +85,19 @@
       "welcomeText": "Texto de Bienvenida",
       "headerImageUrl": "URL Imagen de Cabecera",
       "instagramUrl": "URL de Instagram",
-      "facebookUrl": "URL de Facebook"
+      "facebookUrl": "URL de Facebook",
+      "businessInfo": "Información del Negocio",
+      "businessName": "Nombre del Negocio",
+      "category": "Categoría",
+      "categoryPlaceholder": "Categoría Principal / Subcategoría",
+      "description": "Descripción",
+      "location": "Ubicación",
+      "address": "Dirección",
+      "phone": "Teléfono",
+      "website": "Sitio Web",
+      "logoUrl": "URL del Logo",
+      "currentOfferUrl": "URL de Oferta Actual"
     },
-    "submitButton": "Registrarse",
-    "registerSuccessTitle": "¡Registro exitoso!",
-    "registerSuccessDescription": "Su registro se ha enviado correctamente.",
-    "registerDescription": "Regístrese gratis y sin compromiso en nuestro portal Dicilo. Su registro, ya sea como 'Starter', 'Minorista' o 'Premium', se creará inicialmente como Básico. Esto le asegura un lugar en la página de aterrizaje. Después de su registro, le contactaremos para explicarle todos los beneficios de los paquetes Starter, Minorista y Premium.",
     "errorTitle": "Error",
     "submitError": "Ocurrió un error al enviar tu registro."
   },

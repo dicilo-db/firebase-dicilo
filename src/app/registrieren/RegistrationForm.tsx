@@ -1,6 +1,8 @@
 // src/app/registrieren/RegistrationForm.tsx
 'use client';
 
+import { cn } from '@/lib/utils';
+
 import React from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -12,7 +14,7 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from 'react-i18next';
-import { Loader2, LocateFixed, Eye, EyeOff } from 'lucide-react';
+import { Loader2, LocateFixed, Eye, EyeOff, User, Mail, Phone, Lock, Briefcase, Globe, Image as ImageIcon, MapPin, Instagram, Facebook, Star, Type } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
@@ -285,13 +287,23 @@ export function RegistrationForm() {
   return (
     <form onSubmit={handleSubmit(handleRegistration)}>
       <CardContent className="space-y-6">
-        {/* Contact Person Section */}
-        <div className="space-y-4">
-          <h3 className="text-lg font-medium">{t('register.form.recommenderSection')}</h3>
+        {/* Personal Information Section */}
+        <div className="space-y-4 p-5 rounded-xl bg-slate-50/50 border border-slate-100 shadow-sm transition-all hover:bg-slate-50">
+          <div className="flex items-center gap-3 mb-2 border-b border-slate-200 pb-3">
+            <div className="p-2 rounded-lg bg-blue-100 text-blue-600">
+              <User className="h-5 w-5" />
+            </div>
+            <h3 className="text-lg font-bold text-slate-800">{t('register.form.recommenderSection')}</h3>
+          </div>
+          
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="firstName">{t('register.fields.firstName')}</Label>
-              <Input id="firstName" {...register('firstName')} />
+              <Label htmlFor="firstName" className="flex items-center gap-2">{t('register.fields.firstName')}</Label>
+              <Input 
+                id="firstName" 
+                {...register('firstName')} 
+                className="bg-white transition-all focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+              />
               {errors.firstName && (
                 <p className="text-sm text-destructive">
                   {t(errors.firstName.message as string)}
@@ -299,8 +311,12 @@ export function RegistrationForm() {
               )}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="lastName">{t('register.fields.lastName')}</Label>
-              <Input id="lastName" {...register('lastName')} />
+              <Label htmlFor="lastName" className="flex items-center gap-2">{t('register.fields.lastName')}</Label>
+              <Input 
+                id="lastName" 
+                {...register('lastName')} 
+                className="bg-white transition-all focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+              />
               {errors.lastName && (
                 <p className="text-sm text-destructive">
                   {t(errors.lastName.message as string)}
@@ -310,8 +326,16 @@ export function RegistrationForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="email">{t('register.fields.email')}</Label>
-            <Input id="email" type="email" {...register('email')} />
+            <Label htmlFor="email" className="flex items-center gap-2">
+              <Mail className="h-3.5 w-3.5 text-slate-400" />
+              {t('register.fields.email')}
+            </Label>
+            <Input 
+              id="email" 
+              type="email" 
+              {...register('email')} 
+              className="bg-white transition-all focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+            />
             {errors.email && (
               <p className="text-sm text-destructive">
                 {t(errors.email.message as string)}
@@ -320,7 +344,7 @@ export function RegistrationForm() {
           </div>
 
           <div className="space-y-2">
-            <Label>{t('register.fields.contactType')}</Label>
+            <Label className="flex items-center gap-2">{t('register.fields.contactType')}</Label>
             <Controller
               name="contactType"
               control={control}
@@ -332,11 +356,11 @@ export function RegistrationForm() {
                 >
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="whatsapp" id="contact-whatsapp" />
-                    <Label htmlFor="contact-whatsapp">{t('register.options.whatsapp')}</Label>
+                    <Label htmlFor="contact-whatsapp" className="cursor-pointer">{t('register.options.whatsapp')}</Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="telegram" id="contact-telegram" />
-                    <Label htmlFor="contact-telegram">{t('register.options.telegram')}</Label>
+                    <Label htmlFor="contact-telegram" className="cursor-pointer">{t('register.options.telegram')}</Label>
                   </div>
                 </RadioGroup>
               )}
@@ -345,73 +369,96 @@ export function RegistrationForm() {
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="whatsapp">{t('register.fields.whatsapp')}</Label>
-              <Input id="whatsapp" {...register('whatsapp')} />
+              <Label htmlFor="whatsapp" className="flex items-center gap-2">
+                <Phone className="h-3.5 w-3.5 text-slate-400" />
+                {t('register.fields.whatsapp')}
+              </Label>
+              <Input 
+                id="whatsapp" 
+                {...register('whatsapp')} 
+                className="bg-white transition-all focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+              />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="referralCode">{t('register.fields.referralCode')}</Label>
-              <Input id="referralCode" {...register('referralCode')} />
+              <Label htmlFor="referralCode" className="flex items-center gap-2">
+                <Globe className="h-3.5 w-3.5 text-slate-400" />
+                {t('register.fields.referralCode')}
+              </Label>
+              <Input 
+                id="referralCode" 
+                {...register('referralCode')} 
+                className="bg-white transition-all focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+              />
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="password">{t('register.fields.password')}</Label>
-            <div className="relative">
-              <Input
-                id="password"
-                type={showPassword ? 'text' : 'password'}
-                autoComplete="new-password"
-                {...register('password')}
-                className="pr-10"
-              />
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                className="absolute right-1 top-1/2 h-7 w-7 -translate-y-1/2 text-muted-foreground"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-              </Button>
+          {/* Security Sub-section */}
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 pt-2 border-t border-slate-100">
+            <div className="space-y-2">
+              <Label htmlFor="password">{t('register.fields.password')}</Label>
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  autoComplete="new-password"
+                  {...register('password')}
+                  className="pr-10 bg-white transition-all focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="absolute right-1 top-1/2 h-7 w-7 -translate-y-1/2 text-muted-foreground hover:bg-transparent"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </Button>
+              </div>
+              {errors.password && (
+                <p className="text-sm text-destructive">
+                  {t(errors.password.message as string)}
+                </p>
+              )}
+              <p className="text-[10px] text-muted-foreground">{t('register.fields.passwordHint')}</p>
             </div>
-            {errors.password && (
-              <p className="text-sm text-destructive">
-                {t(errors.password.message as string)}
-              </p>
-            )}
-            <p className="text-xs text-muted-foreground">{t('register.fields.passwordHint')}</p>
-          </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="confirmPassword">{t('register.fields.confirmPassword')}</Label>
-            <div className="relative">
-              <Input
-                id="confirmPassword"
-                type={showConfirmPassword ? 'text' : 'password'}
-                autoComplete="new-password"
-                {...register('confirmPassword')}
-                className="pr-10"
-              />
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                className="absolute right-1 top-1/2 h-7 w-7 -translate-y-1/2 text-muted-foreground"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              >
-                {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-              </Button>
+            <div className="space-y-2">
+              <Label htmlFor="confirmPassword">{t('register.fields.confirmPassword')}</Label>
+              <div className="relative">
+                <Input
+                  id="confirmPassword"
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  autoComplete="new-password"
+                  {...register('confirmPassword')}
+                  className="pr-10 bg-white transition-all focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="absolute right-1 top-1/2 h-7 w-7 -translate-y-1/2 text-muted-foreground hover:bg-transparent"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                >
+                  {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </Button>
+              </div>
+              {errors.confirmPassword && (
+                <p className="text-sm text-destructive">
+                  {t(errors.confirmPassword.message as string)}
+                </p>
+              )}
             </div>
-            {errors.confirmPassword && (
-              <p className="text-sm text-destructive">
-                {t(errors.confirmPassword.message as string)}
-              </p>
-            )}
           </div>
         </div>
 
-        <div className="space-y-3">
-          <Label>{t('register.fields.registrationType')}</Label>
+        <div className="space-y-3 p-5 rounded-xl bg-slate-50/50 border border-slate-100 shadow-sm transition-all hover:bg-slate-50">
+          <div className="flex items-center gap-3 mb-2 border-b border-slate-200 pb-3">
+            <div className="p-2 rounded-lg bg-emerald-100 text-emerald-600">
+              <Star className="h-5 w-5" />
+            </div>
+            <Label className="text-lg font-bold text-slate-800">{t('register.fields.registrationType')}</Label>
+          </div>
+          
           <Controller
             name="registrationType"
             control={control}
@@ -424,14 +471,24 @@ export function RegistrationForm() {
                 {registrationOptions.map((option) => (
                   <Label
                     key={option.value}
-                    className="flex cursor-pointer items-center space-x-2 rounded-md border p-3 hover:bg-accent has-[:checked]:bg-primary has-[:checked]:text-primary-foreground"
+                    className={cn(
+                      "flex cursor-pointer items-center space-x-2 rounded-xl border p-4 transition-all hover:border-emerald-200 hover:bg-white",
+                      field.value === option.value 
+                        ? "border-emerald-500 bg-emerald-50 ring-2 ring-emerald-500 ring-offset-2" 
+                        : "border-slate-100 bg-white"
+                    )}
                   >
                     <RadioGroupItem
                       value={option.value}
                       id={option.value}
-                      className="border-muted-foreground text-primary"
+                      className="text-emerald-500"
                     />
-                    <span>{t(`register.${option.labelKey}`)}</span>
+                    <span className={cn(
+                      "font-medium",
+                      field.value === option.value ? "text-emerald-700" : "text-slate-600"
+                    )}>
+                      {t(`register.${option.labelKey}`)}
+                    </span>
                   </Label>
                 ))}
               </RadioGroup>
@@ -446,59 +503,76 @@ export function RegistrationForm() {
 
         {/* Business Fields Section - Only shown for Retailer and Premium */}
         {showBusinessFields && (
-          <div className="space-y-4 border-t pt-4">
-            <h3 className="text-lg font-medium">{t('register.fields.businessName')}</h3>
-
-            <div className="space-y-2">
-              <Label htmlFor="businessName">{t('register.fields.businessName')} *</Label>
-              <Input id="businessName" {...register('businessName')} />
-              {errors.businessName && (
-                <p className="text-sm text-destructive">
-                  {t(errors.businessName.message as string)}
-                </p>
-              )}
+          <div className="space-y-6 p-5 rounded-xl bg-slate-50/50 border border-slate-100 shadow-sm transition-all hover:bg-slate-100/50 pt-4">
+            <div className="flex items-center gap-3 mb-2 border-b border-slate-200 pb-3">
+              <div className="p-2 rounded-lg bg-orange-100 text-orange-600">
+                <Briefcase className="h-5 w-5" />
+              </div>
+              <h3 className="text-lg font-bold text-slate-800">{t('register.fields.businessInfo')}</h3>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="category">{t('register.fields.category')} *</Label>
-              <Input id="category" {...register('category')} placeholder="Hauptkategorie / Unterkategorie" />
-              {errors.category && (
-                <p className="text-sm text-destructive">
-                  {t(errors.category.message as string)}
-                </p>
-              )}
+              <Label htmlFor="businessName" className="flex items-center gap-2">{t('register.fields.businessName')} *</Label>
+              <Input 
+                id="businessName" 
+                {...register('businessName')} 
+                className="bg-white transition-all focus:ring-2 focus:ring-orange-400 focus:border-transparent"
+              />
+              {errors.businessName && <p className="text-sm text-destructive">{t(errors.businessName.message as string)}</p>}
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="description">{t('register.fields.description')} *</Label>
-              <Textarea id="description" {...register('description')} />
-              {errors.description && (
-                <p className="text-sm text-destructive">
-                  {t(errors.description.message as string)}
-                </p>
-              )}
+              <Label htmlFor="category" className="flex items-center gap-2">{t('register.fields.category')} *</Label>
+              <Input 
+                id="category" 
+                {...register('category')} 
+                placeholder={t('register.fields.categoryPlaceholder')} 
+                className="bg-white transition-all focus:ring-2 focus:ring-orange-400 focus:border-transparent"
+              />
+              {errors.category && <p className="text-sm text-destructive">{t(errors.category.message as string)}</p>}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="description" className="flex items-center gap-2">{t('register.fields.description')} *</Label>
+              <Textarea 
+                id="description" 
+                {...register('description')} 
+                className="bg-white transition-all focus:ring-2 focus:ring-orange-400 focus:border-transparent min-h-[100px]"
+              />
+              {errors.description && <p className="text-sm text-destructive">{t(errors.description.message as string)}</p>}
             </div>
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="location">{t('register.fields.location')} *</Label>
-                <Input id="location" {...register('location')} />
-                {errors.location && (
-                  <p className="text-sm text-destructive">
-                    {t(errors.location.message as string)}
-                  </p>
-                )}
+                <Label htmlFor="location" className="flex items-center gap-2">
+                  <MapPin className="h-3.5 w-3.5 text-slate-400" />
+                  {t('register.fields.location')} *
+                </Label>
+                <Input 
+                  id="location" 
+                  {...register('location')} 
+                  className="bg-white transition-all focus:ring-2 focus:ring-orange-400 focus:border-transparent"
+                />
+                {errors.location && <p className="text-sm text-destructive">{t(errors.location.message as string)}</p>}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="address">{t('register.fields.address')}</Label>
+                <Label htmlFor="address" className="flex items-center gap-2">
+                  <MapPin className="h-3.5 w-3.5 text-slate-400" />
+                  {t('register.fields.address')}
+                </Label>
                 <div className="flex items-center gap-2">
-                  <Input id="address" {...register('address')} />
+                  <Input 
+                    id="address" 
+                    {...register('address')} 
+                    className="bg-white transition-all focus:ring-2 focus:ring-orange-400 focus:border-transparent"
+                  />
                   <Button
                     type="button"
                     variant="outline"
                     size="icon"
                     onClick={triggerGeocode}
                     disabled={isGeocoding}
+                    className="shrink-0 hover:bg-orange-50 hover:text-orange-600 transition-colors"
                   >
                     {isGeocoding ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
@@ -511,7 +585,7 @@ export function RegistrationForm() {
             </div>
 
             {/* Map Section */}
-            <div className="h-[300px] w-full overflow-hidden rounded-lg border shadow-sm">
+            <div className="h-[300px] w-full overflow-hidden rounded-xl border border-slate-200 shadow-inner">
               <DiciloMap
                 key={coords ? coords.join(',') : 'default'}
                 center={coords ? (coords as [number, number]) : [53.5511, 9.9937]}
@@ -521,7 +595,7 @@ export function RegistrationForm() {
                       {
                         id: 'new-marker',
                         coords: coords as [number, number],
-                        name: getValues('businessName') || 'New Business',
+                        name: watch('businessName') || 'New Business',
                       },
                     ]
                     : []
@@ -532,89 +606,122 @@ export function RegistrationForm() {
                 t={t}
               />
             </div>
-            {errors.coords && (
-              <p className="text-sm text-destructive">
-                {t(errors.coords.message as string)}
-              </p>
-            )}
-
+            {errors.coords && <p className="text-sm text-destructive">{t(errors.coords.message as string)}</p>}
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="phone">{t('register.fields.phone')}</Label>
-                <Input id="phone" {...register('phone')} />
+                <Label htmlFor="phone" className="flex items-center gap-2">
+                  <Phone className="h-3.5 w-3.5 text-slate-400" />
+                  {t('register.fields.phone')}
+                </Label>
+                <Input 
+                  id="phone" 
+                  {...register('phone')} 
+                  className="bg-white transition-all focus:ring-2 focus:ring-orange-400 focus:border-transparent"
+                />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="website">{t('register.fields.website')}</Label>
-                <Input id="website" {...register('website')} />
-                {errors.website && (
-                  <p className="text-sm text-destructive">
-                    {t(errors.website.message as string)}
-                  </p>
-                )}
+                <Label htmlFor="website" className="flex items-center gap-2">
+                  <Globe className="h-3.5 w-3.5 text-slate-400" />
+                  {t('register.fields.website')}
+                </Label>
+                <Input 
+                  id="website" 
+                  {...register('website')} 
+                  className="bg-white transition-all focus:ring-2 focus:ring-orange-400 focus:border-transparent"
+                />
+                {errors.website && <p className="text-sm text-destructive">{t(errors.website.message as string)}</p>}
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="imageUrl">{t('register.fields.logoUrl')}</Label>
-              <Input id="imageUrl" {...register('imageUrl')} placeholder={t('register.fields.logoUrlPlaceholder')} />
-              {errors.imageUrl && (
-                <p className="text-sm text-destructive">
-                  {t(errors.imageUrl.message as string)}
-                </p>
-              )}
+              <Label htmlFor="imageUrl" className="flex items-center gap-2">
+                <ImageIcon className="h-3.5 w-3.5 text-slate-400" />
+                {t('register.fields.logoUrl')}
+              </Label>
+              <Input 
+                id="imageUrl" 
+                {...register('imageUrl')} 
+                placeholder={t('register.fields.logoUrlPlaceholder')} 
+                className="bg-white transition-all focus:ring-2 focus:ring-orange-400 focus:border-transparent"
+              />
+              {errors.imageUrl && <p className="text-sm text-destructive">{t(errors.imageUrl.message as string)}</p>}
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="currentOfferUrl">{t('register.fields.currentOfferUrl')}</Label>
-              <Input id="currentOfferUrl" {...register('currentOfferUrl')} />
-              {errors.currentOfferUrl && (
-                <p className="text-sm text-destructive">
-                  {t(errors.currentOfferUrl.message as string)}
-                </p>
-              )}
+            <div className="space-y-2 border-t border-slate-100 pt-3">
+              <Label htmlFor="currentOfferUrl" className="flex items-center gap-2">
+                <Star className="h-3.5 w-3.5 text-slate-400" />
+                {t('register.fields.currentOfferUrl')}
+              </Label>
+              <Input 
+                id="currentOfferUrl" 
+                {...register('currentOfferUrl')} 
+                className="bg-white transition-all focus:ring-2 focus:ring-orange-400 focus:border-transparent"
+              />
+              {errors.currentOfferUrl && <p className="text-sm text-destructive">{t(errors.currentOfferUrl.message as string)}</p>}
             </div>
           </div>
         )}
 
         {/* Landing Page Fields Section - Only shown for Premium */}
         {showPremiumFields && (
-          <div className="space-y-4 border-t pt-4">
-            <h3 className="text-lg font-medium">{t('register.fields.landingPageSection')}</h3>
-
-            <div className="space-y-2">
-              <Label htmlFor="welcomeText">{t('register.fields.welcomeText')}</Label>
-              <Input id="welcomeText" {...register('welcomeText')} />
+          <div className="space-y-6 p-5 rounded-xl bg-slate-50/50 border border-slate-100 shadow-sm transition-all hover:bg-slate-100/50 pt-4">
+            <div className="flex items-center gap-3 mb-2 border-b border-slate-200 pb-3">
+              <div className="p-2 rounded-lg bg-indigo-100 text-indigo-600">
+                <Instagram className="h-5 w-5" />
+              </div>
+              <h3 className="text-lg font-bold text-slate-800">{t('register.fields.landingPageSection')}</h3>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="headerImageUrl">{t('register.fields.headerImageUrl')}</Label>
-              <Input id="headerImageUrl" {...register('headerImageUrl')} />
-              {errors.headerImageUrl && (
-                <p className="text-sm text-destructive">
-                  {t(errors.headerImageUrl.message as string)}
-                </p>
-              )}
+              <Label htmlFor="welcomeText" className="flex items-center gap-2">
+                <Type className="h-3.5 w-3.5 text-slate-400" />
+                {t('register.fields.welcomeText')}
+              </Label>
+              <Input 
+                id="welcomeText" 
+                {...register('welcomeText')} 
+                className="bg-white transition-all focus:ring-2 focus:ring-indigo-400 focus:border-transparent"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="headerImageUrl" className="flex items-center gap-2">
+                <ImageIcon className="h-3.5 w-3.5 text-slate-400" />
+                {t('register.fields.headerImageUrl')}
+              </Label>
+              <Input 
+                id="headerImageUrl" 
+                {...register('headerImageUrl')} 
+                className="bg-white transition-all focus:ring-2 focus:ring-indigo-400 focus:border-transparent"
+              />
+              {errors.headerImageUrl && <p className="text-sm text-destructive">{t(errors.headerImageUrl.message as string)}</p>}
             </div>
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="instagramUrl">{t('register.fields.instagramUrl')}</Label>
-                <Input id="instagramUrl" {...register('instagramUrl')} />
-                {errors.instagramUrl && (
-                  <p className="text-sm text-destructive">
-                    {t(errors.instagramUrl.message as string)}
-                  </p>
-                )}
+                <Label htmlFor="instagramUrl" className="flex items-center gap-2">
+                  <Instagram className="h-3.5 w-3.5 text-slate-400" />
+                  {t('register.fields.instagramUrl')}
+                </Label>
+                <Input 
+                  id="instagramUrl" 
+                  {...register('instagramUrl')} 
+                  className="bg-white transition-all focus:ring-2 focus:ring-indigo-400 focus:border-transparent"
+                />
+                {errors.instagramUrl && <p className="text-sm text-destructive">{t(errors.instagramUrl.message as string)}</p>}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="facebookUrl">{t('register.fields.facebookUrl')}</Label>
-                <Input id="facebookUrl" {...register('facebookUrl')} />
-                {errors.facebookUrl && (
-                  <p className="text-sm text-destructive">
-                    {t(errors.facebookUrl.message as string)}
-                  </p>
-                )}
+                <Label htmlFor="facebookUrl" className="flex items-center gap-2">
+                  <Facebook className="h-3.5 w-3.5 text-slate-400" />
+                  {t('register.fields.facebookUrl')}
+                </Label>
+                <Input 
+                  id="facebookUrl" 
+                  {...register('facebookUrl')} 
+                  className="bg-white transition-all focus:ring-2 focus:ring-indigo-400 focus:border-transparent"
+                />
+                {errors.facebookUrl && <p className="text-sm text-destructive">{t(errors.facebookUrl.message as string)}</p>}
               </div>
             </div>
           </div>
@@ -622,9 +729,13 @@ export function RegistrationForm() {
 
       </CardContent>
       <CardFooter>
-        <Button type="submit" className="w-full" disabled={isSubmitting}>
+        <Button 
+          type="submit" 
+          className="w-full h-12 text-lg font-bold bg-gradient-to-r from-emerald-600 to-blue-600 hover:from-emerald-700 hover:to-blue-700 transition-all hover:scale-[1.01] active:scale-[0.99] shadow-lg" 
+          disabled={isSubmitting}
+        >
           {isSubmitting ? (
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            <Loader2 className="mr-2 h-5 w-5 animate-spin" />
           ) : (
             t('register.form.registerButton')
           )}

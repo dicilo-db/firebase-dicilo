@@ -7,6 +7,8 @@ import { sendBusinessRecommendationEmail } from '@/lib/email';
 import sharp from 'sharp';
 import { randomUUID } from 'crypto';
 
+import { checkBusinessDuplicate } from './business-utils';
+
 export async function submitRecommendation(formData: FormData) {
     try {
         const db = getAdminDb();
@@ -15,18 +17,30 @@ export async function submitRecommendation(formData: FormData) {
 
         // Extract textual data
         const companyName = formData.get('companyName') as string;
+        const neighborhood = formData.get('neighborhood') as string;
+        const city = formData.get('city') as string;
+        const phone = formData.get('phone') as string;
+
+        // Check for duplicates (Company Name + Address + Phone)
+        // We use neighborhood or city as the address factor for recommendations
+        const address = neighborhood || city;
+        const dupCheck = await checkBusinessDuplicate(companyName, address, phone);
+        if (dupCheck.isDuplicate) {
+            return { 
+                success: false, 
+                error: "Esta empresa ya está registrada o recomendada con el mismo nombre, ubicación y teléfono." 
+            };
+        }
+
         const contactName = formData.get('contactName') as string;
         const email = formData.get('email') as string;
-        const phone = formData.get('phone') as string;
         const country = formData.get('country') as string;
         const countryCode = formData.get('countryCode') as string;
-        const city = formData.get('city') as string;
         const website = formData.get('website') as string;
         const category = formData.get('category') as string;
         const comments = formData.get('comments') as string;
         const diciloCode = formData.get('diciloCode') as string;
         const source = formData.get('source') as string;
-        const neighborhood = formData.get('neighborhood') as string;
         const userId = formData.get('userId') as string;
         const campaignId = formData.get('campaignId') as string; // New field
         const lang = (formData.get('lang') as any) || 'es'; // Language for the email
