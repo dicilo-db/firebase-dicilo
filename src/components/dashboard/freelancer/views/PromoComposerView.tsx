@@ -445,7 +445,7 @@ export function PromoComposerView() {
 
     if (!activeCampaign) {
         return (
-            <div className="p-6 md:p-8 space-y-8 bg-slate-50/50 dark:bg-black/10 h-full overflow-y-auto custom-scrollbar">
+            <div className="p-6 md:p-8 space-y-8 bg-slate-50/50 dark:bg-black/10 min-h-full">
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                     <div>
                         <h1 className="text-3xl font-bold tracking-tight">{t('freelancer.composer.selectCampaign.title', 'Selecciona una Campaña')}</h1>
@@ -527,7 +527,7 @@ export function PromoComposerView() {
     }
 
     return (
-        <div className="mx-auto max-w-5xl px-4 py-8 pb-10 animate-in fade-in slide-in-from-right-4 h-full">
+        <div className="mx-auto max-w-5xl px-4 py-8 pb-32 animate-in fade-in slide-in-from-right-4 min-h-full">
             {/* Header / Navigation */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                 <div className="flex items-center gap-4">

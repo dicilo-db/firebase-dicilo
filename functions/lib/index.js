@@ -812,43 +812,42 @@ exports.cleanupDuplicates = (0, https_1.onRequest)({ timeoutSeconds: 540, memory
     try {
         const snapshot = yield businessesCollection.get();
         const businessesByName = {};
-        // Group by name
+        // Group by normalized name
         snapshot.docs.forEach((doc) => {
             const data = doc.data();
-            const name = data.name;
-            if (name) {
-                if (!businessesByName[name]) {
-                    businessesByName[name] = [];
+            const rawName = data.name || data.businessName || '';
+            const normalizedName = rawName.trim().toLowerCase().replace(/\s+/g, ' ');
+            if (normalizedName) {
+                if (!businessesByName[normalizedName]) {
+                    businessesByName[normalizedName] = [];
                 }
-                businessesByName[name].push(doc);
+                businessesByName[normalizedName].push(doc);
             }
         });
         let deletedCount = 0;
         const batch = db.batch();
         let batchCount = 0;
-        for (const name in businessesByName) {
-            const docs = businessesByName[name];
+        for (const normalizedName in businessesByName) {
+            const docs = businessesByName[normalizedName];
             if (docs.length > 1) {
-                // Sort: prefer docs with coords, then by ID length (slugs are usually cleaner/shorter than auto-ids? No, auto-ids are 20 chars. Slugs vary.
-                // Better heuristic: Prefer the one where ID == slugify(name).
-                // Or simply: prefer the one with coords.
-                // Let's sort so the "best" one is first.
+                // Sort so the "best" one is first.
                 docs.sort((a, b) => {
-                    const dataA = a.data();
-                    const dataB = b.data();
+                    var _a, _b;
+                    const dataA = a.data() || {};
+                    const dataB = b.data() || {};
                     // Scoring function to determine richness of data
                     const getScore = (data) => {
                         let score = 0;
                         // High priority: Image
-                        if (data.imageUrl && data.imageUrl.length > 5 && !data.imageUrl.includes('placehold'))
+                        if (data.imageUrl && String(data.imageUrl).length > 5 && !String(data.imageUrl).includes('placehold'))
                             score += 50;
                         // High priority: Description
-                        if (data.description && data.description.length > 10)
+                        if (data.description && String(data.description).length > 10)
                             score += 30;
                         // Medium priority: Contact info
-                        if (data.phone && data.phone.length > 3)
+                        if (data.phone && String(data.phone).length > 3)
                             score += 10;
-                        if (data.website && data.website.length > 3)
+                        if (data.website && String(data.website).length > 3)
                             score += 10;
                         // Base priority: Location/Coords
                         if (data.coords)
@@ -863,15 +862,15 @@ exports.cleanupDuplicates = (0, https_1.onRequest)({ timeoutSeconds: 540, memory
                     if (scoreB > scoreA)
                         return 1;
                     // Tie-breakers if scores are equal:
-                    // Prefer ID that matches slugify(name) (Cleaner IDs)
-                    const slug = slugify(name);
-                    if (a.id === slug && b.id !== slug)
+                    // Prefer ID that matches slugify(name)
+                    const nameA = dataA.name || dataA.businessName || '';
+                    const slugA = slugify(nameA);
+                    if (a.id === slugA && b.id !== slugA)
                         return -1;
-                    if (b.id === slug && a.id !== slug)
+                    if (b.id === slugA && a.id !== slugA)
                         return 1;
-                    // Prefer newer (Latest update/creation might be more relevant)
-                    // @ts-ignore
-                    return b.createTime.toMillis() - a.createTime.toMillis();
+                    // Prefer newer
+                    return (((_a = b.createTime) === null || _a === void 0 ? void 0 : _a.toMillis()) || 0) - (((_b = a.createTime) === null || _b === void 0 ? void 0 : _b.toMillis()) || 0);
                 });
                 // Keep the first one, delete the rest
                 const toDelete = docs.slice(1);

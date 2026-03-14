@@ -102,7 +102,7 @@ export function DashboardLayout({ userData, currentView, onViewChange, children 
                 )}>
                     <div className={cn(
                         "mx-auto",
-                        (currentView === 'freelancer' || currentView === 'map') ? "h-full !max-w-none !w-full" : "max-w-5xl"
+                        (currentView === 'freelancer' || currentView === 'map') ? "min-h-full !max-w-none !w-full" : "max-w-5xl"
                     )}>
                         {children}
                     </div>
