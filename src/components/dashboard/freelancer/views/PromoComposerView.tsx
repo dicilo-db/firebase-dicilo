@@ -135,6 +135,7 @@ export function PromoComposerView() {
     const [connections, setConnections] = useState<SocialConnection[]>([]);
     const [previewNetwork, setPreviewNetwork] = useState('instagram');
     const [scheduledDate, setScheduledDate] = useState<Date | undefined>(undefined);
+    const [rewardAmount, setRewardAmount] = useState<number>(activeCampaign?.reward_per_action ? Math.round(activeCampaign.reward_per_action * 100) : 10);
 
     const isGrayMode = activeCampaign ? (activeCampaign.status === 'gray_mode' || (activeCampaign.budget_remaining !== undefined && activeCampaign.budget_remaining <= 0)) : false;
 
@@ -547,7 +548,7 @@ export function PromoComposerView() {
                     </div>
                 </div>
                 
-                <div className="flex gap-3">
+                <div className="flex flex-col md:flex-row items-end md:items-center gap-3">
                     <Button
                         variant="ghost"
                         size="sm"
@@ -556,14 +557,25 @@ export function PromoComposerView() {
                             params.delete('campaignId');
                             router.push(`/dashboard/freelancer?${params.toString()}`);
                         }}
-                        className="h-10 text-xs px-4 rounded-xl hover:bg-slate-100 border bg-white"
+                        className="h-10 text-xs px-4 rounded-xl hover:bg-slate-100 border bg-white order-2 md:order-1"
                     >
                         <Repeat className="h-4 w-4 mr-2" />
                         {t('freelancer.composer.change_campaign', 'Cambiar Campaña')}
                     </Button>
-                    <div className="hidden md:flex items-center gap-2 bg-green-50 px-4 py-2 rounded-xl border border-green-100">
-                        <span className="text-sm font-bold text-green-700">€{currentTier.rate.toFixed(2)}</span>
-                        <span className="text-[10px] text-green-600 font-bold uppercase tracking-tight">Tarifa Base</span>
+                    
+                    <div className="flex items-center gap-2 bg-purple-50 px-4 py-2 rounded-xl border border-purple-100 order-1 md:order-2">
+                        <span className="text-sm font-bold text-purple-700 flex items-center">
+                            +
+                            <Input 
+                                type="number" 
+                                value={rewardAmount} 
+                                onChange={(e) => setRewardAmount(Number(e.target.value) || 0)}
+                                className="w-16 h-6 px-1 py-0 mx-1 text-center bg-white border-purple-200 text-purple-700 font-bold hide-arrows"
+                                min="0"
+                            />
+                            DP
+                        </span>
+                        <span className="text-xs text-purple-600/80 font-medium whitespace-nowrap">por envío</span>
                     </div>
                 </div>
             </div>

@@ -46,6 +46,7 @@ import {
 import { cn } from "@/lib/utils";
 import React, { useState, useEffect, useMemo } from 'react';
 import { submitRecommendation } from '@/app/actions/recommendations';
+import { getPrivateProfile } from '@/app/actions/user-profile';
 import { useTranslation } from 'react-i18next';
 import { Label } from './ui/label';
 import { Country, City } from 'country-state-city';
@@ -138,6 +139,7 @@ export function RecommendationFormContent({ initialBusinessName, onSuccess, onCa
   const { toast } = useToast();
   const { user } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [userProfile, setUserProfile] = useState<any>(null);
   const [media, setMedia] = useState<MediaFile[]>([]);
   const [countrySearch, setCountrySearch] = useState("");
   const [isCountryOpen, setIsCountryOpen] = useState(false);
@@ -319,6 +321,33 @@ export function RecommendationFormContent({ initialBusinessName, onSuccess, onCa
   }, [selectedCountry]);
 
   useEffect(() => {
+    async function loadUserProfile() {
+      if (user?.uid) {
+        const result = await getPrivateProfile(user.uid);
+        if (result.success && result.profile) {
+          const profile = result.profile;
+          setUserProfile(profile);
+          
+          // Pre-fill form if not already filled or if initialBusinessName
+          if (profile.firstName || profile.lastName) {
+            form.setValue('contactName', `${profile.firstName || ''} ${profile.lastName || ''}`.trim());
+          }
+          if (profile.email) {
+            form.setValue('email', profile.email);
+          }
+          if (profile.phone) {
+            form.setValue('phone', profile.phone);
+          }
+          if (profile.uniqueCode) {
+            form.setValue('diciloCode', profile.uniqueCode);
+          }
+        }
+      }
+    }
+    loadUserProfile();
+  }, [user?.uid, form]);
+
+  useEffect(() => {
     form.setValue('city', '');
   }, [selectedCountry, form]);
 
@@ -396,9 +425,16 @@ export function RecommendationFormContent({ initialBusinessName, onSuccess, onCa
       </div>
 
       <div className="space-y-4 p-4 rounded-xl bg-slate-50/50 border border-slate-100 shadow-sm">
-        <div className="flex items-center gap-2 mb-2">
-          <User className="h-5 w-5 text-blue-500" />
-          <h3 className="font-semibold text-slate-800">{t('form.yourContact', 'Tu Contacto')}</h3>
+        <div className="flex items-center justify-between gap-2 mb-2">
+          <div className="flex items-center gap-2">
+            <User className="h-5 w-5 text-blue-500" />
+            <h3 className="font-semibold text-slate-800">{t('form.yourContact', 'Tu Contacto')}</h3>
+          </div>
+          {userProfile?.uniqueCode && (
+             <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 font-mono text-[10px]">
+                ID: {userProfile.uniqueCode}
+             </Badge>
+          )}
         </div>
 
         {/* Contact Name */}
