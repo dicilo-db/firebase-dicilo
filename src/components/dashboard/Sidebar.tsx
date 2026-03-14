@@ -165,7 +165,7 @@ export function Sidebar({ userData, onViewChange, currentView }: SidebarProps) {
     const [showInfo, setShowInfo] = React.useState(false);
 
     return (
-        <div className="flex h-full w-64 flex-col border-r bg-white">
+        <div className="flex h-screen sticky top-0 w-64 flex-col border-r bg-white">
             {/* Logo Isotype */}
 
 

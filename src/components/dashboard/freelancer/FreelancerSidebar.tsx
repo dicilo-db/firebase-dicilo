@@ -131,7 +131,7 @@ export function FreelancerSidebar({ className, onViewChange, onMobileClose }: Fr
     };
 
     return (
-        <div className={cn("pb-12 w-64 flex-shrink-0 bg-card border-r h-full overflow-y-auto flex flex-col", className)}>
+        <div className={cn("pb-12 w-64 flex-shrink-0 bg-card border-r h-screen sticky top-0 overflow-y-auto flex flex-col", className)}>
 
 
 

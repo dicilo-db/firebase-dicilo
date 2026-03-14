@@ -26,7 +26,7 @@ export function DashboardLayout({ userData, currentView, onViewChange, children 
     const isAdmin = userData?.role === 'admin' || userData?.role === 'superadmin' || user?.email?.includes('dicilo.net'); // Basic check
 
     return (
-        <div className="flex h-full bg-gray-50">
+        <div className="flex min-h-screen bg-gray-50">
             {/* Desktop Sidebar */}
             <div className="hidden border-r bg-white md:block">
                 {currentView === 'freelancer' ? (
@@ -44,7 +44,7 @@ export function DashboardLayout({ userData, currentView, onViewChange, children 
             </div>
 
             {/* Main Content Area */}
-            <div className="flex flex-1 flex-col overflow-hidden">
+            <div className="flex flex-1 flex-col">
 
                 {/* Header (Visible on Desktop & Mobile) */}
                 <header className="flex h-16 items-center justify-between border-b bg-white px-4 md:hidden">
@@ -97,12 +97,12 @@ export function DashboardLayout({ userData, currentView, onViewChange, children 
                 </header>
 
                 <main className={cn(
-                    "flex-1 overflow-auto",
+                    "flex-1",
                     (currentView === 'freelancer' || currentView === 'map') ? "!p-0" : "p-4 md:p-8"
                 )}>
                     <div className={cn(
                         "mx-auto",
-                        (currentView === 'freelancer' || currentView === 'map') ? "min-h-full !max-w-none !w-full" : "max-w-5xl"
+                        (currentView === 'freelancer' || currentView === 'map') ? "!max-w-none !w-full" : "max-w-5xl"
                     )}>
                         {children}
                     </div>
