@@ -288,6 +288,12 @@ export function RecommendationFormContent({ initialBusinessName, onSuccess, onCa
       });
 
       formData.append('rewardAmount', rewardAmount.toString());
+      formData.append('lang', i18n.language.split('-')[0] || 'es');
+      
+      const freelancerName = userProfile ? `${userProfile.firstName || ''} ${userProfile.lastName || ''}`.trim() : '';
+      if (freelancerName) {
+        formData.append('referrerName', freelancerName);
+      }
 
       const result = await submitRecommendation(formData);
 

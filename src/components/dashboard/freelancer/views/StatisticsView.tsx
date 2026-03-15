@@ -9,6 +9,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Badge } from '@/components/ui/badge';
 import {
     AreaChart,
     Area,
@@ -23,13 +24,15 @@ import {
     Facebook, Instagram, Twitter, Linkedin,
     Image as ImageIcon, Youtube,
     MessageCircle, Send, Pin, Twitch,
-    BarChart3, Users, Building2
+    BarChart3, Users, Building2, Info, ExternalLink, CheckCircle2, Clock
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useToast } from '@/hooks/use-toast';
 
 export function StatisticsView() {
     const { t } = useTranslation('common');
     const { user } = useAuth();
+    const { toast } = useToast();
     const [stats, setStats] = useState<FreelancerStats | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -52,6 +55,24 @@ export function StatisticsView() {
     const totalViews = totalPosts * 154; // Mock estimate based on screenshot numbers
     const totalReach = Math.floor(totalViews * 0.85);
     const totalInteractions = Math.floor(totalViews * 0.05);
+
+    const scrollToProspects = () => {
+        const element = document.getElementById('prospects-table');
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
+
+    const handleCardClick = (label: string) => {
+        if (label === t('adsManager.cards.programs.prospects.managerTitle', 'Empresas Registradas') || label === 'Mis Prospectos Registrados') {
+            scrollToProspects();
+        } else {
+            toast({
+                title: label,
+                description: t('freelancer_views.statistics.card_click_msg', 'Visualización detallada próximamente'),
+            });
+        }
+    };
 
     const channels = [
         { id: 'whatsapp', label: 'WhatsApp', icon: MessageCircle, color: 'text-green-500' },
@@ -78,7 +99,7 @@ export function StatisticsView() {
     }
 
     return (
-        <div className="p-6 md:p-8 space-y-8 bg-slate-50/50 dark:bg-black/10 min-h-full">
+        <div className="p-4 md:p-8 space-y-8 bg-slate-50/50 dark:bg-black/10 min-h-full w-full max-w-full overflow-x-hidden">
 
             {/* Header */}
             <div>
@@ -91,18 +112,107 @@ export function StatisticsView() {
             </div>
 
             {/* KPI Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <KpiCard icon={ImageIcon} label={t('freelancer_views.statistics.published_posts')} value={totalPosts} />
-                <KpiCard icon={Calendar} label={t('freelancer_views.statistics.planned')} value="-" />
-                <KpiCard icon={Eye} label={t('freelancer_views.statistics.contacts')} value={totalViews} />
-                <KpiCard icon={Share2} label={t('freelancer_views.statistics.reach')} value={totalReach} />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
+                <KpiCard icon={ImageIcon} label={t('freelancer_views.statistics.published_posts')} value={totalPosts} onClick={() => handleCardClick(t('freelancer_views.statistics.published_posts'))} />
+                <KpiCard icon={Calendar} label={t('freelancer_views.statistics.planned')} value="-" onClick={() => handleCardClick(t('freelancer_views.statistics.planned'))} />
+                <KpiCard icon={Eye} label={t('freelancer_views.statistics.contacts')} value={totalViews} onClick={() => handleCardClick(t('freelancer_views.statistics.contacts'))} />
+                <KpiCard icon={Share2} label={t('freelancer_views.statistics.reach')} value={totalReach} onClick={() => handleCardClick(t('freelancer_views.statistics.reach'))} />
 
-                <KpiCard icon={Building2} label={t('adsManager.cards.programs.prospects.managerTitle', 'Empresas Registradas')} value={stats?.totalBusinessesRegistered || 0} />
-                <KpiCard icon={ThumbsUp} label={t('freelancer_menu.connections')} value={totalInteractions} />
-                <KpiCard icon={Facebook} label="Facebook" value="121" />
-                <KpiCard icon={Instagram} label="Instagram" value="79" />
-                <KpiCard icon={Users} label={t('freelancer_views.statistics.followers')} value="200" />
+                <KpiCard icon={Building2} label={t('adsManager.cards.programs.prospects.managerTitle', 'Empresas Registradas')} value={stats?.totalBusinessesRegistered || 0} onClick={() => handleCardClick(t('adsManager.cards.programs.prospects.managerTitle', 'Empresas Registradas'))} />
+                <KpiCard icon={ThumbsUp} label={t('freelancer_menu.connections')} value={totalInteractions} onClick={() => handleCardClick(t('freelancer_menu.connections'))} />
+                <KpiCard icon={Facebook} label="Facebook" value="121" onClick={() => handleCardClick("Facebook")} />
+                <KpiCard icon={Instagram} label="Instagram" value="79" onClick={() => handleCardClick("Instagram")} />
+                <KpiCard icon={Users} label={t('freelancer_views.statistics.followers')} value="200" onClick={() => handleCardClick(t('freelancer_views.statistics.followers'))} />
             </div>
+
+            {/* Recent Prospects List */}
+            {stats?.recentProspects && stats.recentProspects.length > 0 && (
+                <Card id="prospects-table" className="bg-white dark:bg-card shadow-sm border overflow-hidden">
+                    <CardHeader className="border-b bg-slate-50/50">
+                        <div className="flex items-center gap-2">
+                            <Building2 className="h-5 w-5 text-purple-500" />
+                            <CardTitle className="text-lg">
+                                {t('adsManager.cards.programs.prospects.managerTitle', 'Mis Prospectos Registrados')}
+                            </CardTitle>
+                        </div>
+                    </CardHeader>
+                    <CardContent className="p-0">
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-sm">
+                                <thead className="bg-slate-50 text-slate-500 font-medium">
+                                    <tr>
+                                        <th className="px-4 py-3 text-left">{t('form.companyNamePlaceholder', 'Empresa')}</th>
+                                        <th className="px-4 py-3 text-left">{t('form.contactFirstNamePlaceholder', 'Contacto')}</th>
+                                        <th className="px-4 py-3 text-left">{t('form.email', 'Email')}</th>
+                                        <th className="px-4 py-3 text-left">{t('form.category', 'Categoría')}</th>
+                                        <th className="px-4 py-3 text-left">{t('recommendations.table.location', 'Ubicación')}</th>
+                                        <th className="px-4 py-3 text-left">{t('recommendations.table.details', 'Detalles')}</th>
+                                        <th className="px-4 py-3 text-left">{t('recommendations.table.status', 'Estado')}</th>
+                                        <th className="px-4 py-3 text-left">{t('recommendations.table.paymentStatus', 'Estado del Pago')}</th>
+                                        <th className="px-4 py-3 text-right">{t('recommendations.table.actions', 'Acciones')}</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y">
+                                    {stats.recentProspects.map((prospect) => (
+                                        <tr key={prospect.id} className="hover:bg-slate-50/50 transition-colors">
+                                            <td className="px-4 py-3 font-medium text-slate-900">{prospect.companyName}</td>
+                                            <td className="px-4 py-3">
+                                                <div className="flex flex-col">
+                                                    <span>{prospect.contactName}</span>
+                                                    <span className="text-xs text-muted-foreground">{prospect.phone}</span>
+                                                </div>
+                                            </td>
+                                            <td className="px-4 py-3 text-slate-600">{prospect.companyEmail || prospect.email}</td>
+                                            <td className="px-4 py-3 text-slate-600 capitalize">{prospect.category}</td>
+                                            <td className="px-4 py-3 text-slate-600">{prospect.city}, {prospect.country}</td>
+                                            <td className="px-4 py-3 max-w-[150px]">
+                                                <div className="flex flex-col gap-1">
+                                                    <span className="truncate" title={prospect.comments}>{prospect.comments}</span>
+                                                    {prospect.website && (
+                                                        <a href={prospect.website} target="_blank" className="text-blue-500 text-[10px] flex items-center gap-1 hover:underline">
+                                                            <ExternalLink className="h-2 w-2" /> Web
+                                                        </a>
+                                                    )}
+                                                </div>
+                                            </td>
+                                            <td className="px-4 py-3">
+                                                <Badge className={cn(
+                                                    "capitalize text-[10px] gap-1",
+                                                    prospect.converted ? "bg-green-100 text-green-700 hover:bg-green-100" : "bg-slate-100 text-slate-600 hover:bg-slate-100"
+                                                )}>
+                                                    {prospect.converted ? <CheckCircle2 className="h-3 w-3" /> : <Clock className="h-3 w-3" />}
+                                                    {prospect.converted ? t('recommendations.status.converted', 'Convertido') : t('recommendations.status.pending', 'Pendiente')}
+                                                </Badge>
+                                            </td>
+                                            <td className="px-4 py-3">
+                                                <div className="flex flex-col gap-1">
+                                                    <span className="font-semibold">{prospect.rewardAmount} DP</span>
+                                                    <Badge variant="outline" className={cn(
+                                                        "text-[9px] py-0",
+                                                        prospect.pointsPaid ? "border-green-200 text-green-600 bg-green-50" : "border-yellow-200 text-yellow-600 bg-yellow-50"
+                                                    )}>
+                                                        {prospect.pointsPaid ? t('recommendations.status.paid', 'Pagado') : t('recommendations.status.pending', 'Pendiente')}
+                                                    </Badge>
+                                                </div>
+                                            </td>
+                                            <td className="px-4 py-3 text-right whitespace-nowrap">
+                                                <Button variant="ghost" size="sm" className="h-8 text-xs font-semibold text-blue-600" onClick={() => {
+                                                    toast({
+                                                        title: prospect.companyName,
+                                                        description: `${t('common.date', 'Fecha')}: ${new Date(prospect.date).toLocaleDateString()}`,
+                                                    });
+                                                }}>
+                                                    {t('recommendations.actions.view', 'Ver')}
+                                                </Button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </CardContent>
+                </Card>
+            )}
 
             {/* ACCORDION for Insights */}
             <div className="bg-white dark:bg-card rounded-xl shadow-sm border p-6">
@@ -205,16 +315,22 @@ export function StatisticsView() {
     );
 }
 
-function KpiCard({ icon: Icon, label, value }: { icon: any, label: string, value: string | number }) {
+function KpiCard({ icon: Icon, label, value, onClick }: { icon: any, label: string, value: string | number, onClick?: () => void }) {
     return (
-        <Card className="shadow-sm border-0 border-l-4 border-l-primary/20">
+        <Card 
+            className={cn(
+                "shadow-sm border-0 border-l-4 border-l-primary/20",
+                onClick && "cursor-pointer hover:bg-slate-50 transition-all active:scale-[0.98] active:shadow-inner"
+            )}
+            onClick={onClick}
+        >
             <CardContent className="p-6 flex items-center gap-4">
                 <div className="h-12 w-12 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
                     <Icon className="h-6 w-6 text-slate-700 dark:text-slate-300" />
                 </div>
-                <div>
-                    <div className="text-2xl font-bold">{value}</div>
-                    <div className="text-sm font-medium text-muted-foreground">{label}</div>
+                <div className="min-w-0 flex-1">
+                    <div className="text-xl md:text-2xl font-bold truncate">{value}</div>
+                    <div className="text-xs md:text-sm font-medium text-muted-foreground truncate" title={label}>{label}</div>
                 </div>
             </CardContent>
         </Card>

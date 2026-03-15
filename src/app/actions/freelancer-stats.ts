@@ -12,6 +12,26 @@ export interface FreelancerStats {
     totalBusinessesRegistered: number;
     recentTransactions: Transaction[];
     performanceByCampaign: { campaignName: string, earnings: number, posts: number }[];
+    recentProspects: Prospect[];
+}
+
+export interface Prospect {
+    id: string;
+    companyName: string;
+    contactName: string;
+    phone: string;
+    email: string;
+    companyEmail: string;
+    category: string;
+    city: string;
+    country: string;
+    comments: string;
+    website: string;
+    status: string;
+    pointsPaid: boolean;
+    rewardAmount: number;
+    converted: boolean;
+    date: string;
 }
 
 export interface Transaction {
@@ -97,8 +117,35 @@ export async function getFreelancerStats(userId: string): Promise<{ success: boo
         // 3. Fetch Registered Businesses (Recommendations/Prospects)
         const prospectsSnap = await db.collection('recommendations')
             .where('userId', '==', userId)
+            // .orderBy('createdAt', 'desc') // Removed to avoid index requirement
             .get();
+        
         const totalBusinessesRegistered = prospectsSnap.size;
+
+        const recentProspects: Prospect[] = prospectsSnap.docs
+            .map(doc => {
+                const data = doc.data();
+                return {
+                    id: doc.id,
+                    companyName: data.companyName || 'Unknown',
+                    contactName: data.contactName || 'Unknown',
+                    phone: data.phone || data.companyPhone || '',
+                    email: data.email || '',
+                    companyEmail: data.companyEmail || '',
+                    category: data.category || 'General',
+                    city: data.city || '',
+                    country: data.country || '',
+                    comments: data.comments || '',
+                    website: data.website || '',
+                    status: data.status || 'pending',
+                    pointsPaid: !!data.pointsPaid,
+                    rewardAmount: data.rewardAmount || 10,
+                    converted: !!data.converted,
+                    date: data.createdAt?.toDate().toISOString() || data.timestamp?.toDate().toISOString() || new Date().toISOString()
+                };
+            })
+            .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+            .slice(0, 10);
 
         return {
             success: true,
@@ -110,7 +157,8 @@ export async function getFreelancerStats(userId: string): Promise<{ success: boo
                 totalClicks, 
                 totalBusinessesRegistered,
                 recentTransactions,
-                performanceByCampaign: Array.from(campaignMap.values())
+                performanceByCampaign: Array.from(campaignMap.values()),
+                recentProspects
             }
         };
 

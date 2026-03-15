@@ -146,15 +146,23 @@ export async function submitRecommendation(formData: FormData) {
         }
 
         // BUSINESS NOTIFICATION EMAIL
-        const recipientEmail = companyEmail || email;
+        const recipientEmail = companyEmail;
         if (recipientEmail && companyName) {
+            console.log(`Attempting to send recommendation email to: ${recipientEmail} for company: ${companyName}`);
             const referrerName = (formData.get('referrerName') as string) || (contactName) || 'Un usuario de Dicilo';
-            await sendBusinessRecommendationEmail(
+            const emailResult = await sendBusinessRecommendationEmail(
                 recipientEmail,
                 companyName,
                 referrerName,
                 lang as 'es' | 'en' | 'de'
             );
+            if (emailResult.success) {
+                console.log(`Recommendation email successfully sent to ${recipientEmail}`);
+            } else {
+                console.error(`Failed to send recommendation email to ${recipientEmail}:`, emailResult.error);
+            }
+        } else {
+            console.log('Skipping recommendation email: No companyEmail provided.');
         }
 
         return { success: true };
