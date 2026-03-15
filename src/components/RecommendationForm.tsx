@@ -64,9 +64,12 @@ countries.registerLocale(deLocale);
 // Schema
 const formSchema = z.object({
   companyName: z.string().min(2, 'companyNameRequired'),
-  contactName: z.string().min(2, 'required'),
+  contactFirstName: z.string().min(1, 'required'),
+  contactLastName: z.string().min(1, 'required'),
   email: z.string().email('invalidEmail').optional().or(z.literal('')),
   phone: z.string().optional(),
+  companyEmail: z.string().email('invalidEmail').optional().or(z.literal('')),
+  companyPhone: z.string().optional(),
   country: z.string().min(1, 'required'),
   city: z.string().min(1, 'required'),
   website: z.string().url('invalid_url').optional().or(z.literal('')),
@@ -150,9 +153,12 @@ export function RecommendationFormContent({ initialBusinessName, onSuccess, onCa
     resolver: zodResolver(formSchema),
     defaultValues: {
       companyName: initialBusinessName || '',
-      contactName: '',
+      contactFirstName: '',
+      contactLastName: '',
       email: '',
       phone: '',
+      companyEmail: '',
+      companyPhone: '',
       country: '',
       city: '',
       website: '',
@@ -333,8 +339,11 @@ export function RecommendationFormContent({ initialBusinessName, onSuccess, onCa
           setUserProfile(profile);
           
           // Pre-fill form if not already filled or if initialBusinessName
-          if (profile.firstName || profile.lastName) {
-            form.setValue('contactName', `${profile.firstName || ''} ${profile.lastName || ''}`.trim());
+          if (profile.firstName) {
+            form.setValue('contactFirstName', profile.firstName);
+          }
+          if (profile.lastName) {
+            form.setValue('contactLastName', profile.lastName);
           }
           if (profile.email) {
             form.setValue('email', profile.email);
@@ -449,23 +458,44 @@ export function RecommendationFormContent({ initialBusinessName, onSuccess, onCa
           </div>
         </div>
 
-        {/* Contact Name */}
-        <div className="space-y-2">
-          <Label htmlFor="contactName" className="flex items-center gap-2">
-            {t('form.contactNamePlaceholder')}
-          </Label>
-          <Input
-            id="contactName"
-            {...form.register('contactName')}
-            className={cn(
-              "bg-white transition-all focus:ring-2 focus:ring-blue-400 focus:border-transparent",
-              form.formState.errors.contactName ? 'border-destructive' : ''
+        {/* Contact Name - Split into First and Last Name */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="contactFirstName" className="flex items-center gap-2">
+              {t('form.contactFirstNamePlaceholder')}
+            </Label>
+            <Input
+              id="contactFirstName"
+              {...form.register('contactFirstName')}
+              className={cn(
+                "bg-white transition-all focus:ring-2 focus:ring-blue-400 focus:border-transparent",
+                form.formState.errors.contactFirstName ? 'border-destructive' : ''
+              )}
+              disabled={isSubmitting}
+              placeholder={t('form.contactFirstNamePlaceholder')}
+            />
+            {form.formState.errors.contactFirstName && (
+              <p className="text-sm text-destructive">{t('form.errors.required')}</p>
             )}
-            disabled={isSubmitting}
-          />
-          {form.formState.errors.contactName && (
-            <p className="text-sm text-destructive">{t('form.errors.required')}</p>
-          )}
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="contactLastName" className="flex items-center gap-2">
+              {t('form.contactLastNamePlaceholder')}
+            </Label>
+            <Input
+              id="contactLastName"
+              {...form.register('contactLastName')}
+              className={cn(
+                "bg-white transition-all focus:ring-2 focus:ring-blue-400 focus:border-transparent",
+                form.formState.errors.contactLastName ? 'border-destructive' : ''
+              )}
+              disabled={isSubmitting}
+              placeholder={t('form.contactLastNamePlaceholder')}
+            />
+            {form.formState.errors.contactLastName && (
+              <p className="text-sm text-destructive">{t('form.errors.required')}</p>
+            )}
+          </div>
         </div>
 
         {/* Email & Phone Grid */}
@@ -647,34 +677,70 @@ export function RecommendationFormContent({ initialBusinessName, onSuccess, onCa
           {form.formState.errors.website && <p className="text-sm text-destructive">{t(`form.errors.invalid_url`)}</p>}
         </div>
 
-        {/* Category */}
+        {/* Category & Business Phone */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="category" className="flex items-center gap-2">
+              <Tag className="h-3.5 w-3.5 text-slate-400" />
+              {t('form.categoryLabel')}
+            </Label>
+            <Controller
+              control={form.control}
+              name="category"
+              render={({ field }) => (
+                <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isSubmitting}>
+                  <SelectTrigger className={cn(
+                    "bg-white transition-all hover:bg-slate-50",
+                    form.formState.errors.category ? 'border-destructive' : ''
+                  )}>
+                    <SelectValue placeholder={t('form.selectCategory')} />
+                  </SelectTrigger>
+                  <SelectContent className="z-[1001]">
+                    {CATEGORIES.map((cat) => (
+                      <SelectItem key={cat} value={cat} className="cursor-pointer">
+                        {t(`form.categories.${cat}`)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
+            {form.formState.errors.category && <p className="text-sm text-destructive">{t('form.errors.required')}</p>}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="companyPhone" className="flex items-center gap-2">
+              <Phone className="h-3.5 w-3.5 text-slate-400" />
+              {t('form.companyPhonePlaceholder')}
+            </Label>
+            <Input 
+              id="companyPhone" 
+              {...form.register('companyPhone')} 
+              type="tel" 
+              className="bg-white transition-all focus:ring-2 focus:ring-orange-400 focus:border-transparent"
+              disabled={isSubmitting} 
+              placeholder={t('form.companyPhonePlaceholder')}
+            />
+          </div>
+        </div>
+
+        {/* Business Email */}
         <div className="space-y-2">
-          <Label htmlFor="category" className="flex items-center gap-2">
-            <Tag className="h-3.5 w-3.5 text-slate-400" />
-            {t('form.categoryLabel')}
+          <Label htmlFor="companyEmail" className="flex items-center gap-2">
+            <Mail className="h-3.5 w-3.5 text-slate-400" />
+            {t('form.companyEmailPlaceholder')}
           </Label>
-          <Controller
-            control={form.control}
-            name="category"
-            render={({ field }) => (
-              <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isSubmitting}>
-                <SelectTrigger className={cn(
-                  "bg-white transition-all hover:bg-slate-50",
-                  form.formState.errors.category ? 'border-destructive' : ''
-                )}>
-                  <SelectValue placeholder={t('form.selectCategory')} />
-                </SelectTrigger>
-                <SelectContent className="z-[1001]">
-                  {CATEGORIES.map((cat) => (
-                    <SelectItem key={cat} value={cat} className="cursor-pointer">
-                      {t(`form.categories.${cat}`)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
+          <Input 
+            id="companyEmail" 
+            {...form.register('companyEmail')} 
+            type="email" 
+            className="bg-white transition-all focus:ring-2 focus:ring-orange-400 focus:border-transparent"
+            disabled={isSubmitting} 
+            placeholder={t('form.companyEmailPlaceholder')}
           />
-          {form.formState.errors.category && <p className="text-sm text-destructive">{t('form.errors.required')}</p>}
+          {form.formState.errors.companyEmail && (
+            <p className="text-sm text-destructive">{t(`form.${form.formState.errors.companyEmail.message}`)}</p>
+          )}
         </div>
 
         {/* Dicilo Code & Source - Responsive Grid */}

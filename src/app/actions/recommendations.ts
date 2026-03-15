@@ -32,8 +32,12 @@ export async function submitRecommendation(formData: FormData) {
             };
         }
 
-        const contactName = formData.get('contactName') as string;
+        const contactFirstName = formData.get('contactFirstName') as string;
+        const contactLastName = formData.get('contactLastName') as string;
+        const contactName = `${contactFirstName || ''} ${contactLastName || ''}`.trim() || (formData.get('contactName') as string);
         const email = formData.get('email') as string;
+        const companyEmail = formData.get('companyEmail') as string;
+        const companyPhone = formData.get('companyPhone') as string;
         const country = formData.get('country') as string;
         const countryCode = formData.get('countryCode') as string;
         const website = formData.get('website') as string;
@@ -106,9 +110,13 @@ export async function submitRecommendation(formData: FormData) {
 
         const recommendationData: any = {
             companyName,
+            contactFirstName,
+            contactLastName,
             contactName,
             email,
             phone,
+            companyEmail: companyEmail || null,
+            companyPhone: companyPhone || null,
             country,
             countryCode,
             city,
@@ -138,10 +146,11 @@ export async function submitRecommendation(formData: FormData) {
         }
 
         // BUSINESS NOTIFICATION EMAIL
-        if (email && companyName) {
-            const referrerName = (formData.get('referrerName') as string) || 'Un usuario de Dicilo';
+        const recipientEmail = companyEmail || email;
+        if (recipientEmail && companyName) {
+            const referrerName = (formData.get('referrerName') as string) || (contactName) || 'Un usuario de Dicilo';
             await sendBusinessRecommendationEmail(
-                email,
+                recipientEmail,
                 companyName,
                 referrerName,
                 lang as 'es' | 'en' | 'de'
