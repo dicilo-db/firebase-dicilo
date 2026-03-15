@@ -112,7 +112,7 @@ export function StatisticsView() {
             </div>
 
             {/* KPI Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
                 <KpiCard icon={ImageIcon} label={t('freelancer_views.statistics.published_posts')} value={totalPosts} onClick={() => handleCardClick(t('freelancer_views.statistics.published_posts'))} />
                 <KpiCard icon={Calendar} label={t('freelancer_views.statistics.planned')} value="-" onClick={() => handleCardClick(t('freelancer_views.statistics.planned'))} />
                 <KpiCard icon={Eye} label={t('freelancer_views.statistics.contacts')} value={totalViews} onClick={() => handleCardClick(t('freelancer_views.statistics.contacts'))} />
@@ -138,34 +138,27 @@ export function StatisticsView() {
                     </CardHeader>
                     <CardContent className="p-0">
                         <div className="overflow-x-auto">
-                            <table className="w-full text-sm">
+                            <table className="w-full text-[13px] leading-tight">
                                 <thead className="bg-slate-50 text-slate-500 font-medium">
                                     <tr>
-                                        <th className="px-4 py-3 text-left">{t('form.companyNamePlaceholder', 'Empresa')}</th>
-                                        <th className="px-4 py-3 text-left">{t('form.contactFirstNamePlaceholder', 'Contacto')}</th>
-                                        <th className="px-4 py-3 text-left">{t('form.email', 'Email')}</th>
-                                        <th className="px-4 py-3 text-left">{t('form.category', 'Categoría')}</th>
-                                        <th className="px-4 py-3 text-left">{t('recommendations.table.location', 'Ubicación')}</th>
-                                        <th className="px-4 py-3 text-left">{t('recommendations.table.details', 'Detalles')}</th>
-                                        <th className="px-4 py-3 text-left">{t('recommendations.table.status', 'Estado')}</th>
-                                        <th className="px-4 py-3 text-left">{t('recommendations.table.paymentStatus', 'Estado del Pago')}</th>
-                                        <th className="px-4 py-3 text-right">{t('recommendations.table.actions', 'Acciones')}</th>
+                                        <th className="px-3 py-2 text-left">{t('recommendations.table.paymentStatus', 'Estado del Pago')}</th>
+                                        <th className="px-3 py-2 text-right">{t('recommendations.table.actions', 'Acciones')}</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y">
                                     {stats.recentProspects.map((prospect) => (
                                         <tr key={prospect.id} className="hover:bg-slate-50/50 transition-colors">
-                                            <td className="px-4 py-3 font-medium text-slate-900">{prospect.companyName}</td>
-                                            <td className="px-4 py-3">
+                                            <td className="px-3 py-2 font-medium text-slate-900">{prospect.companyName}</td>
+                                            <td className="px-3 py-2">
                                                 <div className="flex flex-col">
                                                     <span>{prospect.contactName}</span>
-                                                    <span className="text-xs text-muted-foreground">{prospect.phone}</span>
+                                                    <span className="text-[10px] text-muted-foreground">{prospect.phone}</span>
                                                 </div>
                                             </td>
-                                            <td className="px-4 py-3 text-slate-600">{prospect.companyEmail || prospect.email}</td>
-                                            <td className="px-4 py-3 text-slate-600 capitalize">{prospect.category}</td>
-                                            <td className="px-4 py-3 text-slate-600">{prospect.city}, {prospect.country}</td>
-                                            <td className="px-4 py-3 max-w-[150px]">
+                                            <td className="px-3 py-2 text-slate-600">{prospect.companyEmail || prospect.email}</td>
+                                            <td className="px-3 py-2 text-slate-600 capitalize">{prospect.category}</td>
+                                            <td className="px-3 py-2 text-slate-600">{prospect.city}, {prospect.country}</td>
+                                            <td className="px-3 py-2 max-w-[120px]">
                                                 <div className="flex flex-col gap-1">
                                                     <span className="truncate" title={prospect.comments}>{prospect.comments}</span>
                                                     {prospect.website && (
@@ -184,18 +177,18 @@ export function StatisticsView() {
                                                     {prospect.converted ? t('recommendations.status.converted', 'Convertido') : t('recommendations.status.pending', 'Pendiente')}
                                                 </Badge>
                                             </td>
-                                            <td className="px-4 py-3">
-                                                <div className="flex flex-col gap-1">
+                                            <td className="px-3 py-2">
+                                                <div className="flex flex-col gap-0.5">
                                                     <span className="font-semibold">{prospect.rewardAmount} DP</span>
                                                     <Badge variant="outline" className={cn(
-                                                        "text-[9px] py-0",
+                                                        "text-[8px] py-0 px-1 leading-none",
                                                         prospect.pointsPaid ? "border-green-200 text-green-600 bg-green-50" : "border-yellow-200 text-yellow-600 bg-yellow-50"
                                                     )}>
                                                         {prospect.pointsPaid ? t('recommendations.status.paid', 'Pagado') : t('recommendations.status.pending', 'Pendiente')}
                                                     </Badge>
                                                 </div>
                                             </td>
-                                            <td className="px-4 py-3 text-right whitespace-nowrap">
+                                            <td className="px-3 py-2 text-right whitespace-nowrap">
                                                 <Button variant="ghost" size="sm" className="h-8 text-xs font-semibold text-blue-600" onClick={() => {
                                                     toast({
                                                         title: prospect.companyName,
@@ -324,13 +317,13 @@ function KpiCard({ icon: Icon, label, value, onClick }: { icon: any, label: stri
             )}
             onClick={onClick}
         >
-            <CardContent className="p-6 flex items-center gap-4">
-                <div className="h-12 w-12 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
-                    <Icon className="h-6 w-6 text-slate-700 dark:text-slate-300" />
+            <CardContent className="p-4 flex items-center gap-3">
+                <div className="h-10 w-10 shrink-0 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+                    <Icon className="h-5 w-5 text-slate-700 dark:text-slate-300" />
                 </div>
                 <div className="min-w-0 flex-1">
-                    <div className="text-xl md:text-2xl font-bold truncate">{value}</div>
-                    <div className="text-xs md:text-sm font-medium text-muted-foreground truncate" title={label}>{label}</div>
+                    <div className="text-lg md:text-xl font-bold truncate tracking-tight">{value}</div>
+                    <div className="text-[10px] md:text-xs font-medium text-muted-foreground break-words leading-tight" title={label}>{label}</div>
                 </div>
             </CardContent>
         </Card>
