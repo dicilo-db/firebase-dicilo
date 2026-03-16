@@ -88,58 +88,79 @@ export async function getGlobalStats(): Promise<GlobalStats> {
         let totalAgencies = 0;
         let totalUsers = 0;
 
-        // Force mapping for the 10 countries the user specified
+        // Force mapping for the 10 countries the user specified + common variants
         const commonMap: Record<string, string> = {
-            'españa': 'ES', 'spain': 'ES', 'madrid': 'ES', 'barcelona': 'ES',
-            'alemania': 'DE', 'germany': 'DE', 'deutschland': 'DE', 'berlin': 'DE',
-            'bolivia': 'BO', 'la paz': 'BO', 'santa cruz': 'BO',
-            'brasil': 'BR', 'brazil': 'BR', 'rio': 'BR', 'sao paulo': 'BR',
-            'colombia': 'CO', 'bogota': 'CO', 'bogotá': 'CO', 'medellin': 'CO',
-            'ecuador': 'EC', 'quito': 'EC', 'guayaquil': 'EC',
-            'panama': 'PA', 'panamá': 'PA',
-            'dominicana': 'DO', 'republica dominicana': 'DO', 'santo domingo': 'DO',
-            'nicaragua': 'NI', 'managua': 'NI',
-            'venezuela': 'VE', 'caracas': 'VE',
-            'usa': 'US', 'eeuu': 'US', 'united states': 'US'
+            'españa': 'ES', 'spain': 'ES', 'madrid': 'ES', 'barcelona': 'ES', 'es': 'ES',
+            'alemania': 'DE', 'germany': 'DE', 'deutschland': 'DE', 'berlin': 'DE', 'de': 'DE',
+            'bolivia': 'BO', 'la paz': 'BO', 'santa cruz': 'BO', 'bo': 'BO',
+            'brasil': 'BR', 'brazil': 'BR', 'rio': 'BR', 'sao paulo': 'BR', 'br': 'BR',
+            'colombia': 'CO', 'bogota': 'CO', 'bogotá': 'CO', 'medellin': 'CO', 'co': 'CO',
+            'ecuador': 'EC', 'quito': 'EC', 'guayaquil': 'EC', 'ec': 'EC',
+            'panama': 'PA', 'panamá': 'PA', 'pa': 'PA',
+            'dominicana': 'DO', 'republica dominicana': 'DO', 'santo domingo': 'DO', 'do': 'DO',
+            'nicaragua': 'NI', 'managua': 'NI', 'ni': 'NI',
+            'venezuela': 'VE', 'caracas': 'VE', 've': 'VE',
+            'usa': 'US', 'eeuu': 'US', 'united states': 'US', 'us': 'US'
+        };
+
+        // Recursive scanner to find location data anywhere in the doc
+        const findCountryCode = (obj: any): string | null => {
+            if (!obj || typeof obj !== 'object') return null;
+
+            // 1. Direct field checks (common patterns)
+            const candidates = [
+                obj.countryCode, obj.isoCode, obj.iso2, 
+                obj.hierarchy?.countryCode, obj.location?.countryCode,
+                obj.address?.countryCode
+            ];
+            for (const c of candidates) {
+                if (typeof c === 'string' && c.length === 2) return c.toUpperCase();
+                if (typeof c === 'string' && c.length === 3) return countriesIso.alpha3ToAlpha2(c.toUpperCase()) || null;
+            }
+
+            // 2. String field checks (pais, country, city, stadt, land, etc)
+            const stringFields = [
+                obj.country, obj.pais, obj.land, obj.city, obj.ciudad, obj.stadt,
+                obj.location?.country, obj.location?.pais, obj.location?.city,
+                obj.address?.country, obj.address?.state, obj.address?.city
+            ];
+
+            for (const val of stringFields) {
+                if (typeof val !== 'string' || val.length < 2) continue;
+                const normalized = val.toLowerCase().trim();
+                
+                // Check map
+                if (commonMap[normalized]) return commonMap[normalized];
+                
+                // Partial word check for commonMap (e.g. "Quito, Ecuador")
+                for (const [key, code] of Object.entries(commonMap)) {
+                    if (normalized.includes(key)) return code;
+                }
+
+                // Library check
+                const code = countriesIso.getAlpha2Code(normalized, 'es') || 
+                             countriesIso.getAlpha2Code(normalized, 'en') || 
+                             countriesIso.getAlpha2Code(normalized, 'de');
+                if (code) return code;
+            }
+
+            // 3. Deep recursion for nested objects (limit depth to avoid infinite loops)
+            // If we still haven't found it, check if any property is an object
+            for (const key in obj) {
+                if (obj[key] && typeof obj[key] === 'object' && !Array.isArray(obj[key]) && key !== 'createdAt' && key !== 'updatedAt') {
+                    const found = findCountryCode(obj[key]);
+                    if (found) return found;
+                }
+            }
+
+            return null;
         };
 
         identityMap.forEach((data, key) => {
             if (data._type === 'agency') totalAgencies++;
             else totalUsers++;
 
-            // country resolution logic
-            let countryCode: string | null = null;
-            
-            // 1. Try explicit countryCode
-            const rawCode = data.countryCode || data.hierarchy?.countryCode || '';
-            if (rawCode && rawCode.length === 2) countryCode = rawCode.toUpperCase();
-            else if (rawCode && rawCode.length === 3) countryCode = countriesIso.alpha3ToAlpha2(rawCode.toUpperCase()) || null;
-
-            // 2. Try Name matching (Aggressive)
-            const rawName = (data.country || data.location || data.address || data.hierarchy?.country || '').toLowerCase();
-            if (!countryCode && rawName) {
-                // Check common map first
-                for (const [key, code] of Object.entries(commonMap)) {
-                    if (rawName.includes(key)) {
-                        countryCode = code;
-                        break;
-                    }
-                }
-                
-                // Then try library
-                if (!countryCode) {
-                    const parts = rawName.split(',').map((p: string) => p.trim());
-                    for (const p of parts) {
-                        const code = countriesIso.getAlpha2Code(p, 'es') || 
-                                     countriesIso.getAlpha2Code(p, 'en') || 
-                                     countriesIso.getAlpha2Code(p, 'de');
-                        if (code) {
-                            countryCode = code;
-                            break;
-                        }
-                    }
-                }
-            }
+            const countryCode = findCountryCode(data);
 
             if (countryCode && countryCode !== 'UN' && countryCode !== 'UNKNOWN') {
                 const alpha2 = countryCode.toUpperCase();
