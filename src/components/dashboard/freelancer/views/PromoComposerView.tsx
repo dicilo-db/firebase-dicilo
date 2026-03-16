@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'next/navigation';
 import Image from 'next/image';
+import { DateRange } from "react-day-picker";
 
 // UI Components
 import { useToast } from "@/hooks/use-toast";
@@ -134,7 +135,7 @@ export function PromoComposerView() {
     // Connections State
     const [connections, setConnections] = useState<SocialConnection[]>([]);
     const [previewNetwork, setPreviewNetwork] = useState('instagram');
-    const [scheduledDate, setScheduledDate] = useState<Date | undefined>(undefined);
+    const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
     const [rewardAmount, setRewardAmount] = useState<number>(activeCampaign?.reward_per_action ? Math.round(activeCampaign.reward_per_action * 100) : 10);
 
     const isGrayMode = activeCampaign ? (activeCampaign.status === 'gray_mode' || (activeCampaign.budget_remaining !== undefined && activeCampaign.budget_remaining <= 0)) : false;
@@ -414,7 +415,9 @@ export function PromoComposerView() {
                 selectedAssetId || '',
                 draftLinkId || '',
                 selectedTargetUrl || '',
-                rewardAmount / 100
+                rewardAmount / 100,
+                dateRange?.from,
+                dateRange?.to
             );
 
             if (!result.success) {
@@ -611,8 +614,15 @@ export function PromoComposerView() {
                                             <div className="text-lg font-bold text-slate-800">€{activeCampaign.budget}</div>
                                         </div>
                                         <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
-                                            <div className="text-[10px] uppercase font-bold text-slate-400 mb-1">Participantes</div>
-                                            <div className="text-lg font-bold text-slate-800">142</div>
+                                            <div className="text-[10px] uppercase font-bold text-slate-400 mb-1">Vigencia</div>
+                                            <div className="text-[10px] font-bold text-slate-800 leading-tight">
+                                                {activeCampaign.startDate && activeCampaign.endDate ? (
+                                                    <>
+                                                        {format(new Date(activeCampaign.startDate), 'dd/MM/yy')} <br/>
+                                                        {format(new Date(activeCampaign.endDate), 'dd/MM/yy')}
+                                                    </>
+                                                ) : 'Indefinida'}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -816,15 +826,28 @@ export function PromoComposerView() {
                                         </div>
                                         <Popover>
                                             <PopoverTrigger asChild>
-                                                <Button variant="outline" className="h-12 w-12 rounded-2xl border-slate-200 p-0 bg-white">
-                                                    <CalendarIcon className="h-5 w-5 text-slate-400" />
+                                                <Button 
+                                                    variant="outline" 
+                                                    className={cn(
+                                                        "h-12 px-4 rounded-2xl border-slate-200 bg-white flex items-center gap-2",
+                                                        dateRange && "border-purple-300 text-purple-600 bg-purple-50"
+                                                    )}
+                                                >
+                                                    <CalendarIcon className="h-5 w-5" />
+                                                    <span className="text-xs font-bold">
+                                                        {dateRange?.from ? (
+                                                            dateRange.to ? (
+                                                                `${format(dateRange.from, "dd/MM")} - ${format(dateRange.to, "dd/MM")}`
+                                                            ) : format(dateRange.from, "dd/MM")
+                                                        ) : "Programar"}
+                                                    </span>
                                                 </Button>
                                             </PopoverTrigger>
                                             <PopoverContent className="w-auto p-0 rounded-3xl" align="end">
                                                 <Calendar
-                                                    mode="single"
-                                                    selected={scheduledDate}
-                                                    onSelect={setScheduledDate}
+                                                    mode="range"
+                                                    selected={dateRange}
+                                                    onSelect={setDateRange}
                                                     disabled={(date) => date < new Date()}
                                                     initialFocus
                                                 />

@@ -17,7 +17,9 @@ export async function processCampaignPost(
     assetId: string = '',
     existingLinkId: string = '', // New optional param
     targetUrl: string = '', // NEW: Explicit target URL selected by user
-    manualReward?: number // NEW: Manual reward amount allowed
+    manualReward?: number, // NEW: Manual reward amount allowed
+    startDate?: Date,
+    endDate?: Date
 ) {
     if (!userId || !campaignId) {
         return { success: false, error: 'Faltan datos obligatorios.' };
@@ -120,6 +122,8 @@ export async function processCampaignPost(
                 paymentModel: 'fixed_plus_bonus',
                 clickCount: 0, // Reset or keep? Keep if 0.
                 targetUrl: targetUrl || (campaignData?.[`url_${postLanguage}`]) || campaignData?.targetUrl || 'https://dicilo.net',
+                startDate: startDate ? admin.firestore.Timestamp.fromDate(startDate) : null,
+                endDate: endDate ? admin.firestore.Timestamp.fromDate(endDate) : null,
                 createdAt: admin.firestore.FieldValue.serverTimestamp() // Update timestamp to Post Time
             }, { merge: true });
 
@@ -155,6 +159,8 @@ export async function processCampaignPost(
                 companyName: campaignData?.companyName || 'Unknown',
                 campaignTitle: campaignData?.title || '',
                 linkId: linkId,
+                startDate: startDate ? admin.firestore.Timestamp.fromDate(startDate) : null,
+                endDate: endDate ? admin.firestore.Timestamp.fromDate(endDate) : null,
                 created_at: admin.firestore.FieldValue.serverTimestamp() // Snake case consistent with stats query
             });
 

@@ -47,6 +47,8 @@ export interface Campaign {
     languages: string[]; // Supported languages codes
     target_locations: string[];
     gray_mode_trigger: boolean;
+    startDate?: any;
+    endDate?: any;
     createdAt: any;
 }
 
@@ -78,6 +80,8 @@ export interface Promotion {
     platform: 'whatsapp' | 'instagram' | 'telegram' | 'facebook' | 'twitter' | 'linkedin' | 'clipboard';
     status: 'draft' | 'scheduled' | 'published';
     scheduledDate?: any;
+    startDate?: any;
+    endDate?: any;
     createdAt: any;
 }
 

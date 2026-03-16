@@ -120,9 +120,10 @@ export async function getGlobalStats(): Promise<GlobalStats> {
 
             // 2. String field checks (pais, country, city, stadt, land, etc)
             const stringFields = [
-                obj.country, obj.pais, obj.land, obj.city, obj.ciudad, obj.stadt,
-                obj.location?.country, obj.location?.pais, obj.location?.city,
-                obj.address?.country, obj.address?.state, obj.address?.city
+                obj.country, obj.pais, obj.país, obj.land, obj.city, obj.ciudad, obj.stadt,
+                obj.location?.country, obj.location?.pais, obj.location?.país, obj.location?.city,
+                obj.address?.country, obj.address?.state, obj.address?.city,
+                obj.direccion, obj.dirección, obj.address?.street
             ];
 
             for (const val of stringFields) {
@@ -144,8 +145,19 @@ export async function getGlobalStats(): Promise<GlobalStats> {
                 if (code) return code;
             }
 
-            // 3. Deep recursion for nested objects (limit depth to avoid infinite loops)
-            // If we still haven't found it, check if any property is an object
+            // 3. Brute Force: Scan ALL object keys and values for ANY string matching commonMap
+            for (const k in obj) {
+                const val = obj[k];
+                if (typeof val === 'string' && val.length > 2) {
+                    const normalized = val.toLowerCase().trim();
+                    if (commonMap[normalized]) return commonMap[normalized];
+                    for (const [mapKey, code] of Object.entries(commonMap)) {
+                        if (normalized.includes(mapKey)) return code;
+                    }
+                }
+            }
+
+            // 4. Deep recursion for nested objects
             for (const key in obj) {
                 if (obj[key] && typeof obj[key] === 'object' && !Array.isArray(obj[key]) && key !== 'createdAt' && key !== 'updatedAt') {
                     const found = findCountryCode(obj[key]);
