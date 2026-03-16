@@ -20,7 +20,8 @@ import {
   User,
   sendPasswordResetEmail,
 } from 'firebase/auth';
-import { app } from '@/lib/firebase';
+import { httpsCallable } from 'firebase/functions';
+import { app, functions } from '@/lib/firebase';
 import { useTranslation } from 'react-i18next';
 import { Loader2, Eye, EyeOff } from 'lucide-react';
 import { checkAdminRole, AdminUser } from '@/lib/auth';
@@ -38,7 +39,7 @@ const AuthLoadingScreen = ({ message }: { message: string }) => (
 
 // Componente para el formulario de login
 const LoginForm = () => {
-  const { t } = useTranslation('admin');
+  const { t, i18n } = useTranslation('admin');
   const { toast } = useToast();
 
   const [email, setEmail] = useState('');
@@ -85,19 +86,18 @@ const LoginForm = () => {
     }
     setIsSubmitting(true);
     try {
-      await sendPasswordResetEmail(auth, email);
+      const requestReset = httpsCallable(functions, 'requestPasswordReset');
+      await requestReset({ email, lang: i18n.language || 'es' });
+      
       toast({
         title: t('login.reset.successTitle'),
         description: t('login.reset.successDescription', { email }),
       });
     } catch (error: any) {
-      let errorMessageKey = 'login.reset.errorGeneric';
-      if (error.code === 'auth/user-not-found') {
-        errorMessageKey = 'login.reset.userNotFound';
-      }
+      console.error('Admin password reset error:', error);
       toast({
         title: t('login.reset.errorTitle'),
-        description: t(errorMessageKey),
+        description: t('login.reset.errorGeneric'),
         variant: 'destructive',
       });
     } finally {

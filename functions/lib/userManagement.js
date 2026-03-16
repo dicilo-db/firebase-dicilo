@@ -42,12 +42,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.sendUserPasswordReset = exports.updateUserEmail = void 0;
+exports.requestPasswordReset = exports.sendUserPasswordReset = exports.updateUserEmail = void 0;
 const https_1 = require("firebase-functions/v2/https");
 const logger = __importStar(require("firebase-functions/logger"));
 const auth_1 = require("firebase-admin/auth");
 const firestore_1 = require("firebase-admin/firestore");
 const app_1 = require("firebase-admin/app");
+const email_1 = require("./email");
+const i18n_1 = require("./i18n");
 // Helper to check if the caller is an admin
 const assertAdmin = (uid) => __awaiter(void 0, void 0, void 0, function* () {
     if ((0, app_1.getApps)().length === 0)
@@ -100,25 +102,62 @@ exports.sendUserPasswordReset = (0, https_1.onCall)((request) => __awaiter(void 
         yield assertAdmin(request.auth.uid);
         // Generate the password reset link
         const link = yield (0, auth_1.getAuth)().generatePasswordResetLink(email);
-        // Ideally, we would send this link via email using our email service.
-        // However, since we might not have a full email template system set up for this specific case in this file,
-        // we can either return the link to the admin (so they can send it manually) 
-        // OR use the client-side sendPasswordResetEmail which triggers Firebase's built-in template.
-        // BUT the user asked for "pedir via email".
-        // Let's try to use the existing 'sendMail' helper if available, or just return the link for now 
-        // so the admin can copy-paste it, which is very reliable.
-        // WAIT, the prompt said "que la puedan pedir via email".
-        // Actually, `admin.auth().generatePasswordResetLink(email)` generates a link. 
-        // `firebase.auth().sendPasswordResetEmail(email)` (Client SDK) sends the email using Firebase's template.
-        // The Client SDK method is easier if we just want the standard Firebase email.
-        // But we can't call Client SDK from Cloud Functions easily for *another* user without their credentials.
-        // So, we will generate the link and return it to the admin, AND/OR try to send it via nodemailer.
-        // Let's look at existing email.ts to see if we can use it.
-        // For now, I'll return the link. It's the most flexible "Admin" tool.
-        return { success: true, link: link };
+        // Send the email using our custom SMTP service
+        const i18n = yield (0, i18n_1.getEmailI18n)('es', (0, firestore_1.getFirestore)()); // Defaulting to ES for admin trigger or detect from doc
+        const html = (0, i18n_1.render)(i18n['passwordReset.body'], { link });
+        yield (0, email_1.sendMail)({
+            to: email,
+            subject: i18n['passwordReset.subject'],
+            html: html
+        });
+        logger.info(`Password reset email sent to ${email} by admin ${request.auth.uid}`);
+        return { success: true, message: 'Password reset email sent successfully.' };
     }
     catch (error) {
         logger.error('Error generating password reset link:', error);
         throw new https_1.HttpsError('internal', error.message || 'Error generating password reset link.');
+    }
+}));
+/**
+ * Public function to request a password reset email.
+ * This is called from the login page by unauthenticated users.
+ */
+exports.requestPasswordReset = (0, https_1.onCall)((request) => __awaiter(void 0, void 0, void 0, function* () {
+    const { email, lang = 'es' } = request.data;
+    if (!email) {
+        throw new https_1.HttpsError('invalid-argument', 'Email is required.');
+    }
+    try {
+        if ((0, app_1.getApps)().length === 0)
+            (0, app_1.initializeApp)();
+        // 1. Verify user exists (optional, but good for UX)
+        try {
+            yield (0, auth_1.getAuth)().getUserByEmail(email);
+        }
+        catch (authError) {
+            if (authError.code === 'auth/user-not-found') {
+                // To avoid email enumeration, we return success even if user not found,
+                // but we don't send the email.
+                return { success: true, message: 'If an account exists for this email, a reset link has been sent.' };
+            }
+            throw authError;
+        }
+        // 2. Generate the link
+        const link = yield (0, auth_1.getAuth)().generatePasswordResetLink(email);
+        // 3. Send the email
+        const i18n = yield (0, i18n_1.getEmailI18n)(lang, (0, firestore_1.getFirestore)());
+        const html = (0, i18n_1.render)(i18n['passwordReset.body'], { link });
+        yield (0, email_1.sendMail)({
+            to: email,
+            subject: i18n['passwordReset.subject'],
+            html: html
+        });
+        logger.info(`Password reset email requested and sent to ${email}`);
+        return { success: true, message: 'If an account exists for this email, a reset link has been sent.' };
+    }
+    catch (error) {
+        logger.error('Error in requestPasswordReset:', error);
+        // We still return generic "success" message to prevent email enumeration
+        return { success: true, message: 'If an account exists for this email, a reset link has been sent.' };
     }
 }));

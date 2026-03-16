@@ -37,7 +37,7 @@ export function BasicCard({ business, isSelected, onClick, locale }: BasicCardPr
                     />
                 </div>
                 <div className="min-w-0 flex-1">
-                    <h3 className="truncate font-bold text-lg">{business.name}</h3>
+                    <h3 className="font-bold text-lg leading-tight mb-1">{business.name}</h3>
                     <p className="line-clamp-2 text-sm text-muted-foreground mt-1">
                         {business.description_translations?.[locale as 'en' | 'es' | 'de'] || business.description}
                     </p>
@@ -45,9 +45,9 @@ export function BasicCard({ business, isSelected, onClick, locale }: BasicCardPr
                     <div className="mt-3 space-y-1 text-sm text-muted-foreground">
                         {/* Location & Address */}
                         <div className="flex flex-col gap-1">
-                            <div className="flex items-center gap-2">
-                                <MapPin className="h-3.5 w-3.5 shrink-0" />
-                                <span className="truncate">{business.location}</span>
+                            <div className="flex items-start gap-2">
+                                <MapPin className="h-3.5 w-3.5 shrink-0 mt-0.5" />
+                                <span className="leading-tight">{business.location}</span>
                             </div>
                             {business.address && (
                                 <div className="pl-5.5 text-xs text-muted-foreground ml-5">

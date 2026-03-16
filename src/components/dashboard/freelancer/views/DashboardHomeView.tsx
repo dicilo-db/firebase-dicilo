@@ -21,6 +21,7 @@ import { Campaign } from '@/types/freelancer';
 
 import { doc, getDoc, getFirestore } from 'firebase/firestore';
 import { app } from '@/lib/firebase';
+import { WorldMap } from '../../WorldMap';
 
 const db = getFirestore(app);
 
@@ -187,23 +188,6 @@ export function DashboardHomeView() {
                         </CardContent>
                     </Card>
 
-                    {/* RECENT ACTIVITY CHART PREVIEW (Mock) */}
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>{t('freelancer_dashboard.recent_activity')}</CardTitle>
-                        </CardHeader>
-                        <CardContent className="h-64 flex items-center justify-center bg-slate-50/50">
-                            {/* Placeholder for a chart - reusing the visual style implies keeping it clean */}
-                            <div className="text-center text-muted-foreground">
-                                <Sparkles className="h-8 w-8 mx-auto mb-2 opacity-50 text-indigo-400" />
-                                <p className="text-sm">Activity Graph will appear here once you start posting.</p>
-                                <Button variant="link" onClick={() => router.push('/dashboard/freelancer?tab=statistics')}>
-                                    {t('freelancer_dashboard.view_all_stats')}
-                                </Button>
-                            </div>
-                        </CardContent>
-                    </Card>
-
                 </div>
 
                 {/* RIGHT COLUMN (1/3) */}
@@ -265,6 +249,9 @@ export function DashboardHomeView() {
 
                 </div>
             </div>
+
+            {/* WORLD MAP PERSISTENCE SECTION (FULL WIDTH) */}
+            <WorldMap />
         </div>
     );
 }

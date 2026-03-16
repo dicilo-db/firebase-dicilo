@@ -1041,3 +1041,5 @@ export * from './pioneer-referrals';
 // --- Category Counters ---
 export * from './categories';
 
+// --- Community / Social ---
+export * from './social';

@@ -28,3 +28,5 @@ export const db = getFirestore(app);
 export const storage = getStorage(app);
 import { getAuth } from 'firebase/auth';
 export const auth = getAuth(app);
+import { getFunctions } from 'firebase/functions';
+export const functions = getFunctions(app, 'europe-west1');

@@ -904,3 +904,5 @@ __exportStar(require("./userManagement"), exports);
 __exportStar(require("./pioneer-referrals"), exports);
 // --- Category Counters ---
 __exportStar(require("./categories"), exports);
+// --- Community / Social ---
+__exportStar(require("./social"), exports);

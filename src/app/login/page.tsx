@@ -20,7 +20,8 @@ import {
     User,
     sendPasswordResetEmail,
 } from 'firebase/auth';
-import { app } from '@/lib/firebase';
+import { httpsCallable } from 'firebase/functions';
+import { app, functions } from '@/lib/firebase';
 import { useTranslation } from 'react-i18next';
 import { Header } from '@/components/header';
 import { Loader2, Eye, EyeOff } from 'lucide-react';
@@ -36,7 +37,7 @@ const AuthLoadingScreen = ({ message }: { message: string }) => (
 );
 
 const LoginForm = () => {
-    const { t } = useTranslation('login');
+    const { t, i18n } = useTranslation('login');
     const { toast } = useToast();
 
     const [email, setEmail] = useState('');
@@ -83,19 +84,18 @@ const LoginForm = () => {
         }
         setIsSubmitting(true);
         try {
-            await sendPasswordResetEmail(auth, email);
+            const requestReset = httpsCallable(functions, 'requestPasswordReset');
+            await requestReset({ email, lang: i18n.language || 'es' });
+            
             toast({
                 title: t('reset.successTitle'),
                 description: t('reset.successDescription', { email }),
             });
         } catch (error: any) {
-            let errorMessageKey = 'reset.errorGeneric';
-            if (error.code === 'auth/user-not-found') {
-                errorMessageKey = 'reset.userNotFound';
-            }
+            console.error('Password reset error:', error);
             toast({
                 title: t('reset.errorTitle'),
-                description: t(errorMessageKey),
+                description: t('reset.errorGeneric'),
                 variant: 'destructive',
             });
         } finally {

@@ -13,6 +13,13 @@ export interface FreelancerStats {
     recentTransactions: Transaction[];
     performanceByCampaign: { campaignName: string, earnings: number, posts: number }[];
     recentProspects: Prospect[];
+    communityPosts: CommunityPostReward[];
+}
+
+export interface CommunityPostReward {
+    id: string;
+    date: string;
+    amount: number;
 }
 
 export interface Prospect {
@@ -67,6 +74,7 @@ export async function getFreelancerStats(userId: string): Promise<{ success: boo
         const totalClicks = 0; // If we track clicks separately, query them here. For now 0 or derived.
         const campaignMap = new Map<string, { earnings: number, posts: number, campaignName: string }>();
         const recentTransactions: Transaction[] = [];
+        const communityPosts: CommunityPostReward[] = [];
 
         docs.forEach(doc => {
             const data = doc.data();
@@ -94,6 +102,15 @@ export async function getFreelancerStats(userId: string): Promise<{ success: boo
                     status: 'paid', // Instant credit to wallet logic
                     date: data.created_at?.toDate().toISOString() || new Date().toISOString(),
                     description: `Post for ${data.companyName}`
+                });
+            }
+
+            // Track Community Posts specifically for the new list
+            if (data.actionType === 'community_post_reward') {
+                communityPosts.push({
+                    id: doc.id,
+                    date: data.created_at?.toDate().toISOString() || new Date().toISOString(),
+                    amount: amount
                 });
             }
         });
@@ -158,7 +175,8 @@ export async function getFreelancerStats(userId: string): Promise<{ success: boo
                 totalBusinessesRegistered,
                 recentTransactions,
                 performanceByCampaign: Array.from(campaignMap.values()),
-                recentProspects
+                recentProspects,
+                communityPosts: communityPosts.slice(0, 15) // Top 15 recent community posts
             }
         };
 

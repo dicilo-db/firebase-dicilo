@@ -655,26 +655,26 @@ export default function DiciloSearchPage({
                   {t('search.title')}
                 </h2>
               </div>
-              <div className="mb-2 flex gap-2">
+              <div className="mb-4 grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <Button
                   onClick={() => setSearchType('business')}
                   variant={searchType === 'business' ? 'default' : 'outline'}
-                  className="w-full"
+                  className="w-full h-auto py-2 px-3 whitespace-normal text-center flex flex-col sm:flex-row"
                 >
-                  <Building className="mr-2 h-4 w-4" />
-                  {t('search.businessType')}
+                  <Building className="mb-1 sm:mb-0 sm:mr-2 h-4 w-4 shrink-0" />
+                  <span className="leading-tight">{t('search.businessType')}</span>
                 </Button>
                 <Button
                   onClick={() => setSearchType('location')}
                   variant={searchType === 'location' ? 'default' : 'outline'}
-                  className="w-full"
+                  className="w-full h-auto py-2 px-3 whitespace-normal text-center flex flex-col sm:flex-row"
                 >
-                  <MapPin className="mr-2 h-4 w-4" />
-                  {t('search.locationType')}
+                  <MapPin className="mb-1 sm:mb-0 sm:mr-2 h-4 w-4 shrink-0" />
+                  <span className="leading-tight">{t('search.locationType')}</span>
                 </Button>
               </div>
-              <div className="flex w-full items-center space-x-2">
-                <div className="relative flex-grow">
+              <div className="flex w-full flex-wrap sm:flex-nowrap items-center gap-2">
+                <div className="relative flex-grow min-w-[200px]">
                   <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
                   <Input
                     type="text"
@@ -687,43 +687,46 @@ export default function DiciloSearchPage({
                     aria-label={t('search.searchLabel')}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10 text-base"
+                    className="pl-10 text-base w-full"
                     disabled={isGeocoding}
                   />
                   {isGeocoding && (
                     <Loader2 className="absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 animate-spin" />
                   )}
                 </div>
-                <Button
-                  type="button"
-                  size="icon"
-                  variant="outline"
-                  aria-label="Suche per Sprache"
-                  onClick={startListening}
-                  className={isListening ? "text-red-500 animate-pulse border-red-500" : ""}
-                >
-                  <Mic className="h-4 w-4" />
-                </Button>
-                <Button
-                  type="button"
-                  size="icon"
-                  onClick={() => handleGeolocation(false)}
-                  variant="outline"
-                  aria-label={t('search.useLocationLabel')}
-                  disabled={isGeocoding}
-                >
-                  <Navigation className="h-4 w-4" />
-                </Button>
-                <Button
-                  type="button"
-                  size="icon"
-                  onClick={() => setShowMobileMap(true)}
-                  variant="outline"
-                  aria-label="Show map"
-                  className="md:hidden"
-                >
-                  <Map className="h-4 w-4" />
-                </Button>
+                <div className="flex items-center gap-2 ml-auto sm:ml-0">
+                  <Button
+                    type="button"
+                    size="icon"
+                    variant="outline"
+                    aria-label="Suche per Sprache"
+                    onClick={startListening}
+                    className={cn("h-10 w-10 shrink-0", isListening ? "text-red-500 animate-pulse border-red-500" : "")}
+                  >
+                    <Mic className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    type="button"
+                    size="icon"
+                    onClick={() => handleGeolocation(false)}
+                    variant="outline"
+                    aria-label={t('search.useLocationLabel')}
+                    disabled={isGeocoding}
+                    className="h-10 w-10 shrink-0"
+                  >
+                    <Navigation className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    type="button"
+                    size="icon"
+                    onClick={() => setShowMobileMap(true)}
+                    variant="outline"
+                    aria-label="Show map"
+                    className="md:hidden h-10 w-10 shrink-0"
+                  >
+                    <Map className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>

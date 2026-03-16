@@ -78,9 +78,9 @@ export function PremiumCard({ business, isSelected, onClick, locale }: PremiumCa
                         />
                     </div>
                     <div>
-                        <h3 className="font-bold text-xl text-foreground flex items-center gap-2">
+                        <h3 className="font-bold text-xl text-foreground flex flex-wrap items-center gap-2">
                             {business.name}
-                            <BadgeCheck className="h-5 w-5 text-blue-500 fill-blue-100" />
+                            <BadgeCheck className="h-5 w-5 text-blue-500 fill-blue-100 shrink-0" />
                         </h3>
                         <div className="flex items-center gap-1 text-xs font-semibold text-yellow-600 bg-yellow-50 px-2 py-0.5 rounded-full w-fit mt-1 border border-yellow-200">
                             <Star className="h-3 w-3 fill-yellow-600" />
@@ -106,9 +106,9 @@ export function PremiumCard({ business, isSelected, onClick, locale }: PremiumCa
                 <div className="grid grid-cols-1 gap-2 text-sm text-muted-foreground pt-2">
                     {/* Location & Address Block */}
                     <div className="flex flex-col gap-1">
-                        <div className="flex items-center gap-2">
-                            <MapPin className="h-4 w-4 text-primary shrink-0" />
-                            <span className="truncate font-medium text-foreground">{business.location}</span>
+                        <div className="flex items-start gap-2">
+                            <MapPin className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                            <span className="font-medium text-foreground leading-tight">{business.location}</span>
                         </div>
                         {business.address && (
                             <div className="pl-6 text-xs">

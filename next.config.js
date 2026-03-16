@@ -14,6 +14,32 @@ const nextConfig = {
     config.externals.push({
       'pdf-parse': 'commonjs pdf-parse',
     });
+    
+    // Enable WebAssembly for firebase-admin dependencies like farmhash-modern
+    config.experiments = {
+      ...config.experiments,
+      asyncWebAssembly: true,
+    };
+
+    // Ignore Node.js built-in modules on the client side
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        net: false,
+        tls: false,
+        child_process: false,
+        dns: false,
+        os: false,
+        http2: false,
+        'node:events': false,
+        'node:util': false,
+        'node:path': false,
+        'node:crypto': false,
+        'node:stream': false,
+      };
+    }
+
     return config;
   },
   typescript: {
@@ -51,7 +77,9 @@ const nextConfig = {
     serverComponentsExternalPackages: [
       'require-in-the-middle',
       '@opentelemetry/instrumentation',
-      '@genkit-ai/core'
+      '@genkit-ai/core',
+      'firebase-admin',
+      'farmhash-modern'
     ]
   }
 };

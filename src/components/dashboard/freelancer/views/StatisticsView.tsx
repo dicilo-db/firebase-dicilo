@@ -207,6 +207,51 @@ export function StatisticsView() {
                 </Card>
             )}
 
+            {/* Community Posts History */}
+            {stats?.communityPosts && stats.communityPosts.length > 0 && (
+                <Card className="bg-white dark:bg-card shadow-sm border overflow-hidden">
+                    <CardHeader className="border-b bg-slate-50/50">
+                        <div className="flex items-center gap-2">
+                            <MessageCircle className="h-5 w-5 text-blue-500" />
+                            <CardTitle className="text-lg">
+                                {t('freelancer_views.statistics.published_posts')} (Comunidad)
+                            </CardTitle>
+                        </div>
+                    </CardHeader>
+                    <CardContent className="p-0">
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-[13px] leading-tight text-center">
+                                <thead className="bg-slate-50 text-slate-500 font-medium">
+                                    <tr>
+                                        <th className="px-3 py-2 text-left">{t('common.date', 'Fecha')}</th>
+                                        <th className="px-3 py-2">{t('common.time', 'Hora')}</th>
+                                        <th className="px-3 py-2 text-right">{t('recommendations.table.reward', 'Recompensa')}</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y">
+                                    {stats.communityPosts.map((post) => {
+                                        const dateObj = new Date(post.date);
+                                        return (
+                                            <tr key={post.id} className="hover:bg-slate-50/50 transition-colors">
+                                                <td className="px-3 py-2 text-left font-medium text-slate-900">
+                                                    {dateObj.toLocaleDateString()}
+                                                </td>
+                                                <td className="px-3 py-2 text-slate-600">
+                                                    {dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                </td>
+                                                <td className="px-3 py-2 text-right">
+                                                    <span className="font-bold text-green-600">+{post.amount} DP</span>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
+                        </div>
+                    </CardContent>
+                </Card>
+            )}
+
             {/* ACCORDION for Insights */}
             <div className="bg-white dark:bg-card rounded-xl shadow-sm border p-6">
                 <div className="mb-6">

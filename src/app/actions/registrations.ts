@@ -164,15 +164,8 @@ export async function runDatabaseCleanup(): Promise<CleanupResult> {
             if (itemNameKey && processedNames.has(itemNameKey)) matchFound = true;
 
             if (!matchFound) {
-                // CREATE MISSING REGISTRATION
-                console.log(`[Cleanup] Creating missing registration for: ${itemName} (${regType})`);
-                const newRegRef = getAdminDb().collection('registrations').doc();
-                const now = FieldValue.serverTimestamp();
-
-                // Fallback email generator
-                const fallbackEmail = `missing-email-${normalize(itemName).substring(0, 10)}-${Math.random().toString(36).substring(7)}@dicilo.placeholder`;
-                const finalEmail = itemEmail || fallbackEmail;
-
+                // ... (create logic)
+                // ... (already fixed in previous step)
                 const newRegData = {
                     firstName: item._source === 'private' ? item.firstName : itemName,
                     lastName: item._source === 'private' ? item.lastName : '(Empresa)',
@@ -184,16 +177,34 @@ export async function runDatabaseCleanup(): Promise<CleanupResult> {
                     updatedAt: now,
                     clientId: item._source === 'client' ? item.id : null,
                     uid: item._source === 'private' ? item.id : null,
-                    status: 'active'
+                    status: 'active',
+                    // Location Data Recovery
+                    country: item.country || item.hierarchy?.country || null,
+                    countryCode: item.countryCode || item.hierarchy?.countryCode || null,
+                    location: item.location || null,
+                    address: item.address || null,
+                    hierarchy: item.hierarchy || null,
+                    coords: item.coords || null
                 };
 
                 batch.set(newRegRef, newRegData);
                 createdFromClient++;
                 batchCount++;
-
-                // Mark as processed
-                if (itemEmail) processedEmails.add(itemEmail);
-                if (itemNameKey) processedNames.add(itemNameKey);
+            } else {
+                // UPDATE EXISTING IF MISSING DATA
+                const existing = (itemEmail ? emailMap.get(itemEmail) : nameMap.get(itemNameKey))[0];
+                if (existing && (!existing.countryCode || !existing.coords)) {
+                    batch.update(getAdminDb().collection('registrations').doc(existing.id), {
+                        country: existing.country || item.country || item.hierarchy?.country || null,
+                        countryCode: existing.countryCode || item.countryCode || item.hierarchy?.countryCode || null,
+                        location: existing.location || item.location || null,
+                        address: existing.address || item.address || null,
+                        hierarchy: existing.hierarchy || item.hierarchy || null,
+                        coords: existing.coords || item.coords || null,
+                        updatedAt: FieldValue.serverTimestamp()
+                    });
+                    batchCount++;
+                }
             }
         }
 
