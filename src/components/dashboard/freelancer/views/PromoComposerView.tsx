@@ -413,9 +413,30 @@ export function PromoComposerView() {
             await navigator.clipboard.writeText(message);
             setShowFacebookModal(true);
             return; // Modal will handle the open logic
+        } else if (platform === 'email') {
+            window.open(`mailto:?subject=${encodeURIComponent(activeCampaign.companyName)}&body=${encodeURIComponent(message)}`, '_self');
+        } else if (platform === 'native') {
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: activeCampaign.companyName,
+                        text: currentText,
+                        url: trackingLink
+                    });
+                } catch (e) {
+                    console.error("Native share failed", e);
+                }
+            } else {
+                await navigator.clipboard.writeText(message);
+                toast({ title: "Enlace Copiado", description: "El menú de compartir no está disponible en este navegador, pero hemos copiado el enlace." });
+            }
         } else if (platform === 'clipboard') {
             await navigator.clipboard.writeText(message);
-            toast({ title: t('freelancer.composer.copy_success_title'), description: t('freelancer.composer.copy_success_desc') });
+            toast({ 
+                title: t('freelancer.composer.copy_link_success_title', '¡Enlace Copiado!'), 
+                description: t('freelancer.composer.copy_link_success_desc', 'El enlace de la campaña ha sido copiado al portapapeles.'),
+                className: "bg-purple-600 text-white"
+            });
         }
 
         setIsSharing(true);
@@ -966,51 +987,69 @@ export function PromoComposerView() {
             </Tabs>
 
             {/* Sticky Action Footer */}
-            <div className="fixed bottom-0 left-0 right-0 md:left-[var(--sidebar-width,0px)] bg-white/80 backdrop-blur-xl border-t border-slate-200 p-4 z-50 animate-in slide-in-from-bottom-full duration-500">
+            <div className="fixed bottom-0 left-0 right-0 md:left-[var(--sidebar-width,0px)] bg-white/95 backdrop-blur-2xl border-t border-slate-200 p-4 z-50 animate-in slide-in-from-bottom-full duration-500 shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.1)]">
                 <div className="max-w-5xl mx-auto flex items-center justify-between gap-4">
-                    <div className="flex gap-2">
+                    <Button 
+                        variant="ghost" 
+                        className="h-12 px-6 rounded-2xl text-slate-500 font-bold hover:bg-slate-50"
+                        onClick={() => router.back()}
+                    >
+                        Cancelar
+                    </Button>
+
+                    <div className="flex items-center gap-3">
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button 
+                                    variant="outline" 
+                                    className="h-12 px-8 rounded-2xl border-slate-200 text-slate-700 font-bold hover:bg-slate-50 flex items-center gap-2 shadow-sm"
+                                >
+                                    <Share2 className="h-5 w-5" />
+                                    Compartir
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-56 p-2 rounded-2xl shadow-2xl border-none">
+                                <DropdownMenuItem onClick={() => handleShare('whatsapp')} className="rounded-xl h-11 flex items-center gap-3 cursor-pointer hover:bg-green-50 hover:text-green-700 font-bold transition-colors">
+                                    <MessageCircle className="h-5 w-5 text-green-500" />
+                                    WhatsApp
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleShare('telegram')} className="rounded-xl h-11 flex items-center gap-3 cursor-pointer hover:bg-sky-50 hover:text-sky-700 font-bold transition-colors">
+                                    <Send className="h-5 w-5 text-sky-500" />
+                                    Telegram
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleShare('facebook')} className="rounded-xl h-11 flex items-center gap-3 cursor-pointer hover:bg-blue-50 hover:text-blue-700 font-bold transition-colors">
+                                    <Facebook className="h-5 w-5 text-blue-600" />
+                                    Facebook
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleShare('twitter')} className="rounded-xl h-11 flex items-center gap-3 cursor-pointer hover:bg-slate-50 hover:text-slate-900 font-bold transition-colors">
+                                    <Twitter className="h-5 w-5 text-slate-800" />
+                                    X (Twitter)
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleShare('email')} className="rounded-xl h-11 flex items-center gap-3 cursor-pointer hover:bg-purple-50 hover:text-purple-700 font-bold transition-colors">
+                                    <Mail className="h-5 w-5 text-purple-600" />
+                                    Email
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator className="my-1" />
+                                <DropdownMenuItem onClick={() => handleShare('native')} className="rounded-xl h-11 flex items-center gap-3 cursor-pointer hover:bg-slate-50 font-bold">
+                                    <Share2 className="h-4 w-4 text-slate-400" />
+                                    ... Más opciones...
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleShare('clipboard')} className="rounded-xl h-11 flex items-center gap-3 cursor-pointer hover:bg-slate-50 font-bold">
+                                    <Copy className="h-4 w-4 text-slate-400" />
+                                    Copiar Enlace
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+
                         <Button 
-                            variant="outline" 
-                            size="icon" 
-                            onClick={() => handleShare('whatsapp')}
-                            className="h-12 w-12 rounded-2xl border-green-200 text-green-600 hover:bg-green-50 hover:border-green-300 transition-all font-bold shadow-sm"
+                            onClick={handleCopyLink}
+                            className="h-12 px-8 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white font-bold shadow-lg shadow-purple-200 transition-all active:scale-95 flex items-center gap-2"
                         >
-                            <MessageCircle className="h-6 w-6" />
-                        </Button>
-                        <Button 
-                            variant="outline" 
-                            size="icon" 
-                            onClick={() => handleShare('telegram')}
-                            className="h-12 w-12 rounded-2xl border-sky-200 text-sky-600 hover:bg-sky-50 hover:border-sky-300 transition-all font-bold shadow-sm"
-                        >
-                            <Send className="h-6 w-6" />
-                        </Button>
-                        <Button 
-                            variant="outline" 
-                            size="icon" 
-                            onClick={() => handleShare('facebook')}
-                            className="h-12 w-12 rounded-2xl border-blue-200 text-blue-600 hover:bg-blue-50 hover:border-blue-300 transition-all font-bold shadow-sm"
-                        >
-                            <Facebook className="h-6 w-6" />
-                        </Button>
-                        <Button 
-                            variant="outline" 
-                            size="icon" 
-                            onClick={() => handleShare('twitter')}
-                            className="h-12 w-12 rounded-2xl border-slate-200 text-slate-800 hover:bg-slate-50 hover:border-slate-300 transition-all font-bold shadow-sm"
-                        >
-                            <Twitter className="h-5 w-5 fill-current" />
+                            <Check className="h-5 w-5" />
+                            <span className="hidden sm:inline">Guardar y Copiar Enlace</span>
+                            <span className="sm:hidden">Guardar</span>
                         </Button>
                     </div>
-                    
-                    <Button 
-                        onClick={handleCopyLink}
-                        className="h-12 px-8 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white font-bold shadow-lg shadow-purple-200 transition-all active:scale-95 flex items-center gap-2"
-                    >
-                        <Copy className="h-5 w-5" />
-                        <span className="hidden sm:inline">Copiar Enlace de Campaña</span>
-                        <span className="sm:hidden">Copiar Link</span>
-                    </Button>
                 </div>
             </div>
 
