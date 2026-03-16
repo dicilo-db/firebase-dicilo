@@ -21,7 +21,8 @@ import { Campaign } from '@/types/freelancer';
 
 import { doc, getDoc, getFirestore } from 'firebase/firestore';
 import { app } from '@/lib/firebase';
-import { WorldMap } from '../../WorldMap';
+import { getGlobalStats } from '@/app/actions/global-stats';
+import { GlobalPresence } from '../../GlobalPresence';
 
 const db = getFirestore(app);
 
@@ -34,6 +35,7 @@ export function DashboardHomeView() {
     const [stats, setStats] = useState<FreelancerStats | null>(null);
     const [activeCampaigns, setActiveCampaigns] = useState<Campaign[]>([]);
     const [userName, setUserName] = useState<string>('');
+    const [globalStats, setGlobalStats] = useState<any | null>(null);
 
     useEffect(() => {
         if (!user) return;
@@ -60,6 +62,12 @@ export function DashboardHomeView() {
                 const profileSnap = await getDoc(profileRef);
                 if (profileSnap.exists()) {
                     setUserName(profileSnap.data().firstName || '');
+                }
+
+                // Fetch Global Stats
+                const gStats = await getGlobalStats();
+                if (gStats) {
+                    setGlobalStats(gStats);
                 }
 
             } catch (err) {
@@ -250,8 +258,8 @@ export function DashboardHomeView() {
                 </div>
             </div>
 
-            {/* WORLD MAP PERSISTENCE SECTION (FULL WIDTH) */}
-            <WorldMap />
+            {/* GLOBAL PRESENCE SECTION (MAP REPLACEMENT) */}
+            <GlobalPresence stats={globalStats} />
         </div>
     );
 }

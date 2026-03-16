@@ -396,20 +396,34 @@ export function PromoComposerView() {
             ? activeCampaign.images[selectedImageIndex]
             : 'https://placehold.co/600x400/png');
 
-    const handleWhatsAppShare = async () => {
+    const handleShare = async (platform: string) => {
         if (!activeCampaign) return;
 
         const trackingLink = generatedLink;
         const message = `${currentText}\n\n${trackingLink} #${activeCampaign.companyName.replace(/[^a-zA-Z0-9]/g, '')}`;
-        window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
+
+        // Open Platform URL
+        if (platform === 'whatsapp') {
+            window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
+        } else if (platform === 'telegram') {
+            window.open(`https://t.me/share/url?url=${encodeURIComponent(trackingLink)}&text=${encodeURIComponent(currentText)}`, '_blank');
+        } else if (platform === 'twitter') {
+            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}`, '_blank');
+        } else if (platform === 'facebook') {
+            await navigator.clipboard.writeText(message);
+            setShowFacebookModal(true);
+            return; // Modal will handle the open logic
+        } else if (platform === 'clipboard') {
+            await navigator.clipboard.writeText(message);
+            toast({ title: t('freelancer.composer.copy_success_title'), description: t('freelancer.composer.copy_success_desc') });
+        }
 
         setIsSharing(true);
         try {
-            const postLang = activeLangTab;
             const result = await processCampaignPost(
                 user?.uid || 'demo_user_id',
                 activeCampaign.id!,
-                postLang,
+                activeLangTab,
                 currentText.length,
                 selectedImageUrl,
                 selectedAssetId || '',
@@ -420,23 +434,18 @@ export function PromoComposerView() {
                 dateRange?.to
             );
 
-            if (!result.success) {
-                if ((result as any).error?.includes('10 posts')) {
-                    toast({
-                        title: "Límite Diario Alcanzado",
-                        description: "Nota: Has completado tus 10 posts de hoy. Este post no generará recompensa adicional.",
-                        className: "bg-yellow-500 text-white mb-2",
-                        variant: "default"
-                    });
-                    return;
-                }
-                console.error("Backend process error:", (result as any).error);
-            } else {
+            if (result.success) {
                 const reward = (result as any).reward;
                 toast({
-                    title: "¡Publicando!",
-                    description: `Has asegurado $${reward} por creación. ¡Consigue 5 clics para el bono extra de $0.10!`,
+                    title: `¡Compartido en ${platform.toUpperCase()}!`,
+                    description: `Has asegurado $${reward} por creación. ¡Consigue 5 clics para el bono extra!`,
                     className: "bg-green-600 text-white"
+                });
+            } else if ((result as any).error?.includes('10 posts')) {
+                toast({
+                    title: "Límite Diario",
+                    description: "Has completado tus 10 posts de hoy. No se generará recompensa extra.",
+                    className: "bg-yellow-500 text-white",
                 });
             }
         } catch (error: any) {
@@ -444,7 +453,7 @@ export function PromoComposerView() {
         } finally {
             setIsSharing(false);
         }
-    }
+    };
 
     if (isLoading) return <div className="p-8"><Skeleton className="h-64 w-full" /></div>;
 
@@ -616,10 +625,10 @@ export function PromoComposerView() {
                                         <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
                                             <div className="text-[10px] uppercase font-bold text-slate-400 mb-1">Vigencia</div>
                                             <div className="text-[10px] font-bold text-slate-800 leading-tight">
-                                                {activeCampaign.startDate && activeCampaign.endDate ? (
+                                                {activeCampaign.startDate ? (
                                                     <>
-                                                        {format(new Date(activeCampaign.startDate), 'dd/MM/yy')} <br/>
-                                                        {format(new Date(activeCampaign.endDate), 'dd/MM/yy')}
+                                                        {format(activeCampaign.startDate.toDate ? activeCampaign.startDate.toDate() : new Date(activeCampaign.startDate), 'dd/MM/yy')} <br/>
+                                                        {activeCampaign.endDate ? format(activeCampaign.endDate.toDate ? activeCampaign.endDate.toDate() : new Date(activeCampaign.endDate), 'dd/MM/yy') : '∞'}
                                                     </>
                                                 ) : 'Indefinida'}
                                             </div>
@@ -680,6 +689,42 @@ export function PromoComposerView() {
                                     </div>
                                 </CardHeader>
                                 <CardContent className="p-6">
+                                    <div className="flex gap-4 mb-6 p-4 bg-purple-50/50 rounded-2xl border border-purple-100 items-center justify-between">
+                                        <div className="flex items-center gap-2">
+                                            <CalendarIcon className="h-4 w-4 text-purple-600" />
+                                            <span className="text-xs font-bold text-purple-700 uppercase tracking-wider">Programar Envío</span>
+                                        </div>
+                                        <Popover>
+                                            <PopoverTrigger asChild>
+                                                <Button 
+                                                    variant="outline" 
+                                                    className={cn(
+                                                        "h-9 px-4 rounded-xl border-purple-200 bg-white flex items-center gap-2 shadow-sm",
+                                                        dateRange && "border-purple-600 text-purple-600 shadow-purple-100"
+                                                    )}
+                                                >
+                                                    <span className="text-[11px] font-black">
+                                                        {dateRange?.from ? (
+                                                            dateRange.to ? (
+                                                                `${format(dateRange.from, "dd MMM")} - ${format(dateRange.to, "dd MMM")}`
+                                                            ) : format(dateRange.from, "dd MMM")
+                                                        ) : "SIN PROGRAMAR"}
+                                                    </span>
+                                                </Button>
+                                            </PopoverTrigger>
+                                            <PopoverContent className="w-auto p-0 rounded-3xl overflow-hidden shadow-2xl border-none" align="end">
+                                                <Calendar
+                                                    mode="range"
+                                                    selected={dateRange}
+                                                    onSelect={setDateRange}
+                                                    disabled={(date) => date < new Date()}
+                                                    initialFocus
+                                                    className="p-3"
+                                                />
+                                            </PopoverContent>
+                                        </Popover>
+                                    </div>
+
                                     <div className="grid grid-cols-4 gap-3">
                                         {activeCampaign.assets && activeCampaign.assets.length > 0 ? (
                                             activeCampaign.assets.slice(0, visibleImagesCount).map((asset, i) => (
@@ -692,10 +737,9 @@ export function PromoComposerView() {
                                                     )}
                                                 >
                                                     <Image src={asset.imageUrl} alt="" fill className="object-cover" />
-                                                    <div className={cn(
-                                                        "absolute inset-0 bg-purple-600/10 opacity-0 group-hover:opacity-100 transition-opacity",
-                                                        i === selectedImageIndex && "opacity-100"
-                                                    )} />
+                                                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                                        <span className="text-[10px] font-black text-white uppercase tracking-tighter">Envío {i+1}</span>
+                                                    </div>
                                                     {i === selectedImageIndex && (
                                                         <div className="absolute top-2 right-2 bg-purple-600 text-white rounded-full p-1 shadow-md animate-in zoom-in">
                                                             <Check className="h-3 w-3" />
@@ -714,6 +758,9 @@ export function PromoComposerView() {
                                                     )}
                                                 >
                                                     <Image src={img} alt="" fill className="object-cover" />
+                                                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                                        <span className="text-[10px] font-black text-white uppercase tracking-tighter">Envío {i+1}</span>
+                                                    </div>
                                                     {i === selectedImageIndex && (
                                                         <div className="absolute top-2 right-2 bg-purple-600 text-white rounded-full p-1 shadow-md">
                                                             <Check className="h-3 w-3" />
@@ -824,35 +871,6 @@ export function PromoComposerView() {
                                                 <Copy className="h-3 w-3" />
                                             </Button>
                                         </div>
-                                        <Popover>
-                                            <PopoverTrigger asChild>
-                                                <Button 
-                                                    variant="outline" 
-                                                    className={cn(
-                                                        "h-12 px-4 rounded-2xl border-slate-200 bg-white flex items-center gap-2",
-                                                        dateRange && "border-purple-300 text-purple-600 bg-purple-50"
-                                                    )}
-                                                >
-                                                    <CalendarIcon className="h-5 w-5" />
-                                                    <span className="text-xs font-bold">
-                                                        {dateRange?.from ? (
-                                                            dateRange.to ? (
-                                                                `${format(dateRange.from, "dd/MM")} - ${format(dateRange.to, "dd/MM")}`
-                                                            ) : format(dateRange.from, "dd/MM")
-                                                        ) : "Programar"}
-                                                    </span>
-                                                </Button>
-                                            </PopoverTrigger>
-                                            <PopoverContent className="w-auto p-0 rounded-3xl" align="end">
-                                                <Calendar
-                                                    mode="range"
-                                                    selected={dateRange}
-                                                    onSelect={setDateRange}
-                                                    disabled={(date) => date < new Date()}
-                                                    initialFocus
-                                                />
-                                            </PopoverContent>
-                                        </Popover>
                                     </div>
                                     <div className="mt-4 p-4 rounded-2xl bg-blue-50/50 border border-blue-100/50">
                                         <label className="text-[10px] font-bold text-blue-400 uppercase block mb-2">Página de Aterrizaje</label>
@@ -954,7 +972,7 @@ export function PromoComposerView() {
                         <Button 
                             variant="outline" 
                             size="icon" 
-                            onClick={handleWhatsAppShare}
+                            onClick={() => handleShare('whatsapp')}
                             className="h-12 w-12 rounded-2xl border-green-200 text-green-600 hover:bg-green-50 hover:border-green-300 transition-all font-bold shadow-sm"
                         >
                             <MessageCircle className="h-6 w-6" />
@@ -962,9 +980,7 @@ export function PromoComposerView() {
                         <Button 
                             variant="outline" 
                             size="icon" 
-                            onClick={() => {
-                                window.open(`https://t.me/share/url?url=${encodeURIComponent(generatedLink)}&text=${encodeURIComponent(currentText)}`, '_blank');
-                            }}
+                            onClick={() => handleShare('telegram')}
                             className="h-12 w-12 rounded-2xl border-sky-200 text-sky-600 hover:bg-sky-50 hover:border-sky-300 transition-all font-bold shadow-sm"
                         >
                             <Send className="h-6 w-6" />
@@ -972,10 +988,7 @@ export function PromoComposerView() {
                         <Button 
                             variant="outline" 
                             size="icon" 
-                            onClick={async () => {
-                                await navigator.clipboard.writeText(`${currentText}\n\n${generatedLink}`);
-                                setShowFacebookModal(true);
-                            }}
+                            onClick={() => handleShare('facebook')}
                             className="h-12 w-12 rounded-2xl border-blue-200 text-blue-600 hover:bg-blue-50 hover:border-blue-300 transition-all font-bold shadow-sm"
                         >
                             <Facebook className="h-6 w-6" />
@@ -983,10 +996,7 @@ export function PromoComposerView() {
                         <Button 
                             variant="outline" 
                             size="icon" 
-                            onClick={() => {
-                                const text = `${currentText} ${generatedLink}`;
-                                window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, '_blank');
-                            }}
+                            onClick={() => handleShare('twitter')}
                             className="h-12 w-12 rounded-2xl border-slate-200 text-slate-800 hover:bg-slate-50 hover:border-slate-300 transition-all font-bold shadow-sm"
                         >
                             <Twitter className="h-5 w-5 fill-current" />
