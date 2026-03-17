@@ -293,8 +293,8 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
                         {/* Bottom Section: Quick Actions + Wallets */}
                         <div className="grid gap-6 lg:grid-cols-3">
                             {/* Left Column: Quick Actions */}
-                            <div className="lg:col-span-1 space-y-6">
-                                <Card className="h-full">
+                            <div className="lg:col-span-1">
+                                <Card>
                                     <CardHeader>
                                         <CardTitle>{t('dashboard.quickActions', 'Quick Actions')}</CardTitle>
                                     </CardHeader>
@@ -309,8 +309,6 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
                                         </Button>
                                     </CardContent>
                                 </Card>
-
-                                <WhatsAppGroupSection />
                             </div>
 
                             {/* Right Column: Wallets */}
@@ -370,6 +368,11 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
                                     </div>
                                 </div>
                             </div>
+                        </div>
+
+                        {/* Community Section - New Row */}
+                        <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
+                            <WhatsAppGroupSection />
                         </div>
                     </div>
                 );
