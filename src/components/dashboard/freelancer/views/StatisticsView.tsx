@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/context/AuthContext';
 import { getFreelancerStats, FreelancerStats } from '@/app/actions/freelancer-stats';
+import { getMarketingSends, MarketingSend } from '@/app/actions/marketing-sends';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
@@ -24,7 +25,7 @@ import {
     Facebook, Instagram, Twitter, Linkedin,
     Image as ImageIcon, Youtube,
     MessageCircle, Send, Pin, Twitch,
-    BarChart3, Users, Building2, Info, ExternalLink, CheckCircle2, Clock
+    BarChart3, Users, Building2, Info, ExternalLink, CheckCircle2, Clock, Mail
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
@@ -35,14 +36,22 @@ export function StatisticsView() {
     const { toast } = useToast();
     const [stats, setStats] = useState<FreelancerStats | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [marketingSends, setMarketingSends] = useState<MarketingSend[]>([]);
 
     useEffect(() => {
         if (!user) return;
         async function load() {
             setIsLoading(true);
-            const res = await getFreelancerStats(user!.uid);
-            if (res.success && res.stats) {
-                setStats(res.stats);
+            const [statsRes, sendsRes] = await Promise.all([
+                getFreelancerStats(user!.uid),
+                getMarketingSends(user!.uid)
+            ]);
+
+            if (statsRes.success && statsRes.stats) {
+                setStats(statsRes.stats);
+            }
+            if (sendsRes.success && sendsRes.sends) {
+                setMarketingSends(sendsRes.sends);
             }
             setIsLoading(false);
         }
@@ -122,6 +131,15 @@ export function StatisticsView() {
                 <KpiCard icon={ThumbsUp} label={t('freelancer_menu.connections')} value={totalInteractions} onClick={() => handleCardClick(t('freelancer_menu.connections'))} />
                 <KpiCard icon={Facebook} label="Facebook" value="121" onClick={() => handleCardClick("Facebook")} />
                 <KpiCard icon={Instagram} label="Instagram" value="79" onClick={() => handleCardClick("Instagram")} />
+                <KpiCard 
+                    icon={Mail} 
+                    label="Envíos de E-Mail Marketing" 
+                    value={marketingSends.length} 
+                    onClick={() => {
+                        const el = document.getElementById('marketing-sends-table');
+                        el?.scrollIntoView({ behavior: 'smooth' });
+                    }} 
+                />
                 <KpiCard icon={Users} label={t('freelancer_views.statistics.followers')} value="200" onClick={() => handleCardClick(t('freelancer_views.statistics.followers'))} />
             </div>
 
@@ -241,6 +259,56 @@ export function StatisticsView() {
                                                 </td>
                                                 <td className="px-3 py-2 text-right">
                                                     <span className="font-bold text-green-600">+{post.amount} DP</span>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
+                        </div>
+                    </CardContent>
+                </Card>
+            )}
+
+            {/* Email Marketing Sends History */}
+            {marketingSends.length > 0 && (
+                <Card id="marketing-sends-table" className="bg-white dark:bg-card shadow-sm border overflow-hidden">
+                    <CardHeader className="border-b bg-slate-50/50">
+                        <div className="flex items-center gap-2">
+                            <Mail className="h-5 w-5 text-emerald-500" />
+                            <CardTitle className="text-lg">
+                                Envíos de E-Mail Marketing
+                            </CardTitle>
+                        </div>
+                    </CardHeader>
+                    <CardContent className="p-0">
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-[13px] leading-tight text-center">
+                                <thead className="bg-slate-50 text-slate-500 font-medium">
+                                    <tr>
+                                        <th className="px-3 py-2 text-left">Fecha / Hora</th>
+                                        <th className="px-3 py-2 text-left">Destinatario</th>
+                                        <th className="px-3 py-2 text-left">Email</th>
+                                        <th className="px-3 py-2 text-right">Valor</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y">
+                                    {marketingSends.map((send) => {
+                                        const dateObj = new Date(send.createdAt);
+                                        return (
+                                            <tr key={send.id} className="hover:bg-slate-50/50 transition-colors">
+                                                <td className="px-3 py-2 text-left font-medium">
+                                                    <div className="text-slate-900">{dateObj.toLocaleDateString()}</div>
+                                                    <div className="text-[10px] text-muted-foreground">{dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+                                                </td>
+                                                <td className="px-3 py-2 text-left text-slate-700">
+                                                    {send.friendName}
+                                                </td>
+                                                <td className="px-3 py-2 text-left text-slate-600">
+                                                    {send.friendEmail}
+                                                </td>
+                                                <td className="px-3 py-2 text-right">
+                                                    <span className="font-bold text-emerald-600">+{send.rewardAmount} DP</span>
                                                 </td>
                                             </tr>
                                         );

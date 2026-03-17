@@ -366,10 +366,9 @@ export async function getFreelancerReportData(uniqueCode: string, email: string,
 /**
  * Awards 10 DP for sharing a marketing campaign.
  */
-export async function awardMarketingSharePoints(userId: string, campaignId: string, count: number = 1) {
+export async function awardMarketingSharePoints(userId: string, campaignId: string, count: number = 1, rewardPerUnit: number = 10) {
     const db = getAdminDb();
-    const POINTS_PER_SEND = 10;
-    const totalPoints = POINTS_PER_SEND * count;
+    const totalPoints = rewardPerUnit * count;
 
     if (totalPoints <= 0) return { success: true };
 

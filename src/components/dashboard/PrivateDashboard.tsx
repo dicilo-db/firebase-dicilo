@@ -24,6 +24,7 @@ import { DashboardLayout } from './DashboardLayout';
 import { WalletSection } from './WalletSection';
 import { InviteFriendSection } from './InviteFriendSection';
 import { DiciCoinSection } from './DiciCoinSection';
+import { WhatsAppGroupSection } from './WhatsAppGroupSection';
 import { TicketsManager } from './tickets/TicketsManager';
 import { FreelancerLanding } from './freelancer/FreelancerLanding';
 import { FreelancerCampaignList } from './freelancer/FreelancerCampaignList';
@@ -292,7 +293,7 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
                         {/* Bottom Section: Quick Actions + Wallets */}
                         <div className="grid gap-6 lg:grid-cols-3">
                             {/* Left Column: Quick Actions */}
-                            <div className="lg:col-span-1">
+                            <div className="lg:col-span-1 space-y-6">
                                 <Card className="h-full">
                                     <CardHeader>
                                         <CardTitle>{t('dashboard.quickActions', 'Quick Actions')}</CardTitle>
@@ -308,6 +309,8 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
                                         </Button>
                                     </CardContent>
                                 </Card>
+
+                                <WhatsAppGroupSection />
                             </div>
 
                             {/* Right Column: Wallets */}
@@ -694,6 +697,7 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
             userData={formData}
             currentView={activeView}
             onViewChange={setActiveView}
+            walletData={walletData}
         >
             {renderView()}
         </DashboardLayout>

@@ -86,9 +86,16 @@ interface EmailMarketingComposerProps {
     onBack?: () => void;
     uniqueCode?: string;
     referrerName?: string;
+    isAdmin?: boolean;
 }
 
-export function EmailMarketingComposer({ template, onBack, uniqueCode: propUniqueCode, referrerName: propReferrerName }: EmailMarketingComposerProps) {
+export function EmailMarketingComposer({ 
+    template, 
+    onBack, 
+    uniqueCode: propUniqueCode, 
+    referrerName: propReferrerName,
+    isAdmin = false
+}: EmailMarketingComposerProps) {
     const { t } = useTranslation(['common', 'admin']);
     const { toast } = useToast();
     const { user } = useAuth();
@@ -383,7 +390,8 @@ export function EmailMarketingComposer({ template, onBack, uniqueCode: propUniqu
                     name: f.name,
                     email: f.email,
                     lang: f.language as 'es' | 'de' | 'en',
-                    template: template.id || 'email_marketing'
+                    template: template.id || 'email_marketing',
+                    rewardAmount: rewardAmount
                 }))
             );
 
@@ -454,7 +462,7 @@ export function EmailMarketingComposer({ template, onBack, uniqueCode: propUniqu
             // Reward - Only award points for successful sends
             if (successCount > 0) {
                 try {
-                    await awardMarketingSharePoints(currentUser.uid, template.id || '', successCount);
+                    await awardMarketingSharePoints(currentUser.uid, template.id || '', successCount, rewardAmount);
                 } catch (e) {
                     console.error("Points error", e);
                 }
@@ -508,8 +516,9 @@ export function EmailMarketingComposer({ template, onBack, uniqueCode: propUniqu
                                     type="number" 
                                     value={rewardAmount} 
                                     onChange={(e) => setRewardAmount(Number(e.target.value) || 0)}
-                                    className="w-16 h-6 px-1 py-0 mx-1 text-center bg-white border-purple-200 text-purple-700 font-bold hide-arrows"
+                                    className="w-16 h-6 px-1 py-0 mx-1 text-center bg-white border-purple-200 text-purple-700 font-bold hide-arrows disabled:bg-transparent disabled:border-none"
                                     min="0"
+                                    disabled={!isAdmin}
                                 />
                                 DP
                             </span>

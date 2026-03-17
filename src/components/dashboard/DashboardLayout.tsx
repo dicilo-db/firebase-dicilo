@@ -15,9 +15,10 @@ interface DashboardLayoutProps {
     currentView: string;
     onViewChange: (view: string) => void;
     children: React.ReactNode;
+    walletData?: any;
 }
 
-export function DashboardLayout({ userData, currentView, onViewChange, children }: DashboardLayoutProps) {
+export function DashboardLayout({ userData, currentView, onViewChange, children, walletData }: DashboardLayoutProps) {
     const [isMobileOpen, setIsMobileOpen] = useState(false);
     const { user } = useAuth();
 
@@ -87,6 +88,19 @@ export function DashboardLayout({ userData, currentView, onViewChange, children 
                                 className="object-contain object-left"
                                 priority
                             />
+                        </div>
+
+                        {/* Mobile DP Counter - Added for visibility */}
+                        <div className="flex md:hidden items-center gap-2 border-l pl-3 ml-1 mr-2 min-w-fit">
+                            <div className="flex flex-col items-end">
+                                <span className="text-[9px] font-bold text-slate-500 uppercase leading-none">Mis DP</span>
+                                <div className="flex items-center gap-1">
+                                    <span className="text-sm font-black text-emerald-600">
+                                        {walletData?.balance !== undefined ? Math.floor(walletData.balance) : '...'}
+                                    </span>
+                                    <Coins className="h-3.5 w-3.5 text-emerald-500 fill-emerald-50" />
+                                </div>
+                            </div>
                         </div>
                     </div>
 

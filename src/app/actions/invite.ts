@@ -21,7 +21,7 @@ interface SendInvitationResult {
 export async function sendPioneerInvitations(
     referrerId: string,
     referrerName: string,
-    friends: InviteFriend[]
+    friends: (InviteFriend & { rewardAmount?: number })[]
 ): Promise<SendInvitationResult> {
     try {
         if (!referrerId) {
@@ -54,7 +54,8 @@ export async function sendPioneerInvitations(
                 createdAt: admin.firestore.FieldValue.serverTimestamp(),
                 updatedAt: admin.firestore.FieldValue.serverTimestamp(),
                 opened: false,
-                template: friend.template || 'default'
+                template: friend.template || 'default',
+                rewardAmount: friend.rewardAmount || 10
             });
         }
 

@@ -34,7 +34,8 @@ import {
   Megaphone,
   Scan,
   LifeBuoy,
-  Globe
+  Globe,
+  Mail
 } from 'lucide-react';
 import { useAdminUser, useAuthGuard } from '@/hooks/useAuthGuard';
 import { useServerAction } from '@/hooks/useServerAction';
@@ -755,6 +756,20 @@ const DashboardContent: React.FC = () => {
                 <CardContent>
                   <div className="text-2xl font-bold">Plantillas Email</div>
                   <p className="text-xs text-muted-foreground mt-1">Gestión de correos automatizados</p>
+                </CardContent>
+              </Card>
+            </Link>
+
+            {/* Reporting E-Mail Marketing (NEW) */}
+            <Link href="/admin/marketing-reporting" className="group text-indigo-700">
+              <Card className="h-full bg-indigo-50/30 dark:bg-indigo-900/10 border-indigo-100 transition-all hover:shadow-md hover:border-indigo-400 cursor-pointer relative">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-bold">Reporting E-Mail Marketing</CardTitle>
+                  <Mail className="h-4 w-4 text-indigo-500 group-hover:scale-110 transition-transform" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-black">Reportes</div>
+                  <p className="text-xs text-muted-foreground mt-1">Seguimiento de envíos y recompensas</p>
                 </CardContent>
               </Card>
             </Link>

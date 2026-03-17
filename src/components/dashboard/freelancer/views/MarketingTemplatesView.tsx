@@ -11,6 +11,7 @@ import { Search, Mail, LayoutTemplate, Sparkles, Languages, Send } from 'lucide-
 import { Input } from '@/components/ui/input';
 import { EmailMarketingComposer } from '@/components/ads-manager/EmailMarketingComposer';
 import { useToast } from '@/hooks/use-toast';
+import { useDashboardData } from '@/hooks/useDashboardData';
 
 export function MarketingTemplatesView() {
     const { t } = useTranslation('common');
@@ -19,6 +20,7 @@ export function MarketingTemplatesView() {
     const [isLoading, setIsLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedTemplate, setSelectedTemplate] = useState<EmailTemplate | null>(null);
+    const { isAdmin } = useDashboardData();
 
     useEffect(() => {
         async function load() {
@@ -52,6 +54,7 @@ export function MarketingTemplatesView() {
             <EmailMarketingComposer 
                 template={selectedTemplate} 
                 onBack={() => setSelectedTemplate(null)} 
+                isAdmin={isAdmin}
             />
         );
     }
