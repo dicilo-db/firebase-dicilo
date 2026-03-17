@@ -23,7 +23,7 @@ import { togglePrivateUserStatus, deletePrivateUser, setPrivateUserRole, updateU
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
 // import { CSVLink } from 'react-csv'; // Removed
-import { Loader2, Search, Download, LayoutDashboard, RefreshCw, Trash2, Pause, Play, Briefcase, ShieldCheck, UserPlus, Edit, Save, X } from 'lucide-react';
+import { Loader2, Search, Download, LayoutDashboard, RefreshCw, Trash2, Pause, Play, Briefcase, ShieldCheck, UserPlus, Edit, Save, X, Info } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -44,6 +44,7 @@ export default function PrivateUsersPage() {
     // Permissions & Referrer State
     const [permissionDialogUser, setPermissionDialogUser] = useState<any>(null);
     const [referrerDialogUser, setReferrerDialogUser] = useState<any>(null);
+    const [detailDialogUser, setDetailDialogUser] = useState<any>(null);
     const [referrerCodeInput, setReferrerCodeInput] = useState('');
     const [selectedPermissions, setSelectedPermissions] = useState<string[]>([]);
     const AVAILABLE_PERMISSIONS = [
@@ -128,6 +129,7 @@ export default function PrivateUsersPage() {
     const [filterDate, setFilterDate] = useState<Date | undefined>(undefined);
     const [filterCountry, setFilterCountry] = useState('');
     const [filterCity, setFilterCity] = useState('');
+    const [filterReferrer, setFilterReferrer] = useState('');
 
     const filteredUsers = users.filter(user => {
         const matchesSearch =
@@ -138,6 +140,9 @@ export default function PrivateUsersPage() {
 
         const matchesCountry = !filterCountry || (user.country?.toLowerCase() || '').includes(filterCountry.toLowerCase());
         const matchesCity = !filterCity || (user.city?.toLowerCase() || '').includes(filterCity.toLowerCase());
+        const matchesReferrer = !filterReferrer || 
+            (user.referrerCode?.toLowerCase() || '').includes(filterReferrer.toLowerCase()) ||
+            (user.referrerName?.toLowerCase() || '').includes(filterReferrer.toLowerCase());
 
         let matchesDate = true;
         if (filterDate) {
@@ -151,7 +156,7 @@ export default function PrivateUsersPage() {
             }
         }
 
-        return matchesSearch && matchesCountry && matchesCity && matchesDate;
+        return matchesSearch && matchesCountry && matchesCity && matchesReferrer && matchesDate;
     }).sort((a, b) => {
         const dateA = a.createdAt?.seconds ? a.createdAt.seconds : 0;
         const dateB = b.createdAt?.seconds ? b.createdAt.seconds : 0;
@@ -241,7 +246,7 @@ export default function PrivateUsersPage() {
                 <Card>
                     <CardHeader>
                         <CardTitle>{t('common:privateUsersList')}</CardTitle>
-                        <div className="grid grid-cols-1 gap-4 md:grid-cols-5 pt-4">
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-6 pt-4">
                             {/* Filter: Search */}
                             <div className="flex flex-col gap-2">
                                 <Label className="text-xs font-semibold">{t('privateUsers.filters.search')}</Label>
@@ -290,6 +295,20 @@ export default function PrivateUsersPage() {
                                 />
                             </div>
 
+                            {/* Filter: Invited By */}
+                            <div className="flex flex-col gap-2">
+                                <Label className="text-xs font-semibold">Invitado por</Label>
+                                <div className="relative">
+                                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                                    <Input
+                                        placeholder="Referente..."
+                                        value={filterReferrer}
+                                        onChange={(e) => setFilterReferrer(e.target.value)}
+                                        className="pl-9"
+                                    />
+                                </div>
+                            </div>
+
                             {/* Filter: Sort Order */}
                             <div className="flex flex-col gap-2">
                                 <Label className="text-xs font-semibold">{t('privateUsers.filters.sort')}</Label>
@@ -305,7 +324,7 @@ export default function PrivateUsersPage() {
                             </div>
                         </div>
                         {/* Clear Filters Button */}
-                        {(searchTerm || filterCountry || filterCity || filterDate) && (
+                        {(searchTerm || filterCountry || filterCity || filterDate || filterReferrer) && (
                             <div className="flex justify-end pt-2">
                                 <Button
                                     variant="ghost"
@@ -314,6 +333,7 @@ export default function PrivateUsersPage() {
                                         setSearchTerm('');
                                         setFilterCountry('');
                                         setFilterCity('');
+                                        setFilterReferrer('');
                                         setFilterDate(undefined);
                                     }}
                                     className="text-muted-foreground hover:text-foreground h-8"
@@ -430,6 +450,9 @@ export default function PrivateUsersPage() {
                                             </TableCell>
                                             <TableCell>
                                                 <div className="flex items-center gap-2">
+                                                    <Button variant="ghost" size="sm" onClick={() => setDetailDialogUser(user)} title="Ver Ficha Técnica">
+                                                        <Info className="h-4 w-4 text-blue-600" />
+                                                    </Button>
                                                     <Button variant="ghost" size="sm" onClick={async () => {
                                                         const newStatus = !user.disabled;
                                                         if (confirm(`Sind Sie sicher, dass Sie diesen Benutzer ${newStatus ? 'deaktivieren' : 'aktivieren'} möchten?`)) {
@@ -534,6 +557,120 @@ export default function PrivateUsersPage() {
                     <DialogFooter>
                         <Button variant="outline" onClick={() => setReferrerDialogUser(null)}>Cancelar</Button>
                         <Button onClick={handleSaveReferrer}>Guardar</Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            {/* Technical Sheet (Ficha Técnica) Dialog */}
+            <Dialog open={!!detailDialogUser} onOpenChange={(open) => !open && setDetailDialogUser(null)}>
+                <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
+                    <DialogHeader>
+                        <DialogTitle className="text-2xl font-bold flex items-center gap-2">
+                            <Info className="h-6 w-6 text-blue-600" />
+                            Ficha Técnica del Usuario
+                        </DialogTitle>
+                    </DialogHeader>
+                    
+                    {detailDialogUser && (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-6">
+                            {/* Basic Info */}
+                            <div className="space-y-4">
+                                <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground border-b pb-1">Información Básica</h3>
+                                <div className="grid grid-cols-2 gap-2 text-sm">
+                                    <span className="font-semibold text-muted-foreground">Nombre:</span>
+                                    <span>{detailDialogUser.firstName} {detailDialogUser.lastName}</span>
+                                    
+                                    <span className="font-semibold text-muted-foreground">Email:</span>
+                                    <span className="break-all">{detailDialogUser.email}</span>
+                                    
+                                    <span className="font-semibold text-muted-foreground">Código Único:</span>
+                                    <span className="font-mono font-bold">{detailDialogUser.uniqueCode}</span>
+                                    
+                                    <span className="font-semibold text-muted-foreground">Rol:</span>
+                                    <span className="capitalize">{detailDialogUser.role || (detailDialogUser.isFreelancer ? 'freelancer' : 'user')}</span>
+
+                                    <span className="font-semibold text-muted-foreground">Estado:</span>
+                                    <span className={detailDialogUser.disabled ? "text-destructive font-bold" : "text-green-600 font-bold"}>
+                                        {detailDialogUser.disabled ? "Desactivado" : "Activo"}
+                                    </span>
+
+                                    <span className="font-semibold text-muted-foreground">Fecha Registro:</span>
+                                    <span>{detailDialogUser.createdAt?.seconds ? new Date(detailDialogUser.createdAt.seconds * 1000).toLocaleString() : 'N/A'}</span>
+                                </div>
+                            </div>
+
+                            {/* Location & Contact */}
+                            <div className="space-y-4">
+                                <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground border-b pb-1">Ubicación y Contacto</h3>
+                                <div className="grid grid-cols-2 gap-2 text-sm">
+                                    <span className="font-semibold text-muted-foreground">País:</span>
+                                    <span>{detailDialogUser.country || 'N/A'}</span>
+                                    
+                                    <span className="font-semibold text-muted-foreground">Ciudad:</span>
+                                    <span>{detailDialogUser.city || 'N/A'}</span>
+
+                                    <span className="font-semibold text-muted-foreground">Teléfono:</span>
+                                    <span>{detailDialogUser.phoneNumber || 'N/A'}</span>
+
+                                    <span className="font-semibold text-muted-foreground">WhatsApp:</span>
+                                    <span>{detailDialogUser.contactPreferences?.whatsapp || 'N/A'}</span>
+
+                                    <span className="font-semibold text-muted-foreground">Telegram:</span>
+                                    <span>{detailDialogUser.contactPreferences?.telegram || 'N/A'}</span>
+                                </div>
+                            </div>
+
+                            {/* Referrer Info */}
+                            <div className="space-y-4">
+                                <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground border-b pb-1">Referencia</h3>
+                                <div className="grid grid-cols-2 gap-2 text-sm">
+                                    <span className="font-semibold text-muted-foreground">Invitado por:</span>
+                                    <span>{detailDialogUser.referrerName || 'N/A'}</span>
+                                    
+                                    <span className="font-semibold text-muted-foreground">Código Referente:</span>
+                                    <span className="font-mono">{detailDialogUser.referrerCode || 'N/A'}</span>
+                                </div>
+                            </div>
+
+                            {/* Extra Data */}
+                            <div className="space-y-4">
+                                <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground border-b pb-1">Otros Datos</h3>
+                                <div className="space-y-2">
+                                    <div className="flex flex-col">
+                                        <span className="text-xs font-semibold text-muted-foreground">Intereses:</span>
+                                        <div className="flex flex-wrap gap-1 mt-1">
+                                            {detailDialogUser.interests && detailDialogUser.interests.length > 0 ? (
+                                                detailDialogUser.interests.map((interest: string) => (
+                                                    <span key={interest} className="px-2 py-0.5 bg-secondary text-secondary-foreground rounded text-[10px]">
+                                                        {interest}
+                                                    </span>
+                                                ))
+                                            ) : (
+                                                <span className="text-xs text-muted-foreground">Sin intereses listados</span>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <span className="text-xs font-semibold text-muted-foreground">Permisos Extra:</span>
+                                        <div className="flex flex-wrap gap-1 mt-1">
+                                            {detailDialogUser.permissions && detailDialogUser.permissions.length > 0 ? (
+                                                detailDialogUser.permissions.map((perm: string) => (
+                                                    <span key={perm} className="px-2 py-0.5 bg-purple-100 text-purple-800 rounded text-[10px]">
+                                                        {perm}
+                                                    </span>
+                                                ))
+                                            ) : (
+                                                <span className="text-xs text-muted-foreground">Sin permisos adicionales</span>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    <DialogFooter>
+                        <Button onClick={() => setDetailDialogUser(null)}>Cerrar</Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
