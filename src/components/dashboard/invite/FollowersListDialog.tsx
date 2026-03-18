@@ -125,7 +125,7 @@ export function FollowersListDialog({ open, onOpenChange, followerReferrals }: F
                         <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                         <Input
                             type="text"
-                            placeholder={t('common:search', 'Buscar nombre o email...')}
+                            placeholder={t('common:searchPlaceholder', 'Buscar nombre o email...')}
                             className="pl-9 h-9"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}

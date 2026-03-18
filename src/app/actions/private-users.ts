@@ -187,20 +187,28 @@ export async function setReferrer(uid: string, referrerCode: string) {
 /**
  * Fetches details for a list of users by UID.
  * Useful for displaying follower lists. Includes basic info only.
- * Limits to 30 UIDs at a time for performance.
+ * No longer limits to 30, but uses batching for Firestore safety.
  */
 export async function getFollowersDetails(uids: string[]) {
     if (!uids || uids.length === 0) return [];
 
-    // Limit to 30 for safety/performance in this UI
-    const safeUids = uids.slice(0, 30);
     const db = getAdminDb();
 
     try {
-        const refs = safeUids.map(uid => db.collection('private_profiles').doc(uid));
-        const snapshots = await db.getAll(...refs);
+        // Use batches of 100 for Firestore getAll calls
+        const chunks = [];
+        for (let i = 0; i < uids.length; i += 100) {
+            chunks.push(uids.slice(i, i + 100));
+        }
 
-        return snapshots.map(snap => {
+        const allSnapshots: admin.firestore.DocumentSnapshot[] = [];
+        for (const chunk of chunks) {
+            const refs = chunk.map(uid => db.collection('private_profiles').doc(uid));
+            const snapshots = await db.getAll(...refs);
+            allSnapshots.push(...snapshots);
+        }
+
+        return allSnapshots.map(snap => {
             if (!snap.exists) return null;
             const data = snap.data();
             return {

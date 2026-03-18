@@ -572,17 +572,17 @@ export default function PrivateUsersPage() {
                     <DialogHeader>
                         <DialogTitle className="text-2xl font-bold flex items-center gap-2">
                             <Info className="h-6 w-6 text-blue-600" />
-                            Ficha Técnica del Usuario
+                            {t('admin.technicalSheet')}
                         </DialogTitle>
                     </DialogHeader>
                     {detailDialogUser && (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-6 border-t mt-4">
                             {/* Basic Info */}
                             <div className="space-y-4">
-                                <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground border-b pb-1">Información Básica</h3>
+                                <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground border-b pb-1">{t('admin.basicInfo')}</h3>
                                 <div className="grid grid-cols-1 gap-2 text-sm">
                                     <div className="flex justify-between border-b border-dotted pb-1">
-                                        <span className="font-semibold text-muted-foreground">Nombre:</span>
+                                        <span className="font-semibold text-muted-foreground">{t('admin.name')}</span>
                                         <span>{detailDialogUser.firstName} {detailDialogUser.lastName}</span>
                                     </div>
                                     
@@ -592,26 +592,26 @@ export default function PrivateUsersPage() {
                                     </div>
                                     
                                     <div className="flex justify-between border-b border-dotted pb-1">
-                                        <span className="font-semibold text-muted-foreground">Código Único:</span>
+                                        <span className="font-semibold text-muted-foreground">{t('admin.uniqueCode')}</span>
                                         <span className="font-mono font-bold text-blue-700">{detailDialogUser.uniqueCode}</span>
                                     </div>
                                     
                                     <div className="flex justify-between border-b border-dotted pb-1">
-                                        <span className="font-semibold text-muted-foreground">Rol:</span>
+                                        <span className="font-semibold text-muted-foreground">{t('admin.role')}</span>
                                         <span className="capitalize px-2 py-0.5 bg-slate-100 rounded text-[10px] font-bold">
                                             {detailDialogUser.role || (detailDialogUser.isFreelancer ? 'freelancer' : 'user')}
                                         </span>
                                     </div>
 
                                     <div className="flex justify-between border-b border-dotted pb-1">
-                                        <span className="font-semibold text-muted-foreground">Estado:</span>
+                                        <span className="font-semibold text-muted-foreground">{t('admin.status')}</span>
                                         <span className={detailDialogUser.disabled ? "text-destructive font-bold" : "text-green-600 font-bold"}>
-                                            {detailDialogUser.disabled ? "Desactivado" : "Activo"}
+                                            {detailDialogUser.disabled ? t('admin.disabled') : t('admin.active')}
                                         </span>
                                     </div>
 
                                     <div className="flex justify-between border-b border-dotted pb-1">
-                                        <span className="font-semibold text-muted-foreground">Fecha Registro:</span>
+                                        <span className="font-semibold text-muted-foreground">{t('admin.registrationDate')}</span>
                                         <span className="text-xs">
                                             {detailDialogUser.createdAt?.seconds 
                                                 ? format(new Date(detailDialogUser.createdAt.seconds * 1000), 'dd.MM.yyyy - h:mm a') 
@@ -623,35 +623,35 @@ export default function PrivateUsersPage() {
 
                             {/* Location & Contact */}
                             <div className="space-y-4">
-                                <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground border-b pb-1">Ubicación y Contacto</h3>
+                                <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground border-b pb-1">{t('admin.locationContact')}</h3>
                                 <div className="grid grid-cols-1 gap-2 text-sm">
                                     <div className="flex justify-between border-b border-dotted pb-1">
-                                        <span className="font-semibold text-muted-foreground">País / Ciudad:</span>
+                                        <span className="font-semibold text-muted-foreground">{t('admin.countryCity')}</span>
                                         <span>{detailDialogUser.country || 'N/A'} {detailDialogUser.city ? ` / ${detailDialogUser.city}` : ''}</span>
                                     </div>
 
                                     <div className="flex justify-between border-b border-dotted pb-1">
-                                        <span className="font-semibold text-muted-foreground">Teléfono (Mobil):</span>
+                                        <span className="font-semibold text-muted-foreground">{t('admin.phoneMobile')}</span>
                                         <span>{detailDialogUser.phone || detailDialogUser.phoneNumber || 'N/A'}</span>
                                     </div>
 
                                     <div className="flex justify-between border-b border-dotted pb-1">
-                                        <span className="font-semibold text-muted-foreground">Teléfono Fijo:</span>
+                                        <span className="font-semibold text-muted-foreground">{t('dashboard.fixedPhone')}:</span>
                                         <span>{detailDialogUser.fixedPhone || 'N/A'}</span>
                                     </div>
 
                                     <div className="flex justify-between border-b border-dotted pb-1">
-                                        <span className="font-semibold text-muted-foreground">Teléfono Empresa:</span>
+                                        <span className="font-semibold text-muted-foreground">{t('dashboard.workPhone')}:</span>
                                         <span>{detailDialogUser.workPhone || 'N/A'}</span>
                                     </div>
 
                                     <div className="flex justify-between border-b border-dotted pb-1">
-                                        <span className="font-semibold text-muted-foreground">WhatsApp:</span>
+                                        <span className="font-semibold text-muted-foreground">{t('admin.whatsapp')}</span>
                                         <span className="text-green-600 font-medium">{detailDialogUser.contactPreferences?.whatsapp || 'N/A'}</span>
                                     </div>
 
                                     <div className="flex justify-between border-b border-dotted pb-1">
-                                        <span className="font-semibold text-muted-foreground">Telegram:</span>
+                                        <span className="font-semibold text-muted-foreground">{t('admin.telegram')}</span>
                                         <span className="text-blue-500 font-medium">{detailDialogUser.contactPreferences?.telegram || 'N/A'}</span>
                                     </div>
                                 </div>
@@ -659,22 +659,22 @@ export default function PrivateUsersPage() {
 
                             {/* Social Media */}
                             <div className="space-y-4">
-                                <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground border-b pb-1">Redes Sociales</h3>
+                                <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground border-b pb-1">{t('admin.socialNetworks')}</h3>
                                 <div className="grid grid-cols-1 gap-2 text-sm">
                                     <div className="flex justify-between border-b border-dotted pb-1">
-                                        <span className="font-semibold text-muted-foreground">Facebook:</span>
+                                        <span className="font-semibold text-muted-foreground">{t('dashboard.facebook')}:</span>
                                         <span className="text-xs truncate max-w-[150px]">{detailDialogUser.socialLinks?.facebook || 'N/A'}</span>
                                     </div>
                                     <div className="flex justify-between border-b border-dotted pb-1">
-                                        <span className="font-semibold text-muted-foreground">Instagram:</span>
+                                        <span className="font-semibold text-muted-foreground">{t('dashboard.instagram')}:</span>
                                         <span className="text-xs truncate max-w-[150px] font-medium text-pink-600">{detailDialogUser.socialLinks?.instagram || 'N/A'}</span>
                                     </div>
                                     <div className="flex justify-between border-b border-dotted pb-1">
-                                        <span className="font-semibold text-muted-foreground">TikTok:</span>
+                                        <span className="font-semibold text-muted-foreground">{t('dashboard.tiktok')}:</span>
                                         <span className="text-xs truncate max-w-[150px]">{detailDialogUser.socialLinks?.tiktok || 'N/A'}</span>
                                     </div>
                                     <div className="flex justify-between border-b border-dotted pb-1">
-                                        <span className="font-semibold text-muted-foreground">X (Twitter):</span>
+                                        <span className="font-semibold text-muted-foreground">{t('dashboard.twitter')}:</span>
                                         <span className="text-xs truncate max-w-[150px]">{detailDialogUser.socialLinks?.twitter || 'N/A'}</span>
                                     </div>
                                 </div>
@@ -682,25 +682,25 @@ export default function PrivateUsersPage() {
 
                             {/* Reference Info */}
                             <div className="space-y-4">
-                                <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground border-b pb-1">Referencia</h3>
+                                <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground border-b pb-1">{t('admin.reference')}</h3>
                                 <div className="grid grid-cols-1 gap-2 text-sm">
                                     <div className="flex justify-between border-b border-dotted pb-1">
-                                        <span className="font-semibold text-muted-foreground">Invitado por:</span>
+                                        <span className="font-semibold text-muted-foreground">{t('admin.invitedBy')}</span>
                                         <span className="font-bold">{detailDialogUser.referrerName || 'N/A'}</span>
                                     </div>
                                     
                                     <div className="flex justify-between border-b border-dotted pb-1">
-                                        <span className="font-semibold text-muted-foreground">Código Referente:</span>
+                                        <span className="font-semibold text-muted-foreground">{t('admin.referrerCode')}</span>
                                         <span className="font-mono text-xs">{detailDialogUser.referrerCode || 'N/A'}</span>
                                     </div>
 
                                     <div className="flex justify-between border-b border-dotted pb-1">
-                                        <span className="font-semibold text-muted-foreground">WhatsApp Referidor:</span>
+                                        <span className="font-semibold text-muted-foreground">{t('admin.referrerWhatsapp')}</span>
                                         <span className="text-green-600 font-bold">{detailDialogUser.referrerWhatsApp || 'N/A'}</span>
                                     </div>
 
                                     <div className="flex justify-between border-b border-dotted pb-1">
-                                        <span className="font-semibold text-muted-foreground">Fecha Reg.:</span>
+                                        <span className="font-semibold text-muted-foreground">{t('admin.regDateShort')}</span>
                                         <span className="text-xs">
                                             {detailDialogUser.createdAt?.seconds 
                                                 ? format(new Date(detailDialogUser.createdAt.seconds * 1000), 'dd.MM.yyyy - h:mm a') 
@@ -712,10 +712,10 @@ export default function PrivateUsersPage() {
 
                             {/* Extra Data */}
                             <div className="space-y-4 col-span-1 md:col-span-2">
-                                <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground border-b pb-1">Otros Datos e Intereses</h3>
+                                <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground border-b pb-1">{t('admin.otherData')}</h3>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div className="flex flex-col">
-                                        <span className="text-xs font-semibold text-muted-foreground">Intereses:</span>
+                                        <span className="text-xs font-semibold text-muted-foreground">{t('dashboard.interestsTitle')}:</span>
                                         <div className="flex flex-wrap gap-1 mt-1">
                                             {detailDialogUser.interests && detailDialogUser.interests.length > 0 ? (
                                                 detailDialogUser.interests.map((interest: string) => (
@@ -724,12 +724,12 @@ export default function PrivateUsersPage() {
                                                     </span>
                                                 ))
                                             ) : (
-                                                <span className="text-xs text-muted-foreground italic">Sin intereses listados</span>
+                                                <span className="text-xs text-muted-foreground italic">{t('admin.noInterests')}</span>
                                             )}
                                         </div>
                                     </div>
                                     <div className="flex flex-col">
-                                        <span className="text-xs font-semibold text-muted-foreground">Permisos Extra:</span>
+                                        <span className="text-xs font-semibold text-muted-foreground">{t('admin.extraPermissions')}</span>
                                         <div className="flex flex-wrap gap-1 mt-1">
                                             {detailDialogUser.permissions && detailDialogUser.permissions.length > 0 ? (
                                                 detailDialogUser.permissions.map((perm: string) => (
@@ -738,7 +738,7 @@ export default function PrivateUsersPage() {
                                                     </span>
                                                 ))
                                             ) : (
-                                                <span className="text-xs text-muted-foreground italic">Sin permisos adicionales</span>
+                                                <span className="text-xs text-muted-foreground italic">{t('admin.noPermissions')}</span>
                                             )}
                                         </div>
                                     </div>
@@ -748,7 +748,7 @@ export default function PrivateUsersPage() {
                     )}
 
                     <DialogFooter>
-                        <Button onClick={() => setDetailDialogUser(null)}>Cerrar</Button>
+                        <Button onClick={() => setDetailDialogUser(null)}>{t('admin.close')}</Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>

@@ -564,6 +564,50 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
                                             </div>
                                         </div>
                                     </div>
+
+                                    <div className="space-y-4 pt-4 border-t">
+                                        <h3 className="text-lg font-medium">{t('dashboard.personalInfo')} - {t('admin.locationContact')}</h3>
+                                        <div className="grid gap-4 md:grid-cols-2">
+                                            <div className="space-y-2">
+                                                <Label>{t('dashboard.fixedPhone')}</Label>
+                                                <Input
+                                                    value={formData.fixedPhone || ''}
+                                                    onChange={(e) => setFormData({ ...formData, fixedPhone: e.target.value })}
+                                                    onBlur={() => handleUpdate('fixedPhone', { fixedPhone: formData.fixedPhone })}
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label>{t('dashboard.workPhone')}</Label>
+                                                <Input
+                                                    value={formData.workPhone || ''}
+                                                    onChange={(e) => setFormData({ ...formData, workPhone: e.target.value })}
+                                                    onBlur={() => handleUpdate('workPhone', { workPhone: formData.workPhone })}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-4 pt-4 border-t">
+                                        <h3 className="text-lg font-medium">{t('dashboard.communicationPreferences')}</h3>
+                                        <div className="grid gap-4 md:grid-cols-2">
+                                            <div className="space-y-2">
+                                                <Label>{t('dashboard.whatsappHandle')}</Label>
+                                                <Input
+                                                    value={formData.whatsapp || ''}
+                                                    onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
+                                                    onBlur={() => handleUpdate('whatsapp', { whatsapp: formData.whatsapp })}
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label>{t('dashboard.telegramHandle')}</Label>
+                                                <Input
+                                                    value={formData.telegram || ''}
+                                                    onChange={(e) => setFormData({ ...formData, telegram: e.target.value })}
+                                                    onBlur={() => handleUpdate('telegram', { telegram: formData.telegram })}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
                                 </CardContent>
                             </Card>
                         </TabsContent>
@@ -628,6 +672,69 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
                                                 )}
                                             </div>
                                         )}
+                                    </CardContent>
+                                </Card>
+
+                                <Card>
+                                    <CardHeader>
+                                        <CardTitle>{t('dashboard.socialNetworks')}</CardTitle>
+                                        <CardDescription>{t('dashboard.manageProfile')}</CardDescription>
+                                    </CardHeader>
+                                    <CardContent className="space-y-4">
+                                        <div className="grid gap-4 md:grid-cols-2">
+                                            <div className="space-y-2">
+                                                <Label>{t('dashboard.facebook')}</Label>
+                                                <Input
+                                                    value={formData.socialLinks?.facebook || ''}
+                                                    onChange={(e) => setFormData({
+                                                        ...formData,
+                                                        socialLinks: { ...formData.socialLinks, facebook: e.target.value }
+                                                    })}
+                                                    onBlur={() => handleUpdate('facebook', {
+                                                        socialLinks: { ...formData.socialLinks, facebook: formData.socialLinks?.facebook }
+                                                    })}
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label>{t('dashboard.instagram')}</Label>
+                                                <Input
+                                                    value={formData.socialLinks?.instagram || ''}
+                                                    onChange={(e) => setFormData({
+                                                        ...formData,
+                                                        socialLinks: { ...formData.socialLinks, instagram: e.target.value }
+                                                    })}
+                                                    onBlur={() => handleUpdate('instagram', {
+                                                        socialLinks: { ...formData.socialLinks, instagram: formData.socialLinks?.instagram }
+                                                    })}
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label>{t('dashboard.tiktok')}</Label>
+                                                <Input
+                                                    value={formData.socialLinks?.tiktok || ''}
+                                                    onChange={(e) => setFormData({
+                                                        ...formData,
+                                                        socialLinks: { ...formData.socialLinks, tiktok: e.target.value }
+                                                    })}
+                                                    onBlur={() => handleUpdate('tiktok', {
+                                                        socialLinks: { ...formData.socialLinks, tiktok: formData.socialLinks?.tiktok }
+                                                    })}
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label>{t('dashboard.twitter')}</Label>
+                                                <Input
+                                                    value={formData.socialLinks?.twitter || ''}
+                                                    onChange={(e) => setFormData({
+                                                        ...formData,
+                                                        socialLinks: { ...formData.socialLinks, twitter: e.target.value }
+                                                    })}
+                                                    onBlur={() => handleUpdate('twitter', {
+                                                        socialLinks: { ...formData.socialLinks, twitter: formData.socialLinks?.twitter }
+                                                    })}
+                                                />
+                                            </div>
+                                        </div>
                                     </CardContent>
                                 </Card>
 
