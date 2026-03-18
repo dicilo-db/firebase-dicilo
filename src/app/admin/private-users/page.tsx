@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { format } from 'date-fns';
 import { getFirestore, collection, query, getDocs, orderBy } from 'firebase/firestore';
 import { app } from '@/lib/firebase';
 
@@ -107,11 +108,15 @@ export default function PrivateUsersPage() {
                 const userMap = new Map();
                 usersData.forEach((u: any) => userMap.set(u.id, u));
 
-                const enrichedUsers = usersData.map((u: any) => ({
-                    ...u,
-                    referrerCode: u.referredBy ? userMap.get(u.referredBy)?.uniqueCode : null,
-                    referrerName: u.referredBy ? userMap.get(u.referredBy)?.firstName : null
-                }));
+                const enrichedUsers = usersData.map((u: any) => {
+                    const referrer = u.referredBy ? userMap.get(u.referredBy) : null;
+                    return {
+                        ...u,
+                        referrerCode: referrer?.uniqueCode || null,
+                        referrerName: referrer?.firstName || null,
+                        referrerWhatsApp: referrer?.contactPreferences?.whatsapp || referrer?.phoneNumber || null
+                    };
+                });
 
                 setUsers(enrichedUsers);
             } catch (error: any) {
@@ -570,83 +575,156 @@ export default function PrivateUsersPage() {
                             Ficha Técnica del Usuario
                         </DialogTitle>
                     </DialogHeader>
-                    
                     {detailDialogUser && (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-6 border-t mt-4">
                             {/* Basic Info */}
                             <div className="space-y-4">
                                 <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground border-b pb-1">Información Básica</h3>
-                                <div className="grid grid-cols-2 gap-2 text-sm">
-                                    <span className="font-semibold text-muted-foreground">Nombre:</span>
-                                    <span>{detailDialogUser.firstName} {detailDialogUser.lastName}</span>
+                                <div className="grid grid-cols-1 gap-2 text-sm">
+                                    <div className="flex justify-between border-b border-dotted pb-1">
+                                        <span className="font-semibold text-muted-foreground">Nombre:</span>
+                                        <span>{detailDialogUser.firstName} {detailDialogUser.lastName}</span>
+                                    </div>
                                     
-                                    <span className="font-semibold text-muted-foreground">Email:</span>
-                                    <span className="break-all">{detailDialogUser.email}</span>
+                                    <div className="flex justify-between border-b border-dotted pb-1">
+                                        <span className="font-semibold text-muted-foreground">Email:</span>
+                                        <span className="break-all ml-4 text-right">{detailDialogUser.email}</span>
+                                    </div>
                                     
-                                    <span className="font-semibold text-muted-foreground">Código Único:</span>
-                                    <span className="font-mono font-bold">{detailDialogUser.uniqueCode}</span>
+                                    <div className="flex justify-between border-b border-dotted pb-1">
+                                        <span className="font-semibold text-muted-foreground">Código Único:</span>
+                                        <span className="font-mono font-bold text-blue-700">{detailDialogUser.uniqueCode}</span>
+                                    </div>
                                     
-                                    <span className="font-semibold text-muted-foreground">Rol:</span>
-                                    <span className="capitalize">{detailDialogUser.role || (detailDialogUser.isFreelancer ? 'freelancer' : 'user')}</span>
+                                    <div className="flex justify-between border-b border-dotted pb-1">
+                                        <span className="font-semibold text-muted-foreground">Rol:</span>
+                                        <span className="capitalize px-2 py-0.5 bg-slate-100 rounded text-[10px] font-bold">
+                                            {detailDialogUser.role || (detailDialogUser.isFreelancer ? 'freelancer' : 'user')}
+                                        </span>
+                                    </div>
 
-                                    <span className="font-semibold text-muted-foreground">Estado:</span>
-                                    <span className={detailDialogUser.disabled ? "text-destructive font-bold" : "text-green-600 font-bold"}>
-                                        {detailDialogUser.disabled ? "Desactivado" : "Activo"}
-                                    </span>
+                                    <div className="flex justify-between border-b border-dotted pb-1">
+                                        <span className="font-semibold text-muted-foreground">Estado:</span>
+                                        <span className={detailDialogUser.disabled ? "text-destructive font-bold" : "text-green-600 font-bold"}>
+                                            {detailDialogUser.disabled ? "Desactivado" : "Activo"}
+                                        </span>
+                                    </div>
 
-                                    <span className="font-semibold text-muted-foreground">Fecha Registro:</span>
-                                    <span>{detailDialogUser.createdAt?.seconds ? new Date(detailDialogUser.createdAt.seconds * 1000).toLocaleString() : 'N/A'}</span>
+                                    <div className="flex justify-between border-b border-dotted pb-1">
+                                        <span className="font-semibold text-muted-foreground">Fecha Registro:</span>
+                                        <span className="text-xs">
+                                            {detailDialogUser.createdAt?.seconds 
+                                                ? format(new Date(detailDialogUser.createdAt.seconds * 1000), 'dd.MM.yyyy - h:mm a') 
+                                                : 'N/A'}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
 
                             {/* Location & Contact */}
                             <div className="space-y-4">
                                 <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground border-b pb-1">Ubicación y Contacto</h3>
-                                <div className="grid grid-cols-2 gap-2 text-sm">
-                                    <span className="font-semibold text-muted-foreground">País:</span>
-                                    <span>{detailDialogUser.country || 'N/A'}</span>
-                                    
-                                    <span className="font-semibold text-muted-foreground">Ciudad:</span>
-                                    <span>{detailDialogUser.city || 'N/A'}</span>
+                                <div className="grid grid-cols-1 gap-2 text-sm">
+                                    <div className="flex justify-between border-b border-dotted pb-1">
+                                        <span className="font-semibold text-muted-foreground">País / Ciudad:</span>
+                                        <span>{detailDialogUser.country || 'N/A'} {detailDialogUser.city ? ` / ${detailDialogUser.city}` : ''}</span>
+                                    </div>
 
-                                    <span className="font-semibold text-muted-foreground">Teléfono:</span>
-                                    <span>{detailDialogUser.phoneNumber || 'N/A'}</span>
+                                    <div className="flex justify-between border-b border-dotted pb-1">
+                                        <span className="font-semibold text-muted-foreground">Teléfono (Mobil):</span>
+                                        <span>{detailDialogUser.phone || detailDialogUser.phoneNumber || 'N/A'}</span>
+                                    </div>
 
-                                    <span className="font-semibold text-muted-foreground">WhatsApp:</span>
-                                    <span>{detailDialogUser.contactPreferences?.whatsapp || 'N/A'}</span>
+                                    <div className="flex justify-between border-b border-dotted pb-1">
+                                        <span className="font-semibold text-muted-foreground">Teléfono Fijo:</span>
+                                        <span>{detailDialogUser.fixedPhone || 'N/A'}</span>
+                                    </div>
 
-                                    <span className="font-semibold text-muted-foreground">Telegram:</span>
-                                    <span>{detailDialogUser.contactPreferences?.telegram || 'N/A'}</span>
+                                    <div className="flex justify-between border-b border-dotted pb-1">
+                                        <span className="font-semibold text-muted-foreground">Teléfono Empresa:</span>
+                                        <span>{detailDialogUser.workPhone || 'N/A'}</span>
+                                    </div>
+
+                                    <div className="flex justify-between border-b border-dotted pb-1">
+                                        <span className="font-semibold text-muted-foreground">WhatsApp:</span>
+                                        <span className="text-green-600 font-medium">{detailDialogUser.contactPreferences?.whatsapp || 'N/A'}</span>
+                                    </div>
+
+                                    <div className="flex justify-between border-b border-dotted pb-1">
+                                        <span className="font-semibold text-muted-foreground">Telegram:</span>
+                                        <span className="text-blue-500 font-medium">{detailDialogUser.contactPreferences?.telegram || 'N/A'}</span>
+                                    </div>
                                 </div>
                             </div>
 
-                            {/* Referrer Info */}
+                            {/* Social Media */}
+                            <div className="space-y-4">
+                                <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground border-b pb-1">Redes Sociales</h3>
+                                <div className="grid grid-cols-1 gap-2 text-sm">
+                                    <div className="flex justify-between border-b border-dotted pb-1">
+                                        <span className="font-semibold text-muted-foreground">Facebook:</span>
+                                        <span className="text-xs truncate max-w-[150px]">{detailDialogUser.socialLinks?.facebook || 'N/A'}</span>
+                                    </div>
+                                    <div className="flex justify-between border-b border-dotted pb-1">
+                                        <span className="font-semibold text-muted-foreground">Instagram:</span>
+                                        <span className="text-xs truncate max-w-[150px] font-medium text-pink-600">{detailDialogUser.socialLinks?.instagram || 'N/A'}</span>
+                                    </div>
+                                    <div className="flex justify-between border-b border-dotted pb-1">
+                                        <span className="font-semibold text-muted-foreground">TikTok:</span>
+                                        <span className="text-xs truncate max-w-[150px]">{detailDialogUser.socialLinks?.tiktok || 'N/A'}</span>
+                                    </div>
+                                    <div className="flex justify-between border-b border-dotted pb-1">
+                                        <span className="font-semibold text-muted-foreground">X (Twitter):</span>
+                                        <span className="text-xs truncate max-w-[150px]">{detailDialogUser.socialLinks?.twitter || 'N/A'}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Reference Info */}
                             <div className="space-y-4">
                                 <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground border-b pb-1">Referencia</h3>
-                                <div className="grid grid-cols-2 gap-2 text-sm">
-                                    <span className="font-semibold text-muted-foreground">Invitado por:</span>
-                                    <span>{detailDialogUser.referrerName || 'N/A'}</span>
+                                <div className="grid grid-cols-1 gap-2 text-sm">
+                                    <div className="flex justify-between border-b border-dotted pb-1">
+                                        <span className="font-semibold text-muted-foreground">Invitado por:</span>
+                                        <span className="font-bold">{detailDialogUser.referrerName || 'N/A'}</span>
+                                    </div>
                                     
-                                    <span className="font-semibold text-muted-foreground">Código Referente:</span>
-                                    <span className="font-mono">{detailDialogUser.referrerCode || 'N/A'}</span>
+                                    <div className="flex justify-between border-b border-dotted pb-1">
+                                        <span className="font-semibold text-muted-foreground">Código Referente:</span>
+                                        <span className="font-mono text-xs">{detailDialogUser.referrerCode || 'N/A'}</span>
+                                    </div>
+
+                                    <div className="flex justify-between border-b border-dotted pb-1">
+                                        <span className="font-semibold text-muted-foreground">WhatsApp Referidor:</span>
+                                        <span className="text-green-600 font-bold">{detailDialogUser.referrerWhatsApp || 'N/A'}</span>
+                                    </div>
+
+                                    <div className="flex justify-between border-b border-dotted pb-1">
+                                        <span className="font-semibold text-muted-foreground">Fecha Reg.:</span>
+                                        <span className="text-xs">
+                                            {detailDialogUser.createdAt?.seconds 
+                                                ? format(new Date(detailDialogUser.createdAt.seconds * 1000), 'dd.MM.yyyy - h:mm a') 
+                                                : 'N/A'}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
 
                             {/* Extra Data */}
-                            <div className="space-y-4">
-                                <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground border-b pb-1">Otros Datos</h3>
-                                <div className="space-y-2">
+                            <div className="space-y-4 col-span-1 md:col-span-2">
+                                <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground border-b pb-1">Otros Datos e Intereses</h3>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div className="flex flex-col">
                                         <span className="text-xs font-semibold text-muted-foreground">Intereses:</span>
                                         <div className="flex flex-wrap gap-1 mt-1">
                                             {detailDialogUser.interests && detailDialogUser.interests.length > 0 ? (
                                                 detailDialogUser.interests.map((interest: string) => (
-                                                    <span key={interest} className="px-2 py-0.5 bg-secondary text-secondary-foreground rounded text-[10px]">
+                                                    <span key={interest} className="px-2 py-0.5 bg-blue-50 text-blue-700 border border-blue-100 rounded text-[10px]">
                                                         {interest}
                                                     </span>
                                                 ))
                                             ) : (
-                                                <span className="text-xs text-muted-foreground">Sin intereses listados</span>
+                                                <span className="text-xs text-muted-foreground italic">Sin intereses listados</span>
                                             )}
                                         </div>
                                     </div>
@@ -655,12 +733,12 @@ export default function PrivateUsersPage() {
                                         <div className="flex flex-wrap gap-1 mt-1">
                                             {detailDialogUser.permissions && detailDialogUser.permissions.length > 0 ? (
                                                 detailDialogUser.permissions.map((perm: string) => (
-                                                    <span key={perm} className="px-2 py-0.5 bg-purple-100 text-purple-800 rounded text-[10px]">
+                                                    <span key={perm} className="px-2 py-0.5 bg-purple-50 text-purple-700 border border-purple-100 rounded text-[10px]">
                                                         {perm}
                                                     </span>
                                                 ))
                                             ) : (
-                                                <span className="text-xs text-muted-foreground">Sin permisos adicionales</span>
+                                                <span className="text-xs text-muted-foreground italic">Sin permisos adicionales</span>
                                             )}
                                         </div>
                                     </div>

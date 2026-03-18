@@ -67,13 +67,29 @@ const profileFormSchema = z.object({
     // Language Preferences
     preferredLanguage: z.enum(['english', 'spanish', 'german']).default('german'),
 
-    // Contact Channels
+    // Contact Channels (Preferences)
     contactChannels: z.object({
         email: z.boolean().default(true),
         whatsapp: z.boolean().default(false),
         telegram: z.boolean().default(false),
         phone: z.boolean().default(false),
     }),
+
+    // Specialized Contact Values
+    fixedPhone: z.string().optional(),
+    workPhone: z.string().optional(),
+    contactPreferences: z.object({
+        whatsapp: z.string().optional(),
+        telegram: z.string().optional(),
+    }).optional(),
+
+    // Social Links
+    socialLinks: z.object({
+        facebook: z.string().optional(),
+        instagram: z.string().optional(),
+        tiktok: z.string().optional(),
+        twitter: z.string().optional(),
+    }).optional(),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
@@ -100,6 +116,18 @@ export default function PrivateUserProfilePage() {
                 whatsapp: false,
                 telegram: false,
                 phone: false,
+            },
+            fixedPhone: '',
+            workPhone: '',
+            contactPreferences: {
+                whatsapp: '',
+                telegram: '',
+            },
+            socialLinks: {
+                facebook: '',
+                instagram: '',
+                tiktok: '',
+                twitter: '',
             },
         },
     });
@@ -132,6 +160,18 @@ export default function PrivateUserProfilePage() {
                             whatsapp: data.contactChannels?.whatsapp ?? false,
                             telegram: data.contactChannels?.telegram ?? false,
                             phone: data.contactChannels?.phone ?? false,
+                        },
+                        fixedPhone: data.fixedPhone || '',
+                        workPhone: data.workPhone || '',
+                        contactPreferences: {
+                            whatsapp: data.contactPreferences?.whatsapp || '',
+                            telegram: data.contactPreferences?.telegram || '',
+                        },
+                        socialLinks: {
+                            facebook: data.socialLinks?.facebook || '',
+                            instagram: data.socialLinks?.instagram || '',
+                            tiktok: data.socialLinks?.tiktok || '',
+                            twitter: data.socialLinks?.twitter || '',
                         },
                     });
                 } else {
@@ -220,7 +260,8 @@ export default function PrivateUserProfilePage() {
 
                                 {/* Personal Info */}
                                 <div className="space-y-4">
-                                    <h3 className="text-lg font-semibold">Persönliche Informationen</h3>
+                                    <h3 className="text-lg font-semibold">{t('dashboard.personalInfo')}</h3>
+                                    <FormDescription>{t('dashboard.personalInfoDesc')}</FormDescription>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <FormField
                                             control={form.control}
@@ -322,7 +363,7 @@ export default function PrivateUserProfilePage() {
                                         name="phone"
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel>Telefon (Optional)</FormLabel>
+                                                <FormLabel>{t('dashboard.phoneLabel', 'Telefon (Mobil)')}</FormLabel>
                                                 <FormControl>
                                                     <Input placeholder="+49 123 456789" {...field} />
                                                 </FormControl>
@@ -330,6 +371,123 @@ export default function PrivateUserProfilePage() {
                                             </FormItem>
                                         )}
                                     />
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <FormField
+                                            control={form.control}
+                                            name="fixedPhone"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>{t('dashboard.fixedPhone')}</FormLabel>
+                                                    <FormControl>
+                                                        <Input placeholder="+49 40 123456" {...field} />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                        <FormField
+                                            control={form.control}
+                                            name="workPhone"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>{t('dashboard.workPhone')}</FormLabel>
+                                                    <FormControl>
+                                                        <Input placeholder="+49 40 654321" {...field} />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                    </div>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <FormField
+                                            control={form.control}
+                                            name="contactPreferences.whatsapp"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>{t('dashboard.whatsappHandle')}</FormLabel>
+                                                    <FormControl>
+                                                        <Input placeholder="+49 151 12345678" {...field} />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                        <FormField
+                                            control={form.control}
+                                            name="contactPreferences.telegram"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>{t('dashboard.telegramHandle')}</FormLabel>
+                                                    <FormControl>
+                                                        <Input placeholder="@username" {...field} />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Social Networks */}
+                                <div className="space-y-4">
+                                    <h3 className="text-lg font-semibold">{t('dashboard.socialNetworks')}</h3>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <FormField
+                                            control={form.control}
+                                            name="socialLinks.facebook"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>{t('dashboard.facebook')}</FormLabel>
+                                                    <FormControl>
+                                                        <Input placeholder="facebook.com/username" {...field} />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                        <FormField
+                                            control={form.control}
+                                            name="socialLinks.instagram"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>{t('dashboard.instagram')}</FormLabel>
+                                                    <FormControl>
+                                                        <Input placeholder="@username" {...field} />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                        <FormField
+                                            control={form.control}
+                                            name="socialLinks.tiktok"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>{t('dashboard.tiktok')}</FormLabel>
+                                                    <FormControl>
+                                                        <Input placeholder="@username" {...field} />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                        <FormField
+                                            control={form.control}
+                                            name="socialLinks.twitter"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>{t('dashboard.twitter')}</FormLabel>
+                                                    <FormControl>
+                                                        <Input placeholder="@username" {...field} />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                    </div>
                                 </div>
 
                                 {/* Interests */}
