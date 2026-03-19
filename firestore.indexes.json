@@ -141,6 +141,20 @@
                     "order": "ASCENDING"
                 }
             ]
+        },
+        {
+            "collectionGroup": "referrals_pioneers",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
+                    "fieldPath": "referrerId",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "createdAt",
+                    "order": "ASCENDING"
+                }
+            ]
         }
     ],
     "fieldOverrides": [
