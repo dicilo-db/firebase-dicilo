@@ -152,7 +152,8 @@
       "privateUsers": {
         "title": "Privatkunden",
         "description": "Private Profile verwalten"
-      }
+      },
+      "interestsTitle": "Meine Interessen"
     },
     "invite": {
       "form": {
@@ -1251,5 +1252,32 @@
     "add_city_btn": "Stadt hinzufügen",
     "no_locations": "Keine registrierten Standorte gefunden.",
     "start_adding": "Beginnen Sie oben mit dem Hinzufügen eines Landes!"
+  },
+  "admin": {
+    "technicalSheet": "Technische Benutzerinformationen",
+    "basicInfo": "Grundlegende Informationen",
+    "name": "Name:",
+    "uniqueCode": "Einzigartiger Code:",
+    "role": "Rolle:",
+    "status": "Status:",
+    "active": "Aktiv",
+    "disabled": "Deaktiviert",
+    "registrationDate": "Registrierungsdatum:",
+    "locationContact": "Standort & Kontakt",
+    "countryCity": "Land / Stadt:",
+    "phoneMobile": "Telefon (Mobil):",
+    "whatsapp": "WhatsApp:",
+    "telegram": "Telegram:",
+    "socialNetworks": "Soziale Netzwerke",
+    "reference": "Referenz",
+    "invitedBy": "Eingeladen von:",
+    "referrerCode": "Referrer-Code:",
+    "referrerWhatsapp": "Referrer-WhatsApp:",
+    "regDateShort": "Reg.-Datum:",
+    "otherData": "Weitere Daten & Interessen",
+    "noInterests": "Keine Interessen aufgelistet",
+    "extraPermissions": "Zusätzliche Berechtigungen:",
+    "noPermissions": "Keine zusätzlichen Berechtigungen",
+    "close": "Schließen"
   }
 }

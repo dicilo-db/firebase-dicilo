@@ -32,10 +32,34 @@ export async function sendPioneerInvitations(
         const batch = db.batch();
         const referralsRef = db.collection('referrals_pioneers');
 
-        // Check limit (increased from 15 to 100 to allow more marketing activity)
-        const existingDocs = await referralsRef.where('referrerId', '==', referrerId).get();
-        if (existingDocs.size + friends.length > 100) {
-            return { success: false, error: 'Limit reached (Max 100)' };
+        // 1. Get User Role to determine daily limit
+        const userDoc = await db.collection('users_private').doc(referrerId).get();
+        const userData = userDoc.data();
+        const userRole = userData?.role || 'user';
+
+        let dailyLimit = 300; // Default for normal users
+        if (userRole === 'superadmin') {
+            dailyLimit = 3000;
+        } else if (userRole === 'admin') {
+            dailyLimit = 1500;
+        }
+
+        // 2. Count invites sent TODAY (UTC)
+        const startOfDay = new Date();
+        startOfDay.setUTCHours(0, 0, 0, 0);
+        
+        const todayInvites = await referralsRef
+            .where('referrerId', '==', referrerId)
+            .where('createdAt', '>=', startOfDay)
+            .get();
+
+        const currentCount = todayInvites.size;
+
+        if (currentCount + friends.length > dailyLimit) {
+            return { 
+                success: false, 
+                error: `Daily limit reached. Your limit is ${dailyLimit} per day. You have already sent ${currentCount} today.` 
+            };
         }
 
         const generatedIds: string[] = [];

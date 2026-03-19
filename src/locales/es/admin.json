@@ -133,7 +133,8 @@
       "privateUsers": {
         "title": "Usuarios Privados",
         "description": "Gestionar perfiles privados"
-      }
+      },
+      "interestsTitle": "Mis Intereses"
     }
   },
   "dicipoints": {
@@ -1276,5 +1277,32 @@
     "add_city_btn": "Agregar Ciudad",
     "no_locations": "No se encontraron ubicaciones registradas.",
     "start_adding": "¡Comienza agregando un país arriba!"
+  },
+  "admin": {
+    "technicalSheet": "Ficha Técnica del Usuario",
+    "basicInfo": "Información Básica",
+    "name": "Nombre:",
+    "uniqueCode": "Código Único:",
+    "role": "Rol:",
+    "status": "Estado:",
+    "active": "Activo",
+    "disabled": "Desactivado",
+    "registrationDate": "Fecha Registro:",
+    "locationContact": "Ubicación y Contacto",
+    "countryCity": "País / Ciudad:",
+    "phoneMobile": "Teléfono (Móvil):",
+    "whatsapp": "WhatsApp:",
+    "telegram": "Telegram:",
+    "socialNetworks": "Redes Sociales",
+    "reference": "Referencia",
+    "invitedBy": "Invitado por:",
+    "referrerCode": "Código Referente:",
+    "referrerWhatsapp": "WhatsApp del Referidor:",
+    "regDateShort": "Fecha Reg.:",
+    "otherData": "Otros Datos e Intereses",
+    "noInterests": "Sin intereses listados",
+    "extraPermissions": "Permisos Extra:",
+    "noPermissions": "Sin permisos adicionales",
+    "close": "Cerrar"
   }
 }

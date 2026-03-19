@@ -121,7 +121,8 @@
       "privateUsers": {
         "title": "Private Users",
         "description": "Manage private profiles"
-      }
+      },
+      "interestsTitle": "My Interests"
     },
     "invite": {
       "form": {
@@ -1221,8 +1222,36 @@
     "add_district_to": "Add District to {{city}}",
     "district_name": "District Name",
     "new_city_placeholder": "New city...",
+    "confirmDelete": "Are you sure you want to delete this location?",
     "add_city_btn": "Add City",
     "no_locations": "No registered locations found.",
     "start_adding": "Start by adding a country above!"
+  },
+  "admin": {
+    "technicalSheet": "User Technical Information",
+    "basicInfo": "Basic Information",
+    "name": "Name:",
+    "uniqueCode": "Unique Code:",
+    "role": "Role:",
+    "status": "Status:",
+    "active": "Active",
+    "disabled": "Disabled",
+    "registrationDate": "Registration Date:",
+    "locationContact": "Location & Contact",
+    "countryCity": "Country / City:",
+    "phoneMobile": "Phone (Mobile):",
+    "whatsapp": "WhatsApp:",
+    "telegram": "Telegram:",
+    "socialNetworks": "Social Networks",
+    "reference": "Reference",
+    "invitedBy": "Invited by:",
+    "referrerCode": "Referrer Code:",
+    "referrerWhatsapp": "Referrer WhatsApp:",
+    "regDateShort": "Reg. Date:",
+    "otherData": "Other Data & Interests",
+    "noInterests": "No interests listed",
+    "extraPermissions": "Extra Permissions:",
+    "noPermissions": "No extra permissions",
+    "close": "Close"
   }
 }

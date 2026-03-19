@@ -4,30 +4,80 @@ import { getAdminDb } from '@/lib/firebase-admin';
 import { FieldValue } from 'firebase-admin/firestore';
 import * as XLSX from 'xlsx';
 
-// Interface matching the expected Excel structure
+// Interface matching the comprehensive Excel structure
 interface ImportRow {
+    // Basic
     nombre?: string;
     name?: string;
-    telefono?: string;
-    phone?: string;
-    direccion?: string;
-    address?: string;
-    ciudad?: string;
-    city?: string;
-    pais?: string;
-    country?: string;
-    descripcion?: string;
-    description?: string;
-    web?: string;
-    website?: string;
-    email?: string;
+    id_negocio?: string;
+    businessCode?: string;
+    
+    // Categories
     categoria?: string;
     category?: string;
+    subcategoria?: string;
+    subcategory?: string;
+
+    // Descriptions
+    descripcion?: string;
+    description?: string;
+    descripcion_es?: string;
+    description_es?: string;
+    descripcion_en?: string;
+    description_en?: string;
+    descripcion_de?: string;
+    description_de?: string;
+
+    // Location
+    direccion?: string;
+    address?: string;
+    zip?: string;
+    plz?: string;
+    ciudad?: string;
+    city?: string;
+    stadt?: string;
+    barrio?: string;
+    neighborhood?: string;
+    stadtteil?: string;
+    pais?: string;
+    country?: string;
+    land?: string;
+
+    // Contact & Web
+    telefono?: string;
+    phone?: string;
+    email?: string;
+    web?: string;
+    website?: string;
+    sitio_web?: string;
+    oferta_url?: string;
+    currentOfferUrl?: string;
+    mapa_url?: string;
+    mapUrl?: string;
+
+    // Media & AI
+    logo_url?: string;
+    imageUrl?: string;
+    pista_imagen?: string;
+    imageHint?: string;
+
+    // Status & Metrics
+    rating?: number | string;
+    calificacion?: number | string;
+    lat?: number | string;
+    latitude?: number | string;
+    lng?: number | string;
+    longitude?: number | string;
+    tipo?: string;
+    tier_level?: string;
+    activo?: boolean | string;
+    active?: boolean | string;
+
     [key: string]: any;
 }
 
 const DEFAULT_CATEGORY = 'Prospecto Importado';
-const DEFAULT_LOGO = 'https://dicilo.net/img/default_logo.png'; // Placeholder or use a local asset path if preferred
+const DEFAULT_LOGO = 'https://dicilo.net/img/default_logo.png';
 
 export async function importBusinessesFromExcel(formData: FormData) {
     const file = formData.get('file') as File;
@@ -50,91 +100,163 @@ export async function importBusinessesFromExcel(formData: FormData) {
         const batch = db.batch();
         const businessesRef = db.collection('businesses');
 
+        // 1. Pre-fetch Categories for matching
+        const categoriesSnapshot = await db.collection('categories').get();
+        const categoriesData = categoriesSnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        })) as any[];
+
         let importedCount = 0;
         let skippedCount = 0;
         const errors: string[] = [];
 
-        // Pre-fetch names to check duplicates (Basic check)
-        // For large datasets, this might be inefficient, but for typical uploads (hundreds) it's fine.
-        // Ideally we queried specifically, but checking "contains" in Firestore is hard.
-        // We will query for EXACT name match for each row for now.
-
         for (const row of rows) {
-            // Normalize keys (users might upload with spanish or english headers)
-            const name = row.nombre || row.name;
-            const phone = row.telefono || row.phone || '';
-            const address = row.direccion || row.address || '';
-            const city = row.ciudad || row.city || '';
-            const country = row.pais || row.country || '';
-            const description = row.descripcion || row.description || `Imported business: ${name}`;
-            const website = row.web || row.website || '';
-            const email = row.email || '';
-            const categoryFromRow = row.categoria || row.category;
-
+            // --- FIELD NORMALIZATION ---
+            const name = (row.nombre || row.name || '').toString().trim();
             if (!name) {
                 skippedCount++;
                 continue;
             }
 
-            // Check Duplicate
+            // Check Duplicate by Name
             const existingQuery = await businessesRef.where('name', '==', name).limit(1).get();
             if (!existingQuery.empty) {
-                skippedCount++; // Duplicate found
+                skippedCount++;
                 continue;
             }
 
-            // Logic: Smart Defaults
+            // Internal ID
+            const businessCode = (row.id_negocio || row.businessCode || '').toString().trim();
+
+            // Descriptions & Translations
+            const descES = (row.descripcion_es || row.description_es || row.descripcion || row.description || '').toString().trim();
+            const descEN = (row.descripcion_en || row.description_en || '').toString().trim();
+            const descDE = (row.descripcion_de || row.description_de || '').toString().trim();
+            
+            const description_translations = {
+                es: descES,
+                en: descEN,
+                de: descDE
+            };
+
+            // Address Components
+            const address = (row.direccion || row.address || '').toString().trim();
+            const zip = (row.zip || row.plz || '').toString().trim();
+            const city = (row.ciudad || row.city || row.stadt || '').toString().trim();
+            const neighborhood = (row.barrio || row.neighborhood || row.stadtteil || '').toString().trim();
+            const country = (row.pais || row.country || row.land || 'Deutschland').toString().trim();
+
+            const locationStr = [city, country].filter(Boolean).join(', ') || address || 'Unknown Location';
+
+            // Contact
+            const phone = (row.telefono || row.phone || '').toString().trim();
+            const website = (row.web || row.website || row.sitio_web || '').toString().trim();
+            const email = (row.email || '').toString().trim();
+            const currentOfferUrl = (row.oferta_url || row.currentOfferUrl || '').toString().trim();
+            const mapUrl = (row.mapa_url || row.mapUrl || '').toString().trim();
+
+            // Media
+            const imageUrl = (row.logo_url || row.imageUrl || DEFAULT_LOGO).toString().trim();
+            const imageHint = (row.pista_imagen || row.imageHint || `business storefront of ${name}`).toString().trim();
+
+            // Status & Metrics
+            const rawRating = row.rating || row.calificacion || 0;
+            const rating = typeof rawRating === 'number' ? rawRating : parseFloat(rawRating.toString()) || 0;
+
+            const rawActive = row.activo !== undefined ? row.activo : row.active;
+            let active = false;
+            if (rawActive === true || rawActive === 'true' || rawActive === '1' || rawActive === 1) active = true;
+
+            const tier_level = (row.tipo || row.tier_level || 'basic').toString().toLowerCase().trim() === 'premium' ? 'premium' : 'basic';
+
+            // Coordinates
+            const lat = parseFloat((row.lat || row.latitude || '0').toString());
+            const lng = parseFloat((row.lng || row.longitude || '0').toString());
+            const coords = (lat !== 0 || lng !== 0) ? [lat, lng] : null;
+
+            // --- CATEGORY MATCHING ---
+            const categoryFromRow = (row.categoria || row.category || '').toString().trim();
+            const subcategoryFromRow = (row.subcategoria || row.subcategory || '').toString().trim();
+
+            let category_key = '';
+            let subcategory_key = '';
+            let finalCategoryName = categoryFromRow || DEFAULT_CATEGORY;
+
+            if (categoryFromRow) {
+                const matchedCat = categoriesData.find(c => 
+                    c.name.de?.toLowerCase() === categoryFromRow.toLowerCase() ||
+                    c.name.es?.toLowerCase() === categoryFromRow.toLowerCase() ||
+                    c.name.en?.toLowerCase() === categoryFromRow.toLowerCase() ||
+                    c.id.toLowerCase() === categoryFromRow.toLowerCase()
+                );
+
+                if (matchedCat) {
+                    category_key = `category.${matchedCat.id}`;
+                    // Use the DE name as the string representation for 'category' field if possible
+                    finalCategoryName = matchedCat.name.de || categoryFromRow;
+
+                    if (subcategoryFromRow && matchedCat.subcategories) {
+                        const matchedSub = matchedCat.subcategories.find((s: any) => 
+                            s.name.de?.toLowerCase() === subcategoryFromRow.toLowerCase() ||
+                            s.name.es?.toLowerCase() === subcategoryFromRow.toLowerCase() ||
+                            s.name.en?.toLowerCase() === subcategoryFromRow.toLowerCase() ||
+                            s.id.toLowerCase() === subcategoryFromRow.toLowerCase()
+                        );
+                        if (matchedSub) {
+                            subcategory_key = `subcategory.${matchedSub.id}`;
+                            finalCategoryName += ` / ${matchedSub.name.de || subcategoryFromRow}`;
+                        }
+                    }
+                }
+            }
+
+            // --- DOCUMENT PREPARATION ---
             const docRef = businessesRef.doc();
-            const location = [city, country].filter(Boolean).join(', ') || address || 'Unknown Location';
-            const aiHint = `business storefront of ${name} in ${city || 'city'}, commercial photography`;
-
-            const businessData = {
-                name: String(name).trim(),
-                description: String(description).trim(),
-                phone: String(phone).trim(),
-                address: String(address).trim(),
-                city: String(city).trim(),
-                country: String(country).trim(),
-                location: location,
-                website: website,
-                email: email, // Optional, but good to have
-
-                // Defaults
-                active: false, // Pending review
-                category: categoryFromRow || DEFAULT_CATEGORY,
-                category_key: '', // Default unset
-                subcategory_key: '',
-                imageUrl: DEFAULT_LOGO,
-                imageHint: aiHint,
-
+            const businessData: any = {
+                name,
+                businessCode,
+                description: descES, // Primary description is ES for matching UI logic
+                description_translations,
+                address,
+                zip,
+                city,
+                neighborhood,
+                country,
+                location: locationStr,
+                phone,
+                website,
+                email,
+                currentOfferUrl,
+                mapUrl,
+                imageUrl,
+                imageHint,
+                rating,
+                active,
+                tier_level,
+                category: finalCategoryName,
+                category_key,
+                subcategory_key,
+                source: 'excel_import_advanced',
                 createdAt: FieldValue.serverTimestamp(),
                 updatedAt: FieldValue.serverTimestamp(),
-                source: 'excel_import'
             };
+
+            if (coords) businessData.coords = coords;
+
+            // Remove empty fields to keep DB clean
+            Object.keys(businessData).forEach(key => {
+                if (businessData[key] === undefined || businessData[key] === '') {
+                    delete businessData[key];
+                }
+            });
 
             batch.set(docRef, businessData);
             importedCount++;
 
-            // Commit every 400 writes to avoid limit (500)
-            if (importedCount % 400 === 0) {
-                await batch.commit();
-                // Reset batch? No, wait. Firestore Admin SDK batch reuse pattern is complex.
-                // Usually cleaner to stick to one batch if small, or commit and make new.
-                // For simplicity in this logic/context, assuming reasonable file size (<400) or we handle it basic.
-                // If > 500, we need to creating new batch.
-
-                // RE-Initialize batch roughly (Actually batch.commit() ends it, need new one)
-                // Since we can't easily reassing 'batch', let's just break for simplicity or rely on one commit at end if < 500.
-                // Improving: let's perform individual writes or small batches if list is huge? 
-                // For this task, let's assume < 500 rows per upload or just commit at end.
-                // Actually, let's just start a new batch variable if I could, but I can't reassign const 'batch'.
-                // Correction: I'll just commit at the end. If user uploads > 500, it might fail. 
-                // I'll add a check to stop at 500 to be safe for this version.
-            }
-
+            // Safety limit check (Firestore standard batch limit is 500)
             if (importedCount >= 450) {
-                // Safety break to prevent batch overflow in this simple implementation
-                errors.push("Limit of 450 items reached in one batch. Please upload smaller chunks.");
+                errors.push("Limit of 450 items reached in one batch for safety. Please upload remaining data separately.");
                 break;
             }
         }
@@ -147,7 +269,7 @@ export async function importBusinessesFromExcel(formData: FormData) {
             success: true,
             imported: importedCount,
             skipped: skippedCount,
-            message: `Imported ${importedCount} businesses. Skipped ${skippedCount} duplicates.`,
+            message: `Successfully imported ${importedCount} businesses. Skipped ${skippedCount} duplicates or invalid rows.`,
             errors: errors.length > 0 ? errors : undefined
         };
 
