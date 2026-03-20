@@ -54,16 +54,6 @@ export function CityCombobox({ cities, value, onChange, disabled, t }: { cities:
                                         onChange(city.name);
                                         setOpen(false);
                                     }}
-                                    onMouseDown={(e) => {
-                                        e.preventDefault();
-                                        e.stopPropagation();
-                                        onChange(city.name);
-                                        setOpen(false);
-                                    }}
-                                    onPointerDown={(e) => {
-                                        e.preventDefault();
-                                        e.stopPropagation();
-                                    }}
                                     className="cursor-pointer w-full"
                                 >
                                     <Check

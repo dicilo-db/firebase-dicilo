@@ -591,16 +591,6 @@ export function RecommendationFormContent({ initialBusinessName, onSuccess, onCa
                                 form.setValue("country", country.isoCode);
                                 setIsCountryOpen(false);
                               }}
-                              onMouseDown={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                form.setValue("country", country.isoCode);
-                                setIsCountryOpen(false);
-                              }}
-                              onPointerDown={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                              }}
                               className="cursor-pointer hover:bg-emerald-50 w-full"
                             >
                               <Check
