@@ -103,6 +103,62 @@ export function EmailMarketingComposer({
     const [isLoading, setIsLoading] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [isSharing, setIsSharing] = useState(false);
+ 
+    // Data Protection & Cache Logic
+    useEffect(() => {
+        if (!template?.id || !user?.uid) return;
+        
+        const cacheKey = `dicilo_marketing_draft_${template.id}_${user.uid}`;
+        const cached = localStorage.getItem(cacheKey);
+        
+        if (cached) {
+            try {
+                const parsed = JSON.parse(cached);
+                if (Array.isArray(parsed) && parsed.length > 0 && friends.length === 0) {
+                    setFriends(parsed);
+                }
+            } catch (e) {
+                console.error("Error loading cache:", e);
+            }
+        }
+    }, [template?.id, user?.uid]);
+ 
+    useEffect(() => {
+        if (!template?.id || !user?.uid) return;
+        const cacheKey = `dicilo_marketing_draft_${template.id}_${user.uid}`;
+        
+        if (friends.length > 0) {
+            localStorage.setItem(cacheKey, JSON.stringify(friends));
+        } else {
+            localStorage.removeItem(cacheKey);
+        }
+    }, [friends, template?.id, user?.uid]);
+ 
+    useEffect(() => {
+        const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+            const isTextsDirty = JSON.stringify(texts) !== JSON.stringify(template.versions);
+            if (friends.length > 0 || isTextsDirty) {
+                const msg = "¿Tienes cambios o invitaciones preparadas sin enviar. ¿Seguro que quieres salir?";
+                e.preventDefault();
+                e.returnValue = msg;
+                return msg;
+            }
+        };
+ 
+        window.addEventListener('beforeunload', handleBeforeUnload);
+        return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+    }, [friends, texts, template.versions]);
+ 
+    const handleBackWithConfirm = () => {
+        const isTextsDirty = JSON.stringify(texts) !== JSON.stringify(template.versions);
+        if (friends.length > 0 || isTextsDirty) {
+            if (window.confirm("Tienes cambios o invitaciones preparadas que se perderán. ¿Seguro que quieres volver?")) {
+                onBack();
+            }
+        } else {
+            onBack();
+        }
+    };
     const [isTranslating, setIsTranslating] = useState(false);
     const [isCorrecting, setIsCorrecting] = useState(false);
 
@@ -639,6 +695,7 @@ export function EmailMarketingComposer({
                                                         onChange={(e) => setTexts(prev => ({ ...prev, [lang]: { ...prev[lang], subject: e.target.value } }))}
                                                         placeholder="Escribe un asunto atractivo..."
                                                         className="bg-white border-slate-200 focus-visible:ring-purple-500 h-11 text-base shadow-sm"
+                                                        readOnly={!isAdmin}
                                                     />
                                                 </div>
                                                 <div className="space-y-2 relative">
@@ -649,6 +706,7 @@ export function EmailMarketingComposer({
                                                             onChange={(e) => setTexts(prev => ({ ...prev, [lang]: { ...prev[lang], body: e.target.value } }))}
                                                             className="min-h-[300px] resize-none focus-visible:ring-purple-500 bg-white border-slate-200 text-sm leading-relaxed p-5 shadow-sm rounded-xl transition-shadow hover:shadow-md"
                                                             placeholder="Describe tu oferta de forma persuasiva..."
+                                                            readOnly={!isAdmin}
                                                         />
                                                         <div className="absolute top-4 right-4 flex flex-col gap-2 scale-90 md:group-hover:scale-100 transition-transform">
                                                             <Button
@@ -967,7 +1025,7 @@ export function EmailMarketingComposer({
                         <p className="text-xs text-muted-foreground">Última edición hoy a las {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
                     </div>
                     <div className="flex items-center gap-3 w-full md:w-auto">
-                        <Button variant="ghost" className="flex-1 md:flex-none h-11 px-6 rounded-xl hover:bg-slate-100" onClick={onBack}>
+                        <Button variant="ghost" className="flex-1 md:flex-none h-11 px-6 rounded-xl hover:bg-slate-100" onClick={handleBackWithConfirm}>
                             {t('common:cancel', 'Cancelar')}
                         </Button>
                         <div className="flex gap-2 flex-1 md:flex-none">
@@ -997,14 +1055,16 @@ export function EmailMarketingComposer({
                                     </DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
-                            <Button 
-                                onClick={handleSave} 
-                                disabled={isSaving}
-                                className="flex-1 md:flex-none h-11 px-8 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl shadow-lg shadow-purple-500/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
-                            >
-                                {isSaving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Check className="h-4 w-4 mr-2" />}
-                                Guardar Cambios
-                            </Button>
+                            {isAdmin && (
+                                <Button 
+                                    onClick={handleSave} 
+                                    disabled={isSaving}
+                                    className="flex-1 md:flex-none h-11 px-8 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl shadow-lg shadow-purple-500/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                                >
+                                    {isSaving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Check className="h-4 w-4 mr-2" />}
+                                    Guardar Cambios
+                                </Button>
+                            )}
                         </div>
                     </div>
                 </div>

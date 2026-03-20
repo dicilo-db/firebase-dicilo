@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { getTemplate, saveTemplate, translateText, EmailTemplate } from '@/actions/email-templates';
+import { getTemplate, saveTemplate, translateText, deleteTemplate, EmailTemplate } from '@/actions/email-templates';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -19,7 +19,7 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 
 export default function EditTemplatePage() {
-    useAuthGuard(['admin', 'superadmin', 'team_office'], 'access_admin_panel');
+    const { user, isLoading: authLoading } = useAuthGuard(['admin', 'superadmin', 'team_office'], 'access_admin_panel');
     const { t } = useTranslation('admin');
     const { id } = useParams();
     const router = useRouter();
@@ -29,6 +29,7 @@ export default function EditTemplatePage() {
     const [loading, setLoading] = useState(!isNew);
     const [saving, setSaving] = useState(false);
     const [uploadingImage, setUploadingImage] = useState(false);
+    const [initialTemplate, setInitialTemplate] = useState<EmailTemplate | null>(null);
 
     const searchParams = useSearchParams();
     const defaultCategory = searchParams.get('category') || 'email_marketing';
@@ -108,6 +109,7 @@ export default function EditTemplatePage() {
                             }
                         };
                         setTemplate(migratedTemplate);
+                        setInitialTemplate(JSON.parse(JSON.stringify(migratedTemplate)));
                     } else {
                         toast({ title: t("emailTemplates.editor.error"), description: t("emailTemplates.editor.notFound"), variant: "destructive" });
                         router.push('/admin/email-templates');
@@ -156,6 +158,22 @@ export default function EditTemplatePage() {
         }
     };
 
+    const handleDelete = async () => {
+        if (!id || id === 'new') return;
+        if (!window.confirm(t('emailTemplates.editor.confirmDelete', '¿Estás seguro de que deseas eliminar esta plantilla definitivamente?'))) return;
+        
+        setSaving(true);
+        try {
+            await deleteTemplate(id as string);
+            toast({ title: t('emailTemplates.editor.deleted', 'Plantilla eliminada') });
+            router.push('/admin/email-templates');
+        } catch (e) {
+            toast({ title: t('emailTemplates.editor.error'), description: t('emailTemplates.editor.deleteError', 'Error al eliminar'), variant: "destructive" });
+        } finally {
+            setSaving(false);
+        }
+    };
+
     const autoTranslate = async (sourceLang: string = 'es') => {
         const source = template.versions[sourceLang];
         if (!source.subject && !source.body) return;
@@ -184,7 +202,19 @@ export default function EditTemplatePage() {
             setSaving(false);
         }
     };
-
+ 
+    const isDirty = initialTemplate ? JSON.stringify(template) !== JSON.stringify(initialTemplate) : isNew && template.name !== '';
+ 
+    const handleBack = () => {
+        if (isDirty) {
+            if (window.confirm(t('emailTemplates.editor.confirmCancel', 'Tienes cambios sin guardar. ¿Seguro que quieres salir?'))) {
+                router.push(`/admin/email-templates${template.category ? `?category=${template.category}` : ''}`);
+            }
+        } else {
+            router.push(`/admin/email-templates${template.category ? `?category=${template.category}` : ''}`);
+        }
+    };
+ 
     if (loading) return <div className="p-10 text-center">{t('emailTemplates.loading')}</div>;
 
     // Get localized category name
@@ -193,9 +223,7 @@ export default function EditTemplatePage() {
     return (
         <div className="container mx-auto p-6 space-y-6 max-w-4xl">
             <div className="flex items-center gap-4 mb-6">
-                <Link href={`/admin/email-templates${template.category ? `?category=${template.category}` : ''}`}>
-                    <Button variant="ghost" size="icon"><ArrowLeft /></Button>
-                </Link>
+                <Button variant="ghost" size="icon" onClick={handleBack}><ArrowLeft /></Button>
                 <div>
                     <h1 className="text-2xl font-bold">{isNew ? t('emailTemplates.newTemplate') : t('emailTemplates.edit')}</h1>
                     <p className="text-muted-foreground">{template.name || t('emailTemplates.editor.noName')}</p>
@@ -209,6 +237,12 @@ export default function EditTemplatePage() {
                         {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                         {t('emailTemplates.editor.save')}
                     </Button>
+                    {!isNew && user?.role === 'superadmin' && (
+                        <Button variant="destructive" onClick={handleDelete} disabled={saving}>
+                            {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Trash2 className="mr-2 h-4 w-4" />}
+                            {t('emailTemplates.editor.delete', 'Eliminar')}
+                        </Button>
+                    )}
                 </div>
             </div>
 

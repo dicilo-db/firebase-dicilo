@@ -123,6 +123,15 @@ export async function translateText(text: string, targetLang: string) {
     } catch (error: any) {
         console.error("[AI Translation] Error:", error);
         return text;
+    }
+}
 
+export async function deleteTemplate(id: string) {
+    try {
+        await db.collection('email_templates').doc(id).delete();
+        return { success: true };
+    } catch (error) {
+        console.error('Error deleting template:', error);
+        throw new Error('Failed to delete template');
     }
 }

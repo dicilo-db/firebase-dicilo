@@ -29,19 +29,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 
 import { cn } from "@/lib/utils";
 import React, { useState, useEffect, useMemo } from 'react';
@@ -146,7 +133,6 @@ export function RecommendationFormContent({ initialBusinessName, onSuccess, onCa
   const [userProfile, setUserProfile] = useState<any>(null);
   const [media, setMedia] = useState<MediaFile[]>([]);
   const [countrySearch, setCountrySearch] = useState("");
-  const [isCountryOpen, setIsCountryOpen] = useState(false);
   const [rewardAmount, setRewardAmount] = useState(10);
 
   const form = useForm<RecommendationFormValues>({
@@ -376,6 +362,32 @@ export function RecommendationFormContent({ initialBusinessName, onSuccess, onCa
     }
   }, [initialBusinessName, form]);
 
+  // Data Protection Logic
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (form.formState.isDirty || media.length > 0) {
+        const msg = t('form.confirmCancel', 'Tienes cambios sin enviar. ¿Seguro que quieres salir?');
+        e.preventDefault();
+        e.returnValue = msg;
+        return msg;
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [form.formState.isDirty, media.length, t]);
+
+  const handleCancelWithConfirm = () => {
+    if (!onCancel) return;
+    if (form.formState.isDirty || media.length > 0) {
+      if (window.confirm(t('form.confirmCancel', 'Tienes cambios sin enviar. ¿Seguro que quieres salir?'))) {
+        onCancel();
+      }
+    } else {
+      onCancel();
+    }
+  };
+
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-4">
       {/* Media Upload */}
@@ -556,68 +568,31 @@ export function RecommendationFormContent({ initialBusinessName, onSuccess, onCa
               control={form.control}
               name="country"
               render={({ field }) => (
-                <Popover open={isCountryOpen} onOpenChange={setIsCountryOpen}>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      role="combobox"
-                      className={cn(
-                        "w-full justify-between bg-white transition-all hover:bg-slate-50",
-                        !field.value && "text-muted-foreground",
-                        form.formState.errors.country && "border-destructive"
-                      )}
-                      disabled={isSubmitting}
-                    >
-                      {field.value
-                        ? allCountries.find((country) => country.isoCode === field.value)?.localizedName
-                        : t('form.selectOption')}
-                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-[--radix-popover-trigger-width] p-0 shadow-xl border-slate-200">
-                    <Command shouldFilter={true}>
-                      <CommandInput 
-                        placeholder={t('search_country')} 
-                        className="h-10 border-none focus:ring-0"
-                      />
-                      <CommandList className="max-h-[300px]">
-                        <CommandEmpty>{t('no_results', 'No encontrado.')}</CommandEmpty>
-                        <CommandGroup>
-                          {allCountries.map((country) => (
-                            <CommandItem
-                              value={country.localizedName}
-                              key={country.isoCode}
-                              onSelect={() => {
-                                form.setValue("country", country.isoCode);
-                                setIsCountryOpen(false);
-                              }}
-                              onPointerDown={(e) => {
-                                e.preventDefault();
-                                form.setValue("country", country.isoCode);
-                                setIsCountryOpen(false);
-                              }}
-                              onClick={() => {
-                                form.setValue("country", country.isoCode);
-                                setIsCountryOpen(false);
-                              }}
-                              className="cursor-pointer hover:bg-emerald-50 w-full"
-                            >
-                              <Check
-                                className={cn(
-                                  "mr-2 h-4 w-4 text-emerald-500",
-                                  country.isoCode === field.value
-                                    ? "opacity-100"
-                                    : "opacity-0"
-                                )}
-                              />
-                              {country.localizedName}
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
+                <Select
+                  onValueChange={(val) => {
+                    field.onChange(val);
+                    form.setValue("city", ""); // Reset city when country changes
+                  }}
+                  value={field.value}
+                  disabled={isSubmitting}
+                >
+                  <SelectTrigger 
+                    className={cn(
+                      "w-full bg-white transition-all hover:bg-slate-50",
+                      !field.value && "text-muted-foreground",
+                      form.formState.errors.country && "border-destructive"
+                    )}
+                  >
+                    <SelectValue placeholder={t('form.selectOption')} />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-[300px]">
+                    {allCountries.map((country) => (
+                      <SelectItem key={country.isoCode} value={country.isoCode}>
+                        {country.localizedName}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               )}
             />
             {form.formState.errors.country && <p className="text-sm text-destructive">{t('form.errors.required')}</p>}
@@ -836,7 +811,7 @@ export function RecommendationFormContent({ initialBusinessName, onSuccess, onCa
             type="button" 
             variant="ghost" 
             disabled={isSubmitting} 
-            onClick={onCancel}
+            onClick={handleCancelWithConfirm}
             className="hover:bg-slate-100"
           >
             {t('cancel')}

@@ -1,83 +1,43 @@
-import { useState, useMemo } from 'react';
-import { Button } from '@/components/ui/button';
 import {
-    Command,
-    CommandEmpty,
-    CommandGroup,
-    CommandInput,
-    CommandItem,
-    CommandList,
-} from "@/components/ui/command";
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover";
-import { Check, ChevronsUpDown } from "lucide-react";
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import { cn } from "@/lib/utils";
 
 export function CityCombobox({ cities, value, onChange, disabled, t }: { cities: any[], value: string, onChange: (val: string) => void, disabled: boolean, t: any }) {
-    const [open, setOpen] = useState(false);
-
     return (
-        <Popover open={open} onOpenChange={setOpen}>
-            <PopoverTrigger asChild>
-                <Button
-                    variant="outline"
-                    role="combobox"
-                    aria-expanded={open}
-                    className={cn(
-                        "w-full justify-between",
-                        !value && "text-muted-foreground"
-                    )}
-                    disabled={disabled}
-                >
-                    {value
-                        ? value
-                        : t('form.selectOption')}
-                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
-                <Command shouldFilter={true}>
-                    <CommandInput
-                        placeholder={t('search_city')}
-                    />
-                    <CommandList>
-                        <CommandEmpty>{t('no_results', 'No encontrada.')}</CommandEmpty>
-                        <CommandGroup>
-                            {cities.map((city) => (
-                                <CommandItem
-                                    key={`${city.name}-${city.latitude}`}
-                                    value={city.name}
-                                    onSelect={() => {
-                                        onChange(city.name);
-                                        setOpen(false);
-                                    }}
-                                    onPointerDown={(e) => {
-                                        e.preventDefault();
-                                        onChange(city.name);
-                                        setOpen(false);
-                                    }}
-                                    onClick={() => {
-                                        onChange(city.name);
-                                        setOpen(false);
-                                    }}
-                                    className="cursor-pointer w-full"
-                                >
-                                    <Check
-                                        className={cn(
-                                            "mr-2 h-4 w-4",
-                                            value === city.name ? "opacity-100" : "opacity-0"
-                                        )}
-                                    />
-                                    {city.name}
-                                </CommandItem>
-                            ))}
-                        </CommandGroup>
-                    </CommandList>
-                </Command>
-            </PopoverContent>
-        </Popover>
+        <Select
+            onValueChange={onChange}
+            value={value}
+            disabled={disabled}
+        >
+            <SelectTrigger 
+                className={cn(
+                    "w-full bg-white transition-all hover:bg-slate-50",
+                    !value && "text-muted-foreground"
+                )}
+            >
+                <SelectValue placeholder={t('form.selectOption')} />
+            </SelectTrigger>
+            <SelectContent className="max-h-[300px]">
+                {cities.length > 0 ? (
+                    cities.map((city) => (
+                        <SelectItem 
+                            key={`${city.name}-${city.latitude}`} 
+                            value={city.name}
+                        >
+                            {city.name}
+                        </SelectItem>
+                    ))
+                ) : (
+                    <div className="p-2 text-sm text-muted-foreground text-center">
+                        {t('no_results', 'No hay ciudades.')}
+                    </div>
+                )}
+            </SelectContent>
+        </Select>
     );
 }
