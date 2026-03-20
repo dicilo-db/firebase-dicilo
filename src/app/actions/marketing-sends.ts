@@ -9,6 +9,9 @@ export interface MarketingSend {
     rewardAmount: number;
     createdAt: string;
     template: string;
+    status: string;
+    converted?: boolean;
+    convertedAt?: string;
 }
 
 export async function getMarketingSends(userId: string) {
@@ -29,6 +32,9 @@ export async function getMarketingSends(userId: string) {
                 friendEmail: data.friendEmail || 'N/A',
                 rewardAmount: data.rewardAmount || 10,
                 template: data.template || 'default',
+                status: data.status || 'sent',
+                converted: !!data.converted,
+                convertedAt: data.convertedAt?.toDate ? data.convertedAt.toDate().toISOString() : undefined,
                 createdAt: data.createdAt?.toDate ? data.createdAt.toDate().toISOString() : new Date().toISOString()
             };
         });

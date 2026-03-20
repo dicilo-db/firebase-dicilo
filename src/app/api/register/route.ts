@@ -303,6 +303,31 @@ export async function POST(request: Request) {
       }
     }
 
+    // 6b. UPDATE REFERRALS_PIONEERS STATUS (New logic)
+    // If the user registered with an email that was invited via marketing templates
+    try {
+        const referralsRef = db.collection('referrals_pioneers');
+        // Search for invitations sent to this email
+        const inviteQuery = await referralsRef
+            .where('friendEmail', '==', email)
+            .where('status', '==', 'sent')
+            .limit(1)
+            .get();
+
+        if (!inviteQuery.empty) {
+            const inviteDoc = inviteQuery.docs[0];
+            await inviteDoc.ref.update({
+                status: 'converted',
+                converted: true,
+                convertedAt: admin.firestore.FieldValue.serverTimestamp(),
+                convertedUid: ownerUid
+            });
+            console.log(`[CONVERSION] Invitation ${inviteDoc.id} marked as converted for ${email}`);
+        }
+    } catch (convErr) {
+        console.error("Conversion Logic Error:", convErr);
+    }
+
 
     // 7. Webhook & Email
     try {

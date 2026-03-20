@@ -273,42 +273,87 @@ export function StatisticsView() {
             {/* Email Marketing Sends History */}
             {marketingSends.length > 0 && (
                 <Card id="marketing-sends-table" className="bg-white dark:bg-card shadow-sm border overflow-hidden">
-                    <CardHeader className="border-b bg-slate-50/50">
-                        <div className="flex items-center gap-2">
-                            <Mail className="h-5 w-5 text-emerald-500" />
-                            <CardTitle className="text-lg">
-                                Envíos de E-Mail Marketing
-                            </CardTitle>
+                    <CardHeader className="border-b bg-slate-50/50 py-4">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                                <Mail className="h-5 w-5 text-emerald-500" />
+                                <CardTitle className="text-lg font-bold">
+                                    Envíos de E-Mail Marketing
+                                </CardTitle>
+                            </div>
+                            <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-100">
+                                {marketingSends.length} Total
+                            </Badge>
                         </div>
                     </CardHeader>
                     <CardContent className="p-0">
                         <div className="overflow-x-auto">
-                            <table className="w-full text-[13px] leading-tight text-center">
-                                <thead className="bg-slate-50 text-slate-500 font-medium">
+                            <table className="w-full text-[13px] leading-tight text-left">
+                                <thead className="bg-slate-50 text-slate-500 font-medium border-b">
                                     <tr>
-                                        <th className="px-3 py-2 text-left">Fecha / Hora</th>
-                                        <th className="px-3 py-2 text-left">Destinatario</th>
-                                        <th className="px-3 py-2 text-left">Email</th>
-                                        <th className="px-3 py-2 text-right">Valor</th>
+                                        <th className="px-4 py-3">Fecha / Hora</th>
+                                        <th className="px-4 py-3">Destinatario</th>
+                                        <th className="px-4 py-3">Plantilla</th>
+                                        <th className="px-4 py-3">Estado</th>
+                                        <th className="px-4 py-3 text-right">Valor</th>
+                                        <th className="px-4 py-3 text-center">Acciones</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y">
+                                <tbody className="divide-y divide-slate-100">
                                     {marketingSends.map((send) => {
                                         const dateObj = new Date(send.createdAt);
+                                        const initial = send.friendName?.charAt(0).toUpperCase() || '?';
+                                        
                                         return (
-                                            <tr key={send.id} className="hover:bg-slate-50/50 transition-colors">
-                                                <td className="px-3 py-2 text-left font-medium">
-                                                    <div className="text-slate-900">{dateObj.toLocaleDateString()}</div>
+                                            <tr key={send.id} className="hover:bg-slate-50/50 transition-colors group">
+                                                <td className="px-4 py-3 font-medium">
+                                                    <div className="text-slate-900 font-semibold">{dateObj.toLocaleDateString()}</div>
                                                     <div className="text-[10px] text-muted-foreground">{dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
                                                 </td>
-                                                <td className="px-3 py-2 text-left text-slate-700">
-                                                    {send.friendName}
+                                                <td className="px-4 py-3">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="h-8 w-8 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-[10px] font-bold text-slate-600 shrink-0">
+                                                            {initial}
+                                                        </div>
+                                                        <div className="flex flex-col min-w-0">
+                                                            <span className="font-bold text-slate-800 truncate">{send.friendName}</span>
+                                                            <span className="text-[10px] text-muted-foreground truncate">{send.friendEmail}</span>
+                                                        </div>
+                                                    </div>
                                                 </td>
-                                                <td className="px-3 py-2 text-left text-slate-600">
-                                                    {send.friendEmail}
+                                                <td className="px-4 py-3">
+                                                    <Badge variant="outline" className="bg-slate-50 text-[10px] font-medium capitalize truncate max-w-[120px]">
+                                                        {send.template.replace(/_/g, ' ')}
+                                                    </Badge>
                                                 </td>
-                                                <td className="px-3 py-2 text-right">
-                                                    <span className="font-bold text-emerald-600">+{send.rewardAmount} DP</span>
+                                                <td className="px-4 py-3">
+                                                    {send.converted ? (
+                                                        <Badge className="bg-green-100 text-green-700 hover:bg-green-100 border-green-200 text-[10px] py-0 px-2">
+                                                            Registrado
+                                                        </Badge>
+                                                    ) : (
+                                                        <Badge variant="outline" className="text-blue-600 bg-blue-50 border-blue-100 text-[10px] py-0 px-2 italic">
+                                                            Enviado
+                                                        </Badge>
+                                                    )}
+                                                </td>
+                                                <td className="px-4 py-3 text-right text-base">
+                                                    <span className="font-black text-emerald-600">+{send.rewardAmount} <span className="text-[10px]">DP</span></span>
+                                                </td>
+                                                <td className="px-4 py-3 text-center">
+                                                    <Button 
+                                                        variant="ghost" 
+                                                        size="sm" 
+                                                        className="h-8 text-[11px] font-bold text-slate-500 hover:text-emerald-600 hover:bg-emerald-50 transition-all opacity-0 group-hover:opacity-100"
+                                                        onClick={() => {
+                                                            toast({
+                                                                title: "Detalles del Envío",
+                                                                description: `Invitación enviada a ${send.friendName} usando la plantilla ${send.template}.`,
+                                                            });
+                                                        }}
+                                                    >
+                                                        Ver
+                                                    </Button>
                                                 </td>
                                             </tr>
                                         );

@@ -384,7 +384,7 @@ export function EmailMarketingComposer({
             // 1. Create Invitations in Firestore
             const { sendPioneerInvitations } = await import('@/app/actions/invite');
             const result = await sendPioneerInvitations(
-                propUniqueCode || currentUser.uid,
+                currentUser.uid,
                 effectiveSenderName,
                 friends.map(f => ({
                     name: f.name,
@@ -424,8 +424,11 @@ export function EmailMarketingComposer({
                     .replace(/\{\{.*?\}\}/g, friend.name)
                     .replace(/\[Name\]|\[Nombre\]/g, friend.name);
 
+                const { language, ...friendData } = friend;
+
                 return {
-                    ...friend,
+                    ...friendData,
+                    lang: language,
                     generated_subject: subject,
                     generated_body: body,
                     inviteId: inviteId
@@ -435,7 +438,7 @@ export function EmailMarketingComposer({
             const payload = {
                 referrer_id: propUniqueCode || currentUser.uid,
                 referrer_name: effectiveSenderName,
-                referrer_email: currentUser.email,
+                referrer_email: currentUser.email || undefined,
                 friends: enrichedFriends,
                 timestamp: new Date().toISOString()
             };
