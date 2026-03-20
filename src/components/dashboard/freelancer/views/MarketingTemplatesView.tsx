@@ -27,9 +27,14 @@ export function MarketingTemplatesView() {
             setIsLoading(true);
             try {
                 const data = await getTemplates();
-                // Filter by marketing email category only
-                const filtered = data.filter(t => t.category === 'email_marketing');
-                setTemplates(filtered);
+                if (data && Array.isArray(data)) {
+                    // Filter by marketing email category only
+                    const filtered = data.filter(t => t.category === 'email_marketing');
+                    setTemplates(filtered);
+                } else {
+                    console.warn('getTemplates returned no data or invalid format:', data);
+                    setTemplates([]);
+                }
             } catch (error) {
                 console.error('Error loading marketing templates:', error);
                 toast({

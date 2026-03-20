@@ -44,18 +44,23 @@ export function StatisticsView() {
         if (!user) return;
         async function load() {
             setIsLoading(true);
-            const [statsRes, sendsRes] = await Promise.all([
-                getFreelancerStats(user!.uid),
-                getMarketingSends(user!.uid)
-            ]);
+            try {
+                const [statsRes, sendsRes] = await Promise.all([
+                    getFreelancerStats(user!.uid),
+                    getMarketingSends(user!.uid)
+                ]);
 
-            if (statsRes.success && statsRes.stats) {
-                setStats(statsRes.stats);
+                if (statsRes.success && statsRes.stats) {
+                    setStats(statsRes.stats);
+                }
+                if (sendsRes.success && sendsRes.sends) {
+                    setMarketingSends(sendsRes.sends);
+                }
+            } catch (error) {
+                console.error('Error loading stats/sends:', error);
+            } finally {
+                setIsLoading(false);
             }
-            if (sendsRes.success && sendsRes.sends) {
-                setMarketingSends(sendsRes.sends);
-            }
-            setIsLoading(false);
         }
         load();
     }, [user]);
