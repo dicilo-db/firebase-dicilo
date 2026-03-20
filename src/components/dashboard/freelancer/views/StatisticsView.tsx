@@ -25,7 +25,8 @@ import {
     Facebook, Instagram, Twitter, Linkedin,
     Image as ImageIcon, Youtube,
     MessageCircle, Send, Pin, Twitch,
-    BarChart3, Users, Building2, Info, ExternalLink, CheckCircle2, Clock, Mail
+    BarChart3, Users, Building2, Info, ExternalLink, CheckCircle2, Clock, Mail,
+    ChevronDown, ChevronUp
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
@@ -37,6 +38,7 @@ export function StatisticsView() {
     const [stats, setStats] = useState<FreelancerStats | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [marketingSends, setMarketingSends] = useState<MarketingSend[]>([]);
+    const [activeSection, setActiveSection] = useState<string | null>(null);
 
     useEffect(() => {
         if (!user) return;
@@ -65,16 +67,34 @@ export function StatisticsView() {
     const totalReach = Math.floor(totalViews * 0.85);
     const totalInteractions = Math.floor(totalViews * 0.05);
 
-    const scrollToProspects = () => {
-        const element = document.getElementById('prospects-table');
-        if (element) {
-            element.scrollIntoView({ behavior: 'smooth' });
+    const toggleSection = (section: string) => {
+        setActiveSection(prev => prev === section ? null : section);
+        
+        // Scroll to the section if opening it
+        if (activeSection !== section) {
+            setTimeout(() => {
+                const id = section === 'prospects' ? 'prospects-table' 
+                         : section === 'marketing' ? 'marketing-sends-table'
+                         : section === 'posts' ? 'posts-table' : null;
+                if (id) {
+                    const el = document.getElementById(id);
+                    el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }, 100);
         }
     };
 
     const handleCardClick = (label: string) => {
-        if (label === t('adsManager.cards.programs.prospects.managerTitle', 'Empresas Registradas') || label === 'Mis Prospectos Registrados') {
-            scrollToProspects();
+        const prospectsLabel = t('adsManager.cards.programs.prospects.managerTitle', 'Empresas Registradas');
+        const marketingLabel = "Envíos de E-Mail Marketing";
+        const postsLabel = t('freelancer_views.statistics.published_posts');
+
+        if (label === prospectsLabel || label === 'Mis Prospectos Registrados') {
+            toggleSection('prospects');
+        } else if (label === marketingLabel) {
+            toggleSection('marketing');
+        } else if (label === postsLabel) {
+            toggleSection('posts');
         } else {
             toast({
                 title: label,
@@ -135,26 +155,34 @@ export function StatisticsView() {
                     icon={Mail} 
                     label="Envíos de E-Mail Marketing" 
                     value={marketingSends.length} 
-                    onClick={() => {
-                        const el = document.getElementById('marketing-sends-table');
-                        el?.scrollIntoView({ behavior: 'smooth' });
-                    }} 
+                    onClick={() => handleCardClick("Envíos de E-Mail Marketing")}
+                    isActive={activeSection === 'marketing'}
                 />
                 <KpiCard icon={Users} label={t('freelancer_views.statistics.followers')} value="200" onClick={() => handleCardClick(t('freelancer_views.statistics.followers'))} />
             </div>
 
             {/* Recent Prospects List */}
             {stats?.recentProspects && stats.recentProspects.length > 0 && (
-                <Card id="prospects-table" className="bg-white dark:bg-card shadow-sm border overflow-hidden">
-                    <CardHeader className="border-b bg-slate-50/50">
-                        <div className="flex items-center gap-2">
-                            <Building2 className="h-5 w-5 text-purple-500" />
-                            <CardTitle className="text-lg">
-                                {t('adsManager.cards.programs.prospects.managerTitle', 'Mis Prospectos Registrados')}
-                            </CardTitle>
+                <Card id="prospects-table" className={cn(
+                    "bg-white dark:bg-card shadow-sm border overflow-hidden transition-all duration-300",
+                    activeSection === 'prospects' ? "ring-2 ring-purple-500/20" : "opacity-90 grayscale-[0.2]"
+                )}>
+                    <CardHeader 
+                        className="border-b bg-slate-50/50 cursor-pointer hover:bg-slate-100/80 transition-colors"
+                        onClick={() => toggleSection('prospects')}
+                    >
+                        <div className="flex items-center justify-between gap-2">
+                            <div className="flex items-center gap-2">
+                                <Building2 className="h-5 w-5 text-purple-500" />
+                                <CardTitle className="text-lg">
+                                    {t('adsManager.cards.programs.prospects.managerTitle', 'Mis Prospectos Registrados')}
+                                </CardTitle>
+                            </div>
+                            {activeSection === 'prospects' ? <ChevronUp className="h-5 w-5 text-muted-foreground" /> : <ChevronDown className="h-5 w-5 text-muted-foreground" />}
                         </div>
                     </CardHeader>
-                    <CardContent className="p-0">
+                    {activeSection === 'prospects' && (
+                        <CardContent className="p-0 animate-in fade-in slide-in-from-top-2 duration-300">
                         <div className="overflow-x-auto">
                             <table className="w-full text-[13px] leading-tight">
                                 <thead className="bg-slate-50 text-slate-500 font-medium">
@@ -221,22 +249,33 @@ export function StatisticsView() {
                                 </tbody>
                             </table>
                         </div>
-                    </CardContent>
+                        </CardContent>
+                    )}
                 </Card>
             )}
 
             {/* Community Posts History */}
             {stats?.communityPosts && stats.communityPosts.length > 0 && (
-                <Card className="bg-white dark:bg-card shadow-sm border overflow-hidden">
-                    <CardHeader className="border-b bg-slate-50/50">
-                        <div className="flex items-center gap-2">
-                            <MessageCircle className="h-5 w-5 text-blue-500" />
-                            <CardTitle className="text-lg">
-                                {t('freelancer_views.statistics.published_posts')} (Comunidad)
-                            </CardTitle>
+                <Card id="posts-table" className={cn(
+                    "bg-white dark:bg-card shadow-sm border overflow-hidden transition-all duration-300",
+                    activeSection === 'posts' ? "ring-2 ring-blue-500/20" : "opacity-90 grayscale-[0.2]"
+                )}>
+                    <CardHeader 
+                        className="border-b bg-slate-50/50 cursor-pointer hover:bg-slate-100/80 transition-colors"
+                        onClick={() => toggleSection('posts')}
+                    >
+                        <div className="flex items-center justify-between gap-2">
+                            <div className="flex items-center gap-2">
+                                <MessageCircle className="h-5 w-5 text-blue-500" />
+                                <CardTitle className="text-lg">
+                                    {t('freelancer_views.statistics.published_posts')} (Comunidad)
+                                </CardTitle>
+                            </div>
+                            {activeSection === 'posts' ? <ChevronUp className="h-5 w-5 text-muted-foreground" /> : <ChevronDown className="h-5 w-5 text-muted-foreground" />}
                         </div>
                     </CardHeader>
-                    <CardContent className="p-0">
+                    {activeSection === 'posts' && (
+                        <CardContent className="p-0 animate-in fade-in slide-in-from-top-2 duration-300">
                         <div className="overflow-x-auto">
                             <table className="w-full text-[13px] leading-tight text-center">
                                 <thead className="bg-slate-50 text-slate-500 font-medium">
@@ -266,14 +305,21 @@ export function StatisticsView() {
                                 </tbody>
                             </table>
                         </div>
-                    </CardContent>
+                        </CardContent>
+                    )}
                 </Card>
             )}
 
             {/* Email Marketing Sends History */}
             {marketingSends.length > 0 && (
-                <Card id="marketing-sends-table" className="bg-white dark:bg-card shadow-sm border overflow-hidden">
-                    <CardHeader className="border-b bg-slate-50/50 py-4">
+                <Card id="marketing-sends-table" className={cn(
+                    "bg-white dark:bg-card shadow-sm border overflow-hidden transition-all duration-300",
+                    activeSection === 'marketing' ? "ring-2 ring-emerald-500/20" : "opacity-90 grayscale-[0.2]"
+                )}>
+                    <CardHeader 
+                        className="border-b bg-slate-50/50 py-4 cursor-pointer hover:bg-slate-100/80 transition-colors"
+                        onClick={() => toggleSection('marketing')}
+                    >
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
                                 <Mail className="h-5 w-5 text-emerald-500" />
@@ -281,12 +327,16 @@ export function StatisticsView() {
                                     Envíos de E-Mail Marketing
                                 </CardTitle>
                             </div>
-                            <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-100">
-                                {marketingSends.length} Total
-                            </Badge>
+                            <div className="flex items-center gap-3">
+                                <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-100">
+                                    {marketingSends.length} Total
+                                </Badge>
+                                {activeSection === 'marketing' ? <ChevronUp className="h-5 w-5 text-muted-foreground" /> : <ChevronDown className="h-5 w-5 text-muted-foreground" />}
+                            </div>
                         </div>
                     </CardHeader>
-                    <CardContent className="p-0">
+                    {activeSection === 'marketing' && (
+                        <CardContent className="p-0 animate-in fade-in slide-in-from-top-2 duration-300">
                         <div className="overflow-x-auto">
                             <table className="w-full text-[13px] leading-tight text-left">
                                 <thead className="bg-slate-50 text-slate-500 font-medium border-b">
@@ -361,7 +411,8 @@ export function StatisticsView() {
                                 </tbody>
                             </table>
                         </div>
-                    </CardContent>
+                        </CardContent>
+                    )}
                 </Card>
             )}
 
@@ -466,12 +517,13 @@ export function StatisticsView() {
     );
 }
 
-function KpiCard({ icon: Icon, label, value, onClick }: { icon: any, label: string, value: string | number, onClick?: () => void }) {
+function KpiCard({ icon: Icon, label, value, onClick, isActive }: { icon: any, label: string, value: string | number, onClick?: () => void, isActive?: boolean }) {
     return (
         <Card 
             className={cn(
-                "shadow-sm border-0 border-l-4 border-l-primary/20",
-                onClick && "cursor-pointer hover:bg-slate-50 transition-all active:scale-[0.98] active:shadow-inner"
+                "shadow-sm border-0 border-l-4 transition-all duration-300",
+                isActive ? "border-l-primary bg-primary/5 ring-1 ring-primary/10" : "border-l-primary/20",
+                onClick && "cursor-pointer hover:bg-slate-50 active:scale-[0.98] active:shadow-inner"
             )}
             onClick={onClick}
         >
