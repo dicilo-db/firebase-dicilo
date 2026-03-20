@@ -31,6 +31,25 @@ import {
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 
+// Helper: Video Icon
+const VideoIcon = (props: any) => (
+    <svg
+        {...props}
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+    >
+        <path d="M15 10l4.553-2.276A1 1 0 0 1 21 8.618v6.764a1 1 0 0 1-1.447.894L15 14v-4z" />
+        <rect x="3" y="6" width="12" height="12" rx="2" />
+    </svg>
+)
+
 export function StatisticsView() {
     const { t } = useTranslation('common');
     const { user } = useAuth();
@@ -120,6 +139,7 @@ export function StatisticsView() {
         { id: 'twitch', label: 'Twitch Kanal', icon: Twitch, color: 'text-purple-600' },
         { id: 'pinterest', label: 'Pinterest Kanal', icon: Pin, color: 'text-red-500' },
     ];
+
 
     if (isLoading) {
         return (
@@ -551,25 +571,6 @@ function getIconForPlatform(platform: string) {
     if (platform === 'instagram') return <Instagram className="h-4 w-4 text-pink-600 inline" />;
     return null;
 }
-
-// Helper: Video Icon
-const VideoIcon = (props: any) => (
-    <svg
-        {...props}
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-    >
-        <path d="M15 10l4.553-2.276A1 1 0 0 1 21 8.618v6.764a1 1 0 0 1-1.447.894L15 14v-4z" />
-        <rect x="3" y="6" width="12" height="12" rx="2" />
-    </svg>
-)
 
 // Generate consistent mock data for charts
 function generateMockData(baseValue: number) {

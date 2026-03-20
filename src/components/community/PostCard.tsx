@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { useRouter } from 'next/navigation';
 import { CommunityPost } from '@/types/community';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
@@ -356,10 +358,24 @@ export function PostCard({ post, currentUserId, readOnly = false }: PostCardProp
                         </div>
                     </div>
                 ) : (
-                    <p className="text-slate-800 dark:text-slate-200 text-sm leading-relaxed whitespace-pre-wrap">
-                        {showTranslated ? translatedContent : post.content}
-                        {post.updatedAt && !showTranslated && <span className="text-[10px] text-muted-foreground ml-2">(Editado)</span>}
-                    </p>
+                    <div className="text-slate-800 dark:text-slate-200 text-base leading-relaxed prose prose-slate dark:prose-invert max-w-none prose-p:my-0 prose-a:text-blue-600 prose-a:no-underline prose-a:font-bold hover:prose-a:underline">
+                        <ReactMarkdown 
+                            remarkPlugins={[remarkGfm]}
+                            components={{
+                                a: ({ node, ...props }) => {
+                                    const originalUrl = props.href || '';
+                                    if (originalUrl.startsWith('/') || originalUrl.startsWith('#')) {
+                                        return <a {...props} />;
+                                    }
+                                    const safeUrl = `/redirect?url=${encodeURIComponent(originalUrl)}`;
+                                    return <a {...props} href={safeUrl} title="Abrir enlace seguro" target="_blank" rel="noopener noreferrer" />;
+                                }
+                            }}
+                        >
+                            {showTranslated ? (translatedContent || '') : (post.content || '')}
+                        </ReactMarkdown>
+                        {post.updatedAt && !showTranslated && <span className="text-[10px] text-muted-foreground mt-1 inline-block">(Editado)</span>}
+                    </div>
                 )}
 
                 {post.media && post.media.length > 0 ? (

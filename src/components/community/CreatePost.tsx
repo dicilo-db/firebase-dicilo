@@ -6,11 +6,14 @@ import React, { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
-import { Image as ImageIcon, Send, Loader2, X, Lock } from 'lucide-react';
+import { Image as ImageIcon, Send, Loader2, X, Lock, Smile } from 'lucide-react';
 import { nanoid } from 'nanoid';
 import { createPostAction } from '@/app/actions/community';
 import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+
+const COMMON_EMOJIS = ['😊', '😂', '❤️', '👍', '🙌', '✨', '🔥', '🚀', '🎉', '💡', '✅', '📍', '🤝', '💪', '🏠', '🌆', '💼', '📊', '📢', '🌍', '🤔'];
 
 import { useTranslation } from 'react-i18next';
 import { compressVideo } from '@/lib/video-utils';
@@ -41,6 +44,10 @@ export function CreatePost({ userId, neighborhood, neighborhoodId, onPostCreated
     const [mediaItems, setMediaItems] = useState<MediaFile[]>([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const addEmoji = (emoji: string) => {
+        setContent(prev => prev + emoji);
+    };
 
     const isPrivate = mode === 'private';
 
@@ -249,7 +256,7 @@ export function CreatePost({ userId, neighborhood, neighborhoodId, onPostCreated
                             : t('community.feed.whats_happening', `¿Qué está pasando en ${neighborhood}?`, { name: neighborhood })}
                         value={content}
                         onChange={(e) => setContent(e.target.value)}
-                        className={`min-h-[100px] resize-y focus-visible:ring-purple-500 mb-4 ${isPrivate
+                        className={`min-h-[120px] resize-y focus-visible:ring-purple-500 mb-4 text-base md:text-lg ${isPrivate
                             ? 'border-amber-200 bg-white placeholder:text-amber-700/50'
                             : 'border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-900/50'
                             }`}
@@ -320,6 +327,35 @@ export function CreatePost({ userId, neighborhood, neighborhoodId, onPostCreated
                                 <ImageIcon className="h-4 w-4 mr-2" />
                                 {t('community.media', 'Multimedia')}
                             </Button>
+
+                            {/* Emoji Picker */}
+                            <Popover>
+                                <PopoverTrigger asChild>
+                                    <Button 
+                                        type="button"
+                                        variant="ghost" 
+                                        size="sm" 
+                                        className="text-slate-500 hover:text-purple-600 hover:bg-purple-50 dark:hover:bg-purple-900/20"
+                                    >
+                                        <Smile className="h-5 w-5 mr-2" />
+                                        <span>Emoji</span>
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent side="top" align="start" className="w-64 p-3 rounded-2xl shadow-2xl border-0 ring-1 ring-slate-100 dark:ring-slate-700 bg-white dark:bg-slate-900">
+                                    <div className="grid grid-cols-7 gap-1">
+                                        {COMMON_EMOJIS.map(emoji => (
+                                            <button
+                                                type="button"
+                                                key={emoji}
+                                                onClick={() => addEmoji(emoji)}
+                                                className="text-xl hover:bg-slate-100 dark:hover:bg-slate-800 p-2 rounded-lg transition-colors leading-none"
+                                            >
+                                                {emoji}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </PopoverContent>
+                            </Popover>
                         </div>
                         <Button
                             type="submit"

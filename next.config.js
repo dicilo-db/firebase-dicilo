@@ -42,6 +42,7 @@ const nextConfig = {
 
     return config;
   },
+  transpilePackages: ['react-markdown', 'remark-gfm', 'recharts'],
   typescript: {
     ignoreBuildErrors: true,
   },

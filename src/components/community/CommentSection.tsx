@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Loader2, Send } from 'lucide-react';
+import { Loader2, Send, Smile } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -12,6 +12,9 @@ import { addComment } from '@/app/actions/community';
 import { getFirestore, collection, query, orderBy, onSnapshot, limit } from 'firebase/firestore';
 import { app } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
 interface Comment {
     id: string;
@@ -30,6 +33,8 @@ interface CommentSectionProps {
 
 const db = getFirestore(app);
 
+const COMMON_EMOJIS = ['😊', '😂', '😍', '🙌', '👍', '🔥', '❤️', '👏', '🏠', '🌆', '💼', '🚀', '✨', '🤝'];
+
 export function CommentSection({ postId, currentUserId, currentUserAvatar }: CommentSectionProps) {
     const { t } = useTranslation('common');
     const { toast } = useToast();
@@ -41,7 +46,7 @@ export function CommentSection({ postId, currentUserId, currentUserAvatar }: Com
     useEffect(() => {
         const q = query(
             collection(db, 'community_posts', postId, 'comments'),
-            orderBy('createdAt', 'asc'), // Oldest first for chat-like flow? Or desc? Usually comments are asc.
+            orderBy('createdAt', 'asc'),
             limit(50)
         );
 
@@ -75,55 +80,75 @@ export function CommentSection({ postId, currentUserId, currentUserAvatar }: Com
         setIsSubmitting(false);
     };
 
+    const addEmoji = (emoji: string) => {
+        setNewComment(prev => prev + emoji);
+    };
+
     return (
-        <div className="bg-slate-50 dark:bg-slate-900/50 p-4 border-t border-slate-100 dark:border-slate-800">
-            <h3 className="text-sm font-semibold mb-4 text-slate-700 dark:text-slate-300">
-                {t('community.comments', 'Comentarios')}
+        <div className="bg-slate-100/30 dark:bg-slate-900/40 p-5 border-t border-slate-100 dark:border-slate-800">
+            <h3 className="text-sm font-bold mb-5 text-slate-800 dark:text-slate-200 uppercase tracking-wider">
+                {t('community.comments', 'Comentarios')} ({comments.length})
             </h3>
 
             {/* List */}
-            <div className="space-y-4 mb-6">
+            <div className="space-y-5 mb-8">
                 {loading ? (
-                    <div className="flex justify-center p-4">
-                        <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                    <div className="flex justify-center p-6">
+                        <Loader2 className="h-5 w-5 animate-spin text-purple-500" />
                     </div>
                 ) : comments.length === 0 ? (
-                    <p className="text-sm text-muted-foreground text-center py-2">
-                        {t('community.no_comments', 'Sé el primero en comentar.')}
-                    </p>
+                    <div className="text-center py-6 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-2xl">
+                        <p className="text-sm text-slate-400 italic">
+                            {t('community.no_comments', 'Sé el primero en comentar e iniciar la conversación.')}
+                        </p>
+                    </div>
                 ) : (
                     comments.map((comment) => (
-                        <div key={comment.id} className="flex gap-3 text-sm">
-                            <Avatar className="h-8 w-8 mt-1">
+                        <div key={comment.id} className="flex gap-4 group">
+                            <Avatar className="h-10 w-10 shrink-0 border-2 border-white dark:border-slate-800 shadow-sm">
                                 <AvatarImage src={comment.userAvatar} />
-                                <AvatarFallback>{comment.userName.substring(0, 2).toUpperCase()}</AvatarFallback>
+                                <AvatarFallback className="bg-slate-100 font-bold">{comment.userName.substring(0, 2).toUpperCase()}</AvatarFallback>
                             </Avatar>
-                            <div className="flex-1 bg-white dark:bg-slate-800 p-3 rounded-lg shadow-sm">
-                                <div className="flex justify-between items-start mb-1">
-                                    <span className="font-semibold text-slate-900 dark:text-white">{comment.userName}</span>
-                                    <span className="text-xs text-muted-foreground">
-                                        {comment.createdAt?.toDate ? formatDistanceToNow(comment.createdAt.toDate(), { locale: es }) : ''}
+                            <div className="flex-1 bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-md transition-shadow">
+                                <div className="flex justify-between items-center mb-2">
+                                    <span className="font-bold text-slate-900 dark:text-white text-sm">{comment.userName}</span>
+                                    <span className="text-[10px] bg-slate-100 dark:bg-slate-900 px-2 py-0.5 rounded-full text-slate-500 font-medium">
+                                        {comment.createdAt?.toDate ? formatDistanceToNow(comment.createdAt.toDate(), { locale: es, addSuffix: true }) : ''}
                                     </span>
                                 </div>
-                                <p className="text-slate-700 dark:text-slate-300 whitespace-pre-wrap">{comment.content}</p>
+                                <div className="text-slate-700 dark:text-slate-200 text-base leading-relaxed prose prose-slate dark:prose-invert max-w-none prose-p:my-0 prose-a:text-purple-600 prose-a:no-underline prose-a:font-bold hover:prose-a:underline">
+                                    <ReactMarkdown 
+                                        remarkPlugins={[remarkGfm]}
+                                        components={{
+                                            a: ({ node, ...props }) => {
+                                                const originalUrl = props.href || '';
+                                                // Create a safe redirect link
+                                                const safeUrl = `/redirect?url=${encodeURIComponent(originalUrl)}`;
+                                                return <a {...props} href={safeUrl} title="Abrir enlace seguro" target="_blank" rel="noopener noreferrer" />;
+                                            }
+                                        }}
+                                    >
+                                        {comment.content}
+                                    </ReactMarkdown>
+                                </div>
                             </div>
                         </div>
                     ))
                 )}
             </div>
 
-            {/* Input */}
-            <div className="flex gap-3 items-start">
-                <Avatar className="h-8 w-8">
+            {/* Input Form */}
+            <div className="flex gap-4 items-start bg-white dark:bg-slate-800 p-4 rounded-3xl shadow-lg border border-slate-100 dark:border-slate-700">
+                <Avatar className="h-10 w-10 shrink-0 border-2 border-slate-50 dark:border-slate-900">
                     <AvatarImage src={currentUserAvatar} />
-                    <AvatarFallback>yo</AvatarFallback>
+                    <AvatarFallback className="bg-purple-100 text-purple-700 font-bold">YO</AvatarFallback>
                 </Avatar>
-                <div className="flex-1 flex gap-2">
+                <div className="flex-1 flex flex-col gap-2">
                     <Textarea
                         value={newComment}
                         onChange={(e) => setNewComment(e.target.value)}
-                        placeholder={t('community.write_comment', 'Escribe un comentario...')}
-                        className="min-h-[2.5rem] py-2 text-sm bg-white dark:bg-slate-800 resize-none"
+                        placeholder="Escribe algo positivo o comparte un enlace..."
+                        className="min-h-[60px] border-0 focus-visible:ring-0 p-0 text-base md:text-lg bg-transparent resize-none placeholder:text-slate-400"
                         onKeyDown={(e) => {
                             if (e.key === 'Enter' && !e.shiftKey) {
                                 e.preventDefault();
@@ -131,16 +156,47 @@ export function CommentSection({ postId, currentUserId, currentUserAvatar }: Com
                             }
                         }}
                     />
-                    <Button
-                        size="icon"
-                        className="h-9 w-9 shrink-0 bg-purple-600 hover:bg-purple-700"
-                        onClick={handleSubmit}
-                        disabled={isSubmitting || !newComment.trim()}
-                    >
-                        {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-                    </Button>
+                    <div className="flex justify-between items-center pt-2 border-t border-slate-50 dark:border-slate-700">
+                        <div className="flex items-center gap-1">
+                            {/* Emoji Picker */}
+                            <Popover>
+                                <PopoverTrigger asChild>
+                                    <Button variant="ghost" size="sm" className="h-8 text-slate-500 hover:text-purple-600 hover:bg-purple-50 rounded-full transition-colors gap-2 px-2">
+                                        <Smile className="h-5 w-5" />
+                                        <span className="text-xs font-medium">Emoji</span>
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent side="top" align="start" className="w-64 p-3 rounded-2xl shadow-2xl border-0 ring-1 ring-slate-100">
+                                    <div className="grid grid-cols-7 gap-1">
+                                        {COMMON_EMOJIS.map(emoji => (
+                                            <button
+                                                key={emoji}
+                                                onClick={() => addEmoji(emoji)}
+                                                className="text-xl hover:bg-slate-100 p-2 rounded-lg transition-colors leading-none"
+                                            >
+                                                {emoji}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </PopoverContent>
+                            </Popover>
+                        </div>
+                        <Button
+                            size="sm"
+                            className="bg-purple-600 hover:bg-purple-700 text-white font-bold px-6 h-9 rounded-xl shadow-md shadow-purple-200 dark:shadow-none transition-all hover:scale-105 active:scale-95"
+                            onClick={handleSubmit}
+                            disabled={isSubmitting || !newComment.trim()}
+                        >
+                            {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4 mr-2" />}
+                            <span>{t('community.comment_verb', 'Comentar')}</span>
+                        </Button>
+                    </div>
                 </div>
             </div>
+            <p className="text-[10px] text-slate-400 mt-4 px-4 text-center">
+                Los enlaces externos serán verificados por nuestro sistema de seguridad.
+            </p>
         </div>
     );
 }
+
