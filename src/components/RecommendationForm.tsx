@@ -593,6 +593,12 @@ export function RecommendationFormContent({ initialBusinessName, onSuccess, onCa
                               }}
                               onPointerDown={(e) => {
                                 e.preventDefault();
+                                form.setValue("country", country.isoCode);
+                                setIsCountryOpen(false);
+                              }}
+                              onClick={() => {
+                                form.setValue("country", country.isoCode);
+                                setIsCountryOpen(false);
                               }}
                               className="cursor-pointer hover:bg-emerald-50 w-full"
                             >
