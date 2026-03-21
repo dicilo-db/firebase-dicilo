@@ -1,0 +1,9 @@
+{
+  "components/dicilo-search-page.tsx -> @/components/dicilo-map": {
+    "id": "components/dicilo-search-page.tsx -> @/components/dicilo-map",
+    "files": [
+      "static/css/_app-pages-browser_src_components_dicilo-map_tsx.css",
+      "static/chunks/_app-pages-browser_src_components_dicilo-map_tsx.js"
+    ]
+  }
+}

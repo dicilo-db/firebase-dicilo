@@ -103,7 +103,39 @@ export function EmailMarketingComposer({
     const [isLoading, setIsLoading] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [isSharing, setIsSharing] = useState(false);
- 
+    const [isTranslating, setIsTranslating] = useState(false);
+    const [isCorrecting, setIsCorrecting] = useState(false);
+
+    // Multi-language Text State
+    const [texts, setTexts] = useState<{ [key: string]: { subject: string, body: string } }>({
+        es: { subject: '', body: '' },
+        en: { subject: '', body: '' },
+        de: { subject: '', body: '' },
+        fr: { subject: '', body: '' },
+        pt: { subject: '', body: '' },
+        it: { subject: '', body: '' }
+    });
+    const [activeLangTab, setActiveLangTab] = useState('es');
+    const [targetLanguage, setTargetLanguage] = useState('en');
+
+    const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+    const [visibleImagesCount, setVisibleImagesCount] = useState(6);
+
+    const [previewNetwork, setPreviewNetwork] = useState('instagram');
+    const [scheduledDate, setScheduledDate] = useState<Date | undefined>(undefined);
+    const [rewardAmount, setRewardAmount] = useState<number>(template.rewardAmount || 10);
+
+    // Personalizar Invitación State
+    const [friends, setFriends] = useState<Friend[]>([]);
+    const [currentName, setCurrentName] = useState('');
+    const [currentEmail, setCurrentEmail] = useState('');
+    const [currentLanguage, setCurrentLanguage] = useState('es');
+    const [isSendingPersonalized, setIsSendingPersonalized] = useState(false);
+    const [customSenderName, setCustomSenderName] = useState('');
+
+    // Mobile Detection
+    const [isMobile, setIsMobile] = useState(false);
+
     // Data Protection & Cache Logic
     useEffect(() => {
         if (!template?.id || !user?.uid) return;
@@ -159,73 +191,15 @@ export function EmailMarketingComposer({
             onBack();
         }
     };
-    const [isTranslating, setIsTranslating] = useState(false);
-    const [isCorrecting, setIsCorrecting] = useState(false);
-
-    // Multi-language Text State
-    const [texts, setTexts] = useState<{ [key: string]: { subject: string, body: string } }>({
-        es: { subject: '', body: '' },
-        en: { subject: '', body: '' },
-        de: { subject: '', body: '' },
-        fr: { subject: '', body: '' },
-        pt: { subject: '', body: '' },
-        it: { subject: '', body: '' }
-    });
-    const [activeLangTab, setActiveLangTab] = useState('es');
-    const [targetLanguage, setTargetLanguage] = useState('en');
-
-    const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-    const [visibleImagesCount, setVisibleImagesCount] = useState(6);
-
-    const [previewNetwork, setPreviewNetwork] = useState('instagram');
-    const [scheduledDate, setScheduledDate] = useState<Date | undefined>(undefined);
-    const [rewardAmount, setRewardAmount] = useState<number>(template.rewardAmount || 10);
-
-    // Personalizar Invitación State
-    const [friends, setFriends] = useState<Friend[]>([]);
-    const [currentName, setCurrentName] = useState('');
-    const [currentEmail, setCurrentEmail] = useState('');
-    const [currentLanguage, setCurrentLanguage] = useState('es');
-    const [isSendingPersonalized, setIsSendingPersonalized] = useState(false);
-    const [customSenderName, setCustomSenderName] = useState('');
 
     // Shortener / Link Logic
     const generatedLink = `https://dicilo.net?ref=${propUniqueCode || user?.uid || 'promo'}`;
 
-    // Mobile Detection
-    const [isMobile, setIsMobile] = useState(false);
-    useEffect(() => {
-        const checkMobile = () => setIsMobile(window.innerWidth < 768);
-        checkMobile();
-        window.addEventListener('resize', checkMobile);
-        return () => window.removeEventListener('resize', checkMobile);
-    }, []);
-
-    // Load template data
-    useEffect(() => {
-        if (template) {
-            const initialTexts = { ...texts };
-            Object.keys(template.versions).forEach(lang => {
-                if (initialTexts[lang]) {
-                    initialTexts[lang] = {
-                        subject: template.versions[lang].subject || '',
-                        body: template.versions[lang].body || ''
-                    };
-                }
-            });
-            setTexts(initialTexts);
-            
-            // Set first available lang as active if 'es' not present
-            if (!template.versions['es']) {
-                const firstLang = Object.keys(template.versions)[0];
-                if (firstLang) setActiveLangTab(firstLang);
-            }
-        }
-    }, [template]);
-
-    // Get unique code from user doc would be better, but for now we use UID if not available
-    // (Actual implementation in MarketingShareCard fetched private_profiles)
-    // We'll keep it simple for the composer and let the parent provide or fetch it.
+    const allImages = template.images && template.images.length > 0 
+        ? template.images 
+        : (template.imageUrl ? [template.imageUrl] : ['https://placehold.co/600x400/png?text=No+Image']);
+    
+    const selectedImageUrl = allImages[selectedImageIndex] || allImages[0];
 
     const currentData = texts[activeLangTab] || { subject: '', body: '' };
 
@@ -346,11 +320,35 @@ export function EmailMarketingComposer({
         toast({ title: "Copiado", description: "Texto y enlace copiados al portapapeles." });
     };
 
-    const allImages = template.images && template.images.length > 0 
-        ? template.images 
-        : (template.imageUrl ? [template.imageUrl] : ['https://placehold.co/600x400/png?text=No+Image']);
-    
-    const selectedImageUrl = allImages[selectedImageIndex] || allImages[0];
+    // Mobile Detection
+    useEffect(() => {
+        const checkMobile = () => setIsMobile(window.innerWidth < 768);
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
+
+    // Load template data
+    useEffect(() => {
+        if (template) {
+            const initialTexts = { ...texts };
+            Object.keys(template.versions).forEach(lang => {
+                if (initialTexts[lang]) {
+                    initialTexts[lang] = {
+                        subject: template.versions[lang].subject || '',
+                        body: template.versions[lang].body || ''
+                    };
+                }
+            });
+            setTexts(initialTexts);
+            
+            // Set first available lang as active if 'es' not present
+            if (!template.versions['es']) {
+                const firstLang = Object.keys(template.versions)[0];
+                if (firstLang) setActiveLangTab(firstLang);
+            }
+        }
+    }, [template]);
 
     const handleShare = async (platform: string) => {
         const inviteUrl = generatedLink;
@@ -1022,7 +1020,7 @@ export function EmailMarketingComposer({
                 <div className="w-full px-6 flex items-center justify-between">
                     <div className="hidden md:block">
                         <p className="text-sm font-bold text-slate-700">{template.name}</p>
-                        <p className="text-xs text-muted-foreground">Última edición hoy a las {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                        <p className="text-xs text-muted-foreground">Última edición hoy</p>
                     </div>
                     <div className="flex items-center gap-3 w-full md:w-auto">
                         <Button variant="ghost" className="flex-1 md:flex-none h-11 px-6 rounded-xl hover:bg-slate-100" onClick={handleBackWithConfirm}>
