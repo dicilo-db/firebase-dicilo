@@ -177,12 +177,17 @@ export function ReferralCard() {
             const result = await sendPioneerInvitations(
                 uniqueCode || currentUser.uid,
                 referrerName,
-                friends.map(f => ({
-                    name: f.name,
-                    email: f.email,
-                    lang: f.language as 'es' | 'de' | 'en' | 'fr' | 'pt' | 'it',
-                    template: f.templateId
-                }))
+                friends.map(f => {
+                    const dbTemplate = templates.find(t => t.id === f.templateId);
+                    return {
+                        name: f.name,
+                        email: f.email,
+                        lang: f.language as 'es' | 'de' | 'en' | 'fr' | 'pt' | 'it',
+                        template: f.templateId,
+                        rewardSender: dbTemplate?.rewardSender || 50,
+                        rewardReceiver: dbTemplate?.rewardReceiver || 50
+                    };
+                })
             );
 
             if (!result.success || !result.inviteIds) {

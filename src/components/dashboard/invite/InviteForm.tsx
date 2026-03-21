@@ -46,7 +46,11 @@ export function InviteForm({ uniqueCode, userName, onSuccess, availableSlots }: 
     };
 
     const handleSend = async () => {
-        const validFriends = friends.filter(f => f.name && f.email);
+        const validFriends = friends.filter(f => f.name && f.email).map(f => ({
+            ...f,
+            rewardSender: 50,
+            rewardReceiver: 50
+        }));
         if (validFriends.length === 0) return;
 
         setIsSending(true);

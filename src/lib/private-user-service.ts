@@ -64,6 +64,7 @@ export async function createPrivateUserProfile(
     // Referral Logic
     let referrerUid: string | null = null;
     let initialBalance = 0;
+    let referrerReward = 50; // Default
 
     let inviteDocRef: admin.firestore.DocumentReference | null = null;
 
@@ -77,7 +78,8 @@ export async function createPrivateUserProfile(
 
             referrerUid = inviteData?.referrerId || null;
             if (referrerUid) {
-                initialBalance = 50; // Welcome Bonus for Pioneer
+                initialBalance = inviteData?.rewardReceiver ?? 50;
+                referrerReward = inviteData?.rewardSender ?? 50;
                 inviteDocRef = inviteSnapshot.ref;
             }
         }
@@ -136,7 +138,7 @@ export async function createPrivateUserProfile(
         const trxRef = db.collection('wallet_transactions').doc();
         batch.set(trxRef, {
             userId: uid,
-            amount: 50,
+            amount: initialBalance,
             type: 'WELCOME_BONUS',
             description: 'Welcome Bonus (Referred by ' + (referralCode || 'Friend') + ')',
             timestamp: admin.firestore.FieldValue.serverTimestamp()
@@ -144,11 +146,11 @@ export async function createPrivateUserProfile(
     }
 
     if (referrerUid) {
-        // Reward Referrer (+50)
+        // Reward Referrer
         const referrerWalletRef = db.collection('wallets').doc(referrerUid);
         batch.set(referrerWalletRef, {
-            balance: admin.firestore.FieldValue.increment(50),
-            totalEarned: admin.firestore.FieldValue.increment(50),
+            balance: admin.firestore.FieldValue.increment(referrerReward),
+            totalEarned: admin.firestore.FieldValue.increment(referrerReward),
             updatedAt: admin.firestore.FieldValue.serverTimestamp()
         }, { merge: true });
 
@@ -156,7 +158,7 @@ export async function createPrivateUserProfile(
         const refTrxRef = db.collection('wallet_transactions').doc();
         batch.set(refTrxRef, {
             userId: referrerUid,
-            amount: 50,
+            amount: referrerReward,
             type: 'REFERRAL_REWARD',
             description: 'Referral Reward (User: ' + uniqueCode + ')',
             timestamp: admin.firestore.FieldValue.serverTimestamp()

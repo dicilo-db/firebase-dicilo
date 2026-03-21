@@ -42,7 +42,9 @@ export default function EditTemplatePage() {
             'en': { subject: '', body: '' },
             'de': { subject: '', body: '' },
         },
-        variables: []
+        variables: [],
+        rewardSender: 50,
+        rewardReceiver: 50
     });
 
     const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -312,6 +314,45 @@ export default function EditTemplatePage() {
                                 {uploadingImage && <Loader2 className="h-4 w-4 animate-spin" />}
                             </div>
                             <p className="text-[10px] text-muted-foreground italic">Puedes subir varias imágenes a la vez.</p>
+                        </div>
+
+                        {/* Reward Settings */}
+                        <div className="space-y-4 pt-4 border-t">
+                            <Label className="text-xs font-bold text-slate-500 uppercase">Configuración de Premios (DP)</Label>
+                            
+                            <div className="bg-purple-50/50 border border-purple-100 rounded-lg p-3 space-y-3">
+                                <div className="flex items-center justify-between gap-4">
+                                    <div className="flex items-center gap-2 text-purple-700">
+                                        <span className="text-lg font-bold">+</span>
+                                        <div className="w-16">
+                                            <Input
+                                                type="number"
+                                                className="h-8 bg-white border-purple-200 text-purple-700 font-bold text-center"
+                                                value={template.rewardSender || 0}
+                                                onChange={(e) => handleChange('rewardSender', parseInt(e.target.value) || 0)}
+                                            />
+                                        </div>
+                                        <span className="text-sm font-bold">DP</span>
+                                    </div>
+                                    <span className="text-xs text-purple-600 font-medium whitespace-nowrap">por envío</span>
+                                </div>
+
+                                <div className="flex items-center justify-between gap-4">
+                                    <div className="flex items-center gap-2 text-purple-700">
+                                        <span className="text-lg font-bold">+</span>
+                                        <div className="w-16">
+                                            <Input
+                                                type="number"
+                                                className="h-8 bg-white border-purple-200 text-purple-700 font-bold text-center"
+                                                value={template.rewardReceiver || 0}
+                                                onChange={(e) => handleChange('rewardReceiver', parseInt(e.target.value) || 0)}
+                                            />
+                                        </div>
+                                        <span className="text-sm font-bold">DP</span>
+                                    </div>
+                                    <span className="text-xs text-purple-600 font-medium whitespace-nowrap">por recibir</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

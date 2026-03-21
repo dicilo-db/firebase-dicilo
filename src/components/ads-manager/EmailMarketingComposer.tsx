@@ -445,7 +445,8 @@ export function EmailMarketingComposer({
                     email: f.email,
                     lang: f.language as 'es' | 'de' | 'en' | 'fr' | 'pt' | 'it',
                     template: template.id || 'email_marketing',
-                    rewardAmount: rewardAmount
+                    rewardSender: template.rewardSender || 50,
+                    rewardReceiver: template.rewardReceiver || 50
                 }))
             );
 

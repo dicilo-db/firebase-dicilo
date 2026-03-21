@@ -19,6 +19,8 @@ export type EmailTemplate = {
     imageUrl?: string;
     images?: string[];
     rewardAmount?: number;
+    rewardSender?: number;
+    rewardReceiver?: number;
     createdAt?: string;
     updatedAt?: string;
 };
