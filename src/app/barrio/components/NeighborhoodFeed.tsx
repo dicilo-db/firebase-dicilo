@@ -123,7 +123,7 @@ export default function NeighborhoodFeed({ neighborhood }: NeighborhoodFeedProps
                             </span>
                         </div>
                         {post.comment && (
-                            <p className="text-gray-700 text-sm italic">&quot;{post.comment}&quot;</p>
+                            <p className="text-gray-700 text-sm italic whitespace-pre-wrap">&quot;{post.comment}&quot;</p>
                         )}
                         {/* Optional: Show business name linked */}
                     </div>

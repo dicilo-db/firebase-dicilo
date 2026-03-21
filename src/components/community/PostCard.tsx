@@ -372,7 +372,7 @@ export function PostCard({ post, currentUserId, readOnly = false }: PostCardProp
                                 }
                             }}
                         >
-                            {showTranslated ? (translatedContent || '') : (post.content || '')}
+                            {(showTranslated ? (translatedContent || '') : (post.content || '')).replace(/\n/g, '  \n')}
                         </ReactMarkdown>
                         {post.updatedAt && !showTranslated && <span className="text-[10px] text-muted-foreground mt-1 inline-block">(Editado)</span>}
                     </div>

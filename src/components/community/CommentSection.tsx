@@ -128,7 +128,7 @@ export function CommentSection({ postId, currentUserId, currentUserAvatar }: Com
                                             }
                                         }}
                                     >
-                                        {comment.content}
+                                        {comment.content.replace(/\n/g, '  \n')}
                                     </ReactMarkdown>
                                 </div>
                             </div>
