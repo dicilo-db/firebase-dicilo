@@ -1,7 +1,7 @@
 // functions/src/i18n.ts
 import * as admin from 'firebase-admin';
 
-export type Lang = 'es' | 'de' | 'en';
+export type Lang = 'es' | 'de' | 'en' | 'fr' | 'pt' | 'it';
 
 export async function getEmailI18n(lang: Lang) {
   try {
@@ -28,6 +28,30 @@ export async function getEmailI18n(lang: Lang) {
       'reminder.subject': '[DICILO] Erinnerung: Einwilligung ausstehend',
     },
     en: {
+      'consent.subject': '[DICILO] Do you accept info recommended by {{name}}?',
+      'consent.body':
+        'Hi {{recipientName}},<br/>You received a recommendation from {{name}}.<br/>Would you like to receive information from DICILO?<br/><br/>{{cta_accept}}&nbsp;|&nbsp;{{cta_decline}}',
+      'consent.cta.accept': 'Yes, I accept',
+      'consent.cta.decline': 'No, thanks',
+      'reminder.subject': '[DICILO] Consent reminder',
+    },
+    fr: {
+      'consent.subject': '[DICILO] Do you accept info recommended by {{name}}?',
+      'consent.body':
+        'Hi {{recipientName}},<br/>You received a recommendation from {{name}}.<br/>Would you like to receive information from DICILO?<br/><br/>{{cta_accept}}&nbsp;|&nbsp;{{cta_decline}}',
+      'consent.cta.accept': 'Yes, I accept',
+      'consent.cta.decline': 'No, thanks',
+      'reminder.subject': '[DICILO] Consent reminder',
+    },
+    pt: {
+      'consent.subject': '[DICILO] Do you accept info recommended by {{name}}?',
+      'consent.body':
+        'Hi {{recipientName}},<br/>You received a recommendation from {{name}}.<br/>Would you like to receive information from DICILO?<br/><br/>{{cta_accept}}&nbsp;|&nbsp;{{cta_decline}}',
+      'consent.cta.accept': 'Yes, I accept',
+      'consent.cta.decline': 'No, thanks',
+      'reminder.subject': '[DICILO] Consent reminder',
+    },
+    it: {
       'consent.subject': '[DICILO] Do you accept info recommended by {{name}}?',
       'consent.body':
         'Hi {{recipientName}},<br/>You received a recommendation from {{name}}.<br/>Would you like to receive information from DICILO?<br/><br/>{{cta_accept}}&nbsp;|&nbsp;{{cta_decline}}',

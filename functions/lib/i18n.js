@@ -51,6 +51,33 @@ function getEmailI18n(lang, db) {
                 'passwordReset.subject': '[DICILO] Reset your password',
                 'passwordReset.body': 'Hi,<br/><br/>You requested to reset your password for your Dicilo account.<br/><br/><a href="{{link}}" style="background-color: #22c55e; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">Click here to reset your password</a><br/><br/>If the button above does not work, copy and paste the following link into your browser:<br/>{{link}}<br/><br/>If you did not request this change, you can ignore this email.',
             },
+            fr: {
+                'consent.subject': '[DICILO] Do you accept info recommended by {{name}}?',
+                'consent.body': 'Hi {{recipientName}},<br/>You received a recommendation from {{name}}.<br/>Would you like to receive information from DICILO?<br/><br/>{{cta_accept}}&nbsp;|&nbsp;{{cta_decline}}',
+                'consent.cta.accept': 'Yes, I accept',
+                'consent.cta.decline': 'No, thanks',
+                'reminder.subject': '[DICILO] Consent reminder',
+                'passwordReset.subject': '[DICILO] Reset your password',
+                'passwordReset.body': 'Hi,<br/><br/>You requested to reset your password for your Dicilo account.<br/><br/><a href="{{link}}" style="background-color: #22c55e; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">Click here to reset your password</a><br/><br/>If the button above does not work, copy and paste the following link into your browser:<br/>{{link}}<br/><br/>If you did not request this change, you can ignore this email.',
+            },
+            pt: {
+                'consent.subject': '[DICILO] Do you accept info recommended by {{name}}?',
+                'consent.body': 'Hi {{recipientName}},<br/>You received a recommendation from {{name}}.<br/>Would you like to receive information from DICILO?<br/><br/>{{cta_accept}}&nbsp;|&nbsp;{{cta_decline}}',
+                'consent.cta.accept': 'Yes, I accept',
+                'consent.cta.decline': 'No, thanks',
+                'reminder.subject': '[DICILO] Consent reminder',
+                'passwordReset.subject': '[DICILO] Reset your password',
+                'passwordReset.body': 'Hi,<br/><br/>You requested to reset your password for your Dicilo account.<br/><br/><a href="{{link}}" style="background-color: #22c55e; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">Click here to reset your password</a><br/><br/>If the button above does not work, copy and paste the following link into your browser:<br/>{{link}}<br/><br/>If you did not request this change, you can ignore this email.',
+            },
+            it: {
+                'consent.subject': '[DICILO] Do you accept info recommended by {{name}}?',
+                'consent.body': 'Hi {{recipientName}},<br/>You received a recommendation from {{name}}.<br/>Would you like to receive information from DICILO?<br/><br/>{{cta_accept}}&nbsp;|&nbsp;{{cta_decline}}',
+                'consent.cta.accept': 'Yes, I accept',
+                'consent.cta.decline': 'No, thanks',
+                'reminder.subject': '[DICILO] Consent reminder',
+                'passwordReset.subject': '[DICILO] Reset your password',
+                'passwordReset.body': 'Hi,<br/><br/>You requested to reset your password for your Dicilo account.<br/><br/><a href="{{link}}" style="background-color: #22c55e; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">Click here to reset your password</a><br/><br/>If the button above does not work, copy and paste the following link into your browser:<br/>{{link}}<br/><br/>If you did not request this change, you can ignore this email.',
+            },
         };
         return fallback[lang];
     });

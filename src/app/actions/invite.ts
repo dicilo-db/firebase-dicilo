@@ -7,7 +7,7 @@ import { headers } from 'next/headers';
 interface InviteFriend {
     name: string;
     email: string;
-    lang: 'es' | 'de' | 'en';
+    lang: 'es' | 'de' | 'en' | 'fr' | 'pt' | 'it';
     template?: string;
 }
 

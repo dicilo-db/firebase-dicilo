@@ -180,7 +180,7 @@ export function ReferralCard() {
                 friends.map(f => ({
                     name: f.name,
                     email: f.email,
-                    lang: f.language as 'es' | 'de' | 'en',
+                    lang: f.language as 'es' | 'de' | 'en' | 'fr' | 'pt' | 'it',
                     template: f.templateId
                 }))
             );
@@ -225,8 +225,10 @@ export function ReferralCard() {
                     .replace(/\{\{.*?\}\}/g, friend.name)
                     .replace(/\[Name\]|\[Nombre\]/g, friend.name);
 
+                const { language, ...friendData } = friend;
                 return {
-                    ...friend,
+                    ...friendData,
+                    lang: language,
                     generated_subject: subject,
                     generated_body: body,
                     inviteId: inviteId // Pass ID to webhook if needed
@@ -236,7 +238,7 @@ export function ReferralCard() {
             const payload = {
                 referrer_id: uniqueCode || currentUser.uid,
                 referrer_name: referrerName,
-                referrer_email: currentUser.email,
+                referrer_email: currentUser.email || undefined,
                 friends: enrichedFriends,
                 timestamp: new Date().toISOString()
             };
@@ -432,6 +434,9 @@ export function ReferralCard() {
                                                     <SelectItem value="es">{t('admin:invite.form.languages.es', 'Español')}</SelectItem>
                                                     <SelectItem value="en">{t('admin:invite.form.languages.en', 'English')}</SelectItem>
                                                     <SelectItem value="de">{t('admin:invite.form.languages.de', 'Deutsch')}</SelectItem>
+                                                    <SelectItem value="fr">Français</SelectItem>
+                                                    <SelectItem value="pt">Português</SelectItem>
+                                                    <SelectItem value="it">Italiano</SelectItem>
                                                 </SelectContent>
                                             </Select>
                                         </div>

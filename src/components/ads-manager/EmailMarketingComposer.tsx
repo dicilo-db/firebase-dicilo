@@ -443,7 +443,7 @@ export function EmailMarketingComposer({
                 friends.map(f => ({
                     name: f.name,
                     email: f.email,
-                    lang: f.language as 'es' | 'de' | 'en',
+                    lang: f.language as 'es' | 'de' | 'en' | 'fr' | 'pt' | 'it',
                     template: template.id || 'email_marketing',
                     rewardAmount: rewardAmount
                 }))
@@ -847,6 +847,9 @@ export function EmailMarketingComposer({
                                                     <SelectItem value="es">Español</SelectItem>
                                                     <SelectItem value="en">English</SelectItem>
                                                     <SelectItem value="de">Deutsch</SelectItem>
+                                                    <SelectItem value="fr">Français</SelectItem>
+                                                    <SelectItem value="pt">Português</SelectItem>
+                                                    <SelectItem value="it">Italiano</SelectItem>
                                                 </SelectContent>
                                             </Select>
                                         </div>
