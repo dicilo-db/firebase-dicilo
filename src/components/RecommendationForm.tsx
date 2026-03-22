@@ -61,6 +61,8 @@ const formSchema = z.object({
   diciloCode: z.string().optional(), // New
   source: z.string().min(1, 'required'), // New
   neighborhood: z.string().optional(),
+  referrerName: z.string().optional(),
+  referrerEmail: z.string().email('invalidEmail').optional().or(z.literal('')),
 });
 
 type RecommendationFormValues = z.infer<typeof formSchema>;
@@ -145,6 +147,8 @@ export function RecommendationFormContent({ initialBusinessName, onSuccess, onCa
       diciloCode: '',
       source: '',
       neighborhood: '',
+      referrerName: '',
+      referrerEmail: '',
     },
   });
 
@@ -249,6 +253,16 @@ export function RecommendationFormContent({ initialBusinessName, onSuccess, onCa
   };
 
   const onSubmit = async (values: RecommendationFormValues) => {
+    if (!user) {
+      if (!values.referrerName || !values.referrerEmail) {
+        toast({
+          title: t('form.errorTitle', 'Error'),
+          description: t('form.referrerRequired', 'Por favor, ingresa tu nombre y correo electrónico.'),
+          variant: 'destructive',
+        });
+        return;
+      }
+    }
     setIsSubmitting(true);
     try {
       const formData = new FormData();
@@ -268,9 +282,13 @@ export function RecommendationFormContent({ initialBusinessName, onSuccess, onCa
       formData.append('rewardAmount', rewardAmount.toString());
       formData.append('lang', i18n.language.split('-')[0] || 'es');
       
-      const freelancerName = userProfile ? `${userProfile.firstName || ''} ${userProfile.lastName || ''}`.trim() : '';
+      const freelancerName = userProfile ? `${userProfile.firstName || ''} ${userProfile.lastName || ''}`.trim() : values.referrerName || '';
       if (freelancerName) {
         formData.append('referrerName', freelancerName);
+      }
+      const freelancerEmail = user?.email || values.referrerEmail || '';
+      if (freelancerEmail) {
+        formData.append('referrerEmail', freelancerEmail);
       }
 
       const result = await submitRecommendation(formData);
@@ -370,27 +388,59 @@ export function RecommendationFormContent({ initialBusinessName, onSuccess, onCa
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-4">
-      <div className="space-y-4 p-4 rounded-xl bg-slate-50/50 border border-slate-100 shadow-sm">
-          <div className="flex items-center justify-between gap-2 mb-2">
-          <div className="flex items-center gap-2">
+      {!user ? (
+        <div className="space-y-4 p-4 rounded-xl bg-slate-50/50 border border-slate-100 shadow-sm">
+          <div className="flex items-center gap-2 mb-2">
             <User className="h-5 w-5 text-blue-500" />
             <h3 className="font-semibold text-slate-800">{t('form.yourContact', 'Tu Contacto')}</h3>
           </div>
-          <div className="flex items-center gap-2">
-            {userProfile && (
-              <Badge variant="secondary" className="bg-emerald-50 text-emerald-700 border-emerald-100 text-[10px] font-medium flex items-center gap-1">
-                <CheckCircle2 className="h-3 w-3" />
-                {userProfile.firstName} {userProfile.lastName}
-              </Badge>
-            )}
-            {userProfile?.uniqueCode && (
-               <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 font-mono text-[10px]">
-                  ID: {userProfile.uniqueCode}
-               </Badge>
-            )}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="referrerName">Tu Nombre *</Label>
+              <Input 
+                id="referrerName" 
+                {...form.register('referrerName')} 
+                className={cn("bg-white transition-all focus:ring-2 focus:ring-blue-400 focus:border-transparent", form.formState.errors.referrerName ? 'border-destructive' : '')}
+                disabled={isSubmitting} 
+                placeholder="Ej. Juan Pérez"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="referrerEmail">Tu Email *</Label>
+              <Input 
+                id="referrerEmail" 
+                {...form.register('referrerEmail')} 
+                type="email" 
+                className={cn("bg-white transition-all focus:ring-2 focus:ring-blue-400 focus:border-transparent", form.formState.errors.referrerEmail ? 'border-destructive' : '')}
+                disabled={isSubmitting} 
+                placeholder="ejemplo@correo.com"
+              />
+            </div>
           </div>
         </div>
-      </div>
+      ) : (
+        <div className="space-y-4 p-4 rounded-xl bg-slate-50/50 border border-slate-100 shadow-sm">
+            <div className="flex items-center justify-between gap-2 mb-2">
+            <div className="flex items-center gap-2">
+              <User className="h-5 w-5 text-blue-500" />
+              <h3 className="font-semibold text-slate-800">{t('form.yourContact', 'Tu Contacto')}</h3>
+            </div>
+            <div className="flex items-center gap-2">
+              {userProfile && (
+                <Badge variant="secondary" className="bg-emerald-50 text-emerald-700 border-emerald-100 text-[10px] font-medium flex items-center gap-1">
+                  <CheckCircle2 className="h-3 w-3" />
+                  {userProfile.firstName} {userProfile.lastName}
+                </Badge>
+              )}
+              {userProfile?.uniqueCode && (
+                 <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 font-mono text-[10px]">
+                    ID: {userProfile.uniqueCode}
+                 </Badge>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
       {/* Media Upload */}
       <div className="space-y-3">
         <Label>{t('community.add_media', 'Agregar Fotos/Vídeos')}</Label>
@@ -689,27 +739,7 @@ export function RecommendationFormContent({ initialBusinessName, onSuccess, onCa
           />
         </div>
 
-        {/* DP Reward Module (Manual Value) */}
-        <div className="pt-2">
-            <div className="flex items-center justify-between p-3 rounded-xl bg-purple-50 border border-purple-100 shadow-sm">
-                <div className="flex items-center gap-2">
-                    <Sparkles className="h-4 w-4 text-purple-600" />
-                    <span className="text-xs font-bold text-purple-800 uppercase tracking-wider">{t('form.reward_label', 'Recompensa por envío')}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                    <span className="text-sm font-bold text-purple-700">+</span>
-                    <Input 
-                        type="number" 
-                        value={rewardAmount} 
-                        onChange={(e) => setRewardAmount(Number(e.target.value) || 0)}
-                        className="w-16 h-7 px-1 py-0 text-center bg-white border-purple-200 text-purple-700 font-bold hide-arrows focus:ring-purple-400"
-                        min="0"
-                    />
-                    <span className="text-sm font-bold text-purple-700">DP</span>
-                    <span className="text-[10px] text-purple-600/70 font-medium ml-1">por envío</span>
-                </div>
-            </div>
-        </div>
+
       </div>
 
       <div className="flex justify-end gap-3 pt-6 border-t">
