@@ -73,9 +73,28 @@ export async function createPrivateUserProfile(
         const inviteSnapshot = await db.collection('referrals_pioneers').doc(inviteId).get();
         if (inviteSnapshot.exists) {
             const inviteData = inviteSnapshot.data();
-            // Verify email matches? Optional but good practice.
-            // if (inviteData?.friendEmail === email) ... 
 
+            referrerUid = inviteData?.referrerId || null;
+            if (referrerUid) {
+                initialBalance = inviteData?.rewardReceiver ?? 50;
+                referrerReward = inviteData?.rewardSender ?? 50;
+                inviteDocRef = inviteSnapshot.ref;
+            }
+        }
+    }
+
+    if (!inviteDocRef && email) {
+        // Fallback: Validate via Email in Pioneer Invites
+        const inviteQuery = await db.collection('referrals_pioneers')
+            .where('friendEmail', '==', email)
+            .where('status', '==', 'sent')
+            .limit(1)
+            .get();
+        
+        if (!inviteQuery.empty) {
+            const inviteSnapshot = inviteQuery.docs[0];
+            const inviteData = inviteSnapshot.data();
+            
             referrerUid = inviteData?.referrerId || null;
             if (referrerUid) {
                 initialBalance = inviteData?.rewardReceiver ?? 50;
