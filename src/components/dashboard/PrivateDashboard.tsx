@@ -325,7 +325,7 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
                                         </div>
                                         <div>
                                             <div className="text-3xl font-bold">{walletData ? walletData.balance.toFixed(0) : '0'} DP</div>
-                                            <div className="text-sm text-slate-400">≈ {walletData ? (walletData.balance * (walletData.pointValue || 0.10)).toFixed(2) : '0.00'} EUR</div>
+                                            <div className="text-sm text-slate-400">≈ {walletData ? (walletData.balance * (walletData.pointValue || 0.10)).toFixed(2) : '0.00'} EUR / USD $</div>
                                         </div>
                                     </div>
                                     <Button variant="secondary" className="w-full mt-4 bg-white text-slate-950 hover:bg-slate-200" onClick={handleDownloadQr}>
