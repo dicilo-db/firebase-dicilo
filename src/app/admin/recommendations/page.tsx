@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { useTranslation } from 'react-i18next';
+import { sendProspectInvitation } from '@/app/actions/prospect-actions';
 import {
     Table,
     TableBody,
@@ -17,7 +18,7 @@ import {
 } from '@/components/ui/table';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
-import { Loader2, Search, Trash2, LayoutDashboard, RefreshCw, Pen, UserPlus, CheckCircle } from 'lucide-react';
+import { Loader2, Search, Trash2, LayoutDashboard, RefreshCw, Pen, UserPlus, CheckCircle, Mail, Key } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
 import {
@@ -58,6 +59,7 @@ export default function RecommendationsPage() {
     const [editingRec, setEditingRec] = useState<any | null>(null);
     const [isEditOpen, setIsEditOpen] = useState(false);
     const [isSavingEdit, setIsSavingEdit] = useState(false);
+    const [isSendingEmail, setIsSendingEmail] = useState(false);
 
     // Convert State
     const [convertingRec, setConvertingRec] = useState<any | null>(null);
@@ -126,16 +128,69 @@ export default function RecommendationsPage() {
         setIsSavingEdit(true);
         try {
             const { id, ...dataToSave } = editingRec;
-            // Determine active/inactive/deleted? Just update fields.
             await updateDoc(doc(db, 'recommendations', id), dataToSave);
 
             setRecommendations(prev => prev.map(r => r.id === id ? editingRec : r));
-            toast({ title: 'Recommendation Updated', description: 'Changes saved.' });
+            toast({ title: 'Recomendación actualizada', description: 'Cambios guardados exitosamente.' });
             setIsEditOpen(false);
         } catch (error: any) {
             toast({ title: 'Error', description: error.message, variant: 'destructive' });
         } finally {
             setIsSavingEdit(false);
+        }
+    };
+
+    const handleVerifyData = () => {
+        if (!editingRec) return;
+        
+        let isValid = true;
+        
+        // Basic check for required fields
+        if (!editingRec.companyName || editingRec.companyName.trim() === '') isValid = false;
+        if (!editingRec.email || !editingRec.email.includes('@')) isValid = false;
+        
+        if (isValid) {
+            setEditingRec({ ...editingRec, validationStatus: 'validated' });
+            toast({ title: 'Datos verificados', description: 'La información del prospecto es válida. Puedes enviar la invitación.' });
+        } else {
+            setEditingRec({ ...editingRec, validationStatus: 'pending' });
+            toast({ title: 'Validación fallida', description: 'Faltan campos obligatorios o el email es inválido.', variant: 'destructive' });
+        }
+    };
+
+    const handleGenerateKey = () => {
+        if (!editingRec) return;
+        // Simple client-side generation, sync with what server does
+        const array = new Uint8Array(4);
+        window.crypto.getRandomValues(array);
+        const key = Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('').toUpperCase();
+        setEditingRec({ ...editingRec, securityKey: key });
+        toast({ title: 'Clave generada', description: 'Se ha generado una clave única para este prospecto.' });
+    };
+
+    const handleSendInvitation = async () => {
+        if (!editingRec) return;
+        setIsSendingEmail(true);
+        try {
+            // Ensure the recommendation is saved with latest data first
+            const { id, ...dataToSave } = editingRec;
+            await updateDoc(doc(db, 'recommendations', id), dataToSave);
+
+            // Call server action
+            const result = await sendProspectInvitation(id);
+            if (result.success) {
+                toast({ title: 'Invitación enviada', description: 'El email de invitación se ha enviado exitosamente.' });
+                // Update local status
+                const updatedRec = { ...editingRec, validationStatus: 'invitation_sent', securityKey: result.securityKey || editingRec.securityKey };
+                setEditingRec(updatedRec);
+                setRecommendations(prev => prev.map(r => r.id === id ? updatedRec : r));
+            } else {
+                throw new Error(result.error);
+            }
+        } catch (error: any) {
+            toast({ title: 'Error al enviar invitación', description: error.message, variant: 'destructive' });
+        } finally {
+            setIsSendingEmail(false);
         }
     };
 
@@ -356,6 +411,7 @@ export default function RecommendationsPage() {
                                 <Table>
                                     <TableHeader>
                                         <TableRow>
+                                            <TableHead>Fecha</TableHead>
                                             <TableHead>{t('recommendations.table.company')}</TableHead>
                                             <TableHead>{t('recommendations.table.contact')}</TableHead>
                                             <TableHead>{t('recommendations.table.email')}</TableHead>
@@ -370,6 +426,9 @@ export default function RecommendationsPage() {
                                     <TableBody>
                                         {filteredRecommendations.map((rec) => (
                                             <TableRow key={rec.id} className={rec.converted ? "bg-muted/50" : ""}>
+                                                <TableCell className="whitespace-nowrap text-xs text-muted-foreground font-medium">
+                                                    {rec.timestamp?.seconds ? new Date(rec.timestamp.seconds * 1000).toLocaleDateString() : 'N/A'}
+                                                </TableCell>
                                                 <TableCell className="font-medium">{rec.companyName}</TableCell>
                                                 <TableCell>
                                                     <div className="flex flex-col text-sm">
@@ -462,62 +521,134 @@ export default function RecommendationsPage() {
 
             {/* Edit Dialog */}
             <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-                <DialogContent className="max-w-md">
+                <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
                     <DialogHeader>
-                        <DialogTitle>Edit Recommendation</DialogTitle>
+                        <DialogTitle>Centro de Validación de Prospecto</DialogTitle>
+                        <DialogDescription>Revisa y verifica la información antes de enviar la invitación segura.</DialogDescription>
                     </DialogHeader>
                     {editingRec && (
-                        <div className="grid gap-4 py-4">
-                            <div className="grid gap-2">
-                                <Label>Company Name</Label>
-                                <Input value={editingRec.companyName || ''} onChange={(e) => setEditingRec({ ...editingRec, companyName: e.target.value })} />
+                        <div className="grid gap-6 py-4">
+                            {/* Recommender Data Section - Readonly */}
+                            <div className="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-lg border">
+                                <h3 className="text-sm font-bold uppercase tracking-wider mb-3 text-muted-foreground flex items-center gap-2">
+                                    <UserPlus className="h-4 w-4" /> Datos del Recomendador
+                                </h3>
+                                <div className="grid grid-cols-2 gap-4 text-sm">
+                                    <div>
+                                        <p className="text-muted-foreground text-xs">Nombre</p>
+                                        <p className="font-medium">{editingRec.referrerName || editingRec.contactName || 'Desconocido'}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-muted-foreground text-xs">Código Dicilo (o Firebase Auth UID)</p>
+                                        <p className="font-medium font-mono bg-white inline-block px-1 border rounded">{editingRec.diciloCode || editingRec.userId || 'N/A'}</p>
+                                    </div>
+                                </div>
                             </div>
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="grid gap-2">
-                                    <Label>Contact Name</Label>
-                                    <Input value={editingRec.contactName || ''} onChange={(e) => setEditingRec({ ...editingRec, contactName: e.target.value })} />
+
+                            {/* Company Information */}
+                            <div className="grid gap-4">
+                                <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+                                    <Pen className="h-4 w-4" /> Datos de la Empresa
+                                </h3>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="grid gap-2">
+                                        <Label>Nombre de Empresa *</Label>
+                                        <Input value={editingRec.companyName || ''} onChange={(e) => setEditingRec({ ...editingRec, companyName: e.target.value })} />
+                                    </div>
+                                    <div className="grid gap-2">
+                                        <Label>Categoría</Label>
+                                        <Input value={editingRec.category || ''} onChange={(e) => setEditingRec({ ...editingRec, category: e.target.value })} />
+                                    </div>
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="grid gap-2">
+                                        <Label>Email General / Contacto *</Label>
+                                        <Input value={editingRec.email || editingRec.companyEmail || ''} onChange={(e) => setEditingRec({ ...editingRec, email: e.target.value })} />
+                                    </div>
+                                    <div className="grid gap-2">
+                                        <Label>Teléfono</Label>
+                                        <Input value={editingRec.phone || editingRec.companyPhone || ''} onChange={(e) => setEditingRec({ ...editingRec, phone: e.target.value })} />
+                                    </div>
+                                </div>
+                                <div className="grid grid-cols-3 gap-4">
+                                    <div className="grid gap-2">
+                                        <Label>País</Label>
+                                        <Input value={editingRec.country || ''} onChange={(e) => setEditingRec({ ...editingRec, country: e.target.value })} />
+                                    </div>
+                                    <div className="grid gap-2">
+                                        <Label>Ciudad</Label>
+                                        <Input value={editingRec.city || ''} onChange={(e) => setEditingRec({ ...editingRec, city: e.target.value })} />
+                                    </div>
+                                    <div className="grid gap-2">
+                                        <Label>Barrio / Zona</Label>
+                                        <Input value={editingRec.neighborhood || ''} onChange={(e) => setEditingRec({ ...editingRec, neighborhood: e.target.value })} />
+                                    </div>
                                 </div>
                                 <div className="grid gap-2">
-                                    <Label>Phone</Label>
-                                    <Input value={editingRec.phone || ''} onChange={(e) => setEditingRec({ ...editingRec, phone: e.target.value })} />
-                                </div>
-                            </div>
-                            <div className="grid gap-2">
-                                <Label>Email</Label>
-                                <Input value={editingRec.email || ''} onChange={(e) => setEditingRec({ ...editingRec, email: e.target.value })} />
-                            </div>
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="grid gap-2">
-                                    <Label>Category</Label>
-                                    <Input value={editingRec.category || ''} onChange={(e) => setEditingRec({ ...editingRec, category: e.target.value })} />
-                                </div>
-                                <div className="grid gap-2">
-                                    <Label>Website</Label>
+                                    <Label>Sitio Web / Redes Sociales</Label>
                                     <Input value={editingRec.website || ''} onChange={(e) => setEditingRec({ ...editingRec, website: e.target.value })} />
                                 </div>
-                            </div>
-                            <div className="grid grid-cols-2 gap-4">
                                 <div className="grid gap-2">
-                                    <Label>City</Label>
-                                    <Input value={editingRec.city || ''} onChange={(e) => setEditingRec({ ...editingRec, city: e.target.value })} />
-                                </div>
-                                <div className="grid gap-2">
-                                    <Label>Country</Label>
-                                    <Input value={editingRec.country || ''} onChange={(e) => setEditingRec({ ...editingRec, country: e.target.value })} />
+                                    <Label>Comentarios del Recomendador</Label>
+                                    <Textarea value={editingRec.comments || ''} onChange={(e) => setEditingRec({ ...editingRec, comments: e.target.value })} />
                                 </div>
                             </div>
-                            <div className="grid gap-2">
-                                <Label>Comments</Label>
-                                <Textarea value={editingRec.comments || ''} onChange={(e) => setEditingRec({ ...editingRec, comments: e.target.value })} />
+
+                            {/* Security Key & Validation */}
+                            <div className="bg-blue-50/50 dark:bg-blue-900/10 p-5 rounded-lg border border-blue-100 flex flex-col md:flex-row gap-6 items-center">
+                                <div className="flex-1 space-y-2">
+                                    <Label className="flex items-center gap-2"><Key className="h-4 w-4" /> Clave Única de Registro</Label>
+                                    <div className="flex gap-2">
+                                        <Input 
+                                            value={editingRec.securityKey || ''} 
+                                            onChange={(e) => setEditingRec({ ...editingRec, securityKey: e.target.value })}
+                                            placeholder="Sin clave..."
+                                            className="font-mono bg-white uppercase"
+                                        />
+                                        {!editingRec.securityKey && (
+                                            <Button variant="outline" onClick={handleGenerateKey}>Generar</Button>
+                                        )}
+                                    </div>
+                                    <p className="text-xs text-muted-foreground">Esta clave servirá para verificar la autenticidad al momento de que la empresa se registre.</p>
+                                </div>
+
+                                <div className="flex-1 space-y-2 text-center md:text-right">
+                                    <Label className="block mb-2">Estado de Validación</Label>
+                                    {editingRec.validationStatus === 'validated' || editingRec.validationStatus === 'invitation_sent' ? (
+                                        <Badge className="bg-green-500 text-white hover:bg-green-600 px-4 py-1.5 text-sm uppercase">✅ Datos Validados</Badge>
+                                    ) : (
+                                        <Badge variant="outline" className="text-yellow-600 border-yellow-300 bg-yellow-50 px-4 py-1.5 text-sm uppercase">⚠️ Pendiente de Revisión</Badge>
+                                    )}
+                                    
+                                    {editingRec.validationStatus === 'invitation_sent' && (
+                                        <p className="text-xs text-green-600 font-medium mt-1">Invitación ya enviada</p>
+                                    )}
+                                </div>
                             </div>
+
                         </div>
                     )}
-                    <DialogFooter>
-                        <Button variant="outline" onClick={() => setIsEditOpen(false)}>Cancel</Button>
-                        <Button onClick={handleSaveEdit} disabled={isSavingEdit}>
-                            {isSavingEdit && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                            Save Changes
-                        </Button>
+                    <DialogFooter className="flex-col sm:flex-row gap-2 mt-4">
+                        <div className="flex gap-2 w-full sm:w-auto">
+                            <Button variant="outline" onClick={() => setIsEditOpen(false)}>Cancelar</Button>
+                            <Button onClick={handleSaveEdit} variant="secondary" disabled={isSavingEdit}>
+                                {isSavingEdit && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                                Guardar Sin Enviar
+                            </Button>
+                        </div>
+                        
+                        <div className="flex gap-2 w-full sm:w-auto ml-auto">
+                            {editingRec?.validationStatus !== 'validated' && editingRec?.validationStatus !== 'invitation_sent' ? (
+                                <Button onClick={handleVerifyData} className="bg-blue-600 hover:bg-blue-700">
+                                    Verificar Datos
+                                </Button>
+                            ) : (
+                                <Button onClick={handleSendInvitation} disabled={isSendingEmail || !editingRec?.securityKey} className="bg-green-600 hover:bg-green-700">
+                                    {isSendingEmail ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Mail className="mr-2 h-4 w-4" />}
+                                    Disparar Email de Invitación
+                                </Button>
+                            )}
+                        </div>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>

@@ -22,10 +22,7 @@ export function RecommendCompanyView() {
             </div>
 
             <Card className="max-w-4xl border-0 shadow-lg ring-1 ring-slate-200 dark:ring-slate-800 overflow-hidden">
-                <CardHeader className="bg-slate-50/50 dark:bg-slate-900/50 border-b">
-                    <CardTitle>{t('form.title', 'Recomendar una empresa')}</CardTitle>
-                    <CardDescription>{t('form.description')}</CardDescription>
-                </CardHeader>
+
                 <CardContent className="p-6 md:p-10 bg-white dark:bg-slate-950">
                     <RecommendationFormContent />
                 </CardContent>

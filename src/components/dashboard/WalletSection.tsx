@@ -89,7 +89,7 @@ export function WalletSection({ uid, uniqueCode, userProfile }: WalletSectionPro
                     <CardContent className="space-y-4">
                         <div className="space-y-1">
                             <span className="text-4xl font-bold tracking-tight">{data.balance} DP</span>
-                            <p className="text-sm text-gray-400">≈ {(data.balance * (data.pointValue || 0.10)).toFixed(2)} {data.currency}</p>
+                            <p className="text-sm text-gray-400">≈ {(data.balance * (data.pointValue || 0.10)).toFixed(2)} {data.currency} / USD $</p>
                         </div>
 
                         <div className="flex gap-3 pt-4">
