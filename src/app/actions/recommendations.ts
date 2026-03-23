@@ -7,7 +7,7 @@ import { sendBusinessRecommendationEmail } from '@/lib/email';
 import { sendProspectInvitation } from './prospect-actions';
 import { sendSmtpEmail } from '@/lib/mail-service';
 import sharp from 'sharp';
-import { randomUUID } from 'crypto';
+import { randomUUID, randomBytes } from 'crypto';
 
 import { checkBusinessDuplicate } from './business-utils';
 

@@ -293,7 +293,9 @@ export function RecommendationFormContent({ initialBusinessName, onSuccess, onCa
 
       const result = await submitRecommendation(formData);
 
-      if (!result.success) throw new Error(result.error);
+      if (!result || !result.success) {
+        throw new Error(result?.error || 'Error: El servidor no respondió adecuadamente.');
+      }
       
       toast({
         title: t('form.successTitle'),
