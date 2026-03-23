@@ -25,11 +25,17 @@ export type EmailTemplate = {
     updatedAt?: string;
 };
 
-export async function getTemplates() {
+export async function getTemplates(forAdmin: boolean = false) {
     try {
         const snapshot = await db.collection('email_templates').get();
         const templates: EmailTemplate[] = [];
+        const SYSTEM_TEMPLATES = ['qVCINezvMyoMLJk7DUnL', 'MYXkACjt1zFkIhsz7qmY'];
+
         snapshot.forEach((doc) => {
+            // Hide System prospect templates from non-admin calls
+            if (!forAdmin && SYSTEM_TEMPLATES.includes(doc.id)) {
+                return;
+            }
             templates.push({ id: doc.id, ...doc.data() } as EmailTemplate);
         });
         return templates;

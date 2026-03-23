@@ -5,7 +5,7 @@ import { getTemplate } from '@/actions/email-templates';
 import { sendSmtpEmail } from '@/lib/mail-service';
 import { randomBytes } from 'crypto';
 
-export async function sendProspectInvitation(prospectId: string) {
+export async function sendProspectInvitation(prospectId: string, templateIdOverride?: string) {
     try {
         const db = getAdminDb();
         const prospectRef = db.collection('recommendations').doc(prospectId);
@@ -28,8 +28,8 @@ export async function sendProspectInvitation(prospectId: string) {
             await prospectRef.update({ securityKey });
         }
 
-        // Obtener la plantilla indicada: qVCINezvMyoMLJk7DUnL
-        const templateId = 'qVCINezvMyoMLJk7DUnL';
+        // Obtener la plantilla indicada: templateIdOverride o por defecto qVCINezvMyoMLJk7DUnL
+        const templateId = templateIdOverride || 'qVCINezvMyoMLJk7DUnL';
         const template = await getTemplate(templateId);
 
         if (!template) {

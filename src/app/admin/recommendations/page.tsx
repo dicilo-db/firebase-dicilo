@@ -177,7 +177,7 @@ export default function RecommendationsPage() {
             await updateDoc(doc(db, 'recommendations', id), dataToSave);
 
             // Call server action
-            const result = await sendProspectInvitation(id);
+            const result = await sendProspectInvitation(id, 'MYXkACjt1zFkIhsz7qmY');
             if (result.success) {
                 toast({ title: 'Invitación enviada', description: 'El email de invitación se ha enviado exitosamente.' });
                 // Update local status

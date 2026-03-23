@@ -62,7 +62,7 @@ export default function EmailTemplatesPage() {
 
     const loadTemplates = async () => {
         try {
-            const data = await getTemplates();
+            const data = await getTemplates(true);
             setTemplates(data);
         } catch (error) {
             toast({
