@@ -178,6 +178,11 @@ export default function RecommendationsPage() {
 
             // Call server action
             const result = await sendProspectInvitation(id, 'MYXkACjt1zFkIhsz7qmY');
+            
+            if (!result) {
+                throw new Error("El servidor no pudo ser contactado. Por favor, actualiza la página (F5) ya que el sistema ha recibido una actualización reciente.");
+            }
+
             if (result.success) {
                 toast({ title: 'Invitación enviada', description: 'El email de invitación se ha enviado exitosamente.' });
                 // Update local status
@@ -185,7 +190,7 @@ export default function RecommendationsPage() {
                 setEditingRec(updatedRec);
                 setRecommendations(prev => prev.map(r => r.id === id ? updatedRec : r));
             } else {
-                throw new Error(result.error);
+                throw new Error(result.error || "Falló el envío de la invitación.");
             }
         } catch (error: any) {
             toast({ title: 'Error al enviar invitación', description: error.message, variant: 'destructive' });
