@@ -113,13 +113,12 @@ export async function submitRecommendation(formData: FormData) {
         let finalReferrerName = formData.get('referrerName') as string || '';
         const finalReferrerEmail = formData.get('referrerEmail') as string || '';
 
-        // Capture real name if logged in
         if (userId) {
             try {
-                const userDoc = await db.collection('private_users').doc(userId).get();
+                const userDoc = await db.collection('private_profiles').doc(userId).get();
                 if (userDoc.exists) {
                     const ud = userDoc.data() || {};
-                    finalReferrerName = ud.name || ud.first_name || finalReferrerName;
+                    finalReferrerName = ud.name || ud.firstName || ud.first_name || finalReferrerName;
                 }
             } catch (e) {
                 console.error("Error fetching referer name", e);

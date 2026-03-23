@@ -127,7 +127,7 @@ export default function RecommendationsPage() {
 
     useEffect(() => {
         if (editingRec?.userId) {
-            getDoc(doc(db, 'private_users', editingRec.userId)).then(d => {
+            getDoc(doc(db, 'private_profiles', editingRec.userId)).then(d => {
                 if (d.exists()) {
                     const ud = d.data();
                     setRecommenderDetails({
