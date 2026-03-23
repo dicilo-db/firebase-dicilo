@@ -185,7 +185,6 @@ export function QrManager({ onBack }: QrManagerProps) {
         setIsSaving(false);
     };
 
-    // Download QR Handler
     const downloadQR = (id: string, name: string) => {
         // Prevent execution on server just in case
         if (typeof document === 'undefined') return;
@@ -199,6 +198,46 @@ export function QrManager({ onBack }: QrManagerProps) {
             document.body.appendChild(downloadLink);
             downloadLink.click();
             document.body.removeChild(downloadLink);
+        }
+    };
+
+    const downloadQRPdf = async (id: string, name: string) => {
+        if (typeof document === 'undefined') return;
+
+        try {
+            const { jsPDF } = await import('jspdf');
+            const canvas = document.getElementById(`qr-canvas-${id}`) as HTMLCanvasElement;
+            if (canvas) {
+                const imgData = canvas.toDataURL("image/png");
+                const doc = new jsPDF({
+                    orientation: 'portrait',
+                    unit: 'mm',
+                    format: 'a4'
+                });
+
+                // Title centering
+                doc.setFontSize(22);
+                doc.setTextColor(40, 40, 40);
+                doc.text(name, 105, 40, { align: 'center' });
+
+                // QR Image Centering
+                const imgWidth = 100;
+                const imgHeight = 100;
+                const x = (210 - imgWidth) / 2;
+                const y = 60;
+                doc.addImage(imgData, 'PNG', x, y, imgWidth, imgHeight);
+
+                // Helper text
+                doc.setFontSize(12);
+                doc.setTextColor(100, 100, 100);
+                doc.text("Escanea el código QR desde tu móvil", 105, 180, { align: 'center' });
+                doc.text("o compártelo para conectar directamente.", 105, 190, { align: 'center' });
+
+                doc.save(`qr-${name.replace(/\s+/g, '-').toLowerCase()}.pdf`);
+            }
+        } catch (err: any) {
+            console.error('Error creating PDF:', err);
+            toast({ title: t('adsManager.qrManager.toasts.error'), description: 'No se pudo generar el documento PDF.', variant: 'destructive' });
         }
     };
 
@@ -359,7 +398,15 @@ export function QrManager({ onBack }: QrManagerProps) {
                                         className="flex-1 text-xs"
                                         onClick={() => downloadQR(camp.id, camp.name)}
                                     >
-                                        <Download className="mr-2 h-3 w-3" /> {t('adsManager.qrManager.card.downloadPng')}
+                                        <Download className="mr-2 h-3 w-3" /> PNG
+                                    </Button>
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        className="flex-1 text-xs"
+                                        onClick={() => downloadQRPdf(camp.id, camp.name)}
+                                    >
+                                        <Download className="mr-2 h-3 w-3" /> PDF
                                     </Button>
                                     <Button variant="ghost" size="sm"
                                         onClick={() => handleDelete(camp.id)}
