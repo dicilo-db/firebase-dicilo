@@ -37,27 +37,40 @@ export async function sendProspectInvitation(prospectId: string) {
         }
 
         // Determinar idioma (por defecto 'es')
-        const lang = data.countryCode === 'DE' || data.country === 'Deutschland' || data.country === 'Alemania' ? 'de' : 'es';
+        let lang = data.countryCode === 'DE' || data.country === 'Deutschland' || data.country === 'Alemania' ? 'de' : 'es';
         
-        const templateVersion = template.versions[lang] || template.versions['es'] || Object.values(template.versions)[0];
+        let templateVersion = template.versions[lang];
+
+        // Verificar si la versión especificada está vacía, en cuyo caso forzamos 'es' u otra válida
+        if (!templateVersion || !templateVersion.subject || !templateVersion.body) {
+            templateVersion = template.versions['es'];
+        }
+        if (!templateVersion || !templateVersion.subject || !templateVersion.body) {
+            templateVersion = Object.values(template.versions).find((v: any) => v && v.subject && v.body) as any;
+        }
         
         if (!templateVersion) {
-            return { success: false, error: 'Versión de idioma de la plantilla no encontrada' };
+            return { success: false, error: 'Versión de idioma de la plantilla no encontrada o está vacía' };
         }
 
         let subject = templateVersion.subject;
         let body = templateVersion.body;
 
-        // Reemplazar las variables: empresa, clave_aleatoria, ref_code
+        // Reemplazar las variables: empresa, clave_aleatoria, ref_code, y Tu Nombre (ignorando mayúsculas)
         const variables: Record<string, string> = {
             '{{empresa}}': data.companyName || '',
             '{{clave_aleatoria}}': securityKey,
-            '{{ref_code}}': data.diciloCode || data.userId || ''
+            '{{clave aleatoria}}': securityKey,
+            '{{ref_code}}': data.diciloCode || data.userId || '',
+            '{{tu nombre}}': data.referrerName || 'Un usuario de Dicilo',
+            '{{tu_nombre}}': data.referrerName || 'Un usuario de Dicilo'
         };
 
         for (const [key, value] of Object.entries(variables)) {
+            // Escape special regex characters in the key
+            const escapedKey = key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
             // Regex global e insensible a mayúsculas para abarcar más variaciones si las hay
-            const regex = new RegExp(key, 'gi');
+            const regex = new RegExp(escapedKey, 'gi');
             subject = subject.replace(regex, value);
             body = body.replace(regex, value);
         }
