@@ -567,15 +567,17 @@ export default function RecommendationsPage() {
                                 </h3>
                                 <div className="grid grid-cols-2 gap-4 text-sm">
                                     <div>
-                                        <p className="text-muted-foreground text-xs">Nombre</p>
+                                        <p className="text-muted-foreground text-xs">Nombre del recomendador</p>
                                         <p className="font-medium text-foreground">
-                                            {recommenderDetails ? recommenderDetails.name : (editingRec.referrerName || editingRec.contactName || 'Desconocido')}
+                                            {recommenderDetails ? recommenderDetails.name : 
+                                            (editingRec.referrerName === 'Un usuario de Dicilo' && editingRec.userId ? `ID Sistema: ${editingRec.userId.slice(0, 8)}...` : 
+                                            (editingRec.referrerName || editingRec.contactName || 'Desconocido'))}
                                         </p>
                                     </div>
                                     <div>
-                                        <p className="text-muted-foreground text-xs">ID</p>
+                                        <p className="text-muted-foreground text-xs">ID del recomendador</p>
                                         <p className="font-medium font-mono bg-white inline-block px-1 border rounded">
-                                            {recommenderDetails ? recommenderDetails.diciloCode : (editingRec.diciloCode || '-')}
+                                            {recommenderDetails ? recommenderDetails.diciloCode : (editingRec.diciloCode || (editingRec.userId ? editingRec.userId.slice(0, 8) : 'N/A'))}
                                         </p>
                                     </div>
                                 </div>
