@@ -4,6 +4,8 @@ import { getAdminDb, getAdminStorage } from '@/lib/firebase-admin';
 import * as admin from 'firebase-admin';
 import { registerNewProspect } from './dicipoints';
 import { sendBusinessRecommendationEmail } from '@/lib/email';
+import { sendProspectInvitation } from './prospect-actions';
+import { sendSmtpEmail } from '@/lib/mail-service';
 import sharp from 'sharp';
 import { randomUUID } from 'crypto';
 
@@ -108,6 +110,8 @@ export async function submitRecommendation(formData: FormData) {
         const uploadResults = await Promise.all(uploadPromises);
         const media = uploadResults.filter((item): item is { type: 'image' | 'video'; url: string } => item !== null);
 
+        const securityKey = randomBytes(4).toString('hex').toUpperCase();
+
         const recommendationData: any = {
             companyName,
             contactFirstName,
@@ -130,6 +134,8 @@ export async function submitRecommendation(formData: FormData) {
             media,
             photoUrl: media.find(m => m.type === 'image')?.url || '',
             status: 'approved', // Auto-approved for this flow
+            validationStatus: 'pending',
+            securityKey,
             timestamp: admin.firestore.FieldValue.serverTimestamp(),
             createdAt: admin.firestore.FieldValue.serverTimestamp(),
             pointsPaid: false,
@@ -138,31 +144,76 @@ export async function submitRecommendation(formData: FormData) {
         };
 
         const ref = await db.collection('recommendations').add(recommendationData);
-        const rewardAmount = parseInt(formData.get('rewardAmount') as string || '10');
+        let rewardAmount = parseInt(formData.get('rewardAmount') as string || '10');
+        try {
+            const { getTemplate } = await import('@/actions/email-templates');
+            const template = await getTemplate('qVCINezvMyoMLJk7DUnL');
+            if (template) {
+                rewardAmount = template.rewardSender || template.rewardAmount || rewardAmount;
+            }
+        } catch (e) {
+            console.error("Error fetching template reward:", e);
+        }
 
         // AUTOMATIC PAYMENT
         if (userId) {
             await registerNewProspect(userId, ref.id, rewardAmount);
         }
 
-        // BUSINESS NOTIFICATION EMAIL
-        const recipientEmail = companyEmail;
-        if (recipientEmail && companyName) {
-            console.log(`Attempting to send recommendation email to: ${recipientEmail} for company: ${companyName}`);
-            const referrerName = (formData.get('referrerName') as string) || (contactName) || 'Un usuario de Dicilo';
-            const emailResult = await sendBusinessRecommendationEmail(
-                recipientEmail,
-                companyName,
-                referrerName,
-                lang as 'es' | 'en' | 'de'
-            );
-            if (emailResult.success) {
-                console.log(`Recommendation email successfully sent to ${recipientEmail}`);
-            } else {
-                console.error(`Failed to send recommendation email to ${recipientEmail}:`, emailResult.error);
-            }
-        } else {
-            console.log('Skipping recommendation email: No companyEmail provided.');
+        // BUSINESS NOTIFICATION EMAIL (Requirement 1)
+        console.log(`Sending automated invitation to: ${email} for company: ${companyName}`);
+        await sendProspectInvitation(ref.id);
+
+        // NON-REGISTERED RECOMMENDER THANK YOU EMAIL (Requirement 2)
+        const referrerName = (formData.get('referrerName') as string) || (contactName) || 'Un usuario de Dicilo';
+        const referrerEmail = formData.get('referrerEmail') as string;
+
+        if (!userId && referrerEmail) {
+            const subject = lang === 'de' ? 'Danke für deine Empfehlung!' : (lang === 'en' ? 'Thank you for your recommendation!' : '¡Gracias por tu recomendación!');
+            const body = lang === 'de' ? 
+                `Hallo ${referrerName},<br/><br/>Danke, dass du das Unternehmen <b>${companyName}</b> empfohlen hast.<br/>Jede Empfehlung hilft uns, Dicilo zu verbessern!<br/><br/>Dein Dicilo Team` :
+                (lang === 'en' ? 
+                `Hi ${referrerName},<br/><br/>Thank you for recommending <b>${companyName}</b>.<br/>Every recommendation helps us improve Dicilo!<br/><br/>Your Dicilo Team` :
+                `Hola ${referrerName},<br/><br/>Gracias por recomendar la empresa <b>${companyName}</b>.<br/>¡Tu aporte ayuda a hacer crecer la comunidad Dicilo!<br/><br/>El Equipo Dicilo`);
+            
+            await sendSmtpEmail({
+                to: referrerEmail,
+                subject,
+                html: body
+            });
+        }
+
+        // AUTO-TRANSFER TO BASIC (Requirement 3)
+        const fieldsToCheck = [
+            companyName, email, country, city, category, phone, website, neighborhood, comments, 
+            (media && media.length > 0) ? "hasMedia" : ""
+        ];
+        const filledCount = fieldsToCheck.filter(f => f && typeof f === 'string' && f.trim().length > 0).length;
+        const completePercentage = (filledCount / fieldsToCheck.length) * 100;
+
+        if (completePercentage >= 75) {
+            let activeCategory = category;
+            if (activeCategory === 'Gastronomy') activeCategory = 'gastronomy'; // sanity check
+            
+            const locationString = neighborhood ? `${neighborhood}, ${city}, ${country}` : `${city}, ${country}`;
+            const businessData = {
+                name: companyName,
+                email: email,
+                phone: phone || '',
+                category: activeCategory,
+                city: city,
+                country: country,
+                location: locationString,
+                website: website || '',
+                active: false,
+                createdAt: admin.firestore.FieldValue.serverTimestamp(),
+                sourceRecommendationId: ref.id,
+                photos: media.filter(m => m.type === 'image').map(m => m.url),
+                videos: media.filter(m => m.type === 'video').map(m => m.url),
+                description: comments || ''
+            };
+            await db.collection('businesses').add(businessData);
+            await ref.update({ autoTransferredToBasic: true });
         }
 
         return { success: true };
