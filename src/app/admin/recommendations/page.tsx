@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useMemo } from 'react';
-import { getFirestore, collection, query, getDocs, orderBy, deleteDoc, doc, updateDoc, addDoc, setDoc, where } from 'firebase/firestore';
+import { getFirestore, collection, query, getDocs, orderBy, deleteDoc, doc, updateDoc, addDoc, setDoc, where, getDoc } from 'firebase/firestore';
 import { app } from '@/lib/firebase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -118,10 +118,30 @@ export default function RecommendationsPage() {
     };
 
     // --- Edit Logic ---
+    const [recommenderDetails, setRecommenderDetails] = useState<{name: string, diciloCode: string} | null>(null);
+
     const handleEditClick = (rec: any) => {
         setEditingRec({ ...rec });
         setIsEditOpen(true);
     };
+
+    useEffect(() => {
+        if (editingRec?.userId) {
+            getDoc(doc(db, 'private_users', editingRec.userId)).then(d => {
+                if (d.exists()) {
+                    const ud = d.data();
+                    setRecommenderDetails({
+                        name: ud.name || ud.first_name || editingRec.referrerName || 'Desconocido',
+                        diciloCode: ud.diciloCode || editingRec.diciloCode || '-'
+                    });
+                } else {
+                    setRecommenderDetails(null);
+                }
+            }).catch(console.error);
+        } else {
+            setRecommenderDetails(null);
+        }
+    }, [editingRec]);
 
     const handleSaveEdit = async () => {
         if (!editingRec) return;
@@ -417,6 +437,7 @@ export default function RecommendationsPage() {
                                     <TableHeader>
                                         <TableRow>
                                             <TableHead>Fecha</TableHead>
+                                            <TableHead>Recomendador / ID</TableHead>
                                             <TableHead>{t('recommendations.table.company')}</TableHead>
                                             <TableHead>{t('recommendations.table.contact')}</TableHead>
                                             <TableHead>{t('recommendations.table.email')}</TableHead>
@@ -433,6 +454,12 @@ export default function RecommendationsPage() {
                                             <TableRow key={rec.id} className={rec.converted ? "bg-muted/50" : ""}>
                                                 <TableCell className="whitespace-nowrap text-xs text-muted-foreground font-medium">
                                                     {rec.timestamp?.seconds ? new Date(rec.timestamp.seconds * 1000).toLocaleDateString() : 'N/A'}
+                                                </TableCell>
+                                                <TableCell>
+                                                    <div className="flex flex-col text-sm">
+                                                        <span className="font-semibold text-primary">{rec.referrerName && rec.referrerName !== 'Un usuario de Dicilo' ? rec.referrerName : (rec.contactName || 'Desconocido')}</span>
+                                                        <span className="text-muted-foreground text-xs font-mono">{rec.diciloCode || rec.userId || 'N/A'}</span>
+                                                    </div>
                                                 </TableCell>
                                                 <TableCell className="font-medium">{rec.companyName}</TableCell>
                                                 <TableCell>
@@ -541,11 +568,15 @@ export default function RecommendationsPage() {
                                 <div className="grid grid-cols-2 gap-4 text-sm">
                                     <div>
                                         <p className="text-muted-foreground text-xs">Nombre</p>
-                                        <p className="font-medium">{editingRec.referrerName || editingRec.contactName || 'Desconocido'}</p>
+                                        <p className="font-medium text-foreground">
+                                            {recommenderDetails ? recommenderDetails.name : (editingRec.referrerName || editingRec.contactName || 'Desconocido')}
+                                        </p>
                                     </div>
                                     <div>
-                                        <p className="text-muted-foreground text-xs">Código Dicilo (o Firebase Auth UID)</p>
-                                        <p className="font-medium font-mono bg-white inline-block px-1 border rounded">{editingRec.diciloCode || editingRec.userId || 'N/A'}</p>
+                                        <p className="text-muted-foreground text-xs">ID</p>
+                                        <p className="font-medium font-mono bg-white inline-block px-1 border rounded">
+                                            {recommenderDetails ? recommenderDetails.diciloCode : (editingRec.diciloCode || '-')}
+                                        </p>
                                     </div>
                                 </div>
                             </div>

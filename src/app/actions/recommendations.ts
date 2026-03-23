@@ -110,13 +110,33 @@ export async function submitRecommendation(formData: FormData) {
         const uploadResults = await Promise.all(uploadPromises);
         const media = uploadResults.filter((item): item is { type: 'image' | 'video'; url: string } => item !== null);
 
+        let finalReferrerName = formData.get('referrerName') as string || '';
+        const finalReferrerEmail = formData.get('referrerEmail') as string || '';
+
+        // Capture real name if logged in
+        if (userId) {
+            try {
+                const userDoc = await db.collection('private_users').doc(userId).get();
+                if (userDoc.exists) {
+                    const ud = userDoc.data() || {};
+                    finalReferrerName = ud.name || ud.first_name || finalReferrerName;
+                }
+            } catch (e) {
+                console.error("Error fetching referer name", e);
+            }
+        }
+        
+        if (!finalReferrerName) {
+            finalReferrerName = String(contactName || 'Un usuario de Dicilo');
+        }
+
         const securityKey = randomBytes(4).toString('hex').toUpperCase();
 
         const recommendationData: any = {
             companyName,
             contactFirstName,
             contactLastName,
-            contactName,
+            contactName: contactName || '',
             email,
             phone,
             companyEmail: companyEmail || null,
@@ -140,7 +160,8 @@ export async function submitRecommendation(formData: FormData) {
             createdAt: admin.firestore.FieldValue.serverTimestamp(),
             pointsPaid: false,
             campaignId: campaignId || null, // Shared Campaign ID logic
-            referrerName: formData.get('referrerName') || 'Un usuario de Dicilo'
+            referrerName: finalReferrerName,
+            referrerEmail: finalReferrerEmail
         };
 
         const ref = await db.collection('recommendations').add(recommendationData);
@@ -165,19 +186,18 @@ export async function submitRecommendation(formData: FormData) {
         await sendProspectInvitation(ref.id);
 
         // NON-REGISTERED RECOMMENDER THANK YOU EMAIL (Requirement 2)
-        const referrerName = (formData.get('referrerName') as string) || (contactName) || 'Un usuario de Dicilo';
-        const referrerEmail = formData.get('referrerEmail') as string;
+        // Usar las variables resueltas arriba finalReferrerName y finalReferrerEmail
 
-        if (!userId && referrerEmail) {
+        if (!userId && finalReferrerEmail) {
             const subject = lang === 'de' ? 'Danke für deine Empfehlung!' : (lang === 'en' ? 'Thank you for your recommendation!' : '¡Gracias por tu recomendación!');
             const body = lang === 'de' ? 
-                `Hallo ${referrerName},<br/><br/>Danke, dass du das Unternehmen <b>${companyName}</b> empfohlen hast.<br/>Jede Empfehlung hilft uns, Dicilo zu verbessern!<br/><br/>Dein Dicilo Team` :
+                `Hallo ${finalReferrerName},<br/><br/>Danke, dass du das Unternehmen <b>${companyName}</b> empfohlen hast.<br/>Jede Empfehlung hilft uns, Dicilo zu verbessern!<br/><br/>Dein Dicilo Team` :
                 (lang === 'en' ? 
-                `Hi ${referrerName},<br/><br/>Thank you for recommending <b>${companyName}</b>.<br/>Every recommendation helps us improve Dicilo!<br/><br/>Your Dicilo Team` :
-                `Hola ${referrerName},<br/><br/>Gracias por recomendar la empresa <b>${companyName}</b>.<br/>¡Tu aporte ayuda a hacer crecer la comunidad Dicilo!<br/><br/>El Equipo Dicilo`);
+                `Hi ${finalReferrerName},<br/><br/>Thank you for recommending <b>${companyName}</b>.<br/>Every recommendation helps us improve Dicilo!<br/><br/>Your Dicilo Team` :
+                `Hola ${finalReferrerName},<br/><br/>Gracias por recomendar la empresa <b>${companyName}</b>.<br/>¡Tu aporte ayuda a hacer crecer la comunidad Dicilo!<br/><br/>El Equipo Dicilo`);
             
             await sendSmtpEmail({
-                to: referrerEmail,
+                to: finalReferrerEmail,
                 subject,
                 html: body
             });
