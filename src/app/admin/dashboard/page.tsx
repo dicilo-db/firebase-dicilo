@@ -813,6 +813,23 @@ const DashboardContent: React.FC = () => {
               </Card>
             </Link>
 
+            {/* Support Tickets (Central) */}
+            <Link href="/admin/tickets" className="group">
+              <Card className="h-full transition-all hover:shadow-md hover:border-red-500/50 cursor-pointer relative">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Soporte Técnico</CardTitle>
+                  <LifeBuoy className="h-4 w-4 text-muted-foreground group-hover:text-red-500 transition-colors" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">Tickets Soporte</div>
+                  <p className="text-xs text-muted-foreground mt-1">Pool de Tickets & Respuestas</p>
+                  <div className="absolute bottom-4 right-4 text-sm font-mono text-muted-foreground">
+                    {formatCount(counts.tickets)}
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
+
             {/* Starter Kunden */}
             <Link href="/admin/clients?type=starter" className="group">
               <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
@@ -840,23 +857,6 @@ const DashboardContent: React.FC = () => {
                 <CardContent>
                   <div className="text-2xl font-bold">{t('dashboard.cards.stats.title')}</div>
                   <p className="text-xs text-muted-foreground mt-1">{t('dashboard.cards.stats.description')}</p>
-                </CardContent>
-              </Card>
-            </Link>
-
-            {/* Support Tickets (Central) */}
-            <Link href="/admin/tickets" className="group">
-              <Card className="h-full transition-all hover:shadow-md hover:border-red-500/50 cursor-pointer relative">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Soporte Técnico</CardTitle>
-                  <LifeBuoy className="h-4 w-4 text-muted-foreground group-hover:text-red-500 transition-colors" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">Tickets Soporte</div>
-                  <p className="text-xs text-muted-foreground mt-1">Pool de Tickets & Respuestas</p>
-                  <div className="absolute bottom-4 right-4 text-sm font-mono text-muted-foreground">
-                    {formatCount(counts.tickets)}
-                  </div>
                 </CardContent>
               </Card>
             </Link>
