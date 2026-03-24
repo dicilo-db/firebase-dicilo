@@ -56,6 +56,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 
 import { cn } from '@/lib/utils';
+import { ensureHttps, formatSocialUrl } from '@/lib/url-utils';
 import {
   Select,
   SelectContent,
@@ -1694,10 +1695,17 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                       />
                     </div>
 
-                    {/* 9. Website (Left) */}
                     <div className="space-y-2">
                       <Label htmlFor="website">Website</Label>
-                      <Input id="website" {...register('website')} placeholder="https://example.com" />
+                      <Input 
+                        id="website" 
+                        {...register('website')} 
+                        placeholder="https://example.com" 
+                        onBlur={() => {
+                          const val = getValues('website');
+                          if (val) setValue('website', ensureHttps(val));
+                        }}
+                      />
                     </div>
 
                     {/* 10. Public Email (Right) */}
@@ -1766,6 +1774,10 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                       id="headerData.bannerShareUrl"
                       {...register('headerData.bannerShareUrl')}
                       placeholder="https://example.com/special-offer"
+                      onBlur={() => {
+                        const val = getValues('headerData.bannerShareUrl');
+                        if (val) setValue('headerData.bannerShareUrl', ensureHttps(val));
+                      }}
                     />
                   </div>
 

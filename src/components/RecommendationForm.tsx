@@ -31,6 +31,7 @@ import {
 } from '@/components/ui/select';
 
 import { cn } from "@/lib/utils";
+import { ensureHttps } from "@/lib/url-utils";
 import React, { useState, useEffect, useMemo } from 'react';
 import { submitRecommendation } from '@/app/actions/recommendations';
 import { getPrivateProfile } from '@/app/actions/user-profile';
@@ -674,6 +675,12 @@ export function RecommendationFormContent({ initialBusinessName, onSuccess, onCa
           <Input 
             id="website" 
             {...form.register('website')} 
+            onBlur={() => {
+              const currentVal = form.getValues('website');
+              if (currentVal) {
+                form.setValue('website', ensureHttps(currentVal));
+              }
+            }}
             className="bg-white transition-all focus:ring-2 focus:ring-orange-400 focus:border-transparent"
             disabled={isSubmitting} 
           />

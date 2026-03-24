@@ -79,8 +79,8 @@ export async function sendPioneerInvitations(
                 updatedAt: admin.firestore.FieldValue.serverTimestamp(),
                 opened: false,
                 template: friend.template || 'default',
-                rewardSender: friend.rewardSender || 50,
-                rewardReceiver: friend.rewardReceiver || 50
+                rewardSender: friend.rewardSender,
+                rewardReceiver: friend.rewardReceiver
             });
         }
 

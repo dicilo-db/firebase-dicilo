@@ -18,16 +18,17 @@ interface WalletSectionProps {
     uid: string;
     uniqueCode: string;
     userProfile?: any;
+    initialData?: any;
 }
 
-export function WalletSection({ uid, uniqueCode, userProfile }: WalletSectionProps) {
+export function WalletSection({ uid, uniqueCode, userProfile, initialData }: WalletSectionProps) {
     const { t } = useTranslation('common');
-    const [loading, setLoading] = useState(true);
-    const [data, setData] = useState<any>(null);
+    const [loading, setLoading] = useState(!initialData);
+    const [data, setData] = useState<any>(initialData || null);
 
     useEffect(() => {
         async function load() {
-            setLoading(true);
+            if (!initialData) setLoading(true);
             try {
                 // Auto-sync missing referral rewards (retroactive fix)
                 await syncReferralRewards(uid);

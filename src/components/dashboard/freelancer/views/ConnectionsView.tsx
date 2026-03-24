@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Facebook, Instagram, Linkedin, Twitter, Save, Loader2, Link as LinkIcon, Youtube, Twitch, Pin, Video, MessageCircle, Send } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { formatSocialUrl } from '@/lib/url-utils';
 
 const SocialInput = ({
     provider,
@@ -28,6 +29,7 @@ const SocialInput = ({
     label: string,
     value: string,
     onChange: (val: string) => void,
+    onBlur?: () => void,
     onSave: () => void,
     isSaving: boolean,
     isValid: boolean
@@ -42,6 +44,7 @@ const SocialInput = ({
                     placeholder={placeholder}
                     value={value || ''}
                     onChange={(e) => onChange(e.target.value)}
+                    onBlur={onBlur}
                     className="pl-9"
                 />
                 <LinkIcon className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -147,6 +150,7 @@ export function ConnectionsView() {
                             placeholder="https://wa.me/yournumber"
                             value={connections.whatsapp || ''}
                             onChange={(val) => setConnections(prev => ({ ...prev, whatsapp: val }))}
+                            onBlur={() => setConnections(prev => ({ ...prev, whatsapp: formatSocialUrl(connections.whatsapp || '', 'facebook' as any) }))} // Whatsapp doesn't have a standard formatSocialUrl but ensureHttps handles it
                             onSave={() => handleSave('whatsapp')}
                             isSaving={savingProvider === 'whatsapp'}
                             isValid={!!connections.whatsapp}
@@ -170,6 +174,7 @@ export function ConnectionsView() {
                             placeholder="https://instagram.com/username"
                             value={connections.instagram || ''}
                             onChange={(val) => setConnections(prev => ({ ...prev, instagram: val }))}
+                            onBlur={() => setConnections(prev => ({ ...prev, instagram: formatSocialUrl(connections.instagram || '', 'instagram') }))}
                             onSave={() => handleSave('instagram')}
                             isSaving={savingProvider === 'instagram'}
                             isValid={!!connections.instagram}
@@ -181,6 +186,7 @@ export function ConnectionsView() {
                             placeholder="https://facebook.com/page"
                             value={connections.facebook || ''}
                             onChange={(val) => setConnections(prev => ({ ...prev, facebook: val }))}
+                            onBlur={() => setConnections(prev => ({ ...prev, facebook: formatSocialUrl(connections.facebook || '', 'facebook') }))}
                             onSave={() => handleSave('facebook')}
                             isSaving={savingProvider === 'facebook'}
                             isValid={!!connections.facebook}
@@ -193,6 +199,7 @@ export function ConnectionsView() {
                             placeholder="https://tiktok.com/@username"
                             value={connections.tiktok || ''}
                             onChange={(val) => setConnections(prev => ({ ...prev, tiktok: val }))}
+                            onBlur={() => setConnections(prev => ({ ...prev, tiktok: formatSocialUrl(connections.tiktok || '', 'tiktok') }))}
                             onSave={() => handleSave('tiktok')}
                             isSaving={savingProvider === 'tiktok'}
                             isValid={!!connections.tiktok}
@@ -204,6 +211,7 @@ export function ConnectionsView() {
                             placeholder="https://linkedin.com/company/page"
                             value={connections.linkedin || ''}
                             onChange={(val) => setConnections(prev => ({ ...prev, linkedin: val }))}
+                            onBlur={() => setConnections(prev => ({ ...prev, linkedin: formatSocialUrl(connections.linkedin || '', 'linkedin') }))}
                             onSave={() => handleSave('linkedin')}
                             isSaving={savingProvider === 'linkedin'}
                             isValid={!!connections.linkedin}
@@ -216,6 +224,7 @@ export function ConnectionsView() {
                             placeholder="https://youtube.com/@channel"
                             value={connections.youtube || ''}
                             onChange={(val) => setConnections(prev => ({ ...prev, youtube: val }))}
+                            onBlur={() => setConnections(prev => ({ ...prev, youtube: formatSocialUrl(connections.youtube || '', 'youtube') }))}
                             onSave={() => handleSave('youtube')}
                             isSaving={savingProvider === 'youtube'}
                             isValid={!!connections.youtube}
@@ -227,6 +236,7 @@ export function ConnectionsView() {
                             placeholder="https://x.com/username"
                             value={connections.twitter || ''}
                             onChange={(val) => setConnections(prev => ({ ...prev, twitter: val }))}
+                            onBlur={() => setConnections(prev => ({ ...prev, twitter: formatSocialUrl(connections.twitter || '', 'twitter') }))}
                             onSave={() => handleSave('twitter')}
                             isSaving={savingProvider === 'twitter'}
                             isValid={!!connections.twitter}
@@ -239,6 +249,7 @@ export function ConnectionsView() {
                             placeholder="https://twitch.tv/username"
                             value={connections.twitch || ''}
                             onChange={(val) => setConnections(prev => ({ ...prev, twitch: val }))}
+                            onBlur={() => setConnections(prev => ({ ...prev, twitch: formatSocialUrl(connections.twitch || '', 'twitch') }))}
                             onSave={() => handleSave('twitch')}
                             isSaving={savingProvider === 'twitch'}
                             isValid={!!connections.twitch}
@@ -250,6 +261,7 @@ export function ConnectionsView() {
                             placeholder="https://pinterest.com/username"
                             value={connections.pinterest || ''}
                             onChange={(val) => setConnections(prev => ({ ...prev, pinterest: val }))}
+                            onBlur={() => setConnections(prev => ({ ...prev, pinterest: formatSocialUrl(connections.pinterest || '', 'pinterest') }))}
                             onSave={() => handleSave('pinterest')}
                             isSaving={savingProvider === 'pinterest'}
                             isValid={!!connections.pinterest}

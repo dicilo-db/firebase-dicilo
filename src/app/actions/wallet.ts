@@ -3,6 +3,7 @@
 import { getAdminDb } from '@/lib/firebase-admin';
 import * as admin from 'firebase-admin';
 import { revalidatePath } from 'next/cache';
+import { resolveRewards } from '@/lib/rewards';
 
 const MASTER_KEY = process.env.DICIPOINTS_MASTER_KEY; // Need to ensure this is set or handle fallback
 
@@ -288,36 +289,50 @@ export async function syncReferralRewards(uid: string) {
         const batch = db.batch();
         const walletRef = db.collection('wallets').doc(uid);
 
-        // Calculate Total
-        const totalPointsToAdd = unpaidReferrals.length * POINTS_PER_REFERRAL;
+        let totalPointsAdded = 0;
 
-        // Upsert Wallet
-        batch.set(walletRef, {
-            balance: admin.firestore.FieldValue.increment(totalPointsToAdd),
-            totalEarned: admin.firestore.FieldValue.increment(totalPointsToAdd),
-            updatedAt: admin.firestore.FieldValue.serverTimestamp()
-        }, { merge: true });
-
-        // Create Transactions
-        unpaidReferrals.forEach((ref: any) => {
+        // Create Transactions & Calculate Total
+        for (const ref of unpaidReferrals) {
             const refId = typeof ref === 'object' ? ref.uid : ref;
+            if (!refId) continue;
+
+            // Get the referred user's email if possible to help resolve rewards
+            let friendEmail: string | undefined;
+            try {
+                const friendProfile = await db.collection('private_profiles').doc(refId).get();
+                friendEmail = friendProfile.data()?.email;
+            } catch (e) { /* ignore */ }
+
+            // Resolve rewards for this specific referral
+            // We search by email because we don't necessarily have the inviteId here
+            const rewards = await resolveRewards(undefined, friendEmail);
+            const rewardAmount = rewards.rewardSender; // We are paying the REFERRER here
+            
+            totalPointsAdded += rewardAmount;
 
             const trxRef = db.collection('wallet_transactions').doc();
             batch.set(trxRef, {
                 userId: uid,
-                amount: POINTS_PER_REFERRAL,
+                amount: rewardAmount,
                 type: 'REFERRAL_BONUS',
                 referralUid: refId,
-                description: `Bono por referido 50DP`,
+                description: `Bono por referido ${rewardAmount}DP`,
                 timestamp: admin.firestore.FieldValue.serverTimestamp(),
                 metaCreated: new Date().toISOString()
             });
-        });
+        }
+
+        // Upsert Wallet with the calculated total
+        batch.set(walletRef, {
+            balance: admin.firestore.FieldValue.increment(totalPointsAdded),
+            totalEarned: admin.firestore.FieldValue.increment(totalPointsAdded),
+            updatedAt: admin.firestore.FieldValue.serverTimestamp()
+        }, { merge: true });
 
         await batch.commit();
 
         revalidatePath('/dashboard');
-        return { success: true, message: `Synced ${unpaidReferrals.length} referrals (+${totalPointsToAdd} DP)` };
+        return { success: true, message: `Synced ${unpaidReferrals.length} referrals (+${totalPointsAdded} DP)` };
 
     } catch (error: any) {
         console.error('Sync Error:', error);

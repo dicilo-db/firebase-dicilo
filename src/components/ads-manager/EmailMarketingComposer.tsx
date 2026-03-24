@@ -185,10 +185,10 @@ export function EmailMarketingComposer({
         const isTextsDirty = JSON.stringify(texts) !== JSON.stringify(template.versions);
         if (friends.length > 0 || isTextsDirty) {
             if (window.confirm("Tienes cambios o invitaciones preparadas que se perderán. ¿Seguro que quieres volver?")) {
-                onBack();
+                onBack?.();
             }
         } else {
-            onBack();
+            onBack?.();
         }
     };
 
@@ -445,8 +445,8 @@ export function EmailMarketingComposer({
                     email: f.email,
                     lang: f.language as 'es' | 'de' | 'en' | 'fr' | 'pt' | 'it',
                     template: template.id || 'email_marketing',
-                    rewardSender: template.rewardSender || 50,
-                    rewardReceiver: template.rewardReceiver || 50
+                    rewardSender: template.rewardSender,
+                    rewardReceiver: template.rewardReceiver
                 }))
             );
 

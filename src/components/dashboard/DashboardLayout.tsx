@@ -112,7 +112,7 @@ export function DashboardLayout({ userData, currentView, onViewChange, children,
 
                 <main className={cn(
                     "flex-1",
-                    (currentView === 'freelancer' || currentView === 'map') ? "!p-0" : "p-4 md:p-8"
+                    (currentView === 'freelancer' || currentView === 'map') ? "!p-0" : "px-3 py-6 sm:px-4 md:p-8"
                 )}>
                     <div className={cn(
                         "mx-auto",

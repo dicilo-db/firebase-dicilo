@@ -113,15 +113,18 @@ export async function submitRecommendation(formData: FormData) {
         let finalReferrerName = formData.get('referrerName') as string || '';
         const finalReferrerEmail = formData.get('referrerEmail') as string || '';
 
+        let finalDiciloCode = diciloCode || '';
+
         if (userId) {
             try {
                 const userDoc = await db.collection('private_profiles').doc(userId).get();
                 if (userDoc.exists) {
                     const ud = userDoc.data() || {};
                     finalReferrerName = ud.name || ud.firstName || ud.first_name || finalReferrerName;
+                    finalDiciloCode = ud.uniqueCode || ud.diciloCode || finalDiciloCode;
                 }
             } catch (e) {
-                console.error("Error fetching referer name", e);
+                console.error("Error fetching referer details", e);
             }
         }
         
@@ -146,7 +149,7 @@ export async function submitRecommendation(formData: FormData) {
             website,
             category,
             comments,
-            diciloCode,
+            diciloCode: finalDiciloCode,
             source: source || 'search_page_recommendation',
             neighborhood,
             userId,
@@ -164,80 +167,108 @@ export async function submitRecommendation(formData: FormData) {
         };
 
         const ref = await db.collection('recommendations').add(recommendationData);
-        let rewardAmount = parseInt(formData.get('rewardAmount') as string || '10');
+        console.log(`[Recommendation] Saved with ID: ${ref.id}`);
+
+        // --- POST-SAVE BACKGROUND-ISH TASKS ---
+        // We wrap these in a separate try/catch to ensure the main action returns success 
+        // even if one of these secondary steps fails.
+        
         try {
-            const { getTemplate } = await import('@/actions/email-templates');
-            const template = await getTemplate('qVCINezvMyoMLJk7DUnL');
-            if (template) {
-                rewardAmount = template.rewardSender || template.rewardAmount || rewardAmount;
+            let rewardAmount = parseInt(formData.get('rewardAmount') as string || '10');
+            if (isNaN(rewardAmount)) rewardAmount = 10;
+
+            try {
+                const { getTemplate } = await import('@/actions/email-templates');
+                const template = await getTemplate('qVCINezvMyoMLJk7DUnL');
+                if (template) {
+                    rewardAmount = template.rewardSender || template.rewardAmount || rewardAmount;
+                }
+            } catch (e) {
+                console.error("[Post-Save] Error fetching template reward:", e);
             }
-        } catch (e) {
-            console.error("Error fetching template reward:", e);
-        }
 
-        // AUTOMATIC PAYMENT
-        if (userId) {
-            await registerNewProspect(userId, ref.id, rewardAmount);
-        }
+            // A. REWARD POINTS
+            if (userId && !isNaN(rewardAmount) && rewardAmount > 0) {
+                console.log(`[Post-Save] Registering reward for user ${userId}: ${rewardAmount} pts`);
+                await registerNewProspect(userId, ref.id, rewardAmount).catch(e => 
+                    console.error("[Post-Save] Error in registerNewProspect:", e)
+                );
+            }
 
-        // BUSINESS NOTIFICATION EMAIL (Requirement 1)
-        console.log(`Sending automated invitation to: ${email} for company: ${companyName}`);
-        await sendProspectInvitation(ref.id);
+            // B. BUSINESS NOTIFICATION EMAIL
+            console.log(`[Post-Save] Sending automated invitation to: ${email}`);
+            const invitationResult = await sendProspectInvitation(ref.id);
+            if (!invitationResult.success) {
+                console.warn("[Post-Save] Invitation email might have failed:", invitationResult.error);
+            }
 
-        // NON-REGISTERED RECOMMENDER THANK YOU EMAIL (Requirement 2)
-        // Usar las variables resueltas arriba finalReferrerName y finalReferrerEmail
+            // C. REFERRER THANK YOU EMAIL
+            if (!userId && finalReferrerEmail) {
+                console.log(`[Post-Save] Sending thank you email to referrer: ${finalReferrerEmail}`);
+                const subject = lang === 'de' ? 'Danke für deine Empfehlung!' : (lang === 'en' ? 'Thank you for your recommendation!' : '¡Gracias por tu recomendación!');
+                const body = lang === 'de' ? 
+                    `Hallo ${finalReferrerName},<br/><br/>Danke, dass du das Unternehmen <b>${companyName}</b> empfohlen hast.<br/>Jede Empfehlung hilft uns, Dicilo zu verbessern!<br/><br/>Dein Dicilo Team` :
+                    (lang === 'en' ? 
+                    `Hi ${finalReferrerName},<br/><br/>Thank you for recommending <b>${companyName}</b>.<br/>Every recommendation helps us improve Dicilo!<br/><br/>Your Dicilo Team` :
+                    `Hola ${finalReferrerName},<br/><br/>Gracias por recomendar la empresa <b>${companyName}</b>.<br/>¡Tu aporte ayuda a hacer crecer la comunidad Dicilo!<br/><br/>El Equipo Dicilo`);
+                
+                await sendSmtpEmail({
+                    to: finalReferrerEmail,
+                    subject,
+                    html: body
+                }).catch(e => console.error("[Post-Save] Error sending referrer thank you:", e));
+            }
 
-        if (!userId && finalReferrerEmail) {
-            const subject = lang === 'de' ? 'Danke für deine Empfehlung!' : (lang === 'en' ? 'Thank you for your recommendation!' : '¡Gracias por tu recomendación!');
-            const body = lang === 'de' ? 
-                `Hallo ${finalReferrerName},<br/><br/>Danke, dass du das Unternehmen <b>${companyName}</b> empfohlen hast.<br/>Jede Empfehlung hilft uns, Dicilo zu verbessern!<br/><br/>Dein Dicilo Team` :
-                (lang === 'en' ? 
-                `Hi ${finalReferrerName},<br/><br/>Thank you for recommending <b>${companyName}</b>.<br/>Every recommendation helps us improve Dicilo!<br/><br/>Your Dicilo Team` :
-                `Hola ${finalReferrerName},<br/><br/>Gracias por recomendar la empresa <b>${companyName}</b>.<br/>¡Tu aporte ayuda a hacer crecer la comunidad Dicilo!<br/><br/>El Equipo Dicilo`);
-            
-            await sendSmtpEmail({
-                to: finalReferrerEmail,
-                subject,
-                html: body
-            });
-        }
+            // D. AUTO-TRANSFER TO BASIC
+            const fieldsToCheck = [
+                companyName, email, country, city, category, phone, website, neighborhood, comments, 
+                (media && media.length > 0) ? "hasMedia" : ""
+            ];
+            const filledCount = fieldsToCheck.filter(f => f && typeof f === 'string' && f.trim().length > 0).length;
+            const completePercentage = (filledCount / fieldsToCheck.length) * 100;
 
-        // AUTO-TRANSFER TO BASIC (Requirement 3)
-        const fieldsToCheck = [
-            companyName, email, country, city, category, phone, website, neighborhood, comments, 
-            (media && media.length > 0) ? "hasMedia" : ""
-        ];
-        const filledCount = fieldsToCheck.filter(f => f && typeof f === 'string' && f.trim().length > 0).length;
-        const completePercentage = (filledCount / fieldsToCheck.length) * 100;
+            if (completePercentage >= 75) {
+                console.log(`[Post-Save] Data completeness is ${completePercentage.toFixed(0)}%, auto-transferring to basic businesses.`);
+                let activeCategory = category || 'other';
+                if (String(activeCategory).toLowerCase() === 'gastronomy') activeCategory = 'gastronomy';
+                
+                const locationString = neighborhood ? `${neighborhood}, ${city}, ${country}` : `${city}, ${country}`;
+                const businessData = {
+                    name: companyName || 'Empresa Recomendada',
+                    email: email || '',
+                    phone: phone || '',
+                    category: activeCategory,
+                    city: city || '',
+                    country: country || '',
+                    location: locationString || '',
+                    website: website || '',
+                    active: false,
+                    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+                    sourceRecommendationId: ref.id,
+                    photos: media.filter(m => m.type === 'image').map(m => m.url),
+                    videos: media.filter(m => m.type === 'video').map(m => m.url),
+                    description: comments || ''
+                };
+                
+                await db.collection('businesses').add(businessData).catch(e => 
+                    console.error("[Post-Save] Error creating basic business:", e)
+                );
+                await ref.update({ autoTransferredToBasic: true }).catch(e => 
+                    console.error("[Post-Save] Error updating recommendation status:", e)
+                );
+            }
 
-        if (completePercentage >= 75) {
-            let activeCategory = category;
-            if (activeCategory === 'Gastronomy') activeCategory = 'gastronomy'; // sanity check
-            
-            const locationString = neighborhood ? `${neighborhood}, ${city}, ${country}` : `${city}, ${country}`;
-            const businessData = {
-                name: companyName,
-                email: email,
-                phone: phone || '',
-                category: activeCategory,
-                city: city,
-                country: country,
-                location: locationString,
-                website: website || '',
-                active: false,
-                createdAt: admin.firestore.FieldValue.serverTimestamp(),
-                sourceRecommendationId: ref.id,
-                photos: media.filter(m => m.type === 'image').map(m => m.url),
-                videos: media.filter(m => m.type === 'video').map(m => m.url),
-                description: comments || ''
-            };
-            await db.collection('businesses').add(businessData);
-            await ref.update({ autoTransferredToBasic: true });
+        } catch (postSaveError) {
+            // We catch ALL post-save errors to ensure they don't block the UI success
+            console.error("[Post-Save] Critical error in secondary tasks:", postSaveError);
         }
 
         return { success: true };
     } catch (error: any) {
-        console.error('Error submitting recommendation:', error);
-        return { success: false, error: error.message };
+        console.error('Error submitting recommendation (Main Flow):', error);
+        return { 
+            success: false, 
+            error: error.message || 'Error desconocido en el servidor al procesar la recomendación.' 
+        };
     }
 }

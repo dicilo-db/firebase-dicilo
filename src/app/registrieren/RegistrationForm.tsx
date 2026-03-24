@@ -123,9 +123,9 @@ export function RegistrationForm() {
 
   React.useEffect(() => {
     const ref = searchParams.get('ref');
-    const invite = searchParams.get('invite');
+    const inviteId = searchParams.get('inviteId'); // Changed from 'invite' to 'inviteId'
     if (ref) setValue('referralCode', ref);
-    if (invite) setValue('inviteId', invite);
+    if (inviteId) setValue('inviteId', inviteId);
   }, [searchParams, setValue]);
 
   const handleGeocode = React.useCallback(

@@ -78,22 +78,8 @@ export function InviteFriendSection({ uniqueCode, referrals }: InviteFriendSecti
             />
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Left Column: Tracking & History */}
-                <div className="lg:col-span-2 space-y-8">
-                    <InviteTracking
-                        visualContacts={openedCount}
-                        reach={sentCount}
-                        instagram={0} // Placeholder
-                        followers={registeredCount}
-                        onViewFollowers={() => setIsFollowersDialogOpen(true)}
-                        uniqueCode={uniqueCode}
-                    />
-
-                    <InviteList invites={invites} />
-                </div>
-
-                {/* Right Column: Invite Form */}
-                <div className="lg:col-span-1">
+                {/* Right Column: Invite Form - Moved FIRST in DOM for mobile, but lg:order-last for desktop */}
+                <div className="lg:col-span-1 lg:order-last">
                     <div className="sticky top-6">
                         <Card className="border-l-4 border-l-blue-500 shadow-md">
                             <CardHeader className="bg-blue-50/50 pb-4 border-b">
@@ -107,6 +93,20 @@ export function InviteFriendSection({ uniqueCode, referrals }: InviteFriendSecti
                             </CardContent>
                         </Card>
                     </div>
+                </div>
+
+                {/* Left Column: Tracking & History - lg:order-first to stay on left in desktop */}
+                <div className="lg:col-span-2 space-y-8 lg:order-first">
+                    <InviteTracking
+                        visualContacts={openedCount}
+                        reach={sentCount}
+                        instagram={0} // Placeholder
+                        followers={registeredCount}
+                        onViewFollowers={() => setIsFollowersDialogOpen(true)}
+                        uniqueCode={uniqueCode}
+                    />
+
+                    <InviteList invites={invites} />
                 </div>
             </div>
 

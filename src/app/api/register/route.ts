@@ -4,6 +4,7 @@ import { getAdminAuth, getAdminDb } from '@/lib/firebase-admin';
 import { createPrivateUserProfile } from '@/lib/private-user-service';
 import { sendWelcomeEmail } from '@/lib/email';
 import * as admin from 'firebase-admin';
+import { resolveRewards } from '@/lib/rewards';
 
 // ¡REEMPLAZAR CON TU URL REAL DE N8N!
 const N8N_WEBHOOK_URL =
@@ -34,6 +35,7 @@ const registrationSchema = z.object({
   mapUrl: z.string().url().optional().or(z.literal('')),
   coords: z.array(z.number()).length(2).optional(),
   referralCode: z.string().optional(), // Added referralCode
+  inviteId: z.string().optional(), // Added inviteId
 });
 
 // Helper function to create a URL-friendly slug
@@ -146,7 +148,7 @@ export async function POST(request: Request) {
     const {
       firstName, lastName, email, password, whatsapp, contactType, registrationType,
       businessName, category, description, location, address, phone, website,
-      imageUrl, imageHint, rating, currentOfferUrl, mapUrl, coords, referralCode
+      imageUrl, imageHint, rating, currentOfferUrl, mapUrl, coords, referralCode, inviteId
     } = result.data;
 
     const db = getAdminDb();
@@ -225,6 +227,7 @@ export async function POST(request: Request) {
       uniqueCode: userCode,
       referrerId: referrerData.id,
       referrerCode: referrerData.code,
+      inviteId: inviteId || null,
 
       createdAt: new Date(),
       status: 'pending',
@@ -266,66 +269,68 @@ export async function POST(request: Request) {
     }
 
     // 6. REWARD ENGINE (The "Kill Switch" Logic)
-    // Only pay if:
-    // a. Referrer is NOT REFONL (referrerData.isRefonl == false)
-    // b. User is Company (isCompany == true)
-    // c. Referrer is NOT 'Self'
-
-    const REFERRAL_BONUS_AMOUNT = 50; // Points/Coins
-
-    if (!referrerData.isRefonl && isCompany && referrerData.id !== 'SYSTEM_REFONL' && ownerUid && referrerData.id !== ownerUid) {
-
-      // Execute Payment Transaction
-      try {
-        await db.runTransaction(async (t) => {
-          const refWalletRef = db.collection('wallets').doc(referrerData.id);
-
-          // Check if wallet exists first, create if needed (omitted for brevity, increment handles it mostly)
-          t.set(refWalletRef, {
-            balance: admin.firestore.FieldValue.increment(REFERRAL_BONUS_AMOUNT),
-            totalEarned: admin.firestore.FieldValue.increment(REFERRAL_BONUS_AMOUNT),
-            updatedAt: admin.firestore.FieldValue.serverTimestamp()
-          }, { merge: true });
-
-          const trxRef = db.collection('wallet_transactions').doc();
-          t.set(trxRef, {
-            userId: referrerData.id,
-            amount: REFERRAL_BONUS_AMOUNT,
-            type: 'REFERRAL_REWARD_BUSINESS',
-            description: `Bonus por registro de Empresa: ${businessName || 'Empresa'} (${userCode})`,
-            relatedUserId: ownerUid,
-            timestamp: admin.firestore.FieldValue.serverTimestamp()
-          });
-        });
-        console.log(`[REWARD] Paid ${REFERRAL_BONUS_AMOUNT} to ${referrerData.id} for new company ${userCode}`);
-      } catch (err) {
-        console.error("Reward Logic Error:", err);
-      }
-    }
-
-    // 6b. UPDATE REFERRALS_PIONEERS STATUS (New logic)
-    // If the user registered with an email that was invited via marketing templates
+    // Now uses resolveRewards to determine amounts for both parties.
     try {
-        const referralsRef = db.collection('referrals_pioneers');
-        // Search for invitations sent to this email
-        const inviteQuery = await referralsRef
-            .where('friendEmail', '==', email)
-            .where('status', '==', 'sent')
-            .limit(1)
-            .get();
+        const rewards = await resolveRewards(inviteId, email);
+        const rewardSender = rewards.rewardSender;
+        const rewardReceiver = rewards.rewardReceiver;
+        const resolvedReferrerId = rewards.referrerId || (referrerData.id !== 'SYSTEM_REFONL' ? referrerData.id : null);
 
-        if (!inviteQuery.empty) {
-            const inviteDoc = inviteQuery.docs[0];
-            await inviteDoc.ref.update({
+        if (ownerUid) {
+            // A. Pay New User (Receiver)
+            await db.runTransaction(async (t) => {
+                const walletRef = db.collection('wallets').doc(ownerUid);
+                t.set(walletRef, {
+                    balance: admin.firestore.FieldValue.increment(rewardReceiver),
+                    totalEarned: admin.firestore.FieldValue.increment(rewardReceiver),
+                    updatedAt: admin.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+
+                const trxRef = db.collection('wallet_transactions').doc();
+                t.set(trxRef, {
+                    userId: ownerUid,
+                    amount: rewardReceiver,
+                    type: 'WELCOME_BONUS',
+                    description: `Bono de bienvenida por registro${rewards.inviteId ? ' (Invitación)' : ''}`,
+                    timestamp: admin.firestore.FieldValue.serverTimestamp()
+                });
+            });
+
+            // B. Pay Referrer (Sender)
+            if (resolvedReferrerId && resolvedReferrerId !== ownerUid) {
+                await db.runTransaction(async (t) => {
+                    const refWalletRef = db.collection('wallets').doc(resolvedReferrerId);
+                    t.set(refWalletRef, {
+                        balance: admin.firestore.FieldValue.increment(rewardSender),
+                        totalEarned: admin.firestore.FieldValue.increment(rewardSender),
+                        updatedAt: admin.firestore.FieldValue.serverTimestamp()
+                    }, { merge: true });
+
+                    const trxRef = db.collection('wallet_transactions').doc();
+                    t.set(trxRef, {
+                        userId: resolvedReferrerId,
+                        amount: rewardSender,
+                        type: 'REFERRAL_REWARD_BUSINESS',
+                        description: `Bonus por registro de Empresa: ${businessName || 'Empresa'} (${userCode})`,
+                        relatedUserId: ownerUid,
+                        timestamp: admin.firestore.FieldValue.serverTimestamp()
+                    });
+                });
+                console.log(`[REWARD] Paid ${rewardSender}/${rewardReceiver} to ${resolvedReferrerId}/${ownerUid}`);
+            }
+        }
+
+        // C. Update invitation status if applicable
+        if (rewards.inviteId) {
+            await db.collection('referrals_pioneers').doc(rewards.inviteId).update({
                 status: 'converted',
                 converted: true,
                 convertedAt: admin.firestore.FieldValue.serverTimestamp(),
-                convertedUid: ownerUid
+                convertedUid: ownerUid || null
             });
-            console.log(`[CONVERSION] Invitation ${inviteDoc.id} marked as converted for ${email}`);
         }
-    } catch (convErr) {
-        console.error("Conversion Logic Error:", convErr);
+    } catch (rewardErr) {
+        console.error("Reward Engine Error:", rewardErr);
     }
 
 

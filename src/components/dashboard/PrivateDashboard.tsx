@@ -35,6 +35,7 @@ import { StatisticsView } from './freelancer/views/StatisticsView';
 import { AlliesMap } from './AlliesMap';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { ensureHttps, formatSocialUrl } from '@/lib/url-utils';
 
 const db = getFirestore(app);
 // Private Dashboard Component
@@ -42,6 +43,7 @@ const db = getFirestore(app);
 interface PrivateDashboardProps {
     user: User;
     profile: any;
+    initialWalletData?: any;
 }
 
 export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
@@ -56,17 +58,24 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
     const [feedbackRating, setFeedbackRating] = useState(0);
     const [isSubmittingFeedback, setIsSubmittingFeedback] = useState(false);
 
-    const [walletData, setWalletData] = useState<{ balance: number, valueInEur: number, pointValue: number } | null>(null);
+    const [walletData, setWalletData] = useState<{ balance: number, valueInEur: number, pointValue: number } | null>(initialWalletData || null);
     const [registerUrl, setRegisterUrl] = useState('');
 
-    // Fetch wallet data for preview
+    // Fetch wallet data if not provided (fallback)
     useEffect(() => {
-        if (user?.uid) {
+        if (user?.uid && !walletData) {
             import('@/app/actions/wallet').then(({ getWalletData }) => {
                 getWalletData(user.uid).then((data) => setWalletData(data));
             });
         }
-    }, [user?.uid]);
+    }, [user?.uid, walletData]);
+
+    // Sync wallet data when prop changes
+    useEffect(() => {
+        if (initialWalletData) {
+            setWalletData(initialWalletData);
+        }
+    }, [initialWalletData]);
 
     useEffect(() => {
         if (typeof window !== 'undefined' && formData?.uniqueCode) {
@@ -324,8 +333,12 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
                                             <CreditCard className="h-5 w-5 text-slate-400" />
                                         </div>
                                         <div>
-                                            <div className="text-3xl font-bold">{walletData ? walletData.balance.toFixed(0) : '0'} DP</div>
-                                            <div className="text-sm text-slate-400">≈ {walletData ? (walletData.balance * (walletData.pointValue || 0.10)).toFixed(2) : '0.00'} EUR / USD $</div>
+                                            <div className="text-3xl font-bold">
+                                                {walletData ? walletData.balance.toFixed(0) : <Skeleton className="h-9 w-24 inline-block bg-slate-800" />} DP
+                                            </div>
+                                            <div className="text-sm text-slate-400">
+                                                ≈ {walletData ? (walletData.balance * (walletData.pointValue || 0.10)).toFixed(2) : <Skeleton className="h-4 w-16 inline-block bg-slate-800" />} EUR / USD $
+                                            </div>
                                         </div>
                                     </div>
                                     <Button variant="secondary" className="w-full mt-4 bg-white text-slate-950 hover:bg-slate-200" onClick={handleDownloadQr}>
@@ -351,7 +364,9 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
                                     <div className="relative z-10 flex justify-end items-start w-full h-full">
                                         <div className="text-right">
                                             <div className="text-xs text-emerald-100 opacity-90 font-medium">GANANCIAS</div>
-                                            <div className="font-bold text-2xl drop-shadow-md">€ {walletData ? walletData.valueInEur.toFixed(2) : '0.00'}</div>
+                                            <div className="font-bold text-2xl drop-shadow-md">
+                                                € {walletData ? walletData.valueInEur.toFixed(2) : <Skeleton className="h-8 w-20 inline-block bg-emerald-400/30" />}
+                                            </div>
                                         </div>
                                     </div>
 
@@ -389,7 +404,7 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
                     </div>
                 );
             case 'wallet':
-                return <WalletSection uid={user.uid} uniqueCode={formData.uniqueCode} userProfile={formData} />;
+                return <WalletSection uid={user.uid} uniqueCode={formData.uniqueCode} userProfile={formData} initialData={walletData} />;
             case 'invite':
                 return <InviteFriendSection uniqueCode={formData.uniqueCode} referrals={formData.referrals} />;
             case 'dicicoin':
@@ -690,9 +705,12 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
                                                         ...formData,
                                                         socialLinks: { ...formData.socialLinks, facebook: e.target.value }
                                                     })}
-                                                    onBlur={() => handleUpdate('facebook', {
-                                                        socialLinks: { ...formData.socialLinks, facebook: formData.socialLinks?.facebook }
-                                                    })}
+                                                    onBlur={() => {
+                                                        const formatted = formatSocialUrl(formData.socialLinks?.facebook || '', 'facebook');
+                                                        handleUpdate('facebook', {
+                                                            socialLinks: { ...formData.socialLinks, facebook: formatted }
+                                                        });
+                                                    }}
                                                 />
                                             </div>
                                             <div className="space-y-2">
@@ -703,9 +721,12 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
                                                         ...formData,
                                                         socialLinks: { ...formData.socialLinks, instagram: e.target.value }
                                                     })}
-                                                    onBlur={() => handleUpdate('instagram', {
-                                                        socialLinks: { ...formData.socialLinks, instagram: formData.socialLinks?.instagram }
-                                                    })}
+                                                    onBlur={() => {
+                                                        const formatted = formatSocialUrl(formData.socialLinks?.instagram || '', 'instagram');
+                                                        handleUpdate('instagram', {
+                                                            socialLinks: { ...formData.socialLinks, instagram: formatted }
+                                                        });
+                                                    }}
                                                 />
                                             </div>
                                             <div className="space-y-2">
@@ -716,9 +737,12 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
                                                         ...formData,
                                                         socialLinks: { ...formData.socialLinks, tiktok: e.target.value }
                                                     })}
-                                                    onBlur={() => handleUpdate('tiktok', {
-                                                        socialLinks: { ...formData.socialLinks, tiktok: formData.socialLinks?.tiktok }
-                                                    })}
+                                                    onBlur={() => {
+                                                        const formatted = formatSocialUrl(formData.socialLinks?.tiktok || '', 'tiktok');
+                                                        handleUpdate('tiktok', {
+                                                            socialLinks: { ...formData.socialLinks, tiktok: formatted }
+                                                        });
+                                                    }}
                                                 />
                                             </div>
                                             <div className="space-y-2">
@@ -729,9 +753,12 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
                                                         ...formData,
                                                         socialLinks: { ...formData.socialLinks, twitter: e.target.value }
                                                     })}
-                                                    onBlur={() => handleUpdate('twitter', {
-                                                        socialLinks: { ...formData.socialLinks, twitter: formData.socialLinks?.twitter }
-                                                    })}
+                                                    onBlur={() => {
+                                                        const formatted = formatSocialUrl(formData.socialLinks?.twitter || '', 'twitter');
+                                                        handleUpdate('twitter', {
+                                                            socialLinks: { ...formData.socialLinks, twitter: formatted }
+                                                        });
+                                                    }}
                                                 />
                                             </div>
                                         </div>

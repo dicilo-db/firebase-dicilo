@@ -1,5 +1,6 @@
 import { getAdminDb } from '@/lib/firebase-admin';
 import * as admin from 'firebase-admin';
+import { resolveRewards } from './rewards';
 
 /**
  * Generates a unique code for a private user using Admin SDK.
@@ -61,54 +62,24 @@ export async function createPrivateUserProfile(
     const phoneForCode = whatsapp || phone || '000';
     const uniqueCode = await generateUniqueCodeAdmin(firstName, lastName, phoneForCode);
 
-    // Referral Logic
-    let referrerUid: string | null = null;
-    let initialBalance = 0;
-    let referrerReward = 50; // Default
-
+    // 1. Resolve Rewards & Referrer
+    const rewards = await resolveRewards(inviteId, email);
+    
+    let referrerUid = rewards.referrerId;
+    let initialBalance = rewards.rewardReceiver;
+    let referrerReward = rewards.rewardSender;
     let inviteDocRef: admin.firestore.DocumentReference | null = null;
 
-    if (inviteId) {
-        // 1. Priority: Validate via Pioneer Invite ID
-        const inviteSnapshot = await db.collection('referrals_pioneers').doc(inviteId).get();
-        if (inviteSnapshot.exists) {
-            const inviteData = inviteSnapshot.data();
-
-            referrerUid = inviteData?.referrerId || null;
-            if (referrerUid) {
-                initialBalance = inviteData?.rewardReceiver ?? 50;
-                referrerReward = inviteData?.rewardSender ?? 50;
-                inviteDocRef = inviteSnapshot.ref;
-            }
-        }
+    if (rewards.inviteId) {
+        inviteDocRef = db.collection('referrals_pioneers').doc(rewards.inviteId);
     }
 
-    if (!inviteDocRef && email) {
-        // Fallback: Validate via Email in Pioneer Invites
-        const inviteQuery = await db.collection('referrals_pioneers')
-            .where('friendEmail', '==', email)
-            .where('status', '==', 'sent')
-            .limit(1)
-            .get();
-        
-        if (!inviteQuery.empty) {
-            const inviteSnapshot = inviteQuery.docs[0];
-            const inviteData = inviteSnapshot.data();
-            
-            referrerUid = inviteData?.referrerId || null;
-            if (referrerUid) {
-                initialBalance = inviteData?.rewardReceiver ?? 50;
-                referrerReward = inviteData?.rewardSender ?? 50;
-                inviteDocRef = inviteSnapshot.ref;
-            }
-        }
-    }
-
+    // 2. Fallback: Validate via Standard Referral Code (if no invitation found)
     if (!referrerUid && referralCode) {
-        // 2. Fallback: Validate via Standard Referral Code
         referrerUid = await validateReferralCode(referralCode);
         if (referrerUid) {
             initialBalance = 50; // Welcome Bonus standard
+            referrerReward = 50; // Referrer reward standard
         }
     }
 

@@ -21,6 +21,7 @@ import { useTranslation } from 'react-i18next';
 import { Loader2, LogOut, User as UserIcon, Coins } from 'lucide-react';
 import { checkAdminRole } from '@/lib/auth';
 import { PrivateDashboard } from '@/components/dashboard/PrivateDashboard';
+import { getWalletData } from '@/app/actions/wallet';
 
 const auth = getAuth(app);
 const db = getFirestore(app);
@@ -50,6 +51,7 @@ export default function DashboardPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [isAdmin, setIsAdmin] = useState(false);
+    const [walletData, setWalletData] = useState<any | null>(null);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -69,6 +71,9 @@ export default function DashboardPage() {
     const fetchDashboardData = async (currentUser: User) => {
         try {
             const uid = currentUser.uid;
+
+            // Fetch wallet in parallel for private users
+            getWalletData(uid).then(data => setWalletData(data)).catch(e => console.error("Wallet fetch error:", e));
 
             // 1. Check 'clients' collection for ownerUid (Business Users)
             const clientsRef = collection(db, 'clients');
@@ -266,7 +271,7 @@ export default function DashboardPage() {
                 ) : clientData ? (
                     <EditClientForm initialData={clientData} />
                 ) : privateProfile && user ? (
-                    <PrivateDashboard user={user} profile={privateProfile} />
+                    <PrivateDashboard user={user} profile={privateProfile} initialWalletData={walletData} />
                 ) : null}
             </main>
         </div>
