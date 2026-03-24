@@ -511,6 +511,34 @@ const DashboardContent: React.FC = () => {
 
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
 
+            {/* Ads Manager (Admin) */}
+            <Link href="/admin/ads-manager" className="group">
+              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Ads Manager (Admin)</CardTitle>
+                  <LayoutTemplate className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">Ads Manager</div>
+                  <p className="text-xs text-muted-foreground mt-1">Manage advertising banners</p>
+                </CardContent>
+              </Card>
+            </Link>
+
+            {/* Ads Manager (Marketing) */}
+            <Link href="/dashboard/ads-manager" className="group">
+              <Card className="h-full transition-all hover:shadow-md hover:border-purple-500/50 cursor-pointer relative">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Ads Manager (Marketing)</CardTitle>
+                  <Megaphone className="h-4 w-4 text-muted-foreground group-hover:text-purple-500 transition-colors" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">Ads Manager</div>
+                  <p className="text-xs text-muted-foreground mt-1">QRs Dinámicos & Campañas</p>
+                </CardContent>
+              </Card>
+            </Link>
+
             {/* AI Knowledge Base (Katei) */}
             <Link href="/admin/ai-chat" className="group">
               <Card className="h-full bg-indigo-50/50 dark:bg-indigo-900/10 border-indigo-200 transition-all hover:shadow-md hover:border-indigo-500 cursor-pointer relative">
@@ -525,20 +553,6 @@ const DashboardContent: React.FC = () => {
               </Card>
             </Link>
 
-            {/* Configuración de Categorías */}
-            <Link href="/admin/categories" className="group">
-              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Categorías</CardTitle>
-                  <Tag className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">Categorías</div>
-                  <p className="text-xs text-muted-foreground mt-1">Verwalten von Kategorien & Subkategorien</p>
-                </CardContent>
-              </Card>
-            </Link>
-
             {/* Basic (Formerly Businesses / Verzeichnis) */}
             <Link href="/admin/basic" className="group">
               <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
@@ -548,10 +562,253 @@ const DashboardContent: React.FC = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">Basic</div>
-                  <p className="text-xs text-muted-foreground mt-1">Unternehmen verwalten</p>
+                  <p className="text-xs text-muted-foreground mt-1">Gestionar empresas</p>
                   <div className="absolute bottom-4 right-4 text-sm font-mono text-muted-foreground">
                     {formatCount(counts.basic)}
                   </div>
+                </CardContent>
+              </Card>
+            </Link>
+
+            {/* CAMPANA MARKETING - Renamed and Sorted */}
+            <Link href="/admin/email-marketing" className="group">
+              <Card className="h-full bg-blue-50/50 dark:bg-blue-900/10 border-blue-200 transition-all hover:shadow-md hover:border-blue-600 cursor-pointer relative">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-bold text-blue-700 dark:text-blue-400">Campañas Marketing</CardTitle>
+                  <Mail className="h-4 w-4 text-blue-600 group-hover:scale-110 transition-transform" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-black">Email Marketing</div>
+                  <p className="text-xs text-muted-foreground mt-1">Envío de Emails - Campañas de Marketing</p>
+                </CardContent>
+              </Card>
+            </Link>
+
+            {/* Configuración de Categorías */}
+            <Link href="/admin/categories" className="group">
+              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Categorías</CardTitle>
+                  <Tag className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">Categorías</div>
+                  <p className="text-xs text-muted-foreground mt-1">Gestionar categorías y subcategorías</p>
+                </CardContent>
+              </Card>
+            </Link>
+
+            {/* Client Reviews (Moderation) */}
+            <Link href="/admin/reviews" className="group">
+              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">{t('clientReviews.title', 'Moderate Reviews')}</CardTitle>
+                  <Star className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{t('clientReviews.cardBigTitle', 'Client Reviews')}</div>
+                  <p className="text-xs text-muted-foreground mt-1">{t('clientReviews.cardDesc', 'Approve and reject reviews')}</p>
+                </CardContent>
+              </Card>
+            </Link>
+
+            {/* Retailer (Einzelhändler) Kunden */}
+            <Link href="/admin/clients?type=retailer" className="group">
+              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Einzelhändler</CardTitle>
+                  <Building className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">Einzelhändler</div>
+                  <p className="text-xs text-muted-foreground mt-1">Gestionar empresas</p>
+                  <div className="absolute bottom-4 right-4 text-sm font-mono text-muted-foreground">
+                    {formatCount(counts.retailer)}
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
+
+            {/* Empfehlungen (NEW) */}
+            <Link href="/admin/recommendations" className="group">
+              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Empfehlungen</CardTitle>
+                  <ThumbsUp className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">Empfehlungen</div>
+                  <p className="text-xs text-muted-foreground mt-1">Recomendaciones en las páginas de destino</p>
+                  <div className="absolute bottom-4 right-4 text-sm font-mono text-muted-foreground">
+                    {formatCount(counts.recommendations)}
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
+
+            {/* Feedbacks (Platform) */}
+            <Link href="/admin/feedbacks" className="group">
+              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">{t('feedbacks.title', { ns: 'admin' })}</CardTitle>
+                  <MessageSquare className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{t('dashboard.cards.feedback.title')}</div>
+                  <p className="text-xs text-muted-foreground mt-1">{t('dashboard.cards.feedback.description')}</p>
+                </CardContent>
+              </Card>
+            </Link>
+
+            {/* Formulare */}
+            <Link href="/admin/forms-dashboard" className="group">
+              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">{t('formsDashboard.title', { ns: 'admin' })}</CardTitle>
+                  <FileText className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{t('dashboard.cards.forms.title')}</div>
+                  <p className="text-xs text-muted-foreground mt-1">{t('dashboard.cards.forms.description')}</p>
+                </CardContent>
+              </Card>
+            </Link>
+
+            {/* Freelancer */}
+            <Link href="/dashboard/freelancer" className="group">
+              <Card className="h-full transition-all hover:shadow-md hover:border-blue-500/50 cursor-pointer relative">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Freelancer</CardTitle>
+                  <Briefcase className="h-4 w-4 text-muted-foreground group-hover:text-blue-500 transition-colors" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">Freelancer</div>
+                  <p className="text-xs text-muted-foreground mt-1">Gestión de Promovendedores</p>
+                </CardContent>
+              </Card>
+            </Link>
+
+            {/* Landing Pages / Builder */}
+            <Link href="/admin/clients" className="group">
+              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Landing Pages</CardTitle>
+                  <LayoutTemplate className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{t('dashboard.cards.builder.title')}</div>
+                  <p className="text-xs text-muted-foreground mt-1">{t('dashboard.cards.builder.description')}</p>
+                </CardContent>
+              </Card>
+            </Link>
+
+            {/* Plantillas Email (NEW) */}
+            <Link href="/admin/email-templates" className="group">
+              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Plantillas Email</CardTitle>
+                  <MessageSquare className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">Plantillas Email</div>
+                  <p className="text-xs text-muted-foreground mt-1">Gestión de correos automatizados</p>
+                </CardContent>
+              </Card>
+            </Link>
+
+            {/* Pläne */}
+            {isAdminOrSuper && (
+              <Link href="/admin/plans" className="group">
+                <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">{t('plans.title', { ns: 'admin' })}</CardTitle>
+                    <DollarSign className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">{t('dashboard.cards.plans.title')}</div>
+                    <p className="text-xs text-muted-foreground mt-1">{t('dashboard.cards.plans.description')}</p>
+                  </CardContent>
+                </Card>
+              </Link>
+            )}
+
+            {/* Premium Kunden */}
+            <Link href="/admin/clients?type=premium" className="group">
+              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Premium</CardTitle>
+                  <Star className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">Premium</div>
+                  <p className="text-xs text-muted-foreground mt-1">Gestionar clientes Premium</p>
+                  <div className="absolute bottom-4 right-4 text-sm font-mono text-muted-foreground">
+                    {formatCount(counts.premium)}
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
+
+            {/* Privat User (renamed from Privatkunden) */}
+            {isAdminOrSuper && (
+              <Link href="/admin/private-users" className="group">
+                <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Privatkunden</CardTitle>
+                    <User className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">Privatuser</div>
+                    <p className="text-xs text-muted-foreground mt-1">Gestionar perfiles privados</p>
+                    <div className="absolute bottom-4 right-4 text-sm font-mono text-muted-foreground">
+                      {formatCount(counts.private)}
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+            )}
+
+            {/* Registrierungen */}
+            <Link href="/admin/registrations" className="group">
+              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">{t('registrations.title', { ns: 'admin' })}</CardTitle>
+                  <UserCheck className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{t('dashboard.cards.registrations.title')}</div>
+                  <p className="text-xs text-muted-foreground mt-1">{t('dashboard.cards.registrations.description')}</p>
+                  <div className="absolute bottom-4 right-4 text-sm font-mono text-muted-foreground">
+                    {formatCount(counts.registrations)}
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
+
+            {/* Reporting E-Mail Marketing (NEW) */}
+            <Link href="/admin/marketing-reporting" className="group text-indigo-700">
+              <Card className="h-full bg-indigo-50/30 dark:bg-indigo-900/10 border-indigo-100 transition-all hover:shadow-md hover:border-indigo-400 cursor-pointer relative">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-bold">Reporting E-Mail Marketing</CardTitle>
+                  <Mail className="h-4 w-4 text-indigo-500 group-hover:scale-110 transition-transform" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-black">Reportes</div>
+                  <p className="text-xs text-muted-foreground mt-1">Seguimiento de envíos y recompensas</p>
+                </CardContent>
+              </Card>
+            </Link>
+
+            {/* Scanner & Reports (B2B Tools) */}
+            <Link href="/admin/scan" className="group">
+              <Card className="h-full bg-blue-50/50 dark:bg-blue-900/10 border-blue-200 transition-all hover:shadow-md hover:border-blue-500 cursor-pointer relative">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium text-blue-700 dark:text-blue-400">Scanner & Reports</CardTitle>
+                  <Scan className="h-4 w-4 text-blue-500 group-hover:scale-110 transition-transform" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">Scanner Pro</div>
+                  <p className="text-xs text-muted-foreground mt-1">Captura OCR & Reportes B2B</p>
                 </CardContent>
               </Card>
             </Link>
@@ -573,89 +830,6 @@ const DashboardContent: React.FC = () => {
               </Card>
             </Link>
 
-            {/* Retailer (Einzelhändler) Kunden */}
-            <Link href="/admin/clients?type=retailer" className="group">
-              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Einzelhändler</CardTitle>
-                  <Building className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">Einzelhändler</div>
-                  <p className="text-xs text-muted-foreground mt-1">Unternehmen verwalten</p>
-                  <div className="absolute bottom-4 right-4 text-sm font-mono text-muted-foreground">
-                    {formatCount(counts.retailer)}
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
-
-            {/* Premium Kunden */}
-            <Link href="/admin/clients?type=premium" className="group">
-              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Premium</CardTitle>
-                  <Star className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">Premium</div>
-                  <p className="text-xs text-muted-foreground mt-1">Premium Kunden verwalten</p>
-                  <div className="absolute bottom-4 right-4 text-sm font-mono text-muted-foreground">
-                    {formatCount(counts.premium)}
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
-
-            {/* Privat User (renamed from Privatkunden) */}
-            {isAdminOrSuper && (
-              <Link href="/admin/private-users" className="group">
-                <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Privatkunden</CardTitle>
-                    <User className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">Privatuser</div>
-                    <p className="text-xs text-muted-foreground mt-1">Private Profile verwalten</p>
-                    <div className="absolute bottom-4 right-4 text-sm font-mono text-muted-foreground">
-                      {formatCount(counts.private)}
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
-            )}
-
-            {/* Landing Pages / Builder */}
-            <Link href="/admin/clients" className="group">
-              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Landing Pages</CardTitle>
-                  <LayoutTemplate className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{t('dashboard.cards.builder.title')}</div>
-                  <p className="text-xs text-muted-foreground mt-1">{t('dashboard.cards.builder.description')}</p>
-                </CardContent>
-              </Card>
-            </Link>
-
-            {/* Pläne */}
-            {isAdminOrSuper && (
-              <Link href="/admin/plans" className="group">
-                <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">{t('plans.title', { ns: 'admin' })}</CardTitle>
-                    <DollarSign className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">{t('dashboard.cards.plans.title')}</div>
-                    <p className="text-xs text-muted-foreground mt-1">{t('dashboard.cards.plans.description')}</p>
-                  </CardContent>
-                </Card>
-              </Link>
-            )}
-
             {/* Statistiken */}
             <Link href="/admin/statistics" className="group">
               <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
@@ -666,139 +840,6 @@ const DashboardContent: React.FC = () => {
                 <CardContent>
                   <div className="text-2xl font-bold">{t('dashboard.cards.stats.title')}</div>
                   <p className="text-xs text-muted-foreground mt-1">{t('dashboard.cards.stats.description')}</p>
-                </CardContent>
-              </Card>
-            </Link>
-
-            {/* Formulare */}
-            <Link href="/admin/forms-dashboard" className="group">
-              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">{t('formsDashboard.title', { ns: 'admin' })}</CardTitle>
-                  <FileText className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{t('dashboard.cards.forms.title')}</div>
-                  <p className="text-xs text-muted-foreground mt-1">{t('dashboard.cards.forms.description')}</p>
-                </CardContent>
-              </Card>
-            </Link>
-
-            {/* Registrierungen */}
-            <Link href="/admin/registrations" className="group">
-              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">{t('registrations.title', { ns: 'admin' })}</CardTitle>
-                  <UserCheck className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{t('dashboard.cards.registrations.title')}</div>
-                  <p className="text-xs text-muted-foreground mt-1">{t('dashboard.cards.registrations.description')}</p>
-                  <div className="absolute bottom-4 right-4 text-sm font-mono text-muted-foreground">
-                    {formatCount(counts.registrations)}
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
-
-            {/* Ads Manager */}
-            <Link href="/admin/ads-manager" className="group">
-              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Ads Manager</CardTitle>
-                  <LayoutTemplate className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">Ads Manager</div>
-                  <p className="text-xs text-muted-foreground mt-1">Manage advertising banners</p>
-                </CardContent>
-              </Card>
-            </Link>
-
-            {/* Empfehlungen (NEW) */}
-            <Link href="/admin/recommendations" className="group">
-              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Empfehlungen</CardTitle>
-                  <ThumbsUp className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">Empfehlungen</div>
-                  <p className="text-xs text-muted-foreground mt-1">Empfehlungen auf den Landingpage</p>
-                  <div className="absolute bottom-4 right-4 text-sm font-mono text-muted-foreground">
-                    {formatCount(counts.recommendations)}
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
-
-            {/* Ciudades y Países (NEW MODULE) */}
-            <Link href="/admin/locations" className="group">
-              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Ubicaciones</CardTitle>
-                  <Globe className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">Ciudades y Países</div>
-                  <p className="text-xs text-muted-foreground mt-1">Gestión de lugares del sistema</p>
-                </CardContent>
-              </Card>
-            </Link>
-
-            {/* Email Templates (NEW) */}
-            <Link href="/admin/email-templates" className="group">
-              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Plantillas Email</CardTitle>
-                  <MessageSquare className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">Plantillas Email</div>
-                  <p className="text-xs text-muted-foreground mt-1">Gestión de correos automatizados</p>
-                </CardContent>
-              </Card>
-            </Link>
-
-            {/* Reporting E-Mail Marketing (NEW) */}
-            <Link href="/admin/marketing-reporting" className="group text-indigo-700">
-              <Card className="h-full bg-indigo-50/30 dark:bg-indigo-900/10 border-indigo-100 transition-all hover:shadow-md hover:border-indigo-400 cursor-pointer relative">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-bold">Reporting E-Mail Marketing</CardTitle>
-                  <Mail className="h-4 w-4 text-indigo-500 group-hover:scale-110 transition-transform" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-black">Reportes</div>
-                  <p className="text-xs text-muted-foreground mt-1">Seguimiento de envíos y recompensas</p>
-                </CardContent>
-              </Card>
-            </Link>
-
-
-            {/* Client Reviews (Moderation) */}
-            <Link href="/admin/reviews" className="group">
-              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">{t('clientReviews.title', 'Moderate Reviews')}</CardTitle>
-                  <Star className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{t('clientReviews.cardBigTitle', 'Client Reviews')}</div>
-                  <p className="text-xs text-muted-foreground mt-1">{t('clientReviews.cardDesc', 'Approve and reject reviews')}</p>
-                </CardContent>
-              </Card>
-            </Link>
-
-            {/* Feedbacks (Platform) */}
-            <Link href="/admin/feedbacks" className="group">
-              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">{t('feedbacks.title', { ns: 'admin' })}</CardTitle>
-                  <MessageSquare className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{t('dashboard.cards.feedback.title')}</div>
-                  <p className="text-xs text-muted-foreground mt-1">{t('dashboard.cards.feedback.description')}</p>
                 </CardContent>
               </Card>
             </Link>
@@ -820,44 +861,16 @@ const DashboardContent: React.FC = () => {
               </Card>
             </Link>
 
-            {/* Scanner & Reports (B2B Tools) */}
-            <Link href="/admin/scan" className="group">
-              <Card className="h-full bg-blue-50/50 dark:bg-blue-900/10 border-blue-200 transition-all hover:shadow-md hover:border-blue-500 cursor-pointer relative">
+            {/* Ciudades y Países (Locations) */}
+            <Link href="/admin/locations" className="group">
+              <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium text-blue-700 dark:text-blue-400">Scanner & Reports</CardTitle>
-                  <Scan className="h-4 w-4 text-blue-500 group-hover:scale-110 transition-transform" />
+                  <CardTitle className="text-sm font-medium">Ubicaciones</CardTitle>
+                  <Globe className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">Scanner Pro</div>
-                  <p className="text-xs text-muted-foreground mt-1">Captura OCR & Reportes B2B</p>
-                </CardContent>
-              </Card>
-            </Link>
-
-            {/* Support Tickets (Central) */}
-            <Link href="/dashboard/freelancer" className="group">
-              <Card className="h-full transition-all hover:shadow-md hover:border-blue-500/50 cursor-pointer relative">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Gig Economy</CardTitle>
-                  <Briefcase className="h-4 w-4 text-muted-foreground group-hover:text-blue-500 transition-colors" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">Freelancer</div>
-                  <p className="text-xs text-muted-foreground mt-1">Gestión de Promovendedores</p>
-                </CardContent>
-              </Card>
-            </Link>
-
-            {/* Ads Manager (NEW MODULE) */}
-            <Link href="/dashboard/ads-manager" className="group">
-              <Card className="h-full transition-all hover:shadow-md hover:border-purple-500/50 cursor-pointer relative">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Marketing Tools</CardTitle>
-                  <Megaphone className="h-4 w-4 text-muted-foreground group-hover:text-purple-500 transition-colors" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">Ads Manager</div>
-                  <p className="text-xs text-muted-foreground mt-1">QRs Dinámicos & Campañas</p>
+                  <div className="text-2xl font-bold">Ciudades y Países</div>
+                  <p className="text-xs text-muted-foreground mt-1">Gestión de lugares del sistema</p>
                 </CardContent>
               </Card>
             </Link>

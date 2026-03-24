@@ -253,7 +253,7 @@ exports.sendWelcomeEmail = (0, firestore_1.onDocumentCreated)('registrations/{re
       <p>Sie können sich jetzt in Ihrem Dashboard anmelden, um Ihr Profil zu verwalten:</p>
       
       <div style="text-align: center; margin: 30px 0;">
-        <a href="https://dicilo-search.web.app/login" style="background-color: #007bff; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold;">Zum Dashboard</a>
+        <a href="https://dicilo.net/login" style="background-color: #007bff; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold;">Zum Dashboard</a>
       </div>
 
       <p>Falls Sie Fragen haben, stehen wir Ihnen gerne zur Verfügung.</p>

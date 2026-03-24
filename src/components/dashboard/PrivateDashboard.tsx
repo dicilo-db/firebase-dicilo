@@ -48,7 +48,7 @@ interface PrivateDashboardProps {
 
 export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDashboardProps) {
     const { toast } = useToast();
-    const { t } = useTranslation('common');
+    const { t } = useTranslation(['common', 'admin']);
     const router = useRouter();
     const searchParams = useSearchParams();
     const [activeView, setActiveView] = useState(searchParams?.get('view') || 'overview'); // overview, wallet, invite, map, settings, dicicoin, tickets
@@ -581,7 +581,7 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                                     </div>
 
                                     <div className="space-y-4 pt-4 border-t">
-                                        <h3 className="text-lg font-medium">{t('dashboard.personalInfo')} - {t('admin.locationContact')}</h3>
+                                        <h3 className="text-lg font-medium">{t('admin:locationContact')}</h3>
                                         <div className="grid gap-4 md:grid-cols-2">
                                             <div className="space-y-2">
                                                 <Label>{t('dashboard.fixedPhone')}</Label>

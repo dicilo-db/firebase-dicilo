@@ -100,7 +100,6 @@ exports.sendPioneerInvitations = (0, https_1.onCall)((request) => __awaiter(void
         // Aquí usaremos la plantilla HTML raw con reemplazos como solicitaste, o un templateId si se prefiere.
         // Usaremos el HTML raw proporcionado para máxima flexibilidad inicial.
         const registrationLink = `https://dicilo.net/registrieren?ref=${referrerId}&invite=${inviteId}&utm_source=email_pioneer`;
-        // TODO: Ajustar dominio real. dicilo.net o dicilo-search.web.app? Usaré dicilo.net como placeholder.
         const emailContent = generatePioneerEmailHtml(friend.name, referrerName, friend.editedText, registrationLink, friend.lang);
         const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
         sendSmtpEmail.subject = getSubjectByLang(friend.lang, referrerName);
