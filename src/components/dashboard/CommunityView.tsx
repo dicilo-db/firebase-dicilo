@@ -72,7 +72,9 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
     // Sync state with URL when it changes
     const updateNeighborhood = (name: string) => {
         setNeighborhoodName(name);
-        router.push(`?neighborhood=${encodeURIComponent(name)}`, { scroll: false });
+        const params = new URLSearchParams(searchParams?.toString() || "");
+        params.set('neighborhood', name);
+        router.push(`?${params.toString()}`, { scroll: false });
     };
 
     // Dynamic Neighborhood Config (merging Static + DB)

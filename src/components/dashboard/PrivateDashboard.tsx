@@ -46,7 +46,7 @@ interface PrivateDashboardProps {
     initialWalletData?: any;
 }
 
-export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
+export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDashboardProps) {
     const { toast } = useToast();
     const { t } = useTranslation('common');
     const router = useRouter();
@@ -301,8 +301,8 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
 
                         {/* Bottom Section: Quick Actions + Wallets */}
                         <div className="grid gap-6 lg:grid-cols-3">
-                            {/* Left Column: Quick Actions */}
-                            <div className="lg:col-span-1">
+                            {/* Left Column: Quick Actions - Moved FIRST in DOM/Mobile */}
+                            <div className="lg:col-span-1 order-first lg:order-none">
                                 <Card>
                                     <CardHeader>
                                         <CardTitle>{t('dashboard.quickActions', 'Quick Actions')}</CardTitle>
@@ -320,8 +320,8 @@ export function PrivateDashboard({ user, profile }: PrivateDashboardProps) {
                                 </Card>
                             </div>
 
-                            {/* Right Column: Wallets */}
-                            <div className="lg:col-span-2 grid gap-4 md:grid-cols-2">
+                            {/* Right Column: Wallets - Follows in Mobile */}
+                            <div className="lg:col-span-2 grid gap-4 md:grid-cols-2 order-last lg:order-none">
                                 {/* Dicilo Wallet (Dark Card) */}
                                 <div className="bg-slate-950 text-white rounded-xl p-6 flex flex-col justify-between shadow-lg min-h-[180px]">
                                     <div>
