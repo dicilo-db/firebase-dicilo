@@ -55,7 +55,7 @@ export default function FreelancerPage() {
     useAuthGuard(allowedRoles, 'freelancer_tool');
 
     const searchParams = useSearchParams();
-    const currentTab = searchParams.get('tab') || 'dashboard';
+    const currentTab = searchParams?.get('tab') || 'dashboard';
 
     const CurrentView = VIEWS[currentTab] || DashboardHomeView;
 
