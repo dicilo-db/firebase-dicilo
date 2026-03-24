@@ -24,6 +24,17 @@ export interface MarketingLead {
     notes?: string;
 }
 
+export interface AdminMarketingSend {
+    id: string;
+    createdAt: string;
+    referrerName: string;
+    referrerId: string;
+    friendName: string;
+    friendEmail: string;
+    rewardAmount: number;
+    template: string;
+}
+
 export async function getAllMarketingLeads() {
     try {
         const db = getAdminDb();
@@ -56,6 +67,34 @@ export async function getAllMarketingLeads() {
         return { success: true, leads };
     } catch (error: any) {
         console.error('Error fetching all marketing leads:', error);
+        return { success: false, error: error.message };
+    }
+}
+
+export async function getAllMarketingSends() {
+    try {
+        const db = getAdminDb();
+        const snapshot = await db.collection('referrals_pioneers')
+            .orderBy('createdAt', 'desc')
+            .get();
+
+        const sends: AdminMarketingSend[] = snapshot.docs.map(doc => {
+            const data = doc.data();
+            return {
+                id: doc.id,
+                createdAt: data.createdAt?.toDate ? data.createdAt.toDate().toISOString() : new Date().toISOString(),
+                referrerName: data.referrerName || 'N/A',
+                referrerId: data.referrerId || 'N/A',
+                friendName: data.friendName || 'N/A',
+                friendEmail: data.friendEmail || 'N/A',
+                rewardAmount: data.diciPointsIncentive || 0,
+                template: data.lastTemplateSent || 'default'
+            };
+        });
+
+        return { success: true, sends };
+    } catch (error: any) {
+        console.error('Error fetching marketing sends:', error);
         return { success: false, error: error.message };
     }
 }
