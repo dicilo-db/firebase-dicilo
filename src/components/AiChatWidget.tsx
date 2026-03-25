@@ -161,7 +161,21 @@ export function AiChatWidget() {
                     .replace(/[\p{Extended_Pictographic}]/gu, ''); // Quita TODOS los emojis (Smileys) para no leerlos
                     
                 const utterance = new SpeechSynthesisUtterance(textToSpeak);
-                utterance.lang = 'es-ES'; // Default, ideally we detect from text
+                
+                // --- Simple Language Detection ---
+                // DiciBot responds in the user's language. We read the generated string to decide the TTS accent.
+                const txt = textToSpeak.toLowerCase();
+                const isEnglish = /\b(the|a|an|is|are|you|your|our|we|can|will|how|what|yes|no|please|free)\b/.test(txt);
+                const isGerman = /\b(der|die|das|und|ist|sind|kann|wie|was|ja|nein|bitte|für|oder|kostenlos)\b/.test(txt);
+                
+                if (isEnglish && !isGerman) {
+                    utterance.lang = 'en-US';
+                } else if (isGerman) {
+                    utterance.lang = 'de-DE';
+                } else {
+                    utterance.lang = 'es-ES'; // Default
+                }
+                
                 utterance.rate = 1.05;
                 window.speechSynthesis.speak(utterance);
             }

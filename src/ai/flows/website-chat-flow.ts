@@ -206,7 +206,13 @@ ${DICICOIN_SCRIPT}
 
         return {
             answer: finalAnswerText,
-            uiComponent: showShareButtons ? 'SHARE_BUTTONS' as const : 'NONE' as const
+            uiComponent: showShareButtons ? 'SHARE_BUTTONS' : 'NONE'
+        };
+    } catch (error: any) {
+        console.error('Error in chat flow:', error);
+        return {
+            answer: `Sincronizando agente... ¿Podrías repetirme la pregunta, por favor? 🔄 \n\n(Internal Log: ${error.message || 'Timeout'})`,
+            uiComponent: 'NONE'
         };
     }
-);
+});
