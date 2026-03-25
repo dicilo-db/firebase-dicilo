@@ -103,11 +103,6 @@ export function FreelancerSidebar({ className, onViewChange, onMobileClose }: Fr
             icon: Link2
         },
         {
-            id: 'faqs',
-            label: t('freelancer_menu.faqs', 'FAQs'),
-            icon: HelpCircle
-        },
-        {
             id: 'section_recommendation',
             label: t('freelancer_menu.recommendation_section', 'Recomienda empresas'),
             isHeading: true

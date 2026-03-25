@@ -10,7 +10,6 @@ import { MyPostingsView } from '@/components/dashboard/freelancer/views/MyPostin
 import { StatisticsView } from '@/components/dashboard/freelancer/views/StatisticsView';
 import { OnlineReviewsView } from '@/components/dashboard/freelancer/views/OnlineReviewsView';
 import { ConnectionsView } from '@/components/dashboard/freelancer/views/ConnectionsView';
-import { FaqsView } from '@/components/dashboard/freelancer/views/FaqsView';
 import { PromoComposerView } from '@/components/dashboard/freelancer/views/PromoComposerView'; // "Templates/Composer"
 import { MarketingTemplatesView } from '@/components/dashboard/freelancer/views/MarketingTemplatesView';
 import { RecommendCompanyView } from '@/components/dashboard/freelancer/views/RecommendCompanyView';
@@ -27,7 +26,6 @@ const VIEWS: Record<string, React.ComponentType> = {
     'statistics': StatisticsView,
     'online_reviews': OnlineReviewsView,
     'connections': ConnectionsView,
-    'faqs': FaqsView,
     'recommend_company': RecommendCompanyView
 };
 

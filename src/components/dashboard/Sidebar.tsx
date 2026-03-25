@@ -23,7 +23,8 @@ import {
     ChevronDown,
     ChevronRight,
     Scan,
-    Share2
+    Share2,
+    HelpCircle
 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -126,6 +127,7 @@ export function Sidebar({ userData, onViewChange, currentView }: SidebarProps) {
         // Added items from header - NOW VIEWS for SPA
         { id: 'dicicoin', label: 'DiciCoin', icon: Coins, type: 'view' },
         { id: 'tickets', label: t('tickets.title', 'Tickets'), icon: LifeBuoy, type: 'view' },
+        { id: 'faqs', label: t('freelancer_menu.faqs', 'FAQs'), icon: HelpCircle, type: 'view' },
         { id: 'dicipoints-info', label: t('dicipoints.whatIs.title', 'What are DiciPoints?'), icon: Info, type: 'dialog' },
     ];
 

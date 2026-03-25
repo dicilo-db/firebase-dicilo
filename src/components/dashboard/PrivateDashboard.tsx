@@ -28,9 +28,9 @@ import { DiciCoinSection } from './DiciCoinSection';
 import { WhatsAppGroupSection } from './WhatsAppGroupSection';
 import { TicketsManager } from './tickets/TicketsManager';
 import { FreelancerLanding } from './freelancer/FreelancerLanding';
-import { FreelancerCampaignList } from './freelancer/FreelancerCampaignList';
 import FreelancerPromoComposerPage from '@/app/dashboard/freelancer/page';
 import { CommunityView } from './CommunityView';
+import { FaqsView } from './FaqsView';
 import ScannerPro from '../admin/ScannerPro';
 import { StatisticsView } from './freelancer/views/StatisticsView';
 import { AlliesMap } from './AlliesMap';
@@ -398,6 +398,8 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                         <CommunityView defaultNeighborhood={formData.city || 'Hamburg'} currentUser={user} />
                     </div>
                 );
+            case 'faqs':
+                return <FaqsView />;
             case 'scanner':
                 return (
                     <div className="animate-in fade-in duration-500">
