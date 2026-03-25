@@ -68,7 +68,7 @@ export async function sendPioneerInvitations(
             const newDocRef = referralsRef.doc();
             generatedIds.push(newDocRef.id);
 
-            batch.set(newDocRef, {
+            const docData: any = {
                 referrerId,
                 referrerName,
                 friendName: friend.name,
@@ -78,10 +78,17 @@ export async function sendPioneerInvitations(
                 createdAt: admin.firestore.FieldValue.serverTimestamp(),
                 updatedAt: admin.firestore.FieldValue.serverTimestamp(),
                 opened: false,
-                template: friend.template || 'default',
-                rewardSender: friend.rewardSender,
-                rewardReceiver: friend.rewardReceiver
-            });
+                template: friend.template || 'default'
+            };
+
+            if (friend.rewardSender !== undefined) {
+                docData.rewardSender = friend.rewardSender;
+            }
+            if (friend.rewardReceiver !== undefined) {
+                docData.rewardReceiver = friend.rewardReceiver;
+            }
+
+            batch.set(newDocRef, docData);
         }
 
         await batch.commit();
