@@ -129,98 +129,60 @@ export async function getDynamicKnowledgeContext(): Promise<string> {
         const db = getAdminDb();
         let dynamicContext = "";
 
-        // 1. Fetch GLOBAL Text Snippets (No clientId)
+        // 1. Fetch GLOBAL Text Snippets (No clientId) - The 100 FAQs
         // We filter manually or use a query for non-private snippets.
-        // Determining "Global" via missing clientId.
-        const snippetsSnapshot = await db.collection('ai_knowledge_snippets').orderBy('createdAt', 'desc').get();
-        if (!snippetsSnapshot.empty) {
-            dynamicContext += "\n\n[GLOBAL SYSTEM KNOWLEDGE]\n";
-            let globalCount = 0;
-            snippetsSnapshot.forEach(doc => {
-                const data = doc.data();
-                // Include ONLY if NO clientId (Global) 
-                // CRITICAL: Filter out specific "HörComfort" or displaced text that ended up as global noise
-                const isNoise = data.text && data.text.includes("Bereits seit 2011");
-                if (data.text && !data.clientId && !isNoise) {
-                    dynamicContext += `- ${data.text}\n`;
-                    globalCount++;
-                }
-            });
-            // If we have very few globals, maybe include recent client updates? No, privacy/confusion risk.
+        try {
+            const snippetsSnapshot = await db.collection('ai_knowledge_snippets').orderBy('createdAt', 'desc').get();
+            if (!snippetsSnapshot.empty) {
+                dynamicContext += "\n\n[GLOBAL SYSTEM KNOWLEDGE (FAQS & RULES)]\n";
+                let globalCount = 0;
+                snippetsSnapshot.forEach(doc => {
+                    const data = doc.data();
+                    const isNoise = data.text && data.text.includes("Bereits seit 2011");
+                    if (data.text && !data.clientId && !isNoise) {
+                        dynamicContext += `- ${data.text}\n`;
+                        globalCount++;
+                    }
+                });
+            }
+        } catch (e) {
+            console.error("Warning: Could not fetch global snippets in strict order.", e);
+            // Fallback without orderBy to bypass index errors if they occur
+            const fallbackSnap = await db.collection('ai_knowledge_snippets').limit(200).get();
+            if (!fallbackSnap.empty) {
+                dynamicContext += "\n\n[GLOBAL SYSTEM KNOWLEDGE (FAQS & RULES)]\n";
+                fallbackSnap.forEach(doc => {
+                    const data = doc.data();
+                    if (data.text && !data.clientId && !data.text.includes("Bereits seit 2011")) {
+                        dynamicContext += `- ${data.text}\n`;
+                    }
+                });
+            }
         }
 
         // 2. Fetch DATA SNAPSHOT (Directory)
-        // This remains the "Wide Net" to let the Brain know WHO exists.
-        const [businessesSnapshot, clientsSnapshot] = await Promise.all([
-            db.collection('businesses').get(),
-            db.collection('clients').get()
-        ]);
+        // [REMOVED] - We no longer dump all businesses into the prompt to prevent Payload Too Large Errors.
+        // The DiciBot will now use the searchBusinessDirectoryTool when it needs to find a company.
 
-        if (!businessesSnapshot.empty || !clientsSnapshot.empty) {
-            dynamicContext += "\n\n[DIRECTORY - KNOWN COMPANIES]\n(Use these names to identify who the user is asking about)\n";
-
-            const processEntry = (doc: any) => {
-                const d = doc.data();
-                const name = d.clientName || d.name || d.businessName || "Unknown";
-                const type = d.clientType || 'Standard';
-                let cat = d.category?.name || d.category || '';
-
-                // Fallback: Infer category from name if missing
-                if (!cat) {
-                    const lowerName = name.toLowerCase();
-                    if (lowerName.includes('reisen') || lowerName.includes('travel') || lowerName.includes('viajes')) cat = 'Agencia de Viajes / Reisebüro';
-                    else if (lowerName.includes('shop') || lowerName.includes('market')) cat = 'Comercio';
-                }
-
-                // Enrich with cues for the LLM (Crucial for "Reisen" -> "Viajes" matching)
-                const desc = d.shortDescription || d.description || d.about || "";
-                const snippet = desc ? desc.substring(0, 80).replace(/\n/g, " ") : "";
-                const phone = d.contact?.phone || d.phone || d.phoneNumber || d.celular || d.contactPhone || "";
-                const city = d.address?.city || d.city || d.location || "";
-
-                return `- ${name} (${type} / ${cat}) ${city ? `[${city}] ` : ''}[Info: ${snippet}...] [Tel: ${phone}]`;
-            };
-
-            const seenKey = new Set();
-
-            const addToContext = (doc: any) => {
-                const d = doc.data();
-
-                // FILTER: We now allow ALL types to ensure the AI can find everything in the directory ("Travelposting", etc).
-                const type = (d.clientType || 'basic').toLowerCase();
-                // We match partial strings to catch 'premium-plus' or 'retailer-v1' if they exist.
-                // Added: 'basic', 'free', 'standard', 'business' to ensure coverage.
-                const allowedTypes = ['starter', 'retailer', 'minorista', 'premium', 'basic', 'free', 'standard', 'business'];
-
-                if (!allowedTypes.some(t => type.includes(t)) && type !== 'unknown') {
-                    // Minimal filter for truly invalid/test types if needed, but for now we open the gates.
-                    // If strict filtering is invalid for "Travelposting", we must allow it.
-                    // return; 
-                }
-
-                const rawName = d.clientName || d.name || d.businessName || "";
-
-                // Dedupe strictly by Normalized Name or Slug. 
-                // Ignore Doc ID for deduplication purposes to force merging of "Inviajes" (client) and "Inviajes" (business).
-                const key = d.slug || normalize(rawName);
-
-                if (key && key.length > 2 && !seenKey.has(key)) {
-                    const entry = processEntry(doc);
-                    dynamicContext += entry + "\n";
-                    seenKey.add(key);
-                } else if ((!key || key.length <= 2) && !seenKey.has(doc.id)) {
-                    // Fallback for messy data without name/slug
-                    const entry = processEntry(doc);
-                    dynamicContext += entry + "\n";
-                    seenKey.add(doc.id);
-                }
-            };
-
-            clientsSnapshot.forEach(doc => addToContext(doc));
-            businessesSnapshot.forEach(doc => addToContext(doc));
+        // 3. Fetch PLANS (Menus / Prices) to ensure Dicibot knows what Dicilo sells
+        try {
+            const plansSnap = await db.collection('plans').orderBy('order').get();
+            if (!plansSnap.empty) {
+                dynamicContext += "\n\n[DICILO PLANS & PRICING]\n";
+                plansSnap.forEach(doc => {
+                    const plan = doc.data();
+                    const name = plan.name?.es || plan.name?.en || plan.name?.de || 'Unknown';
+                    const price = plan.price || '0';
+                    const interval = plan.interval || 'month';
+                    const features = (plan.features || []).slice(0, 5).join(', '); // first 5 features
+                    dynamicContext += `- Plan ${name}: ${price}€/${interval}. Incluye: ${features}\n`;
+                });
+            }
+        } catch (e) {
+            console.error("Warning: Could not fetch plans", e);
         }
-
-        // 3. Combine
+        
+        // 4. Combine
         return `${DICILO_KNOWLEDGE}\n\n[DICICOIN INFO]\n${DICICOIN_KNOWLEDGE}\n${dynamicContext}`;
 
     } catch (error) {

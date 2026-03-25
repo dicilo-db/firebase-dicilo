@@ -1,6 +1,6 @@
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
-import { sendMessageTool, calendarTool, retrieveCompanyInfoTool } from '@/ai/tools';
+import { sendMessageTool, calendarTool, searchBusinessDirectoryTool } from '@/ai/tools';
 import { gemini20Flash } from '@genkit-ai/googleai';
 import { getDynamicKnowledgeContext } from '@/ai/data/knowledge-retriever';
 import { getSessionHistory, saveInteraction } from '@/lib/chat-history';
@@ -107,11 +107,12 @@ TU TAREA:
         if (input.context) dynamicContext += "\n\n[DOCS ADICIONALES]:\n" + input.context;
 
         const systemPrompt = `
-ROL: Agente DiciBot.
+ROL: Agente DiciBot, el Asistente Inteligente de Dicilo.net.
+PERSONALIDAD: Eres cálido, proactivo, tienes "vida" y muestras empatía con los usuarios. Piensas rápido, das respuestas claras y amables. Conoces Dicilo.net a la perfección.
 
-<CONTEXTO_CONOCIMIENTO>
+<CONTEXTO_CONOCIMIENTO_GLOBAL_Y_PLANES>
 ${dynamicContext}
-</CONTEXTO_CONOCIMIENTO>
+</CONTEXTO_CONOCIMIENTO_GLOBAL_Y_PLANES>
 
 <MEMORIA_RECIENTE>
 ${historyText}
@@ -122,48 +123,31 @@ ${DICICOIN_SCRIPT}
 </SCRIPT_DICICOIN>
 
 === 🧠 REGLA DE ATENCIÓN (FRESH START) ===
-- Analiza el "INPUT DEL USUARIO" actual por sí mismo.
-- Si el usuario cambia de tema (ej: estaba hablando de "Travelposting" y ahora dice "quiero viajar a Hamburgo"), IGNORA el fracaso anterior.
-- NO repitas "No encontré X" si el usuario ya no pregunta por X. ¡Busca lo nuevo!
+- Analiza la intención actual del usuario con mucha agudeza.
+- Si el usuario pregunta cosas generales sobre Dicilo, mira el CONTEXTO_CONOCIMIENTO_GLOBAL_Y_PLANES (ahí están todas las FAQs y Planes).
 
-=== ⚠️ REGLAS NEGATIVAS (PROHIBICIONES) ===
-1. [MODO SILENCIO]: PROHIBIDO DECIR "Voy a usar la herramienta...". ¡Simplemente úsala!
-2. [NO INVENTAR]: Si no hay empresas de ese tipo en [CONTEXTO_CONOCIMIENTO], di "No encuentro coincidencias exactas en el directorio, pero puedo buscar otros servicios".
-3. [IDIOMA]: PROHIBIDO hablar en un idioma diferente al del usuario.
+=== ⚠️ REGLAS Y RESTRICCIONES ===
+1. [MODO SILENCIO METADATOS]: NUNCA digas "Voy a usar la herramienta...". ¡Úsala y ya!
+2. Si el usuario busca Categorías, Empresas, o cualquier negocio de terceros en el mundo real -> ¡USA LA HERRAMIENTA 'searchBusinessDirectory' INMEDIATAMENTE! No asumas que no existe solo porque no lo ves en tu contexto estático. Recuerda que no tienes todo el directorio en la memoria; debes consultar la herramienta.
+3. [IDIOMA]: Mimetízate con el idioma del usuario. Si pregunta en español, tu empatía debe fluir en español puro y cálido. Si está en alemán, habla un alemán cortés.
 
-=== 🌍 PROTOCOLO DE IDIOMA (PRIORIDAD MÁXIMA) ===
+=== 🌍 PROTOCOLO DE IDIOMA E INTERNACIONALIZACIÓN ===
 - INPUT DEL USUARIO: "${input.question}"
-- TU TAREA: Detecta el idioma del input. 
-- RESPUESTA: TODA tu salida debe estar EN ESE MISMO IDIOMA.
-- TRADUCCIÓN OBLIGATORIA: Si lees datos en alemán/inglés de la base de datos, TRADÚCELOS antes de hablar.
-- EJEMPLO: Si el usuario pregunta en Español y la ficha dice "Zahnklinik Hamburg", tú respondes: "Aquí tienes una Clínica Dental en Hamburgo..."
+- Detecta el idioma y asegúrate de que toda tu salida respete ese idioma.
 
-=== 🔍 ESTRATEGIA DE BÚSQUEDA ===
-1. Si el usuario busca Categoría ("Dentista", "Abogado", "Viaje") -> ESCANEA el [CONTEXTO_CONOCIMIENTO].
-2. Si ves algo relevante -> EJECUTA 'retrieveCompanyInfo' con el nombre de esa empresa.
-3. Si el usuario pregunta "¿Dónde está...?" o "¿Dirección de...?" -> ¡OBLIGATORIO USAR 'retrieveCompanyInfo'!
-4. NO preguntes "¿Cuál nombre?" si ya ves candidatos probables.
-
-=== 🔗 FORMATO DE ENLACES ===
-- Cuando menciones una UBICACIÓN o DIRECCIÓN (aunque sea solo CIUDAD), DEBES convertirla en un enlace de Google Maps.
-- Formato: [Ubicación](https://www.google.com/maps/search/?api=1&query=Ubicación)
-- Ejemplo: [Musterstraße 123, Hamburgo](https://www.google.com/maps/search/?api=1&query=Musterstraße+123,+Hamburgo)
-
-=== ⚠️ REGLA DE "DIRECCIÓN EXACTA" ===
-- Si la base de datos solo dice "Hamburg, Germany", **ESA ES LA DIRECCIÓN**.
-- NO digas "no tengo la dirección exacta".
-- Di: "Está ubicada en [Hamburg, Germany](...)."
-- ¡Cualquier ubicación geográfica cuenta como dirección!
+=== 🔗 FORMATO DE ENLACES PARA EMPRESAS ===
+- Si encuentras y recomiendas una EMPRESA usando 'searchBusinessDirectory', enlaza su Ubicación así:
+- [Hamburgo](https://www.google.com/maps/search/?api=1&query=Hamburgo)
 `;
 
-        let currentPrompt = `${systemPrompt}\n\nUSER INPUT: "${input.question}"\n\n[SYSTEM]: REPLY IN THE LANGUAGE OF THE USER INPUT ONLY. TRANSLATE DATA IF NEEDED.`;
+        let currentPrompt = `${systemPrompt}\n\nUSER INPUT: "${input.question}"\n\n[SYSTEM]: REPLY IN THE LANGUAGE OF THE USER INPUT ONLY. BE WARM, EMPATHETIC AND DIRECT. TRANSLATE DATA IF NEEDED.`;
 
         // 3. Generación Inicial
         let response = await ai.generate({
             model: gemini20Flash,
             prompt: currentPrompt,
-            tools: [sendMessageTool, calendarTool, retrieveCompanyInfoTool],
-            config: { temperature: 0.2 }
+            tools: [sendMessageTool, calendarTool, searchBusinessDirectoryTool],
+            config: { temperature: 0.3 }
         });
 
         let showShareButtons = false;
@@ -171,7 +155,6 @@ ${DICICOIN_SCRIPT}
 
         // 4. Bucle de Ejecución
         while (response.toolRequests && response.toolRequests.length > 0 && turns < 5) {
-            // Genkit response parts access fix
             const toolPart = response.toolRequests[0];
             const toolName = toolPart.toolRequest.name;
             const toolInput = toolPart.toolRequest.input;
@@ -184,36 +167,29 @@ ${DICICOIN_SCRIPT}
             try {
                 if (toolName === 'sendMessage') toolResultContent = await sendMessageTool.run(toolInput as any);
                 if (toolName === 'calendar') toolResultContent = await calendarTool.run(toolInput as any);
-                if (toolName === 'retrieveCompanyInfo') toolResultContent = await retrieveCompanyInfoTool.run(toolInput as any);
+                if (toolName === 'searchBusinessDirectory') toolResultContent = await searchBusinessDirectoryTool.run(toolInput as any);
             } catch (e: any) {
                 toolResultContent = JSON.stringify({ success: false, error: e.message });
             }
 
-            if (toolName === 'retrieveCompanyInfo') {
+            if (toolName === 'searchBusinessDirectory') {
                 currentPrompt += `
-                \n[SYSTEM EVENT: RAG Data Retrieved successfully]
-                \n[KNOWLEDGE FOUND (RAW DATA, DO NOT COPY LANGUAGE)]: ${toolResultContent}
-                \n[FINAL INSTRUCTION]: 
-                You have retrieved detailed data. Now you must ANSWER the user's question "${input.question}".
-                
-                CRITICAL LANGUAGE RULE:
-                1. The USER speaks: "${input.question}" (Detect Language!).
-                2. The DATA is likely in German/English.
-                3. YOU MUST TRANSLATE the key concepts from the DATA into the USER'S LANGUAGE.
-                4. DO NOT OUTPUT GERMAN if the user spoke Spanish.
-                5. Answer directly.`;
+                \n[SYSTEM EVENT: Búsqueda RAG en el Directorio completada]
+                \n[RESULTADOS DE LA BASE DE DATOS]: ${toolResultContent}
+                \n[INSTRUCCIÓN FINAL]: 
+                Basado estrictamente en estos resultados, responde con empatía y precisión a la consulta del usuario. Si no hay empresas, ofrécele ayuda con otros servicios. Si hay empresas, recomiéndalas con entusiasmo.`;
             } else {
                 currentPrompt += `
-                \n[SYSTEM EVENT: Tool '${toolName}' executed. Result: ${toolResultContent}.]
-                \n[INSTRUCTION: Translate the result to the language of "${input.question}" and explain it politely.]`;
+                \n[SYSTEM EVENT: Herramienta '${toolName}' ejecutada. Resultado: ${toolResultContent}.]
+                \n[INSTRUCCIÓN: Traduce el resultado al idioma de "${input.question}" y explícalo amablemente.]`;
             }
 
-            // Segunda generación (Temp media para naturalidad en la respuesta final)
+            // Segunda generación (Temp un poco más alta para naturalidad)
             response = await ai.generate({
                 model: gemini20Flash,
                 prompt: currentPrompt,
-                tools: [sendMessageTool, calendarTool, retrieveCompanyInfoTool],
-                config: { temperature: 0.3 }
+                tools: [sendMessageTool, calendarTool, searchBusinessDirectoryTool],
+                config: { temperature: 0.4 }
             });
 
             turns++;

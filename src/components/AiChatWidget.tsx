@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { MessageCircle, X, Send, Loader2, Bot, User, Mic, MicOff, Share2 } from 'lucide-react';
+import { MessageCircle, X, Send, Loader2, Bot, User, Mic, MicOff, Share2, Volume2, VolumeX } from 'lucide-react';
 import { chatAction } from '@/app/actions/chat';
 import Image from 'next/image';
 import { getGreetingAction } from '@/app/actions/greeting';
@@ -43,6 +43,7 @@ export function AiChatWidget() {
     const [inputValue, setInputValue] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [isListening, setIsListening] = useState(false);
+    const [isAudioEnabled, setIsAudioEnabled] = useState(true); // Voice out state
     const [userId, setUserId] = useState<string>(''); // User Identity State
     const scrollAreaRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -150,6 +151,20 @@ export function AiChatWidget() {
             };
 
             setMessages((prev) => [...prev, aiMessage]);
+
+            // Text to speech for the AI answer
+            if (isAudioEnabled && 'speechSynthesis' in window) {
+                // Remove markdown, URLs, and Emojis/Smileys to speak clearly
+                const textToSpeak = result.answer
+                    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // Reemplaza links por su texto
+                    .replace(/[#_*`]/g, '')                 // Quita caracteres markdown
+                    .replace(/[\p{Extended_Pictographic}]/gu, ''); // Quita TODOS los emojis (Smileys) para no leerlos
+                    
+                const utterance = new SpeechSynthesisUtterance(textToSpeak);
+                utterance.lang = 'es-ES'; // Default, ideally we detect from text
+                utterance.rate = 1.05;
+                window.speechSynthesis.speak(utterance);
+            }
         } catch (error) {
             console.error('Error sending message:', error);
             const errorMessage: Message = {
@@ -312,6 +327,21 @@ export function AiChatWidget() {
                                 title="Hablar con DiciBot"
                             >
                                 {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+                            </Button>
+                            <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => {
+                                    setIsAudioEnabled(!isAudioEnabled);
+                                    if (isAudioEnabled && 'speechSynthesis' in window) {
+                                        window.speechSynthesis.cancel();
+                                    }
+                                }}
+                                className="text-muted-foreground"
+                                title={isAudioEnabled ? "Silenciar voz de DiciBot" : "Activar voz de DiciBot"}
+                            >
+                                {isAudioEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
                             </Button>
                         </form>
                     </CardFooter>

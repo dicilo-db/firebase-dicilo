@@ -2,24 +2,77 @@ import { ai } from './genkit';
 import { z } from 'genkit';
 import { getClientDeepKnowledge } from '@/ai/data/knowledge-retriever';
 
-// --- HERRAMIENTA 3: BUSCADOR DE INFORMACIÓN DE EMPRESA (RAG) ---
-export const retrieveCompanyInfoTool = ai.defineTool(
+// --- HERRAMIENTA 3: BUSCADOR DE DIRECTORIO DE EMPRESAS (AGENTIC RAG) ---
+export const searchBusinessDirectoryTool = ai.defineTool(
     {
-        name: 'retrieveCompanyInfo',
-        description: 'Busca información detallada sobre una empresa específica (Dirección, Servicios, Descripción). Úsala SIEMPRE que el usuario pregunte "Qué es", "Qué hace" o "Dónde está" una empresa del directorio.',
+        name: 'searchBusinessDirectory',
+        description: 'Busca empresas, negocios o servicios en el directorio activo de Dicilo.net. Úsala SIEMPRE que el usuario pregunte por "empresas", "ofrecen X servicio", "dónde hay un dentista", o "quién hace X".',
         inputSchema: z.object({
-            companyName: z.string().describe("El nombre exacto de la empresa a buscar."),
+            keyword: z.string().nullable().optional().describe("Palabra clave a buscar (ej: 'dentista', 'viajes', 'consultoría', 'Travelposting')."),
+            city: z.string().nullable().optional().describe("Ciudad de la empresa si el usuario la menciona."),
+            country: z.string().nullable().optional().describe("País de la empresa si el usuario lo menciona (ej: 'Colombia')."),
         }),
         outputSchema: z.string(),
     },
-    async ({ companyName }) => {
-        console.log(`[Tool:retrieveCompanyInfo] Buscando: ${companyName}`);
+    async ({ keyword, city, country }) => {
+        console.log(`[Tool:searchBusinessDirectory] Buscando: ${keyword || 'TODO'} en ${city || 'CUALQUIER CIUDAD'}, ${country || 'CUALQUIER PAIS'}`);
         try {
-            const knowledge = await getClientDeepKnowledge(companyName);
-            if (!knowledge || knowledge.length < 10) {
-                return JSON.stringify({ success: false, error: "No se encontró información detallada para esta empresa." });
+            const { getAdminDb } = await import('@/lib/firebase-admin');
+            const db = getAdminDb();
+            const businessesSnap = await db.collection('businesses').get();
+            const clientsSnap = await db.collection('clients').get();
+            
+            let results: string[] = [];
+            
+            const processSearch = (doc: any, source: string) => {
+                const data = doc.data();
+                const name = data.clientName || data.name || data.businessName || "";
+                const category = data.category?.name || data.category || "";
+                const desc = data.shortDescription || data.description || data.about || "";
+                const address = data.address?.city || data.city || data.location || "";
+                const dataCountry = data.address?.country || data.country || "";
+                
+                const searchString = `${name} ${category} ${desc}`.toLowerCase();
+                const cityString = `${address} ${dataCountry}`.toLowerCase();
+                
+                let matchesKw = true;
+                if (keyword && keyword.trim().length > 0) {
+                    matchesKw = searchString.includes(keyword.toLowerCase());
+                }
+                
+                let matchesCity = true;
+                if (city && city.trim().length > 0) {
+                    matchesCity = cityString.includes(city.toLowerCase());
+                }
+
+                let matchesCountry = true;
+                if (country && country.trim().length > 0) {
+                    matchesCountry = cityString.includes(country.toLowerCase());
+                }
+                
+                if (matchesKw && matchesCity && matchesCountry && name) {
+                    const phone = data.contact?.phone || data.phone || data.phoneNumber || "No disponible";
+                    const email = data.contact?.email || data.email || "No disponible";
+                    const fullAddress = `${data.address?.street || data.street || ''}, ${address}`;
+                    
+                    results.push(`EMPRESA: ${name}\nCATEGORÍA: ${category}\nUBICACIÓN: ${fullAddress}\nCONTACTO: ${phone} / ${email}\nINFO: ${desc.substring(0, 150)}...\n---`);
+                }
+            };
+
+            businessesSnap.forEach(doc => processSearch(doc, 'businesses'));
+            clientsSnap.forEach(doc => processSearch(doc, 'clients'));
+
+            if (results.length === 0) {
+                return JSON.stringify({ success: true, message: "No se encontraron empresas con esos criterios en el directorio." });
             }
-            return JSON.stringify({ success: true, data: knowledge });
+
+            // Limit to 10 results to prevent context bloat
+            const truncated = results.slice(0, 10);
+            return JSON.stringify({ 
+                success: true, 
+                count: results.length,
+                data: truncated.join('\n') 
+            });
         } catch (error: any) {
             return JSON.stringify({ success: false, error: error.message });
         }

@@ -42,11 +42,10 @@ export function NotificationBell() {
         if (!user?.uid) return;
 
         const db = getFirestore(app);
+        // Remove orderBy and limit from the query to bypass Firestore SDK CA9 / B815 cache assertion errors
         const q = query(
             collection(db, 'notifications'),
-            where('toUserId', '==', user.uid),
-            orderBy('createdAt', 'desc'),
-            limit(10)
+            where('toUserId', '==', user.uid)
         );
 
         const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -55,9 +54,24 @@ export function NotificationBell() {
             snapshot.forEach((doc) => {
                 const data = doc.data() as Notification;
                 notifs.push({ ...data, id: doc.id });
-                if (!data.read) unread++;
             });
-            setNotifications(notifs);
+
+            // Sort by createdAt descending in memory
+            notifs.sort((a, b) => {
+                const timeA = a.createdAt?.toDate ? a.createdAt.toDate().getTime() : (a.createdAt || 0);
+                const timeB = b.createdAt?.toDate ? b.createdAt.toDate().getTime() : (b.createdAt || 0);
+                return timeB - timeA;
+            });
+
+            // Limit to 10 newest in memory
+            const limitedNotifs = notifs.slice(0, 10);
+
+            // Calculate unread count strictly for the 10 loaded to keep it consistent
+            limitedNotifs.forEach(n => {
+                if (!n.read) unread++;
+            });
+
+            setNotifications(limitedNotifs);
             setUnreadCount(unread);
         });
 
