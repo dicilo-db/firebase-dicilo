@@ -43,15 +43,21 @@ export function AlliesMap({ userInterests, userId, onNavigateToSettings }: Allie
     const [showCouponsOnly, setShowCouponsOnly] = useState(false);
     const [couponBusinessIds, setCouponBusinessIds] = useState<string[]>([]);
     const [isLoadingCoupons, setIsLoadingCoupons] = useState(false);
+    const [userLocation, setUserLocation] = useState<{city?: string, country?: string}>({});
 
+    // 1. Efecto inicial: Cargar datos
     useEffect(() => {
         const fetchData = async () => {
             setIsLoading(true);
             try {
-                // 1. Cargar favoritos del usuario
+                // 1. Cargar favoritos y ubicación del usuario
                 if (userId) {
                     const userDoc = await getDoc(doc(db, 'private_profiles', userId));
-                    if (userDoc.exists()) setFavoriteIds(userDoc.data().favorites || []);
+                    if (userDoc.exists()) {
+                        const data = userDoc.data();
+                        setFavoriteIds(data.favorites || []);
+                        setUserLocation({ country: data.country, city: data.city });
+                    }
                 }
 
                 // 2. Cargar Categorías
@@ -77,9 +83,14 @@ export function AlliesMap({ userInterests, userId, onNavigateToSettings }: Allie
                     const data = doc.data();
                     let coords: [number, number] = [51.505, -0.09]; // Fallback
                     if (data.coordinates) {
-                        coords = Array.isArray(data.coordinates)
-                            ? [Number(data.coordinates[0]), Number(data.coordinates[1])]
-                            : [Number(data.coordinates.lat), Number(data.coordinates.lng)];
+                        try {
+                            coords = Array.isArray(data.coordinates)
+                                ? [Number(data.coordinates[0]), Number(data.coordinates[1])]
+                                : [Number(data.coordinates.lat), Number(data.coordinates.lng)];
+                            if (isNaN(coords[0]) || isNaN(coords[1])) throw new Error("Invalid coords");
+                        } catch (e) {
+                            coords = [51.505, -0.09];
+                        }
                     }
                     return {
                         id: doc.id,
@@ -136,6 +147,25 @@ export function AlliesMap({ userInterests, userId, onNavigateToSettings }: Allie
         if (!userId) return;
 
         const isFavorite = favoriteIds.includes(businessId);
+        const business = allBusinesses.find(b => b.id === businessId);
+
+        if (!isFavorite && business) {
+            const userCountry = userLocation.country?.toLowerCase().trim();
+            const userCity = userLocation.city?.toLowerCase().trim();
+            const bizCountry = business.country?.toLowerCase().trim();
+            const bizCity = business.city?.toLowerCase().trim();
+
+            const isDifferentCountry = userCountry && bizCountry && userCountry !== bizCountry;
+            const isDifferentCity = userCity && bizCity && userCity !== bizCity;
+
+            if (isDifferentCountry || isDifferentCity) {
+                const confirmMsg = `Esta empresa parece estar fuera de tu área de residencia actual (${business.city || ''}, ${business.country || ''}).\n\n¿Quieres aún así agregarla a tus intereses para recibir sus ofertas?`;
+                if (!window.confirm(confirmMsg)) {
+                    return; 
+                }
+            }
+        }
+
         const userRef = doc(db, 'private_profiles', userId);
 
         try {
@@ -202,11 +232,11 @@ export function AlliesMap({ userInterests, userId, onNavigateToSettings }: Allie
             <div className="w-full md:w-[400px] flex flex-col border-r bg-white z-10 shadow-2xl">
                 <div className="p-4 bg-slate-50 border-b space-y-3">
                     <h2 className="text-xl font-bold flex items-center gap-2">
-                        Mi Selección <Star className="fill-yellow-400 text-yellow-400 h-5 w-5" />
+                        Empresas de mi Interés <Star className="fill-yellow-400 text-yellow-400 h-5 w-5" />
                     </h2>
 
                     <Input
-                        placeholder="Buscar en mis favoritos..."
+                        placeholder="Buscar empresas o categorías..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="bg-white"

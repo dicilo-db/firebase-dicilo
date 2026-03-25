@@ -34,6 +34,7 @@ import { FaqsView } from './FaqsView';
 import ScannerPro from '../admin/ScannerPro';
 import { StatisticsView } from './freelancer/views/StatisticsView';
 import { AlliesMap } from './AlliesMap';
+import { MiBox } from './MiBox';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { ensureHttps, formatSocialUrl } from '@/lib/url-utils';
@@ -418,14 +419,6 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                 return <AdsDashboard />;
             case 'freelancer':
                 return <FreelancerPromoComposerPage />;
-            case 'map':
-                return (
-                    <AlliesMap
-                        userInterests={formData.interests || []}
-                        userId={user.uid}
-                        onNavigateToSettings={() => setActiveView('settings')}
-                    />
-                );
             case 'settings':
                 return (
                     <Tabs defaultValue="personal" className="space-y-4">
@@ -434,6 +427,8 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                             <TabsTrigger value="personal">{t('dashboard.personalData')}</TabsTrigger>
                             <TabsTrigger value="interests">{t('dashboard.interests')}</TabsTrigger>
                             <TabsTrigger value="social">{t('dashboard.socialRewards')}</TabsTrigger>
+                            <TabsTrigger value="companies">{t('dashboard.companiesOfInterest', 'Empresas de Interes')}</TabsTrigger>
+                            <TabsTrigger value="mibox">Mi Box</TabsTrigger>
                         </TabsList>
 
                         {/* Re-using existing content logic for settings sub-tabs */}
@@ -824,6 +819,20 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                                     </CardContent>
                                 </Card>
                             </div>
+                        </TabsContent>
+
+                        <TabsContent value="mibox" className="bg-white rounded-lg pt-4">
+                            <MiBox user={user} />
+                        </TabsContent>
+
+                        <TabsContent value="companies" className="h-[75vh] min-h-[600px] border rounded-lg overflow-hidden bg-white mt-6 relative">
+                            <AlliesMap
+                                userInterests={formData.interests || []}
+                                userId={user.uid}
+                                onNavigateToSettings={() => {
+                                    document.querySelector<HTMLElement>('[value="interests"]')?.click();
+                                }}
+                            />
                         </TabsContent>
                     </Tabs>
                 );
