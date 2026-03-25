@@ -36,8 +36,9 @@ const websiteChatFlow = ai.defineFlow(
         outputSchema: WebsiteChatOutputSchema,
     },
     async (input: z.infer<typeof WebsiteChatInputSchema>) => {
-        // 0. ID DE SESIÓN
-        const effectiveSessionId = input.sessionId || input.userId || 'unknown-session';
+        try {
+            // 0. ID DE SESIÓN
+            const effectiveSessionId = input.sessionId || input.userId || 'unknown-session';
 
         // ---------------------------------------------------------
         // TRAMPA DETERMINISTA DE EMAIL (Para romper bucles)
@@ -130,16 +131,18 @@ ${DICICOIN_SCRIPT}
 4. Si el usuario busca Categorías o Empresas -> ¡USA LA HERRAMIENTA 'searchBusinessDirectory' INMEDIATAMENTE! No asumas que no existe solo porque no lo ves de entrada.
 5. [IDIOMA]: Mimetízate con el idioma del usuario. Si pregunta en español, empatía fluyendo en español puro.
 
-=== 🌍 PROTOCOLO DE IDIOMA E INTERNACIONALIZACIÓN ===
-- INPUT DEL USUARIO: "${input.question}"
-- Detecta el idioma y asegúrate de que toda tu salida respete ese idioma.
+=== 🌍 LANGUAGE & INTERNATIONALIZATION PROTOCOL (CRITICAL) ===
+- USER INPUT: "${input.question}"
+- **DETECT THE LANGUAGE** OF THE USER INPUT IMMEDIATELY.
+- YOU MUST RESPOND ENTIRELY IN THE SAME LANGUAGE AS THE USER INPUT. 
+- Example: If the user speaks English, you reply 100% in English. If German, 100% German.
 
 === 🔗 FORMATO DE ENLACES PARA EMPRESAS ===
 - Si encuentras y recomiendas una EMPRESA usando 'searchBusinessDirectory', enlaza su Ubicación así:
 - [Hamburgo](https://www.google.com/maps/search/?api=1&query=Hamburgo)
 `;
 
-        let currentPrompt = `${systemPrompt}\n\nUSER INPUT: "${input.question}"\n\n[SYSTEM]: REPLY IN THE LANGUAGE OF THE USER INPUT ONLY. BE WARM, EMPATHETIC, AND CONCISE (Max 120 words). DO NOT OUTPUT ANY INTERNAL TAGS (NEVER OUTPUT <SCRIPT_DICICOIN>). TRANSLATE DATA IF NEEDED.`;
+        let currentPrompt = `${systemPrompt}\n\nUSER INPUT: "${input.question}"\n\n[SYSTEM RULE (MANDATORY)]: RESPOND EXCLUSIVELY IN THE LANGUAGE OF THE USER INPUT. DO NOT REPLY IN SPANISH IF THE USER SPEAKS ENGLISH OR GERMAN. BE WARM, EMPATHETIC, AND CONCISE (Max 120 words). NEVER OUTPUT INTERNAL TAGS LIKE <SCRIPT_DICICOIN>.`;
 
         // 3. Generación Inicial
         let response = await ai.generate({
