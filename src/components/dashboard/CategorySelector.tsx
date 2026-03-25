@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Check, ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Card } from '@/components/ui/card';
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
 import { useTranslation } from 'react-i18next';
 import { getFirestore, collection, getDocs, query } from 'firebase/firestore';
 import { app } from '@/lib/firebase';
@@ -146,56 +147,63 @@ export function CategorySelector({ selectedCategories, onChange }: CategorySelec
             </div>
 
             {selectedMainCategories.length > 0 && (
-                <div className="rounded-xl border bg-card p-5 mt-6 shadow-sm border-primary/20 bg-primary/5">
-                    <h4 className="font-semibold text-lg flex items-center mb-2 text-primary">
-                        <ChevronDown className="h-5 w-5 mr-2" />
-                        Subcategorías (Opcional)
-                    </h4>
-                    <p className="text-sm text-foreground/80 mb-6">
-                        {t('settings.interests.subcategories_desc', 'Afina tus intereses seleccionando subcategorías específicas para recibir ofertas más precisas.')}
-                    </p>
-                    
-                    <div className="space-y-6">
-                        {selectedMainCategories.map(mainCat => {
-                            if (!mainCat.subcategories || mainCat.subcategories.length === 0) return null;
-                            const mainName = mainCat.name?.[currentLang] || mainCat.name?.de || mainCat.id;
-                            
-                            // Sort subcategories alphabetically
-                            const sortedSubs = [...mainCat.subcategories].sort((a, b) => {
-                                const sa = a.name?.[currentLang] || a.name?.de || a.id;
-                                const sb = b.name?.[currentLang] || b.name?.de || b.id;
-                                return sa.localeCompare(sb);
-                            });
+                <div className="rounded-xl border bg-card mt-6 shadow-sm border-primary/20 bg-primary/5">
+                    <Accordion type="single" collapsible className="w-full">
+                        <AccordionItem value="subcategories" className="border-none">
+                            <AccordionTrigger className="hover:no-underline px-5 py-4 rounded-t-xl hover:bg-primary/10 transition-colors relative group">
+                                <span className="flex items-center text-lg font-semibold tracking-tight text-primary text-left">
+                                    Subcategorías (Opcional)
+                                </span>
+                            </AccordionTrigger>
+                            <AccordionContent className="pt-2 px-5 pb-6">
+                                <p className="text-sm text-foreground/80 mb-6">
+                                    {t('settings.interests.subcategories_desc', 'Afina tus intereses seleccionando subcategorías específicas para recibir ofertas más precisas.')}
+                                </p>
+                                
+                                <div className="space-y-6">
+                                    {selectedMainCategories.map(mainCat => {
+                                        if (!mainCat.subcategories || mainCat.subcategories.length === 0) return null;
+                                        const mainName = mainCat.name?.[currentLang] || mainCat.name?.de || mainCat.id;
+                                        
+                                        // Sort subcategories alphabetically
+                                        const sortedSubs = [...mainCat.subcategories].sort((a, b) => {
+                                            const sa = a.name?.[currentLang] || a.name?.de || a.id;
+                                            const sb = b.name?.[currentLang] || b.name?.de || b.id;
+                                            return sa.localeCompare(sb);
+                                        });
 
-                            return (
-                                <div key={mainCat.id} className="space-y-3 bg-background p-4 rounded-lg border">
-                                    <h5 className="text-sm font-bold text-foreground tracking-wider">{mainName}</h5>
-                                    <div className="flex flex-wrap gap-2">
-                                        {sortedSubs.map((sub: any) => {
-                                            const subName = sub.name?.[currentLang] || sub.name?.de || sub.id;
-                                            const isSubSelected = selectedCategories.includes(sub.id);
-                                            
-                                            return (
-                                                <Badge 
-                                                    key={sub.id}
-                                                    variant={isSubSelected ? "default" : "outline"}
-                                                    className={cn(
-                                                        "cursor-pointer px-3 py-1.5 transition-colors select-none font-normal",
-                                                        !isSubSelected && "hover:bg-secondary text-secondary-foreground",
-                                                        isSubSelected && "font-medium"
-                                                    )}
-                                                    onClick={() => toggleSubcategory(sub.id)}
-                                                >
-                                                    {isSubSelected && <Check className="h-3 w-3 mr-1.5" />}
-                                                    {subName}
-                                                </Badge>
-                                            );
-                                        })}
-                                    </div>
+                                        return (
+                                            <div key={mainCat.id} className="space-y-3 bg-background p-4 rounded-lg border">
+                                                <h5 className="text-sm font-bold text-foreground tracking-wider">{mainName}</h5>
+                                                <div className="flex flex-wrap gap-2">
+                                                    {sortedSubs.map((sub: any) => {
+                                                        const subName = sub.name?.[currentLang] || sub.name?.de || sub.id;
+                                                        const isSubSelected = selectedCategories.includes(sub.id);
+                                                        
+                                                        return (
+                                                            <Badge 
+                                                                key={sub.id}
+                                                                variant={isSubSelected ? "default" : "outline"}
+                                                                className={cn(
+                                                                    "cursor-pointer px-3 py-1.5 transition-colors select-none font-normal",
+                                                                    !isSubSelected && "hover:bg-secondary text-secondary-foreground",
+                                                                    isSubSelected && "font-medium"
+                                                                )}
+                                                                onClick={() => toggleSubcategory(sub.id)}
+                                                            >
+                                                                {isSubSelected && <Check className="h-3 w-3 mr-1.5" />}
+                                                                {subName}
+                                                            </Badge>
+                                                        );
+                                                    })}
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
                                 </div>
-                            );
-                        })}
-                    </div>
+                            </AccordionContent>
+                        </AccordionItem>
+                    </Accordion>
                 </div>
             )}
         </div>

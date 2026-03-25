@@ -134,23 +134,31 @@ export default function AdminAiChatPage() {
     // --- LOAD INITIAL DATA (Dashboard) ---
     useEffect(() => {
         // 1. Load Categories
-        const catUnsub = onSnapshot(query(collection(db, 'categories'), orderBy('name.de')), (snap) => {
+        const catUnsub = onSnapshot(query(collection(db, 'categories')), (snap) => {
             const cats = snap.docs.map(d => d.data() as Category);
+            // Sort in memory safely
+            cats.sort((a, b) => (a.name?.de || '').localeCompare(b.name?.de || ''));
             setCategories(cats);
-        });
+        }, e => console.error("Categories error:", e));
 
         // 2. Load Premium & Retailer Clients
         const clientQuery = query(collection(db, 'clients'), where('clientType', 'in', ['premium', 'retailer']));
         const clientUnsub = onSnapshot(clientQuery, (snap) => {
             const data = snap.docs.map(d => ({ id: d.id, ...d.data() } as ClientData));
             setClients(data);
-        });
+        }, e => console.error("Clients error:", e));
 
         // 3. Load Global Knowledge (No clientId)
-        const snippetUnsub = onSnapshot(query(collection(db, 'ai_knowledge_snippets'), orderBy('createdAt', 'desc')), (snap) => {
+        const snippetUnsub = onSnapshot(query(collection(db, 'ai_knowledge_snippets')), (snap) => {
             const all = snap.docs.map(d => ({ id: d.id, ...d.data() } as KnowledgeSnippet));
+            // Sort in memory safely
+            all.sort((a: any, b: any) => {
+                const timeA = a.createdAt?.toDate ? a.createdAt.toDate().getTime() : (a.createdAt || 0);
+                const timeB = b.createdAt?.toDate ? b.createdAt.toDate().getTime() : (b.createdAt || 0);
+                return timeB - timeA;
+            });
             setGlobalSnippets(all.filter(s => !s.clientId)); // Only global
-        });
+        }, e => console.error("Snippets error:", e));
 
         return () => {
             catUnsub();
@@ -161,11 +169,19 @@ export default function AdminAiChatPage() {
 
     // --- LOAD CHAT HISTORY ---
     useEffect(() => {
-        // Load last 100 sessions for global search and client filtering
-        const q = query(collection(db, 'chat_sessions'), orderBy('lastUpdated', 'desc'), limit(100)); // limit 100
+        // Load sessions and sort in memory to avoid Firestore ca9 assertion errors with mixed timestamp types
+        const q = query(collection(db, 'chat_sessions'), limit(100)); 
         const unsub = onSnapshot(q, (snap) => {
             const data = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            // Sort descending by lastUpdated in memory
+            data.sort((a: any, b: any) => {
+                const timeA = a.lastUpdated?.toDate ? a.lastUpdated.toDate().getTime() : (a.lastUpdated || 0);
+                const timeB = b.lastUpdated?.toDate ? b.lastUpdated.toDate().getTime() : (b.lastUpdated || 0);
+                return timeB - timeA;
+            });
             setChatHistory(data);
+        }, (error) => {
+            console.error("Chat sessions snapshot error:", error);
         });
         return () => unsub();
     }, []);
@@ -616,8 +632,17 @@ function GlobalFolderView({ onBack, snippets, onAdd, onDelete, newSnippet, setNe
     const [emailLogs, setEmailLogs] = useState<any[]>([]);
 
     useEffect(() => {
-        const unsub = onSnapshot(query(collection(db, 'email_logs'), orderBy('sentAt', 'desc')), (snap) => {
-            setEmailLogs(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+        // Get email logs without orderBy to prevent ca9 error, sort in memory
+        const unsub = onSnapshot(query(collection(db, 'email_logs'), limit(100)), (snap) => {
+            const data = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            data.sort((a: any, b: any) => {
+                const timeA = a.sentAt?.toDate ? a.sentAt.toDate().getTime() : (a.sentAt || 0);
+                const timeB = b.sentAt?.toDate ? b.sentAt.toDate().getTime() : (b.sentAt || 0);
+                return timeB - timeA;
+            });
+            setEmailLogs(data);
+        }, (error) => {
+            console.error("Email logs snapshot error:", error);
         });
         return () => unsub();
     }, []);

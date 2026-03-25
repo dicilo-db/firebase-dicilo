@@ -91,10 +91,56 @@ export async function respondToFriendRequestAction(requestId: string, status: 'a
     if (!requestId) return { success: false, error: 'ID de solicitud faltante.' };
 
     try {
-        await db.collection('friend_requests').doc(requestId).update({
+        const batch = db.batch();
+        const requestRef = db.collection('friend_requests').doc(requestId);
+        
+        batch.update(requestRef, {
             status,
             updatedAt: admin.firestore.FieldValue.serverTimestamp()
         });
+
+        if (status === 'accepted') {
+            const reqSnap = await requestRef.get();
+            if (reqSnap.exists) {
+                const reqData = reqSnap.data();
+                if (reqData && reqData.fromUserId && reqData.toUserId) {
+                    const fromUserId = reqData.fromUserId;
+                    const toUserId = reqData.toUserId; // Whoever is receiving and accepting
+
+                    // Get acceptor info
+                    let toUserName = 'Un vecino';
+                    let toUserAvatar = '';
+
+                    try {
+                        const profileSnap = await db.collection('private_profiles').doc(toUserId).get();
+                        if (profileSnap.exists) {
+                            const profile = profileSnap.data();
+                            if (profile?.firstName) {
+                                toUserName = `${profile.firstName} ${profile.lastName || ''}`.trim();
+                            }
+                            if (profile?.photoURL || profile?.imgUrl) {
+                                toUserAvatar = profile.photoURL || profile.imgUrl || '';
+                            }
+                        }
+                    } catch (e) {
+                        console.warn("Profile fetch failed in respondToFriendRequestAction", e);
+                    }
+
+                    const notifRef = db.collection('notifications').doc();
+                    batch.set(notifRef, {
+                        toUserId: fromUserId, // Send to the original requester
+                        fromUserId: toUserId,
+                        fromUserName: toUserName,
+                        fromUserAvatar: toUserAvatar,
+                        type: 'friend_request_accepted',
+                        read: false,
+                        createdAt: admin.firestore.FieldValue.serverTimestamp()
+                    });
+                }
+            }
+        }
+
+        await batch.commit();
         return { success: true };
     } catch (error: any) {
         console.error('Error in respondToFriendRequestAction:', error);

@@ -60,7 +60,7 @@ export function PostCard({ post, currentUserId, readOnly = false }: PostCardProp
     const [selectedMediaIndex, setSelectedMediaIndex] = useState(0);
     const [showComments, setShowComments] = useState(false);
     const [currentTranslationLang, setCurrentTranslationLang] = useState<string | null>(null);
-    const { friends, sendFriendRequest } = useFriends();
+    const { friends, sendFriendRequest, sentRequests } = useFriends();
     const [requestSent, setRequestSent] = useState(false);
 
     
@@ -75,6 +75,7 @@ export function PostCard({ post, currentUserId, readOnly = false }: PostCardProp
 
     const isMe = currentUserId === post.userId;
     const isFriend = friends.some(f => f.uid === post.userId);
+    const hasSentPending = (sentRequests || []).some(req => req.toUserId === post.userId);
     const date = post.createdAt?.toDate ? post.createdAt.toDate() : new Date(post.createdAt);
     const isWithin12Hours = (Date.now() - date.getTime()) <= 12 * 60 * 60 * 1000;
 
@@ -83,7 +84,7 @@ export function PostCard({ post, currentUserId, readOnly = false }: PostCardProp
             toast({ title: t('common:login.required', 'Inicio de sesión requerido'), description: t('common:community.login_to_interact', 'Regístrate para conectar con vecinos.') });
             return;
         }
-        if (requestSent) return;
+        if (requestSent || hasSentPending) return;
 
         // Optimistic UI
         setRequestSent(true);
@@ -273,11 +274,11 @@ export function PostCard({ post, currentUserId, readOnly = false }: PostCardProp
                         {!isMe && !isFriend && (
                             <button
                                 onClick={handleConnect}
-                                disabled={requestSent}
+                                disabled={requestSent || hasSentPending}
                                 className="text-purple-600 hover:bg-purple-50 p-1 rounded-full transition-colors"
-                                title={requestSent ? "Solicitud enviada" : "Conectar / Agregar a mi Círculo"}
+                                title={(requestSent || hasSentPending) ? "Solicitud enviada" : "Conectar / Agregar a mi Círculo"}
                             >
-                                {requestSent ? <Check size={16} className="text-green-600" /> : <UserPlus size={16} />}
+                                {(requestSent || hasSentPending) ? <Check size={16} className="text-green-600" /> : <UserPlus size={16} />}
                             </button>
                         )}
                     </div>

@@ -179,7 +179,40 @@ export function SocialPanel({ neighborhood = 'Hamburg' }: { neighborhood?: strin
                                 </div>
                             )}
 
-                            {/* Vecinos Sugeridos / Amigos */}
+                            {/* Mis Amigos (Accepted Friends) */}
+                            {friends.length > 0 && (
+                                <div className="mb-6">
+                                    <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
+                                        {t('social.headers.my_friends', 'Mis Amigos')}
+                                    </h3>
+                                    <div className="space-y-3">
+                                        {friends.map((friend) => (
+                                            <div key={friend.uid} className="bg-white p-3 rounded-md shadow-sm border flex items-center justify-between group">
+                                                <div className="flex items-center gap-3">
+                                                    <Avatar src={friend.photoURL || `https://ui-avatars.com/api/?name=${friend.displayName}`} name={friend.displayName} />
+                                                    <div className="overflow-hidden">
+                                                        <p className="text-sm font-bold text-gray-800 truncate">{friend.displayName}</p>
+                                                        <p className="text-xs text-muted-foreground truncate max-w-[100px]">
+                                                            {friend.neighborhood || t('social.list.unknown_neighborhood', 'Vecindario')}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <div className="flex gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+                                                    <button
+                                                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-full transition-colors"
+                                                        title={t('social.actions.start_chat', 'Iniciar Chat')}
+                                                        onClick={() => handleStartChat(friend.uid)}
+                                                    >
+                                                        <MessageCircle size={18} />
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Vecinos Sugeridos */}
                             <div>
                                 <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
                                     {t('social.headers.suggested_neighbors')}

@@ -1,19 +1,18 @@
 import { useState, useEffect } from 'react';
 import { User, FriendRequest } from '@/types/social';
 import { useAuth } from '@/context/AuthContext';
-import { getFirestore, collection, query, where, getDocs, addDoc, updateDoc, doc, Timestamp, limit } from 'firebase/firestore';
+import { getFirestore, collection, query, where, getDocs, limit } from 'firebase/firestore';
 import { app } from '@/lib/firebase';
 
 export function useFriends() {
     const { user: currentUser } = useAuth();
     const [friends, setFriends] = useState<User[]>([]);
     const [pendingRequests, setPendingRequests] = useState<FriendRequest[]>([]);
+    const [sentRequests, setSentRequests] = useState<FriendRequest[]>([]);
     const [suggestedNeighbors, setSuggestedNeighbors] = useState<User[]>([]);
     const [loading, setLoading] = useState(false);
 
     const db = getFirestore(app);
-
-    // 1. Fetch Requests, Friends & Neighbors
 
     useEffect(() => {
         if (!currentUser?.uid) return;
@@ -21,6 +20,18 @@ export function useFriends() {
         const fetchData = async () => {
             setLoading(true);
             try {
+                // Fetch Current User Profile to know their location
+                const qProfile = query(
+                    collection(db, 'private_profiles'),
+                    where('uid', '==', currentUser.uid),
+                    limit(1)
+                );
+                const profileSnap = await getDocs(qProfile);
+                let currentProfile: any = null;
+                if (!profileSnap.empty) {
+                    currentProfile = profileSnap.docs[0].data();
+                }
+
                 // A. Fetch Pending Requests
                 const qRequests = query(
                     collection(db, 'friend_requests'),
@@ -34,11 +45,10 @@ export function useFriends() {
                 
                 reqSnapshot.forEach(doc => {
                     const data = doc.data();
-                    reqs.push({ id: doc.id, ...data } as FriendRequest);
+                    reqs.push({ ...data, id: doc.id } as FriendRequest);
                     fromUserIds.add(data.fromUserId);
                 });
 
-                // Fetch profiles for all senders to get names and emails
                 if (fromUserIds.size > 0) {
                     const ids = Array.from(fromUserIds).slice(0, 30);
                     const qProfiles = query(
@@ -51,7 +61,6 @@ export function useFriends() {
                         profileMap.set(doc.data().uid, doc.data());
                     });
 
-                    // Enrich requests
                     reqs.forEach(req => {
                         const profile = profileMap.get(req.fromUserId);
                         if (profile) {
@@ -60,11 +69,25 @@ export function useFriends() {
                         }
                     });
                 }
-
                 setPendingRequests(reqs);
 
+                // A2. Fetch Sent Requests
+                const qSent = query(
+                    collection(db, 'friend_requests'),
+                    where('fromUserId', '==', currentUser.uid),
+                    where('status', '==', 'pending')
+                );
+                const sentSnap = await getDocs(qSent);
+                const sentReqs: FriendRequest[] = [];
+                const sentUserIds = new Set<string>();
+                sentSnap.forEach(doc => {
+                    const data = doc.data() as FriendRequest;
+                    sentReqs.push({ ...data, id: doc.id });
+                    sentUserIds.add(data.toUserId);
+                });
+                setSentRequests(sentReqs);
+
                 // B. Fetch Friends (Accepted Requests)
-                // We need two queries because we could be the sender OR the receiver
                 const qFriendsReceiver = query(
                     collection(db, 'friend_requests'),
                     where('toUserId', '==', currentUser.uid),
@@ -85,17 +108,8 @@ export function useFriends() {
                 receiverSnap.forEach(doc => friendIds.add(doc.data().fromUserId));
                 senderSnap.forEach(doc => friendIds.add(doc.data().toUserId));
 
-                // Fetch Friend Profiles
                 if (friendIds.size > 0) {
-                    // Note: Firestore 'in' limit is 30. For production, batching is needed.
-                    // Here we fetch friends using individual gets or a filtered list for MVP simplicity 
-                    // OR just reuse the 'private_profiles' fetch below to filter.
-                    // Let's assume we fetch all visible neighbors and filter for friends for now to save reads, 
-                    // or fetch specific docs if we had IDs. 
-                    // For now, let's just create dummy User objects if we can't fetch profiles efficiently without ID list,
-                    // BUT actually, we can query profiles where 'uid' in [...friendIds].
-
-                    const ids = Array.from(friendIds).slice(0, 30); // MVP Limit
+                    const ids = Array.from(friendIds).slice(0, 30);
                     if (ids.length > 0) {
                         const qProfiles = query(
                             collection(db, 'private_profiles'),
@@ -116,26 +130,64 @@ export function useFriends() {
                     }
                 }
 
-                // C. Fetch Suggested Neighbors
+                // C. Fetch Suggested Neighbors intelligently
                 const usersRef = collection(db, 'private_profiles');
-                const qNeighbors = query(usersRef, limit(20)); // Limit for safety
+                let qNeighbors;
+
+                // Priority: Same neighborhood -> Same city -> Global (Fallback)
+                if (currentProfile?.neighborhood) {
+                    qNeighbors = query(usersRef, where('neighborhood', '==', currentProfile.neighborhood), limit(50));
+                } else if (currentProfile?.city) {
+                    qNeighbors = query(usersRef, where('city', '==', currentProfile.city), limit(50));
+                } else if (currentProfile?.country) {
+                    qNeighbors = query(usersRef, where('country', '==', currentProfile.country), limit(50));
+                } else {
+                    qNeighbors = query(usersRef, limit(50));
+                }
 
                 const userSnapshot = await getDocs(qNeighbors);
-                const neighbors: User[] = [];
+                let neighbors: any[] = [];
                 userSnapshot.forEach(doc => {
                     const data = doc.data();
-                    // Exclude self and ALREADY friends
-                    if (doc.id !== currentUser.uid && !friendIds.has(doc.id) && (data.uid || doc.id)) {
-                        neighbors.push({
-                            uid: data.uid || doc.id,
-                            displayName: data.firstName ? `${data.firstName} ${data.lastName || ''}`.trim() : 'Vecino',
-                            photoURL: data.photoURL,
-                            neighborhood: data.neighborhood
-                        });
+                    // Exclude self, existing friends, and people we already invited or invited us
+                    if (
+                        doc.id !== currentUser.uid && 
+                        !friendIds.has(doc.id) && 
+                        !sentUserIds.has(doc.id) && 
+                        !fromUserIds.has(doc.id) && 
+                        (data.uid || doc.id)
+                    ) {
+                        // Exclude empty test profiles to keep it clean
+                        if (data.firstName || data.lastName) {
+                            neighbors.push({
+                                uid: data.uid || doc.id,
+                                displayName: data.firstName ? `${data.firstName} ${data.lastName || ''}`.trim() : 'Vecino',
+                                photoURL: data.photoURL,
+                                neighborhood: data.neighborhood || 'Barrio desconocido',
+                                interests: data.interests || [],
+                                city: data.city || ''
+                            });
+                        }
                     }
                 });
 
-                setSuggestedNeighbors(neighbors);
+                // Score neighbors based on interests and location proximity
+                const myInterests = currentProfile?.interests || [];
+                neighbors.forEach(n => {
+                    let score = 0;
+                    if (n.neighborhood === currentProfile?.neighborhood) score += 3;
+                    if (n.city === currentProfile?.city) score += 2;
+                    const matches = (n.interests || []).filter((i: string) => myInterests.includes(i)).length;
+                    score += matches;
+                    n._score = score;
+                });
+
+                // Sort by highest score first
+                neighbors.sort((a, b) => b._score - a._score);
+                
+                // Take top 30 and shuffle them randomly to provide fresh 20 suggestions
+                const topCandidates = neighbors.slice(0, 30).sort(() => Math.random() - 0.5);
+                setSuggestedNeighbors(topCandidates.slice(0, 20));
 
             } catch (error) {
                 console.error("Error fetching social data:", error);
@@ -168,7 +220,6 @@ export function useFriends() {
             const result = await respondToFriendRequestAction(requestId, status);
             
             if (result.success) {
-                // Remove from local state immediately
                 setPendingRequests(prev => prev.filter(req => req.id !== requestId));
             } else {
                 console.error('Error responding to friend request:', result.error);
@@ -181,6 +232,7 @@ export function useFriends() {
     return {
         friends,
         pendingRequests,
+        sentRequests,
         suggestedNeighbors,
         sendFriendRequest,
         respondToFriendRequest,

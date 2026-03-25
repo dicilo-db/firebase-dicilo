@@ -193,9 +193,9 @@ export function MiBox({ user }: MiBoxProps) {
             ) : (
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                     {coupons.map((coupon) => (
-                        <div key={coupon.id} className="flex flex-col gap-3 group relative perspective-1000">
+                        <div key={coupon.id} className="flex flex-col gap-3 group relative perspective-1000 h-full justify-between">
                             {/* Card Wrapper for html2canvas */}
-                            <Card id={`box-coupon-card-${coupon.id}`} className="overflow-hidden flex flex-col h-full border-2 hover:border-primary/50 transition-all bg-white relative shadow-md">
+                            <Card id={`box-coupon-card-${coupon.id}`} className="flex-1 overflow-hidden flex flex-col border-2 hover:border-primary/50 transition-all bg-white relative shadow-md">
                                 {/* Banner */}
                                 <div className="h-36 w-full bg-slate-100 relative overflow-hidden group-hover:scale-105 transition-transform duration-500">
                                     {coupon.backgroundImage ? (

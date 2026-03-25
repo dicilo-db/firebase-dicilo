@@ -275,7 +275,7 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                                 <CardContent>
                                     <div className="text-2xl font-bold">
                                         {formData.interests
-                                            ? [...new Set(formData.interests)].filter((i: any) => CATEGORIES.includes(i)).length
+                                            ? [...new Set(formData.interests)].length
                                             : 0}
                                     </div>
                                     <p className="text-xs text-muted-foreground">

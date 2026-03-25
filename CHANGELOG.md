@@ -1,5 +1,15 @@
 # Bitácora de Cambios - Dicilo.net
 
+### **200. FEAT & FIX: SMART NEIGHBORS & FEED FRIEND REQUESTS - CÓDIGO: FEAT-COMMUNITY-V1**
+- **Fecha y Hora:** 26 de Marzo de 2026, 01:35 (CET)
+- **Módulos Afectados:** `src/hooks/useFriends.ts`, `src/components/community/PostCard.tsx`, `src/components/dashboard/PrivateDashboard.tsx`, `src/app/actions/social.ts`
+- **Descripción del Cambio:**
+  - **Dashboard:** Se arregló el contador de intereses para que refleje el total real de selecciones y renderice un valor exacto en lugar de 0.
+  - **Círculo Privado:** Se subieron los índices compuestos de Firestore (`status` + `fromUserId`/`toUserId`) requeridos para listar amigos correctamente y se incluyó la lógica para generar notificaciones tipo `friend_request_accepted`.
+  - **Vecinos Sugeridos:** Se refactorizó la lógica implementando un sistema de puntuación (+3 mismo barrio, +2 misma ciudad, +1 interés común), filtrando eficientemente desde el backend y barajando el top 30.
+  - **Muro Social:** Se extrajo el estado de `sentRequests` de `useFriends.ts` hacia `PostCard.tsx` para permitir que el botón `UserPlus` se bloquee y muestre un `Check` verde permanente tras enviar la solicitud, sobreviviendo al refresco de la app.
+- **Resultado:** Interacción comunitaria orgánica, notificaciones funcionales y experiencia de usuario fluida sin fallas de retención de estado.
+
 ### **198. UI: PREPAID CARD DASHBOARD - CÓDIGO: FEAT-DASHBOARD-PREPAID-V1**
 - **Fecha y Hora:** 08 de Enero de 2026, 01:10 (CET)
 - **Módulos Afectados:** `src/components/dashboard/PrivateDashboard.tsx`, `public/assets/images/dicilo-prepaid-card.png`.
