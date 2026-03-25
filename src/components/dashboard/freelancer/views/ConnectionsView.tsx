@@ -19,6 +19,7 @@ const SocialInput = ({
     label,
     value,
     onChange,
+    onBlur,
     onSave,
     isSaving,
     isValid
