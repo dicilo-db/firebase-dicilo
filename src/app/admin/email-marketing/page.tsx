@@ -26,7 +26,7 @@ import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { 
     Loader2, Search, RefreshCw, Pen, UserPlus, 
     CheckCircle, Mail, LayoutDashboard, ExternalLink,
-    Clock, Trash2, Send
+    Clock, Trash2, Send, Key
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
@@ -107,10 +107,23 @@ export default function EmailMarketingPage() {
         }
     };
 
+    const handleGenerateKey = () => {
+        if (!editingLead) return;
+        const array = new Uint8Array(4);
+        window.crypto.getRandomValues(array);
+        const key = Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('').toUpperCase();
+        setEditingLead({ ...editingLead, securityKey: key });
+        toast({ title: 'Clave generada', description: 'Se ha generado una clave única para este prospecto.' });
+    };
+
     const handleSendEmail = async () => {
         if (!editingLead || !selectedTemplate) return;
         setIsSending(true);
         try {
+            // IMPORTANT: Save the lead data to Firestore first so the backend email action
+            // can read the newly generated securityKey and updated fields.
+            await updateMarketingLead(editingLead.id, editingLead);
+
             const res = await sendMarketingEmail(editingLead.id, selectedTemplate);
             if (res.success) {
                 toast({ title: 'Email enviado', description: 'La campaña se ha enviado al lead.' });
@@ -273,7 +286,11 @@ export default function EmailMarketingPage() {
                                                             size="sm" 
                                                             className="h-8 text-blue-600"
                                                             onClick={() => {
-                                                                setEditingLead(lead);
+                                                                let leadToEdit = { ...lead };
+                                                                if (!leadToEdit.companyName || leadToEdit.companyName.trim() === '') {
+                                                                    leadToEdit.companyName = leadToEdit.friendName;
+                                                                }
+                                                                setEditingLead(leadToEdit);
                                                                 setIsEditOpen(true);
                                                             }}
                                                         >
@@ -354,6 +371,34 @@ export default function EmailMarketingPage() {
                                     onChange={e => setEditingLead({...editingLead, notes: e.target.value})}
                                     placeholder="Agrega notas internas sobre este prospecto..."
                                 />
+                            </div>
+                            
+                            {/* Security Key & Validation */}
+                            <div className="bg-blue-50/50 dark:bg-blue-900/10 p-5 rounded-lg border border-blue-100 flex flex-col md:flex-row gap-6 items-center mt-2">
+                                <div className="flex-1 space-y-2">
+                                    <Label className="flex items-center gap-2"><Key className="h-4 w-4" /> Clave Única de Registro</Label>
+                                    <div className="flex gap-2">
+                                        <Input 
+                                            value={editingLead.securityKey || ''} 
+                                            onChange={(e) => setEditingLead({ ...editingLead, securityKey: e.target.value })}
+                                            placeholder="SIN CLAVE..."
+                                            className="font-mono bg-white uppercase"
+                                        />
+                                        {!editingLead.securityKey && (
+                                            <Button variant="outline" onClick={handleGenerateKey}>Generar</Button>
+                                        )}
+                                    </div>
+                                    <p className="text-xs text-muted-foreground">Esta clave servirá para verificar la autenticidad al momento de que la empresa se registre.</p>
+                                </div>
+
+                                <div className="flex-1 space-y-2 text-center md:text-right">
+                                    <Label className="block mb-2">Estado de Validación</Label>
+                                    {editingLead.securityKey ? (
+                                        <Badge className="bg-green-500 text-white hover:bg-green-600 px-4 py-1.5 text-sm uppercase">✅ CLAVE ASIGNADA</Badge>
+                                    ) : (
+                                        <Badge variant="outline" className="text-yellow-600 border-yellow-300 bg-yellow-50 px-4 py-1.5 text-sm uppercase">⚠️ PENDIENTE DE REVISIÓN</Badge>
+                                    )}
+                                </div>
                             </div>
                             
                             <div className="flex flex-wrap gap-2 pt-4 border-t">

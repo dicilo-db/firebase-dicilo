@@ -22,6 +22,8 @@ export interface MarketingLead {
     referrerId?: string;
     referrerName?: string;
     notes?: string;
+    securityKey?: string;
+    validationStatus?: string;
 }
 
 export interface AdminMarketingSend {
@@ -60,7 +62,9 @@ export async function getAllMarketingLeads() {
                 createdAt: data.createdAt?.toDate ? data.createdAt.toDate().toISOString() : new Date().toISOString(),
                 referrerId: data.referrerId || '',
                 referrerName: data.referrerName || '',
-                notes: data.notes || ''
+                notes: data.notes || '',
+                securityKey: data.securityKey || '',
+                validationStatus: data.validationStatus || ''
             };
         });
 
@@ -140,11 +144,16 @@ export async function sendMarketingEmail(leadId: string, templateId: string) {
             '{{nombre}}': data.friendName || 'Usuario',
             '{{empresa}}': data.companyName || '',
             '{{tu_nombre}}': data.referrerName || 'Equipo Dicilo',
-            '{{referrer_name}}': data.referrerName || 'Equipo Dicilo'
+            '{{tu nombre}}': data.referrerName || 'Equipo Dicilo',
+            '{{referrer_name}}': data.referrerName || 'Equipo Dicilo',
+            '{{clave_aleatoria}}': data.securityKey || '',
+            '{{clave aleatoria}}': data.securityKey || '',
+            '{{ref_code}}': data.referrerId || ''
         };
 
         for (const [key, val] of Object.entries(vars)) {
-            const regex = new RegExp(key, 'gi');
+            const escapedKey = key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const regex = new RegExp(escapedKey, 'gi');
             subject = subject.replace(regex, val);
             body = body.replace(regex, val);
         }
