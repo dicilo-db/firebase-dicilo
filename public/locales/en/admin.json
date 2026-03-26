@@ -318,8 +318,12 @@
         "description": "Newsletters and mass promotional emails."
       },
       "referrals": {
-        "title": "Refer a Friend",
+        "title": "Refer Friends",
         "description": "Invitation emails and referral system."
+      },
+      "newsletters": {
+        "title": "User Notifications",
+        "description": "Newsletters and event alerts for private members."
       }
     }
   },

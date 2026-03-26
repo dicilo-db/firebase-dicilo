@@ -348,6 +348,10 @@
       "referrals": {
         "title": "Recomienda a amigos",
         "description": "Correos de invitación y sistema de referidos."
+      },
+      "newsletters": {
+        "title": "Notificaciones a Usuarios",
+        "description": "Newsletters y avisos de eventos para usuarios privados."
       }
     }
   },

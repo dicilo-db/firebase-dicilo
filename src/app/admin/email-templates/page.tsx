@@ -11,8 +11,9 @@ import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { useTranslation } from 'react-i18next';
+import { BellRing } from 'lucide-react';
 
-type CategoryType = 'network_campaigns' | 'email_marketing' | 'referrals';
+type CategoryType = 'network_campaigns' | 'email_marketing' | 'referrals' | 'newsletters';
 
 const CATEGORIES: { id: CategoryType; icon: any; color: string }[] = [
     {
@@ -29,6 +30,11 @@ const CATEGORIES: { id: CategoryType; icon: any; color: string }[] = [
         id: 'referrals',
         icon: Users,
         color: 'text-green-500 bg-green-50 dark:bg-green-900/10 border-green-200'
+    },
+    {
+        id: 'newsletters',
+        icon: BellRing,
+        color: 'text-orange-500 bg-orange-50 dark:bg-orange-900/10 border-orange-200'
     }
 ];
 
@@ -81,8 +87,8 @@ export default function EmailTemplatesPage() {
 
     const categoriesData = CATEGORIES.map(cat => ({
         ...cat,
-        title: t(`emailTemplates.categories.${cat.id}.title`),
-        description: t(`emailTemplates.categories.${cat.id}.description`)
+        title: cat.id === 'newsletters' ? t(`emailTemplates.categories.${cat.id}.title`, 'Notificaciones a Usuarios') : t(`emailTemplates.categories.${cat.id}.title`),
+        description: cat.id === 'newsletters' ? t(`emailTemplates.categories.${cat.id}.description`, 'Newsletters y avisos de eventos para usuarios privados.') : t(`emailTemplates.categories.${cat.id}.description`)
     }));
 
     return (

@@ -328,6 +328,10 @@
       "referrals": {
         "title": "Freunde werben",
         "description": "Einladungs-E-Mails und Empfehlungssystem."
+      },
+      "newsletters": {
+        "title": "Benutzerbenachrichtigungen",
+        "description": "Newsletter und Event-Hinweise für private Mitglieder."
       }
     }
   },

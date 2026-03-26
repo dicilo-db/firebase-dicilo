@@ -31,6 +31,8 @@ import { FreelancerLanding } from './freelancer/FreelancerLanding';
 import FreelancerPromoComposerPage from '@/app/dashboard/freelancer/page';
 import { CommunityView } from './CommunityView';
 import { FaqsView } from './FaqsView';
+import { GeneralInfoSection } from './GeneralInfoSection';
+import { NotificationBell } from './NotificationBell';
 import ScannerPro from '../admin/ScannerPro';
 import { StatisticsView } from './freelancer/views/StatisticsView';
 import { AlliesMap } from './AlliesMap';
@@ -237,13 +239,16 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                 return (
                     <div className="space-y-6 animate-in fade-in duration-500">
                         {/* Header */}
-                        <div>
-                            <h1 className="text-3xl font-bold tracking-tight">
-                                {t('dashboard.welcome', 'Welcome')}, {formData.firstName}!
-                            </h1>
-                            <p className="text-muted-foreground">
-                                {t('dashboard.welcomeDesc', 'Manage your personal profile and preferences.')}
-                            </p>
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <h1 className="text-3xl font-bold tracking-tight flex items-center gap-3">
+                                    {t('dashboard.welcome', 'Welcome')}, {formData.firstName}!
+                                </h1>
+                                <p className="text-muted-foreground mt-1">
+                                    {t('dashboard.welcomeDesc', 'Manage your personal profile and preferences.')}
+                                </p>
+                            </div>
+                            <NotificationBell />
                         </div>
 
                         {/* Top Stats Row */}
@@ -387,8 +392,13 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                             </div>
                         </div>
 
+                        {/* General Info & Events Section */}
+                        <div id="general-info-section" className="animate-in fade-in slide-in-from-bottom-4 duration-700 delay-500 mt-6 scroll-m-6">
+                            <GeneralInfoSection />
+                        </div>
+
                         {/* Community Section - New Row */}
-                        <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
+                        <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 delay-600 mt-6">
                             <WhatsAppGroupSection />
                         </div>
                     </div>

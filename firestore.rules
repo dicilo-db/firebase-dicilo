@@ -141,6 +141,12 @@ service cloud.firestore {
       allow write: if isAdmin(); 
     }
 
+    // General Information (Admin Dashboard Calendar & Notes)
+    match /general_info/{infoId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
     // Community Wall
     match /community_posts/{postId} {
       allow read: if isAuthenticated();

@@ -704,6 +704,20 @@ const DashboardContent: React.FC = () => {
               </Card>
             </Link>
 
+            {/* Información General */}
+            <Link href="/admin/general-info" className="group">
+              <Card className="h-full bg-teal-50/50 dark:bg-teal-900/10 border-teal-200 transition-all hover:shadow-md hover:border-teal-500 cursor-pointer relative">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium text-teal-700 dark:text-teal-400">Información General</CardTitle>
+                  <FileText className="h-4 w-4 text-teal-500 group-hover:scale-110 transition-transform" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">Información General</div>
+                  <p className="text-xs text-muted-foreground mt-1">Noticias, Calendario y Enlaces Generales</p>
+                </CardContent>
+              </Card>
+            </Link>
+
             {/* Landing Pages / Builder */}
             <Link href="/admin/clients" className="group">
               <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 cursor-pointer relative">
