@@ -116,7 +116,7 @@ export function CommentSection({ postId, currentUserId, currentUserAvatar }: Com
                                         {comment.createdAt?.toDate ? formatDistanceToNow(comment.createdAt.toDate(), { locale: es, addSuffix: true }) : ''}
                                     </span>
                                 </div>
-                                <div className="text-slate-700 dark:text-slate-200 text-base leading-relaxed prose prose-slate dark:prose-invert max-w-none prose-p:my-0 prose-a:text-purple-600 prose-a:no-underline prose-a:font-bold hover:prose-a:underline">
+                                <div className="text-slate-700 dark:text-slate-200 text-base leading-relaxed prose prose-slate dark:prose-invert max-w-none prose-p:mt-0 prose-p:mb-2 prose-a:text-purple-600 prose-a:no-underline prose-a:font-bold hover:prose-a:underline">
                                     <ReactMarkdown 
                                         remarkPlugins={[remarkGfm]}
                                         components={{

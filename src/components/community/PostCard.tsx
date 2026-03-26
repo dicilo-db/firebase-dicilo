@@ -32,6 +32,7 @@ import { MediaLightbox } from './MediaLightbox';
 interface PostCardProps {
     post: CommunityPost;
     currentUserId: string;
+    readOnly?: boolean;
 }
 
 const LANGUAGES = [
@@ -67,8 +68,8 @@ export function PostCard({ post, currentUserId, readOnly = false }: PostCardProp
     // Edit & Delete State
     const [isEditing, setIsEditing] = useState(false);
     const [editContent, setEditContent] = useState(post.content);
-    const [editMedia, setEditMedia] = useState<{type: string, url: string}[]>(
-        post.media || (post.imageUrl ? [{ type: 'image', url: post.imageUrl }] : [])
+    const [editMedia, setEditMedia] = useState<{type: 'image'|'video', url: string}[]>(
+        (post.media as {type: 'image'|'video', url: string}[]) || (post.imageUrl ? [{ type: 'image', url: post.imageUrl }] : [])
     );
     const [isSavingEdit, setIsSavingEdit] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
@@ -172,8 +173,8 @@ export function PostCard({ post, currentUserId, readOnly = false }: PostCardProp
         if (result.success) {
             toast({ title: "Publicación actualizada" });
             post.content = editContent; // Optimistic local update
-            post.media = editMedia;
-            if (editMedia.length === 0) post.imageUrl = null;
+            post.media = editMedia as any;
+            if (editMedia.length === 0) post.imageUrl = undefined;
             else if (editMedia.length > 0 && editMedia[0].type === 'image') post.imageUrl = editMedia[0].url;
             setIsEditing(false);
         } else {
@@ -348,7 +349,7 @@ export function PostCard({ post, currentUserId, readOnly = false }: PostCardProp
                             <Button variant="outline" size="sm" onClick={() => {
                                 setIsEditing(false);
                                 setEditContent(post.content);
-                                setEditMedia(post.media || (post.imageUrl ? [{ type: 'image', url: post.imageUrl }] : []));
+                                setEditMedia((post.media as {type: 'image'|'video', url: string}[]) || (post.imageUrl ? [{ type: 'image', url: post.imageUrl }] : []));
                             }} disabled={isSavingEdit}>
                                 Cancelar
                             </Button>
@@ -359,7 +360,7 @@ export function PostCard({ post, currentUserId, readOnly = false }: PostCardProp
                         </div>
                     </div>
                 ) : (
-                    <div className="text-slate-800 dark:text-slate-200 text-base leading-relaxed prose prose-slate dark:prose-invert max-w-none prose-p:my-0 prose-a:text-blue-600 prose-a:no-underline prose-a:font-bold hover:prose-a:underline">
+                    <div className="text-slate-800 dark:text-slate-200 text-base leading-relaxed prose prose-slate dark:prose-invert max-w-none prose-p:mt-0 prose-p:mb-3 prose-a:text-blue-600 prose-a:no-underline prose-a:font-bold hover:prose-a:underline">
                         <ReactMarkdown 
                             remarkPlugins={[remarkGfm]}
                             components={{
@@ -375,7 +376,7 @@ export function PostCard({ post, currentUserId, readOnly = false }: PostCardProp
                         >
                             {(showTranslated ? (translatedContent || '') : (post.content || '')).replace(/\n/g, '  \n')}
                         </ReactMarkdown>
-                        {post.updatedAt && !showTranslated && <span className="text-[10px] text-muted-foreground mt-1 inline-block">(Editado)</span>}
+                        {(post as any).updatedAt && !showTranslated && <span className="text-[10px] text-muted-foreground mt-1 inline-block">(Editado)</span>}
                     </div>
                 )}
 

@@ -80,6 +80,9 @@ export async function broadcastGeneralInfoNewsletter(payload: BroadcastPayload) 
             body = body.replace(/{{hora inicio}}/gi, payload.time || '');
             body = body.replace(/{{hora fin}}/gi, payload.endTime || '');
 
+            // Preservar los saltos de línea (párrafos) para el cuerpo HTML del correo
+            body = body.replace(/\n/g, '<br />');
+
             return sendSmtpEmail({
                 to: user.email,
                 subject,
@@ -89,12 +92,18 @@ export async function broadcastGeneralInfoNewsletter(payload: BroadcastPayload) 
 
         const results = await Promise.allSettled(emailPromises);
         const sentCount = results.filter(r => r.status === 'fulfilled' && r.value?.success).length;
+        const failedCount = results.filter(r => r.status === 'fulfilled' && r.value && r.value.success === false).length;
+        const firstError = results.find(r => r.status === 'fulfilled' && r.value && r.value.success === false) as any;
 
-        console.log(`GeneralInfo Broadcast completed. Sent ${sentCount} out of ${users.length} users.`);
+        console.log(`GeneralInfo Broadcast completed. Sent ${sentCount} out of ${users.length} users. Failed: ${failedCount}`);
+
+        if (sentCount === 0 && failedCount > 0) {
+            return { success: false, error: firstError?.value?.error || 'Error desconocido de SMTP' };
+        }
 
         return { success: true, count: sentCount };
     } catch (error: any) {
         console.error('Failed to broadcast general info newsletter:', error);
-        return { success: false, error: error.message };
+        return { success: false, error: error.message || String(error) };
     }
 }

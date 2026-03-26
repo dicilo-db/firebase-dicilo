@@ -50,9 +50,9 @@ export async function getTemplate(id: string) {
         const doc = await db.collection('email_templates').doc(id).get();
         if (!doc.exists) return null;
         return { id: doc.id, ...doc.data() } as EmailTemplate;
-    } catch (error) {
+    } catch (error: any) {
         console.error('Error fetching template:', error);
-        throw new Error('Failed to fetch template');
+        throw new Error('Failed to fetch template: ' + (error.message || String(error)));
     }
 }
 
