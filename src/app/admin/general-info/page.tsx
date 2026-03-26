@@ -122,19 +122,29 @@ export default function GeneralInfoPage() {
                     ...dataToSave,
                     createdAt: serverTimestamp(),
                 });
-                toast({ title: 'Creado', description: 'Nuevo registro añadido. Disparando notificaciones en segundo plano...' });
+                toast({ title: 'Creado', description: 'Nuevo registro añadido. Disparando notificaciones...' });
 
                 // Dispatch if it was saved as active 
                 if (dataToSave.active) {
-                    broadcastGeneralInfoNewsletter({
-                        type: dataToSave.type as 'note' | 'event',
-                        title: dataToSave.title,
-                        description: dataToSave.description,
-                        url: dataToSave.url,
-                        date: dataToSave.date || undefined,
-                        time: dataToSave.time || undefined,
-                        endTime: dataToSave.endTime || undefined
-                    }).catch(console.error);
+                    try {
+                        const result = await broadcastGeneralInfoNewsletter({
+                            type: dataToSave.type as 'note' | 'event',
+                            title: dataToSave.title,
+                            description: dataToSave.description,
+                            url: dataToSave.url,
+                            date: dataToSave.date || undefined,
+                            time: dataToSave.time || undefined,
+                            endTime: dataToSave.endTime || undefined
+                        });
+                        if (!result.success) {
+                            toast({ title: 'Aviso Notificaciones', description: 'Guardado, pero falló el envío: ' + result.error, variant: 'destructive' });
+                        } else {
+                            toast({ title: 'Notificaciones', description: `Se enviaron ${result.count} correos exitosamente.` });
+                        }
+                    } catch (err: any) {
+                        console.error('Broadcast failed:', err);
+                        toast({ title: 'Aviso', description: 'Falló el envío de correos: ' + err.message, variant: 'destructive' });
+                    }
                 }
             }
             setIsDialogOpen(false);

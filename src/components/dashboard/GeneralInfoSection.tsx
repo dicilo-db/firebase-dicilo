@@ -4,8 +4,15 @@ import { Calendar } from '@/components/ui/calendar';
 import { getFirestore, collection, query, where, getDocs, orderBy } from 'firebase/firestore';
 import { app } from '@/lib/firebase';
 import { useTranslation } from 'react-i18next';
-import { Loader2, Calendar as CalendarIcon, Link as LinkIcon, Info, ExternalLink, CalendarClock } from 'lucide-react';
+import { Loader2, Calendar as CalendarIcon, Link as LinkIcon, Info, ExternalLink, CalendarClock, Maximize2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogDescription,
+} from "@/components/ui/dialog";
 
 const db = getFirestore(app);
 
@@ -15,6 +22,7 @@ export function GeneralInfoSection() {
     const [events, setEvents] = useState<any[]>([]);
     const [notes, setNotes] = useState<any[]>([]);
     const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+    const [selectedNote, setSelectedNote] = useState<any | null>(null);
 
     useEffect(() => {
         const fetchInfo = async () => {
@@ -164,12 +172,10 @@ export function GeneralInfoSection() {
                     ) : (
                         <div className="flex flex-col gap-3">
                             {notes.map(note => (
-                                <a 
+                                <div 
                                     key={note.id} 
-                                    href={note.url || '#'} 
-                                    target={note.url ? "_blank" : "_self"}
-                                    rel="noopener noreferrer"
-                                    className="group"
+                                    onClick={() => setSelectedNote(note)}
+                                    className="group cursor-pointer"
                                 >
                                     <div className="bg-white dark:bg-slate-950 border rounded-lg p-4 transition-all hover:border-blue-400 hover:shadow-md relative overflow-hidden">
                                         <div className="absolute left-0 top-0 bottom-0 w-1 bg-blue-500 group-hover:w-2 transition-all"></div>
@@ -184,17 +190,43 @@ export function GeneralInfoSection() {
                                                     </p>
                                                 )}
                                             </div>
-                                            {note.url && (
-                                                <ExternalLink className="h-4 w-4 text-slate-400 group-hover:text-blue-500 flex-shrink-0 ml-2 mt-0.5" />
-                                            )}
+                                            <Maximize2 className="h-4 w-4 text-slate-300 group-hover:text-blue-500 flex-shrink-0 ml-2 mt-0.5" />
                                         </div>
                                     </div>
-                                </a>
+                                </div>
                             ))}
                         </div>
                     )}
                 </CardContent>
             </Card>
+
+            {/* Modal for Reading Notes completely */}
+            <Dialog open={!!selectedNote} onOpenChange={(open) => !open && setSelectedNote(null)}>
+                <DialogContent className="max-w-md">
+                    <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2 text-blue-700 dark:text-blue-400">
+                            <Info className="h-5 w-5" /> {selectedNote?.title}
+                        </DialogTitle>
+                    </DialogHeader>
+                    
+                    <div className="py-2">
+                        <DialogDescription className="text-slate-700 dark:text-slate-300 text-sm whitespace-pre-line leading-relaxed">
+                            {selectedNote?.description || 'Sin descripción adicional.'}
+                        </DialogDescription>
+                    </div>
+
+                    {selectedNote?.url && (
+                        <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-end">
+                             <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white">
+                                <a href={selectedNote.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
+                                    <ExternalLink className="h-4 w-4" />
+                                    Abrir Enlace
+                                </a>
+                            </Button>
+                        </div>
+                    )}
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }
