@@ -39,7 +39,7 @@ const CATEGORIES: { id: CategoryType; icon: any; color: string }[] = [
 ];
 
 export default function EmailTemplatesPage() {
-    useAuthGuard(['admin', 'superadmin', 'team_office'], 'access_admin_panel');
+    const { user } = useAuthGuard(['admin', 'superadmin', 'team_office'], 'access_admin_panel');
     const { t } = useTranslation('admin');
     const [templates, setTemplates] = useState<EmailTemplate[]>([]);
     const [loading, setLoading] = useState(true);
@@ -81,8 +81,10 @@ export default function EmailTemplatesPage() {
         }
     };
 
+    const visibleTemplates = templates.filter(t => t.visibleTo !== 'superadmin' || user?.role === 'superadmin');
+
     const filteredTemplates = selectedCategory
-        ? templates.filter(t => t.category === selectedCategory)
+        ? visibleTemplates.filter(t => t.category === selectedCategory)
         : [];
 
     const categoriesData = CATEGORIES.map(cat => ({
@@ -135,7 +137,7 @@ export default function EmailTemplatesPage() {
                 <div className="grid gap-6 md:grid-cols-3">
                     {categoriesData.map((cat) => {
                         const Icon = cat.icon;
-                        const count = templates.filter(t => t.category === cat.id).length;
+                        const count = visibleTemplates.filter(t => t.category === cat.id).length;
                         return (
                             <Card
                                 key={cat.id}

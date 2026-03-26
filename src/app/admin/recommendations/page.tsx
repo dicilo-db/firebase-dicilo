@@ -479,7 +479,11 @@ export default function RecommendationsPage() {
                                                     {rec.converted && <span className="inline-flex items-center text-xs text-green-600 font-medium"><CheckCircle className="w-3 h-3 mr-1" /> {t('recommendations.status.converted')}</span>}
                                                 </TableCell>
                                                 <TableCell>
-                                                    {rec.pointsPaid ? (
+                                                    {rec.unsubscribed || rec.status === 'unsubscribed' ? (
+                                                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-bold bg-red-100 text-red-800 border border-red-200 uppercase" title="La empresa indicó que no desea pertenecer a la plataforma">
+                                                            Dado de Baja
+                                                        </span>
+                                                    ) : rec.pointsPaid ? (
                                                         <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
                                                             {t('recommendations.status.paid')}
                                                         </span>

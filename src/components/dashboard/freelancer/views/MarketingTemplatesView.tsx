@@ -12,6 +12,7 @@ import { Input } from '@/components/ui/input';
 import { EmailMarketingComposer } from '@/components/ads-manager/EmailMarketingComposer';
 import { useToast } from '@/hooks/use-toast';
 import { useDashboardData } from '@/hooks/useDashboardData';
+import { useAdminUser } from '@/hooks/useAuthGuard';
 
 export function MarketingTemplatesView() {
     const { t } = useTranslation('common');
@@ -21,6 +22,7 @@ export function MarketingTemplatesView() {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedTemplate, setSelectedTemplate] = useState<EmailTemplate | null>(null);
     const { isAdmin } = useDashboardData();
+    const { user: adminUser } = useAdminUser();
 
     useEffect(() => {
         async function load() {
@@ -49,10 +51,14 @@ export function MarketingTemplatesView() {
         load();
     }, [toast]);
 
-    const filteredTemplates = templates.filter(template =>
-        template.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        Object.values(template.versions).some(v => v.subject.toLowerCase().includes(searchQuery.toLowerCase()))
-    );
+    const filteredTemplates = templates.filter(template => {
+        const matchesSearch = template.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            Object.values(template.versions).some(v => v.subject.toLowerCase().includes(searchQuery.toLowerCase()));
+        
+        const isVisibleRole = template.visibleTo !== 'superadmin' || adminUser?.role === 'superadmin';
+        
+        return matchesSearch && isVisibleRole;
+    });
 
     if (selectedTemplate) {
         return (

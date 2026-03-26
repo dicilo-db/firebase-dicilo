@@ -1,5 +1,14 @@
 # Bitácora de Cambios - Dicilo.net
 
+### **201. FEAT & FIX: EMAIL MARKETING COMPOSER & UNSUBSCRIBE FLOW - CÓDIGO: FEAT-EMAIL-MKT-V2**
+- **Fecha y Hora:** 26 de Marzo de 2026, 22:50 (CET)
+- **Módulos Afectados:** `src/components/ads-manager/EmailMarketingComposer.tsx`, `src/app/baja/page.tsx`, `src/app/actions/unsubscribe.ts`, `src/app/registrieren/RegistrationForm.tsx`, `src/app/admin/recommendations/page.tsx`
+- **Descripción del Cambio:**
+  - **Filtro Unsubscribe (Baja):** Se rediseñó la función de la etiqueta `{{Baja}}` para reemplazarla por `Darse de baja de forma segura` en los envíos de Email Marketing. Se creó la ruta `/baja` y Server Actions para modificar las tablas `unsubscribes`, notificar al remitente ocultamente y bloquear próximos intentos. Las listas del Admin reflejan este estado con una placa "Dado de Baja".
+  - **Custom Tags & Fallbacks:** Se inyectó la lógica de parseo para `{{Empresa}}` o `{{Company}}` extrayendo el valor de la nueva columna en la UI.
+  - **Call to Action Buttons HTML:** Se interceptan las variables estáticas `[BOTÓN: xyz]` para compilar bloques HTML estilizados en línea (botones customizados) optimizando el CTR (Click Through Rate) de las campañas B2B.
+  - **Link Registration Smart Pipeline:** Al hacer clic en el botón de marketing, se inyecta `&type=retailer`, automatizando la pestaña de Registros para cargar con la modalidad "Empresa / Retailer" lista desde el primer milisegundo mediante optimización del hook de formulario.
+- **Resultado:** Campañas de mailing completamente GDPR compliant, mejor apariencia y UI B2B en los correos y flujos convertidos eficientemente a funnel Retailer.
 ### **200. FEAT & FIX: SMART NEIGHBORS & FEED FRIEND REQUESTS - CÓDIGO: FEAT-COMMUNITY-V1**
 - **Fecha y Hora:** 26 de Marzo de 2026, 01:35 (CET)
 - **Módulos Afectados:** `src/hooks/useFriends.ts`, `src/components/community/PostCard.tsx`, `src/components/dashboard/PrivateDashboard.tsx`, `src/app/actions/social.ts`

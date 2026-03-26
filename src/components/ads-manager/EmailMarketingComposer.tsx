@@ -40,7 +40,7 @@ import {
 } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
-import { cn } from "@/lib/utils";
+import { cn, getGreeting } from "@/lib/utils";
 
 // Icons
 import {
@@ -79,6 +79,7 @@ type Friend = {
     name: string;
     email: string;
     language: string;
+    company?: string;
 };
 
 interface EmailMarketingComposerProps {
@@ -130,6 +131,7 @@ export function EmailMarketingComposer({
     const [currentName, setCurrentName] = useState('');
     const [currentEmail, setCurrentEmail] = useState('');
     const [currentLanguage, setCurrentLanguage] = useState('es');
+    const [currentCompany, setCurrentCompany] = useState('');
     const [isSendingPersonalized, setIsSendingPersonalized] = useState(false);
     const [customSenderName, setCustomSenderName] = useState('');
 
@@ -193,7 +195,7 @@ export function EmailMarketingComposer({
     };
 
     // Shortener / Link Logic
-    const generatedLink = `https://dicilo.net?ref=${propUniqueCode || user?.uid || 'promo'}`;
+    const generatedLink = `https://dicilo.net/registrieren?ref=${propUniqueCode || user?.uid || 'promo'}&type=retailer`;
 
     const allImages = template.images && template.images.length > 0 
         ? template.images 
@@ -356,8 +358,10 @@ export function EmailMarketingComposer({
         const genericName = activeLangTab === 'es' ? 'Empresa' : activeLangTab === 'de' ? 'Unternehmen' : 'Company';
         
         let processedBody = currentData.body
-            .replace(/\[Name\]|\[Nombre\]|\{\{Nombre\}\}|\{\{Name\}\}/g, genericName)
-            .replace(/\[Tu Nombre\]|\{\{Tu Nombre\}\}|\{\{Your Name\}\}|\{\{Dein Name\}\}/g, user?.displayName || 'Tu Contacto');
+            .replace(/\[Name\]|\[Nombre\]|\{\{Nombre\}\}|\{\{Name\}\}/ig, genericName) // or fallback
+            .replace(/\{\{Company\}\}|\{\{Empresa\}\}|\[Company\]|\[Empresa\]/ig, genericName)
+            .replace(/\[Tu Nombre\]|\{\{Tu Nombre\}\}|\{\{Your Name\}\}|\{\{Dein Name\}\}/ig, user?.displayName || 'Tu Contacto')
+            .replace(/\{\{Greeting\}\}/ig, getGreeting(activeLangTab));
 
         const fullShareText = `*${subject}*\n\n${processedBody}\n\n👉 ${inviteUrl}`;
 
@@ -395,8 +399,8 @@ export function EmailMarketingComposer({
     };
 
     const addFriend = () => {
-        if (!currentName.trim() || !currentEmail.trim()) {
-            toast({ title: "Faltan datos", description: "Completa nombre y email", variant: "destructive" });
+        if (!currentEmail.trim()) {
+            toast({ title: "Faltan datos", description: "Completa obligatoriamente el email.", variant: "destructive" });
             return;
         }
         if (friends.length >= 7) {
@@ -404,12 +408,14 @@ export function EmailMarketingComposer({
             return;
         }
         setFriends([...friends, {
-            name: currentName,
-            email: currentEmail,
-            language: currentLanguage
+            name: currentName.trim() || 'Contacto',
+            email: currentEmail.trim(),
+            language: currentLanguage,
+            company: currentCompany.trim()
         }]);
         setCurrentName('');
         setCurrentEmail('');
+        setCurrentCompany('');
     };
 
     const removeFriend = (index: number) => {
@@ -459,7 +465,7 @@ export function EmailMarketingComposer({
             // 2. Prepare Payload
             const enrichedFriends = friends.map((friend, index) => {
                 const inviteId = inviteIds[index];
-                const inviteUrl = `https://dicilo.net/registrieren?ref=${propUniqueCode || currentUser.uid}&inviteId=${inviteId}`;
+                const inviteUrl = `https://dicilo.net/registrieren?ref=${propUniqueCode || currentUser.uid}&inviteId=${inviteId}&type=retailer`;
 
                 let subject = texts[friend.language]?.subject || texts['es']?.subject || texts['en']?.subject || '';
                 let body = texts[friend.language]?.body || texts['es']?.body || texts['en']?.body || '';
@@ -470,14 +476,19 @@ export function EmailMarketingComposer({
 
                 // Replace tags
                 body = body
-                    .replace(/\[Name\]|\[Nombre\]|\{\{Nombre\}\}|\{\{Name\}\}/g, friend.name)
-                    .replace(/\[Tu Nombre\]|\{\{Tu Nombre\}\}|\{\{Your Name\}\}|\{\{Dein Name\}\}/g, effectiveSenderName)
-                    .replace(/\[RefCode\]|\{\{RefCode\}\}/g, propUniqueCode || currentUser.uid)
-                    .replace(/\[(BOTÓN|BUTTON):.*?\]/g, `\n👉 ${inviteUrl}\n`);
+                    .replace(/\[Name\]|\[Nombre\]|\{\{Nombre\}\}|\{\{Name\}\}/ig, friend.name)
+                    .replace(/\{\{Company\}\}|\{\{Empresa\}\}|\[Company\]|\[Empresa\]/ig, friend.company || 'la Empresa')
+                    .replace(/\[Tu Nombre\]|\{\{Tu Nombre\}\}|\{\{Your Name\}\}|\{\{Dein Name\}\}/ig, effectiveSenderName)
+                    .replace(/\[RefCode\]|\{\{RefCode\}\}/ig, propUniqueCode || currentUser.uid)
+                    .replace(/\{\{Greeting\}\}/ig, getGreeting(friend.language || 'es'))
+                    .replace(/\[Unsubscribe\]|\{\{Unsubscribe\}\}|\[Baja\]|\{\{Baja\}\}/ig, `<a href="https://dicilo.net/baja?email=${encodeURIComponent(friend.email)}&inviteId=${inviteId}" style="color: #64748b; text-decoration: underline;">Darse de baja de forma segura</a>`)
+                    .replace(/\[(?:BOTÓN|BUTTON):\s*(.*?)\]/ig, `<div style="margin: 20px 0;"><a href="${inviteUrl}" style="display: inline-block; padding: 14px 28px; background-color: #2563eb; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: bold; text-align: center;">$1</a></div>`);
 
                 subject = subject
-                    .replace(/\{\{.*?\}\}/g, friend.name)
-                    .replace(/\[Name\]|\[Nombre\]/g, friend.name);
+                    .replace(/\{\{.*?\}\}/g, friend.name) // Legacy fallback
+                    .replace(/\[Name\]|\[Nombre\]/ig, friend.name)
+                    .replace(/\{\{Company\}\}|\{\{Empresa\}\}|\[Company\]|\[Empresa\]/ig, friend.company || 'la Empresa')
+                    .replace(/\{\{Greeting\}\}/ig, getGreeting(friend.language || 'es'));
 
                 const { language, ...friendData } = friend;
 
@@ -818,8 +829,17 @@ export function EmailMarketingComposer({
                                 {/* Add Friend Form */}
                                 <div className="space-y-4">
                                     <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
-                                        <div className="space-y-2 md:col-span-4">
-                                            <Label className="text-xs font-bold text-slate-500 uppercase">Nombre</Label>
+                                        <div className="space-y-2 md:col-span-3">
+                                            <Label className="text-xs font-bold text-slate-500 uppercase">Empresa (Opcional)</Label>
+                                            <Input
+                                                placeholder="Ej: Dicilo"
+                                                value={currentCompany}
+                                                onChange={(e) => setCurrentCompany(e.target.value)}
+                                                className="h-10 border-slate-200 focus-visible:ring-blue-500 bg-white shadow-sm"
+                                            />
+                                        </div>
+                                        <div className="space-y-2 md:col-span-3">
+                                            <Label className="text-xs font-bold text-slate-500 uppercase">Persona / Contacto</Label>
                                             <Input
                                                 placeholder="Ej: Juan"
                                                 value={currentName}
@@ -827,8 +847,8 @@ export function EmailMarketingComposer({
                                                 className="h-10 border-slate-200 focus-visible:ring-blue-500 bg-white"
                                             />
                                         </div>
-                                        <div className="space-y-2 md:col-span-4">
-                                            <Label className="text-xs font-bold text-slate-500 uppercase">Email</Label>
+                                        <div className="space-y-2 md:col-span-3">
+                                            <Label className="text-xs font-bold text-slate-500 uppercase">Email *</Label>
                                             <Input
                                                 type="email"
                                                 placeholder="laura@ejemplo.com"
@@ -838,7 +858,7 @@ export function EmailMarketingComposer({
                                                 className="h-10 border-slate-200 focus-visible:ring-blue-500 bg-white"
                                             />
                                         </div>
-                                        <div className="space-y-2 md:col-span-3">
+                                        <div className="space-y-2 md:col-span-2">
                                             <Label className="text-xs font-bold text-slate-500 uppercase">Idioma</Label>
                                             <Select value={currentLanguage} onValueChange={setCurrentLanguage}>
                                                 <SelectTrigger className="h-10 border-slate-200 bg-white text-slate-700">
@@ -859,7 +879,7 @@ export function EmailMarketingComposer({
                                                 variant="outline"
                                                 size="icon"
                                                 onClick={addFriend}
-                                                disabled={friends.length >= 7 || !currentName.trim() || !currentEmail.trim()}
+                                                disabled={friends.length >= 7 || !currentEmail.trim()}
                                                 className="h-10 w-full border-blue-200 text-blue-600 hover:bg-blue-50"
                                             >
                                                 <Plus className="h-5 w-5" />
@@ -886,8 +906,8 @@ export function EmailMarketingComposer({
                                                                 {f.name.charAt(0).toUpperCase()}
                                                             </div>
                                                             <div className="min-w-0">
-                                                                <p className="text-sm font-bold text-slate-900 truncate">{f.name}</p>
-                                                                <p className="text-xs text-slate-500 truncate">{f.email}</p>
+                                                                <p className="text-sm font-bold text-slate-900 truncate">{f.company || f.name}</p>
+                                                                <p className="text-xs text-slate-500 truncate">{f.email} {f.company ? `(${f.name})` : ''}</p>
                                                             </div>
                                                         </div>
                                                         <div className="flex items-center gap-2 shrink-0 ml-2">

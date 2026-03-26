@@ -94,9 +94,12 @@ export function RegistrationForm() {
   const { t, i18n } = useTranslation('register');
   const locale = i18n.language;
   const searchParams = useSearchParams();
-  const [isGeocoding, setIsGeocoding] = React.useState(false);
-  const [showPassword, setShowPassword] = React.useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
+  const getInitialType = () => {
+    const regTypeParam = searchParams.get('type');
+    return (regTypeParam && ['private', 'donor', 'retailer', 'premium'].includes(regTypeParam)) 
+      ? regTypeParam 
+      : 'private';
+  };
 
   const {
     register,
@@ -110,7 +113,7 @@ export function RegistrationForm() {
   } = useForm<RegistrationFormData>({
     resolver: zodResolver(registrationSchema),
     defaultValues: {
-      registrationType: 'private',
+      registrationType: getInitialType() as any,
       contactType: 'whatsapp',
       rating: 0,
     },
@@ -121,11 +124,19 @@ export function RegistrationForm() {
   const showPremiumFields = registrationType === 'premium';
   const coords = watch('coords');
 
+  const [isGeocoding, setIsGeocoding] = React.useState(false);
+  const [showPassword, setShowPassword] = React.useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
+
   React.useEffect(() => {
     const ref = searchParams.get('ref');
-    const inviteId = searchParams.get('inviteId'); // Changed from 'invite' to 'inviteId'
+    const inviteId = searchParams.get('inviteId'); 
+    const regType = searchParams.get('type');
     if (ref) setValue('referralCode', ref);
     if (inviteId) setValue('inviteId', inviteId);
+    if (regType && ['private', 'donor', 'retailer', 'premium'].includes(regType)) {
+      setValue('registrationType', regType as any, { shouldValidate: true, shouldDirty: true });
+    }
   }, [searchParams, setValue]);
 
   const handleGeocode = React.useCallback(

@@ -43,6 +43,7 @@ export default function EditTemplatePage() {
             'de': { subject: '', body: '' },
         },
         variables: [],
+        visibleTo: 'all',
         rewardSender: 50,
         rewardReceiver: 50
     });
@@ -352,6 +353,29 @@ export default function EditTemplatePage() {
                                     </div>
                                     <span className="text-xs text-purple-600 font-medium whitespace-nowrap">por recibir</span>
                                 </div>
+                            </div>
+                        </div>
+
+                        {/* Visibility Settings / Segmentación */}
+                        <div className="space-y-4 pt-4 border-t">
+                            <Label className="text-xs font-bold text-slate-500 uppercase">Visibilidad</Label>
+                            <div className="flex gap-2 w-full pt-1">
+                                <Button
+                                    type="button"
+                                    variant={template.visibleTo === 'all' || !template.visibleTo ? 'default' : 'outline'}
+                                    className="flex-1 rounded-none border shadow-sm h-10"
+                                    onClick={() => handleChange('visibleTo', 'all')}
+                                >
+                                    freelancer / admin
+                                </Button>
+                                <Button
+                                    type="button"
+                                    variant={template.visibleTo === 'superadmin' ? 'default' : 'outline'}
+                                    className="flex-1 rounded-none border shadow-sm h-10"
+                                    onClick={() => handleChange('visibleTo', 'superadmin')}
+                                >
+                                    Superadmin
+                                </Button>
                             </div>
                         </div>
                     </div>

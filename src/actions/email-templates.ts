@@ -18,6 +18,7 @@ export type EmailTemplate = {
     variables: string[];
     imageUrl?: string;
     images?: string[];
+    visibleTo?: 'all' | 'admin' | 'superadmin';
     rewardAmount?: number;
     rewardSender?: number;
     rewardReceiver?: number;
