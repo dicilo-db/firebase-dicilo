@@ -202,29 +202,33 @@ export function GeneralInfoSection() {
 
             {/* Modal for Reading Notes completely */}
             <Dialog open={!!selectedNote} onOpenChange={(open) => !open && setSelectedNote(null)}>
-                <DialogContent className="max-w-md">
-                    <DialogHeader>
+                <DialogContent className="max-w-md w-11/12 max-h-[90vh] flex flex-col overflow-hidden p-0 rounded-lg">
+                    <DialogHeader className="p-6 pb-2 border-b flex flex-row items-center justify-between">
                         <DialogTitle className="flex items-center gap-2 text-blue-700 dark:text-blue-400">
-                            <Info className="h-5 w-5" /> {selectedNote?.title}
+                            <Info className="h-5 w-5 flex-shrink-0" /> 
+                            <span>{selectedNote?.title}</span>
                         </DialogTitle>
                     </DialogHeader>
                     
-                    <div className="py-2">
+                    <div className="flex-1 overflow-y-auto custom-scrollbar p-6 py-4">
                         <DialogDescription className="text-slate-700 dark:text-slate-300 text-sm whitespace-pre-line leading-relaxed">
                             {selectedNote?.description || 'Sin descripción adicional.'}
                         </DialogDescription>
                     </div>
 
-                    {selectedNote?.url && (
-                        <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-end">
+                    <div className="p-4 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 bg-slate-50 dark:bg-slate-900/50 rounded-b-lg">
+                        <Button variant="outline" onClick={() => setSelectedNote(null)}>
+                            Cerrar
+                        </Button>
+                        {selectedNote?.url && (
                              <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white">
                                 <a href={selectedNote.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
                                     <ExternalLink className="h-4 w-4" />
                                     Abrir Enlace
                                 </a>
                             </Button>
-                        </div>
-                    )}
+                        )}
+                    </div>
                 </DialogContent>
             </Dialog>
         </div>
