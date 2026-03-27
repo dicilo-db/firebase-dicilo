@@ -21,9 +21,9 @@ export interface MarketingLead {
     convertedAt?: string;
     referrerId?: string;
     referrerName?: string;
-    notes?: string;
     securityKey?: string;
     validationStatus?: string;
+    lang?: string;
 }
 
 export interface AdminMarketingSend {
@@ -64,7 +64,8 @@ export async function getAllMarketingLeads() {
                 referrerName: data.referrerName || '',
                 notes: data.notes || '',
                 securityKey: data.securityKey || '',
-                validationStatus: data.validationStatus || ''
+                validationStatus: data.validationStatus || '',
+                lang: data.lang || ''
             };
         });
 
@@ -132,7 +133,7 @@ export async function sendMarketingEmail(leadId: string, templateId: string) {
         if (!template) return { success: false, error: 'Template not found' };
 
         // Determine language
-        const lang = data.country === 'Deutschland' || data.country === 'Germany' ? 'de' : 'es';
+        const lang = data.lang || (data.country === 'Deutschland' || data.country === 'Germany' ? 'de' : 'es');
         let templateVersion = template.versions[lang] || template.versions['es'] || Object.values(template.versions)[0];
 
         if (!templateVersion) return { success: false, error: 'No valid template version found' };

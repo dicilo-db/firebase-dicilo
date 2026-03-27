@@ -442,7 +442,7 @@ export default function RecommendationsPage() {
                                             <TableHead>{t('recommendations.table.contact')}</TableHead>
                                             <TableHead>{t('recommendations.table.email')}</TableHead>
                                             <TableHead>{t('recommendations.table.category')}</TableHead>
-                                            <TableHead>{t('recommendations.table.location')}</TableHead>
+                                            <TableHead>Idioma / Ubicación</TableHead>
                                             <TableHead>{t('recommendations.table.details')}</TableHead>
                                             <TableHead>{t('recommendations.table.status')}</TableHead>
                                             <TableHead>{t('recommendations.table.paymentStatus')}</TableHead>
@@ -470,7 +470,19 @@ export default function RecommendationsPage() {
                                                 </TableCell>
                                                 <TableCell>{rec.email}</TableCell>
                                                 <TableCell>{rec.category}</TableCell>
-                                                <TableCell>{rec.city}, {rec.country}</TableCell>
+                                                <TableCell>
+                                                    <div className="flex flex-col gap-1">
+                                                        <div className="flex items-center gap-2">
+                                                            <span title={`Idioma: ${rec.lang || 'No definido'}`} className="text-lg">
+                                                                {rec.lang === 'es' ? '🇪🇸' : rec.lang === 'en' ? '🇬🇧' : rec.lang === 'de' ? '🇩🇪' : rec.lang === 'fr' ? '🇫🇷' : rec.lang === 'pt' ? '🇵🇹' : rec.lang === 'it' ? '🇮🇹' : '🌐'}
+                                                            </span>
+                                                            <span className="font-medium uppercase text-xs">{rec.lang || 'ES'}</span>
+                                                        </div>
+                                                        <div className="text-xs text-muted-foreground whitespace-nowrap">
+                                                            <span>{rec.city || 'Sin ciudad'}</span>{rec.country && <span>, {rec.country}</span>}
+                                                        </div>
+                                                    </div>
+                                                </TableCell>
                                                 <TableCell className="max-w-[200px]">
                                                     <div className="truncate" title={rec.comments}>{rec.comments}</div>
                                                     {rec.website && <a href={rec.website} target="_blank" className="text-blue-500 text-xs hover:underline block truncate">{rec.website}</a>}
@@ -625,6 +637,22 @@ export default function RecommendationsPage() {
                                         <Label>Barrio / Zona</Label>
                                         <Input value={editingRec.neighborhood || ''} onChange={(e) => setEditingRec({ ...editingRec, neighborhood: e.target.value })} />
                                     </div>
+                                </div>
+                                <div className="grid gap-2 mt-2">
+                                    <Label>Idioma de Contacto</Label>
+                                    <Select value={editingRec.lang || 'es'} onValueChange={v => setEditingRec({...editingRec, lang: v})}>
+                                        <SelectTrigger>
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="es">🇪🇸 Español</SelectItem>
+                                            <SelectItem value="en">🇬🇧 English</SelectItem>
+                                            <SelectItem value="de">🇩🇪 Deutsch</SelectItem>
+                                            <SelectItem value="fr">🇫🇷 Français</SelectItem>
+                                            <SelectItem value="pt">🇵🇹 Português</SelectItem>
+                                            <SelectItem value="it">🇮🇹 Italiano</SelectItem>
+                                        </SelectContent>
+                                    </Select>
                                 </div>
                                 <div className="grid gap-2">
                                     <Label>Sitio Web / Redes Sociales</Label>

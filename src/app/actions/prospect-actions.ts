@@ -36,8 +36,8 @@ export async function sendProspectInvitation(prospectId: string, templateIdOverr
             return { success: false, error: 'Plantilla de email no encontrada' };
         }
 
-        // Determinar idioma (por defecto 'es')
-        let lang = data.countryCode === 'DE' || data.country === 'Deutschland' || data.country === 'Alemania' ? 'de' : 'es';
+        // Determinar idioma explícito o intentar inferir (por defecto 'es')
+        let lang = data.lang || (data.countryCode === 'DE' || data.country === 'Deutschland' || data.country === 'Alemania' ? 'de' : 'es');
         
         let templateVersion = template.versions[lang];
 

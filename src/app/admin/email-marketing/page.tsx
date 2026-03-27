@@ -245,7 +245,7 @@ export default function EmailMarketingPage() {
                                         <TableRow>
                                             <TableHead className="font-bold">Lead / Empresa</TableHead>
                                             <TableHead className="font-bold">Contacto</TableHead>
-                                            <TableHead className="font-bold">Ubicación</TableHead>
+                                            <TableHead className="font-bold">Idioma / Ubicación</TableHead>
                                             <TableHead className="font-bold">Fecha</TableHead>
                                             <TableHead className="font-bold text-center">Estado</TableHead>
                                             <TableHead className="font-bold text-right">Acciones</TableHead>
@@ -280,9 +280,17 @@ export default function EmailMarketingPage() {
                                                         </div>
                                                     </TableCell>
                                                     <TableCell className="text-sm">
-                                                        <div className="flex items-center gap-1">
-                                                            <span>{lead.city}</span>
-                                                            {lead.country && <span className="text-muted-foreground">({lead.country})</span>}
+                                                        <div className="flex flex-col gap-1">
+                                                            <div className="flex items-center gap-2">
+                                                                <span title={`Idioma: ${lead.lang || 'No definido'}`} className="text-lg">
+                                                                    {lead.lang === 'es' ? '🇪🇸' : lead.lang === 'en' ? '🇬🇧' : lead.lang === 'de' ? '🇩🇪' : lead.lang === 'fr' ? '🇫🇷' : lead.lang === 'pt' ? '🇵🇹' : lead.lang === 'it' ? '🇮🇹' : '🌐'}
+                                                                </span>
+                                                                <span className="font-medium uppercase text-xs">{lead.lang || 'ES'}</span>
+                                                            </div>
+                                                            <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                                                                <span>{lead.city || 'Sin ciudad'}</span>
+                                                                {lead.country && <span>({lead.country})</span>}
+                                                            </div>
                                                         </div>
                                                     </TableCell>
                                                     <TableCell className="text-xs text-muted-foreground">
@@ -406,6 +414,22 @@ export default function EmailMarketingPage() {
                                         value={editingLead.country || ''} 
                                         onChange={e => setEditingLead({...editingLead, country: e.target.value})}
                                     />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label>Idioma de Contacto</Label>
+                                    <Select value={editingLead.lang || 'es'} onValueChange={v => setEditingLead({...editingLead, lang: v})}>
+                                        <SelectTrigger>
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="es">🇪🇸 Español</SelectItem>
+                                            <SelectItem value="en">🇬🇧 English</SelectItem>
+                                            <SelectItem value="de">🇩🇪 Deutsch</SelectItem>
+                                            <SelectItem value="fr">🇫🇷 Français</SelectItem>
+                                            <SelectItem value="pt">🇵🇹 Português</SelectItem>
+                                            <SelectItem value="it">🇮🇹 Italiano</SelectItem>
+                                        </SelectContent>
+                                    </Select>
                                 </div>
                             </div>
                             <div className="space-y-2">
