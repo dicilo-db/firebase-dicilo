@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Building2, Users, Briefcase } from 'lucide-react';
-import { getFirestore, collection, getCountFromServer, query, where, or } from 'firebase/firestore';
-import { app } from '@/lib/firebase';
 import { Skeleton } from '@/components/ui/skeleton';
+import { getSuperAdminDashboardStats } from '@/app/actions/superadmin-stats';
 
 export function SuperAdminStatsGrid() {
     const [stats, setStats] = useState<{
@@ -14,42 +13,22 @@ export function SuperAdminStatsGrid() {
 
     useEffect(() => {
         const fetchStats = async () => {
-            const db = getFirestore(app);
-            
             try {
-                // 1. Total Businesses
-                const businessesCount = await getCountFromServer(collection(db, 'businesses'));
-                
-                // Additional: Consider recommended businesses from 'referrals_pioneers'
-                // Depending on the exact definition of "empresas registradas y recomendadas"
-                const referralsCount = await getCountFromServer(collection(db, 'referrals_pioneers'));
-                
-                const totalM1 = businessesCount.data().count + referralsCount.data().count;
-
-                // 2. Total Registered Users
-                const privateCount = await getCountFromServer(collection(db, 'private_profiles'));
-                // Maybe clients too? Usually 'registrations' captures all. Let's rely on 'private_profiles' and 'clients'.
-                const clientsCount = await getCountFromServer(collection(db, 'clients'));
-                const totalM2 = privateCount.data().count + clientsCount.data().count;
-
-                // 3. Total Freelancers
-                const freelancerQuery = query(
-                    collection(db, 'private_profiles'), 
-                    or(
-                        where('role', '==', 'freelancer'),
-                        where('isFreelancer', '==', true),
-                        where('role', '==', 'team_office')
-                    )
-                );
-                const freelancerCount = await getCountFromServer(freelancerQuery);
-
-                setStats({
-                    empresas: totalM1,
-                    users: totalM2,
-                    freelancers: freelancerCount.data().count
-                });
+                const result = await getSuperAdminDashboardStats();
+                if (result.success) {
+                    setStats({
+                        empresas: result.empresas || 0,
+                        users: result.users || 0,
+                        freelancers: result.freelancers || 0
+                    });
+                } else {
+                    console.error("SuperAdmin stats fetch failed:", result.error);
+                    // Fallback to 0 if blocked by something so it doesn't stay skeleton forever
+                    setStats({ empresas: 0, users: 0, freelancers: 0 });
+                }
             } catch (error) {
                 console.error("Error fetching SuperAdmin stats:", error);
+                setStats({ empresas: 0, users: 0, freelancers: 0 });
             }
         };
 
@@ -60,7 +39,7 @@ export function SuperAdminStatsGrid() {
         <div className="grid gap-4 md:grid-cols-3 mt-4">
             <Card className="border-indigo-100 bg-indigo-50/30">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium text-indigo-900">M1. Empresas Registradas</CardTitle>
+                    <CardTitle className="text-sm font-medium text-indigo-900">Empresas Registradas</CardTitle>
                     <Building2 className="h-4 w-4 text-indigo-500" />
                 </CardHeader>
                 <CardContent>
@@ -73,7 +52,7 @@ export function SuperAdminStatsGrid() {
 
             <Card className="border-cyan-100 bg-cyan-50/30">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium text-cyan-900">M2. Usuarios (Activos)</CardTitle>
+                    <CardTitle className="text-sm font-medium text-cyan-900">Usuarios (Activos)</CardTitle>
                     <Users className="h-4 w-4 text-cyan-500" />
                 </CardHeader>
                 <CardContent>
@@ -86,7 +65,7 @@ export function SuperAdminStatsGrid() {
 
             <Card className="border-emerald-100 bg-emerald-50/30">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium text-emerald-900">M3. Freelancers</CardTitle>
+                    <CardTitle className="text-sm font-medium text-emerald-900">Freelancers</CardTitle>
                     <Briefcase className="h-4 w-4 text-emerald-500" />
                 </CardHeader>
                 <CardContent>
