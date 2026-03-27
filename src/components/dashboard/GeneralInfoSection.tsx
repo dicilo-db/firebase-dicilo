@@ -13,6 +13,7 @@ import {
     DialogTitle,
     DialogDescription,
 } from "@/components/ui/dialog";
+import { trackGeneralInfoView } from '@/app/actions/track';
 
 const db = getFirestore(app);
 
@@ -142,7 +143,7 @@ export function GeneralInfoSection() {
                                         )}
                                         {evt.url && (
                                             <Button variant="link" size="sm" className="h-auto p-0 mt-2 text-teal-600 text-xs" asChild>
-                                                <a href={evt.url} target="_blank" rel="noopener noreferrer">
+                                                <a href={evt.url} target="_blank" rel="noopener noreferrer" onClick={() => trackGeneralInfoView(evt.id)}>
                                                     Ver enlace del evento
                                                 </a>
                                             </Button>
@@ -174,7 +175,10 @@ export function GeneralInfoSection() {
                             {notes.map(note => (
                                 <div 
                                     key={note.id} 
-                                    onClick={() => setSelectedNote(note)}
+                                    onClick={() => {
+                                        setSelectedNote(note);
+                                        trackGeneralInfoView(note.id);
+                                    }}
                                     className="group cursor-pointer"
                                 >
                                     <div className="bg-white dark:bg-slate-950 border rounded-lg p-4 transition-all hover:border-blue-400 hover:shadow-md relative overflow-hidden">
@@ -222,7 +226,7 @@ export function GeneralInfoSection() {
                         </Button>
                         {selectedNote?.url && (
                              <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white">
-                                <a href={selectedNote.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
+                                <a href={selectedNote.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2" onClick={() => trackGeneralInfoView(selectedNote.id)}>
                                     <ExternalLink className="h-4 w-4" />
                                     Abrir Enlace
                                 </a>

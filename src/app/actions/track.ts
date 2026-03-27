@@ -22,3 +22,22 @@ export async function markInviteAsOpened(inviteId: string) {
         return { success: false, error: error.message };
     }
 }
+
+export async function trackGeneralInfoView(itemId: string) {
+    if (!itemId) return { success: false };
+    
+    try {
+        const db = getAdminDb();
+        const docRef = db.collection('general_info').doc(itemId);
+        
+        await docRef.update({
+            views: admin.firestore.FieldValue.increment(1)
+        });
+        
+        return { success: true };
+    } catch (error) {
+        // Silently fail so it doesn't break the UI if doc not found
+        console.error('Error tracking general info view:', error);
+        return { success: false };
+    }
+}

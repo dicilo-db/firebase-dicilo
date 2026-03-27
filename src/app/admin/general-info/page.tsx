@@ -242,6 +242,7 @@ export default function GeneralInfoPage() {
                                         <TableRow>
                                             <TableHead>Título</TableHead>
                                             <TableHead>Tipo</TableHead>
+                                            <TableHead className="text-center">Vistas</TableHead>
                                             <TableHead>Fecha Programada</TableHead>
                                             <TableHead>Enlace</TableHead>
                                             <TableHead className="text-center">Estado</TableHead>
@@ -276,6 +277,11 @@ export default function GeneralInfoPage() {
                                                                 <LinkIcon className="w-3 h-3 mr-1" /> Noticia / Link
                                                             </Badge>
                                                         )}
+                                                    </TableCell>
+                                                    <TableCell className="text-center">
+                                                        <Badge variant="secondary" className="bg-slate-100/50 text-slate-600 border-transparent hover:bg-slate-200 font-mono">
+                                                            <Eye className="w-3 h-3 mr-1 text-slate-400" /> {item.views || 0}
+                                                        </Badge>
                                                     </TableCell>
                                                     <TableCell className="text-sm min-w-[140px]">
                                                         {item.type === 'event' && item.date ? (

@@ -37,6 +37,7 @@ import ScannerPro from '../admin/ScannerPro';
 import { StatisticsView } from './freelancer/views/StatisticsView';
 import { AlliesMap } from './AlliesMap';
 import { MiBox } from './MiBox';
+import { SuperAdminStatsGrid } from './SuperAdminStatsGrid';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { ensureHttps, formatSocialUrl } from '@/lib/url-utils';
@@ -305,6 +306,11 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                                 </CardContent>
                             </Card>
                         </div>
+
+                        {/* SuperAdmin Quick Stats */}
+                        {(user.email === 'superadmin@dicilo.net' || formData.role === 'SuperAdmin' || formData.role === 'superadmin') && (
+                            <SuperAdminStatsGrid />
+                        )}
 
                         {/* Bottom Section: Quick Actions + Wallets */}
                         <div className="grid gap-6 lg:grid-cols-3">
