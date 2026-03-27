@@ -158,7 +158,9 @@ export async function sendMarketingEmail(leadId: string, templateId: string) {
             '{{clave aleatoria}}': data.securityKey || '',
             '{{ref_code}}': data.referrerId || '',
             '{{Greeting}}': lang === 'de' ? 'Hallo' : 'Hola',
-            '{{Baja}}': `<a href="${unsubscribeUrl}" style="color: #64748b; font-size: 11px; text-decoration: underline;" target="_blank" rel="noopener noreferrer">Darse de baja / Unsubscribe</a>`
+            '{{Baja}}': `<a href="${unsubscribeUrl}" style="color: #64748b; font-size: 11px; text-decoration: underline;" target="_blank" rel="noopener noreferrer">Darse de baja / Unsubscribe</a>`,
+            '{{Contactenos por WhatsApp}}': `<a href="https://wa.me/491788338735?text=Estimados%20Srs.%20de%20Dicilo%20nos%20interesa%20una%20reunion%20con%20ustedes%20para%20conversar%20sobre%20la%20propuesta%20de%20dicilo.net" style="background-color: #25D366; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">Contáctenos por WhatsApp</a>`,
+            '{{WhatsApp}}': `<a href="https://wa.me/491788338735?text=Estimados%20Srs.%20de%20Dicilo%20nos%20interesa%20una%20reunion%20con%20ustedes%20para%20conversar%20sobre%20la%20propuesta%20de%20dicilo.net" target="_blank" rel="noopener noreferrer">WhatsApp</a>`
         };
 
         for (const [key, val] of Object.entries(vars)) {
