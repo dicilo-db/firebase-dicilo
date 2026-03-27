@@ -501,24 +501,28 @@ export async function getManualPaymentHistory() {
     const db = getAdminDb();
     try {
         const snapshot = await db.collection('wallet_transactions')
-            .where('type', 'in', ['MANUAL_POINTS', 'MANUAL_CASH'])
             .orderBy('timestamp', 'desc')
-            .limit(50)
+            .limit(300)
             .get();
 
-        const history = snapshot.docs.map(doc => {
-            const data = doc.data();
-            return {
-                id: doc.id,
-                userId: data.userId,
-                type: data.type,
-                amount: data.amount,
-                description: data.description,
-                timestamp: data.timestamp.toDate().toISOString(),
-                adminId: data.adminId,
-                currency: data.currency || 'DP'
-            };
-        });
+        const manualTypes = ['MANUAL_POINTS', 'MANUAL_CASH'];
+
+        const history = snapshot.docs
+            .map(doc => {
+                const data = doc.data();
+                return {
+                    id: doc.id,
+                    userId: data.userId,
+                    type: data.type,
+                    amount: data.amount,
+                    description: data.description || '',
+                    timestamp: data.timestamp?.toDate ? data.timestamp.toDate().toISOString() : (data.timestamp || new Date().toISOString()),
+                    adminId: data.adminId || '',
+                    currency: data.currency || 'DP'
+                };
+            })
+            .filter(trx => manualTypes.includes(trx.type))
+            .slice(0, 50);
 
         return { success: true, data: history };
     } catch (error: any) {

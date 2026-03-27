@@ -329,7 +329,12 @@ export async function getFreelancerReportData(uniqueCode: string, email: string,
                 const data = doc.data();
                 return {
                     id: doc.id,
-                    ...data,
+                    type: data.type || 'UNKNOWN',
+                    amount: data.amount || 0,
+                    description: data.description || '',
+                    userId: data.userId || '',
+                    adminId: data.adminId || '',
+                    currency: data.currency || 'DP',
                     // Serialize timestamp for client
                     timestamp: data.timestamp?.toDate ? data.timestamp.toDate().toISOString() : new Date().toISOString()
                 };
