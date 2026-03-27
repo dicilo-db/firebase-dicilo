@@ -2,7 +2,6 @@
 
 import { getAdminDb } from '@/lib/firebase-admin';
 import * as admin from 'firebase-admin';
-import { revalidatePath } from 'next/cache';
 import { resolveRewards } from '@/lib/rewards';
 
 const MASTER_KEY = process.env.DICIPOINTS_MASTER_KEY; // Need to ensure this is set or handle fallback
@@ -165,7 +164,6 @@ export async function adminAdjustBalance(targetUid: string, amount: number, reas
 
     try {
         await batch.commit();
-        revalidatePath('/admin/private-users');
         return { success: true, message: 'Balance adjusted successfully' };
     } catch (e) {
         console.error(e);
@@ -188,7 +186,6 @@ export async function adminUpdatePointValue(newValue: number, masterPass: string
         updatedAt: admin.firestore.FieldValue.serverTimestamp()
     }, { merge: true });
 
-    revalidatePath('/dashboard');
     return { success: true };
 }
 
@@ -331,7 +328,6 @@ export async function syncReferralRewards(uid: string) {
 
         await batch.commit();
 
-        revalidatePath('/dashboard');
         return { success: true, message: `Synced ${unpaidReferrals.length} referrals (+${totalPointsAdded} DP)` };
 
     } catch (error: any) {
@@ -480,8 +476,6 @@ export async function adminProcessManualPayment(
 
     try {
         await batch.commit();
-        revalidatePath('/admin/dicipoints');
-        revalidatePath('/admin/freelancers');
 
         return {
             success: true,

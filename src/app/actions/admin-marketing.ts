@@ -139,16 +139,26 @@ export async function sendMarketingEmail(leadId: string, templateId: string) {
 
         let { subject, body } = templateVersion;
 
+        const unsubscribeUrl = `https://dicilo.net/baja?email=${encodeURIComponent(email)}`;
+        let generatedLink = `https://dicilo.net/registrieren?type=retailer&email=${encodeURIComponent(email)}`;
+        if (data.referrerId) generatedLink += `&ref=${encodeURIComponent(data.referrerId)}`;
+
         // Replace variables
         const vars: Record<string, string> = {
             '{{nombre}}': data.friendName || 'Usuario',
-            '{{empresa}}': data.companyName || '',
+            '{{Name}}': data.friendName || 'Usuario',
+            '{{empresa}}': data.companyName || 'su empresa',
+            '{{Company}}': data.companyName || 'su empresa',
+            '{{Empresa}}': data.companyName || 'su empresa',
             '{{tu_nombre}}': data.referrerName || 'Equipo Dicilo',
             '{{tu nombre}}': data.referrerName || 'Equipo Dicilo',
+            '{{Tu Nombre}}': data.referrerName || 'Equipo Dicilo',
             '{{referrer_name}}': data.referrerName || 'Equipo Dicilo',
             '{{clave_aleatoria}}': data.securityKey || '',
             '{{clave aleatoria}}': data.securityKey || '',
-            '{{ref_code}}': data.referrerId || ''
+            '{{ref_code}}': data.referrerId || '',
+            '{{Greeting}}': lang === 'de' ? 'Hallo' : 'Hola',
+            '{{Baja}}': `<a href="${unsubscribeUrl}" style="color: #64748b; font-size: 11px; text-decoration: underline;" target="_blank" rel="noopener noreferrer">Darse de baja / Unsubscribe</a>`
         };
 
         for (const [key, val] of Object.entries(vars)) {
@@ -157,6 +167,17 @@ export async function sendMarketingEmail(leadId: string, templateId: string) {
             subject = subject.replace(regex, val);
             body = body.replace(regex, val);
         }
+
+        // Reemplazo de botón de acción: [BOTÓN: Texto del botón]
+        body = body.replace(/\[BOTÓN:\s*(.+?)\]/gi, (match, buttonText) => {
+            return `
+            <div style="text-align: center; margin: 30px 0;">
+                <a href="${generatedLink}" style="background-color: #2563eb; color: #ffffff; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-block; font-family: sans-serif; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);" target="_blank" rel="noopener noreferrer">
+                    ${buttonText}
+                </a>
+            </div>
+            `;
+        });
 
         const html = body.replace(/\n/g, '<br/>');
 
@@ -226,6 +247,16 @@ export async function convertLeadToClient(leadId: string, targetType: string) {
         });
 
         return { success: true, businessId };
+    } catch (error: any) {
+        return { success: false, error: error.message };
+    }
+}
+
+export async function deleteMarketingLead(leadId: string) {
+    try {
+        const db = getAdminDb();
+        await db.collection('referrals_pioneers').doc(leadId).delete();
+        return { success: true };
     } catch (error: any) {
         return { success: false, error: error.message };
     }

@@ -2,7 +2,6 @@
 
 import { getAdminDb } from '@/lib/firebase-admin';
 import * as admin from 'firebase-admin';
-import { revalidatePath } from 'next/cache';
 
 /**
  * Procesa un intento de post por parte de un usuario en una campaña.
@@ -172,7 +171,6 @@ export async function processCampaignPost(
             };
         });
 
-        revalidatePath('/dashboard');
         return result;
 
     } catch (error: any) {

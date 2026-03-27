@@ -7,6 +7,7 @@ import {
     updateMarketingLead, 
     sendMarketingEmail, 
     convertLeadToClient,
+    deleteMarketingLead,
     MarketingLead 
 } from '@/app/actions/admin-marketing';
 import { getTemplates, EmailTemplate } from '@/actions/email-templates';
@@ -159,6 +160,24 @@ export default function EmailMarketingPage() {
         }
     };
 
+    const handleDelete = async (id: string, name: string) => {
+        if (!window.confirm(`¿Estás seguro de que deseas eliminar permanentemente a "${name}" de la lista de marketing?`)) {
+            return;
+        }
+        
+        try {
+            const res = await deleteMarketingLead(id);
+            if (res.success) {
+                toast({ title: 'Eliminado', description: 'El prospecto fue eliminado con éxito de la base de datos.' });
+                setLeads(prev => prev.filter(l => l.id !== id));
+            } else {
+                throw new Error(res.error);
+            }
+        } catch (error: any) {
+            toast({ title: 'Error', description: error.message, variant: 'destructive' });
+        }
+    };
+
     const filteredLeads = useMemo(() => {
         return leads.filter(l => 
             l.friendName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -281,21 +300,32 @@ export default function EmailMarketingPage() {
                                                         </Badge>
                                                     </TableCell>
                                                     <TableCell className="text-right">
-                                                        <Button 
-                                                            variant="ghost" 
-                                                            size="sm" 
-                                                            className="h-8 text-blue-600"
-                                                            onClick={() => {
-                                                                let leadToEdit = { ...lead };
-                                                                if (!leadToEdit.companyName || leadToEdit.companyName.trim() === '') {
-                                                                    leadToEdit.companyName = leadToEdit.friendName;
-                                                                }
-                                                                setEditingLead(leadToEdit);
-                                                                setIsEditOpen(true);
-                                                            }}
-                                                        >
-                                                            Ficha Técnica
-                                                        </Button>
+                                                        <div className="flex justify-end gap-2 items-center">
+                                                            <Button 
+                                                                variant="ghost" 
+                                                                size="sm" 
+                                                                className="h-8 text-blue-600 px-2"
+                                                                onClick={() => {
+                                                                    let leadToEdit = { ...lead };
+                                                                    if (!leadToEdit.companyName || leadToEdit.companyName.trim() === '') {
+                                                                        leadToEdit.companyName = leadToEdit.friendName;
+                                                                    }
+                                                                    setEditingLead(leadToEdit);
+                                                                    setIsEditOpen(true);
+                                                                }}
+                                                            >
+                                                                Ficha Técnica
+                                                            </Button>
+                                                            <Button
+                                                                variant="outline"
+                                                                size="sm"
+                                                                className="h-8 w-8 p-0 text-red-500 border-red-200 hover:bg-red-50"
+                                                                onClick={() => handleDelete(lead.id, lead.companyName || lead.friendName)}
+                                                                title="Eliminar Prospecto"
+                                                            >
+                                                                <Trash2 className="h-4 w-4" />
+                                                            </Button>
+                                                        </div>
                                                     </TableCell>
                                                 </TableRow>
                                             ))
@@ -310,7 +340,7 @@ export default function EmailMarketingPage() {
 
             {/* MODAL: FICHA TÉCNICA (EDIT) */}
             <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-                <DialogContent className="max-w-2xl sm:max-w-[700px]">
+                <DialogContent className="max-w-2xl sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
                     <DialogHeader>
                         <DialogTitle className="text-2xl font-bold flex items-center gap-2">
                             <Pen className="h-5 w-5 text-blue-500" />
@@ -319,7 +349,22 @@ export default function EmailMarketingPage() {
                     </DialogHeader>
                     {editingLead && (
                         <div className="grid gap-6 py-4">
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg border flex items-center gap-3">
+                                <div className="bg-blue-100 p-2 rounded-full text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
+                                    <UserPlus className="h-4 w-4" />
+                                </div>
+                                <div className="flex flex-col text-sm">
+                                    <span className="text-muted-foreground">Registrado por:</span>
+                                    <div className="flex items-center gap-2">
+                                        <span className="font-bold">{editingLead.referrerName || 'Admin / Directo'}</span>
+                                        {editingLead.referrerId && (
+                                            <Badge variant="outline" className="font-mono text-[10px] py-0">{editingLead.referrerId}</Badge>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <Label>Nombre del Lead</Label>
                                     <Input 

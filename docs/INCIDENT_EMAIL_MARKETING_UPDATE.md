@@ -31,3 +31,8 @@ The platform needed a more robust, professional, and GDPR-friendly B2B email mar
 ### 4. Zero-Friction B2B Registration Pipeline
 - **Smart Link Routing:** The payload builder injects `&type=retailer` automatically into all Dicilo marketing payloads.
 - **Auto-Hydration in Form:** Refactored the `useForm` initialization in `RegistrationForm.tsx` to actively snag the URL parameter immediately before the UI hydrates. This surgically prevents React's initial "jump" and locks the Registration Type directly on *Retailer* with the business schema input fields expanded and ready.
+
+### 5. Admin Panel Adjustments (`/admin/email-marketing`)
+- **Ficha Técnica UI:** The modal now utilizes `max-h-[90vh]` and `overflow-y-auto` to ensure it is fully accessible on mobile devices, allowing users to scroll and locate the close (`x`) button.
+- **Referrer Information Display:** Integrated a visual block at the top of the Technical Sheet to prominently display the user who registered the prospect (`referrerName` and `referrerId`).
+- **Template Tag Normalization:** Centralized the `<a href="...">` parsing logic into `src/app/actions/admin-marketing.ts` (`sendMarketingEmail`), ensuring secondary follow-up emails sent directly from the Admin Panel now correctly parse `[BOTÓN: text]`, `{{Baja}}`, and `{{Empresa}}` tags.

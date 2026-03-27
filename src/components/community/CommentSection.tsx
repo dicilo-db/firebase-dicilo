@@ -62,7 +62,11 @@ export function CommentSection({ postId, currentUserId, currentUserAvatar }: Com
         return () => unsubscribe();
     }, [postId]);
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (e?: React.MouseEvent | React.FormEvent) => {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
         if (!newComment.trim()) return;
         setIsSubmitting(true);
 
@@ -152,7 +156,8 @@ export function CommentSection({ postId, currentUserId, currentUserAvatar }: Com
                         onKeyDown={(e) => {
                             if (e.key === 'Enter' && !e.shiftKey) {
                                 e.preventDefault();
-                                handleSubmit();
+                                e.stopPropagation();
+                                handleSubmit(e);
                             }
                         }}
                     />
@@ -161,7 +166,7 @@ export function CommentSection({ postId, currentUserId, currentUserAvatar }: Com
                             {/* Emoji Picker */}
                             <Popover>
                                 <PopoverTrigger asChild>
-                                    <Button variant="ghost" size="sm" className="h-8 text-slate-500 hover:text-purple-600 hover:bg-purple-50 rounded-full transition-colors gap-2 px-2">
+                                    <Button type="button" variant="ghost" size="sm" className="h-8 text-slate-500 hover:text-purple-600 hover:bg-purple-50 rounded-full transition-colors gap-2 px-2">
                                         <Smile className="h-5 w-5" />
                                         <span className="text-xs font-medium">Emoji</span>
                                     </Button>
@@ -182,6 +187,7 @@ export function CommentSection({ postId, currentUserId, currentUserAvatar }: Com
                             </Popover>
                         </div>
                         <Button
+                            type="button"
                             size="sm"
                             className="bg-purple-600 hover:bg-purple-700 text-white font-bold px-6 h-9 rounded-xl shadow-md shadow-purple-200 dark:shadow-none transition-all hover:scale-105 active:scale-95"
                             onClick={handleSubmit}
