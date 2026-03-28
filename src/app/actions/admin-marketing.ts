@@ -129,16 +129,37 @@ export async function sendMarketingEmail(leadId: string, templateId: string) {
         const email = data.friendEmail || data.email;
         if (!email) return { success: false, error: 'No email found for lead' };
 
+        let securityKey = data.securityKey;
+        if (!securityKey) {
+            const { randomBytes } = require('crypto');
+            securityKey = randomBytes(4).toString('hex').toUpperCase(); // 8 chars key
+            await leadRef.update({ securityKey });
+            data.securityKey = securityKey;
+        }
+
         const template = await getTemplate(templateId);
         if (!template) return { success: false, error: 'Template not found' };
 
-        // Determine language
-        const lang = data.lang || (data.country === 'Deutschland' || data.country === 'Germany' ? 'de' : 'es');
-        let templateVersion = template.versions[lang] || template.versions['es'] || Object.values(template.versions)[0];
+        // Determinar idioma explícito o intentar inferir (por defecto 'es')
+        let lang = data.lang || (data.countryCode === 'DE' || data.country === 'Deutschland' || data.country === 'Alemania' ? 'de' : 'es');
+        
+        let templateVersion = template.versions[lang];
 
-        if (!templateVersion) return { success: false, error: 'No valid template version found' };
+        // Verificar si la versión especificada está vacía, en cuyo caso forzamos 'es' u otra válida
+        if (!templateVersion || !templateVersion.subject || !templateVersion.body) {
+            templateVersion = template.versions['es'];
+        }
+        if (!templateVersion || !templateVersion.subject || !templateVersion.body) {
+            templateVersion = Object.values(template.versions).find((v: any) => v && v.subject && v.body) as any;
+        }
+        
+        if (!templateVersion) {
+            return { success: false, error: 'Versión de idioma de la plantilla no encontrada o está vacía' };
+        }
 
-        let { subject, body } = templateVersion;
+
+        let subject = templateVersion.subject;
+        let body = templateVersion.body;
 
         const unsubscribeUrl = `https://dicilo.net/baja?email=${encodeURIComponent(email)}`;
         let generatedLink = `https://dicilo.net/registrieren?type=retailer&email=${encodeURIComponent(email)}`;
@@ -184,7 +205,10 @@ export async function sendMarketingEmail(leadId: string, templateId: string) {
 
         const html = body.replace(/\n/g, '<br/>');
 
+        console.log(`[sendMarketingEmail] Sending to: ${email}, Subject: ${subject}`);
         const result = await sendSmtpEmail({ to: email, subject, html });
+        console.log(`[sendMarketingEmail] SMTP Result:`, result);
+
         if (!result.success) return { success: false, error: result.error };
 
         // Update lead status
