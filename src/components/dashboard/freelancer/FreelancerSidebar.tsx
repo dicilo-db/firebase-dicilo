@@ -38,8 +38,8 @@ export function FreelancerSidebar({ className, onViewChange, onMobileClose }: Fr
     const searchParams = useSearchParams();
 
     // Helper to get current tab (default to 'dashboard')
-    const currentTab = searchParams.get('tab') || 'dashboard';
-    const selectedCampaignId = searchParams.get('campaignId');
+    const currentTab = searchParams?.get('tab') || 'dashboard';
+    const selectedCampaignId = searchParams?.get('campaignId');
 
     // Navigation Structure
     const navItems = [

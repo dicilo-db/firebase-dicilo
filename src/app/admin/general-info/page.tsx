@@ -464,9 +464,8 @@ export default function GeneralInfoPage() {
                                     </p>
                                 </div>
 
-                                <div className="space-y-4">
+                                <div className="space-y-4 relative">
                                     <Label 
-                                        htmlFor="media-upload" 
                                         className="cursor-pointer flex flex-col items-center justify-center p-6 border-2 border-dashed border-teal-300 rounded-lg bg-teal-50/50 hover:bg-teal-100/50 transition-colors text-center"
                                     >
                                         <LinkIcon className="w-8 h-8 text-teal-500 mb-2" />
@@ -479,7 +478,7 @@ export default function GeneralInfoPage() {
                                         multiple
                                         accept=".pdf,image/*,video/*"
                                         onChange={handleFileChange}
-                                        className="hidden"
+                                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                                     />
                                     {selectedFiles.length > 0 && (
                                         <div className="bg-white border border-teal-100 p-2 rounded text-sm text-teal-800 shadow-sm">

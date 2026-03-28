@@ -49,7 +49,7 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
     const { toast } = useToast();
     const router = useRouter();
     const searchParams = useSearchParams();
-    const urlNeighborhood = searchParams.get('neighborhood');
+    const urlNeighborhood = searchParams?.get('neighborhood');
 
     // Initialize state from URL param or default prop
     const [neighborhoodName, setNeighborhoodName] = useState(urlNeighborhood || defaultNeighborhood);
