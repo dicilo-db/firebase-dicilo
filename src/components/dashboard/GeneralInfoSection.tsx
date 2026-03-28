@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { Loader2, Calendar as CalendarIcon, Link as LinkIcon, Info, ExternalLink, CalendarClock, Maximize2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
+    Dialog,
     DialogContent,
     DialogHeader,
     DialogTitle,
