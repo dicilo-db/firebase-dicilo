@@ -1,11 +1,12 @@
 // src/app/ueber-uns/page.tsx
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from 'react-i18next';
 import Link from 'next/link';
+import { FeedbackShowcase } from '@/components/public/FeedbackShowcase';
 import {
   Users,
   User,
@@ -84,6 +85,7 @@ const ClubCtaCard = () => {
 
 function UeberUnsClientContent() {
   const { t } = useTranslation('about');
+  const [showFeedback, setShowFeedback] = useState(false);
 
   return (
     <>
@@ -191,6 +193,24 @@ function UeberUnsClientContent() {
           descKey="data.description"
         />
       </div>
+
+      <div className="flex justify-center mt-12 mb-4">
+        <Button 
+          size="lg" 
+          variant={showFeedback ? "outline" : "default"}
+          onClick={() => setShowFeedback(!showFeedback)}
+          className="rounded-full shadow-md text-lg px-8 transition-all hover:scale-105"
+        >
+          <MessageCircle className="mr-2 h-5 w-5" />
+          {t('about:listenCommunity', 'Escucha a la comunidad')}
+        </Button>
+      </div>
+
+      {showFeedback && (
+        <div className="animate-in fade-in slide-in-from-top-4 duration-500">
+          <FeedbackShowcase />
+        </div>
+      )}
     </>
   );
 }

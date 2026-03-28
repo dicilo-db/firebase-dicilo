@@ -41,6 +41,7 @@ import { SuperAdminStatsGrid } from './SuperAdminStatsGrid';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { ensureHttps, formatSocialUrl } from '@/lib/url-utils';
+import { VideoFeedbackUploader } from './VideoFeedbackUploader';
 
 const db = getFirestore(app);
 // Private Dashboard Component
@@ -803,34 +804,10 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                                                 </SelectContent>
                                             </Select>
                                         </div>
-                                        <div className="space-y-2">
-                                            <Label>{t('benefits.feedback.rating')}</Label>
-                                            <div className="flex items-center space-x-1">
-                                                {[1, 2, 3, 4, 5].map((star) => (
-                                                    <Star
-                                                        key={star}
-                                                        className={`cursor-pointer h-5 w-5 ${star <= feedbackRating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
-                                                        onClick={() => setFeedbackRating(star)}
-                                                    />
-                                                ))}
-                                            </div>
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Label>{t('dashboard.feedback')}</Label>
-                                            <Textarea
-                                                placeholder={t('dashboard.feedbackPlaceholder')}
-                                                value={feedbackMessage}
-                                                onChange={(e) => setFeedbackMessage(e.target.value)}
-                                            />
-                                            <Button
-                                                variant="outline"
-                                                size="sm"
-                                                className="mt-2"
-                                                onClick={handleSendFeedback}
-                                                disabled={isSubmittingFeedback}
-                                            >
-                                                {isSubmittingFeedback ? t('dashboard.pending') : t('dashboard.sendFeedback')}
-                                            </Button>
+                                        
+                                        {/* New Video Feedback Component */}
+                                        <div className="pt-2">
+                                            <VideoFeedbackUploader formData={formData} uid={user.uid} />
                                         </div>
                                     </CardContent>
                                 </Card>

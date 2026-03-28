@@ -8,6 +8,8 @@ import {
   onSnapshot,
   query,
   orderBy,
+  doc,
+  updateDoc
 } from 'firebase/firestore';
 import { app } from '@/lib/firebase';
 import { useTranslation } from 'react-i18next';
@@ -42,6 +44,8 @@ interface Feedback {
   message: string;
   country: string;
   customerType: CustomerType;
+  status?: string;
+  videoUrl?: string;
   createdAt: {
     seconds: number;
     nanoseconds: number;
@@ -127,6 +131,15 @@ export default function FeedbacksPage() {
   const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  const toggleStatus = async (id: string, currentStatus: string | undefined) => {
+    try {
+      const newStatus = currentStatus === 'approved' ? 'pending' : 'approved';
+      await updateDoc(doc(db, 'feedbacks', id), { status: newStatus });
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   useAuthGuard(['superadmin', 'admin']);
 
   useEffect(() => {
@@ -187,6 +200,7 @@ export default function FeedbacksPage() {
                 <TableHead>{t('admin:feedbacks.table.customerType')}</TableHead>
                 <TableHead>{t('admin:feedbacks.table.rating')}</TableHead>
                 <TableHead>{t('admin:feedbacks.table.message')}</TableHead>
+                <TableHead>Acciones</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -220,6 +234,20 @@ export default function FeedbacksPage() {
                     </TableCell>
                     <TableCell className="max-w-md">
                       <p className="text-sm">{fb.message}</p>
+                      {fb.videoUrl && (
+                        <a href={fb.videoUrl} target="_blank" rel="noreferrer" className="text-blue-500 text-xs mt-1 inline-block hover:underline">
+                          Ver Video Ajunto &rarr;
+                        </a>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <Button
+                        variant={fb.status === 'approved' ? "default" : "secondary"}
+                        size="sm"
+                        onClick={() => toggleStatus(fb.id, fb.status)}
+                      >
+                        {fb.status === 'approved' ? 'Aprobado' : 'Pendiente'}
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))
