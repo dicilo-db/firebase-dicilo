@@ -219,6 +219,29 @@ export function GeneralInfoSection() {
                         <DialogDescription className="text-slate-700 dark:text-slate-300 text-sm whitespace-pre-line leading-relaxed">
                             {selectedNote?.description || 'Sin descripción adicional.'}
                         </DialogDescription>
+                        
+                        {selectedNote?.media_paths && selectedNote.media_paths.length > 0 && (
+                            <div className="mt-4 flex flex-col gap-3">
+                                {selectedNote.media_paths.map((mediaUrl: string, idx: number) => {
+                                    if (mediaUrl.endsWith('.mp4') || mediaUrl.includes('video')) {
+                                        return (
+                                            <video key={idx} src={mediaUrl} controls className="w-full rounded-md border text-xs" />
+                                        );
+                                    } else if (mediaUrl.endsWith('.pdf')) {
+                                        return (
+                                            <a key={idx} href={mediaUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline text-sm flex items-center gap-1">
+                                                <ExternalLink className="w-4 h-4"/> Ver Archivo Adjunto (PDF)
+                                            </a>
+                                        );
+                                    } else {
+                                        return (
+                                            <img key={idx} src={mediaUrl} alt="Attached Media" className="w-full h-auto rounded-md border object-cover" />
+                                        );
+                                    }
+                                })}
+                            </div>
+                        )}
+
                         {selectedNote && (
                             <GeneralInfoComments infoId={selectedNote.id} />
                         )}

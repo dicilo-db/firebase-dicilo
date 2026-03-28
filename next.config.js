@@ -43,6 +43,11 @@ const nextConfig = {
     return config;
   },
   transpilePackages: ['react-markdown', 'remark-gfm', 'recharts'],
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '50mb',
+    },
+  },
   typescript: {
     ignoreBuildErrors: true,
   },

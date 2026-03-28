@@ -146,7 +146,17 @@ export function CreatePost({ userId, neighborhood, neighborhoodId, onPostCreated
 
                 imageCompression(file, options).then(compressedFile => {
                     const fileName = file.name.replace(/\.[^/.]+$/, "") + ".webp";
-                    const webpFile = new File([compressedFile], fileName, { type: 'image/webp' });
+                    
+                    let webpFile;
+                    try {
+                        webpFile = new File([compressedFile], fileName, { type: 'image/webp' });
+                    } catch (e) {
+                        // iOS Safari fallback: append name and lastModified to Blob directly
+                        webpFile = compressedFile as any;
+                        webpFile.name = fileName;
+                        webpFile.lastModified = new Date().getTime();
+                    }
+                    
                     const newPreview = URL.createObjectURL(webpFile);
                     
                     setMediaItems(prev => prev.map(item => {
