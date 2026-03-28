@@ -94,6 +94,23 @@ export async function broadcastGeneralInfoNewsletter(payload: BroadcastPayload) 
             body = body.replace(/{{hora inicio}}/gi, payload.time || '');
             body = body.replace(/{{hora fin}}/gi, payload.endTime || '');
 
+            // Ensure the media/link is visible in the email.
+            if (payload.url) {
+                const buttonText = payload.url.includes('.mp4') || payload.url.includes('.webm') ? 'Ver Video Adjunto 🎬' : 'Ver Enlace Adjunto 🔗';
+                const mediaButton = `
+                <div style="text-align:center; margin-top:30px; margin-bottom: 20px;">
+                    <a href="${payload.url}" target="_blank" style="background-color:#0d9488;color:#ffffff;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:bold;font-family:Arial, sans-serif;display:inline-block;">
+                        ${buttonText}
+                    </a>
+                </div>`;
+                
+                if (body.includes('</body>')) {
+                    body = body.replace('</body>', mediaButton + '\n</body>');
+                } else {
+                    body += mediaButton;
+                }
+            }
+
             // Preservar los saltos de línea (párrafos) para el cuerpo HTML del correo
             body = body.replace(/\n/g, '<br />');
 

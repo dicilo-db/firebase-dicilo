@@ -19,6 +19,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { adminProcessManualPayment } from '@/app/actions/wallet';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 export default function DicipointsControlCenter() {
     const { toast } = useToast();
@@ -206,7 +208,6 @@ export default function DicipointsControlCenter() {
         if (!paymentResult) return;
 
         try {
-            const jsPDF = (await import('jspdf')).default;
             const doc = new jsPDF();
 
             // Header
@@ -362,9 +363,6 @@ export default function DicipointsControlCenter() {
         if (!reportData) return;
 
         try {
-            const jsPDF = (await import('jspdf')).default;
-            const autoTable = (await import('jspdf-autotable')).default;
-
             const doc = new jsPDF();
 
             // Header
