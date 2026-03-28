@@ -9,6 +9,7 @@ interface InviteFriend {
     email: string;
     lang: 'es' | 'de' | 'en' | 'fr' | 'pt' | 'it';
     template?: string;
+    company?: string;
 }
 
 interface SendInvitationResult {
@@ -71,8 +72,9 @@ export async function sendPioneerInvitations(
             const docData: any = {
                 referrerId,
                 referrerName,
-                friendName: friend.name,
+                friendName: friend.name || '',
                 friendEmail: friend.email,
+                companyName: friend.company || '',
                 lang: friend.lang.toLowerCase(),
                 status: 'sent', // Or 'draft' depending on email sending outcome
                 createdAt: admin.firestore.FieldValue.serverTimestamp(),

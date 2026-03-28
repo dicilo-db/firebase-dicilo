@@ -10,7 +10,7 @@ export interface CompressionProgress {
 
 export async function compressVideo(
     file: File,
-    maxSizeMB: number = 50,
+    maxSizeMB: number = 25,
     onProgress?: (progress: CompressionProgress) => void
 ): Promise<File> {
     const fileSizeMB = file.size / (1024 * 1024);
@@ -41,10 +41,20 @@ export async function compressVideo(
                 return resolve(file);
             }
 
+            // Dynamic Bitrate Calculation (WhatsApp-like approach)
+            // Target size is roughly 8-10MB ideal, so we adjust bitrate based on duration
+            let targetBitrate = 1500000; // default 1.5 Mbps
+            const duration = video.duration || 10; // estimate if unknown
+            const targetSizeTotalBits = 10 * 1024 * 1024 * 8; // 10MB limit ideally
+            const requiredBitrate = Math.floor(targetSizeTotalBits / duration);
+            
+            // Constrain bitrate between 500kbps (minimal acceptable) and 2.5Mbps (good 720p)
+            targetBitrate = Math.max(500000, Math.min(2500000, requiredBitrate));
+
             // Options for compression
-            const options = {
+            const options: any = {
                 mimeType: 'video/webm;codecs=vp8',
-                videoBitsPerSecond: 1500000, // 1.5 Mbps for roughly 720p-ish quality
+                videoBitsPerSecond: targetBitrate, 
             };
 
             // Check for support
@@ -91,13 +101,15 @@ export async function compressVideo(
             video.onerror = (e) => {
                 clearInterval(interval);
                 mediaRecorder.stop();
-                reject(e);
+                console.warn("Video compression error during playback, returning original file", e);
+                resolve(file); // Graceful fallback
             };
         };
 
         video.onerror = (e) => {
             URL.revokeObjectURL(videoUrl);
-            reject(e);
+            console.warn("Video load error for compression, returning original file", e);
+            resolve(file); // Graceful fallback
         };
     });
 }

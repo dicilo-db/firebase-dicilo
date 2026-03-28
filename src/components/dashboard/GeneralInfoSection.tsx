@@ -7,13 +7,13 @@ import { useTranslation } from 'react-i18next';
 import { Loader2, Calendar as CalendarIcon, Link as LinkIcon, Info, ExternalLink, CalendarClock, Maximize2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
-    Dialog,
     DialogContent,
     DialogHeader,
     DialogTitle,
     DialogDescription,
 } from "@/components/ui/dialog";
 import { trackGeneralInfoView } from '@/app/actions/track';
+import { GeneralInfoComments } from './GeneralInfoComments';
 
 const db = getFirestore(app);
 
@@ -218,6 +218,9 @@ export function GeneralInfoSection() {
                         <DialogDescription className="text-slate-700 dark:text-slate-300 text-sm whitespace-pre-line leading-relaxed">
                             {selectedNote?.description || 'Sin descripción adicional.'}
                         </DialogDescription>
+                        {selectedNote && (
+                            <GeneralInfoComments infoId={selectedNote.id} />
+                        )}
                     </div>
 
                     <div className="p-4 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 bg-slate-50 dark:bg-slate-900/50 rounded-b-lg">

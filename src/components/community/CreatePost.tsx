@@ -82,6 +82,14 @@ export function CreatePost({ userId, neighborhood, neighborhoodId, onPostCreated
             }
 
             if (isVideo) {
+                if (file.size > 25 * 1024 * 1024) {
+                    toast({
+                        title: "Archivo demasiado grande",
+                        description: `El video ${file.name} supera el límite de 25MB permitido en la comunidad.`,
+                        variant: "destructive"
+                    });
+                    continue;
+                }
                 // Compress almost everything (> 1MB) to ensure efficiency as per user request
                 const needsCompression = file.size > 1 * 1024 * 1024;
                 const newItem: MediaFile = {

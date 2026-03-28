@@ -34,6 +34,8 @@ interface Review {
     id: string;
     refPath: string; // To know where to update/delete
     clientName?: string;
+    userId?: string;
+    ipAddress?: string;
     userName: string;
     rating: number;
     comment: string;
@@ -67,7 +69,9 @@ export default function AdminReviewsPage() {
                     id: doc.id,
                     refPath: doc.ref.path,
                     clientName: data.clientName || 'Unknown Client',
-                    userName: data.name ? `${data.name} ${data.lastName || ''}`.trim() : 'Anonymous',
+                    userId: data.userId,
+                    ipAddress: data.ipAddress,
+                    userName: data.name || data.userName ? `${data.name || data.userName} ${data.lastName || ''}`.trim() : 'Anonymous',
                     rating: data.rating || 5,
                     comment: data.comment || '',
                     status: data.status || 'pending',
@@ -137,6 +141,7 @@ export default function AdminReviewsPage() {
                             <TableHead>{t('clientReviews.table.date', 'Date')}</TableHead>
                             <TableHead>{t('clientReviews.table.client', 'Client')}</TableHead>
                             <TableHead>{t('clientReviews.table.reviewer', 'Reviewer')}</TableHead>
+                            <TableHead>IP</TableHead>
                             <TableHead>{t('clientReviews.table.rating', 'Rating')}</TableHead>
                             <TableHead className="w-1/3">{t('clientReviews.table.comment', 'Comment')}</TableHead>
                             <TableHead>{t('clientReviews.table.status', 'Status')}</TableHead>
@@ -146,11 +151,11 @@ export default function AdminReviewsPage() {
                     <TableBody>
                         {loading ? (
                             <TableRow>
-                                <TableCell colSpan={7} className="h-24 text-center">{t('clientReviews.table.loading', 'Loading...')}</TableCell>
+                                <TableCell colSpan={8} className="h-24 text-center">{t('clientReviews.table.loading', 'Loading...')}</TableCell>
                             </TableRow>
                         ) : reviews.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={7} className="h-24 text-center">{t('clientReviews.table.empty', 'No reviews found.')}</TableCell>
+                                <TableCell colSpan={8} className="h-24 text-center">{t('clientReviews.table.empty', 'No reviews found.')}</TableCell>
                             </TableRow>
                         ) : (
                             reviews.map((review) => (
@@ -159,7 +164,25 @@ export default function AdminReviewsPage() {
                                         {review.createdAt?.toDate().toLocaleDateString() || 'N/A'}
                                     </TableCell>
                                     <TableCell className="font-medium">{review.clientName}</TableCell>
-                                    <TableCell>{review.userName}</TableCell>
+                                    <TableCell>
+                                        <div className="flex flex-col gap-1">
+                                            {(!review.userId || review.userId === 'guest' || review.userId === 'Anonymous' || review.userName === 'Anonymous') ? (
+                                                <span className="text-red-600 font-semibold flex items-center gap-1 text-xs">
+                                                    <XCircle className="w-3 h-3"/> Origen no verificado
+                                                </span>
+                                            ) : (
+                                                <Link href={`/admin/statistics/client/${review.userId}`} className="text-blue-600 hover:underline font-medium">
+                                                    {review.userName}
+                                                </Link>
+                                            )}
+                                            <span className="text-[10px] text-gray-400 font-mono" title="User ID">
+                                                ID: {review.userId || 'N/A'}
+                                            </span>
+                                        </div>
+                                    </TableCell>
+                                    <TableCell className="text-xs font-mono text-gray-500">
+                                        {review.ipAddress || 'Sin registro'}
+                                    </TableCell>
                                     <TableCell>
                                         <div className="flex text-yellow-500">
                                             {Array.from({ length: review.rating }).map((_, i) => (

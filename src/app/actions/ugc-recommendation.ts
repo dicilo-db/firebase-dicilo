@@ -7,6 +7,8 @@ import { v4 as uuidv4 } from 'uuid';
 const db = getAdminDb();
 const storage = getAdminStorage();
 
+import { headers } from 'next/headers';
+
 export async function submitUGCRecommendation(formData: FormData) {
     try {
         const mediaFiles = formData.getAll('media') as File[];
@@ -18,6 +20,12 @@ export async function submitUGCRecommendation(formData: FormData) {
         if (mediaFiles.length === 0 || !businessId || !userId) {
             throw new Error('Missing required fields');
         }
+        if (userId === 'guest' || userId === 'Anonymous') {
+            throw new Error('Debes iniciar sesión para publicar una reseña.');
+        }
+
+        const headersList = await headers();
+        const ipAddress = headersList.get('x-forwarded-for') || headersList.get('x-real-ip') || 'IP desconocida';
 
         const uploadPromises = mediaFiles.map(async (file) => {
             if (!file || file.size === 0) return null;
@@ -83,6 +91,7 @@ export async function submitUGCRecommendation(formData: FormData) {
             comment: comment || '',
             status: 'pending', // Pending n8n validation
             createdAt: new Date(),
+            ipAddress,
         };
 
         await db.collection('recommendations').doc(recommendationId).set(recommendationData);

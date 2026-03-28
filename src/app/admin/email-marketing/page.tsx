@@ -53,6 +53,12 @@ export default function EmailMarketingPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     
+    // Filters State
+    const [sortOrder, setSortOrder] = useState<string>('newest');
+    const [filterCountry, setFilterCountry] = useState<string>('all');
+    const [filterCity, setFilterCity] = useState<string>('all');
+    const [filterCategory, setFilterCategory] = useState<string>('all');
+    
     // Edit/Tech Sheet State
     const [editingLead, setEditingLead] = useState<MarketingLead | null>(null);
     const [isEditOpen, setIsEditOpen] = useState(false);
@@ -178,13 +184,29 @@ export default function EmailMarketingPage() {
         }
     };
 
+    const uniqueCities = useMemo(() => Array.from(new Set(leads.map(r => r.city).filter(Boolean))).sort(), [leads]);
+    const uniqueCountries = useMemo(() => Array.from(new Set(leads.map(r => r.country).filter(Boolean))).sort(), [leads]);
+    const uniqueCategories = useMemo(() => Array.from(new Set(leads.map(r => r.category).filter(Boolean))).sort(), [leads]);
+
     const filteredLeads = useMemo(() => {
-        return leads.filter(l => 
-            l.friendName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            l.friendEmail.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            l.companyName?.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-    }, [leads, searchTerm]);
+        return leads.filter(l => {
+            const matchesSearch = (
+                (l.friendName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+                (l.friendEmail || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+                (l.companyName || '').toLowerCase().includes(searchTerm.toLowerCase())
+            );
+            const matchesCountry = filterCountry === 'all' || l.country === filterCountry;
+            const matchesCity = filterCity === 'all' || l.city === filterCity;
+            const matchesCategory = filterCategory === 'all' || l.category === filterCategory;
+            return matchesSearch && matchesCountry && matchesCity && matchesCategory;
+        }).sort((a, b) => {
+            if (sortOrder === 'name-asc') return (a.companyName || a.friendName || '').localeCompare(b.companyName || b.friendName || '');
+            if (sortOrder === 'name-desc') return (b.companyName || b.friendName || '').localeCompare(a.companyName || a.friendName || '');
+            if (sortOrder === 'newest') return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime();
+            if (sortOrder === 'oldest') return new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime();
+            return 0;
+        });
+    }, [leads, searchTerm, sortOrder, filterCountry, filterCity, filterCategory]);
 
     return (
         <div className="flex min-h-screen flex-col bg-slate-50 dark:bg-slate-900">
@@ -214,7 +236,7 @@ export default function EmailMarketingPage() {
 
                 <Card className="border-none shadow-sm overflow-hidden">
                     <CardHeader className="bg-white dark:bg-slate-800 border-b">
-                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div className="flex flex-col gap-4">
                             <CardTitle className="text-lg font-semibold flex items-center gap-2">
                                 <Mail className="h-5 w-5 text-blue-500" />
                                 Leads de Campañas
@@ -222,14 +244,64 @@ export default function EmailMarketingPage() {
                                     {filteredLeads.length} Total
                                 </Badge>
                             </CardTitle>
-                            <div className="relative w-full md:w-64">
-                                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                                <Input
-                                    placeholder="Buscar lead, email o empresa..."
-                                    className="pl-8"
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                />
+                            
+                            <div className="flex gap-4 flex-wrap">
+                                <div className="relative">
+                                    <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                                    <Input
+                                        placeholder="Buscar lead o correo..."
+                                        className="pl-8 w-[250px]"
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                    />
+                                </div>
+                                <Select value={sortOrder} onValueChange={setSortOrder}>
+                                    <SelectTrigger className="w-[160px]">
+                                        <SelectValue placeholder="Ordenar por" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="newest">Más recientes</SelectItem>
+                                        <SelectItem value="oldest">Más antiguos</SelectItem>
+                                        <SelectItem value="name-asc">Nombre (A-Z)</SelectItem>
+                                        <SelectItem value="name-desc">Nombre (Z-A)</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                                <Select value={filterCountry} onValueChange={setFilterCountry}>
+                                    <SelectTrigger className="w-[160px]">
+                                        <SelectValue placeholder="País" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">Todos los Países</SelectItem>
+                                        {uniqueCountries.map(c => <SelectItem key={c as string} value={c as string}>{c as string}</SelectItem>)}
+                                    </SelectContent>
+                                </Select>
+                                <Select value={filterCity} onValueChange={setFilterCity}>
+                                    <SelectTrigger className="w-[160px]">
+                                        <SelectValue placeholder="Ciudad" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">Todas las Ciudades</SelectItem>
+                                        {uniqueCities.map(c => <SelectItem key={c as string} value={c as string}>{c as string}</SelectItem>)}
+                                    </SelectContent>
+                                </Select>
+                                <Select value={filterCategory} onValueChange={setFilterCategory}>
+                                    <SelectTrigger className="w-[160px]">
+                                        <SelectValue placeholder="Categoría" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">Todas las Categorías</SelectItem>
+                                        {uniqueCategories.map(c => <SelectItem key={c as string} value={c as string}>{c as string}</SelectItem>)}
+                                    </SelectContent>
+                                </Select>
+                                <Button variant="ghost" onClick={() => {
+                                    setSearchTerm('');
+                                    setSortOrder('newest');
+                                    setFilterCountry('all');
+                                    setFilterCity('all');
+                                    setFilterCategory('all');
+                                }}>
+                                    Resetear
+                                </Button>
                             </div>
                         </div>
                     </CardHeader>

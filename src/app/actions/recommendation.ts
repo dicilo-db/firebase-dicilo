@@ -57,14 +57,24 @@ async function moderateContent(text: string): Promise<{ safe: boolean; reason?: 
     }
 }
 
+import { headers } from 'next/headers';
+
 export async function submitRecommendation(prevState: any, formData: FormData) {
     try {
         const businessId = formData.get('businessId') as string;
         const rating = formData.get('rating');
+        const userId = formData.get('userId') as string;
+
+        if (!userId || userId === 'guest' || userId === 'Anonymous') {
+            return { success: false, message: 'Debes iniciar sesión para publicar una reseña.' };
+        }
+
+        const headersList = await headers();
+        const ipAddress = headersList.get('x-forwarded-for') || headersList.get('x-real-ip') || 'IP desconocida';
 
         const rawData = {
             businessId,
-            userId: formData.get('userId') as string || 'guest',
+            userId,
             userName: formData.get('userName') as string,
             userContact: formData.get('userContact') as string,
             comment: formData.get('comment') as string,
@@ -135,6 +145,7 @@ export async function submitRecommendation(prevState: any, formData: FormData) {
             status: 'approved',
             createdAt: FieldValue.serverTimestamp(),
             moderatedBy: 'ai',
+            ipAddress, // Nuevo campo de auditoría
         };
 
         await clientRef.collection('recommendations').add(reviewData);

@@ -408,7 +408,7 @@ export function EmailMarketingComposer({
             return;
         }
         setFriends([...friends, {
-            name: currentName.trim() || 'Contacto',
+            name: currentName.trim(), 
             email: currentEmail.trim(),
             language: currentLanguage,
             company: currentCompany.trim()
@@ -451,6 +451,7 @@ export function EmailMarketingComposer({
                     email: f.email,
                     lang: f.language as 'es' | 'de' | 'en' | 'fr' | 'pt' | 'it',
                     template: template.id || 'email_marketing',
+                    company: f.company,
                     rewardSender: template.rewardSender,
                     rewardReceiver: template.rewardReceiver
                 }))
@@ -474,9 +475,11 @@ export function EmailMarketingComposer({
                 const imageHtml = selectedImageUrl ? `<div style="margin-bottom: 20px;"><img src="${selectedImageUrl}" alt="" style="max-width: 100%; height: auto; border-radius: 12px; display: block;" /></div>` : '';
                 body = imageHtml + body;
 
+                const displayName = friend.name || friend.company || '';
+
                 // Replace tags
                 body = body
-                    .replace(/\[Name\]|\[Nombre\]|\{\{Nombre\}\}|\{\{Name\}\}/ig, friend.name)
+                    .replace(/\[Name\]|\[Nombre\]|\{\{Nombre\}\}|\{\{Name\}\}/ig, displayName)
                     .replace(/\{\{Company\}\}|\{\{Empresa\}\}|\[Company\]|\[Empresa\]/ig, friend.company || 'la Empresa')
                     .replace(/\[Tu Nombre\]|\{\{Tu Nombre\}\}|\{\{Your Name\}\}|\{\{Dein Name\}\}/ig, effectiveSenderName)
                     .replace(/\[RefCode\]|\{\{RefCode\}\}/ig, propUniqueCode || currentUser.uid)
@@ -485,8 +488,8 @@ export function EmailMarketingComposer({
                     .replace(/\[(?:BOTÓN|BUTTON):\s*(.*?)\]/ig, `<div style="margin: 20px 0;"><a href="${inviteUrl}" style="display: inline-block; padding: 14px 28px; background-color: #2563eb; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: bold; text-align: center;">$1</a></div>`);
 
                 subject = subject
-                    .replace(/\{\{.*?\}\}/g, friend.name) // Legacy fallback
-                    .replace(/\[Name\]|\[Nombre\]/ig, friend.name)
+                    .replace(/\{\{.*?\}\}/g, displayName) // Legacy fallback
+                    .replace(/\[Name\]|\[Nombre\]/ig, displayName)
                     .replace(/\{\{Company\}\}|\{\{Empresa\}\}|\[Company\]|\[Empresa\]/ig, friend.company || 'la Empresa')
                     .replace(/\{\{Greeting\}\}/ig, getGreeting(friend.language || 'es'));
 
@@ -828,8 +831,8 @@ export function EmailMarketingComposer({
 
                                 {/* Add Friend Form */}
                                 <div className="space-y-4">
-                                    <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
-                                        <div className="space-y-2 md:col-span-3">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
+                                        <div className="space-y-2">
                                             <Label className="text-xs font-bold text-slate-500 uppercase">Empresa (Opcional)</Label>
                                             <Input
                                                 placeholder="Ej: Dicilo"
@@ -838,16 +841,16 @@ export function EmailMarketingComposer({
                                                 className="h-10 border-slate-200 focus-visible:ring-blue-500 bg-white shadow-sm"
                                             />
                                         </div>
-                                        <div className="space-y-2 md:col-span-3">
+                                        <div className="space-y-2">
                                             <Label className="text-xs font-bold text-slate-500 uppercase">Persona / Contacto</Label>
                                             <Input
                                                 placeholder="Ej: Juan"
                                                 value={currentName}
                                                 onChange={(e) => setCurrentName(e.target.value)}
-                                                className="h-10 border-slate-200 focus-visible:ring-blue-500 bg-white"
+                                                className="h-10 border-slate-200 focus-visible:ring-blue-500 bg-white shadow-sm"
                                             />
                                         </div>
-                                        <div className="space-y-2 md:col-span-3">
+                                        <div className="space-y-2">
                                             <Label className="text-xs font-bold text-slate-500 uppercase">Email *</Label>
                                             <Input
                                                 type="email"
@@ -855,35 +858,35 @@ export function EmailMarketingComposer({
                                                 value={currentEmail}
                                                 onChange={(e) => setCurrentEmail(e.target.value)}
                                                 onKeyDown={(e) => e.key === 'Enter' && addFriend()}
-                                                className="h-10 border-slate-200 focus-visible:ring-blue-500 bg-white"
+                                                className="h-10 border-slate-200 focus-visible:ring-blue-500 bg-white focus:border-blue-500 transition-all"
                                             />
                                         </div>
-                                        <div className="space-y-2 md:col-span-2">
+                                        <div className="space-y-2">
                                             <Label className="text-xs font-bold text-slate-500 uppercase">Idioma</Label>
-                                            <Select value={currentLanguage} onValueChange={setCurrentLanguage}>
-                                                <SelectTrigger className="h-10 border-slate-200 bg-white text-slate-700">
-                                                    <SelectValue />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    <SelectItem value="es">Español</SelectItem>
-                                                    <SelectItem value="en">English</SelectItem>
-                                                    <SelectItem value="de">Deutsch</SelectItem>
-                                                    <SelectItem value="fr">Français</SelectItem>
-                                                    <SelectItem value="pt">Português</SelectItem>
-                                                    <SelectItem value="it">Italiano</SelectItem>
-                                                </SelectContent>
-                                            </Select>
-                                        </div>
-                                        <div className="md:col-span-1">
-                                            <Button
-                                                variant="outline"
-                                                size="icon"
-                                                onClick={addFriend}
-                                                disabled={friends.length >= 7 || !currentEmail.trim()}
-                                                className="h-10 w-full border-blue-200 text-blue-600 hover:bg-blue-50"
-                                            >
-                                                <Plus className="h-5 w-5" />
-                                            </Button>
+                                            <div className="flex gap-2">
+                                                <Select value={currentLanguage} onValueChange={setCurrentLanguage}>
+                                                    <SelectTrigger className="h-10 border-slate-200 bg-white text-slate-700 flex-1">
+                                                        <SelectValue />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectItem value="es">Español</SelectItem>
+                                                        <SelectItem value="en">English</SelectItem>
+                                                        <SelectItem value="de">Deutsch</SelectItem>
+                                                        <SelectItem value="fr">Français</SelectItem>
+                                                        <SelectItem value="pt">Português</SelectItem>
+                                                        <SelectItem value="it">Italiano</SelectItem>
+                                                    </SelectContent>
+                                                </Select>
+                                                <Button
+                                                    variant="outline"
+                                                    size="icon"
+                                                    onClick={addFriend}
+                                                    disabled={friends.length >= 7 || !currentEmail.trim()}
+                                                    className="h-10 w-12 border-blue-200 text-blue-600 hover:bg-blue-50 transition-colors"
+                                                >
+                                                    <Plus className="h-5 w-5" />
+                                                </Button>
+                                            </div>
                                         </div>
                                     </div>
 
@@ -906,8 +909,8 @@ export function EmailMarketingComposer({
                                                                 {f.name.charAt(0).toUpperCase()}
                                                             </div>
                                                             <div className="min-w-0">
-                                                                <p className="text-sm font-bold text-slate-900 truncate">{f.company || f.name}</p>
-                                                                <p className="text-xs text-slate-500 truncate">{f.email} {f.company ? `(${f.name})` : ''}</p>
+                                                                <p className="text-sm font-bold text-slate-900 truncate">{f.company || f.name || 'Sin nombre'}</p>
+                                                                <p className="text-xs text-slate-500 truncate">{f.email} {f.company && f.name ? `(${f.name})` : ''}</p>
                                                             </div>
                                                         </div>
                                                         <div className="flex items-center gap-2 shrink-0 ml-2">
