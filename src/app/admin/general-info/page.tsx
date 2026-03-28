@@ -161,10 +161,10 @@ export default function GeneralInfoPage() {
                         type: result.dataToSave.type as 'note' | 'event',
                         title: result.dataToSave.title,
                         description: result.dataToSave.description,
-                        url: result.dataToSave.url || result.dataToSave.pdf_path || result.dataToSave.video_path || result.dataToSave.image_path || '',
-                        date: result.dataToSave.date || undefined,
-                        time: result.dataToSave.time || undefined,
-                        endTime: result.dataToSave.endTime || undefined
+                        url: result.dataToSave.url || (result.dataToSave.media_paths && result.dataToSave.media_paths[0]) || '',
+                        date: result.dataToSave.date || '',
+                        time: result.dataToSave.time || '',
+                        endTime: result.dataToSave.endTime || ''
                     });
                     if (!broadcastResult.success) {
                         toast({ title: 'Aviso Notificaciones', description: 'Guardado, pero falló el envío: ' + broadcastResult.error, variant: 'destructive' });
