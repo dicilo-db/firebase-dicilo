@@ -99,7 +99,8 @@ export default function EmailMarketingPage() {
         if (!editingLead) return;
         setIsSaving(true);
         try {
-            const res = await updateMarketingLead(editingLead.id, editingLead);
+            const sanitizedLead = JSON.parse(JSON.stringify(editingLead));
+            const res = await updateMarketingLead(editingLead.id, sanitizedLead);
             if (res.success) {
                 toast({ title: 'Lead actualizado', description: 'Cambios guardados correctamente.' });
                 setLeads(prev => prev.map(l => l.id === editingLead.id ? editingLead : l));
@@ -129,7 +130,8 @@ export default function EmailMarketingPage() {
         try {
             // IMPORTANT: Save the lead data to Firestore first so the backend email action
             // can read the newly generated securityKey and updated fields.
-            await updateMarketingLead(editingLead.id, editingLead);
+            const sanitizedLead = JSON.parse(JSON.stringify(editingLead));
+            await updateMarketingLead(editingLead.id, sanitizedLead);
 
             const res = await sendMarketingEmail(editingLead.id, selectedTemplate);
             if (res.success) {
