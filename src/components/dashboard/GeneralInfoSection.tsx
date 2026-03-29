@@ -14,6 +14,30 @@ import {
     DialogDescription,
 } from "@/components/ui/dialog";
 import { trackGeneralInfoView } from '@/app/actions/track';
+import { translateText } from '@/app/actions/community';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Globe } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+
+const LANGUAGES = [
+    { code: 'es', name: 'Spanish', label: 'Español' },
+    { code: 'en', name: 'English', label: 'English' },
+    { code: 'de', name: 'German', label: 'Deutsch' },
+    { code: 'fr', name: 'French', label: 'Français' },
+    { code: 'it', name: 'Italian', label: 'Italiano' },
+    { code: 'pt', name: 'Portuguese', label: 'Português' },
+    { code: 'zh', name: 'Mandarin Chinese', label: 'Mandarin (中文)' },
+    { code: 'ar', name: 'Arabic', label: 'Arabic (العربية)' },
+    { code: 'hi', name: 'Hindi', label: 'Hindi' },
+    { code: 'ru', name: 'Russian', label: 'Russian' },
+    { code: 'ja', name: 'Japanese', label: 'Japanese' }
+];
 import { GeneralInfoComments } from './GeneralInfoComments';
 
 const db = getFirestore(app);
@@ -25,6 +49,57 @@ export function GeneralInfoSection() {
     const [notes, setNotes] = useState<any[]>([]);
     const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
     const [selectedNote, setSelectedNote] = useState<any | null>(null);
+
+    const { toast } = useToast();
+    const [isTranslating, setIsTranslating] = useState(false);
+    const [translatedTitle, setTranslatedTitle] = useState<string | null>(null);
+    const [translatedContent, setTranslatedContent] = useState<string | null>(null);
+    const [showTranslated, setShowTranslated] = useState(false);
+    const [currentTranslationLang, setCurrentTranslationLang] = useState<string | null>(null);
+
+    // Reiniciar los estados de traducción al cambiar de nota
+    useEffect(() => {
+        setIsTranslating(false);
+        setTranslatedTitle(null);
+        setTranslatedContent(null);
+        setShowTranslated(false);
+        setCurrentTranslationLang(null);
+    }, [selectedNote]);
+
+    const handleTranslate = async (targetLang: string) => {
+        if (!selectedNote) return;
+        if (showTranslated && currentTranslationLang === targetLang) return;
+
+        setIsTranslating(true);
+        try {
+            const [titleRes, contentRes] = await Promise.all([
+                selectedNote.title ? translateText(selectedNote.title, targetLang) : Promise.resolve({ success: true, translatedText: '' }),
+                selectedNote.description ? translateText(selectedNote.description, targetLang) : Promise.resolve({ success: true, translatedText: '' })
+            ]);
+
+            if (titleRes.success || contentRes.success) {
+                if (titleRes.translatedText) setTranslatedTitle(titleRes.translatedText);
+                if (contentRes.translatedText) setTranslatedContent(contentRes.translatedText);
+                
+                setCurrentTranslationLang(targetLang);
+                setShowTranslated(true);
+            } else {
+                toast({
+                    title: "Error",
+                    description: t('community.translation_error', 'Traducción fallida. Inténtalo más tarde.'),
+                    variant: "destructive"
+                });
+            }
+        } catch (error) {
+            toast({
+                title: "Error",
+                description: t('community.translation_error', 'Traducción fallida. Inténtalo más tarde.'),
+                variant: "destructive"
+            });
+        } finally {
+            setIsTranslating(false);
+        }
+    };
 
     useEffect(() => {
         const fetchInfo = async () => {
@@ -208,16 +283,51 @@ export function GeneralInfoSection() {
             {/* Modal for Reading Notes completely */}
             <Dialog open={!!selectedNote} onOpenChange={(open) => !open && setSelectedNote(null)}>
                 <DialogContent className="max-w-md w-11/12 max-h-[90vh] flex flex-col overflow-hidden p-0 rounded-lg">
-                    <DialogHeader className="p-6 pb-2 border-b flex flex-row items-center justify-between">
-                        <DialogTitle className="flex items-center gap-2 text-blue-700 dark:text-blue-400">
+                    <DialogHeader className="p-6 pb-2 border-b flex flex-row items-center justify-between gap-4">
+                        <DialogTitle className="flex items-center gap-2 text-blue-700 dark:text-blue-400 flex-1">
                             <Info className="h-5 w-5 flex-shrink-0" /> 
-                            <span>{selectedNote?.title}</span>
+                            <span className="leading-tight text-left">{showTranslated ? translatedTitle : selectedNote?.title}</span>
                         </DialogTitle>
+                        
+                        {/* Translation Control */}
+                        <div className="flex justify-end items-center flex-shrink-0">
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="h-8 px-2 text-xs text-purple-600 hover:text-purple-700 hover:bg-purple-50"
+                                        disabled={isTranslating}
+                                    >
+                                        {isTranslating ? (
+                                            <Loader2 className="h-4 w-4 mr-1.5 animate-spin" />
+                                        ) : (
+                                            <Globe className="h-4 w-4 mr-1.5" />
+                                        )}
+                                        {showTranslated ? t('community.show_original', 'Ver original') : t('community.translate_ai', 'Traducir con AI')}
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end" className="w-48 max-h-64 overflow-y-auto">
+                                    <DropdownMenuItem onClick={() => setShowTranslated(false)} disabled={!showTranslated}>
+                                        Original
+                                    </DropdownMenuItem>
+                                    <DropdownMenuSeparator />
+                                    {LANGUAGES.map((lang) => (
+                                        <DropdownMenuItem
+                                            key={lang.code}
+                                            onClick={() => handleTranslate(lang.name)}
+                                        >
+                                            {lang.label}
+                                        </DropdownMenuItem>
+                                    ))}
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </div>
                     </DialogHeader>
                     
                     <div className="flex-1 overflow-y-auto custom-scrollbar p-6 py-4">
                         <DialogDescription className="text-slate-700 dark:text-slate-300 text-sm whitespace-pre-line leading-relaxed">
-                            {selectedNote?.description || 'Sin descripción adicional.'}
+                            {showTranslated ? translatedContent : (selectedNote?.description || 'Sin descripción adicional.')}
                         </DialogDescription>
                         
                         {selectedNote?.media_paths && selectedNote.media_paths.length > 0 && (
