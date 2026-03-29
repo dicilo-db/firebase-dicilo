@@ -37,7 +37,7 @@ export function WhatsAppGroupSection() {
                             {t('dashboard.joinChatGroup', 'Unirse al Grupo de Chat')}
                         </CardTitle>
                         <CardDescription className="text-emerald-700/80">
-                            Conecta con nuestra comunidad global.
+                            {t('dashboard.chatGroup.connect', 'Conecta con nuestra comunidad global.')}
                         </CardDescription>
                     </div>
                 </div>
@@ -47,7 +47,7 @@ export function WhatsAppGroupSection() {
                     <div className="space-y-4">
                         <div className="bg-amber-50 border border-amber-100 p-4 rounded-lg">
                             <p className="text-sm text-amber-900 leading-relaxed font-medium">
-                                "Por favor al entrar en el Chat preséntate con tu nombre y di, de qué país nos visitas. Esto es para que todos sepan de qué país nos están visitando."
+                                {t('dashboard.chatGroup.welcomeRules', '"Por favor al entrar en el Chat preséntate con tu nombre y di, de qué país nos visitas. Esto es para que todos sepan de qué país nos están visitando."')}
                             </p>
                         </div>
                         
@@ -89,7 +89,7 @@ export function WhatsAppGroupSection() {
                             />
                         </div>
                         <p className="text-[10px] text-emerald-700/60 mt-4 text-center font-medium">
-                            Escanea para unirte directamente al grupo
+                            {t('dashboard.chatGroup.scanToJoin', 'Escanea para unirte directamente al grupo')}
                         </p>
                     </div>
                 </div>

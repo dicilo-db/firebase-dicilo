@@ -467,7 +467,19 @@
       "commingSoon": "Coming Soon",
       "readMore": "Read more",
       "walletDescription": "Your wallet and rewards center."
-    }
+    },
+    "chatGroup": {
+      "connect": "Connect with our global community.",
+      "welcomeRules": "Please when entering the Chat introduce yourself with your name and say which country you are visiting us from. This is so everyone knows where you're from.",
+      "scanToJoin": "Scan to join the group directly"
+    },
+    "generalInfo": {
+      "eventsAndMeetings": "Events / Meetings",
+      "latestEvents": "Latest Events and Updates",
+      "noEventsToday": "No events scheduled for this day."
+    },
+    "downloadQr": "Download QR Code",
+    "joinChatGroup": "Join Chat Group"
   },
   "tickets": {
     "title": "Support Tickets",

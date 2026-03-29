@@ -91,7 +91,7 @@ export function GeneralInfoSection() {
                 <CardHeader className="bg-slate-50 dark:bg-slate-900/50 border-b pb-4">
                     <CardTitle className="text-lg font-bold flex items-center gap-2 text-slate-800 dark:text-slate-200">
                         <CalendarIcon className="h-5 w-5 text-teal-600" />
-                        Eventos / Reuniones
+                        {t('dashboard.generalInfo.eventsAndMeetings', 'Eventos / Reuniones')}
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="flex flex-col md:flex-row gap-6 p-6 flex-1">
@@ -122,7 +122,7 @@ export function GeneralInfoSection() {
                             {selectedEvents.length === 0 ? (
                                 <div className="text-center text-sm text-muted-foreground py-8">
                                     <CalendarClock className="h-8 w-8 mx-auto mb-2 opacity-20" />
-                                    <p>No hay eventos programados para este día.</p>
+                                    <p>{t('dashboard.generalInfo.noEventsToday', 'No hay eventos programados para este día.')}</p>
                                 </div>
                             ) : (
                                 selectedEvents.map(evt => (
@@ -162,7 +162,7 @@ export function GeneralInfoSection() {
                 <CardHeader className="bg-slate-50 dark:bg-slate-900/50 border-b pb-4">
                     <CardTitle className="text-lg font-bold flex items-center gap-2 text-slate-800 dark:text-slate-200">
                         <Info className="h-5 w-5 text-blue-600" />
-                        Últimos Eventos y Actualizaciones
+                        {t('dashboard.generalInfo.latestEvents', 'Últimos Eventos y Actualizaciones')}
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="p-6 flex-1 overflow-y-auto max-h-[350px] custom-scrollbar">

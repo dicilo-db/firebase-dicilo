@@ -354,7 +354,19 @@
       "yourBalance": "Tu Balance",
       "limit": "El límite máximo permitido es de 2.000 DICICOIN por usuario. Para montos mayores, se requiere una verificación de identidad adicional (KYC) conforme a las regulaciones vigentes.",
       "walletDescription": "Tu billetera y centro de recompensas."
-    }
+    },
+    "chatGroup": {
+      "connect": "Conecta con nuestra comunidad global.",
+      "welcomeRules": "Por favor al entrar en el Chat preséntate con tu nombre y di, de qué país nos visitas. Esto es para que todos sepan de qué país nos están visitando.",
+      "scanToJoin": "Escanea para unirte directamente al grupo"
+    },
+    "generalInfo": {
+      "eventsAndMeetings": "Eventos / Reuniones",
+      "latestEvents": "Últimos Eventos y Actualizaciones",
+      "noEventsToday": "No hay eventos programados para este día."
+    },
+    "downloadQr": "Descargar Código QR",
+    "joinChatGroup": "Unirse al Grupo de Chat"
   },
   "tickets": {
     "title": "Tickets de Soporte",

@@ -70,3 +70,4 @@ firebase-debug.log
 
 # Environment files (local configs)
 /.env.*
+test-brevo.ts
