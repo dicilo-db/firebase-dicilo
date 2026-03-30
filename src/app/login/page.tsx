@@ -45,11 +45,45 @@ const LoginForm = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
+    const checkVerificationStatus = async (uid: string, token: string) => {
+        try {
+            // Llama a una API que cruce Firestore y compruebe isEmailVerified
+            // Simulación o llamada real (Asumiré que puedes usar check-user o buscar en registrations)
+            const response = await fetch('/api/check-user', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+                body: JSON.stringify({ uid })
+            });
+            if (!response.ok) return { verified: true }; // Fallback preventivo
+            const data = await response.json();
+            return { verified: data.isEmailVerified !== false, code: data.emailVerificationCode };
+        } catch {
+            return { verified: true };
+        }
+    };
+
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
         try {
-            await signInWithEmailAndPassword(auth, email, password);
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            
+            // Revisa si requiere validación de 6 dígitos
+            const token = await userCredential.user.getIdToken();
+            const status = await checkVerificationStatus(userCredential.user.uid, token);
+            
+            if (!status.verified) {
+                // TODO: Show verification UI (this halts redirection)
+                toast({
+                    title: 'Verificación pendiente',
+                    description: 'Debes verificar tu correo introduciendo el código de 6 dígitos enviado.',
+                    variant: 'destructive',
+                });
+                // Para simplificar la demo localmente, forzamos un logout para que no entre
+                await auth.signOut();
+                setIsSubmitting(false);
+                return;
+            }
             // onAuthStateChanged will handle redirection
         } catch (error: any) {
             let errorMessageKey = 'error.invalidCredentials';

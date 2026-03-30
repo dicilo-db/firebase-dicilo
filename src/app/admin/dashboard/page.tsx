@@ -36,7 +36,8 @@ import {
   LifeBuoy,
   Globe,
   Mail,
-  Ticket
+  Ticket,
+  Settings
 } from 'lucide-react';
 import { useAdminUser, useAuthGuard } from '@/hooks/useAuthGuard';
 import { useServerAction } from '@/hooks/useServerAction';
@@ -511,6 +512,21 @@ const DashboardContent: React.FC = () => {
           </p>
 
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+
+            {/* Acceso Directo al Nuevo Panel Empresarial Aislado */}
+            <Link href="/admin/dashboard-empresarial" className="group lg:col-span-2 xl:col-span-1">
+              <Card className="h-full bg-slate-900 border-slate-800 transition-all hover:shadow-xl hover:border-primary cursor-pointer relative overflow-hidden text-white">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-transparent pointer-events-none" />
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
+                  <CardTitle className="text-sm font-bold text-slate-200">Gobernanza Global</CardTitle>
+                  <Settings className="h-4 w-4 text-primary group-hover:rotate-90 transition-transform duration-500" />
+                </CardHeader>
+                <CardContent className="relative z-10">
+                  <div className="text-2xl font-black">Panel Empresarial</div>
+                  <p className="text-xs text-slate-400 mt-1">Gestor Maestro de Fichas y Módulos</p>
+                </CardContent>
+              </Card>
+            </Link>
 
             {/* Ads Manager (Admin) */}
             <Link href="/admin/ads-manager" className="group">

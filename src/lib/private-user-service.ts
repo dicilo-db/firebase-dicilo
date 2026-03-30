@@ -92,6 +92,8 @@ export async function createPrivateUserProfile(
         firstName,
         lastName,
         uniqueCode,
+        emailVerificationCode: Math.floor(100000 + Math.random() * 900000).toString(),
+        isEmailVerified: false,
         contactPreferences: {
             whatsapp: contactType === 'whatsapp' ? (whatsapp || phone || '') : '',
             telegram: contactType === 'telegram' ? (whatsapp || phone || '') : '',

@@ -3,7 +3,7 @@
 import { useBusinessAccess } from '@/hooks/useBusinessAccess';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowRightLeft, CreditCard, PiggyBank, ReceiptEuro, RefreshCw } from 'lucide-react';
+import { ArrowRightLeft, CreditCard, PiggyBank, ReceiptEuro, RefreshCw, AlertTriangle } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
@@ -139,4 +139,3 @@ export default function BusinessFinancialsPage() {
     );
 }
 
-import { AlertTriangle } from 'lucide-react';

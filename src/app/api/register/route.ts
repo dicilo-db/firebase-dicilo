@@ -36,6 +36,7 @@ const registrationSchema = z.object({
   coords: z.array(z.number()).length(2).optional(),
   referralCode: z.string().optional(), // Added referralCode
   inviteId: z.string().optional(), // Added inviteId
+  lang: z.string().optional(),
 });
 
 // Helper function to create a URL-friendly slug
@@ -148,7 +149,7 @@ export async function POST(request: Request) {
     const {
       firstName, lastName, email, password, whatsapp, contactType, registrationType,
       businessName, category, description, location, address, phone, website,
-      imageUrl, imageHint, rating, currentOfferUrl, mapUrl, coords, referralCode, inviteId
+      imageUrl, imageHint, rating, currentOfferUrl, mapUrl, coords, referralCode, inviteId, lang
     } = result.data;
 
     const db = getAdminDb();
@@ -228,6 +229,10 @@ export async function POST(request: Request) {
       referrerId: referrerData.id,
       referrerCode: referrerData.code,
       inviteId: inviteId || null,
+
+      // EMAIL VERIFICATION
+      emailVerificationCode: Math.floor(100000 + Math.random() * 900000).toString(),
+      isEmailVerified: false,
 
       createdAt: new Date(),
       status: 'pending',
@@ -344,7 +349,8 @@ export async function POST(request: Request) {
     } catch (e) { /* ignore */ }
 
     if (email && firstName) {
-      await sendWelcomeEmail(email, firstName);
+      const defaultLang = lang || 'es'; 
+      await sendWelcomeEmail(email, firstName, defaultLang, registrationData.emailVerificationCode);
     }
 
     return NextResponse.json({ success: true, message: 'Registration successful.' }, { status: 200 });

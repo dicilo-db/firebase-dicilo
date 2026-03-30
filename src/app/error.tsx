@@ -12,6 +12,13 @@ export default function Error({
 }) {
     useEffect(() => {
         console.error(error);
+        if (typeof window !== 'undefined') {
+            const isChunkLoadError = error?.name === 'ChunkLoadError' || error?.message?.includes('Loading chunk');
+            if (isChunkLoadError) {
+                // Forzar la recarga desde el servidor para traer los nuevos archivos JS tras un despliegue
+                window.location.reload();
+            }
+        }
     }, [error]);
 
     return (

@@ -142,6 +142,11 @@ service cloud.firestore {
     }
 
     // General Information (Admin Dashboard Calendar & Notes)
+    match /system_modules/{moduleId} {
+      allow read: if true; 
+      allow write: if isAdmin();
+    }
+
     match /general_info/{infoId} {
       allow read: if true;
       allow write: if isAdmin();

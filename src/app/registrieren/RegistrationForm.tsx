@@ -127,6 +127,12 @@ export function RegistrationForm() {
   const [isGeocoding, setIsGeocoding] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
+  
+  // Success & Verification States
+  const [isSuccess, setIsSuccess] = React.useState(false);
+  const [registeredEmail, setRegisteredEmail] = React.useState('');
+  const [verificationCode, setVerificationCode] = React.useState('');
+  const [isVerifying, setIsVerifying] = React.useState(false);
 
   React.useEffect(() => {
     const ref = searchParams.get('ref');
@@ -246,7 +252,8 @@ export function RegistrationForm() {
             phoneNumber: data.phone || data.whatsapp, // Fallback
             contactType: data.contactType,
             referralCode: data.referralCode,
-            inviteId: data.inviteId
+            inviteId: data.inviteId,
+            lang: locale
           }),
         });
 
@@ -255,14 +262,14 @@ export function RegistrationForm() {
           throw new Error(errorData.message || errorData.error || 'Failed to create profile');
         }
 
-        // Success
         toast({
           title: t('register.form.registerSuccessTitle'),
           description: t('register.form.registerSuccessDescription'),
         });
 
-        // Redirect to dashboard or home?
-        window.location.href = '/dashboard';
+        // Set success state instead of redirect immediately
+        setRegisteredEmail(data.email);
+        setIsSuccess(true);
         return;
       }
 
@@ -270,7 +277,7 @@ export function RegistrationForm() {
       const response = await fetch('/api/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+        body: JSON.stringify({ ...data, lang: locale }),
       });
 
       const result = await response.json();
@@ -284,7 +291,8 @@ export function RegistrationForm() {
         title: t('register.form.registerSuccessTitle'),
         description: t('register.form.registerSuccessDescription'),
       });
-      reset();
+      setRegisteredEmail(data.email);
+      setIsSuccess(true);
     } catch (error: any) {
       console.error('Registration Error:', error);
       toast({
@@ -294,6 +302,79 @@ export function RegistrationForm() {
       });
     }
   };
+
+  const handleVerifyCode = async () => {
+    if (!verificationCode || verificationCode.length < 6) return;
+    setIsVerifying(true);
+    try {
+      const response = await fetch('/api/verify-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: registeredEmail, code: verificationCode }),
+      });
+      
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.message || 'Código inválido.');
+      
+      toast({
+        title: locale === 'es' ? 'Verificación Exitosa' : (locale === 'de' ? 'Erfolgreich' : 'Verification Success'),
+        description: locale === 'es' ? 'Cuenta verificada correctamente.' : (locale === 'de' ? 'Konto erfolgreich verifiziert.' : 'Account verified successfully.'),
+      });
+      window.location.href = '/dashboard';
+    } catch (error: any) {
+      toast({
+        title: 'Error',
+        description: error.message,
+        variant: 'destructive',
+      });
+    } finally {
+      setIsVerifying(false);
+    }
+  };
+
+  if (isSuccess) {
+    const isEs = locale === 'es';
+    const isDe = locale === 'de';
+    
+    const uiTitle = isEs ? '¡Su registro ha sido completado!' : (isDe ? 'Registrierung erfolgreich abgeschlossen!' : 'Registration successfully completed!');
+    const uiMsg = isEs ? 'Gracias por elegir Dicilo. Nos tomamos su seguridad muy en serio. Acabamos de enviarle un código de seguridad seguro a su bandeja de correo electrónico.' : 
+                  (isDe ? 'Vielen Dank, dass Sie sich für Dicilo entschieden haben. Wir haben einen sicheren Sicherheitscode an Ihren Posteingang gesendet.' : 
+                  'Thank you for choosing Dicilo. We take your security very seriously. We have just sent a secure code to your email inbox.');
+    const uiPrompt = isEs ? 'Por favor ingrese el código de 6 dígitos aquí:' : (isDe ? 'Bitte geben Sie den 6-stelligen Code hier ein:' : 'Please enter the 6-digit code here:');
+    const uiBtn = isEs ? 'Verificar y Entrar' : (isDe ? 'Überprüfen und Eintreten' : 'Verify & Enter');
+    
+    return (
+      <div className="flex flex-col items-center justify-center py-12 px-4 text-center animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className="h-20 w-20 bg-emerald-100 rounded-full flex items-center justify-center mb-6 shadow-sm">
+          <svg className="w-10 h-10 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+          </svg>
+        </div>
+        <h2 className="text-3xl font-extrabold text-slate-800 mb-4">{uiTitle}</h2>
+        <p className="text-lg text-slate-600 mb-8 max-w-lg mx-auto">{uiMsg}</p>
+        
+        <div className="bg-slate-50 border border-slate-200 rounded-xl p-8 max-w-sm w-full shadow-sm">
+          <Label className="block mb-4 text-sm font-semibold text-slate-700">{uiPrompt}</Label>
+          <Input 
+            value={verificationCode}
+            onChange={(e) => setVerificationCode(e.target.value)}
+            placeholder="000000"
+            className="text-center text-3xl letter-spacing-widest font-mono h-16 bg-white mb-6 border-slate-300 focus:ring-emerald-500 focus:border-emerald-500"
+            maxLength={6}
+          />
+          <Button 
+            onClick={handleVerifyCode} 
+            disabled={isVerifying || verificationCode.length < 6}
+            className="w-full h-14 text-lg font-bold bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-700 hover:to-emerald-600 shadow-md transition-all"
+          >
+            {isVerifying ? <Loader2 className="h-5 w-5 animate-spin mr-2" /> : null}
+            {uiBtn}
+          </Button>
+          <p className="mt-6 text-xs text-slate-400">Dicilo Secure Login • MILENIUM HOLDING & CONSULTING</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <form onSubmit={handleSubmit(handleRegistration)}>

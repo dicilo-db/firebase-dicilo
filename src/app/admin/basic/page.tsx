@@ -487,9 +487,15 @@ export default function BusinessesPage() {
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
-                      <Button variant="outline" size="icon" asChild>
+                      <Button variant="outline" size="sm" asChild className="hidden md:flex">
                         <Link href={`/admin/basic/${business.id}/edit`}>
-                          <Edit className="h-4 w-4" />
+                          Form Clásico
+                        </Link>
+                      </Button>
+                      <Button variant="default" size="sm" asChild>
+                        <Link href={`/admin/clients/${business.id}/manage`} className="font-bold">
+                          <LayoutDashboard className="mr-2 h-4 w-4" />
+                          Panel Modular
                         </Link>
                       </Button>
                       <AlertDialog>

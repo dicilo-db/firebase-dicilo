@@ -189,50 +189,60 @@ export async function adminUpdatePointValue(newValue: number, masterPass: string
     return { success: true };
 }
 
-/**
- * Merchant: Process a payment/deduction.
- * Returns success and new balance.
- */
 export async function processQrPayment(userId: string, merchantId: string, amountPoints: number) {
     const db = getAdminDb();
+    const INVERSION_RATE = 0.10; // 1 DP = 0.10 EUR
 
     try {
         const result = await db.runTransaction(async (t) => {
-            const walletRef = db.collection('wallets').doc(userId);
-            const doc = await t.get(walletRef);
+            // Ref a la wallet del usuario
+            const userWalletRef = db.collection('wallets').doc(userId);
+            const userDoc = await t.get(userWalletRef);
 
-            if (!doc.exists) {
+            if (!userDoc.exists) {
                 throw new Error("User has no wallet");
             }
 
-            const currentBalance = doc.data()?.balance || 0;
+            const currentBalance = userDoc.data()?.balance || 0;
             if (currentBalance < amountPoints) {
                 throw new Error("Insufficient balance");
             }
 
+            // Ref a la wallet de la empresa
+            const merchantRef = db.collection('businesses').doc(merchantId);
+            
+            // 1. Mermar Puntos al Usuario
             const newBalance = currentBalance - amountPoints;
-            t.update(walletRef, {
+            t.update(userWalletRef, {
                 balance: newBalance,
                 totalSpent: admin.firestore.FieldValue.increment(amountPoints)
             });
 
-            // Log Transaction
+            // 2. Sumar Puntos a la Empresa
+            t.set(merchantRef, {
+                dpBalance: admin.firestore.FieldValue.increment(amountPoints)
+            }, { merge: true });
+
+            const euroValue = amountPoints * INVERSION_RATE;
+
+            // 3. Registrar Log (Historial)
             const trxRef = db.collection('wallet_transactions').doc();
             t.set(trxRef, {
                 userId: userId,
                 amount: -amountPoints,
-                type: 'PURCHASE',
+                type: 'COBRO_CLIENTE',
                 merchantId: merchantId,
                 description: `Payment to Merchant ${merchantId}`,
+                valorEuroEquivalente: euroValue,
                 timestamp: admin.firestore.FieldValue.serverTimestamp()
             });
 
-            return newBalance;
+            return { newBalance, euroValue };
         });
 
-        return { success: true, newBalance: result };
+        return { success: true, newBalance: result.newBalance, message: 'Cobro realizado con éxito' };
     } catch (error: any) {
-        return { success: false, message: error.message };
+        return { success: false, status: 'denied', message: error.message };
     }
 }
 

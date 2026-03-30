@@ -1,0 +1,48 @@
+'use client';
+
+import { Video, CalendarDays, Projector } from 'lucide-react';
+
+export default function PresentationsVipPage() {
+    return (
+        <div className="p-8 max-w-5xl animate-in fade-in zoom-in duration-500">
+            <div className="bg-gradient-to-r from-red-500 to-orange-600 p-8 rounded-3xl text-white shadow-xl mb-8 relative overflow-hidden">
+                <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                    <div>
+                        <h1 className="text-3xl font-extrabold flex items-center gap-3">
+                            <Video className="w-8 h-8" />
+                            6 Presentaciones Online
+                        </h1>
+                        <p className="mt-3 text-red-100 max-w-xl text-lg">
+                            Reúnete en vivo con el equipo experto de Dicilo para presentar tus productos, recibir mentorías de ventas y trazar estrategias anuales.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div className="bg-white p-8 rounded-2xl border shadow-sm flex items-start gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-red-100 flex items-center justify-center shrink-0">
+                        <CalendarDays className="w-6 h-6 text-red-600" />
+                    </div>
+                    <div>
+                        <h3 className="font-bold text-slate-800 text-lg mb-1">Agendar Presentación</h3>
+                        <p className="text-slate-500 text-sm">
+                            Consulta la disponibilidad del equipo y reserva una de tus 6 sesiones garantizadas anuales.
+                        </p>
+                    </div>
+                </div>
+                <div className="bg-white p-8 rounded-2xl border shadow-sm flex items-start gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center shrink-0">
+                        <Projector className="w-6 h-6 text-orange-600" />
+                    </div>
+                    <div>
+                        <h3 className="font-bold text-slate-800 text-lg mb-1">Sala de Reunión Privada</h3>
+                        <p className="text-slate-500 text-sm">
+                            El link de Microsoft Teams o Google Meet se autogenerará aquí cuando la sesión se confirme.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}

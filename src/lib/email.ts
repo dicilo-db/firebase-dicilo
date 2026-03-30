@@ -1,6 +1,5 @@
 import { Resend } from 'resend';
-
-// Helper to get Resend instance
+import { getAdminDb } from './firebase-admin';
 const getResend = () => {
     const key = process.env.RESEND_API_KEY;
     if (!key) {
@@ -10,21 +9,104 @@ const getResend = () => {
     return new Resend(key);
 };
 
-export async function sendWelcomeEmail(email: string, firstName: string) {
+export async function sendWelcomeEmail(email: string, firstName: string, lang: string = 'es', code: string = '') {
     const resend = getResend();
     if (!resend) return { success: false, error: 'Missing API Key' };
 
     try {
+        const db = getAdminDb();
+        const blacklistDoc = await db.collection('email_blacklist').doc(email).get();
+        if (blacklistDoc.exists) {
+            console.log(`Email ${email} is in blacklist. Aborting send.`);
+            return { success: false, error: 'Email unsubscribed.' };
+        }
+
+        const tMap: Record<string, { subject: string, title: string, greeting: string, msg: string, codeMsg: string, team: string, thanks: string, legalMsg1: string, legalMsg2: string, unsub: string }> = {
+            es: {
+                subject: '¡Bienvenido a Dicilo!',
+                title: 'Verificación de Cuenta',
+                greeting: `¡Bienvenido a Dicilo, ${firstName}!`,
+                msg: 'Gracias por su registro. Nos complace darle la bienvenida a nuestra comunidad. Descubra ahora ofertas exclusivas y conéctese con empresas locales.',
+                codeMsg: 'Para verificar y proteger su cuenta, ingrese el siguiente código en la plataforma:',
+                team: 'Dicilo International Team',
+                thanks: 'Gracias por su registro.',
+                legalMsg1: 'Declaración de Confidencialidad / Aviso Legal',
+                legalMsg2: 'Este correo electrónico contiene información que puede estar protegida legalmente o ser confidencial. Está destinado exclusivamente al destinatario indicado. Si no es el destinatario correcto o ha recibido este correo por error, informe inmediatamente al remitente y destruya este correo electrónico. No está permitida la copia no autorizada, revelación o distribución no autorizada de este material.',
+                unsub: 'Si no deseas recibir más correos nuestros, haga clic aquí: '
+            },
+            en: {
+                subject: 'Welcome to Dicilo!',
+                title: 'Account Verification',
+                greeting: `Welcome to Dicilo, ${firstName}!`,
+                msg: 'Thank you for your registration. We are excited to welcome you to our community. Discover exclusive offers now and connect with local businesses.',
+                codeMsg: 'To verify and secure your account, please enter the following code on the platform:',
+                team: 'Dicilo International Team',
+                thanks: 'Thank you for registering.',
+                legalMsg1: 'Vertraulichkeitserklärung / Legal Notice',
+                legalMsg2: 'This e-mail contains information that may be privileged or confidential. It is intended only for the person to whom it is addressed. If you are not the intended recipient or have received this e-mail in error please notify the sender immediately and destroy this e-mail. Any unauthorized copying, disclosure or distribution of the material in this e-mail is strictly forbidden.',
+                unsub: 'If you no longer wish to receive emails from us, click here: '
+            },
+            de: {
+                subject: 'Willkommen bei Dicilo!',
+                title: 'Kontoverifizierung',
+                greeting: `Willkommen bei Dicilo, ${firstName}!`,
+                msg: 'Vielen Dank für Ihre Registrierung. Wir freuen uns, Sie in unserer Gemeinschaft begrüßen zu dürfen. Entdecken Sie jetzt exklusive Angebote und vernetzen Sie sich mit lokalen Unternehmen.',
+                codeMsg: 'Um Ihr Konto zu verifizieren und zu schützen, geben Sie bitte den folgenden Code auf der Plattform ein:',
+                team: 'Dicilo International Team',
+                thanks: 'Vielen Dank für Ihre Registrierung.',
+                legalMsg1: 'Vertraulichkeitserklärung / Legal Notice',
+                legalMsg2: 'Diese E-Mail enthält Informationen, die rechtlich geschützt oder vertraulich sein können. Sie ist ausschließlich für den angegebenen Empfänger bestimmt. Sollten Sie nicht der richtige Adressat sein oder diese E-Mail irrtümlich erhalten haben, informieren Sie bitte unverzüglich den Absender und vernichten Sie diese E-Mail. Das unerlaubte Kopieren oder Offenlegen sowie die unbefugte Weitergabe dieser E-Mail ist nicht gestattet.',
+                unsub: 'Wenn Sie keine weiteren E-Mails von uns erhalten möchten, klicken Sie hier: '
+            },
+            fr: {} as any, it: {} as any, pt: {} as any, nl: {} as any, tr: {} as any, 
+            ru: {} as any, zh: {} as any, ja: {} as any, ar: {} as any
+        };
+
+        const t = tMap[lang]?.subject ? tMap[lang] : tMap['en'];
+        const unsubscribeLink = `https://dicilo.net/api/unsubscribe?email=${encodeURIComponent(email)}&lang=${lang}`;
+
         const { data, error } = await resend.emails.send({
             from: 'Dicilo <onboarding@dicilo.net>',
             to: [email],
-            subject: 'Willkommen bei Dicilo!',
+            subject: t.subject,
             html: `
-        <h1>Willkommen bei Dicilo, ${firstName}!</h1>
-        <p>Vielen Dank für Ihre Registrierung. Wir freuen uns, Sie in unserer Gemeinschaft begrüßen zu dürfen.</p>
-        <p>Entdecken Sie jetzt exklusive Angebote und vernetzen Sie sich mit lokalen Unternehmen.</p>
-        <br/>
-        <p>Ihr Dicilo Team</p>
+        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; color: #333333;">
+            <div style="padding: 30px 20px; text-align: center; border-bottom: 2px solid #f1f5f9;">
+               <h1 style="color: #0f172a; margin: 0; font-size: 24px;">${t.greeting}</h1>
+            </div>
+            
+            <div style="padding: 30px 20px;">
+                <p style="font-size: 16px; line-height: 1.6; color: #475569;">${t.msg}</p>
+                
+                ${code ? `
+                <div style="margin: 30px 0; padding: 20px; text-align: center; background-color: #f8fafc; border-radius: 8px; border: 1px dashed #cbd5e1;">
+                    <p style="margin: 0 0 10px 0; color: #64748b; font-size: 14px;">${t.codeMsg}</p>
+                    <div style="font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #0f172a;">${code}</div>
+                </div>` : ''}
+            </div>
+
+            <div style="padding: 20px; text-align: left; border-top: 1px solid #f1f5f9; background: #fafafa;">
+                <p style="margin: 0; font-weight: 500;">${t.thanks}</p>
+                <p style="margin: 5px 0 20px 0; font-weight: 600; color: #0f172a;">${t.team}</p>
+
+                <div style="font-size: 12px; color: #64748b; line-height: 1.5;">
+                    <p style="margin: 0;">Dicilo.net es una marca del grupo:</p>
+                    <p style="margin: 5px 0; font-weight: bold;">MILENIUM HOLDING & CONSULTING<br/>DICILO | Travelposting UG |</p>
+                    <p style="margin: 5px 0;">International Innovations & Company<br/>(Werbe & Promotions-/Reiseagentur)</p>
+                    <p style="margin: 15px 0;">Mühlendamm 84a<br/>22089 Hamburg - DE</p>
+                    <p style="margin: 5px 0;">Handelsregister:<br/>Registergericht: Amtsgericht Hamburg<br/>Registernummer: HRB 171236.</p>
+                    <hr style="border: 0; border-top: 1px dashed #cbd5e1; margin: 15px 0;" />
+                    <p style="margin: 5px 0;">Email: support@dicilo.net<br/>Web: https://dicilo.net</p>
+                    <hr style="border: 0; border-top: 1px dashed #cbd5e1; margin: 15px 0;" />
+                    <p style="margin: 5px 0;">${t.unsub} <a href="${unsubscribeLink}" style="color: #3b82f6; text-decoration: underline;">${lang === 'es' ? 'Baja' : 'Unsubscribe'}</a></p>
+                </div>
+                
+                <div style="margin-top: 20px; font-size: 11px; color: #94a3b8; text-align: justify; border-top: 1px solid #e2e8f0; padding-top: 15px;">
+                    <strong>${t.legalMsg1}</strong><br/>
+                    ${t.legalMsg2}
+                </div>
+            </div>
+        </div>
       `,
         });
 

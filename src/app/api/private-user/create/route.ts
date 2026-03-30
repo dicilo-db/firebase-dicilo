@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getAdminAuth } from '@/lib/firebase-admin';
 import { createPrivateUserProfile } from '@/lib/private-user-service';
+import { sendWelcomeEmail } from '@/lib/email';
 
 export async function POST(request: Request) {
     try {
@@ -20,7 +21,7 @@ export async function POST(request: Request) {
         }
 
         const body = await request.json();
-        const { uid, email, firstName, lastName, phoneNumber, contactType, referralCode, inviteId } = body;
+        const { uid, email, firstName, lastName, phoneNumber, contactType, referralCode, inviteId, lang } = body;
 
         if (decodedToken.uid !== uid) {
             return NextResponse.json({ error: 'Forbidden: UID mismatch' }, { status: 403 });
@@ -50,6 +51,11 @@ export async function POST(request: Request) {
                 return NextResponse.json({ message: result.message, profile: result.profile }, { status: 200 });
             }
             return NextResponse.json({ error: result.message }, { status: 500 });
+        }
+
+        if (result.success && result.profile) {
+            const defaultLang = lang || 'es';
+            await sendWelcomeEmail(email, firstName, defaultLang, result.profile.emailVerificationCode);
         }
 
         return NextResponse.json(
