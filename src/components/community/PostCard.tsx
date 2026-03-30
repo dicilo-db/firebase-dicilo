@@ -24,6 +24,8 @@ import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { Textarea } from '@/components/ui/textarea';
 import { useTranslation } from 'react-i18next';
+import { doc, onSnapshot, getFirestore } from 'firebase/firestore';
+import { app } from '@/lib/firebase';
 import { CommentSection } from './CommentSection';
 import { useFriends } from '@/hooks/useFriends';
 import { UserPlus, Check } from 'lucide-react';
@@ -54,6 +56,9 @@ export function PostCard({ post, currentUserId, readOnly = false }: PostCardProp
     const { toast } = useToast();
     const router = useRouter();
     const [likes, setLikes] = useState<string[]>(post.likes || []);
+    useEffect(() => {
+        setLikes(post.likes || []);
+    }, [post.likes]);
     const [isTranslating, setIsTranslating] = useState(false);
     const [translatedContent, setTranslatedContent] = useState<string | null>(null);
     const [showTranslated, setShowTranslated] = useState(false);
@@ -63,6 +68,20 @@ export function PostCard({ post, currentUserId, readOnly = false }: PostCardProp
     const [currentTranslationLang, setCurrentTranslationLang] = useState<string | null>(null);
     const { friends, sendFriendRequest, sentRequests } = useFriends();
     const [requestSent, setRequestSent] = useState(false);
+    const [liveCommentCount, setLiveCommentCount] = useState(post.commentCount || 0);
+    
+    // Live listener for likes and commentCount
+    useEffect(() => {
+        const db = getFirestore(app);
+        const unsubscribe = onSnapshot(doc(db, 'community_posts', post.id), (docSnap) => {
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                setLikes(data.likes || []);
+                setLiveCommentCount(data.commentCount || 0);
+            }
+        });
+        return () => unsubscribe();
+    }, [post.id]);
 
     
     // Edit & Delete State
@@ -97,7 +116,7 @@ export function PostCard({ post, currentUserId, readOnly = false }: PostCardProp
     };
 
     const isLiked = likes.includes(currentUserId);
-    const commentCount = post.commentCount || 0;
+    const commentCount = liveCommentCount;
 
     const handleLike = async () => {
         if (readOnly) {
