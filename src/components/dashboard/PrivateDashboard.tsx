@@ -144,6 +144,13 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
         }
     }, [searchParams]);
 
+    const handleViewChange = (view: string) => {
+        setActiveView(view);
+        const params = new URLSearchParams(searchParams?.toString() || "");
+        params.set('view', view);
+        router.push(`?${params.toString()}`, { scroll: false });
+    };
+
     const handleSendFeedback = async () => {
         if (!feedbackMessage.trim()) return;
         setIsSubmittingFeedback(true);
@@ -272,7 +279,7 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                             </Card>
 
                             {/* Interests */}
-                            <Card className="cursor-pointer hover:bg-accent/50 transition-colors" onClick={() => setActiveView('settings')}>
+                            <Card className="cursor-pointer hover:bg-accent/50 transition-colors" onClick={() => handleViewChange('settings')}>
                                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                                     <CardTitle className="text-sm font-medium">
                                         {t('dashboard.interests', 'Interests')}
@@ -292,7 +299,7 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                             </Card>
 
                             {/* Referrals */}
-                            <Card className="cursor-pointer hover:bg-accent/50 transition-colors" onClick={() => setActiveView('invite')}>
+                            <Card className="cursor-pointer hover:bg-accent/50 transition-colors" onClick={() => handleViewChange('invite')}>
                                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                                     <CardTitle className="text-sm font-medium">
                                         {t('dashboard.referrals', 'Referrals')}
@@ -322,11 +329,11 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                                         <CardTitle>{t('dashboard.quickActions', 'Quick Actions')}</CardTitle>
                                     </CardHeader>
                                     <CardContent className="space-y-4">
-                                        <Button variant="outline" className="w-full justify-start h-12" onClick={() => setActiveView('wallet')}>
+                                        <Button variant="outline" className="w-full justify-start h-12" onClick={() => handleViewChange('wallet')}>
                                             <Users className="mr-2 h-4 w-4" />
                                             {t('dashboard.goToWallet', 'Go to Wallet')}
                                         </Button>
-                                        <Button variant="outline" className="w-full justify-start h-12" onClick={() => setActiveView('invite')}>
+                                        <Button variant="outline" className="w-full justify-start h-12" onClick={() => handleViewChange('invite')}>
                                             <Share2 className="mr-2 h-4 w-4" />
                                             {t('dashboard.inviteFriends', 'Invite Friends')}
                                         </Button>
@@ -429,7 +436,7 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
             case 'invite':
                 return <InviteFriendSection uniqueCode={formData.uniqueCode} referrals={formData.referrals} />;
             case 'dicicoin':
-                return <DiciCoinSection userData={formData} onViewHistory={() => setActiveView('tickets')} />;
+                return <DiciCoinSection userData={formData} onViewHistory={() => handleViewChange('tickets')} />;
             case 'tickets':
                 return <TicketsManager />;
             case 'ads-manager':
@@ -838,7 +845,7 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
         <DashboardLayout
             userData={formData}
             currentView={activeView}
-            onViewChange={setActiveView}
+            onViewChange={handleViewChange}
             walletData={walletData}
         >
             {renderView()}
