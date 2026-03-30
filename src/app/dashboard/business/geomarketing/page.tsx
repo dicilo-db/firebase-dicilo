@@ -12,6 +12,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Slider } from '@/components/ui/slider';
+import { useTranslation } from 'react-i18next';
+
 import { useToast } from '@/hooks/use-toast';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
@@ -24,6 +26,7 @@ interface GeoConfig {
 }
 
 export default function GeomarketingPage() {
+    const { t } = useTranslation('common');
     const { businessId, plan, isLoading } = useBusinessAccess();
     const { toast } = useToast();
     
@@ -99,10 +102,10 @@ export default function GeomarketingPage() {
                 <div>
                     <h1 className="text-3xl font-extrabold flex items-center gap-3 text-slate-900">
                         <Radar className="w-8 h-8 text-emerald-600" />
-                        Geomarketing <span className="text-emerald-600">Hyperlocal</span>
+                        {t('business.geo.title', 'Geomarketing Hyperlocal')}
                     </h1>
                     <p className="mt-2 text-slate-500 text-lg max-w-2xl">
-                        Atrae clientes que caminan cerca de tu negocio. Define tu radio de acción y lanza notificaciones PUSH automáticas en sus móviles.
+                        {t('business.geo.desc', 'Atrae clientes que caminan cerca de tu negocio.')}
                     </p>
                 </div>
                 <div className="flex items-center gap-3 shrink-0 mb-1 bg-white border border-slate-200 px-4 py-2 rounded-xl shadow-sm">
@@ -127,7 +130,7 @@ export default function GeomarketingPage() {
                     <Card className="border-t-4 border-t-emerald-500 shadow-sm">
                         <CardHeader>
                             <CardTitle className="text-xl flex items-center gap-2">
-                                <LocateFixed className="w-5 h-5 text-emerald-600" /> Parámetros de Zona
+                                <LocateFixed className="w-5 h-5 text-emerald-600" /> {t('business.geo.zoneParams', 'Parámetros de Zona')}
                             </CardTitle>
                             <CardDescription>Ajusta cómo la app de Dicilo detecta y aborda a los clientes potenciales.</CardDescription>
                         </CardHeader>
@@ -135,7 +138,7 @@ export default function GeomarketingPage() {
                             
                             <div className="space-y-3">
                                 <div className="flex justify-between">
-                                    <Label className="font-bold text-slate-800">Radio de Alcance (Kilómetros)</Label>
+                                    <Label className="font-bold text-slate-800">{t('business.geo.radiusLabel', 'Radio de Alcance (Kilómetros)')}</Label>
                                     <span className="font-mono text-emerald-600 font-bold bg-emerald-50 px-2 rounded-md">{config.radiusKm} km</span>
                                 </div>
                                 <Slider 
@@ -149,7 +152,7 @@ export default function GeomarketingPage() {
                             </div>
 
                             <div className="space-y-2 pt-2 border-t border-slate-100">
-                                <Label className="font-bold text-slate-800">Códigos Postales Prioritarios (Opcional)</Label>
+                                <Label className="font-bold text-slate-800">{t('business.geo.zipLabel', 'Códigos Postales Prioritarios')}</Label>
                                 <Input 
                                     placeholder="Ej: 28014, 28015"
                                     value={config.targetZips}
@@ -159,7 +162,7 @@ export default function GeomarketingPage() {
                             </div>
 
                             <div className="space-y-2 pt-2 border-t border-slate-100">
-                                <Label className="font-bold text-slate-800">Mensaje Flash (Push Notification)</Label>
+                                <Label className="font-bold text-slate-800">{t('business.geo.pushLabel', 'Mensaje Flash')}</Label>
                                 <Textarea 
                                     placeholder="El mensaje que recibirá la persona al pasar cerca."
                                     rows={3}
@@ -193,7 +196,7 @@ export default function GeomarketingPage() {
 
                             <CardHeader className="relative z-10 pb-2">
                                 <CardTitle className="text-xl flex items-center gap-2 text-emerald-400">
-                                    <Activity className="w-5 h-5" /> Simulador de Impacto
+                                    <Activity className="w-5 h-5" /> {t('business.geo.simulator', 'Simulador de Impacto')}
                                 </CardTitle>
                             </CardHeader>
                             <CardContent className="relative z-10 space-y-4">

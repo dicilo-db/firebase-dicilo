@@ -1,4 +1,6 @@
 'use client';
+import { useTranslation } from 'react-i18next';
+
 
 import React, { useEffect, useState } from 'react';
 import { useBusinessAccess } from '@/hooks/useBusinessAccess';
@@ -23,6 +25,7 @@ const getTrendData = (category: string) => {
 };
 
 export default function MarketIntelligencePage() {
+    const { t } = useTranslation('common');
     const { plan, isLoading } = useBusinessAccess();
     
     const [globalData, setGlobalData] = useState<GlobalStats | null>(null);
@@ -71,10 +74,10 @@ export default function MarketIntelligencePage() {
                 <div>
                     <h1 className="text-3xl font-extrabold flex items-center gap-3 text-slate-900">
                         <BrainCircuit className="w-8 h-8 text-blue-600" />
-                        Inteligencia de <span className="text-blue-600">Mercado</span>
+                        {t('business.market.title', 'Inteligencia de Mercado')}
                     </h1>
                     <p className="mt-2 text-slate-500 text-lg">
-                        Descubre insights demográficos, competitividad en red y toma decisiones basadas en la data de Dicilo.
+                        {t('business.market.desc', 'Descubre insights demográficos, competitividad en red y toma decisiones basadas en la data de Dicilo.')}
                     </p>
                 </div>
                 <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 gap-1 px-3 py-1 text-sm">
@@ -93,7 +96,7 @@ export default function MarketIntelligencePage() {
                     <Card className="border-t-4 border-t-blue-500 shadow-sm">
                         <CardHeader className="pb-2">
                             <CardTitle className="text-sm font-medium text-slate-500 flex justify-between">
-                                Usuarios Potenciales <Users className="w-4 h-4 text-slate-400"/>
+                                {t('business.market.potentialUsers', 'Usuarios Potenciales')} <Users className="w-4 h-4 text-slate-400"/>
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
@@ -105,7 +108,7 @@ export default function MarketIntelligencePage() {
                     <Card className="border-t-4 border-t-indigo-500 shadow-sm">
                         <CardHeader className="pb-2">
                             <CardTitle className="text-sm font-medium text-slate-500 flex justify-between">
-                                Red de Comercios <Presentation className="w-4 h-4 text-slate-400"/>
+                                {t('business.market.agencies', 'Red de Comercios')} <Presentation className="w-4 h-4 text-slate-400"/>
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
@@ -117,7 +120,7 @@ export default function MarketIntelligencePage() {
                     <Card className="border-t-4 border-t-violet-500 shadow-sm">
                         <CardHeader className="pb-2">
                             <CardTitle className="text-sm font-medium text-slate-500 flex justify-between">
-                                Alcance Demográfico <MapPin className="w-4 h-4 text-slate-400"/>
+                                {t('business.market.countries', 'Alcance Demográfico')} <MapPin className="w-4 h-4 text-slate-400"/>
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
@@ -134,7 +137,7 @@ export default function MarketIntelligencePage() {
                 <Card className="lg:col-span-2 shadow-sm border-slate-200">
                     <CardHeader>
                         <CardTitle className="text-xl text-slate-800 flex items-center gap-2">
-                            <LineChart className="w-5 h-5 text-blue-500"/> Tendencia de Categoría: {businessCategory}
+                            <LineChart className="w-5 h-5 text-blue-500"/> {t('business.market.trendTitle', 'Tendencia de Categoría')}: {businessCategory}
                         </CardTitle>
                         <CardDescription>Volumen de búsquedas estimadas y clics de la comunidad local.</CardDescription>
                     </CardHeader>
@@ -168,7 +171,7 @@ export default function MarketIntelligencePage() {
                 <Card className="shadow-sm border-slate-200 bg-gradient-to-br from-blue-50 to-indigo-50">
                     <CardHeader>
                         <CardTitle className="text-xl text-indigo-900 flex items-center gap-2">
-                            <Lightbulb className="w-5 h-5 text-indigo-600"/> Sugerencias I.A.
+                            <Lightbulb className="w-5 h-5 text-indigo-600"/> {t('business.market.aiTips', 'Sugerencias I.A.')}
                         </CardTitle>
                         <CardDescription className="text-indigo-700/70">Consejos automatizados para destacar sobre la competencia.</CardDescription>
                     </CardHeader>

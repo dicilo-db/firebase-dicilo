@@ -243,5 +243,67 @@
       "category": "Kategorie",
       "subcategory": "Unterkategorie"
     }
+  },
+  "business": {
+    "chatbot": {
+      "title": "K.I. Assistent",
+      "desc": "Trainieren Sie Ihren eigenen Kundenservice-Roboter, um Fragen zu Ihrem Geschäft auf Ihrem Dicilo-Profil zu beantworten.",
+      "baseConfig": "Basiskonfiguration",
+      "baseConfigDesc": "Definieren Sie die Persönlichkeit Ihres Bots.",
+      "botName": "Assistentenname",
+      "botNameObj": "Z.B. Johann von der Pizzeria Napoli",
+      "greeting": "Willkommensnachricht",
+      "greetingDesc": "Diese Nachricht erscheint, wenn der Kunde den Chat öffnet.",
+      "prompt": "Hauptanweisungen (Prompt)",
+      "promptDesc": "Weisen Sie die K.I. detailliert an, welchen Ton sie verwenden und welche Infos sie priorisieren soll.",
+      "saveArgs": "Änderungen speichern",
+      "filesBox": "Wissensdateien",
+      "filesDesc": "Füttern Sie Ihre K.I. mit Speisekarten, Katalogen oder FAQ-PDFs.",
+      "uploadDoc": "PDF-Datei hochladen"
+    },
+    "campaigns": {
+      "title": "Individuelle Kampagnen",
+      "desc": "Messen Sie die Leistung Ihrer E-Mail-Marketing- und organischen Akquisitionsstrategien in Dicilo.",
+      "requestNew": "Neue Kampagne anfordern",
+      "emptyTitle": "Keine aktiven Kampagnen",
+      "budgetLabel": "Budget",
+      "remainingLabel": "Verbleibend"
+    },
+    "market": {
+      "title": "Marktintelligenz",
+      "desc": "Entdecken Sie demografische Einblicke, Netzwerkkonkurrenzfähigkeit und treffen Sie datenbasierte Entscheidungen.",
+      "potentialUsers": "Potenzielle Nutzer",
+      "agencies": "Unternehmensnetzwerk",
+      "countries": "Demografische Reichweite",
+      "trendTitle": "Kategorietrend",
+      "aiTips": "K.I. Vorschläge"
+    },
+    "geo": {
+      "title": "Hyperlokales Geomarketing",
+      "desc": "Ziehen Sie Kunden an, die an Ihrem Geschäft vorbeigehen. Definieren Sie Ihren Aktionsradius und starten Sie automatische PUSH-Benachrichtigungen.",
+      "zoneParams": "Zonenparameter",
+      "radiusLabel": "Reichweitenradius (Kilometer)",
+      "zipLabel": "Priorisierte Postleitzahlen (Optional)",
+      "pushLabel": "Flash-Nachricht (Push-Benachrichtigung)",
+      "simulator": "Auswirkungssimulator",
+      "privacy": "Datenschutz gewährleistet: Dicilo teilt niemals genaue Standorte..."
+    },
+    "products": {
+      "title": "Produkt- und Dienstleistungsverwaltung",
+      "desc": "Fügen Sie Artikel hinzu, bearbeiten und organisieren Sie diese für Ihr Dicilo-Profil.",
+      "addProduct": "Neues Produkt hinzufügen",
+      "emptyCatalog": "Leerer Katalog",
+      "productName": "Produkt-/Dienstleistungsname",
+      "price": "Preis (€)",
+      "save": "Produkt speichern"
+    },
+    "messages": {
+      "title": "Anfrage-Posteingang",
+      "desc": "Verwalten Sie die Nachrichten und Leads, die Kunden über Ihr Dicilo-Profil senden.",
+      "noMessages": "Keine neuen Anfragen",
+      "openChat": "WhatsApp öffnen",
+      "markRead": "Als gelesen markieren",
+      "delete": "Löschen"
+    }
   }
 }

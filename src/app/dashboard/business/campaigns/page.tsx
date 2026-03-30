@@ -18,6 +18,8 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { useTranslation } from 'react-i18next';
+
 import { useToast } from '@/hooks/use-toast';
 import { collection, query, where, getDocs, addDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
@@ -37,6 +39,7 @@ interface CampaignData {
 }
 
 export default function CampaignsPage() {
+    const { t } = useTranslation('common');
     const { businessId, plan, name, isLoading } = useBusinessAccess();
     const { toast } = useToast();
     
@@ -136,17 +139,17 @@ export default function CampaignsPage() {
                 <div>
                     <h1 className="text-3xl font-extrabold flex items-center gap-3 text-slate-900">
                         <Megaphone className="w-8 h-8 text-orange-600" />
-                        Campañas <span className="text-orange-600">Personalizadas</span>
+                        {t('business.campaigns.title', 'Campañas Personalizadas')}
                     </h1>
                     <p className="mt-2 text-slate-500 text-lg">
-                        Mide el rendimiento de tus estrategias de email marketing y captación orgánica administradas en Dicilo.
+                        {t('business.campaigns.desc', 'Mide el rendimiento de tus estrategias de email marketing y captación orgánica administradas en Dicilo.')}
                     </p>
                 </div>
                 
                 <Dialog open={isRequestOpen} onOpenChange={setIsRequestOpen}>
                     <DialogTrigger asChild>
                         <Button className="bg-orange-600 hover:bg-orange-700 text-white gap-2 font-bold whitespace-nowrap">
-                            <PlusCircle className="w-5 h-5"/> Solicitar Nueva Campaña
+                            <PlusCircle className="w-5 h-5"/> {t('business.campaigns.requestNew', 'Solicitar Nueva Campaña')}
                         </Button>
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-[425px]">
@@ -189,7 +192,7 @@ export default function CampaignsPage() {
             ) : campaigns.length === 0 ? (
                 <div className="bg-slate-50/80 rounded-2xl p-16 text-center shadow-sm border border-slate-200">
                     <Rocket className="w-16 h-16 mx-auto text-slate-300 mb-6" />
-                    <h2 className="text-3xl font-extrabold text-slate-700 mb-2">Sin Campañas Activas</h2>
+                    <h2 className="text-3xl font-extrabold text-slate-700 mb-2">{t('business.campaigns.emptyTitle', 'Sin Campañas Activas')}</h2>
                     <p className="text-slate-500 max-w-lg mx-auto mb-6">
                         No hemos detectado campañas de publicidad orgánica activas para tu negocio actualmente. Inicia la primera para captar leads mediante la comunidad.
                     </p>

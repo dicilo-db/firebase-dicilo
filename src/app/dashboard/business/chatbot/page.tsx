@@ -10,6 +10,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { useTranslation } from 'react-i18next';
+
 import { useToast } from '@/hooks/use-toast';
 import { doc, getDoc, updateDoc, collection, query, where, getDocs, setDoc, deleteDoc } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL, deleteObject } from 'firebase/storage';
@@ -33,6 +35,7 @@ interface KnowledgeFile {
 }
 
 export default function ChatbotPage() {
+    const { t } = useTranslation('common');
     const { businessId, plan, isLoading } = useBusinessAccess();
     const { toast } = useToast();
     
@@ -202,10 +205,10 @@ export default function ChatbotPage() {
                 <div>
                     <h1 className="text-3xl font-extrabold flex items-center gap-3 text-slate-900">
                         <Bot className="w-8 h-8 text-indigo-600" />
-                        Asistente <span className="text-indigo-600">I.A.</span>
+                        {t('business.chatbot.title', 'Asistente I.A.')}
                     </h1>
                     <p className="mt-2 text-slate-500 text-lg">
-                        Entrena a tu propio robot de atención al cliente para que responda dudas sobre tu negocio en tu Ficha Dicilo.
+                        {t('business.chatbot.desc', 'Entrena a tu propio robot de atención al cliente para que responda dudas sobre tu negocio en tu Ficha Dicilo.')}
                     </p>
                 </div>
                 <div className="flex items-center gap-3 shrink-0 mb-1">
@@ -230,12 +233,12 @@ export default function ChatbotPage() {
                     <div className="space-y-6">
                         <Card className="border-slate-200 shadow-sm">
                             <CardHeader>
-                                <CardTitle className="text-xl">Configuración Base</CardTitle>
-                                <CardDescription>Define la personalidad de tu bot.</CardDescription>
+                                <CardTitle className="text-xl">{t('business.chatbot.baseConfig', 'Configuración Base')}</CardTitle>
+                                <CardDescription>{t('business.chatbot.baseConfigDesc', 'Define la personalidad de tu bot.')}</CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <div className="space-y-2">
-                                    <Label>Nombre del Asistente</Label>
+                                    <Label>{t('business.chatbot.botName', 'Nombre del Asistente')}</Label>
                                     <Input 
                                         value={config.botName} 
                                         onChange={e => setConfig({...config, botName: e.target.value})}
@@ -243,7 +246,7 @@ export default function ChatbotPage() {
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label>Mensaje de Bienvenida</Label>
+                                    <Label>{t('business.chatbot.greeting', 'Mensaje de Bienvenida')}</Label>
                                     <Input 
                                         value={config.greetingMessage} 
                                         onChange={e => setConfig({...config, greetingMessage: e.target.value})}
@@ -252,7 +255,7 @@ export default function ChatbotPage() {
                                     <p className="text-xs text-slate-500">Este mensaje aparecerá cuando el cliente abra el chat.</p>
                                 </div>
                                 <div className="space-y-2">
-                                    <Label>Instrucciones Centrales (Prompt)</Label>
+                                    <Label>{t('business.chatbot.prompt', 'Instrucciones Centrales (Prompt)')}</Label>
                                     <Textarea 
                                         value={config.systemPrompt} 
                                         onChange={e => setConfig({...config, systemPrompt: e.target.value})}
@@ -278,7 +281,7 @@ export default function ChatbotPage() {
                         <Card className="border-slate-200 shadow-sm border-t-4 border-t-indigo-600">
                             <CardHeader>
                                 <CardTitle className="text-xl flex items-center gap-2">
-                                    <Globe className="w-5 h-5 text-indigo-600" /> Archivos de Conocimiento
+                                    <Globe className="w-5 h-5 text-indigo-600" /> {t('business.chatbot.filesBox', 'Archivos de Conocimiento')}
                                 </CardTitle>
                                 <CardDescription>Alimenta a tu I.A. con menús, catálogos o preguntas frecuentes en PDF.</CardDescription>
                             </CardHeader>
@@ -299,7 +302,7 @@ export default function ChatbotPage() {
                                     ) : (
                                         <div className="flex flex-col items-center">
                                             <Upload className="w-10 h-10 text-indigo-400 mb-3" />
-                                            <p className="font-semibold text-slate-700">Cargar Archivo PDF</p>
+                                            <p className="font-semibold text-slate-700">{t('business.chatbot.uploadDoc', 'Cargar Archivo PDF')}</p>
                                             <p className="text-sm text-slate-500 mt-1 max-w-xs">Arrastra o haz clic aquí (Máximo 10MB)</p>
                                         </div>
                                     )}

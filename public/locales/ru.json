@@ -1,0 +1,64 @@
+{
+  "business": {
+    "chatbot": {
+      "title": "A.I. Assistant",
+      "desc": "Train your own customer service robot to answer questions about your business on your Dicilo Profile.",
+      "baseConfig": "Base Configuration",
+      "baseConfigDesc": "Define your bot's personality.",
+      "botName": "Assistant Name",
+      "botNameObj": "E.g. John from Napoli Pizzeria",
+      "greeting": "Welcome Message",
+      "greetingDesc": "This message will appear when the client opens the chat.",
+      "prompt": "Core Instructions (Prompt)",
+      "promptDesc": "Instruct the A.I. in detail on what tone to use and what info to prioritize.",
+      "saveArgs": "Save Changes",
+      "filesBox": "Knowledge Files",
+      "filesDesc": "Feed your A.I. with menus, catalogs, or FAQ PDFs.",
+      "uploadDoc": "Upload PDF File"
+    },
+    "campaigns": {
+      "title": "Custom Campaigns",
+      "desc": "Measure the performance of your email marketing and organic acquisition strategies managed in Dicilo.",
+      "requestNew": "Request New Campaign",
+      "emptyTitle": "No Active Campaigns",
+      "budgetLabel": "Budget",
+      "remainingLabel": "Remaining"
+    },
+    "market": {
+      "title": "Market Intelligence",
+      "desc": "Discover demographic insights, network competitiveness, and make data-driven decisions.",
+      "potentialUsers": "Potential Users",
+      "agencies": "Business Network",
+      "countries": "Demographic Reach",
+      "trendTitle": "Category Trend",
+      "aiTips": "A.I. Suggestions"
+    },
+    "geo": {
+      "title": "Hyperlocal Geomarketing",
+      "desc": "Attract customers walking near your business. Define your action radius and launch automatic PUSH notifications.",
+      "zoneParams": "Zone Parameters",
+      "radiusLabel": "Reach Radius (Kilometers)",
+      "zipLabel": "Priority Postal Codes (Optional)",
+      "pushLabel": "Flash Message (Push Notification)",
+      "simulator": "Impact Simulator",
+      "privacy": "Privacy Assured: Dicilo never shares exact locations..."
+    },
+    "products": {
+      "title": "Products and Services Management",
+      "desc": "Add, edit, and organize the items users will see on your Dicilo profile.",
+      "addProduct": "Add New Product",
+      "emptyCatalog": "Empty Catalog",
+      "productName": "Product/Service Name",
+      "price": "Price (€)",
+      "save": "Save Product"
+    },
+    "messages": {
+      "title": "Inquiries Inbox",
+      "desc": "Manage the messages and leads clients send from your Dicilo Profile.",
+      "noMessages": "No new inquiries",
+      "openChat": "Open WhatsApp",
+      "markRead": "Mark as read",
+      "delete": "Delete"
+    }
+  }
+}

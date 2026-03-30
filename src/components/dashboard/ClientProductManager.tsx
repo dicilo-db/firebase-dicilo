@@ -6,6 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { useTranslation } from 'react-i18next';
+
 import { useToast } from '@/hooks/use-toast';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
@@ -157,7 +159,7 @@ export function ClientProductManager({ companyId }: ClientProductManagerProps) {
             {products.length === 0 ? (
                 <div className="text-center p-12 border-2 border-dashed border-slate-200 rounded-2xl bg-slate-50">
                     <Package className="w-12 h-12 text-slate-300 mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold text-slate-700">Catálogo Vacío</h3>
+                    <h3 className="text-lg font-semibold text-slate-700">{t('business.products.emptyCatalog', 'Catálogo Vacío')}</h3>
                     <p className="text-slate-500 max-w-sm mx-auto mt-2">No has agregado ningún producto o servicio todavía. Agrega el primero para que tus clientes puedan explorar tu oferta.</p>
                     <Button variant="outline" className="mt-6 text-indigo-600 border-indigo-200 hover:bg-indigo-50" onClick={() => openModal()}>
                         Comenzar

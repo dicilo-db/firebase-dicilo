@@ -7,6 +7,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { useTranslation } from 'react-i18next';
+
 import { useToast } from '@/hooks/use-toast';
 import { collection, query, where, getDocs, doc, updateDoc, deleteDoc, orderBy } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
@@ -25,6 +27,7 @@ interface BusinessMessage {
 }
 
 export default function MessagesPage() {
+    const { t } = useTranslation('common');
     const { businessId, plan, isLoading } = useBusinessAccess();
     const { toast } = useToast();
     const [messages, setMessages] = useState<BusinessMessage[]>([]);
