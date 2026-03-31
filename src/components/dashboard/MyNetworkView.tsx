@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2, Network, Users, Trophy, Star, Medal } from 'lucide-react';
+import { Loader2, Network, Users, Trophy, Star, Medal, ChevronRight, ChevronDown } from 'lucide-react';
 import { getNetworkTree } from '@/app/actions/mlm-actions';
 import { useTranslation } from 'react-i18next';
 
@@ -10,7 +10,65 @@ interface MyNetworkViewProps {
     uid: string;
 }
 
+    const RankIcon = ({ role }: { role: string }) => {
+        if (role === 'team_leader') return <Trophy className="text-amber-500 w-5 h-5" />;
+        if (role === 'freelancer') return <Star className="text-blue-500 w-5 h-5" />;
+        return <Medal className="text-slate-400 w-5 h-5" />;
+    };
+
+    const TreeNodeItem = ({ node, depth = 0 }: { node: any, depth: number }) => {
+        const [isExpanded, setIsExpanded] = useState(depth === 0);
+        
+        if (!node) return null;
+        
+        const hasChildren = node.directs && node.directs.length > 0;
+
+        return (
+            <div className={`mt-2 ${depth > 0 ? 'ml-6 border-l-2' : ''} ${depth === 0 ? 'border-primary' : 'border-slate-300 dark:border-slate-700'}`}>
+                <div 
+                    className={`flex items-center justify-between p-3 bg-white dark:bg-slate-900 shadow-sm transition-colors border rounded-md ${hasChildren ? 'cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800' : ''} ${depth === 0 ? 'border-orange-200 shadow-md' : 'border-slate-100'}`}
+                    onClick={() => hasChildren && setIsExpanded(!isExpanded)}
+                >
+                    <div className="flex items-center gap-3">
+                        <RankIcon role={node.role} />
+                        <div>
+                            <p className="font-semibold text-sm text-slate-800 dark:text-slate-100">
+                                {depth === 0 ? "¡Tú!" : `${node.firstName} ${node.lastName}`} 
+                                <span className="text-xs text-muted-foreground ml-2">({node.role})</span>
+                            </p>
+                            <p className="text-xs text-muted-foreground mt-0.5">
+                                {depth > 0 && `${node.email} | `}
+                                <span className="font-medium text-slate-600 dark:text-slate-300">
+                                    Directos: {node.directsCount}
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                    {hasChildren && (
+                        <div className="p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                            {isExpanded ? (
+                                <ChevronDown className="h-5 w-5 text-slate-500" />
+                            ) : (
+                                <ChevronRight className="h-5 w-5 text-slate-500" />
+                            )}
+                        </div>
+                    )}
+                </div>
+                
+                {/* Accordion Content (Cascading Children) */}
+                {hasChildren && isExpanded && (
+                    <div className="animate-in slide-in-from-top-2 fade-in duration-200">
+                        {node.directs.map((child: any) => (
+                            <TreeNodeItem key={child.uid} node={child} depth={depth + 1} />
+                        ))}
+                    </div>
+                )}
+            </div>
+        );
+    };
+
 export function MyNetworkView({ uid }: MyNetworkViewProps) {
+
     const { t } = useTranslation('common');
     const [loading, setLoading] = useState(true);
     const [treeNode, setTreeNode] = useState<any>(null);
@@ -32,38 +90,6 @@ export function MyNetworkView({ uid }: MyNetworkViewProps) {
             loadNetwork();
         }
     }, [uid]);
-
-    const RankIcon = ({ role }: { role: string }) => {
-        if (role === 'team_leader') return <Trophy className="text-amber-500 w-5 h-5" />;
-        if (role === 'freelancer') return <Star className="text-blue-500 w-5 h-5" />;
-        return <Medal className="text-slate-400 w-5 h-5" />;
-    };
-
-    const renderTree = (node: any, depth = 0) => {
-        if (!node) return null;
-        return (
-            <div key={node.uid} className={`ml-${depth * 6} mt-2 p-3 border-l-2 ${depth === 0 ? 'border-primary' : 'border-slate-300 dark:border-slate-700'} bg-white dark:bg-slate-900 rounded-r-md shadow-sm`}>
-                <div className="flex items-center gap-3">
-                    <RankIcon role={node.role} />
-                    <div>
-                        <p className="font-semibold text-sm">
-                            {depth === 0 ? "¡Tú!" : `${node.firstName} ${node.lastName}`} 
-                            <span className="text-xs text-muted-foreground ml-2">({node.role})</span>
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                            {depth > 0 && `${node.email} | `}
-                            Directos: {node.directsCount}
-                        </p>
-                    </div>
-                </div>
-                {node.directs && node.directs.length > 0 && (
-                    <div className="mt-2 ml-4">
-                        {node.directs.map((child: any) => renderTree(child, depth + 1))}
-                    </div>
-                )}
-            </div>
-        );
-    };
 
     if (loading) {
         return (
@@ -100,7 +126,7 @@ export function MyNetworkView({ uid }: MyNetworkViewProps) {
                                 <p className="text-muted-foreground mb-4">Todavía no has invitado a nadie a tu red.</p>
                             </div>
                         ) : (
-                            renderTree(treeNode)
+                            <TreeNodeItem node={treeNode} depth={0} />
                         )}
                     </div>
                 </CardContent>

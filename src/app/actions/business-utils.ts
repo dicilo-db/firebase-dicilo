@@ -3,9 +3,9 @@ import { getAdminDb } from '@/lib/firebase-admin';
 /**
  * Normalizes a string for comparison (lowercase, trimmed, removed multiple spaces)
  */
-const normalize = (text: string | null | undefined) => {
-  if (!text) return '';
-  return text.trim().toLowerCase().replace(/\s+/g, ' ');
+const normalize = (text: any) => {
+  if (!text || typeof text !== 'string') return '';
+  return String(text).trim().toLowerCase().replace(/\s+/g, ' ');
 };
 
 /**
@@ -21,32 +21,41 @@ export async function checkBusinessDuplicate(
   address: string | null | undefined,
   phone: string | null | undefined
 ) {
-  const db = getAdminDb();
-  const normalizedName = normalize(name);
-  const normalizedAddress = normalize(address);
-  const normalizedPhone = normalize(phone);
+  try {
+      const db = getAdminDb();
+      const normalizedName = normalize(name);
+      const normalizedAddress = normalize(address);
+      const normalizedPhone = normalize(phone);
 
-  if (!normalizedName) return { isDuplicate: false, type: null };
+      if (!normalizedName) return { isDuplicate: false, type: null };
 
-  // Collections to check
-  const collections = ['businesses', 'registrations', 'recommendations'];
-  
-  for (const collectionName of collections) {
-    let nameField = 'businessName';
-    if (collectionName === 'businesses') nameField = 'name';
-    if (collectionName === 'recommendations') nameField = 'companyName';
-
-    // Query by name first (most common factor)
-    const snapshot = await db.collection(collectionName)
-      .where(nameField, '==', name) // We try exact match first for indexed query
-      .get();
+      // Collections to check
+      const collections = ['businesses', 'registrations', 'recommendations'];
       
-    for (const doc of snapshot.docs) {
-      const data = doc.data();
-      if (isFullMatch(data, normalizedName, normalizedAddress, normalizedPhone)) {
-        return { isDuplicate: true, type: collectionName };
+      for (const collectionName of collections) {
+        let nameField = 'businessName';
+        if (collectionName === 'businesses') nameField = 'name';
+        if (collectionName === 'recommendations') nameField = 'companyName';
+
+        // Safe query value
+        if (!name) continue;
+
+        // Query by name first (most common factor)
+        const snapshot = await db.collection(collectionName)
+          .where(nameField, '==', name) // We try exact match first for indexed query
+          .get();
+          
+        for (const doc of snapshot.docs) {
+          const data = doc.data();
+          if (isFullMatch(data, normalizedName, normalizedAddress, normalizedPhone)) {
+            return { isDuplicate: true, type: collectionName };
+          }
+        }
       }
-    }
+  } catch (err) {
+      console.error("Duplicate Check Error:", err);
+      // Failsafe: if duplicate check crashes, do NOT block business registration/recommendation.
+      return { isDuplicate: false, type: null };
   }
 
   return { isDuplicate: false, type: null };
