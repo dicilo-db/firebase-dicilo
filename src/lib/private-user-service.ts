@@ -1,6 +1,7 @@
 import { getAdminDb } from '@/lib/firebase-admin';
 import * as admin from 'firebase-admin';
 import { resolveRewards } from './rewards';
+import { checkAndUpgradeRank } from '@/app/actions/mlm-actions';
 
 /**
  * Generates a unique code for a private user using Admin SDK.
@@ -194,6 +195,14 @@ export async function createPrivateUserProfile(
     });
 
     await batch.commit();
+
+    // 6. Check Referrer Rank MLM
+    if (referrerUid) {
+        checkAndUpgradeRank(referrerUid).catch(err => 
+            console.error('[MLM] Error checking rank for referrer:', referrerUid, err)
+        );
+    }
+
     return { success: true, profile: profileData };
 }
 

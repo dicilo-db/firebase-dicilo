@@ -5,6 +5,7 @@ import { createPrivateUserProfile } from '@/lib/private-user-service';
 import { sendWelcomeEmail } from '@/lib/email';
 import * as admin from 'firebase-admin';
 import { resolveRewards } from '@/lib/rewards';
+import { checkAndUpgradeRank } from '@/app/actions/mlm-actions';
 
 // ¡REEMPLAZAR CON TU URL REAL DE N8N!
 const N8N_WEBHOOK_URL =
@@ -333,6 +334,13 @@ export async function POST(request: Request) {
                 convertedAt: admin.firestore.FieldValue.serverTimestamp(),
                 convertedUid: ownerUid || null
             });
+        }
+
+        // D. MLM Check: See if Referrer should be upgraded to Freelancer or Team Leader
+        if (resolvedReferrerId && resolvedReferrerId !== ownerUid) {
+            await checkAndUpgradeRank(resolvedReferrerId).catch(err => 
+                console.error("[REWARD] MLM Upgrade Error:", err)
+            );
         }
     } catch (rewardErr) {
         console.error("Reward Engine Error:", rewardErr);
