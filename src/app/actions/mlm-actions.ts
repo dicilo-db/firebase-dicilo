@@ -4,6 +4,9 @@ import { getAdminDb } from '@/lib/firebase-admin';
 import * as admin from 'firebase-admin';
 import { sendSmtpEmail } from '@/lib/mail-service';
 
+// Webhook de n8n o endpoint para notificaciones de rango
+const N8N_RANK_WEBHOOK_URL = process.env.N8N_RANK_WEBHOOK_URL || 'https://tu-n8n.com/webhook/rank-upgrade';
+
 export interface MLMUserNode {
     uid: string;
     firstName: string;
@@ -80,7 +83,7 @@ export async function checkAndUpgradeRank(uid: string) {
         });
 
         const lang = 'es'; // default
-        await notifyRankUpgrade(profile?.email, profile?.firstName || '', newRole, lang);
+        await notifyRankUpgrade(profile?.email, profile?.firstName || '', newRole, lang, profile?.phone || profile?.whatsapp || '');
         
         return { success: true, oldRole: profile?.role, newRole };
     }
@@ -88,7 +91,7 @@ export async function checkAndUpgradeRank(uid: string) {
     return { success: false, reason: 'No upgrade needed' };
 }
 
-async function notifyRankUpgrade(email: string | undefined, name: string, newRole: string, lang: string) {
+async function notifyRankUpgrade(email: string | undefined, name: string, newRole: string, lang: string, phone: string) {
     if (!email) return;
     
     let subject = '';
@@ -102,12 +105,36 @@ async function notifyRankUpgrade(email: string | undefined, name: string, newRol
         body = `Hola ${name},<br><br>Has superado los 20 referidos y lideras un equipo activo. ¡Felicidades, ahora eres Team Leader!<br><br>Este es el rango aristocrático más alto, con beneficios y bonos por servicio.`;
     }
     
+    // 1. Enviar Email Interno Fijo (como siempre)
     if (body) {
         await sendSmtpEmail({
             to: email,
             subject,
             html: body
         }).catch(e => console.error("Error sending rank upgrade email:", e));
+    }
+
+    // 2. Disparar Webhook de n8n para envios automatizados (Telegram y flujos extra)
+    try {
+        await fetch(N8N_RANK_WEBHOOK_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                event: 'rank_upgrade',
+                user: {
+                    name,
+                    email,
+                    phone,
+                    newRole,
+                    lang
+                },
+                notification: {
+                    subject
+                }
+            })
+        });
+    } catch (e) {
+        console.error("Error dispatching N8N webhook for rank upgrade:", e);
     }
 }
 

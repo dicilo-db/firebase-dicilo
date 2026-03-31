@@ -720,15 +720,15 @@ const DashboardContent: React.FC = () => {
               </Card>
             </Link>
 
-            {/* Red MLM (Network) */}
+            {/* Red Dicilo (Network) */}
             <Link href="/admin/mlm" className="group">
               <Card className="h-full bg-orange-50/50 dark:bg-orange-900/10 border-orange-200 transition-all hover:shadow-md hover:border-orange-500 cursor-pointer relative">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium text-orange-700 dark:text-orange-400">Red MLM</CardTitle>
+                  <CardTitle className="text-sm font-medium text-orange-700 dark:text-orange-400">Red Dicilo</CardTitle>
                   <Users className="h-4 w-4 text-orange-500 group-hover:scale-110 transition-transform" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">Red MLM</div>
+                  <div className="text-2xl font-bold">Red Dicilo</div>
                   <p className="text-xs text-muted-foreground mt-1">Gestión Jerárquica e Historial</p>
                 </CardContent>
               </Card>
