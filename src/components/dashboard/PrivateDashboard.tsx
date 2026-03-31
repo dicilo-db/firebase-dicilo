@@ -38,6 +38,7 @@ import { StatisticsView } from './freelancer/views/StatisticsView';
 import { AlliesMap } from './AlliesMap';
 import { MiBox } from './MiBox';
 import { SuperAdminStatsGrid } from './SuperAdminStatsGrid';
+import { MyNetworkView } from './MyNetworkView';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { ensureHttps, formatSocialUrl } from '@/lib/url-utils';
@@ -421,6 +422,12 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                 return (
                     <div className="space-y-6 animate-in fade-in duration-500">
                         <CommunityView defaultNeighborhood={formData.city || 'Hamburg'} currentUser={user} />
+                    </div>
+                );
+            case 'my-network':
+                return (
+                    <div className="animate-in fade-in duration-500">
+                        <MyNetworkView uid={user.uid} />
                     </div>
                 );
             case 'faqs':

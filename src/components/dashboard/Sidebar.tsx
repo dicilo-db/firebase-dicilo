@@ -24,7 +24,8 @@ import {
     ChevronRight,
     Scan,
     Share2,
-    HelpCircle
+    HelpCircle,
+    Network
 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -153,9 +154,11 @@ export function Sidebar({ userData, onViewChange, currentView }: SidebarProps) {
     const insertIdx = navItems.findIndex(item => item.id === 'freelancer');
     if (insertIdx !== -1) {
         navItems.splice(insertIdx + 1, 0, { id: 'community', label: t('community.your_community', 'Tu Comunidad'), icon: Share2, type: 'view' });
+        navItems.splice(insertIdx + 2, 0, { id: 'my-network', label: 'Mi Red Dicilo', icon: Network, type: 'view' });
     } else {
         // Fallback
         navItems.push({ id: 'community', label: t('community.your_community', 'Tu Comunidad'), icon: Share2, type: 'view' });
+        navItems.push({ id: 'my-network', label: 'Mi Red Dicilo', icon: Network, type: 'view' });
     }
 
     // Add Admin conditionally

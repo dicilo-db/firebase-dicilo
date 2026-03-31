@@ -442,23 +442,29 @@ export function EmailMarketingComposer({
             const effectiveSenderName = customSenderName.trim() || currentUser.displayName || 'Usuario';
 
             // 1. Create Invitations in Firestore
-            const { sendPioneerInvitations } = await import('@/app/actions/invite');
-            const result = await sendPioneerInvitations(
-                currentUser.uid,
-                effectiveSenderName,
-                friends.map(f => ({
-                    name: f.name,
-                    email: f.email,
-                    lang: f.language as 'es' | 'de' | 'en' | 'fr' | 'pt' | 'it',
-                    template: template.id || 'email_marketing',
-                    company: f.company,
-                    rewardSender: template.rewardSender,
-                    rewardReceiver: template.rewardReceiver
-                }))
-            );
+                const sanitizedFriends = friends.map(f => {
+                    const friendProps: any = {
+                        name: f.name || 'Amigo',
+                        email: f.email,
+                        lang: f.language || 'es',
+                        template: template.id || 'email_marketing',
+                    };
+                    if (f.company) friendProps.company = f.company;
+                    if (template.rewardSender !== undefined) friendProps.rewardSender = template.rewardSender;
+                    if (template.rewardReceiver !== undefined) friendProps.rewardReceiver = template.rewardReceiver;
+                    return friendProps;
+                });
+
+                const { sendPioneerInvitations } = await import('@/app/actions/invite');
+                const result = await sendPioneerInvitations(
+                    currentUser.uid,
+                    effectiveSenderName,
+                    sanitizedFriends
+                );
 
             if (!result || !result.success || !result.inviteIds) {
-                throw new Error(result?.error || 'No se pudieron crear las invitaciones en el servidor.');
+                console.error("Server Action Result Failed:", result);
+                throw new Error(result?.error ? `Error del servidor: ${result.error}` : 'No se pudieron crear las invitaciones en el servidor. Verifica tu cuota o datos.');
             }
 
             const inviteIds = result.inviteIds;
@@ -493,24 +499,31 @@ export function EmailMarketingComposer({
                     .replace(/\{\{Company\}\}|\{\{Empresa\}\}|\[Company\]|\[Empresa\]/ig, friend.company || 'la Empresa')
                     .replace(/\{\{Greeting\}\}/ig, getGreeting(friend.language || 'es'));
 
-                const { language, ...friendData } = friend;
-
-                return {
+                const { language, company, ...friendData } = friend;
+                
+                const finalFriendObj: any = {
                     ...friendData,
                     lang: language,
                     generated_subject: subject,
                     generated_body: body,
                     inviteId: inviteId
                 };
+                
+                if (company) finalFriendObj.company = company;
+                
+                return finalFriendObj;
             });
 
-            const payload = {
+            const payload: any = {
                 referrer_id: propUniqueCode || currentUser.uid,
                 referrer_name: effectiveSenderName,
-                referrer_email: currentUser.email || undefined,
                 friends: enrichedFriends,
                 timestamp: new Date().toISOString()
             };
+            
+            if (currentUser.email) {
+                payload.referrer_email = currentUser.email;
+            }
 
             // 3. Send via SMTP Server Action
             const { sendBulkMarketingEmails } = await import('@/app/actions/marketing-emails');
