@@ -296,8 +296,8 @@ export function Sidebar({ userData, onViewChange, currentView }: SidebarProps) {
                                         <Button
                                             variant="ghost"
                                             size="sm"
-                                            className={cn("w-full justify-start h-8 text-xs font-normal", currentTab === 'stats' && "bg-muted font-medium text-primary")}
-                                            onClick={() => router.push('?view=freelancer&tab=stats')}
+                                            className={cn("w-full justify-start h-8 text-xs font-normal", currentTab === 'statistics' && "bg-muted font-medium text-primary")}
+                                            onClick={() => router.push('?view=freelancer&tab=statistics')}
                                         >
                                             Mis Estadísticas
                                         </Button>

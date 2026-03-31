@@ -91,21 +91,6 @@ export function StatisticsView() {
     const totalReach = Math.floor(totalViews * 0.85);
     const totalInteractions = Math.floor(totalViews * 0.05);
 
-    const toggleSection = (section: string) => {
-        setActiveSection(prev => prev === section ? null : section);
-        
-        // Scroll to the section if opening it
-        if (activeSection !== section) {
-            setTimeout(() => {
-                const id = section === 'prospects' ? 'prospects-table' 
-                         : section === 'marketing' ? 'marketing-sends-table'
-                         : section === 'posts' ? 'posts-table' : null;
-                if (id) {
-                    const el = document.getElementById(id);
-                    el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            }, 100);
-        }
     };
 
     const handleCardClick = (label: string) => {
@@ -114,11 +99,14 @@ export function StatisticsView() {
         const postsLabel = t('freelancer_views.statistics.published_posts');
 
         if (label === prospectsLabel || label === 'Mis Prospectos Registrados') {
-            toggleSection('prospects');
+            const el = document.getElementById('prospects-table');
+            el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
         } else if (label === marketingLabel) {
-            toggleSection('marketing');
+            const el = document.getElementById('marketing-sends-table');
+            el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
         } else if (label === postsLabel) {
-            toggleSection('posts');
+            const el = document.getElementById('posts-table');
+            el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
         } else {
             toast({
                 title: label,
@@ -192,22 +180,15 @@ export function StatisticsView() {
                     "bg-white dark:bg-card shadow-sm border overflow-hidden transition-all duration-300",
                     activeSection === 'prospects' ? "ring-2 ring-purple-500/20" : "opacity-90 grayscale-[0.2]"
                 )}>
-                    <CardHeader 
-                        className="border-b bg-slate-50/50 cursor-pointer hover:bg-slate-100/80 transition-colors"
-                        onClick={() => toggleSection('prospects')}
-                    >
-                        <div className="flex items-center justify-between gap-2">
-                            <div className="flex items-center gap-2">
-                                <Building2 className="h-5 w-5 text-purple-500" />
-                                <CardTitle className="text-lg">
-                                    {t('adsManager.cards.programs.prospects.managerTitle', 'Mis Prospectos Registrados')}
-                                </CardTitle>
-                            </div>
-                            {activeSection === 'prospects' ? <ChevronUp className="h-5 w-5 text-muted-foreground" /> : <ChevronDown className="h-5 w-5 text-muted-foreground" />}
+                    <CardHeader className="border-b bg-slate-50/50">
+                        <div className="flex items-center gap-2">
+                            <Building2 className="h-5 w-5 text-purple-500" />
+                            <CardTitle className="text-lg">
+                                {t('adsManager.cards.programs.prospects.managerTitle', 'Mis Prospectos Registrados')}
+                            </CardTitle>
                         </div>
                     </CardHeader>
-                    {activeSection === 'prospects' && (
-                        <CardContent className="p-0 animate-in fade-in slide-in-from-top-2 duration-300">
+                    <CardContent className="p-0">
                         <div className="overflow-x-auto">
                             <table className="w-full text-[13px] leading-tight">
                                 <thead className="bg-slate-50 text-slate-500 font-medium">
@@ -275,7 +256,6 @@ export function StatisticsView() {
                             </table>
                         </div>
                         </CardContent>
-                    )}
                 </Card>
             )}
 
@@ -285,22 +265,15 @@ export function StatisticsView() {
                     "bg-white dark:bg-card shadow-sm border overflow-hidden transition-all duration-300",
                     activeSection === 'posts' ? "ring-2 ring-blue-500/20" : "opacity-90 grayscale-[0.2]"
                 )}>
-                    <CardHeader 
-                        className="border-b bg-slate-50/50 cursor-pointer hover:bg-slate-100/80 transition-colors"
-                        onClick={() => toggleSection('posts')}
-                    >
-                        <div className="flex items-center justify-between gap-2">
-                            <div className="flex items-center gap-2">
-                                <MessageCircle className="h-5 w-5 text-blue-500" />
-                                <CardTitle className="text-lg">
-                                    {t('freelancer_views.statistics.published_posts')} (Comunidad)
-                                </CardTitle>
-                            </div>
-                            {activeSection === 'posts' ? <ChevronUp className="h-5 w-5 text-muted-foreground" /> : <ChevronDown className="h-5 w-5 text-muted-foreground" />}
+                    <CardHeader className="border-b bg-slate-50/50">
+                        <div className="flex items-center gap-2">
+                            <MessageCircle className="h-5 w-5 text-blue-500" />
+                            <CardTitle className="text-lg">
+                                {t('freelancer_views.statistics.published_posts')} (Comunidad)
+                            </CardTitle>
                         </div>
                     </CardHeader>
-                    {activeSection === 'posts' && (
-                        <CardContent className="p-0 animate-in fade-in slide-in-from-top-2 duration-300">
+                    <CardContent className="p-0">
                         <div className="overflow-x-auto">
                             <table className="w-full text-[13px] leading-tight text-center">
                                 <thead className="bg-slate-50 text-slate-500 font-medium">
@@ -331,7 +304,6 @@ export function StatisticsView() {
                             </table>
                         </div>
                         </CardContent>
-                    )}
                 </Card>
             )}
 
@@ -341,10 +313,7 @@ export function StatisticsView() {
                     "bg-white dark:bg-card shadow-sm border overflow-hidden transition-all duration-300",
                     activeSection === 'marketing' ? "ring-2 ring-emerald-500/20" : "opacity-90 grayscale-[0.2]"
                 )}>
-                    <CardHeader 
-                        className="border-b bg-slate-50/50 py-4 cursor-pointer hover:bg-slate-100/80 transition-colors"
-                        onClick={() => toggleSection('marketing')}
-                    >
+                    <CardHeader className="border-b bg-slate-50/50 py-4">
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
                                 <Mail className="h-5 w-5 text-emerald-500" />
@@ -356,12 +325,10 @@ export function StatisticsView() {
                                 <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-100">
                                     {marketingSends.length} Total
                                 </Badge>
-                                {activeSection === 'marketing' ? <ChevronUp className="h-5 w-5 text-muted-foreground" /> : <ChevronDown className="h-5 w-5 text-muted-foreground" />}
                             </div>
                         </div>
                     </CardHeader>
-                    {activeSection === 'marketing' && (
-                        <CardContent className="p-0 animate-in fade-in slide-in-from-top-2 duration-300">
+                    <CardContent className="p-0">
                         <div className="overflow-x-auto">
                             <table className="w-full text-[13px] leading-tight text-left">
                                 <thead className="bg-slate-50 text-slate-500 font-medium border-b">
@@ -437,7 +404,6 @@ export function StatisticsView() {
                             </table>
                         </div>
                         </CardContent>
-                    )}
                 </Card>
             )}
 
