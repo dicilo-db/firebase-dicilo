@@ -142,8 +142,10 @@ export function GeneralInfoSection() {
         .filter(e => e.date)
         .map(e => new Date(e.date + "T00:00:00")); // Ensure local time parsing doesn't shift the day
 
-    // Get events for the currently selected date
-    const selectedDateString = selectedDate ? selectedDate.toISOString().split('T')[0] : '';
+    // Get events for the currently selected date - SAFE LOCAL TIMEZONE FORMATTING
+    const selectedDateString = selectedDate 
+        ? `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}` 
+        : '';
     const selectedEvents = events.filter(e => e.date === selectedDateString);
 
     if (isLoading) {

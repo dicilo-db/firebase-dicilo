@@ -166,8 +166,8 @@ export default function GeneralInfoPage() {
                         time: result.dataToSave.time || '',
                         endTime: result.dataToSave.endTime || ''
                     });
-                    if (!broadcastResult.success) {
-                        toast({ title: 'Aviso Notificaciones', description: 'Guardado, pero falló el envío: ' + broadcastResult.error, variant: 'destructive' });
+                    if (!broadcastResult || !broadcastResult.success) {
+                        toast({ title: 'Aviso Notificaciones', description: 'Guardado, pero falló el envío o el servidor no respondió: ' + (broadcastResult?.error || 'Sin detalle'), variant: 'destructive' });
                     } else {
                         toast({ title: 'Notificaciones', description: `Se enviaron ${broadcastResult.count} correos exitosamente.` });
                     }

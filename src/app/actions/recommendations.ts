@@ -265,10 +265,7 @@ export async function submitRecommendation(formData: FormData) {
 
         return { success: true };
     } catch (error: any) {
-        console.error('Error submitting recommendation (Main Flow):', error);
-        return { 
-            success: false, 
-            error: error.message || 'Error desconocido en el servidor al procesar la recomendación.' 
-        };
+        console.error("Critical error in submitRecommendation:", error);
+        return { success: false, error: "Detalle de servidor: " + (error?.message || String(error)) };
     }
 }

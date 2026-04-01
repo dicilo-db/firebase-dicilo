@@ -60,6 +60,8 @@ export default function ClientModulesDashboard() {
     useEffect(() => {
         const fetchClient = async () => {
             if (!params.id) return;
+            
+            // Ver si es un cliente (Client)
             const docRef = doc(db, 'clients', params.id as string);
             const docSnap = await getDoc(docRef);
             if (docSnap.exists()) {
@@ -68,12 +70,31 @@ export default function ClientModulesDashboard() {
                 if (!data.module_overrides) {
                     data.module_overrides = {};
                 }
-                setClientData({ id: docSnap.id, ...data });
+                setClientData({ id: docSnap.id, collectionName: 'clients', ...data });
+                setIsLoading(false);
             } else {
-                toast({ title: 'Error', description: 'Cliente no encontrado', variant: 'destructive' });
-                router.push('/admin/dashboard');
+                // Fallback: Ver si es un negocio (Basic / Business)
+                const busRef = doc(db, 'businesses', params.id as string);
+                const busSnap = await getDoc(busRef);
+                if (busSnap.exists()) {
+                    const data = busSnap.data();
+                    if (!data.module_overrides) {
+                        data.module_overrides = {};
+                    }
+                    setClientData({ 
+                        id: busSnap.id, 
+                        collectionName: 'businesses',
+                        clientName: data.name || 'Sin Nombre',
+                        clientType: data.clientType || 'basic',
+                        ...data 
+                    });
+                    setIsLoading(false);
+                } else {
+                    toast({ title: 'Error', description: 'Cliente no encontrado', variant: 'destructive' });
+                    router.push('/admin/dashboard');
+                    // No seteamos isLoading(false) para evitar que intente renderizar el componente roto mientras desvía
+                }
             }
-            setIsLoading(false);
         };
         fetchClient();
     }, [params.id, db, router, toast]);
@@ -81,7 +102,8 @@ export default function ClientModulesDashboard() {
     const handleToggleOverride = async (moduleId: ModuleId, currentValue: boolean) => {
         setIsSaving(true);
         try {
-            const docRef = doc(db, 'clients', clientData.id);
+            const collectionName = clientData.collectionName || 'clients';
+            const docRef = doc(db, collectionName, clientData.id);
             const newOverrides = { ...clientData.module_overrides, [moduleId]: !currentValue };
             await updateDoc(docRef, { module_overrides: newOverrides });
             
@@ -149,7 +171,7 @@ export default function ClientModulesDashboard() {
                     </div>
                     <div>
                         {/* Botón temporal de compatibilidad: ir al formulario clásico */}
-                        <Button onClick={() => router.push(`/admin/clients/${clientData.id}/edit`)} variant="outline">
+                        <Button onClick={() => router.push(`/${clientData.collectionName === 'businesses' ? 'admin/basic' : 'admin/clients'}/${clientData.id}/edit`)} variant="outline">
                             Ver Formulario Clásico Completo
                         </Button>
                     </div>
@@ -236,7 +258,7 @@ export default function ClientModulesDashboard() {
                                     <Settings className="w-12 h-12 mx-auto mb-4 opacity-50 text-slate-400 animate-spin-slow" />
                                     <h3 className="text-lg font-semibold text-slate-700 mb-2">Módulo en Migración</h3>
                                     <p>Este módulo está siendo separado a la nueva arquitectura Ficha Técnica.</p>
-                                    <p className="mt-2 text-sm text-slate-400">Por ahora, utiliza el <button onClick={() => { setActiveModule(null); router.push(`/admin/clients/${clientData.id}/edit`); }} className="text-primary hover:underline">Formulario Clásico Completo</button> para modificarlo.</p>
+                                    <p className="mt-2 text-sm text-slate-400">Por ahora, utiliza el <button onClick={() => { setActiveModule(null); router.push(`/${clientData.collectionName === 'businesses' ? 'admin/basic' : 'admin/clients'}/${clientData.id}/edit`); }} className="text-primary hover:underline">Formulario Clásico Completo</button> para modificarlo.</p>
                                 </div>
                             )}
                         </div>

@@ -488,20 +488,34 @@ export default function RecommendationsPage() {
                                                     {rec.website && <a href={rec.website} target="_blank" className="text-blue-500 text-xs hover:underline block truncate">{rec.website}</a>}
                                                 </TableCell>
                                                 <TableCell>
-                                                    {rec.converted && <span className="inline-flex items-center text-xs text-green-600 font-medium"><CheckCircle className="w-3 h-3 mr-1" /> {t('recommendations.status.converted')}</span>}
+                                                    {rec.converted ? (
+                                                        <Badge className="bg-green-500 text-white hover:bg-green-600 border-transparent"><CheckCircle className="w-3 h-3 mr-1" /> Convertido</Badge>
+                                                    ) : rec.validationStatus === 'invitation_sent' ? (
+                                                        <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-200 border-transparent">Invitación Enviada</Badge>
+                                                    ) : rec.validationStatus === 'validated' ? (
+                                                        <Badge className="bg-emerald-100 text-emerald-800 hover:bg-emerald-200 border-transparent">Datos Validados</Badge>
+                                                    ) : rec.status === 'approved' ? (
+                                                        <Badge className="bg-green-100 text-green-800 hover:bg-green-200 border-transparent">Aprobado</Badge>
+                                                    ) : (
+                                                        <Badge className="bg-slate-100 text-slate-500 hover:bg-slate-200 border-transparent">Sin Revisar</Badge>
+                                                    )}
                                                 </TableCell>
                                                 <TableCell>
                                                     {rec.unsubscribed || rec.status === 'unsubscribed' ? (
-                                                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-bold bg-red-100 text-red-800 border border-red-200 uppercase" title="La empresa indicó que no desea pertenecer a la plataforma">
+                                                        <span className="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold bg-red-100 text-red-800 border border-red-200 uppercase" title="La empresa indicó que no desea pertenecer a la plataforma">
                                                             Dado de Baja
                                                         </span>
                                                     ) : rec.pointsPaid ? (
                                                         <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                                            {t('recommendations.status.paid')}
+                                                            Pago Completado
+                                                        </span>
+                                                    ) : (!rec.userId || rec.userId.trim() === '') ? (
+                                                        <span className="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold bg-slate-100 text-slate-500 uppercase border border-slate-200" title="Recomendación pública sin cuenta asociada.">
+                                                            N/A (Público)
                                                         </span>
                                                     ) : (
-                                                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                                                            {t('recommendations.status.pending')}
+                                                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200 whitespace-nowrap" title="Los DiciPoints se pagarán automáticamente en cuanto la empresa complete su registro en la plataforma.">
+                                                            Bono en Espera (Al registrarse)
                                                         </span>
                                                     )}
                                                 </TableCell>

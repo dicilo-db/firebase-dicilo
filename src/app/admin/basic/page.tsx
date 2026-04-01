@@ -241,15 +241,15 @@ export default function BusinessesPage() {
 
   const filteredBusinesses = useMemo(() => {
     return businesses.filter((business) => {
-      const matchesSearch = business.name.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesSearch = (business.name || '').toLowerCase().includes(searchQuery.toLowerCase());
       const matchesCountry = filterCountry === 'all' || business.country === filterCountry;
       const matchesCity = filterCity === 'all' || business.city === filterCity;
       const matchesCategory = filterCategory === 'all' || business.category === filterCategory;
 
       return matchesSearch && matchesCountry && matchesCity && matchesCategory;
     }).sort((a, b) => {
-      if (sortOrder === 'name-asc') return a.name.localeCompare(b.name);
-      if (sortOrder === 'name-desc') return b.name.localeCompare(a.name);
+      if (sortOrder === 'name-asc') return (a.name || '').localeCompare(b.name || '');
+      if (sortOrder === 'name-desc') return (b.name || '').localeCompare(a.name || '');
       if (sortOrder === 'newest') {
         const dateA = a.createdAt?.seconds ? new Date(a.createdAt.seconds * 1000) : new Date(0);
         const dateB = b.createdAt?.seconds ? new Date(b.createdAt.seconds * 1000) : new Date(0);
