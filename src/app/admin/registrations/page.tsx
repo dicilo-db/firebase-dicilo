@@ -125,6 +125,19 @@ const ActionButton = ({ registration }: { registration: Registration }) => {
             </DropdownMenuItem>
           )}
 
+          {/* CREATE CLIENT (For Companies WITHOUT clientId) */}
+          {(!registration.clientId && registration.registrationType !== 'private') && (
+            <DropdownMenuItem asChild>
+              <Link 
+                href={`/admin/basic/new?name=${encodeURIComponent(registration.businessName || `${registration.firstName} ${registration.lastName}`)}&email=${encodeURIComponent(registration.email)}&tier=${registration.registrationType}`} 
+                className="flex items-center cursor-pointer text-emerald-600 font-medium"
+              >
+                <Edit className="mr-2 h-4 w-4" />
+                Aprobar y Crear Empresa
+              </Link>
+            </DropdownMenuItem>
+          )}
+
           {/* PRIVATE USER ACTIONS */}
           {registration.registrationType === 'private' && (
             <>

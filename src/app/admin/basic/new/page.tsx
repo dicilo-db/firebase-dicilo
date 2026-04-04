@@ -1,7 +1,7 @@
 // src/app/admin/businesses/new/page.tsx
 'use client';
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, Suspense } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -21,7 +21,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { ArrowLeft, Loader2, LocateFixed } from 'lucide-react';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
@@ -89,10 +89,15 @@ const NewBusinessSkeleton = () => (
   </div>
 );
 
-export default function NewBusinessPage() {
+function NewBusinessPageContent() {
   useAuthGuard();
   const db = getFirestore(app);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const prefillName = searchParams?.get('name') || '';
+  const prefillTierRaw = searchParams?.get('tier') || 'basic';
+  const prefillTier = ['premium', 'starter', 'retailer'].includes(prefillTierRaw) ? 'premium' : 'basic';
+
   const { toast } = useToast();
   const { t, i18n } = useTranslation('admin');
   const locale = i18n.language;
@@ -116,7 +121,7 @@ export default function NewBusinessPage() {
   } = useForm<BusinessFormData>({
     resolver: zodResolver(businessSchema),
     defaultValues: {
-      name: '',
+      name: prefillName,
       category: '',
       description: '',
       location: '', // Deprecated but kept for backward compatibility if needed
@@ -133,6 +138,7 @@ export default function NewBusinessPage() {
       coords: undefined,
       currentOfferUrl: '',
       mapUrl: '',
+      tier_level: prefillTier as 'basic' | 'premium',
     },
   });
 
@@ -657,5 +663,13 @@ export default function NewBusinessPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function NewBusinessPage() {
+  return (
+    <Suspense fallback={<NewBusinessSkeleton />}>
+      <NewBusinessPageContent />
+    </Suspense>
   );
 }
