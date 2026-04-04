@@ -1011,6 +1011,22 @@
     "docUploadMsg": "Upload your identity document to verify it is you. (Only necessary for payments from 100 $/€)",
     "selectFile": "Select File",
     "noFileSelected": "No file selected yet",
-    "saveData": "Save Financial Data"
+    "saveData": "Save Financial Data",
+    "locked": {
+      "title": "💸 Turn your recommendations into real money with DICILO",
+      "subtitle": "What if you could earn money just by recommending what you already use every day?",
+      "p1": "Become a DICILO Freelancer and start generating income by recommending friends, businesses, and valuable brands. Yes, the same places where you already shop.",
+      "h1": "✨ How does it work?",
+      "p2": "For every person or business you invite, you earn rewards that you can convert into:",
+      "b1": "💵 Cash",
+      "b2": "🎯 DiciPoints to save on your everyday purchases",
+      "h2": "🚀 Start today",
+      "p3": "You only need to invite 10 people to activate your freelancer profile and begin earning.",
+      "h3": "💳 Your earnings are real and transferable to:",
+      "b3": "Bank accounts",
+      "b4": "PayPal",
+      "b5": "Other available methods",
+      "footer": "👉 Don’t change what you do… just start earning from it. Join DICILO and turn your recommendations into income."
+    }
   }
 }

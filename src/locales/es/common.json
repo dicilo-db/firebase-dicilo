@@ -1080,6 +1080,22 @@
     "docUploadMsg": "Suba su documento de identidad para verificar que es usted. (Solo necesario para pagos a partir de los 100 $/€)",
     "selectFile": "Seleccionar Archivo",
     "noFileSelected": "Ningún archivo seleccionado todavía",
-    "saveData": "Guardar Datos Financieros"
+    "saveData": "Guardar Datos Financieros",
+    "locked": {
+      "title": "💸 Convierte tus recomendaciones en dinero real con DICILO",
+      "subtitle": "¿Y si te dijera que puedes ganar dinero recomendando lo que ya usas todos los días?",
+      "p1": "Conviértete en Freelancer DICILO y empieza a generar ingresos recomendando amigos, negocios y marcas de valor. Sí, esos mismos lugares donde ya compras.",
+      "h1": "✨ ¿Cómo funciona?",
+      "p2": "Por cada persona o empresa que invites, acumulas recompensas que puedes transformar en:",
+      "b1": "💵 Dinero en efectivo",
+      "b2": "🎯 DiciPoints para ahorrar en tus compras habituales",
+      "h2": "🚀 Empieza hoy mismo",
+      "p3": "Solo necesitas invitar a 10 personas para activar tu perfil como freelancer y comenzar a ganar.",
+      "h3": "💳 Tus ganancias son reales y transferibles a:",
+      "b3": "Cuentas bancarias",
+      "b4": "PayPal",
+      "b5": "Otros métodos disponibles",
+      "footer": "👉 No cambies lo que haces… solo empieza a ganar por ello. Únete a DICILO y convierte tus recomendaciones en ingresos."
+    }
   }
 }

@@ -995,6 +995,22 @@
     "docUploadMsg": "Laden Sie Ihr Ausweisdokument hoch, um zu überprüfen, dass Sie es sind. (Nur erforderlich für Zahlungen ab 100 $/€)",
     "selectFile": "Datei auswählen",
     "noFileSelected": "Noch keine Datei ausgewählt",
-    "saveData": "Finanzdaten speichern"
+    "saveData": "Finanzdaten speichern",
+    "locked": {
+      "title": "💸 Verwandle deine Empfehlungen in echtes Geld mit DICILO",
+      "subtitle": "Was wäre, wenn du Geld verdienen könntest, indem du einfach das empfiehlst, was du ohnehin täglich nutzt?",
+      "p1": "Werde ein DICILO Freelancer und beginne, Einnahmen zu erzielen, indem du Freunde, Unternehmen und wertvolle Marken empfiehlst. Ja, genau die Orte, bei denen du bereits einkaufst.",
+      "h1": "✨ Wie funktioniert das?",
+      "p2": "Für jede Person oder jedes Unternehmen, das du einlädst, sammelst du Belohnungen, die du umwandeln kannst in:",
+      "b1": "💵 Bargeld",
+      "b2": "🎯 DiciPoints zum Sparen bei deinen täglichen Einkäufen",
+      "h2": "🚀 Starte noch heute",
+      "p3": "Du musst nur 10 Personen einladen, um dein Freelancer-Profil zu aktivieren und Geld zu verdienen.",
+      "h3": "💳 Deine Einnahmen sind real und übertragbar auf:",
+      "b3": "Bankkonten",
+      "b4": "PayPal",
+      "b5": "Andere verfügbare Methoden",
+      "footer": "👉 Ändere nichts an dem, was du tust… verdiene einfach daran. Werde Teil von DICILO und mache deine Empfehlungen zu Einkommen."
+    }
   }
 }
