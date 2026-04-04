@@ -1061,7 +1061,7 @@
     "lastnames": "Apellidos *",
     "namesPlaceholder": "Sus nombres completos",
     "lastnamesPlaceholder": "Sus apellidos completos",
-    "countryDestLabel": "País de destino de la transferencia *",
+    "countryDestLabel": "Ruta de la transferencia *",
     "countryDestPlaceholder": "Seleccione ruta",
     "docTypeLabel": "Tipo de documento *",
     "docTypePlaceholder": "Seleccione",

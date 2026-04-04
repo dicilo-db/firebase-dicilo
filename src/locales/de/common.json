@@ -976,7 +976,7 @@
     "lastnames": "Nachnamen *",
     "namesPlaceholder": "Ihre vollständigen Vornamen",
     "lastnamesPlaceholder": "Ihre vollständigen Nachnamen",
-    "countryDestLabel": "Zielland der Überweisung *",
+    "countryDestLabel": "Überweisungsroute *",
     "countryDestPlaceholder": "Route auswählen",
     "docTypeLabel": "Dokumententyp *",
     "docTypePlaceholder": "Auswählen",

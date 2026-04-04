@@ -992,7 +992,7 @@
     "lastnames": "Last Names *",
     "namesPlaceholder": "Your full first names",
     "lastnamesPlaceholder": "Your full last names",
-    "countryDestLabel": "Destination country of the transfer *",
+    "countryDestLabel": "Transfer route *",
     "countryDestPlaceholder": "Select route",
     "docTypeLabel": "Document type *",
     "docTypePlaceholder": "Select",
