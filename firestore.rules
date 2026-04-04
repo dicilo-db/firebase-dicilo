@@ -200,6 +200,11 @@ service cloud.firestore {
       allow delete: if isAuthenticated() && (resource.data.fromUserId == request.auth.uid || resource.data.toUserId == request.auth.uid);
     }
 
+    // User Payout Methods
+    match /user_payout_methods/{userId} {
+      allow read, write: if isAuthenticated() && (request.auth.uid == userId || hasDashboardAccess());
+    }
+
     // Default deny
     match /{document=**} {
       allow read, write: if false;

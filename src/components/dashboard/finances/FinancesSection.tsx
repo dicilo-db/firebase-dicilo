@@ -8,9 +8,10 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Lock, Save, Loader2, Upload } from 'lucide-react';
+import { Lock, Save, Loader2, Upload, Globe } from 'lucide-react';
+import { GlobalPayoutForm } from './GlobalPayoutForm';
 
-const LEGAL_TERMS = {
+export const LEGAL_TERMS = {
   es: {
     title: "Declaración legal y aceptación de condiciones",
     paras: [
@@ -92,6 +93,7 @@ export function FinancesSection({ user, profile, handleUpdate }: FinancesSection
   const { t, i18n } = useTranslation(['common', 'admin']);
   const [isSaving, setIsSaving] = useState(false);
   const [legalAccepted, setLegalAccepted] = useState(false);
+  const [viewMode, setViewMode] = useState<'venezuela' | 'global'>('venezuela');
   const financialData = profile?.financialData || {};
 
   const [formData, setFormData] = useState({
@@ -194,13 +196,23 @@ export function FinancesSection({ user, profile, handleUpdate }: FinancesSection
     );
   }
 
+    if (viewMode === 'global') {
+      return <GlobalPayoutForm user={user} onSwitchMode={() => setViewMode('venezuela')} />;
+    }
+
   return (
-    <Card className="border-emerald-100 shadow-sm">
-      <CardHeader className="bg-emerald-50/50 border-b">
-        <CardTitle className="text-xl text-emerald-800">{t('finances.formTitle')}</CardTitle>
-        <CardDescription>
-          {t('finances.formDesc')}
-        </CardDescription>
+    <Card className="border-emerald-100 shadow-sm relative overflow-hidden">
+      <CardHeader className="bg-emerald-50/50 border-b relative pb-4 pt-6 flex flex-col md:flex-row md:items-start md:justify-between">
+        <div>
+          <CardTitle className="text-xl text-emerald-800">{t('finances.formTitle')}</CardTitle>
+          <CardDescription className="mt-1">
+            {t('finances.formDesc')}
+          </CardDescription>
+        </div>
+        <Button variant="outline" size="sm" onClick={() => setViewMode('global')} className="mt-4 md:mt-0 flex items-center gap-2 border-emerald-200 text-emerald-700 hover:bg-emerald-50 h-9">
+          <Globe className="h-4 w-4" />
+          Global Payout
+        </Button>
       </CardHeader>
       <CardContent className="pt-6 space-y-6">
         
