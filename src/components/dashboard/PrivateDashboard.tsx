@@ -43,6 +43,7 @@ import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { ensureHttps, formatSocialUrl } from '@/lib/url-utils';
 import { VideoFeedbackUploader } from './VideoFeedbackUploader';
+import { FinancesSection } from './finances/FinancesSection';
 
 const db = getFirestore(app);
 // Private Dashboard Component
@@ -454,12 +455,15 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                 return (
                     <Tabs defaultValue="personal" className="space-y-4">
                         <h2 className="text-2xl font-bold tracking-tight">{t('dashboard.settings')}</h2>
-                        <TabsList>
-                            <TabsTrigger value="personal">{t('dashboard.personalData')}</TabsTrigger>
-                            <TabsTrigger value="interests">{t('dashboard.interests')}</TabsTrigger>
-                            <TabsTrigger value="social">{t('dashboard.socialRewards')}</TabsTrigger>
-                            <TabsTrigger value="companies">{t('dashboard.companiesOfInterest', 'Empresas de Interes')}</TabsTrigger>
-                            <TabsTrigger value="mibox">Mi Box</TabsTrigger>
+                        <TabsList className="flex flex-wrap h-auto gap-1">
+                            <TabsTrigger value="personal" className="flex-grow sm:flex-grow-0">{t('dashboard.personalData')}</TabsTrigger>
+                            <TabsTrigger value="interests" className="flex-grow sm:flex-grow-0">{t('dashboard.interests')}</TabsTrigger>
+                            <TabsTrigger value="finanzas" className="flex-grow sm:flex-grow-0 text-emerald-700 bg-emerald-50/50 hover:bg-emerald-100 data-[state=active]:bg-emerald-600 data-[state=active]:text-white">
+                                {t('dashboard.finances', 'Finanzas')} {!['freelancer', 'team_leader', 'manager', 'admin', 'superadmin', 'SuperAdmin'].includes(formData?.role?.toLowerCase() || '') && formData?.referrals?.length < 10 && <Lock className="inline w-3 h-3 ml-1"/>}
+                            </TabsTrigger>
+                            <TabsTrigger value="mibox" className="flex-grow sm:flex-grow-0">Mi Box</TabsTrigger>
+                            <TabsTrigger value="companies" className="flex-grow sm:flex-grow-0">{t('dashboard.companiesOfInterest', 'Empresas de Interes')}</TabsTrigger>
+                            <TabsTrigger value="social" className="flex-grow sm:flex-grow-0">{t('dashboard.socialRewards')}</TabsTrigger>
                         </TabsList>
 
                         {/* Re-using existing content logic for settings sub-tabs */}
@@ -669,6 +673,10 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                                     />
                                 </CardContent>
                             </Card>
+                        </TabsContent>
+
+                        <TabsContent value="finanzas">
+                            <FinancesSection user={user} profile={formData} handleUpdate={handleUpdate} />
                         </TabsContent>
 
                         <TabsContent value="social">

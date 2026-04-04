@@ -965,5 +965,36 @@
       "new_comment": "Neuer Kommentar zu",
       "reply_btn": "Antworten"
     }
+  },
+  "finances": {
+    "lockedTitle": "Verdienen Sie Geld, während Sie Dicilo empfehlen",
+    "lockedSubtitle": "Werden Sie Freelancer und wachsen Sie mit uns",
+    "lockedDesc": "Verdienen Sie Geld, indem Sie Freunde oder wertvolle Unternehmen empfehlen. Ja, genau die Unternehmen oder Geschäfte, bei denen Sie auch einkaufen. Über unser Bonusprogramm können Sie Bargeld oder Prämienpunkte (DiciPoints) verdienen, mit denen Sie bei Ihren ohnehin getätigten Einkäufen sparen können. Freelancer zu werden ist sehr einfach: Sie müssen nur 10 Freunde für Dicilo werben, damit auch sie sparen und Geld verdienen, das auf ihr Bankkonto, PayPal usw. überwiesen wird.",
+    "formTitle": "Formular ausfüllen (FINANZEN)",
+    "formDesc": "Vervollständigen Sie Ihre Bankdaten, um Ihre Zahlungen und Boni zu bearbeiten.",
+    "names": "Vornamen *",
+    "lastnames": "Nachnamen *",
+    "namesPlaceholder": "Ihre vollständigen Vornamen",
+    "lastnamesPlaceholder": "Ihre vollständigen Nachnamen",
+    "countryDestLabel": "Zielland der Überweisung *",
+    "countryDestPlaceholder": "Route auswählen",
+    "docTypeLabel": "Dokumententyp *",
+    "docTypePlaceholder": "Auswählen",
+    "docNumberLabel": "Personalausweisnummer *",
+    "bankLabel": "Bank *",
+    "bankPlaceholder": "Bank auswählen",
+    "accountTypeLabel": "Kontotyp *",
+    "savings": "Sparen",
+    "checking": "Girokonto",
+    "accountNumberLabel": "Kontonummer *",
+    "beneFirstLabel": "Vorname des Begünstigten *",
+    "beneLastLabel": "Nachname des Begünstigten *",
+    "emailLabel": "E-Mail-Adresse *",
+    "fixedPhoneLabel": "Festnetztelefon",
+    "mobilePhoneLabel": "Mobiltelefon *",
+    "docUploadMsg": "Laden Sie Ihr Ausweisdokument hoch, um zu überprüfen, dass Sie es sind. (Nur erforderlich für Zahlungen ab 100 $/€)",
+    "selectFile": "Datei auswählen",
+    "noFileSelected": "Noch keine Datei ausgewählt",
+    "saveData": "Finanzdaten speichern"
   }
 }
