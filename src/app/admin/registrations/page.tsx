@@ -33,7 +33,7 @@ import {
 } from '@/components/ui/table';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
-import { LayoutDashboard, Edit, RefreshCw, Trash2, MoreHorizontal, Play, Pause, Trash, Search } from 'lucide-react';
+import { LayoutDashboard, Edit, RefreshCw, Trash2, MoreHorizontal, Play, Pause, Trash, Search, ArrowDownAZ, ArrowDown, ArrowUp } from 'lucide-react';
 import { runDatabaseCleanup, deleteRegistration, updateRegistrationStatus } from '@/app/actions/registrations';
 import { useToast } from '@/hooks/use-toast';
 import {
@@ -211,6 +211,7 @@ export default function RegistrationsPage() {
   const [isCleaning, setIsCleaning] = useState(false);
   const [activeTab, setActiveTab] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const [sortOrder, setSortOrder] = useState<'desc' | 'asc'>('desc');
   useAuthGuard(['superadmin']);
 
   // Efecto para suscribirse a los registros en tiempo real
@@ -324,20 +325,40 @@ export default function RegistrationsPage() {
 
   const filteredRegistrations = useMemo(() => {
     let regs = allRegistrations;
+
+    // Type filter
     if (activeTab !== 'all') {
       regs = regs.filter((reg) => reg.registrationType === activeTab);
     }
+
+    // Search filter
     if (searchTerm) {
-      const lower = searchTerm.toLowerCase();
-      regs = regs.filter(reg =>
-        (reg.firstName && reg.firstName.toLowerCase().includes(lower)) ||
-        (reg.lastName && reg.lastName.toLowerCase().includes(lower)) ||
-        (reg.email && reg.email.toLowerCase().includes(lower)) ||
-        (reg.businessName && reg.businessName.toLowerCase().includes(lower))
-      );
+      const normalize = (str: string) => str ? str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase() : '';
+      const lowerSearch = normalize(searchTerm);
+
+      regs = regs.filter(reg => {
+        const fullCombined = normalize(`${reg.firstName || ''} ${reg.lastName || ''}`);
+        return (
+          normalize(reg.firstName).includes(lowerSearch) ||
+          normalize(reg.lastName).includes(lowerSearch) ||
+          fullCombined.includes(lowerSearch) ||
+          normalize(reg.email).includes(lowerSearch) ||
+          normalize(reg.businessName).includes(lowerSearch) ||
+          normalize(reg.city).includes(lowerSearch) ||
+          normalize(reg.country).includes(lowerSearch)
+        );
+      });
     }
+
+    // Sort order
+    regs = [...regs].sort((a, b) => {
+      const timeA = a.createdAt?.seconds || 0;
+      const timeB = b.createdAt?.seconds || 0;
+      return sortOrder === 'desc' ? timeB - timeA : timeA - timeB;
+    });
+
     return regs;
-  }, [allRegistrations, activeTab, searchTerm]);
+  }, [allRegistrations, activeTab, searchTerm, sortOrder]);
 
   const typeLabels: Record<string, string> = {
     all: t('registrations.tabs.all', { ns: 'admin' }),
@@ -377,14 +398,24 @@ export default function RegistrationsPage() {
           </div>
         </div>
 
-        <div className="mb-6 relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder={t('registrations.searchPlaceholder', { ns: 'admin', defaultValue: 'Search registrations...' })}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-9 max-w-md bg-white"
-          />
+        <div className="mb-6 flex gap-3 relative">
+          <div className="relative flex-grow max-w-md">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder={t('registrations.searchPlaceholder', { ns: 'admin', defaultValue: 'Buscar por nombre, email, ciudad o país...' })}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-9 w-full bg-white"
+            />
+          </div>
+          <Button 
+            variant="outline" 
+            onClick={() => setSortOrder(prev => prev === 'desc' ? 'asc' : 'desc')}
+            className="flex items-center gap-2 bg-white min-w-[120px]"
+          >
+            {sortOrder === 'desc' ? <ArrowDown className="h-4 w-4" /> : <ArrowUp className="h-4 w-4" />}
+            {sortOrder === 'desc' ? 'Más Recientes' : 'Más Antiguos'}
+          </Button>
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab}>

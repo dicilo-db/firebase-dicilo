@@ -12,6 +12,27 @@ import { useToast } from '@/hooks/use-toast';
 import { Checkbox } from '@/components/ui/checkbox';
 import { LEGAL_TERMS } from './FinancesSection';
 
+const INFO_TEXT: Record<string, string[]> = {
+  es: [
+    "Configure una cuenta bancaria internacional para recibir pagos desde Dicilo directamente a su país.",
+    "Países donde podemos enviar sus bonos/provisiones:",
+    "América: Estados Unidos, México, Brasil, Chile, Colombia, Canadá.",
+    "Asia y Oceanía: Australia, Nueva Zelanda, Singapur, Japón, India, China, Tailandia, Emiratos Árabes Unidos."
+  ],
+  en: [
+    "Configure an international bank account to receive payouts from Dicilo directly to your country.",
+    "Countries where we can send your bonuses/commissions:",
+    "Americas: United States, Mexico, Brazil, Chile, Colombia, Canada.",
+    "Asia & Oceania: Australia, New Zealand, Singapore, Japan, India, China, Thailand, United Arab Emirates."
+  ],
+  de: [
+    "Richten Sie ein internationales Bankkonto ein, um Zahlungen von Dicilo direkt in Ihrem Land zu erhalten.",
+    "Länder, in die wir Ihre Boni/Provisionen senden können:",
+    "Amerika: USA, Mexiko, Brasilien, Chile, Kolumbien, Kanada.",
+    "Asien & Ozeanien: Australien, Neuseeland, Singapur, Japan, Indien, China, Thailand, Vereinigte Arabische Emirate."
+  ]
+};
+
 const PAYOUT_CONFIG = {
   languages: ["es", "en", "de"],
   groups: {
@@ -183,10 +204,19 @@ export function GlobalPayoutForm({ user, onSwitchMode }: GlobalPayoutFormProps) 
             <Globe className="h-5 w-5 text-indigo-600" />
             International Global Payout
           </CardTitle>
-          <CardDescription className="mt-1">
-            {lang === 'es' ? 'Configure una cuenta bancaria internacional para recibir pagos desde Dicilo directamente a su país.' :
-             lang === 'de' ? 'Richten Sie ein internationales Bankkonto ein, um Zahlungen von Dicilo direkt in Ihrem Land zu erhalten.' :
-             'Configure an international bank account to receive payouts from Dicilo directly to your country.'}
+          <CardDescription className="mt-1 space-y-1">
+            <span className="block text-slate-600 font-medium">
+              {(INFO_TEXT[lang] || INFO_TEXT['es'])[0]}
+            </span>
+            <span className="block text-slate-500 text-xs mt-2 font-semibold">
+              {(INFO_TEXT[lang] || INFO_TEXT['es'])[1]}
+            </span>
+            <span className="block text-slate-500 text-xs text-balance">
+              <span className="font-medium mr-1">•</span>{(INFO_TEXT[lang] || INFO_TEXT['es'])[2]}
+            </span>
+            <span className="block text-slate-500 text-xs text-balance">
+              <span className="font-medium mr-1">•</span>{(INFO_TEXT[lang] || INFO_TEXT['es'])[3]}
+            </span>
           </CardDescription>
         </div>
         <Button variant="outline" size="sm" onClick={onSwitchMode} className="mt-4 md:mt-0 flex items-center gap-2 border-indigo-200 text-indigo-700 hover:bg-indigo-50 h-9">
