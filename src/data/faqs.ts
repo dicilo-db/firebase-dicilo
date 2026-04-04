@@ -1891,8 +1891,8 @@ export const faqsData = {
     {
       "id": 315,
       "categoria": "Allgemein",
-      "pregunta": "Cross-Posting bzw XPosting?",
-      "respuesta": "Partner aus den Service-Zentren für digitale Werbeverteilung via Push-Technik diverser Socials."
+      "pregunta": "Was ist M&Solutions?",
+      "respuesta": "Es ist ein technologischer Partnerdienst von MHC, der die automatisierte Veröffentlichung und Verbreitung von Informationen über mehrere digitale Kanäle erleichtert."
     },
     {
       "id": 316,
