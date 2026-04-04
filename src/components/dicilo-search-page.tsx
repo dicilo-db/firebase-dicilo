@@ -228,6 +228,7 @@ export default function DiciloSearchPage({
   const [recommendedBusiness, setRecommendedBusiness] = useState('');
   const [showMobileMap, setShowMobileMap] = useState(false);
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
+  const [isMobileSearchHidden, setIsMobileSearchHidden] = useState(false);
 
   const selectedBusinessIdRef = React.useRef(selectedBusinessId);
   const [isListening, setIsListening] = useState(false);
@@ -645,10 +646,34 @@ export default function DiciloSearchPage({
       </div>
 
       {/* Columna de Búsqueda y Resultados */}
-      <div className="flex h-full w-full flex-col md:w-1/2">
+      <div className="flex h-full w-full flex-col md:w-1/2 relative">
         <Header />
-        <div className="flex-shrink-0 px-4 pt-4">
-          <Card className="w-full shadow-lg">
+        
+        {/* Toggle para reabrir la búsqueda (Solo Móvil) */}
+        {isMobileSearchHidden && (
+          <div className="md:hidden flex justify-center py-3 bg-slate-50/95 backdrop-blur border-b shadow-sm sticky top-0 z-20">
+            <Button 
+              variant="outline" 
+              onClick={() => setIsMobileSearchHidden(false)} 
+              className="text-primary hover:bg-green-50 rounded-full h-12 w-12 p-0 border-2 border-green-500 bg-white shadow-md transition-transform hover:scale-110"
+              aria-label="Abrir búsqueda"
+            >
+              <Search className="h-6 w-6 text-green-600" />
+            </Button>
+          </div>
+        )}
+
+        <div className={cn("flex-shrink-0 px-4 pt-4 transition-all duration-300", isMobileSearchHidden ? "hidden md:block" : "block")}>
+          <Card className="w-full shadow-lg relative">
+            <Button 
+              onClick={() => setIsMobileSearchHidden(true)} 
+              variant="ghost" 
+              size="icon" 
+              className="md:hidden absolute top-2 right-2 text-slate-400 hover:text-slate-600 z-10"
+              aria-label="Minimizar búsqueda"
+            >
+              <X className="h-5 w-5" />
+            </Button>
             <CardContent className="pt-6">
               <div className="mb-4 text-center">
                 <h2 className="text-2xl font-bold tracking-tight">
@@ -687,6 +712,12 @@ export default function DiciloSearchPage({
                     aria-label={t('search.searchLabel')}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && window.innerWidth < 768) {
+                        e.currentTarget.blur();
+                        setIsMobileSearchHidden(true);
+                      }
+                    }}
                     className="pl-10 text-base w-full"
                     disabled={isGeocoding}
                   />
@@ -733,7 +764,19 @@ export default function DiciloSearchPage({
         </div>
 
         <ScrollArea className="mt-4 flex-grow px-4">
-          <div className="grid grid-cols-1 gap-4 pb-4 md:grid-cols-2">
+          <div 
+            className="grid grid-cols-1 gap-4 pb-4 md:grid-cols-2"
+            onTouchMoveCapture={() => {
+              if (!isMobileSearchHidden && window.innerWidth < 768) {
+                setIsMobileSearchHidden(true);
+              }
+            }}
+            onWheelCapture={() => {
+              if (!isMobileSearchHidden && window.innerWidth < 768) {
+                setIsMobileSearchHidden(true);
+              }
+            }}
+          >
             {businessesWithAds.length > 0 ? (
               businessesWithAds.map((item, idx) => {
                 // Calc Debug
