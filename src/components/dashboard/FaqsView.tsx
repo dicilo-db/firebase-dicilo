@@ -37,6 +37,37 @@ export function FaqsView() {
         }, {} as Record<string, typeof faqs>);
     }, [faqs, searchTerm]);
 
+    // Custom preferred order for categories (includes ES, EN, DE names for safety)
+    const categoryOrder = [
+        "Visión y Futuro", "Vision and Future", "Vision und Zukunft",
+        "Economía Circular", "Circular Economy", "Kreislaufwirtschaft",
+        "General", "Allgemein", 
+        "Cuenta", "Account", "Konto",
+        "Empresas", "Companies", "Unternehmen",
+        "Comunidad", "Community",
+        "DP (DiciPoints)",
+        "Finanzas", "Finance", "Finanzen",
+        "Ingresos", "Income", "Einkommen",
+        "Comisiones", "Commissions", "Provisionen",
+        "Red", "Network", "Netzwerk",
+        "Niveles", "Levels", "Ebenen",
+        "Sorteos", "Draws", "Verlosungen",
+        "Seguridad", "Security", "Sicherheit",
+        "Tecnología", "Technology", "Technologie",
+        "Soporte", "Support", 
+        "Legal", "Rechtlich"
+    ];
+
+    const sortedCategories = Object.entries(groupedFaqs).sort((a, b) => {
+        const indexA = categoryOrder.indexOf(a[0]);
+        const indexB = categoryOrder.indexOf(b[0]);
+        
+        if (indexA === -1 && indexB === -1) return a[0].localeCompare(b[0]);
+        if (indexA === -1) return 1;
+        if (indexB === -1) return -1;
+        return indexA - indexB;
+    });
+
     return (
         <div className="p-6 max-w-4xl mx-auto animate-in fade-in duration-500">
             <div className="mb-8">
@@ -58,13 +89,13 @@ export function FaqsView() {
                 />
             </div>
 
-            {Object.keys(groupedFaqs).length === 0 ? (
+            {sortedCategories.length === 0 ? (
                 <div className="text-center py-10 text-muted-foreground border rounded-lg bg-slate-50">
                     No se encontraron resultados para tu búsqueda.
                 </div>
             ) : (
                 <div className="space-y-8">
-                    {Object.entries(groupedFaqs).map(([category, questions]) => (
+                    {sortedCategories.map(([category, questions]) => (
                         <div key={category} className="space-y-4">
                             <h2 className="text-xl font-semibold border-b pb-2 text-slate-800">
                                 {category}
@@ -75,7 +106,7 @@ export function FaqsView() {
                                         <AccordionTrigger className="text-left font-medium">
                                             {faq.pregunta}
                                         </AccordionTrigger>
-                                        <AccordionContent className="text-slate-600 leading-relaxed">
+                                        <AccordionContent className="text-slate-600 leading-relaxed whitespace-pre-wrap">
                                             {faq.respuesta}
                                         </AccordionContent>
                                     </AccordionItem>
