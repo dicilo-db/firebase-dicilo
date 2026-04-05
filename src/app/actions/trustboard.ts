@@ -123,26 +123,8 @@ export async function createTrustBoardPost(prevState: any, formData: FormData) {
 
         // 3. AI Moderation Check
         let status = 'approved';
-        try {
-            const modResponse = await ai.generate({
-                model: 'googleai/gemini-2.5-flash',
-                prompt: `
-                Analiza este anuncio clasificado para un tablero comunitario buscando violaciones.
-                Título: ${title}
-                Descripción: ${description}
-            
-                Responde ÚNICAMENTE la palabra "REJECTED" si promueve fraude, odio, violencia explícita o servicios abiertamente ilegales. 
-                De lo contrario, responde ÚNICAMENTE la palabra "APPROVED".
-                `
-            });
-            const verdict = modResponse.text?.trim().toUpperCase();
-            if (verdict === 'REJECTED') {
-                return { success: false, error: 'Rechazado por Cerebro DiciBot por violación de políticas comunitarias.' };
-            }
-        } catch (modError) {
-            console.error('Moderation failed, defaulting to pending manually:', modError);
-            status = 'pending'; // Fallback to manual review if AI fails
-        }
+        // 3. AI Moderation Check (Bypassed temporaly for debugging)
+        let status = 'approved';
 
         // 4. Premium Auto-Translations
         let finalTitle: any = { es: title, en: title, de: title };
