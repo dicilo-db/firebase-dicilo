@@ -1,14 +1,28 @@
 'use server';
 
-import { getAdminDb } from '@/lib/firebase-admin';
+import { getAdminDb, getAdminStorage } from '@/lib/firebase-admin';
 import * as admin from 'firebase-admin';
+import { randomUUID } from 'crypto';
 
-export async function createTrustBoardPost(userId: string, data: any) {
-    if (!userId || !data) {
+export async function createTrustBoardPost(prevState: any, formData: FormData) {
+    const userId = formData.get('userId') as string;
+    const title = formData.get('title') as string;
+    const description = formData.get('description') as string;
+    const category = formData.get('category') as string;
+    const neighborhood = formData.get('neighborhood') as string;
+    const lang = formData.get('lang') as string || 'es';
+    const mediaFiles = formData.getAll('media') as File[];
+
+    if (!userId || !title || !description || !category || !neighborhood) {
         return { success: false, error: 'User ID or Data missing.' };
     }
 
+    if (mediaFiles.length > 6) {
+        return { success: false, error: 'No puedes subir más de 6 archivos en una sola publicación.' };
+    }
+
     const db = getAdminDb();
+    const storage = getAdminStorage();
 
     try {
         // 1. Fetch user private profile to check model and stats
@@ -37,34 +51,102 @@ export async function createTrustBoardPost(userId: string, data: any) {
             };
         }
 
-        // 2. Prepare Post Object
+        // 2. Upload Media Files in Parallel
+        const uploadPromises = mediaFiles.map(async (file) => {
+            if (!file || file.size === 0) return null;
+
+            try {
+                const buffer = await file.arrayBuffer();
+                const fileBuffer = Buffer.from(buffer as any);
+                let finalBuffer = fileBuffer;
+                let contentType = file.type;
+                let mediaType: 'image' | 'video' = contentType.startsWith('video/') ? 'video' : 'image';
+
+                // Image processing (only for images)
+                if (mediaType === 'image') {
+                    try {
+                        const { fileTypeFromBuffer } = await import('file-type');
+                        const type = await fileTypeFromBuffer(fileBuffer);
+                        const allowedMimes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+
+                        if (type && allowedMimes.includes(type.mime)) {
+                            contentType = type.mime;
+                            
+                            // Skip sharp if already optimized WebP (efficiency)
+                            if (contentType === 'image/webp') {
+                                // Already optimized by client, move to upload
+                            } else {
+                                // Try Sharp Optimization for other formats
+                                try {
+                                    const sharp = (await import('sharp')).default;
+                                    finalBuffer = await sharp(fileBuffer)
+                                        .resize({ width: 1200, withoutEnlargement: true })
+                                        .webp({ quality: 80 })
+                                        .toBuffer();
+                                    contentType = 'image/webp';
+                                } catch (sharpError) {
+                                    console.warn("Sharp optimization failed:", sharpError);
+                                }
+                            }
+                        }
+                    } catch (dependencyError) {
+                        console.warn("Image processing fallback:", dependencyError);
+                    }
+                }
+
+                // Upload to Firebase Storage
+                const extension = contentType.split('/')[1] || (mediaType === 'video' ? 'mp4' : 'img');
+                const filename = `trustboard/${neighborhood}/${randomUUID()}.${extension}`;
+                const bucket = storage.bucket();
+                const fileRef = bucket.file(filename);
+
+                await fileRef.save(finalBuffer, {
+                    metadata: { contentType: contentType },
+                });
+
+                await fileRef.makePublic();
+                const publicUrl = fileRef.publicUrl();
+
+                return { type: mediaType, url: publicUrl };
+
+            } catch (uploadError) {
+                console.error("Single file upload error:", uploadError);
+                return null;
+            }
+        });
+
+        const uploadResults = await Promise.all(uploadPromises);
+        const mediaItems = uploadResults.filter((item): item is { type: 'image' | 'video', url: string } => item !== null);
+        const firstImageUrl = mediaItems.find(item => item.type === 'image')?.url || null;
+
+        // 3. Prepare Post Object
         const postRef = db.collection('trustboard_posts').doc();
         const newPost = {
             id: postRef.id,
             authorId: userId,
-            authorName: profileData.displayName || data.authorName || 'Usuario',
-            category: data.category, // 'jobs', 'living', 'talent', 'swap'
-            neighborhood: data.neighborhood, // 'Hamburg', etc.
+            authorName: profileData.displayName || 'Usuario',
+            category: category, 
+            neighborhood: neighborhood, 
             title: {
-                // By default set original text to all. If premium, Cloud Function will overwrite others.
-                es: data.title,
-                en: data.title,
-                de: data.title,
-                // fallback languages
+                es: title,
+                en: title,
+                de: title,
             },
             description: {
-                es: data.description,
-                en: data.description,
-                de: data.description,
+                es: description,
+                en: description,
+                de: description,
             },
-            originalLang: data.lang || 'es',
-            status: 'pending', // Cloud function should transition this to 'approved' after AI check
-            isPremium: isPremium, // Flag for the cloud function translation trigger
+            imageUrl: firstImageUrl || (mediaItems.length > 0 ? mediaItems[0].url : null),
+            media: mediaItems,
+            originalLang: lang,
+            status: 'pending',
+            isPremium: isPremium,
             createdAt: admin.firestore.FieldValue.serverTimestamp(),
             updatedAt: admin.firestore.FieldValue.serverTimestamp(),
         };
 
-        // 3. Batch Write: Create Post + Update User Counter
+        // 4. Batch Write: Create Post + Update User Counter
         const batch = db.batch();
         batch.set(postRef, newPost);
         
@@ -78,6 +160,6 @@ export async function createTrustBoardPost(userId: string, data: any) {
 
     } catch (error: any) {
         console.error('Error creating TrustBoard post:', error);
-        return { success: false, error: 'Internal server error.' };
+        return { success: false, error: error.message || 'Internal server error.' };
     }
 }

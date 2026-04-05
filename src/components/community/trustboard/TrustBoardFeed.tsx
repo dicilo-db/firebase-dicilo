@@ -177,6 +177,21 @@ export function TrustBoardFeed({ neighborhood, activeCategory }: { neighborhood:
                             </h3>
                         </CardHeader>
                         
+                        {post.imageUrl && (
+                            <div className="relative w-full h-48 bg-slate-100 overflow-hidden border-b border-slate-100">
+                                <img 
+                                    src={post.imageUrl} 
+                                    alt="TrustBoard Ad" 
+                                    className="w-full h-full object-cover transition-transform hover:scale-105 duration-300"
+                                />
+                                {post.media && post.media.length > 1 && (
+                                    <div className="absolute bottom-2 right-2 bg-black/60 text-white text-[10px] font-bold px-2 py-1 rounded-full backdrop-blur-sm">
+                                        1 / {post.media.length}
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                        
                         <CardContent className="p-4 flex-1">
                             <p className="text-sm text-slate-600 line-clamp-4 leading-relaxed">
                                 {description}
