@@ -6,6 +6,9 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Search, Briefcase, Home, Sparkles, RefreshCw } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { TrustBoardPostForm } from './TrustBoardPostForm';
+import { TrustBoardFeed } from './TrustBoardFeed';
 
 interface TrustBoardViewProps {
     neighborhood: string;
@@ -15,6 +18,7 @@ export function TrustBoardView({ neighborhood }: TrustBoardViewProps) {
     const { t } = useTranslation('common');
     const [activeCategory, setActiveCategory] = useState<'all' | 'jobs' | 'living' | 'talent' | 'swap'>('all');
     const [searchTerm, setSearchTerm] = useState('');
+    const [isFormOpen, setIsFormOpen] = useState(false);
 
     const categories = [
         { id: 'all', label: t('community.trustboard.cat_all', 'Todo'), icon: Search, color: 'bg-slate-100 text-slate-700' },
@@ -36,9 +40,26 @@ export function TrustBoardView({ neighborhood }: TrustBoardViewProps) {
                     />
                     <Search className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
                 </div>
-                <Button className="w-full md:w-auto bg-primary hover:bg-primary/90 text-white shadow-sm font-semibold">
-                    + {t('community.trustboard.new_post', 'Nuevo Anuncio')}
-                </Button>
+                <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+                    <DialogTrigger asChild>
+                        <Button className="w-full md:w-auto bg-primary hover:bg-primary/90 text-white shadow-sm font-semibold">
+                            + {t('community.trustboard.new_post', 'Nuevo Anuncio')}
+                        </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                        <DialogHeader>
+                            <DialogTitle>{t('community.trustboard.form.dialog_title', 'Crear Anuncio Local')}</DialogTitle>
+                            <DialogDescription>
+                                {t('community.trustboard.form.dialog_desc', 'Publica tu anuncio en {{name}}. Sé claro y profesional.', { name: neighborhood })}
+                            </DialogDescription>
+                        </DialogHeader>
+                        <TrustBoardPostForm 
+                            neighborhood={neighborhood} 
+                            onSuccess={() => setIsFormOpen(false)} 
+                            onCancel={() => setIsFormOpen(false)} 
+                        />
+                    </DialogContent>
+                </Dialog>
             </div>
 
             <div className="flex overflow-x-auto gap-3 pb-2 scrollbar-hide">
@@ -55,17 +76,7 @@ export function TrustBoardView({ neighborhood }: TrustBoardViewProps) {
                 ))}
             </div>
 
-            <Card className="border-dashed border-2 bg-slate-50/50">
-                <CardContent className="flex flex-col items-center justify-center p-12 text-center text-muted-foreground">
-                    <Sparkles className="w-12 h-12 mb-4 text-slate-300" />
-                    <h3 className="text-lg font-medium text-slate-700 mb-2">
-                        {t('community.trustboard.empty_title', 'Comienza a construir el ecosistema local')}
-                    </h3>
-                    <p className="max-w-md mx-auto text-sm">
-                        {t('community.trustboard.empty_desc', 'Agrega anuncios de empleo, busca compañeros de cuarto, ofrece tus mentorías o regala cosas que ya no uses. Este tablón es exclusivo para residentes verificados de {{name}}.', { name: neighborhood })}
-                    </p>
-                </CardContent>
-            </Card>
+            <TrustBoardFeed neighborhood={neighborhood} activeCategory={activeCategory} />
         </div>
     );
 }
