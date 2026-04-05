@@ -103,7 +103,15 @@
       "empty_title": "Comienza a construir el ecosistema local",
       "empty_desc": "Agrega anuncios de empleo, busca compañeros de cuarto, ofrece tus mentorías o regala cosas que ya no uses. Este tablón es exclusivo para residentes verificados de {{name}}.",
       "empty_search": "No se encontraron anuncios para \"{{term}}\"",
-      "untitled": "Sin Título"
+      "untitled": "Sin Título",
+      "empty_jobs_title": "Dicilo Jobs (Empleo)",
+      "empty_jobs_desc": "Encuentra o publica ofertas de trabajo exclusivas. Conexiones profesionales directas entre miembros certificados.",
+      "empty_living_title": "Dicilo Living (Vivienda y Viajes)",
+      "empty_living_desc": "Alquila habitaciones, busca casa o compañeros de viaje. Espacios compartidos con la confianza de Dicilo.",
+      "empty_talent_title": "Dicilo Talent (Clases y Mentorías)",
+      "empty_talent_desc": "Ofrece o recibe clases, mentorías y servicios. Comparte tu conocimiento con la comunidad certificada.",
+      "empty_swap_title": "Dicilo Gift/Swap (Trueque y Regalos)",
+      "empty_swap_desc": "Dale una segunda vida a tus objetos. Regala o intercambia ropa, muebles y más sin intermediarios."
     },
     "ranking": {
       "title": "Top Empresas",

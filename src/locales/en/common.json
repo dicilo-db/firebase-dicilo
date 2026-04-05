@@ -1015,7 +1015,15 @@
       "empty_title": "Start building the local ecosystem",
       "empty_desc": "Add job ads, look for roommates, offer mentoring, or give away things you no longer use. This board is exclusive to verified residents of {{name}}.",
       "empty_search": "No ads found for \"{{term}}\"",
-      "untitled": "Untitled"
+      "untitled": "Untitled",
+      "empty_jobs_title": "Dicilo Jobs (Employment)",
+      "empty_jobs_desc": "Find or post exclusive job offers. Direct professional connections between certified members.",
+      "empty_living_title": "Dicilo Living (Housing & Travel)",
+      "empty_living_desc": "Rent rooms, search for houses, or find travel companions. Shared spaces with the trust of Dicilo.",
+      "empty_talent_title": "Dicilo Talent (Classes & Mentoring)",
+      "empty_talent_desc": "Offer or receive lessons, mentoring, and professional services. Share your knowledge with the certified community.",
+      "empty_swap_title": "Dicilo Gift/Swap (Barter & Gifts)",
+      "empty_swap_desc": "Give your items a second life. Give away or exchange clothes, furniture, and more without intermediaries."
     },
     "verifying": "Verifying...",
     "verify_create": "Verify & Create",

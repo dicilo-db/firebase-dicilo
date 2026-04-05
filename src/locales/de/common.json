@@ -76,7 +76,15 @@
       "empty_title": "Beginnen Sie mit dem Aufbau des lokalen Ökosystems",
       "empty_desc": "Fügen Sie Stellenanzeigen hinzu, suchen Sie Mitbewohner, bieten Sie Mentoring an oder verschenken Sie Dinge, die Sie nicht mehr verwenden. Dieses Board ist exklusiv für verifizierte Bewohner von {{name}}.",
       "empty_search": "Keine Anzeigen gefunden für \"{{term}}\"",
-      "untitled": "Ohne Titel"
+      "untitled": "Ohne Titel",
+      "empty_jobs_title": "Dicilo Jobs (Beschäftigung)",
+      "empty_jobs_desc": "Finde oder veröffentliche exklusive Stellenangebote. Direkte berufliche Verbindungen zwischen zertifizierten Mitgliedern.",
+      "empty_living_title": "Dicilo Living (Wohnen & Reisen)",
+      "empty_living_desc": "Zimmer mieten, Häuser suchen oder Reisepartner finden. Gemeinsame Räume mit dem Vertrauen von Dicilo.",
+      "empty_talent_title": "Dicilo Talent (Unterricht & Mentoring)",
+      "empty_talent_desc": "Biete oder erhalte Unterricht, Mentoring und Dienstleistungen. Teile dein Wissen mit der zertifizierten Community.",
+      "empty_swap_title": "Dicilo Gift/Swap (Tausch & Geschenke)",
+      "empty_swap_desc": "Gib deinen Gegenständen ein zweites Leben. Verschenke oder tausche Kleidung, Möbel und mehr ohne Zwischenhändler."
     },
     "ranking": {
       "title": "Top-Unternehmen",

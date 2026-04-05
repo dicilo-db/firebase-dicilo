@@ -142,10 +142,14 @@ export function TrustBoardFeed({ neighborhood, activeCategory }: { neighborhood:
                 <CardContent className="flex flex-col items-center justify-center p-12 text-center text-muted-foreground">
                     <Sparkles className="w-12 h-12 mb-4 text-slate-300" />
                     <h3 className="text-lg font-medium text-slate-700 mb-2">
-                        {t('community.trustboard.empty_title', 'Comienza a construir el ecosistema local')}
+                        {activeCategory === 'all' 
+                            ? t('community.trustboard.empty_title', 'Comienza a construir el ecosistema local')
+                            : t(`community.trustboard.empty_${activeCategory}_title`, '')}
                     </h3>
                     <p className="max-w-md mx-auto text-sm">
-                        {t('community.trustboard.empty_desc', 'Agrega anuncios de empleo, busca compañeros de cuarto, ofrece tus mentorías o regala cosas que ya no uses. Este tablón es exclusivo para residentes verificados de {{name}}.', { name: neighborhood })}
+                        {activeCategory === 'all'
+                            ? t('community.trustboard.empty_desc', 'Agrega anuncios de empleo, busca compañeros de cuarto, ofrece tus mentorías o regala cosas que ya no uses. Este tablón es exclusivo para residentes verificados de {{name}}.', { name: neighborhood })
+                            : t(`community.trustboard.empty_${activeCategory}_desc`, '')}
                     </p>
                 </CardContent>
             </Card>
