@@ -121,11 +121,9 @@ export async function createTrustBoardPost(prevState: any, formData: FormData) {
         const mediaItems = uploadResults.filter((item): item is { type: 'image' | 'video', url: string } => item !== null);
         const firstImageUrl = mediaItems.find(item => item.type === 'image')?.url || null;
 
-        // 3. AI Moderation Check
-        let status = 'approved';
         // 3. AI Moderation Check (Bypassed temporaly for debugging)
         let status = 'approved';
-
+        
         // 4. Premium Auto-Translations
         let finalTitle: any = { es: title, en: title, de: title };
         let finalDesc: any = { es: description, en: description, de: description };
