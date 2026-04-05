@@ -100,7 +100,9 @@
     "share_place": "Comparte un lugar, servicio o experiencia con tus vecinos.",
     "search_neighborhoods": "Buscar barrios...",
     "verifying": "Verificando...",
-    "verify_create": "Verificar y Crear"
+    "verify_create": "Verificar y Crear",
+    "media": "Multimedia",
+    "emoji": "Emoji"
   },
   "dicipoints": {
     "whatIs": {
@@ -1134,5 +1136,13 @@
       "b5": "Otros métodos disponibles",
       "footer": "👉 No cambies lo que haces… solo empieza a ganar por ello. Únete a DICILO y convierte tus recomendaciones en ingresos."
     }
+  },
+  "social": {
+    "my_private_circle": "Mi Círculo Privado",
+    "friends_only": "Solo Amigos",
+    "monitored_env": "Entorno Monitoreado",
+    "monitored_desc": "Las publicaciones aquí son exclusivas para tus contactos, pero el entorno está sujeto a la auditoría preventiva de Cerebro DiciBot para detectar violaciones a las normativas de la comunidad.",
+    "your_private_circle": "Tu Círculo Privado",
+    "create_post_private": "¿Qué estás pensando? (Solo para tus amigos)"
   }
 }

@@ -264,7 +264,7 @@ export function CreatePost({ userId, neighborhood, neighborhoodId, onPostCreated
                     {isPrivate && (
                         <div className="flex items-center gap-2 mb-3 text-sm text-amber-700 font-medium">
                             <span className="bg-amber-100 p-1 rounded-full"><Lock size={12} /></span>
-                            Tu Círculo Privado
+                            {t('social.your_private_circle', 'Tu Círculo Privado')}
                         </div>
                     )}
 

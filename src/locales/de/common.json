@@ -73,7 +73,9 @@
     "share_place": "Teile einen Ort, einen Dienst oder ein Erlebnis mit deinen Nachbarn.",
     "search_neighborhoods": "Viertel suchen...",
     "verifying": "Wird überprüft...",
-    "verify_create": "Überprüfen & Erstellen"
+    "verify_create": "Überprüfen & Erstellen",
+    "media": "Medien",
+    "emoji": "Emoji"
   },
   "header": {
     "nav": {
@@ -1052,5 +1054,13 @@
   },
   "navigation": {
     "social_network": "Mein Kreis"
+  },
+  "social": {
+    "my_private_circle": "Mein privater Kreis",
+    "friends_only": "Nur Freunde",
+    "monitored_env": "Überwachte Umgebung",
+    "monitored_desc": "Beiträge hier sind exklusiv für Ihre Kontakte, aber die Umgebung unterliegt einer präventiven Überprüfung durch den DiciBot-Brain, um Verstöße gegen die Community-Richtlinien zu erkennen.",
+    "your_private_circle": "Dein privater Kreis",
+    "create_post_private": "Was denkst du? (Nur für deine Freunde)"
   }
 }

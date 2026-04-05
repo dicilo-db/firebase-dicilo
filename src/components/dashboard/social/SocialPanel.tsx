@@ -338,9 +338,9 @@ export function SocialPanel({ neighborhood = 'Hamburg' }: { neighborhood?: strin
                             <div className="flex justify-between items-center">
                                 <div>
                                     <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
-                                        Mi Círculo Privado
+                                        {t('social.my_private_circle', 'Mi Círculo Privado')}
                                         <span className="text-xs bg-emerald-100 text-emerald-700 font-medium px-2 py-0.5 rounded-full border border-emerald-200">
-                                            Solo Amigos
+                                            {t('social.friends_only', 'Solo Amigos')}
                                         </span>
                                     </h2>
                                 </div>
@@ -350,7 +350,7 @@ export function SocialPanel({ neighborhood = 'Hamburg' }: { neighborhood?: strin
                             <div className="bg-slate-100 rounded-md p-3 flex items-start gap-2 border border-slate-200 shadow-sm mt-1">
                                 <ShieldAlert className="h-4 w-4 text-slate-500 flex-shrink-0 mt-0.5" />
                                 <p className="text-[11px] text-slate-600 leading-relaxed">
-                                    <strong>Entorno Monitoreado:</strong> Las publicaciones aquí son exclusivas para tus contactos, pero el entorno está sujeto a la auditoría preventiva de Cerebro DiciBot para detectar violaciones a las normativas de la comunidad.
+                                    <strong>{t('social.monitored_env', 'Entorno Monitoreado')}:</strong> {t('social.monitored_desc', 'Las publicaciones aquí son exclusivas para tus contactos, pero el entorno está sujeto a la auditoría preventiva de Cerebro DiciBot para detectar violaciones a las normativas de la comunidad.')}
                                 </p>
                             </div>
                         </div>

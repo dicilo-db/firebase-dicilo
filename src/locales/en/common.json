@@ -1003,7 +1003,9 @@
       "untitled": "Untitled"
     },
     "verifying": "Verifying...",
-    "verify_create": "Verify & Create"
+    "verify_create": "Verify & Create",
+    "media": "Media",
+    "emoji": "Emoji"
   },
   "finances": {
     "lockedTitle": "Earn money while recommending Dicilo",
@@ -1054,5 +1056,13 @@
   },
   "navigation": {
     "social_network": "My Circle"
+  },
+  "social": {
+    "my_private_circle": "My Private Circle",
+    "friends_only": "Friends Only",
+    "monitored_env": "Monitored Environment",
+    "monitored_desc": "Posts here are exclusive to your contacts, but the environment is subject to preventive auditing by DiciBot Brain to detect violations of community guidelines.",
+    "your_private_circle": "Your Private Circle",
+    "create_post_private": "What are you thinking? (Only for your friends)"
   }
 }
