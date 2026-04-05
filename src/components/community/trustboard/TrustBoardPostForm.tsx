@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { createTrustBoardPost } from '@/app/actions/trustboard';
+import { createTrustBoardPost, editTrustBoardPost } from '@/app/actions/trustboard';
 import { useAuth } from '@/context/AuthContext';
 import { Loader2, Image as ImageIcon, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -26,7 +26,7 @@ interface MediaFile {
     statusText?: string;
 }
 
-export function TrustBoardPostForm({ neighborhood, onSuccess, onCancel }: { neighborhood: string, onSuccess: () => void, onCancel: () => void }) {
+export function TrustBoardPostForm({ neighborhood, onSuccess, onCancel, postToEdit }: { neighborhood: string, onSuccess: () => void, onCancel: () => void, postToEdit?: any }) {
     const { t, i18n } = useTranslation('common');
     const { user } = useAuth();
     const { toast } = useToast();
@@ -35,9 +35,11 @@ export function TrustBoardPostForm({ neighborhood, onSuccess, onCancel }: { neig
     const [loading, setLoading] = useState(false);
     const [mediaItems, setMediaItems] = useState<MediaFile[]>([]);
     const [formData, setFormData] = useState({
-        title: '',
-        description: '',
-        category: 'jobs'
+        title: postToEdit?.originalLang ? postToEdit.title?.[postToEdit.originalLang] : postToEdit?.title?.es || '',
+        description: postToEdit?.originalLang ? postToEdit.description?.[postToEdit.originalLang] : postToEdit?.description?.es || '',
+        category: postToEdit?.category || 'jobs',
+        startDate: postToEdit?.startDate ? new Date(postToEdit.startDate._seconds ? postToEdit.startDate._seconds * 1000 : postToEdit.startDate.toMillis()).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+        endDate: postToEdit?.endDate ? new Date(postToEdit.endDate._seconds ? postToEdit.endDate._seconds * 1000 : postToEdit.endDate.toMillis()).toISOString().split('T')[0] : ''
     });
 
     const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -162,14 +164,19 @@ export function TrustBoardPostForm({ neighborhood, onSuccess, onCancel }: { neig
             submitData.append('neighborhood', neighborhood);
             submitData.append('lang', i18n.language.substring(0, 2));
 
+            submitData.append('startDate', formData.startDate);
+            submitData.append('endDate', formData.endDate);
+
             mediaItems.forEach(item => submitData.append('media', item.file));
 
-            const result = await createTrustBoardPost(null, submitData);
+            const result = postToEdit
+                ? await editTrustBoardPost(postToEdit.id, submitData)
+                : await createTrustBoardPost(null, submitData);
             
             if (result.success) {
                 toast({
-                    title: t('community.trustboard.form.success_title', '¡Anuncio Publicado!'),
-                    description: t('community.trustboard.form.success_desc', 'Tu anuncio pasará por la revisión automática de Dicilo y será visible pronto.'),
+                    title: postToEdit ? '¡Anuncio Actualizado!' : t('community.trustboard.form.success_title', '¡Anuncio Publicado!'),
+                    description: postToEdit ? 'Tu anuncio ha sido modificado y será revisado nuevamente.' : t('community.trustboard.form.success_desc', 'Tu anuncio pasará por la revisión automática de Dicilo y será visible pronto.'),
                     className: "bg-emerald-50 border-emerald-200 text-emerald-800"
                 });
                 mediaItems.forEach(item => URL.revokeObjectURL(item.preview));
@@ -232,6 +239,28 @@ export function TrustBoardPostForm({ neighborhood, onSuccess, onCancel }: { neig
                 />
             </div>
 
+            <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                    <Label>Fecha de Inicio <span className="text-red-500">*</span></Label>
+                    <Input 
+                        type="date"
+                        required 
+                        value={formData.startDate}
+                        onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                    />
+                </div>
+                <div className="space-y-2">
+                    <Label>Fecha de Fin <span className="text-red-500">*</span></Label>
+                    <Input 
+                        type="date"
+                        required 
+                        min={formData.startDate}
+                        value={formData.endDate}
+                        onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
+                    />
+                </div>
+            </div>
+
             {mediaItems.length > 0 && (
                 <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 mb-2">
                     {mediaItems.map((item, index) => (
@@ -277,7 +306,7 @@ export function TrustBoardPostForm({ neighborhood, onSuccess, onCancel }: { neig
                 </Button>
                 <Button type="submit" className="bg-primary hover:bg-primary/90 text-white" disabled={loading}>
                     {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                    {t('community.trustboard.form.submit', 'Publicar Anuncio')}
+                    {postToEdit ? t('common.update', 'Actualizar Anuncio') : t('community.trustboard.form.submit', 'Publicar Anuncio')}
                 </Button>
             </div>
         </form>

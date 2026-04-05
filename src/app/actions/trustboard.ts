@@ -13,11 +13,16 @@ export async function createTrustBoardPost(prevState: any, formData: FormData) {
     const category = formData.get('category') as string;
     const neighborhood = formData.get('neighborhood') as string;
     const lang = formData.get('lang') as string || 'es';
+    const startDateStr = formData.get('startDate') as string;
+    const endDateStr = formData.get('endDate') as string;
     const mediaFiles = formData.getAll('media') as File[];
 
-    if (!userId || !title || !description || !category || !neighborhood) {
-        return { success: false, error: 'User ID or Data missing.' };
+    if (!userId || !title || !description || !category || !neighborhood || !startDateStr || !endDateStr) {
+        return { success: false, error: 'Datos incompletos.' };
     }
+
+    const startDate = admin.firestore.Timestamp.fromDate(new Date(startDateStr));
+    const endDate = admin.firestore.Timestamp.fromDate(new Date(endDateStr));
 
     if (mediaFiles.length > 6) {
         return { success: false, error: 'No puedes subir más de 6 archivos en una sola publicación.' };
@@ -170,9 +175,11 @@ export async function createTrustBoardPost(prevState: any, formData: FormData) {
             authorName: profileData.displayName || 'Usuario',
             category: category, 
             neighborhood: neighborhood, 
+            startDate,
+            endDate,
             title: finalTitle,
             description: finalDesc,
-            imageUrl: firstImageUrl || (mediaItems.length > 0 ? mediaItems[0].url : null),
+            imageUrl: mediaItems.length > 0 ? mediaItems[0].url : null,
             media: mediaItems,
             originalLang: cleanLang,
             status: status,
@@ -196,6 +203,132 @@ export async function createTrustBoardPost(prevState: any, formData: FormData) {
     } catch (error: any) {
         console.error('Error creating TrustBoard post:', error);
         return { success: false, error: error.message || 'Internal server error.' };
+    }
+}
+
+export async function editTrustBoardPost(postId: string, formData: FormData) {
+    const userId = formData.get('userId') as string;
+    const title = formData.get('title') as string;
+    const description = formData.get('description') as string;
+    const category = formData.get('category') as string;
+    const startDateStr = formData.get('startDate') as string;
+    const endDateStr = formData.get('endDate') as string;
+    const mediaFiles = formData.getAll('media') as File[];
+
+    if (!userId || !title || !description || !category || !startDateStr || !endDateStr) {
+        return { success: false, error: 'Datos incompletos.' };
+    }
+
+    const startDate = admin.firestore.Timestamp.fromDate(new Date(startDateStr));
+    const endDate = admin.firestore.Timestamp.fromDate(new Date(endDateStr));
+
+    try {
+        const db = getAdminDb();
+        const postRef = db.collection('trustboard_posts').doc(postId);
+        
+        const docSnap = await postRef.get();
+        if (!docSnap.exists) {
+            return { success: false, error: 'Anuncio no encontrado' };
+        }
+        
+        const post = docSnap.data();
+        
+        if (post?.authorId !== userId) {
+            return { success: false, error: 'No tienes permisos para editar este anuncio' };
+        }
+
+        const createdAt = post?.createdAt?.toMillis() || Date.now();
+        const twelveHours = 12 * 60 * 60 * 1000;
+        if (Date.now() - createdAt > twelveHours) {
+            return { success: false, error: 'El tiempo máximo para editar (12 horas) ha expirado.' };
+        }
+
+        // Si sube nuevas fotos, pisamos el array. La subida es asincrónica, vamos a simplificar usando el mismo bucle
+        let newMediaItems = post?.media || [];
+        let newImageUrl = post?.imageUrl || null;
+
+        if (mediaFiles.length > 0 && mediaFiles[0].size > 0) {
+            const storage = getAdminStorage();
+            const uploadPromises = mediaFiles.map(async (file) => {
+                if (!file || file.size === 0) return null;
+                try {
+                    const buffer = await file.arrayBuffer();
+                    const fileBuffer = Buffer.from(buffer as any);
+                    let finalBuffer = fileBuffer;
+                    let contentType = file.type;
+                    let mediaType = contentType.startsWith('video/') ? 'video' : 'image';
+
+                    if (mediaType === 'image') {
+                        try {
+                            const { fileTypeFromBuffer } = await import('file-type');
+                            const type = await fileTypeFromBuffer(fileBuffer);
+                            if (type && type.mime !== 'image/webp') {
+                                const sharp = (await import('sharp')).default;
+                                finalBuffer = await sharp(fileBuffer).resize({ width: 1200, withoutEnlargement: true }).webp({ quality: 80 }).toBuffer();
+                                contentType = 'image/webp';
+                            }
+                        } catch (e) {}
+                    }
+
+                    const extension = contentType.split('/')[1] || (mediaType === 'video' ? 'mp4' : 'img');
+                    const filename = `trustboard/${post?.neighborhood}/${randomUUID()}.${extension}`;
+                    const bucket = storage.bucket();
+                    const fileRef = bucket.file(filename);
+
+                    await fileRef.save(finalBuffer, { metadata: { contentType: contentType } });
+                    await fileRef.makePublic();
+                    return { type: mediaType, url: fileRef.publicUrl() };
+                } catch (e) { return null; }
+            });
+
+            const uploadResults = await Promise.all(uploadPromises);
+            const validMediaItems = uploadResults.filter((item): item is { type: string, url: string } => item !== null);
+            if (validMediaItems.length > 0) {
+                newMediaItems = validMediaItems;
+                newImageUrl = validMediaItems.find(i => i.type === 'image')?.url || null;
+            }
+        }
+
+        // Re-Moderar
+        let status = 'approved';
+        try {
+            const modResponse = await ai.generate({
+                model: 'googleai/gemini-2.5-flash',
+                prompt: `Analiza este anuncio clasificado para un tablero comunitario buscando violaciones.\nTítulo: ${title}\nDescripción: ${description}\nResponde ÚNICAMENTE la palabra "REJECTED" si promueve fraude, odio, violencia explícita o servicios abiertamente ilegales. De lo contrario, responde ÚNICAMENTE la palabra "APPROVED".`
+            });
+            if (modResponse.text?.trim().toUpperCase() === 'REJECTED') {
+                return { success: false, error: 'Rechazado por Cerebro DiciBot por violación de políticas comunitarias.' };
+            }
+        } catch (e) { status = 'pending'; } // fallback
+
+        let finalTitle: any = { es: title, en: title, de: title };
+        let finalDescription: any = { es: description, en: description, de: description };
+        if (post?.isPremium) {
+            try {
+                const enTit = await translateText(title, 'en');
+                const deTit = await translateText(title, 'de');
+                finalTitle = { es: title, en: enTit, de: deTit };
+                const enDesc = await translateText(description, 'en');
+                const deDesc = await translateText(description, 'de');
+                finalDescription = { es: description, en: enDesc, de: deDesc };
+            } catch (e) {}
+        }
+
+        await postRef.update({
+            title: finalTitle,
+            description: finalDescription,
+            category,
+            startDate,
+            endDate,
+            media: newMediaItems,
+            imageUrl: newImageUrl,
+            status,
+            updatedAt: admin.firestore.FieldValue.serverTimestamp()
+        });
+
+        return { success: true };
+    } catch (error: any) {
+        return { success: false, error: error.message || 'Error editing post.' };
     }
 }
 

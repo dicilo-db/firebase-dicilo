@@ -9,6 +9,9 @@ import { Badge } from '@/components/ui/badge';
 import { Briefcase, Home, Sparkles, RefreshCw, Loader2, MessageCircle, MapPin, Languages, Trash2 } from 'lucide-react';
 import { deleteTrustBoardPost } from '@/app/actions/trustboard';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { TrustBoardPostForm } from './TrustBoardPostForm';
+import { Edit2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/context/AuthContext';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
@@ -23,6 +26,7 @@ export function TrustBoardFeed({ neighborhood, activeCategory }: { neighborhood:
     const [indexError, setIndexError] = useState<string | null>(null);
     const [translatingId, setTranslatingId] = useState<string | null>(null);
     const [deletingId, setDeletingId] = useState<string | null>(null);
+    const [editingPost, setEditingPost] = useState<any | null>(null);
     const [isAdmin, setIsAdmin] = useState(false);
     const { t, i18n } = useTranslation('common');
     const { user } = useAuth();
@@ -67,10 +71,15 @@ export function TrustBoardFeed({ neighborhood, activeCategory }: { neighborhood:
         }
 
         const unsubscribe = onSnapshot(q, (snapshot) => {
+            const now = Date.now();
             const data = snapshot.docs.map(doc => ({
                 id: doc.id,
                 ...doc.data()
-            }));
+            })).filter((doc: any) => {
+                if (!doc.endDate) return true;
+                const end = doc.endDate._seconds ? doc.endDate._seconds * 1000 : doc.endDate.toMillis();
+                return end > now;
+            });
             data.sort((a: any, b: any) => {
                 const timeA = a.createdAt?.toMillis() || 0;
                 const timeB = b.createdAt?.toMillis() || 0;
@@ -196,6 +205,9 @@ export function TrustBoardFeed({ neighborhood, activeCategory }: { neighborhood:
                 const title = post.title?.[currentLang] || post.title?.es || t('community.trustboard.untitled', 'Sin Título');
                 const description = post.description?.[currentLang] || post.description?.es || '';
                 
+                const createdAt = post.createdAt?.toMillis() || Date.now();
+                const canEdit = (Date.now() - createdAt) < 12 * 60 * 60 * 1000;
+
                 return (
                     <Card key={post.id} className="overflow-hidden flex flex-col hover:shadow-md transition-shadow">
                         <CardHeader className="p-4 pb-2 border-b bg-slate-50/50">
@@ -259,6 +271,17 @@ export function TrustBoardFeed({ neighborhood, activeCategory }: { neighborhood:
                                     </Button>
                                 )}
                                 <div className="flex gap-2">
+                                    {user && post.authorId === user.uid && canEdit && (
+                                        <Button 
+                                            size="sm" 
+                                            variant="outline" 
+                                            className="h-8 text-xs font-medium border-slate-200 hover:bg-slate-50"
+                                            onClick={() => setEditingPost(post)}
+                                        >
+                                            <Edit2 className="h-3 w-3 mr-1" />
+                                            {t('common.edit', 'Editar')}
+                                        </Button>
+                                    )}
                                     {user && post.authorId === user.uid && (
                                         <Button 
                                             size="sm" 
@@ -284,6 +307,25 @@ export function TrustBoardFeed({ neighborhood, activeCategory }: { neighborhood:
                 );
             })}
             </div>
+
+            <Dialog open={!!editingPost} onOpenChange={(open) => !open && setEditingPost(null)}>
+                <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                    <DialogHeader>
+                        <DialogTitle>Editar Anuncio</DialogTitle>
+                        <DialogDescription>
+                            Realiza los cambios necesarios en tu anuncio. Será revisado nuevamente.
+                        </DialogDescription>
+                    </DialogHeader>
+                    {editingPost && (
+                        <TrustBoardPostForm 
+                            neighborhood={neighborhood} 
+                            onSuccess={() => setEditingPost(null)} 
+                            onCancel={() => setEditingPost(null)} 
+                            postToEdit={editingPost}
+                        />
+                    )}
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }
