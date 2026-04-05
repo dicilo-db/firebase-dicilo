@@ -162,7 +162,7 @@ export function TrustBoardFeed({ neighborhood, activeCategory }: { neighborhood:
                     <Card key={post.id} className="overflow-hidden flex flex-col hover:shadow-md transition-shadow">
                         <CardHeader className="p-4 pb-2 border-b bg-slate-50/50">
                             <div className="flex justify-between items-start mb-2">
-                                <Badge variant="outline" className={\`flex items-center gap-1 \${getCategoryColor(post.category)}\`}>
+                                <Badge variant="outline" className={`flex items-center gap-1 ${getCategoryColor(post.category)}`}>
                                     {getCategoryIcon(post.category)}
                                     <span className="capitalize">{post.category}</span>
                                 </Badge>
@@ -180,7 +180,7 @@ export function TrustBoardFeed({ neighborhood, activeCategory }: { neighborhood:
                             
                             <div className="mt-4 flex items-center gap-2">
                                 <Avatar className="h-6 w-6">
-                                    <img src={\`https://ui-avatars.com/api/?name=\${post.authorName}&background=random\`} alt={post.authorName} />
+                                    <img src={`https://ui-avatars.com/api/?name=${post.authorName}&background=random`} alt={post.authorName} />
                                 </Avatar>
                                 <span className="text-xs font-medium text-slate-700">{post.authorName}</span>
                             </div>
