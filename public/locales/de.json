@@ -11,7 +11,8 @@
       "directory": "Verzeichnis",
       "login": "Anmelden",
       "register": "Registrieren",
-      "language": "Sprache"
+      "language": "Sprache",
+      "community": "Gemeinschaft"
     }
   },
   "footer": {
@@ -305,5 +306,68 @@
       "markRead": "Als gelesen markieren",
       "delete": "Löschen"
     }
+  },
+  "community": {
+    "title": "Deine Community",
+    "subtitle": "Erkunde, was in deinem Viertel passiert, und vernetze dich mit deinen Nachbarn.",
+    "ranking": {
+      "no_data": "Noch nicht genügend Daten für das Ranking vorhanden."
+    },
+    "feed": {
+      "wall": "Soziale Wand",
+      "recommendations": "Empfehlungen",
+      "whats_happening": "Erkunde, was in {{name}} passiert"
+    },
+    "trustboard": {
+      "tab_title": "Lokaler Markt & Dienste",
+      "new_post": "Neue Anzeige",
+      "cat_all": "Alle",
+      "search_ph": "Suche auf der Vertrauenswand...",
+      "empty_title": "Beginne, das lokale Ökosystem aufzubauen",
+      "empty_desc": "Fügen Sie Stellenanzeigen hinzu, suchen Sie Mitbewohner, bieten Sie Mentoring an oder verschenken Sie Dinge. Dieses Board ist exklusiv für verifizierte Einwohner von {{name}}.",
+      "untitled": "Ohne Titel",
+      "connect": "Verbinden",
+      "admin": {
+        "translated": "Erzwungene Übersetzung abgeschlossen",
+        "translate_error": "Übersetzungsfehler",
+        "translate_btn": "Übersetzen (Admin)"
+      },
+      "form": {
+        "dialog_title": "Lokale Anzeige erstellen",
+        "dialog_desc": "Veröffentlichen Sie Ihre Anzeige in {{name}}. Seien Sie klar und professionell.",
+        "category": "Kategorie",
+        "cat_placeholder": "Wählen Sie ein Fachgebiet",
+        "title": "Anzeigentitel",
+        "title_ph": "Z.B. Deutschkurse Niveau C1",
+        "desc": "Beschreibung",
+        "desc_ph": "Beschreiben Sie, was Sie anbieten oder suchen...",
+        "note": "Hinweis: Diese Anzeige wird in veröffentlicht:",
+        "note_premium": "Wenn Sie ein Premium-Nutzer sind, übersetzt Cerebro DiciBot diese Anzeige automatisch in die anderen 11 Sprachen.",
+        "cancel": "Abbrechen",
+        "submit": "Anzeige veröffentlichen",
+        "success_title": "Anzeige veröffentlicht!",
+        "success_desc": "Ihre Anzeige durchläuft die automatische Überprüfung von Dicilo und wird bald sichtbar sein.",
+        "error_title": "Limit erreicht oder Fehler",
+        "unexpected_title": "Unerwarteter Fehler",
+        "unexpected_desc": "Überprüfen Sie Ihre Verbindung und versuchen Sie es erneut."
+      },
+      "cat_jobs": "Dicilo Jobs (Lokale Jobs)",
+      "cat_living": "Dicilo Living (Wohnen/Mitbewohner)",
+      "cat_talent": "Dicilo Talent (Dienste/Mentoren)",
+      "cat_swap": "Gift/Swap (Tausch/Geschenke)"
+    },
+    "trustboard_guard": {
+      "verifying": "Einloggdaten werden überprüft...",
+      "restricted": "Eingeschränkter Zugang zum TrustBoard",
+      "general": "Um unsere Gemeinschaft sicher und frei von Spam zu halten, erfordert das \"TrustBoard\", dass alle Benutzer ihr Profil zu 100% validiert haben, um interagieren oder veröffentlichen zu können.",
+      "req_name": "Identifizierbarer echter Name",
+      "req_photo": "Profilfoto (Person oder Geschäft sichtbar)",
+      "req_email": "E-Mail verifiziert",
+      "req_location": "Standort / Nachbarschaft bestätigt",
+      "action_complete": "Profil jetzt vervollständigen"
+    }
+  },
+  "navigation": {
+    "social_network": "Mein Kreis"
   }
 }

@@ -11,7 +11,8 @@
       "directory": "Directorio",
       "login": "Iniciar sesión",
       "register": "Registrarse",
-      "language": "Idioma"
+      "language": "Idioma",
+      "community": "Comunidad"
     }
   },
   "footer": {
@@ -305,5 +306,68 @@
       "markRead": "Marcar como leído",
       "delete": "Eliminar"
     }
+  },
+  "community": {
+    "title": "Tu Comunidad",
+    "subtitle": "Explora lo que sucede en tu barrio y conecta con tus vecinos.",
+    "ranking": {
+      "no_data": "No hay suficientes datos para el ranking aún."
+    },
+    "feed": {
+      "wall": "Muro Social",
+      "recommendations": "Recomendaciones",
+      "whats_happening": "Explora lo que sucede en {{name}}"
+    },
+    "trustboard": {
+      "tab_title": "Mercado Local & Servicios",
+      "new_post": "Nuevo Anuncio",
+      "cat_all": "Todo",
+      "search_ph": "Buscar en el muro de confianza...",
+      "empty_title": "Comienza a construir el ecosistema local",
+      "empty_desc": "Agrega anuncios de empleo, busca compañeros de cuarto, ofrece tus mentorías o regala cosas que ya no uses. Este tablón es exclusivo para residentes verificados de {{name}}.",
+      "untitled": "Sin Título",
+      "connect": "Conectar",
+      "admin": {
+        "translated": "Traducción Forzada Completada",
+        "translate_error": "Error en Traducción",
+        "translate_btn": "Traducir (Admin)"
+      },
+      "form": {
+        "dialog_title": "Crear Anuncio Local",
+        "dialog_desc": "Publica tu anuncio en {{name}}. Sé claro y profesional.",
+        "category": "Categoría",
+        "cat_placeholder": "Selecciona una especialidad",
+        "title": "Título del Anuncio",
+        "title_ph": "Ej. Clases de Alemán Nivel C1",
+        "desc": "Descripción",
+        "desc_ph": "Detalla qué ofreces o qué buscas...",
+        "note": "Nota: Este anuncio se publicará en",
+        "note_premium": "Si eres usuario premium, Cerebro DiciBot traducirá este anuncio automáticamente a los otros 11 idiomas.",
+        "cancel": "Cancelar",
+        "submit": "Publicar Anuncio",
+        "success_title": "¡Anuncio Publicado!",
+        "success_desc": "Tu anuncio pasará por la revisión automática de Dicilo y será visible pronto.",
+        "error_title": "Límite Alcanzado o Error",
+        "unexpected_title": "Error Inesperado",
+        "unexpected_desc": "Revisa tu conexión e inténtalo de nuevo."
+      },
+      "cat_jobs": "Dicilo Jobs (Empleos locales)",
+      "cat_living": "Dicilo Living (Vivienda/Compañeros)",
+      "cat_talent": "Dicilo Talent (Servicios/Mentores)",
+      "cat_swap": "Gift/Swap (Intercambio/Regalos)"
+    },
+    "trustboard_guard": {
+      "verifying": "Verificando Credenciales de Ingreso...",
+      "restricted": "Acceso Restringido al TrustBoard",
+      "general": "Para mantener nuestra comunidad segura y libre de spam, el \"Muro de la Confianza\" requiere que todos los usuarios tengan su perfil validado al 100% para poder interactuar o publicar.",
+      "req_name": "Nombre Real Identificable",
+      "req_photo": "Fotografía de Perfil (Persona o negocio visible)",
+      "req_email": "Correo Electrónico Verificado",
+      "req_location": "Ubicación / Barrio Confirmado",
+      "action_complete": "Completar Perfil Ahora"
+    }
+  },
+  "navigation": {
+    "social_network": "Mi Círculo"
   }
 }
