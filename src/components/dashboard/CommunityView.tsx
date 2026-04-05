@@ -817,7 +817,7 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
                             <div className="flex items-center justify-between mb-2">
                                 <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
                                     <Search className="h-5 w-5 text-blue-600" />
-                                    Mercado Local & Servicios
+                                    {t('community.trustboard.tab_title', 'Mercado Local & Servicios')}
                                 </h3>
                             </div>
                             <TrustBoardGuard currentUser={currentUser}>
