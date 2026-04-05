@@ -6,7 +6,8 @@ import { app } from '@/lib/firebase';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Avatar } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { Briefcase, Home, Sparkles, RefreshCw, Loader2, MessageCircle, MapPin, Languages } from 'lucide-react';
+import { Briefcase, Home, Sparkles, RefreshCw, Loader2, MessageCircle, MapPin, Languages, Trash2 } from 'lucide-react';
+import { deleteTrustBoardPost } from '@/app/actions/trustboard';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/context/AuthContext';
@@ -21,6 +22,7 @@ export function TrustBoardFeed({ neighborhood, activeCategory }: { neighborhood:
     const [loading, setLoading] = useState(true);
     const [indexError, setIndexError] = useState<string | null>(null);
     const [translatingId, setTranslatingId] = useState<string | null>(null);
+    const [deletingId, setDeletingId] = useState<string | null>(null);
     const [isAdmin, setIsAdmin] = useState(false);
     const { t, i18n } = useTranslation('common');
     const { user } = useAuth();
@@ -142,6 +144,21 @@ export function TrustBoardFeed({ neighborhood, activeCategory }: { neighborhood:
         );
     }
 
+    const handleDelete = async (postId: string) => {
+        if (!user) return;
+        if (!confirm('¿Estás seguro de que quieres eliminar este anuncio?')) return;
+        
+        setDeletingId(postId);
+        const res = await deleteTrustBoardPost(postId, user.uid);
+        setDeletingId(null);
+        
+        if (res.success) {
+            toast({ title: 'Anuncio eliminado', description: 'El anuncio ha sido retirado existosamente.' });
+        } else {
+            toast({ title: 'Error', description: res.error || 'No se pudo eliminar.', variant: 'destructive' });
+        }
+    };
+
     if (indexError) {
         return (
             <div className="bg-red-50 text-red-600 p-4 rounded-md mt-6 border border-red-200 text-sm">
@@ -174,9 +191,6 @@ export function TrustBoardFeed({ neighborhood, activeCategory }: { neighborhood:
 
     return (
         <div className="mt-6">
-            <div className="bg-slate-100 p-2 rounded text-xs mb-4 text-center">
-                DEBUG: Fetched {posts.length} posts for [{neighborhood}] with status [approved].
-            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {posts.map((post) => {
                 const title = post.title?.[currentLang] || post.title?.es || t('community.trustboard.untitled', 'Sin Título');
@@ -244,12 +258,26 @@ export function TrustBoardFeed({ neighborhood, activeCategory }: { neighborhood:
                                         {t('community.trustboard.admin.translate_btn', 'Traducir (Admin)')}
                                     </Button>
                                 )}
-                                {user && post.authorId !== user.uid ? (
-                                    <Button size="sm" variant="outline" className="h-8 text-xs font-medium border-primary/20 text-primary hover:bg-primary/5">
-                                        <MessageCircle className="h-3 w-3 mr-1" />
-                                        {t('community.trustboard.connect', 'Conectar')}
-                                    </Button>
-                                ) : null}
+                                <div className="flex gap-2">
+                                    {user && post.authorId === user.uid && (
+                                        <Button 
+                                            size="sm" 
+                                            variant="outline" 
+                                            className="h-8 text-xs font-medium border-red-200 text-red-600 hover:bg-red-50"
+                                            onClick={() => handleDelete(post.id)}
+                                            disabled={deletingId === post.id}
+                                        >
+                                            {deletingId === post.id ? <Loader2 className="h-3 w-3 mr-1 animate-spin" /> : <Trash2 className="h-3 w-3 mr-1" />}
+                                            {t('common.delete', 'Eliminar')}
+                                        </Button>
+                                    )}
+                                    {user && post.authorId !== user.uid ? (
+                                        <Button size="sm" variant="outline" className="h-8 text-xs font-medium border-primary/20 text-primary hover:bg-primary/5">
+                                            <MessageCircle className="h-3 w-3 mr-1" />
+                                            {t('community.trustboard.connect', 'Conectar')}
+                                        </Button>
+                                    ) : null}
+                                </div>
                             </div>
                         </CardFooter>
                     </Card>

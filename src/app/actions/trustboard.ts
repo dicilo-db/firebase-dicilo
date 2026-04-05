@@ -118,11 +118,28 @@ export async function createTrustBoardPost(prevState: any, formData: FormData) {
         });
 
         const uploadResults = await Promise.all(uploadPromises);
-        const mediaItems = uploadResults.filter((item): item is { type: 'image' | 'video', url: string } => item !== null);
-        const firstImageUrl = mediaItems.find(item => item.type === 'image')?.url || null;
-
-        // 3. AI Moderation Check (Bypassed temporaly for debugging)
+        // 3. AI Moderation Check
         let status = 'approved';
+        try {
+            const modResponse = await ai.generate({
+                model: 'googleai/gemini-2.5-flash',
+                prompt: `
+                Analiza este anuncio clasificado para un tablero comunitario buscando violaciones.
+                Título: ${title}
+                Descripción: ${description}
+            
+                Responde ÚNICAMENTE la palabra "REJECTED" si promueve fraude, odio, violencia explícita o servicios abiertamente ilegales. 
+                De lo contrario, responde ÚNICAMENTE la palabra "APPROVED".
+                `
+            });
+            const verdict = modResponse.text?.trim().toUpperCase();
+            if (verdict === 'REJECTED') {
+                return { success: false, error: 'Rechazado por Cerebro DiciBot por violación de políticas comunitarias.' };
+            }
+        } catch (modError) {
+            console.error('Moderation failed, defaulting to pending manually:', modError);
+            status = 'pending'; // Fallback to manual review if AI fails
+        }
         
         // 4. Premium Auto-Translations
         let finalTitle: any = { es: title, en: title, de: title };
@@ -179,5 +196,29 @@ export async function createTrustBoardPost(prevState: any, formData: FormData) {
     } catch (error: any) {
         console.error('Error creating TrustBoard post:', error);
         return { success: false, error: error.message || 'Internal server error.' };
+    }
+}
+
+export async function deleteTrustBoardPost(postId: string, userId: string) {
+    try {
+        const db = getAdminDb();
+        const postRef = db.collection('trustboard_posts').doc(postId);
+        
+        const docSnap = await postRef.get();
+        if (!docSnap.exists) {
+            return { success: false, error: 'Anuncio no encontrado' };
+        }
+        
+        const post = docSnap.data();
+        
+        if (post?.authorId !== userId) {
+            return { success: false, error: 'No tienes permisos para borrar este anuncio' };
+        }
+        
+        await postRef.delete();
+        return { success: true };
+    } catch (error: any) {
+        console.error('Error deleting TrustBoard post:', error);
+        return { success: false, error: error.message || 'Error al intentar borrar.' };
     }
 }
