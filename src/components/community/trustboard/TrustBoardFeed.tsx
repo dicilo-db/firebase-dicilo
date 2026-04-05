@@ -50,7 +50,6 @@ export function TrustBoardFeed({ neighborhood, activeCategory }: { neighborhood:
                 postsRef,
                 where('neighborhood', '==', neighborhood),
                 where('status', '==', 'approved'),
-                orderBy('createdAt', 'desc'),
                 limit(50)
             );
         } else {
@@ -59,7 +58,6 @@ export function TrustBoardFeed({ neighborhood, activeCategory }: { neighborhood:
                 where('neighborhood', '==', neighborhood),
                 where('category', '==', activeCategory),
                 where('status', '==', 'approved'),
-                orderBy('createdAt', 'desc'),
                 limit(50)
             );
         }
@@ -69,6 +67,11 @@ export function TrustBoardFeed({ neighborhood, activeCategory }: { neighborhood:
                 id: doc.id,
                 ...doc.data()
             }));
+            data.sort((a: any, b: any) => {
+                const timeA = a.createdAt?.toMillis() || 0;
+                const timeB = b.createdAt?.toMillis() || 0;
+                return timeB - timeA;
+            });
             setPosts(data);
             setLoading(false);
         }, (err) => {
