@@ -6,9 +6,10 @@ import { app } from '@/lib/firebase';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Avatar } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { Briefcase, Home, Sparkles, RefreshCw, Loader2, MessageCircle, MapPin, Languages, Trash2 } from 'lucide-react';
+import { Briefcase, Home, Sparkles, RefreshCw, Loader2, MessageCircle, MapPin, Languages, Trash2, Share2, Send, Facebook, Twitter, Mail, Copy } from 'lucide-react';
 import { deleteTrustBoardPost } from '@/app/actions/trustboard';
 import { Button } from '@/components/ui/button';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { TrustBoardPostForm } from './TrustBoardPostForm';
 import { Edit2 } from 'lucide-react';
@@ -145,6 +146,46 @@ export function TrustBoardFeed({ neighborhood, activeCategory }: { neighborhood:
         }
     };
 
+    const handleSocialShare = async (platform: string, post: any) => {
+        const domain = window.location.origin;
+        // The router link would be what we want, currently just generic domain/post/id
+        const url = `${domain}/trustboard/${post.id}?hood=${encodeURIComponent(neighborhood)}`;
+        const title = post.title?.[currentLang] || post.title?.es || 'Anuncio';
+        const text = `Mira este anuncio en Dicilo TrustBoard: ${title} - ${post.neighborhood}`;
+        const textWithUrl = `${text} ${url}`;
+
+        switch (platform) {
+            case 'whatsapp':
+                window.open(`https://wa.me/?text=${encodeURIComponent(textWithUrl)}`, '_blank');
+                break;
+            case 'telegram':
+                window.open(`https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`, '_blank');
+                break;
+            case 'facebook':
+                window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
+                break;
+            case 'twitter':
+                window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`, '_blank');
+                break;
+            case 'email':
+                window.location.href = `mailto:?subject=${encodeURIComponent(title + ' en Dicilo')}&body=${encodeURIComponent(textWithUrl)}`;
+                break;
+            case 'native':
+                if (navigator.share) {
+                    navigator.share({ title: 'Dicilo', text: text, url: url }).catch(console.error);
+                } else {
+                    toast({ description: "No soportado en este dispositivo.", variant: "destructive" });
+                }
+                break;
+            case 'copy':
+                try {
+                    await navigator.clipboard.writeText(url);
+                    toast({ description: t('community.link_copied', 'Enlace copiado al portapapeles') });
+                } catch (err) {}
+                break;
+        }
+    };
+
     if (loading) {
         return (
             <div className="flex justify-center items-center py-12">
@@ -251,13 +292,53 @@ export function TrustBoardFeed({ neighborhood, activeCategory }: { neighborhood:
                             </div>
                         </CardContent>
                         
-                        <CardFooter className="p-3 bg-slate-50 border-t flex justify-between items-center gap-2">
+                        <CardFooter className="p-3 bg-slate-50 border-t flex flex-wrap justify-between items-center gap-2">
                             <div className="flex items-center text-xs text-slate-500">
                                 <MapPin className="h-3 w-3 mr-1" />
                                 {post.neighborhood}
                             </div>
                             
-                            <div className="flex gap-2 isolate">
+                            <div className="flex flex-wrap justify-end gap-2 isolate">
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button variant="ghost" size="sm" className="h-8 flex gap-2 hover:text-green-600 bg-white border border-slate-200">
+                                            <Share2 className="h-4 w-4" />
+                                            <span className="text-xs">{t('community.share', 'Compartir')}</span>
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end" className="w-56">
+                                        <DropdownMenuItem onClick={() => handleSocialShare('whatsapp', post)} className="cursor-pointer gap-2">
+                                            <MessageCircle className="h-4 w-4 text-green-500" />
+                                            <span>WhatsApp</span>
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem onClick={() => handleSocialShare('telegram', post)} className="cursor-pointer gap-2">
+                                            <Send className="h-4 w-4 text-blue-400" />
+                                            <span>Telegram</span>
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem onClick={() => handleSocialShare('facebook', post)} className="cursor-pointer gap-2">
+                                            <Facebook className="h-4 w-4 text-blue-600" />
+                                            <span>Facebook</span>
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem onClick={() => handleSocialShare('twitter', post)} className="cursor-pointer gap-2">
+                                            <Twitter className="h-4 w-4 text-black dark:text-white" />
+                                            <span>X (Twitter)</span>
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem onClick={() => handleSocialShare('email', post)} className="cursor-pointer gap-2">
+                                            <Mail className="h-4 w-4 text-gray-600" />
+                                            <span>Email</span>
+                                        </DropdownMenuItem>
+                                        <DropdownMenuSeparator />
+                                        <DropdownMenuItem onClick={() => handleSocialShare('copy', post)} className="cursor-pointer gap-2">
+                                            <Copy className="h-4 w-4" />
+                                            <span>{t('community.copy_link', 'Copiar Enlace')}</span>
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem onClick={() => handleSocialShare('native', post)} className="cursor-pointer gap-2">
+                                            <Share2 className="h-4 w-4" />
+                                            <span>... Más opciones...</span>
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+
                                 {isAdmin && (
                                     <Button 
                                         size="sm" 
@@ -270,7 +351,7 @@ export function TrustBoardFeed({ neighborhood, activeCategory }: { neighborhood:
                                         {t('community.trustboard.admin.translate_btn', 'Traducir (Admin)')}
                                     </Button>
                                 )}
-                                <div className="flex gap-2">
+                                <div className="flex flex-wrap justify-end gap-2">
                                     {user && post.authorId === user.uid && canEdit && (
                                         <Button 
                                             size="sm" 
