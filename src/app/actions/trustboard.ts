@@ -125,6 +125,7 @@ export async function createTrustBoardPost(prevState: any, formData: FormData) {
         let status = 'approved';
         try {
             const modResponse = await ai.generate({
+                model: 'googleai/gemini-2.5-flash',
                 prompt: `
                 Analiza este anuncio clasificado para un tablero comunitario buscando violaciones.
                 Título: ${title}
