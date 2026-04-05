@@ -44,29 +44,24 @@ export function TrustBoardFeed({ neighborhood, activeCategory }: { neighborhood:
         setLoading(true);
         const postsRef = collection(db, 'trustboard_posts');
         
-        let q;
-        if (activeCategory === 'all') {
-            q = query(
-                postsRef,
-                where('neighborhood', '==', neighborhood),
-                where('status', '==', 'approved'),
-                limit(50)
-            );
-        } else {
-            q = query(
-                postsRef,
-                where('neighborhood', '==', neighborhood),
-                where('category', '==', activeCategory),
-                where('status', '==', 'approved'),
-                limit(50)
-            );
-        }
+        // Bypass composite indexes entirely by fetching only by neighborhood and filtering in-memory
+        const q = query(
+            postsRef,
+            where('neighborhood', '==', neighborhood),
+            limit(100)
+        );
 
         const unsubscribe = onSnapshot(q, (snapshot) => {
-            const data = snapshot.docs.map(doc => ({
+            let data = snapshot.docs.map(doc => ({
                 id: doc.id,
                 ...doc.data()
             }));
+
+            // Client-side filtering
+            data = data.filter((post: any) => post.status === 'approved');
+            if (activeCategory !== 'all') {
+                data = data.filter((post: any) => post.category === activeCategory);
+            }
             data.sort((a: any, b: any) => {
                 const timeA = a.createdAt?.toMillis() || 0;
                 const timeB = b.createdAt?.toMillis() || 0;
