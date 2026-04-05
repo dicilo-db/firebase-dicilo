@@ -157,7 +157,11 @@ export function TrustBoardFeed({ neighborhood, activeCategory }: { neighborhood:
     }
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+        <div className="mt-6">
+            <div className="bg-slate-100 p-2 rounded text-xs mb-4 text-center">
+                DEBUG: Fetched {posts.length} posts for [{neighborhood}] with status [approved].
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {posts.map((post) => {
                 const title = post.title?.[currentLang] || post.title?.es || t('community.trustboard.untitled', 'Sin Título');
                 const description = post.description?.[currentLang] || post.description?.es || '';
@@ -235,6 +239,7 @@ export function TrustBoardFeed({ neighborhood, activeCategory }: { neighborhood:
                     </Card>
                 );
             })}
+            </div>
         </div>
     );
 }
