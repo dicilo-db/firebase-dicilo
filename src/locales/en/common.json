@@ -932,13 +932,13 @@
     "download_error": "Failed to download",
     "your_community": "Your Community",
     "neighborhoods_of": "Neighborhoods of",
-    "explore_desc": "Explore what is happening in your neighborhood and connect with neighbors.",
+    "explore_desc": "Explore what's happening in your neighborhood and connect with your neighbors.",
     "new_recommendation": "New Recommendation",
-    "share_place": "Share a place, service, or experience with your neighbors in {{name}}.",
+    "share_place": "Share a place, service, or experience with your neighbors.",
     "ranking": {
-      "title": "Top Businesses",
-      "subtitle": "Most recommended",
-      "no_data": "Not enough data for ranking yet."
+      "title": "Top Companies",
+      "subtitle": "Most recommended businesses",
+      "no_data": "Not enough data for the ranking yet."
     },
     "barometer": {
       "title": "Barometer",
@@ -964,13 +964,14 @@
       "whats_happening": "What's happening in {{name}}?",
       "loading": "Loading activity...",
       "empty": "No recent activity in {{name}}.",
-      "be_first": "Be the first to recommend a place!",
+      "be_first": "Be the first to share something!",
       "recent": "Just now",
-      "photo_by": "Photo by"
+      "photo_by": "Photo by",
+      "empty_global": "No activity yet in the {{name}} community."
     },
     "actions": {
-      "set_favorite": "Set as my Neighborhood",
-      "is_favorite": "My Neighborhood"
+      "is_favorite": "My Neighborhood",
+      "set_favorite": "Set as My Neighborhood"
     },
     "post_btn": "Post",
     "search_neighborhoods": "Search neighborhoods...",
@@ -980,7 +981,29 @@
     "read_in": "Read in",
     "show_original": "Show original",
     "translate_ai": "Translate with AI",
-    "translation_error": "Translation failed"
+    "translation_error": "Translation failed",
+    "trustboard": {
+      "title": "Local Recommendations",
+      "badge": "TrustBoard",
+      "cat_jobs": "Dicilo Jobs",
+      "cat_living": "Dicilo Living",
+      "cat_talent": "Dicilo Talent",
+      "cat_swap": "Gift/Swap",
+      "cat_all": "All",
+      "search_ph": "Search the trust board...",
+      "new_post": "New Ad",
+      "form": {
+        "dialog_title": "Create Local Ad",
+        "dialog_desc": "Publish your ad in {{name}}. Be clear and professional."
+      },
+      "tab_title": "Local Market & Services",
+      "empty_title": "Start building the local ecosystem",
+      "empty_desc": "Add job ads, look for roommates, offer mentoring, or give away things you no longer use. This board is exclusive to verified residents of {{name}}.",
+      "empty_search": "No ads found for \"{{term}}\"",
+      "untitled": "Untitled"
+    },
+    "verifying": "Verifying...",
+    "verify_create": "Verify & Create"
   },
   "finances": {
     "lockedTitle": "Earn money while recommending Dicilo",
@@ -1028,5 +1051,8 @@
       "b5": "Other available methods",
       "footer": "👉 Don’t change what you do… just start earning from it. Join DICILO and turn your recommendations into income."
     }
+  },
+  "navigation": {
+    "social_network": "My Circle"
   }
 }

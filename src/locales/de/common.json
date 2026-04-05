@@ -3,11 +3,11 @@
   "search_city": "Stadt suchen...",
   "searchPlaceholder": "Name oder E-Mail suchen...",
   "community": {
-    "register_neighborhood": "Nachbarschaft registrieren",
-    "register_neighborhood_desc": "Finden Sie Ihre Nachbarschaft nicht? Registrieren Sie sie hier, um sich mit Ihren Nachbarn zu vernetzen.",
-    "register_neighborhood_btn": "Nachbarschaft registrieren",
+    "register_neighborhood": "Viertel registrieren",
+    "register_neighborhood_desc": "Finden Sie Ihr Viertel nicht? Registrieren Sie es hier, um sich mit Ihren Nachbarn zu vernetzen.",
+    "register_neighborhood_btn": "Viertel registrieren",
     "your_community": "Deine Community",
-    "neighborhoods_of": "Nachbarschaften von",
+    "neighborhoods_of": "Viertel von",
     "global_wall": "Globale Wand",
     "photo": "Foto",
     "like": "Gefällt mir",
@@ -25,9 +25,11 @@
     "link_copied": "Link in Zwischenablage kopiert",
     "copy_link": "Link kopieren",
     "feed": {
-      "empty_global": "Noch keine Aktivität in der {{name}} Community.",
+      "empty_global": "Noch keine Aktivität in der {{name}}-Community.",
       "be_first": "Seien Sie der Erste, der etwas teilt!",
-      "whats_happening": "Was passiert in {{name}}?"
+      "whats_happening": "Was passiert in {{name}}?",
+      "wall": "Soziale Wand",
+      "recommendations": "Empfehlungen"
     },
     "post_btn": "Veröffentlichen",
     "recommend_business": "Geschäft empfehlen",
@@ -36,7 +38,42 @@
     "email_whatsapp_opt": "E-Mail oder WhatsApp (Optional)",
     "comment_label": "Kommentar",
     "comment_placeholder": "Was hat Ihnen am besten gefallen?",
-    "send_recommendation": "Empfehlung senden"
+    "send_recommendation": "Empfehlung senden",
+    "actions": {
+      "is_favorite": "Mein Viertel",
+      "set_favorite": "Als mein Viertel festlegen"
+    },
+    "trustboard": {
+      "title": "Lokale Empfehlungen",
+      "badge": "TrustBoard",
+      "cat_jobs": "Dicilo Jobs",
+      "cat_living": "Dicilo Living",
+      "cat_talent": "Dicilo Talent",
+      "cat_swap": "Gift/Swap",
+      "cat_all": "Alle",
+      "search_ph": "Durchsuchen Sie das Vertrauensboard...",
+      "new_post": "Neue Anzeige",
+      "form": {
+        "dialog_title": "Lokale Anzeige erstellen",
+        "dialog_desc": "Veröffentlichen Sie Ihre Anzeige in {{name}}. Seien Sie klar und professionell."
+      },
+      "tab_title": "Lokaler Markt & Dienste",
+      "empty_title": "Beginnen Sie mit dem Aufbau des lokalen Ökosystems",
+      "empty_desc": "Fügen Sie Stellenanzeigen hinzu, suchen Sie Mitbewohner, bieten Sie Mentoring an oder verschenken Sie Dinge, die Sie nicht mehr verwenden. Dieses Board ist exklusiv für verifizierte Bewohner von {{name}}.",
+      "empty_search": "Keine Anzeigen gefunden für \"{{term}}\"",
+      "untitled": "Ohne Titel"
+    },
+    "ranking": {
+      "title": "Top-Unternehmen",
+      "subtitle": "Meist empfohlene Unternehmen",
+      "no_data": "Noch nicht genug Daten für das Ranking."
+    },
+    "explore_desc": "Erkunde, was in deinem Viertel passiert, und vernetze dich mit deinen Nachbarn.",
+    "new_recommendation": "Neue Empfehlung",
+    "share_place": "Teile einen Ort, einen Dienst oder ein Erlebnis mit deinen Nachbarn.",
+    "search_neighborhoods": "Viertel suchen...",
+    "verifying": "Wird überprüft...",
+    "verify_create": "Überprüfen & Erstellen"
   },
   "header": {
     "nav": {
@@ -1012,5 +1049,8 @@
       "b5": "Andere verfügbare Methoden",
       "footer": "👉 Ändere nichts an dem, was du tust… verdiene einfach daran. Werde Teil von DICILO und mache deine Empfehlungen zu Einkommen."
     }
+  },
+  "navigation": {
+    "social_network": "Mein Kreis"
   }
 }

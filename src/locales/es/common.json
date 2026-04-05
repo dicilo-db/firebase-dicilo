@@ -46,7 +46,9 @@
     "feed": {
       "empty_global": "Aún no hay actividad en la comunidad de {{name}}.",
       "be_first": "¡Sé el primero en compartir algo!",
-      "whats_happening": "¿Qué está pasando en {{name}}?"
+      "whats_happening": "¿Qué está pasando en {{name}}?",
+      "wall": "Muro Social",
+      "recommendations": "Recomendaciones"
     },
     "post_btn": "Publicar",
     "recommend_business": "Recomendar Negocio",
@@ -63,7 +65,42 @@
     "showing_recent": "Mostrando últimas 10 actualizaciones",
     "notif_new_post": "ha publicado en {{neighborhood}}.",
     "notif_new_post_generic": "ha publicado en la comunidad.",
-    "notif_friend_request": "te ha enviado una solicitud de amistad."
+    "notif_friend_request": "te ha enviado una solicitud de amistad.",
+    "actions": {
+      "is_favorite": "Es mi Barrio",
+      "set_favorite": "Marcar como mi Barrio"
+    },
+    "trustboard": {
+      "title": "Recomendaciones Locales",
+      "badge": "TrustBoard",
+      "cat_jobs": "Dicilo Jobs",
+      "cat_living": "Dicilo Living",
+      "cat_talent": "Dicilo Talent",
+      "cat_swap": "Gift/Swap",
+      "cat_all": "Todo",
+      "search_ph": "Buscar en el muro de confianza...",
+      "new_post": "Nuevo Anuncio",
+      "form": {
+        "dialog_title": "Crear Anuncio Local",
+        "dialog_desc": "Publica tu anuncio en {{name}}. Sé claro y profesional."
+      },
+      "tab_title": "Mercado Local & Servicios",
+      "empty_title": "Comienza a construir el ecosistema local",
+      "empty_desc": "Agrega anuncios de empleo, busca compañeros de cuarto, ofrece tus mentorías o regala cosas que ya no uses. Este tablón es exclusivo para residentes verificados de {{name}}.",
+      "empty_search": "No se encontraron anuncios para \"{{term}}\"",
+      "untitled": "Sin Título"
+    },
+    "ranking": {
+      "title": "Top Empresas",
+      "subtitle": "Negocios más recomendados",
+      "no_data": "No hay suficientes datos para el ranking aún."
+    },
+    "explore_desc": "Explora lo que sucede en tu barrio y conecta con tus vecinos.",
+    "new_recommendation": "Nueva Recomendación",
+    "share_place": "Comparte un lugar, servicio o experiencia con tus vecinos.",
+    "search_neighborhoods": "Buscar barrios...",
+    "verifying": "Verificando...",
+    "verify_create": "Verificar y Crear"
   },
   "dicipoints": {
     "whatIs": {
