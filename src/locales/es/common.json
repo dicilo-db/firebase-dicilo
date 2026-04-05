@@ -82,7 +82,22 @@
       "new_post": "Nuevo Anuncio",
       "form": {
         "dialog_title": "Crear Anuncio Local",
-        "dialog_desc": "Publica tu anuncio en {{name}}. Sé claro y profesional."
+        "dialog_desc": "Publica tu anuncio en {{name}}. Sé claro y profesional.",
+        "category": "Categoría",
+        "cat_placeholder": "Selecciona una especialidad",
+        "title": "Título del Anuncio",
+        "title_ph": "Ej. Clases de Alemán Nivel C1",
+        "desc": "Descripción",
+        "desc_ph": "Detalla qué ofreces o qué buscas...",
+        "note": "Nota: Este anuncio se publicará en",
+        "note_premium": "Si eres usuario premium, Cerebro DiciBot traducirá este anuncio automáticamente a los otros 11 idiomas.",
+        "cancel": "Cancelar",
+        "submit": "Publicar Anuncio",
+        "success_title": "¡Anuncio Publicado!",
+        "success_desc": "Tu anuncio pasará por la revisión automática de Dicilo y será visible pronto.",
+        "error_title": "Límite Alcanzado o Error",
+        "unexpected_title": "Error Inesperado",
+        "unexpected_desc": "Revisa tu conexión e inténtalo de nuevo."
       },
       "tab_title": "Mercado Local & Servicios",
       "empty_title": "Comienza a construir el ecosistema local",

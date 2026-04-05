@@ -994,7 +994,22 @@
       "new_post": "New Ad",
       "form": {
         "dialog_title": "Create Local Ad",
-        "dialog_desc": "Publish your ad in {{name}}. Be clear and professional."
+        "dialog_desc": "Publish your ad in {{name}}. Be clear and professional.",
+        "category": "Category",
+        "cat_placeholder": "Select a specialty",
+        "title": "Ad Title",
+        "title_ph": "E.g. German Classes Level C1",
+        "desc": "Description",
+        "desc_ph": "Detail what you offer or look for...",
+        "note": "Note: This ad will be published in",
+        "note_premium": "If you are a premium user, DiciBot Brain will translate this ad automatically to the other 11 languages.",
+        "cancel": "Cancel",
+        "submit": "Publish Ad",
+        "success_title": "Ad Published!",
+        "success_desc": "Your ad will go through Dicilo's automatic review and will be visible soon.",
+        "error_title": "Limit Reached or Error",
+        "unexpected_title": "Unexpected Error",
+        "unexpected_desc": "Check your connection and try again."
       },
       "tab_title": "Local Market & Services",
       "empty_title": "Start building the local ecosystem",

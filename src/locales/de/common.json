@@ -55,7 +55,22 @@
       "new_post": "Neue Anzeige",
       "form": {
         "dialog_title": "Lokale Anzeige erstellen",
-        "dialog_desc": "Veröffentlichen Sie Ihre Anzeige in {{name}}. Seien Sie klar und professionell."
+        "dialog_desc": "Veröffentlichen Sie Ihre Anzeige in {{name}}. Seien Sie klar und professionell.",
+        "category": "Kategorie",
+        "cat_placeholder": "Wählen Sie ein Fachgebiet",
+        "title": "Anzeigentitel",
+        "title_ph": "z.B. Deutschunterricht Niveau C1",
+        "desc": "Beschreibung",
+        "desc_ph": "Detaillieren Sie, was Sie anbieten oder suchen...",
+        "note": "Hinweis: Diese Anzeige wird veröffentlicht in",
+        "note_premium": "Wenn Sie ein Premium-Benutzer sind, wird der DiciBot-Brain diese Anzeige automatisch in die anderen 11 Sprachen übersetzen.",
+        "cancel": "Abbrechen",
+        "submit": "Anzeige veröffentlichen",
+        "success_title": "Anzeige veröffentlicht!",
+        "success_desc": "Ihre Anzeige durchläuft die automatische Überprüfung von Dicilo und ist bald sichtbar.",
+        "error_title": "Limit erreicht oder Fehler",
+        "unexpected_title": "Unerwarteter Fehler",
+        "unexpected_desc": "Überprüfen Sie Ihre Verbindung und versuchen Sie es erneut."
       },
       "tab_title": "Lokaler Markt & Dienste",
       "empty_title": "Beginnen Sie mit dem Aufbau des lokalen Ökosystems",
