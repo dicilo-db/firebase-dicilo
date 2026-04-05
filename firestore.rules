@@ -192,6 +192,12 @@ service cloud.firestore {
       allow create: if isAuthenticated();
     }
 
+    // TrustBoard Posts
+    match /trustboard_posts/{postId} {
+      allow read: if isAuthenticated(); // Client reads Feed
+      allow write: if isAdmin(); // Created through secure Server Actions
+    }
+
     // Friend Requests collection
     match /friend_requests/{requestId} {
       allow read: if isAuthenticated() && (resource.data.fromUserId == request.auth.uid || resource.data.toUserId == request.auth.uid);
