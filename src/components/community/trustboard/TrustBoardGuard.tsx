@@ -87,7 +87,7 @@ export function TrustBoardGuard({ currentUser, children }: TrustBoardGuardProps)
     if (loading) {
         return (
             <div className="flex justify-center items-center h-48 animate-pulse text-muted-foreground">
-                <ShieldAlert className="mr-2 h-6 w-6" /> Verificando Credenciales de Ingreso...
+                <ShieldAlert className="mr-2 h-6 w-6" /> {t('community.trustboard_guard.verifying', 'Verificando Credenciales de Ingreso...')}
             </div>
         );
     }
@@ -98,7 +98,7 @@ export function TrustBoardGuard({ currentUser, children }: TrustBoardGuardProps)
                 <CardHeader>
                     <CardTitle className="text-red-700 flex items-center gap-2">
                         <ShieldAlert className="h-6 w-6" />
-                        Acceso Restringido al TrustBoard
+                        {t('community.trustboard_guard.restricted', 'Acceso Restringido al TrustBoard')}
                     </CardTitle>
                     <CardDescription className="text-red-600/80">
                         {t('community.trustboard_guard', 'Para mantener nuestra comunidad segura y libre de spam, el "Muro de la Confianza" requiere que todos los usuarios tengan su perfil validado al 100% para poder interactuar o publicar.')}
@@ -107,19 +107,19 @@ export function TrustBoardGuard({ currentUser, children }: TrustBoardGuardProps)
                 <CardContent className="space-y-4">
                     <ul className="space-y-3 p-4 bg-white rounded-md border border-red-100 shadow-sm">
                         <li className="flex items-center justify-between">
-                            <span className="font-medium text-slate-700">Nombre Real Identificable</span>
+                            <span className="font-medium text-slate-700">{t('community.trustboard_guard.req_name', 'Nombre Real Identificable')}</span>
                             {profileStatus.hasName ? <CheckCircle2 className="h-5 w-5 text-emerald-500" /> : <XCircle className="h-5 w-5 text-red-500" />}
                         </li>
                         <li className="flex items-center justify-between">
-                            <span className="font-medium text-slate-700">Fotografía de Perfil (Persona o negocio visible)</span>
+                            <span className="font-medium text-slate-700">{t('community.trustboard_guard.req_photo', 'Fotografía de Perfil (Persona o negocio visible)')}</span>
                             {profileStatus.hasPhoto ? <CheckCircle2 className="h-5 w-5 text-emerald-500" /> : <XCircle className="h-5 w-5 text-red-500" />}
                         </li>
                         <li className="flex items-center justify-between">
-                            <span className="font-medium text-slate-700">Correo Electrónico Verificado</span>
+                            <span className="font-medium text-slate-700">{t('community.trustboard_guard.req_email', 'Correo Electrónico Verificado')}</span>
                             {profileStatus.isVerified ? <CheckCircle2 className="h-5 w-5 text-emerald-500" /> : <XCircle className="h-5 w-5 text-red-500" />}
                         </li>
                         <li className="flex items-center justify-between">
-                            <span className="font-medium text-slate-700">Ubicación / Barrio Confirmado</span>
+                            <span className="font-medium text-slate-700">{t('community.trustboard_guard.req_location', 'Ubicación / Barrio Confirmado')}</span>
                             {profileStatus.hasLocation ? <CheckCircle2 className="h-5 w-5 text-emerald-500" /> : <XCircle className="h-5 w-5 text-red-500" />}
                         </li>
                     </ul>
@@ -127,7 +127,7 @@ export function TrustBoardGuard({ currentUser, children }: TrustBoardGuardProps)
                     <div className="pt-4 flex justify-end">
                         <Link href="/dashboard?view=settings">
                             <Button variant="default" className="bg-red-600 hover:bg-red-700 text-white">
-                                Completar Perfil Ahora
+                                {t('community.trustboard_guard.action_complete', 'Completar Perfil Ahora')}
                             </Button>
                         </Link>
                     </div>

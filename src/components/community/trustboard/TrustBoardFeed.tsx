@@ -120,9 +120,9 @@ export function TrustBoardFeed({ neighborhood, activeCategory }: { neighborhood:
                 'description.de': descDe.translation || post.description.de,
             });
 
-            toast({ title: 'Traucción Forzada Completada' });
+            toast({ title: t('community.trustboard.admin.translated', 'Traducción Forzada Completada') });
         } catch (error) {
-            toast({ title: 'Error en Traducción', variant: 'destructive' });
+            toast({ title: t('community.trustboard.admin.translate_error', 'Error en Traducción'), variant: 'destructive' });
         } finally {
             setTranslatingId(null);
         }
@@ -141,10 +141,11 @@ export function TrustBoardFeed({ neighborhood, activeCategory }: { neighborhood:
             <Card className="border-dashed border-2 bg-slate-50/50 mt-6">
                 <CardContent className="flex flex-col items-center justify-center p-12 text-center text-muted-foreground">
                     <Sparkles className="w-12 h-12 mb-4 text-slate-300" />
-                    <h3 className="text-lg font-medium text-slate-700 mb-2">Comienza a construir el ecosistema local</h3>
+                    <h3 className="text-lg font-medium text-slate-700 mb-2">
+                        {t('community.trustboard.empty_title', 'Comienza a construir el ecosistema local')}
+                    </h3>
                     <p className="max-w-md mx-auto text-sm">
-                        Agrega anuncios de empleo, busca compañeros de cuarto, ofrece tus mentorías o regala cosas que ya no uses. 
-                        Este tablón es exclusivo para residentes verificados de {neighborhood}.
+                        {t('community.trustboard.empty_desc', 'Agrega anuncios de empleo, busca compañeros de cuarto, ofrece tus mentorías o regala cosas que ya no uses. Este tablón es exclusivo para residentes verificados de {{name}}.', { name: neighborhood })}
                     </p>
                 </CardContent>
             </Card>
@@ -154,7 +155,7 @@ export function TrustBoardFeed({ neighborhood, activeCategory }: { neighborhood:
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
             {posts.map((post) => {
-                const title = post.title?.[currentLang] || post.title?.es || 'Sin Título';
+                const title = post.title?.[currentLang] || post.title?.es || t('community.trustboard.untitled', 'Sin Título');
                 const description = post.description?.[currentLang] || post.description?.es || '';
                 
                 return (
@@ -201,13 +202,13 @@ export function TrustBoardFeed({ neighborhood, activeCategory }: { neighborhood:
                                         onClick={() => handleForceTranslate(post)}
                                     >
                                         {translatingId === post.id ? <Loader2 className="h-3 w-3 mr-1 animate-spin" /> : <Languages className="h-3 w-3 mr-1" />}
-                                        Traducir (Admin)
+                                        {t('community.trustboard.admin.translate_btn', 'Traducir (Admin)')}
                                     </Button>
                                 )}
                                 {user && post.authorId !== user.uid ? (
                                     <Button size="sm" variant="outline" className="h-8 text-xs font-medium border-primary/20 text-primary hover:bg-primary/5">
                                         <MessageCircle className="h-3 w-3 mr-1" />
-                                        Conectar
+                                        {t('community.trustboard.connect', 'Conectar')}
                                     </Button>
                                 ) : null}
                             </div>
