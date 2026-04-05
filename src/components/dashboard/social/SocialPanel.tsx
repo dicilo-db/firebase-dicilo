@@ -15,7 +15,7 @@ import {
     ConversationHeader,
     Search
 } from '@chatscope/chat-ui-kit-react';
-import { UserPlus, MessageCircle, X, Check, Send, Image as ImageIcon, Loader2 } from 'lucide-react';
+import { UserPlus, MessageCircle, X, Check, Send, Image as ImageIcon, Loader2, ShieldAlert } from 'lucide-react';
 
 // Hooks & Services
 import { useTranslation } from 'react-i18next';
@@ -273,6 +273,14 @@ export function SocialPanel({ neighborhood = 'Hamburg' }: { neighborhood?: strin
                             />
                         </ConversationHeader>
 
+                        {/* Banner de Monitoreo de Seguridad (TrustBoard Update) */}
+                        <div className="bg-amber-50 border-b border-amber-200 p-3 flex items-start gap-3 shadow-inner z-10 w-full">
+                            <ShieldAlert className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                            <p className="text-xs text-amber-800 leading-relaxed">
+                                <strong>Aviso de Seguridad:</strong> Las conversaciones están cifradas para su protección. Sin embargo, para mantener un ambiente seguro, los filtros de inteligencia artificial de Dicilo monitorean proactivamente contenido ilegal o perjudicial. Cualquier infracción será bloqueada, notificada y la cuenta podría ser expulsada.
+                            </p>
+                        </div>
+
                         <MessageList>
                             {messages
                                 .filter(m => m.roomId === activeChatRoom)
@@ -326,19 +334,25 @@ export function SocialPanel({ neighborhood = 'Hamburg' }: { neighborhood?: strin
                     /* PRIVATE CIRCLE FEED (Standard View) */
                     <div className="flex-1 h-full overflow-y-auto bg-slate-50/50 flex flex-col">
                         {/* Feed Header */}
-                        <div className="p-4 bg-white/80 backdrop-blur-md sticky top-0 z-10 border-b flex justify-between items-center">
-                            <div>
-                                <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
-                                    Mi Círculo Privado
-                                    <span className="text-xs bg-amber-100 text-amber-700 font-normal px-2 py-0.5 rounded-full border border-amber-200">
-                                        Solo Amigos
-                                    </span>
-                                </h2>
-                                <p className="text-xs text-muted-foreground">
-                                    Las publicaciones aquí son privadas y solo visibles para tus contactos.
+                        <div className="p-4 bg-white/90 backdrop-blur-md sticky top-0 z-10 border-b flex flex-col gap-3">
+                            <div className="flex justify-between items-center">
+                                <div>
+                                    <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+                                        Mi Círculo Privado
+                                        <span className="text-xs bg-emerald-100 text-emerald-700 font-medium px-2 py-0.5 rounded-full border border-emerald-200">
+                                            Solo Amigos
+                                        </span>
+                                    </h2>
+                                </div>
+                            </div>
+                            
+                            {/* Banner de Monitoreo de Seguridad (TrustBoard Update) */}
+                            <div className="bg-slate-100 rounded-md p-3 flex items-start gap-2 border border-slate-200 shadow-sm mt-1">
+                                <ShieldAlert className="h-4 w-4 text-slate-500 flex-shrink-0 mt-0.5" />
+                                <p className="text-[11px] text-slate-600 leading-relaxed">
+                                    <strong>Entorno Monitoreado:</strong> Las publicaciones aquí son exclusivas para tus contactos, pero el entorno está sujeto a la auditoría preventiva de Cerebro DiciBot para detectar violaciones a las normativas de la comunidad.
                                 </p>
                             </div>
-                            {/* Optional: Add "Find Friends" button here if empty */}
                         </div>
 
                         {/* Feed Content */}

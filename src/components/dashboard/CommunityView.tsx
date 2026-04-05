@@ -29,6 +29,8 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CommunityFeed } from '../community/CommunityFeed';
 import { SocialPanel } from './social/SocialPanel';
+import { TrustBoardGuard } from '../community/trustboard/TrustBoardGuard';
+import { TrustBoardView } from '../community/trustboard/TrustBoardView';
 import { User } from 'firebase/auth';
 
 const db = getFirestore(app);
@@ -506,7 +508,7 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
 
     const [activeTab, setActiveTab] = useState("wall");
     // Hide sidebar for both Social Panel (Chats) and Wall (Feed) to provide full width space
-    const isFullWidthTab = activeTab === 'social' || activeTab === 'wall';
+    const isFullWidthTab = activeTab === 'social' || activeTab === 'wall' || activeTab === 'trustboard';
 
     return (
         <div className="space-y-8">
@@ -762,18 +764,25 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
                 <div className={isFullWidthTab ? "lg:col-span-12" : "lg:col-span-8"}>
                     <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
                         <div className="flex items-center justify-between">
-                            <TabsList className="grid w-full grid-cols-3 lg:w-[480px]">
-                                <TabsTrigger value="wall">
-                                    <MessageSquare className="h-4 w-4 mr-2" />
-                                    {t('community.feed.wall', 'Muro Social')}
+                            <TabsList className="grid w-full grid-cols-4 lg:w-[600px] h-auto p-1">
+                                <TabsTrigger value="wall" className="py-2 text-xs sm:text-sm whitespace-normal h-full">
+                                    <MessageSquare className="h-4 w-4 mr-1 sm:mr-2 flex-shrink-0" />
+                                    <span className="hidden sm:inline">{t('community.feed.wall', 'Muro Social')}</span>
+                                    <span className="sm:hidden">Muro</span>
                                 </TabsTrigger>
-                                <TabsTrigger value="recommendations">
-                                    <MapPin className="h-4 w-4 mr-2" />
-                                    {t('community.feed.recommendations', 'Recomendaciones')}
+                                <TabsTrigger value="recommendations" className="py-2 text-xs sm:text-sm whitespace-normal h-full">
+                                    <MapPin className="h-4 w-4 mr-1 sm:mr-2 flex-shrink-0" />
+                                    <span className="hidden sm:inline">{t('community.feed.recommendations', 'Recomendaciones')}</span>
+                                    <span className="sm:hidden">Recoms</span>
                                 </TabsTrigger>
-                                <TabsTrigger value="social">
-                                    <Users className="h-4 w-4 mr-2" />
-                                    {t('navigation.social_network', 'Mi Círculo')}
+                                <TabsTrigger value="social" className="py-2 text-xs sm:text-sm whitespace-normal h-full">
+                                    <Users className="h-4 w-4 mr-1 sm:mr-2 flex-shrink-0" />
+                                    <span className="hidden sm:inline">{t('navigation.social_network', 'Mi Círculo')}</span>
+                                    <span className="sm:hidden">Círculo</span>
+                                </TabsTrigger>
+                                <TabsTrigger value="trustboard" className="py-2 text-xs sm:text-sm whitespace-normal h-full text-blue-700 bg-blue-50/50">
+                                    <Search className="h-4 w-4 mr-1 sm:mr-2 text-blue-600 flex-shrink-0" />
+                                    <span className="font-semibold">TrustBoard</span>
                                 </TabsTrigger>
                             </TabsList>
                         </div>
@@ -802,6 +811,18 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
                                 </h3>
                             </div>
                             <SocialPanel neighborhood={neighborhoodName} />
+                        </TabsContent>
+
+                        <TabsContent value="trustboard" className="space-y-4 animate-in fade-in slide-in-from-bottom-2">
+                            <div className="flex items-center justify-between mb-2">
+                                <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+                                    <Search className="h-5 w-5 text-blue-600" />
+                                    Mercado Local & Servicios
+                                </h3>
+                            </div>
+                            <TrustBoardGuard currentUser={currentUser}>
+                                <TrustBoardView neighborhood={neighborhoodName} />
+                            </TrustBoardGuard>
                         </TabsContent>
                     </Tabs>
                 </div>
