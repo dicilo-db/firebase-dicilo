@@ -365,7 +365,22 @@
       "req_email": "E-Mail verifiziert",
       "req_location": "Standort / Nachbarschaft bestätigt",
       "action_complete": "Profil jetzt vervollständigen"
-    }
+    },
+    "actions": {
+      "is_favorite": "Mein Viertel",
+      "set_favorite": "Als mein Viertel festlegen"
+    },
+    "your_community": "Deine Community",
+    "explore_desc": "Erkunde, was in deinem Viertel passiert, und vernetze dich mit deinen Nachbarn.",
+    "new_recommendation": "Neue Empfehlung",
+    "share_place": "Teile einen Ort, einen Dienst oder ein Erlebnis mit deinen Nachbarn.",
+    "neighborhoods_of": "Viertel von",
+    "search_neighborhoods": "Viertel suchen...",
+    "register_neighborhood_btn": "Viertel registrieren",
+    "register_neighborhood": "Viertel registrieren",
+    "register_neighborhood_desc": "Finden Sie Ihr Viertel nicht? Registrieren Sie es hier, um sich mit Ihren Nachbarn zu vernetzen.",
+    "verifying": "Wird überprüft...",
+    "verify_create": "Überprüfen & Erstellen"
   },
   "navigation": {
     "social_network": "Mein Kreis"

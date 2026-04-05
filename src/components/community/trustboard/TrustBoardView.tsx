@@ -22,10 +22,10 @@ export function TrustBoardView({ neighborhood }: TrustBoardViewProps) {
 
     const categories = [
         { id: 'all', label: t('community.trustboard.cat_all', 'Todo'), icon: Search, color: 'bg-slate-100 text-slate-700' },
-        { id: 'jobs', label: 'Dicilo Jobs', icon: Briefcase, color: 'bg-blue-100 text-blue-700' },
-        { id: 'living', label: 'Dicilo Living', icon: Home, color: 'bg-orange-100 text-orange-700' },
-        { id: 'talent', label: 'Dicilo Talent', icon: Sparkles, color: 'bg-purple-100 text-purple-700' },
-        { id: 'swap', label: 'Gift/Swap', icon: RefreshCw, color: 'bg-green-100 text-green-700' }
+        { id: 'jobs', label: t('community.trustboard.cat_jobs', 'Dicilo Jobs'), icon: Briefcase, color: 'bg-blue-100 text-blue-700' },
+        { id: 'living', label: t('community.trustboard.cat_living', 'Dicilo Living'), icon: Home, color: 'bg-orange-100 text-orange-700' },
+        { id: 'talent', label: t('community.trustboard.cat_talent', 'Dicilo Talent'), icon: Sparkles, color: 'bg-purple-100 text-purple-700' },
+        { id: 'swap', label: t('community.trustboard.cat_swap', 'Gift/Swap'), icon: RefreshCw, color: 'bg-green-100 text-green-700' }
     ];
 
     return (
@@ -33,7 +33,7 @@ export function TrustBoardView({ neighborhood }: TrustBoardViewProps) {
             <div className="flex flex-col md:flex-row justify-between items-center gap-4 bg-white p-4 rounded-lg shadow-sm border border-slate-100">
                 <div className="flex-1 w-full relative">
                     <Input 
-                        placeholder={t('community.trustboard.search', 'Buscar en el muro de confianza...')} 
+                        placeholder={t('community.trustboard.search_ph', 'Buscar en el muro de confianza...')} 
                         className="pl-10" 
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}

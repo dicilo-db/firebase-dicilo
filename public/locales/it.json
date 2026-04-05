@@ -119,7 +119,22 @@
       "req_email": "Email Verified",
       "req_location": "Location / Neighborhood Confirmed",
       "action_complete": "Complete Profile Now"
-    }
+    },
+    "actions": {
+      "is_favorite": "My Neighborhood",
+      "set_favorite": "Set as My Neighborhood"
+    },
+    "your_community": "Your Community",
+    "explore_desc": "Explore what's happening in your neighborhood and connect with your neighbors.",
+    "new_recommendation": "New Recommendation",
+    "share_place": "Share a place, service, or experience with your neighbors.",
+    "neighborhoods_of": "Neighborhoods of",
+    "search_neighborhoods": "Search neighborhoods...",
+    "register_neighborhood_btn": "Register Neighborhood",
+    "register_neighborhood": "Register Neighborhood",
+    "register_neighborhood_desc": "Can't find your neighborhood? Register it here to start connecting with your neighbors.",
+    "verifying": "Verifying...",
+    "verify_create": "Verify & Create"
   },
   "navigation": {
     "social_network": "My Circle"

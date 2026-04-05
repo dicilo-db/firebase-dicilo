@@ -365,7 +365,22 @@
       "req_email": "Correo Electrónico Verificado",
       "req_location": "Ubicación / Barrio Confirmado",
       "action_complete": "Completar Perfil Ahora"
-    }
+    },
+    "actions": {
+      "is_favorite": "Es mi Barrio",
+      "set_favorite": "Marcar como mi Barrio"
+    },
+    "your_community": "Tu Comunidad",
+    "explore_desc": "Explora lo que sucede en tu barrio y conecta con tus vecinos.",
+    "new_recommendation": "Nueva Recomendación",
+    "share_place": "Comparte un lugar, servicio o experiencia con tus vecinos.",
+    "neighborhoods_of": "Barrios de",
+    "search_neighborhoods": "Buscar barrios...",
+    "register_neighborhood_btn": "Registrar Barrio",
+    "register_neighborhood": "Registrar Barrio",
+    "register_neighborhood_desc": "¿No encuentras tu barrio? Regístralo aquí para empezar a conectar con tus vecinos.",
+    "verifying": "Verificando...",
+    "verify_create": "Verificar y Crear"
   },
   "navigation": {
     "social_network": "Mi Círculo"
