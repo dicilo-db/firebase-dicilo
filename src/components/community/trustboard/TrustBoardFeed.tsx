@@ -19,6 +19,7 @@ const db = getFirestore(app);
 export function TrustBoardFeed({ neighborhood, activeCategory }: { neighborhood: string, activeCategory: string }) {
     const [posts, setPosts] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [indexError, setIndexError] = useState<string | null>(null);
     const [translatingId, setTranslatingId] = useState<string | null>(null);
     const [isAdmin, setIsAdmin] = useState(false);
     const { t, i18n } = useTranslation('common');
@@ -42,6 +43,7 @@ export function TrustBoardFeed({ neighborhood, activeCategory }: { neighborhood:
         }
 
         setLoading(true);
+        setIndexError(null);
         const postsRef = collection(db, 'trustboard_posts');
         
         let q;
@@ -50,7 +52,6 @@ export function TrustBoardFeed({ neighborhood, activeCategory }: { neighborhood:
                 postsRef,
                 where('neighborhood', '==', neighborhood),
                 where('status', '==', 'approved'),
-                orderBy('createdAt', 'desc'),
                 limit(50)
             );
         } else {
@@ -59,7 +60,6 @@ export function TrustBoardFeed({ neighborhood, activeCategory }: { neighborhood:
                 where('neighborhood', '==', neighborhood),
                 where('category', '==', activeCategory),
                 where('status', '==', 'approved'),
-                orderBy('createdAt', 'desc'),
                 limit(50)
             );
         }
@@ -69,10 +69,16 @@ export function TrustBoardFeed({ neighborhood, activeCategory }: { neighborhood:
                 id: doc.id,
                 ...doc.data()
             }));
+            data.sort((a: any, b: any) => {
+                const timeA = a.createdAt?.toMillis() || 0;
+                const timeB = b.createdAt?.toMillis() || 0;
+                return timeB - timeA;
+            });
             setPosts(data);
             setLoading(false);
-        }, (err) => {
+        }, (err: any) => {
             console.error('Error fetching trustboard posts:', err);
+            setIndexError(err.message);
             setLoading(false);
         });
 
@@ -136,7 +142,17 @@ export function TrustBoardFeed({ neighborhood, activeCategory }: { neighborhood:
         );
     }
 
-    if (posts.length === 0) {
+    if (indexError) {
+        return (
+            <div className="bg-red-50 text-red-600 p-4 rounded-md mt-6 border border-red-200 text-sm">
+                <p className="font-bold mb-2">Error de Base de Datos:</p>
+                <p>{indexError}</p>
+                <p className="mt-2 text-xs">Si la base de datos está construyendo los índices, esto desaparecerá en unos minutos.</p>
+            </div>
+        );
+    }
+
+    if (!loading && posts.length === 0) {
         return (
             <Card className="border-dashed border-2 bg-slate-50/50 mt-6">
                 <CardContent className="flex flex-col items-center justify-center p-12 text-center text-muted-foreground">
