@@ -85,7 +85,7 @@ export async function createTrustBoardPost(prevState: any, formData: FormData) {
                             } else {
                                 // Try Sharp Optimization for other formats
                                 try {
-                                    const sharp = (await import('sharp')).default;
+                                    const sharp = require('sharp');
                                     finalBuffer = await sharp(fileBuffer)
                                         .resize({ width: 1200, withoutEnlargement: true })
                                         .webp({ quality: 80 })
@@ -123,6 +123,8 @@ export async function createTrustBoardPost(prevState: any, formData: FormData) {
         });
 
         const uploadResults = await Promise.all(uploadPromises);
+        const mediaItems = uploadResults.filter((item): item is { type: string, url: string } => item !== null);
+
         // 3. AI Moderation Check
         let status = 'approved';
         try {
@@ -263,7 +265,7 @@ export async function editTrustBoardPost(postId: string, formData: FormData) {
                             const { fileTypeFromBuffer } = await import('file-type');
                             const type = await fileTypeFromBuffer(fileBuffer);
                             if (type && type.mime !== 'image/webp') {
-                                const sharp = (await import('sharp')).default;
+                                const sharp = require('sharp');
                                 finalBuffer = await sharp(fileBuffer).resize({ width: 1200, withoutEnlargement: true }).webp({ quality: 80 }).toBuffer();
                                 contentType = 'image/webp';
                             }
