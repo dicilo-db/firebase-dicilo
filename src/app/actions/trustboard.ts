@@ -8,6 +8,7 @@ import { translateText } from './translate';
 
 export async function createTrustBoardPost(prevState: any, formData: FormData) {
     const userId = formData.get('userId') as string;
+    let authorName = formData.get('authorName') as string || 'Usuario';
     const title = formData.get('title') as string;
     const description = formData.get('description') as string;
     const category = formData.get('category') as string;
@@ -40,6 +41,15 @@ export async function createTrustBoardPost(prevState: any, formData: FormData) {
         }
 
         const profileData = profileSnap.data() || {};
+        
+        // Extract correct name like in community posts
+        if (profileData.firstName) {
+            authorName = `${profileData.firstName} ${profileData.lastName || ''}`.trim();
+        } else if (authorName.includes('@')) {
+            // Clean up if it defaulted to email
+            authorName = authorName.split('@')[0];
+        }
+
         const isPremium = profileData.model === 'premium' || profileData.model === 'gold' || profileData.role === 'admin' || profileData.role === 'superadmin';
         
         // Month string (e.g. "2026-04")
@@ -174,7 +184,7 @@ export async function createTrustBoardPost(prevState: any, formData: FormData) {
         const newPost = {
             id: postRef.id,
             authorId: userId,
-            authorName: profileData.displayName || 'Usuario',
+            authorName: authorName,
             category: category, 
             neighborhood: neighborhood, 
             startDate,

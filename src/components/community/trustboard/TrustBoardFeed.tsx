@@ -28,6 +28,7 @@ export function TrustBoardFeed({ neighborhood, activeCategory }: { neighborhood:
     const [translatingId, setTranslatingId] = useState<string | null>(null);
     const [deletingId, setDeletingId] = useState<string | null>(null);
     const [editingPost, setEditingPost] = useState<any | null>(null);
+    const [viewingPost, setViewingPost] = useState<any | null>(null);
     const [isAdmin, setIsAdmin] = useState(false);
     const { t, i18n } = useTranslation('common');
     const { user } = useAuth();
@@ -265,7 +266,10 @@ export function TrustBoardFeed({ neighborhood, activeCategory }: { neighborhood:
                         </CardHeader>
                         
                         {post.imageUrl && (
-                            <div className="relative w-full h-48 bg-slate-100 overflow-hidden border-b border-slate-100">
+                            <div 
+                                className="relative w-full h-48 bg-slate-100 overflow-hidden border-b border-slate-100 cursor-pointer"
+                                onClick={() => setViewingPost(post)}
+                            >
                                 <img 
                                     src={post.imageUrl} 
                                     alt="TrustBoard Ad" 
@@ -279,16 +283,22 @@ export function TrustBoardFeed({ neighborhood, activeCategory }: { neighborhood:
                             </div>
                         )}
                         
-                        <CardContent className="p-4 flex-1">
-                            <p className="text-sm text-slate-600 line-clamp-4 leading-relaxed">
+                        <CardContent 
+                            className="p-4 flex-1 cursor-pointer group"
+                            onClick={() => setViewingPost(post)}
+                        >
+                            <p className="text-sm text-slate-600 line-clamp-4 leading-relaxed group-hover:text-slate-900 transition-colors">
                                 {description}
                             </p>
                             
-                            <div className="mt-4 flex items-center gap-2">
-                                <Avatar className="h-6 w-6">
-                                    <img src={`https://ui-avatars.com/api/?name=${post.authorName}&background=random`} alt={post.authorName} />
-                                </Avatar>
-                                <span className="text-xs font-medium text-slate-700">{post.authorName}</span>
+                            <div className="mt-4 flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                    <Avatar className="h-6 w-6">
+                                        <img src={`https://ui-avatars.com/api/?name=${post.authorName}&background=random`} alt={post.authorName} />
+                                    </Avatar>
+                                    <span className="text-xs font-medium text-slate-700">{post.authorName}</span>
+                                </div>
+                                <span className="text-xs text-blue-600 font-medium opacity-0 group-hover:opacity-100 transition-opacity">Ver más...</span>
                             </div>
                         </CardContent>
                         
@@ -405,6 +415,57 @@ export function TrustBoardFeed({ neighborhood, activeCategory }: { neighborhood:
                             postToEdit={editingPost}
                         />
                     )}
+                </DialogContent>
+            </Dialog>
+
+            <Dialog open={!!viewingPost} onOpenChange={(open) => !open && setViewingPost(null)}>
+                <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto p-0 border-none bg-white">
+                    {viewingPost?.imageUrl && (
+                        <div className="relative w-full h-64 sm:h-96 bg-black flex justify-center items-center">
+                            <img src={viewingPost.imageUrl} className="w-full h-full object-contain" alt="Ad Full Media" />
+                        </div>
+                    )}
+                    <div className="p-6">
+                        <div className="flex justify-between items-start mb-4">
+                            <Badge variant="outline" className={`flex items-center gap-1 ${getCategoryColor(viewingPost?.category)}`}>
+                                {getCategoryIcon(viewingPost?.category)}
+                                <span className="capitalize">{viewingPost?.category}</span>
+                            </Badge>
+                            <span className="text-slate-500 flex items-center text-sm font-medium">
+                                <MapPin className="w-4 h-4 mr-1" />
+                                {viewingPost?.neighborhood}
+                            </span>
+                        </div>
+                        <h2 className="text-2xl font-bold mb-4 text-slate-900">
+                            {viewingPost?.title?.[currentLang] || viewingPost?.title?.es}
+                        </h2>
+                        
+                        <div className="prose prose-slate max-w-none text-slate-700 whitespace-pre-wrap leading-relaxed text-[15px]">
+                            {viewingPost?.description?.[currentLang] || viewingPost?.description?.es}
+                        </div>
+
+                        <div className="mt-8 pt-4 border-t border-slate-100 flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <Avatar className="h-10 w-10 border">
+                                    <img src={`https://ui-avatars.com/api/?name=${viewingPost?.authorName}&background=random`} alt={viewingPost?.authorName} />
+                                </Avatar>
+                                <div>
+                                    <p className="text-sm font-bold text-slate-800">{viewingPost?.authorName}</p>
+                                    <p className="text-xs text-slate-500">
+                                        Publicado el {viewingPost?.createdAt ? new Date(viewingPost.createdAt.toMillis()).toLocaleDateString() : 'Reciente'}
+                                    </p>
+                                </div>
+                            </div>
+                            <Button 
+                                onClick={() => handleSocialShare('native', viewingPost)}
+                                variant="outline" 
+                                className="flex gap-2"
+                            >
+                                <Share2 className="h-4 w-4" />
+                                Compartir Anuncio
+                            </Button>
+                        </div>
+                    </div>
                 </DialogContent>
             </Dialog>
         </div>

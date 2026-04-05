@@ -158,6 +158,7 @@ export function TrustBoardPostForm({ neighborhood, onSuccess, onCancel, postToEd
         try {
             const submitData = new FormData();
             submitData.append('userId', user.uid);
+            submitData.append('authorName', user.displayName || user.email || 'Usuario');
             submitData.append('title', formData.title);
             submitData.append('description', formData.description);
             submitData.append('category', formData.category);
