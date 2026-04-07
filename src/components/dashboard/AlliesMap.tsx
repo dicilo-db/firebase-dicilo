@@ -14,6 +14,7 @@ import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { getAllCoupons } from '@/app/actions/coupons';
+import { useTranslation } from 'react-i18next';
 
 const DiciloMap = dynamic(() => import('@/components/dicilo-map'), {
     ssr: false,
@@ -29,6 +30,7 @@ interface AlliesMapProps {
 }
 
 export function AlliesMap({ userInterests, userId, onNavigateToSettings }: AlliesMapProps) {
+    const { t } = useTranslation(['common', 'dashboard']);
     const { toast } = useToast();
     const [allBusinesses, setAllBusinesses] = useState<any[]>([]);
     const [categoriesData, setCategoriesData] = useState<any[]>([]);
@@ -204,15 +206,11 @@ export function AlliesMap({ userInterests, userId, onNavigateToSettings }: Allie
                 if (!couponBusinessIds.includes(b.id)) return false;
             }
 
-            // Regla de Oro: Mostrar si está en intereses O si es favorito (Solo si NO estamos filtrando por cupones exclusivamente)
-            // Si estamos en modo cupones, ya filtramos arriba. Si queremos que respete intereses DENTRO de cupones, descomentar logica.
-            // Asumo que "Buscar Cupones" es un modo global "Ver ofertas".
-
-            if (!showCouponsOnly) {
-                const isMatchInterest = interestsNormalized.includes(b.categoryNormalized);
-                const isFavorite = favoriteIds.includes(b.id);
-                if (!isMatchInterest && !isFavorite) return false;
-            }
+            // Regla de Oro: Mostrar si está en intereses O si es favorito
+            // ESTO APLICA SIEMPRE, incluso mostrando cupones. Cada cliente ve solo SUS intereses.
+            const isMatchInterest = interestsNormalized.length > 0 && interestsNormalized.includes(b.categoryNormalized);
+            const isFavorite = favoriteIds.includes(b.id);
+            if (!isMatchInterest && !isFavorite) return false;
 
             // Filtros adicionales de UI
             if (selectedCategory !== 'all' && b.categoryNormalized !== selectedCategory.toLowerCase()) return false;
@@ -232,11 +230,11 @@ export function AlliesMap({ userInterests, userId, onNavigateToSettings }: Allie
             <div className="w-full md:w-[400px] flex flex-col border-r bg-white z-10 shadow-2xl">
                 <div className="p-4 bg-slate-50 border-b space-y-3">
                     <h2 className="text-xl font-bold flex items-center gap-2">
-                        Empresas de mi Interés <Star className="fill-yellow-400 text-yellow-400 h-5 w-5" />
+                        {t('dashboard.companiesOfInterest', 'Empresas de mi Interés')} <Star className="fill-yellow-400 text-yellow-400 h-5 w-5" />
                     </h2>
 
                     <Input
-                        placeholder="Buscar empresas o categorías..."
+                        placeholder={t('dashboard.searchCompanies', 'Buscar empresas o categorías...')}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="bg-white"
@@ -245,10 +243,10 @@ export function AlliesMap({ userInterests, userId, onNavigateToSettings }: Allie
                     <div className="flex gap-2">
                         <Select value={selectedCategory} onValueChange={setSelectedCategory}>
                             <SelectTrigger className="bg-white flex-1">
-                                <SelectValue placeholder="Filtrar por interés" />
+                                <SelectValue placeholder={t('dashboard.filterByInterest', 'Filtrar por interés')} />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="all">Todos mis intereses</SelectItem>
+                                <SelectItem value="all">{t('dashboard.allMyInterests', 'Todos mis intereses')}</SelectItem>
                                 {userInterests.map(cat => (
                                     <SelectItem key={cat} value={cat}>{getCategoryName(cat)}</SelectItem>
                                 ))}
@@ -269,7 +267,7 @@ export function AlliesMap({ userInterests, userId, onNavigateToSettings }: Allie
                         disabled={isLoadingCoupons}
                     >
                         <Ticket className={cn("mr-2 h-4 w-4", showCouponsOnly && "fill-current")} />
-                        {isLoadingCoupons ? "Buscando..." : (showCouponsOnly ? "Viendo Ofertas Activas" : "Ticket / Cupones")}
+                        {isLoadingCoupons ? t('common.searching', 'Buscando...') : (showCouponsOnly ? t('dashboard.viewingActiveOffers', 'Viendo Ofertas Activas') : t('dashboard.ticketsCoupons', 'Ticket / Cupones'))}
                     </Button>
 
                 </div>

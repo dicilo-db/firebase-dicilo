@@ -154,11 +154,11 @@ export function Sidebar({ userData, onViewChange, currentView }: SidebarProps) {
     const insertIdx = navItems.findIndex(item => item.id === 'freelancer');
     if (insertIdx !== -1) {
         navItems.splice(insertIdx + 1, 0, { id: 'community', label: t('community.your_community', 'Tu Comunidad'), icon: Share2, type: 'view' });
-        navItems.splice(insertIdx + 2, 0, { id: 'my-network', label: 'Mi Red Dicilo', icon: Network, type: 'view' });
+        navItems.splice(insertIdx + 2, 0, { id: 'my-network', label: t('dashboard.myNetwork', 'Mi Red Dicilo'), icon: Network, type: 'view' });
     } else {
         // Fallback
         navItems.push({ id: 'community', label: t('community.your_community', 'Tu Comunidad'), icon: Share2, type: 'view' });
-        navItems.push({ id: 'my-network', label: 'Mi Red Dicilo', icon: Network, type: 'view' });
+        navItems.push({ id: 'my-network', label: t('dashboard.myNetwork', 'Mi Red Dicilo'), icon: Network, type: 'view' });
     }
 
     // Add Admin conditionally
@@ -191,7 +191,7 @@ export function Sidebar({ userData, onViewChange, currentView }: SidebarProps) {
                 {/* ... existing avatar code ... keep as is, just ensure wrapper structure matches */}
                 <div className="relative mb-4">
                     <Avatar className="h-20 w-20 cursor-pointer border-2 border-primary/20 hover:border-primary">
-                        <AvatarImage src={userData?.photoURL} />
+                        <AvatarImage src={userData?.photoURL || userData?.photoUrl || user?.photoURL} />
                         <AvatarFallback>{userData?.firstName?.[0] || 'U'}</AvatarFallback>
                     </Avatar>
                     <label

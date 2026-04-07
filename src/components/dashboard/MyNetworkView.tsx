@@ -104,7 +104,7 @@ export function MyNetworkView({ uid }: MyNetworkViewProps) {
             <div className="flex items-center gap-3">
                 <Network className="h-8 w-8 text-orange-500" />
                 <div>
-                    <h1 className="text-2xl font-bold">Mi Red Dicilo</h1>
+                    <h1 className="text-2xl font-bold">{t('dashboard.myNetwork', 'Mi Red Dicilo')}</h1>
                     <p className="text-muted-foreground">Visualiza tu árbol de invitados y equipo.</p>
                 </div>
             </div>

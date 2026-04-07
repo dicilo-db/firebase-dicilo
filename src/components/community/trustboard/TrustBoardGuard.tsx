@@ -57,7 +57,7 @@ export function TrustBoardGuard({ currentUser, children }: TrustBoardGuardProps)
                 }
 
                 // Temporary override for superadmin users via email if doc is slow
-                if (currentUser.email === 'superadmin@dicilo.net' || isAdmin) {
+                if (currentUser.email === 'superadmin@dicilo.net' || currentUser.email === 'mohammedzaxo@outlook.de' || isAdmin) {
                     hasName = true;
                     hasPhoto = true;
                     isVerified = true;

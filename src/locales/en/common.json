@@ -319,7 +319,7 @@
       "maximizeEarnings": "Good job! Write {{chars}} more to maximize to €0.40.",
       "earningsMaximized": "Excellent! You have maximized your base rate."
     },
-    "scanToRegister": "Scan to register with my code.",
+    "scanToRegister": "Scan to register with my referral link",
     "myCode": "my code.",
     "download": "Download",
     "myArea": "My Area",
@@ -330,12 +330,12 @@
     "yourUniqueCode": "Your Unique Code",
     "overview": "Overview",
     "myWallet": "My Wallet",
-    "alliesMapNav": "My Interests",
+    "alliesMapNav": "Allies Map",
     "freelancer_nav": "Freelancer",
     "settings": "Settings",
     "personalData": "Personal Data",
     "interests": "Interests",
-    "socialRewards": "Social & Rewards",
+    "socialRewards": "Social Rewards",
     "profileStatus": "Profile Status",
     "active": "Active",
     "memberSince": "Member since",
@@ -346,6 +346,8 @@
     "inviteFriends": "Invite Friends",
     "personalInfo": "Personal Information",
     "personalInfoDesc": "Update your personal details and contact preferences.",
+    "myNetwork": "My Dicilo Network",
+    "contactPhones": "Contact Phones",
     "fixedPhone": "Fixed Phone",
     "workPhone": "Work Phone",
     "whatsappHandle": "WhatsApp",
@@ -478,8 +480,27 @@
       "latestEvents": "Latest Events and Updates",
       "noEventsToday": "No events scheduled for this day."
     },
-    "downloadQr": "Download QR Code",
-    "joinChatGroup": "Join Chat Group"
+    "downloadQr": "Download QR",
+    "joinChatGroup": "Join Chat Group",
+    "miBox": "My Box",
+    "miBoxTitle": "My Box (Inbox)",
+    "miBoxDesc": "Receive personalized offers from your favorite allies and categories of interest in your city.",
+    "miBoxEmptyTitle": "Your box is empty",
+    "miBoxEmptyDesc": "You don't have new offers yet. Make sure to update your interests and follow your favorite local businesses to receive exclusive promotions here.",
+    "companiesOfInterest": "Companies of Interest",
+    "searchCompanies": "Search companies or categories...",
+    "filterByInterest": "Filter by interest",
+    "allMyInterests": "All my interests",
+    "viewingActiveOffers": "Viewing Active Offers",
+    "ticketsCoupons": "Ticket / Coupons",
+    "uniqueIdLabel": "Your unique ID and referral code.",
+    "diciloId": "Dicilo ID",
+    "fullName": "Full Name",
+    "share": "Share",
+    "couponObtained": "Coupon Obtained!",
+    "couponObtainedDesc": "Saved on your device and removed from the box.",
+    "couponError": "Could not process coupon.",
+    "finances": "Finances"
   },
   "tickets": {
     "title": "Support Tickets",
@@ -1087,5 +1108,9 @@
     "monitored_desc": "Posts here are exclusive to your contacts, but the environment is subject to preventive auditing by DiciBot Brain to detect violations of community guidelines.",
     "your_private_circle": "Your Private Circle",
     "create_post_private": "What are you thinking? (Only for your friends)"
-  }
+  },
+  "validUntil": "Valid until:",
+  "downloadPDF": "Download PDF",
+  "downloadJPG": "Download JPG",
+  "searching": "Searching..."
 }

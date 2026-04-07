@@ -153,10 +153,10 @@ export function MiBox({ user }: MiBoxProps) {
             // 3. Remove from UI
             setCoupons(prev => prev.filter(c => c.id !== coupon.id));
             
-            toast({ title: '¡Cupón Obtenido!', description: 'Se ha guardado en tu dispositivo y removido del buzón.' });
+            toast({ title: t('dashboard.couponObtained', '¡Cupón Obtenido!'), description: t('dashboard.couponObtainedDesc', 'Se ha guardado en tu dispositivo y removido del buzón.') });
         } catch (error) {
             console.error("Error consuming coupon", error);
-            toast({ title: 'Error', description: 'No se pudo procesar el cupón.', variant: 'destructive' });
+            toast({ title: 'Error', description: t('dashboard.couponError', 'No se pudo procesar el cupón.'), variant: 'destructive' });
         }
     };
 
@@ -166,10 +166,10 @@ export function MiBox({ user }: MiBoxProps) {
                 <div>
                     <h3 className="text-xl font-bold flex items-center gap-2 text-primary">
                         <Mailbox className="h-6 w-6" />
-                        Mi Box (Buzón)
+                        {t('dashboard.miBoxTitle', 'Mi Box (Buzón)')}
                     </h3>
                     <p className="text-sm text-muted-foreground mt-1">
-                        Aquí recibes ofertas personalizadas de tus aliados favoritos y categorías de interés en tu ciudad.
+                        {t('dashboard.miBoxDesc', 'Aquí recibes ofertas personalizadas de tus aliados favoritos y categorías de interés en tu ciudad.')}
                     </p>
                 </div>
             </div>
@@ -184,9 +184,9 @@ export function MiBox({ user }: MiBoxProps) {
                         <div className="h-16 w-16 bg-muted rounded-full flex items-center justify-center mb-4">
                             <Archive className="h-8 w-8 text-muted-foreground" />
                         </div>
-                        <h3 className="text-xl font-medium text-foreground">Tu buzón está vacío</h3>
+                        <h3 className="text-xl font-medium text-foreground">{t('dashboard.miBoxEmptyTitle', 'Tu buzón está vacío')}</h3>
                         <p className="text-sm text-muted-foreground max-w-md mt-2">
-                            Aún no tienes nuevas ofertas. Asegúrate de actualizar tus intereses y seguir a tus negocios locales favoritos para recibir sus promociones exclusivas aquí.
+                            {t('dashboard.miBoxEmptyDesc', 'Aún no tienes nuevas ofertas. Asegúrate de actualizar tus intereses y seguir a tus negocios locales favoritos para recibir sus promociones exclusivas aquí.')}
                         </p>
                     </CardContent>
                 </Card>
@@ -229,7 +229,7 @@ export function MiBox({ user }: MiBoxProps) {
                                     <div className="flex items-center text-muted-foreground bg-white p-2 rounded-md border shadow-sm">
                                         <Calendar className="mr-2 h-4 w-4 text-primary" />
                                         <span className="font-medium text-xs">
-                                            Válido hasta: {coupon.endDate && !isNaN(new Date(coupon.endDate).getTime()) ? format(new Date(coupon.endDate), 'dd MMM yyyy', { locale: dateLocale }) : 'Pronto'}
+                                            {t('validUntil', 'Válido hasta:')} {coupon.endDate && !isNaN(new Date(coupon.endDate).getTime()) ? format(new Date(coupon.endDate), 'dd MMM yyyy', { locale: dateLocale }) : 'Pronto'}
                                         </span>
                                     </div>
                                     <div className="flex items-center text-muted-foreground text-xs px-1">
@@ -243,11 +243,11 @@ export function MiBox({ user }: MiBoxProps) {
                             <div className="grid grid-cols-2 gap-2 mt-1">
                                 <Button className="w-full text-xs shadow-sm hover:shadow-md transition-shadow" variant="default" onClick={() => handleConsumeAndDownload(coupon, 'pdf')}>
                                     <Download className="mr-2 h-3 w-3" />
-                                    Descargar PDF
+                                    {t('downloadPDF', 'Descargar PDF')}
                                 </Button>
                                 <Button className="w-full text-xs shadow-sm hover:shadow-md transition-shadow" variant="outline" onClick={() => handleConsumeAndDownload(coupon, 'jpg')}>
                                     <Download className="mr-2 h-3 w-3" />
-                                    Descargar JPG
+                                    {t('downloadJPG', 'Descargar JPG')}
                                 </Button>
                             </div>
                         </div>

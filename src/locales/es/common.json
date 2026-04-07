@@ -267,7 +267,7 @@
       "maximizeEarnings": "¡Buen trabajo! Escribe {{chars}} más para maximizar a €0.40.",
       "earningsMaximized": "¡Excelente! Has maximizado tu tarifa base."
     },
-    "scanToRegister": "Escanea para registrarte con mi código.",
+    "scanToRegister": "Escanea para registrarte con mi enlace de referencia",
     "myCode": "mi código.",
     "download": "Descargar",
     "myArea": "Mi Área",
@@ -283,7 +283,7 @@
     "settings": "Ajustes",
     "personalData": "Datos Personales",
     "interests": "Intereses",
-    "socialRewards": "Social y Recompensas",
+    "socialRewards": "Recompensas Sociales",
     "profileStatus": "Estado del Perfil",
     "active": "Activo",
     "memberSince": "Miembro desde",
@@ -294,6 +294,8 @@
     "inviteFriends": "Invitar Amigos",
     "personalInfo": "Información Personal",
     "personalInfoDesc": "Actualiza tus datos y preferencias de contacto.",
+    "myNetwork": "Mi Red Dicilo",
+    "contactPhones": "Teléfonos de Contacto",
     "fixedPhone": "Teléfono fijo",
     "workPhone": "Telefono empresa",
     "whatsappHandle": "WhatsApp",
@@ -427,8 +429,27 @@
       "latestEvents": "Últimos Eventos y Actualizaciones",
       "noEventsToday": "No hay eventos programados para este día."
     },
-    "downloadQr": "Descargar Código QR",
-    "joinChatGroup": "Unirse al Grupo de Chat"
+    "downloadQr": "Descargar QR",
+    "joinChatGroup": "Unirse al Grupo de Chat",
+    "miBox": "Mi Box",
+    "miBoxTitle": "Mi Box (Buzón)",
+    "miBoxDesc": "Aquí recibes ofertas personalizadas de tus aliados favoritos y categorías de interés en tu ciudad.",
+    "miBoxEmptyTitle": "Tu buzón está vacío",
+    "miBoxEmptyDesc": "Aún no tienes nuevas ofertas. Asegúrate de actualizar tus intereses y seguir a tus negocios locales favoritos para recibir sus promociones exclusivas aquí.",
+    "companiesOfInterest": "Empresas de mi Interés",
+    "searchCompanies": "Buscar empresas o categorías...",
+    "filterByInterest": "Filtrar por interés",
+    "allMyInterests": "Todos mis intereses",
+    "viewingActiveOffers": "Viendo Ofertas Activas",
+    "ticketsCoupons": "Ticket / Cupones",
+    "uniqueIdLabel": "Tu identificación única y código de recomendación.",
+    "diciloId": "ID de Dicilo",
+    "fullName": "Nombre Completo",
+    "share": "Compartir",
+    "couponObtained": "¡Cupón Obtenido!",
+    "couponObtainedDesc": "Se ha guardado en tu dispositivo y removido del buzón.",
+    "couponError": "No se pudo procesar el cupón.",
+    "finances": "Finanzas"
   },
   "tickets": {
     "title": "Tickets de Soporte",
@@ -1167,5 +1188,9 @@
     "monitored_desc": "Las publicaciones aquí son exclusivas para tus contactos, pero el entorno está sujeto a la auditoría preventiva de Cerebro DiciBot para detectar violaciones a las normativas de la comunidad.",
     "your_private_circle": "Tu Círculo Privado",
     "create_post_private": "¿Qué estás pensando? (Solo para tus amigos)"
-  }
+  },
+  "validUntil": "Válido hasta:",
+  "downloadPDF": "Descargar PDF",
+  "downloadJPG": "Descargar JPG",
+  "searching": "Buscando..."
 }

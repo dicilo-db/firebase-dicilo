@@ -462,8 +462,8 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                             <TabsTrigger value="finanzas" className="flex-grow sm:flex-grow-0 text-emerald-700 bg-emerald-50/50 hover:bg-emerald-100 data-[state=active]:bg-emerald-600 data-[state=active]:text-white">
                                 {t('dashboard.finances', 'Finanzas')} {!['freelancer', 'team_leader', 'manager', 'admin', 'superadmin', 'SuperAdmin'].includes(formData?.role?.toLowerCase() || '') && formData?.referrals?.length < 10 && <Lock className="inline w-3 h-3 ml-1"/>}
                             </TabsTrigger>
-                            <TabsTrigger value="mibox" className="flex-grow sm:flex-grow-0">Mi Box</TabsTrigger>
-                            <TabsTrigger value="companies" className="flex-grow sm:flex-grow-0">{t('dashboard.companiesOfInterest', 'Empresas de Interes')}</TabsTrigger>
+                            <TabsTrigger value="mibox" className="flex-grow sm:flex-grow-0">{t('dashboard.miBox', 'Mi Box')}</TabsTrigger>
+                            <TabsTrigger value="companies" className="flex-grow sm:flex-grow-0">{t('dashboard.companiesOfInterest', 'Empresas de mi Interés')}</TabsTrigger>
                             <TabsTrigger value="social" className="flex-grow sm:flex-grow-0">{t('dashboard.socialRewards')}</TabsTrigger>
                         </TabsList>
 
@@ -479,11 +479,11 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                                                 Dicilo ID & QR
                                             </CardTitle>
                                             <CardDescription>
-                                                Tu identificación única y código de recomendación.
+                                                {t('dashboard.uniqueIdLabel', 'Tu identificación única y código de recomendación.')}
                                             </CardDescription>
                                         </div>
                                         <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200">
-                                            Activo
+                                            {t('dashboard.active', 'Activo')}
                                         </Badge>
                                     </div>
                                 </CardHeader>
@@ -492,7 +492,7 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                                         {/* ID Details */}
                                         <div className="space-y-4">
                                             <div className="space-y-1">
-                                                <Label className="text-xs text-muted-foreground uppercase tracking-wider">ID de Dicilo</Label>
+                                                <Label className="text-xs text-muted-foreground uppercase tracking-wider">{t('dashboard.diciloId', 'ID de Dicilo')}</Label>
                                                 <div className="flex items-center gap-2 bg-slate-100 p-3 rounded-lg font-mono text-lg font-bold">
                                                     {formData.uniqueCode || '---'}
                                                     <Button variant="ghost" size="icon" className="ml-auto h-8 w-8" onClick={() => copyToClipboard(formData.uniqueCode)}>
@@ -502,7 +502,7 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                                             </div>
                                             
                                             <div className="space-y-1">
-                                                <Label className="text-xs text-muted-foreground uppercase tracking-wider">Nombre Completo</Label>
+                                                <Label className="text-xs text-muted-foreground uppercase tracking-wider">{t('dashboard.fullName', 'Nombre Completo')}</Label>
                                                 <p className="font-semibold text-slate-800">{formData.firstName} {formData.lastName}</p>
                                             </div>
 
@@ -516,11 +516,11 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                                             <div className="flex flex-col sm:flex-row gap-2 pt-2">
                                                 <Button className="flex-1 bg-emerald-600 hover:bg-emerald-700" onClick={handleDownloadQr}>
                                                     <Download className="mr-2 h-4 w-4" />
-                                                    Descargar QR
+                                                    {t('dashboard.downloadQr', 'Descargar QR')}
                                                 </Button>
                                                 <Button variant="outline" className="flex-1" onClick={handleShareQr}>
                                                     <Share2 className="mr-2 h-4 w-4" />
-                                                    Compartir
+                                                    {t('dashboard.share', 'Compartir')}
                                                 </Button>
                                             </div>
                                         </div>
@@ -541,7 +541,7 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                                                 </div>
                                             )}
                                             <p className="text-[10px] text-muted-foreground mt-4 text-center">
-                                                Escanea para registrarte con mi enlace de referencia
+                                                {t('dashboard.scanToRegister', 'Escanea para registrarte con mi enlace de referencia')}
                                             </p>
                                         </div>
                                     </div>
