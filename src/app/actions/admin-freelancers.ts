@@ -75,3 +75,35 @@ export async function getFreelancersList(): Promise<{ success: boolean; data: Fr
         return { success: false, data: [], error: error.message };
     }
 }
+
+export async function getFreelancerPayoutMethod(uid: string) {
+    try {
+        const db = getAdminDb();
+        // Check for new Global Payout method first
+        const docSnap = await db.collection('user_payout_methods').doc(uid).get();
+        if (docSnap.exists) {
+            return { success: true, data: { source: 'Global', ...docSnap.data() } };
+        }
+        
+        // Fallback to legacy/local financialData inside private_profiles
+        const profileSnap = await db.collection('private_profiles').doc(uid).get();
+        if (profileSnap.exists) {
+            const profileData = profileSnap.data();
+            if (profileData && profileData.financialData) {
+                return { 
+                    success: true, 
+                    data: { 
+                        source: 'Local (Venezuela)', 
+                        group: 'LOCAL_BANKING', 
+                        details: profileData.financialData 
+                    } 
+                };
+            }
+        }
+
+        return { success: false, error: 'No payout method configured' };
+    } catch (error: any) {
+        console.error('Error fetching payout method:', error);
+        return { success: false, error: error.message };
+    }
+}

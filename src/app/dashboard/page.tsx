@@ -22,6 +22,7 @@ import { Loader2, LogOut, User as UserIcon, Coins } from 'lucide-react';
 import { checkAdminRole } from '@/lib/auth';
 import { PrivateDashboard } from '@/components/dashboard/PrivateDashboard';
 import { getWalletData } from '@/app/actions/wallet';
+import { OnboardingLock } from '@/components/dashboard/OnboardingLock';
 
 const auth = getAuth(app);
 const db = getFirestore(app);
@@ -219,6 +220,26 @@ export default function DashboardPage() {
                     <DashboardSkeleton />
                 </main>
             </div>
+        );
+    }
+
+    const isClientNeedsOnboarding = clientData && (!clientData.country || !clientData.city);
+    const isPrivateNeedsOnboarding = privateProfile && (!privateProfile.country || !privateProfile.city || !privateProfile.interests || privateProfile.interests.length === 0);
+
+    const requiresOnboarding = isClientNeedsOnboarding || isPrivateNeedsOnboarding;
+
+    if (requiresOnboarding && user) {
+        const uType = clientData ? 'client' : 'private';
+        const name = clientData ? clientData.clientName : privateProfile?.firstName || 'Usuario';
+        
+        return (
+             <OnboardingLock 
+                 uid={user.uid} 
+                 name={name} 
+                 userType={uType} 
+                 clientId={clientData?.id} 
+                 onSuccess={() => window.location.reload()} 
+             />
         );
     }
 

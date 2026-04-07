@@ -111,3 +111,37 @@ export async function getProfile(uid: string) {
         return null;
     }
 }
+
+export async function completeOnboarding(
+    uid: string, 
+    data: { country: string; city: string; items: string[] }, 
+    userType: 'private' | 'client', 
+    clientId?: string
+) {
+    try {
+        const db = getAdminDb();
+        const updatePayload = {
+            country: data.country,
+            city: data.city,
+            updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        };
+
+        if (userType === 'private') {
+            await db.collection('private_profiles').doc(uid).set({
+                ...updatePayload,
+                interests: data.items
+            }, { merge: true });
+        } else if (userType === 'client' && clientId) {
+            await db.collection('clients').doc(clientId).set({
+                ...updatePayload,
+                // Si la empresa no tenía categoría asignada, le ponemos la primera que eligió
+                category: data.items[0] || 'other' 
+            }, { merge: true });
+        }
+
+        return { success: true };
+    } catch (error: any) {
+        console.error('Error completando onboarding:', error);
+        return { success: false, error: error.message };
+    }
+}

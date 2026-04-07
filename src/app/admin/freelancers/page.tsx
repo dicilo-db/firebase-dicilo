@@ -14,9 +14,10 @@ import {
 } from '@/components/ui/table';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAdminUser, useAuthGuard } from '@/hooks/useAuthGuard';
-import { Loader2, Search, LayoutDashboard, Download, Filter, RefreshCw, X } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { getFreelancersList, FreelancerData, getFreelancerPayoutMethod } from '@/app/actions/admin-freelancers';
+import { Landmark, Loader2, Search, LayoutDashboard, Download, Filter, RefreshCw, X } from 'lucide-react';
 import Link from 'next/link';
-import { getFreelancersList, FreelancerData } from '@/app/actions/admin-freelancers';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 
@@ -35,6 +36,27 @@ export default function FreelancersPage() {
     const [filterCountry, setFilterCountry] = useState('all');
     const [filterCity, setFilterCity] = useState('all');
     const [filterCategory, setFilterCategory] = useState('all'); // Mapping to 'Interests'
+
+    // Payout modal state
+    const [selectedUserForPayout, setSelectedUserForPayout] = useState<FreelancerData | null>(null);
+    const [payoutData, setPayoutData] = useState<any>(null);
+    const [isLoadingPayout, setIsLoadingPayout] = useState(false);
+    const [isPayoutModalOpen, setIsPayoutModalOpen] = useState(false);
+
+    const handleViewPayout = async (user: FreelancerData) => {
+        setSelectedUserForPayout(user);
+        setIsPayoutModalOpen(true);
+        setIsLoadingPayout(true);
+        setPayoutData(null);
+        
+        const res = await getFreelancerPayoutMethod(user.id);
+        if (res.success) {
+            setPayoutData(res.data);
+        } else {
+            setPayoutData(null); // Explicitly null if not found
+        }
+        setIsLoadingPayout(false);
+    };
 
     const fetchData = async () => {
         setIsLoading(true);
@@ -278,7 +300,12 @@ export default function FreelancersPage() {
                                                 <TableCell className="font-mono font-medium text-xs text-muted-foreground">{user.uniqueCode}</TableCell>
                                                 <TableCell>
                                                     <div className="flex flex-col">
-                                                        <span className="font-medium">{user.firstName} {user.lastName}</span>
+                                                        <div className="flex items-center gap-2">
+                                                            <span className="font-medium">{user.firstName} {user.lastName}</span>
+                                                            <Button variant="ghost" size="icon" className="h-6 w-6 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-full" onClick={() => handleViewPayout(user)} title="Ver Datos Bancarios">
+                                                                <Landmark className="h-3.5 w-3.5" />
+                                                            </Button>
+                                                        </div>
                                                         <Badge variant="outline" className="w-fit text-[10px] h-5 mt-1 capitalize font-normal border-blue-200 bg-blue-50 text-blue-700">
                                                             {user.role}
                                                         </Badge>
@@ -332,6 +359,47 @@ export default function FreelancersPage() {
                         )}
                     </CardContent>
                 </Card>
+
+                <Dialog open={isPayoutModalOpen} onOpenChange={setIsPayoutModalOpen}>
+                    <DialogContent className="sm:max-w-md">
+                        <DialogHeader>
+                            <DialogTitle className="flex items-center gap-2">
+                                <Landmark className="h-5 w-5 text-emerald-600" /> Datos Bancarios 
+                            </DialogTitle>
+                            <DialogDescription>
+                                Beneficiario: {selectedUserForPayout?.firstName} {selectedUserForPayout?.lastName}
+                            </DialogDescription>
+                        </DialogHeader>
+                        
+                        <div className="py-2 overflow-y-auto max-h-[60vh] pr-2">
+                            {isLoadingPayout ? (
+                                <div className="flex justify-center p-8">
+                                    <Loader2 className="h-6 w-6 animate-spin text-emerald-600" />
+                                </div>
+                            ) : payoutData ? (
+                                <div className="space-y-4">
+                                    <div className="rounded-lg bg-slate-50 p-4 border border-slate-100">
+                                        <p className="text-sm font-semibold text-slate-800 mb-2">Método de Cobro: <span className="font-mono text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded">{payoutData.group || 'General'}</span></p>
+                                        <div className="grid grid-cols-1 gap-y-3 mt-4">
+                                            {payoutData.details ? Object.entries(payoutData.details).map(([key, value]) => (
+                                                <div key={key} className="flex flex-col">
+                                                    <span className="text-xs text-slate-500 font-medium uppercase tracking-wider">{key.replace(/_/g, ' ')}</span>
+                                                    <span className="text-sm font-mono text-slate-900 bg-white border border-slate-200 mt-1 p-2 rounded break-all">{String(value)}</span>
+                                                </div>
+                                            )) : (
+                                                <span className="text-sm text-slate-500">Sin datos financieros estructurados.</span>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="text-center p-6 border border-dashed rounded-lg bg-slate-50 border-slate-200">
+                                    <p className="text-sm text-slate-500">Este freelancer aún no ha configurado sus datos bancarios para pagos internacionales.</p>
+                                </div>
+                            )}
+                        </div>
+                    </DialogContent>
+                </Dialog>
             </main>
         </div>
     );

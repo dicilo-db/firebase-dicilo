@@ -4,7 +4,8 @@ import { useSearchParams } from 'next/navigation';
 import AdsDashboard from '@/components/ads-manager/AdsDashboard';
 import { updatePrivateProfile, ensureUniqueCode } from '@/app/actions/profile';
 import { User } from 'firebase/auth';
-import { doc, getFirestore, updateDoc, setDoc, onSnapshot, addDoc, collection } from 'firebase/firestore';
+import { getFirestore, doc, onSnapshot, setDoc, addDoc, collection } from 'firebase/firestore';
+import { ALL_COUNTRIES } from '@/data/countries';
 import { app } from '@/lib/firebase';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
@@ -596,11 +597,24 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                                         <div className="grid gap-4 md:grid-cols-2">
                                             <div className="space-y-2">
                                                 <Label>{t('dashboard.country')}</Label>
-                                                <Input
+                                                <Select
                                                     value={formData.country || ''}
-                                                    onChange={(e) => setFormData({ ...formData, country: e.target.value })}
-                                                    onBlur={() => handleUpdate('country', { country: formData.country })}
-                                                />
+                                                    onValueChange={(val) => {
+                                                        setFormData({ ...formData, country: val });
+                                                        handleUpdate('country', { country: val });
+                                                    }}
+                                                >
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Seleccionar..." />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        {ALL_COUNTRIES.map((c) => (
+                                                            <SelectItem key={c.value} value={c.value}>
+                                                                {c.label}
+                                                            </SelectItem>
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select>
                                             </div>
                                             <div className="space-y-2">
                                                 <Label>{t('dashboard.city')}</Label>
@@ -614,7 +628,7 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                                     </div>
 
                                     <div className="space-y-4 pt-4 border-t">
-                                        <h3 className="text-lg font-medium">{t('admin:locationContact')}</h3>
+                                        <h3 className="text-lg font-medium">{t('dashboard.contactPhones', 'Teléfonos de Contacto')}</h3>
                                         <div className="grid gap-4 md:grid-cols-2">
                                             <div className="space-y-2">
                                                 <Label>{t('dashboard.fixedPhone')}</Label>

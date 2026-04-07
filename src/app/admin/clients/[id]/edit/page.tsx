@@ -34,6 +34,8 @@ export interface ClientData {
   category?: string;
   subcategory?: string;
   layout?: any[]; // For the Landing Page Builder
+  country?: string;
+  city?: string;
 }
 
 const EditClientFormSkeleton = () => (
