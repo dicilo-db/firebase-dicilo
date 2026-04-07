@@ -10,23 +10,55 @@ import sharp from 'sharp';
 import { randomUUID, randomBytes } from 'crypto';
 
 import { checkBusinessDuplicate } from './business-utils';
+import { headers } from 'next/headers';
+import { checkRateLimit } from '@/lib/rate-limit';
+import { z } from 'zod';
+
+const recommendSchema = z.object({
+    companyName: z.string().min(2, "Nombre de empresa muy corto").max(150, "Nombre muy largo"),
+    neighborhood: z.string().max(150).optional().nullable(),
+    city: z.string().max(100).optional().nullable(),
+    phone: z.string().max(50).optional().nullable(),
+    email: z.string().max(150).optional().nullable(),
+    contactName: z.string().max(150).optional().nullable(),
+    comments: z.string().max(2000, "Los comentarios no pueden exceder 2000 caracteres").optional().nullable()
+});
 
 export async function submitRecommendation(formData: FormData) {
+    const headersList = headers();
+    const ip = headersList.get('x-forwarded-for') || headersList.get('x-real-ip') || 'unknown';
+    
+    // Limits an IP to 5 recommendations per minute
+    if (!checkRateLimit(`create_rec_${ip}`, 5, 60000)) {
+        return { success: false, error: 'Has excedido el límite de recomendaciones. Por favor, espera 1 minuto.' };
+    }
+
     try {
         const db = getAdminDb();
         const storage = getAdminStorage();
         const bucket = storage.bucket();
 
         // Extract textual data
-        const companyName = formData.get('companyName') as string;
-        const neighborhood = formData.get('neighborhood') as string;
-        const city = formData.get('city') as string;
-        const phone = formData.get('phone') as string;
+        const rawData = {
+            companyName: formData.get('companyName') as string,
+            neighborhood: formData.get('neighborhood') as string,
+            city: formData.get('city') as string,
+            phone: formData.get('phone') as string,
+            email: formData.get('email') as string,
+            contactName: (formData.get('contactFirstName') as string || '') + ' ' + (formData.get('contactLastName') as string || ''),
+            comments: formData.get('comments') as string
+        };
+
+        const parsed = recommendSchema.safeParse(rawData);
+        if (!parsed.success) {
+            return { success: false, error: parsed.error.errors[0].message };
+        }
+
+        const { companyName, neighborhood, city, phone, email, contactName, comments } = parsed.data;
 
         // Check for duplicates (Company Name + Address + Phone)
-        // We use neighborhood or city as the address factor for recommendations
         const address = neighborhood || city;
-        const dupCheck = await checkBusinessDuplicate(companyName, address, phone);
+        const dupCheck = await checkBusinessDuplicate(companyName, address || '', phone || '');
         if (dupCheck.isDuplicate) {
             return { 
                 success: false, 
@@ -34,17 +66,12 @@ export async function submitRecommendation(formData: FormData) {
             };
         }
 
-        const contactFirstName = formData.get('contactFirstName') as string;
-        const contactLastName = formData.get('contactLastName') as string;
-        const contactName = `${contactFirstName || ''} ${contactLastName || ''}`.trim() || (formData.get('contactName') as string);
-        const email = formData.get('email') as string;
         const companyEmail = formData.get('companyEmail') as string;
         const companyPhone = formData.get('companyPhone') as string;
         const country = formData.get('country') as string;
         const countryCode = formData.get('countryCode') as string;
         const website = formData.get('website') as string;
         const category = formData.get('category') as string;
-        const comments = formData.get('comments') as string;
         const diciloCode = formData.get('diciloCode') as string;
         const source = formData.get('source') as string;
         const userId = formData.get('userId') as string;
@@ -136,8 +163,8 @@ export async function submitRecommendation(formData: FormData) {
 
         const recommendationData: any = {
             companyName,
-            contactFirstName,
-            contactLastName,
+            contactFirstName: formData.get('contactFirstName') as string || '',
+            contactLastName: formData.get('contactLastName') as string || '',
             contactName: contactName || '',
             email,
             phone,

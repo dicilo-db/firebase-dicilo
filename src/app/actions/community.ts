@@ -3,16 +3,43 @@
 import { getAuth } from 'firebase-admin/auth';
 import { getAdminDb, getAdminStorage } from '@/lib/firebase-admin';
 import { randomUUID } from 'crypto';
+import { headers } from 'next/headers';
+import { checkRateLimit } from '@/lib/rate-limit';
+import { z } from 'zod';
+
+const postSchema = z.object({
+    content: z.string().max(3000, "El contenido excede el límite de caracteres (3000)").nullable().optional(),
+    neighborhood: z.string().max(200, "Error en barrio"),
+    userId: z.string().min(5, "ID de usuario inválido"),
+    visibility: z.string().max(50).optional()
+});
 
 const db = getAdminDb();
 const auth = getAuth();
 const storage = getAdminStorage();
 
 export async function createPostAction(prevState: any, formData: FormData) {
-    const content = formData.get('content') as string;
-    const neighborhood = formData.get('neighborhood') as string;
-    const userId = formData.get('userId') as string;
-    const visibility = (formData.get('visibility') as string) || 'public';
+    const headersList = headers();
+    const ip = headersList.get('x-forwarded-for') || headersList.get('x-real-ip') || 'unknown';
+    
+    // Limits an IP to 10 posts per minute to prevent brute-force server flooding
+    if (!checkRateLimit(`create_post_${ip}`, 10, 60000)) {
+        return { success: false, error: 'Has excedido el límite de creación. Por favor, espera 1 minuto.' };
+    }
+
+    const rawData = {
+        content: formData.get('content') as string,
+        neighborhood: formData.get('neighborhood') as string,
+        userId: formData.get('userId') as string,
+        visibility: (formData.get('visibility') as string) || 'public'
+    };
+
+    const parsed = postSchema.safeParse(rawData);
+    if (!parsed.success) {
+        return { success: false, error: parsed.error.errors[0].message };
+    }
+
+    const { content, neighborhood, userId, visibility } = parsed.data;
     const mediaFiles = formData.getAll('media') as File[];
 
     if (!content && mediaFiles.length === 0) {

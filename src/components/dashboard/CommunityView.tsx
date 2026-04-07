@@ -185,6 +185,15 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
                     // Flatten Country -> Cities -> Districts
                     if (data.cities) {
                         data.cities.forEach((cityObj: any) => {
+                            // Enlazar datos de /admin/locations: Mostrar ciudades en la lista
+                            newSystemDocs.push({
+                                id: cityObj.name,
+                                name: cityObj.name,
+                                city: cityObj.name,
+                                type: 'ciudad',
+                                location: null
+                            });
+
                             if (cityObj.districts) {
                                 cityObj.districts.forEach((distName: string) => {
                                     newSystemDocs.push({
@@ -324,16 +333,20 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
         return neighborhoodName.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
     }, [neighborhoodName, neighborhoodConfig, dbNeighborhoods]);
 
+    const [favoriteNeighborhood, setFavoriteNeighborhoodName] = useState<string | null>(null);
+
     // Listen for favorite status
     useEffect(() => {
         if (!currentUser) return;
         const unsub = onSnapshot(doc(db, 'private_profiles', currentUser.uid), (docSnap) => {
             if (docSnap.exists()) {
                 const data = docSnap.data();
-                // Compare loosely or exactly? normalize for comparison
+                const favName = data.favoriteNeighborhood || null;
+                setFavoriteNeighborhoodName(favName);
+
                 const currentNorm = neighborhoodName.toLowerCase();
-                const favNorm = (data.favoriteNeighborhood || '').toLowerCase();
-                setIsFavorite(currentNorm === favNorm);
+                const favNorm = (favName || '').toLowerCase();
+                setIsFavorite(currentNorm === favNorm && favNorm !== '');
             }
         });
         return () => unsub();
@@ -371,26 +384,20 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
         const fetchData = async () => {
             setLoading(true);
             try {
-                // 1. Trending Businesses
-                const isCitySearch = neighborhoodName === 'Hamburg'; // Or dynamic check
+                // 1. Trending Businesses (Fetch both City and Neighborhood matches for robustness)
+                const qCityBiz = query(collection(db, 'clients'), where('city', '==', neighborhoodName), limit(20));
+                const qNeighBiz = query(collection(db, 'clients'), where('neighborhood', '==', neighborhoodName), limit(20));
 
-                let constraints: any[] = [];
-                if (isCitySearch) {
-                    constraints.push(where('city', '==', neighborhoodName));
-                } else {
-                    // Check if it matches city prop or neighborhood prop
-                    constraints.push(where('neighborhood', '==', neighborhoodName));
-                }
+                const [snapCityBiz, snapNeighBiz] = await Promise.all([
+                    getDocs(qCityBiz),
+                    getDocs(qNeighBiz)
+                ]);
 
-                // ... (rest of fetch logic remains same)
-
-                const qBusinesses = query(
-                    collection(db, 'clients'),
-                    ...constraints,
-                    limit(20)
-                );
-                const snapBiz = await getDocs(qBusinesses);
-                const businesses = snapBiz.docs.map(d => ({ id: d.id, ...d.data() })) as any[];
+                const bizMap = new Map();
+                snapCityBiz.docs.forEach(d => bizMap.set(d.id, { id: d.id, ...d.data() }));
+                snapNeighBiz.docs.forEach(d => bizMap.set(d.id, { id: d.id, ...d.data() }));
+                
+                const businesses = Array.from(bizMap.values()) as any[];
 
                 // Simple client-side sort for demo (better DB index `orderBy` in prod)
                 const sortedBiz = businesses
@@ -403,37 +410,31 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
                 const sevenDaysAgo = new Date();
                 sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-                // Query 1: Recommendations
-                let recConstraints: any[] = [];
-                if (isCitySearch) {
-                    recConstraints.push(where('city', '==', neighborhoodName));
-                } else {
-                    recConstraints.push(where('neighborhood', '==', neighborhoodName));
-                }
+                // Query 1: Recommendations (City or Neighborhood)
+                const qRecsCity = query(collection(db, 'recommendations'), where('city', '==', neighborhoodName), where('createdAt', '>=', sevenDaysAgo));
+                const qRecsNeigh = query(collection(db, 'recommendations'), where('neighborhood', '==', neighborhoodName), where('createdAt', '>=', sevenDaysAgo));
 
-                const qRecs = query(
-                    collection(db, 'recommendations'),
-                    ...recConstraints,
-                    where('createdAt', '>=', sevenDaysAgo)
-                );
-
-                // Query 2: Community Posts (Always uses 'neighborhood' field)
-                const qPosts = query(
-                    collection(db, 'community_posts'),
-                    where('neighborhood', '==', neighborhoodName),
-                    where('createdAt', '>=', sevenDaysAgo)
-                );
-
-
-                const [snapRecs, snapPosts] = await Promise.all([
-                    getDocs(qRecs),
-                    getDocs(qPosts)
+                // Query 2: Community Posts
+                const qPostsCity = query(collection(db, 'community_posts'), where('city', '==', neighborhoodName), where('createdAt', '>=', sevenDaysAgo));
+                const qPostsNeigh = query(collection(db, 'community_posts'), where('neighborhood', '==', neighborhoodName), where('createdAt', '>=', sevenDaysAgo));
+                
+                const [snapRecsCity, snapRecsNeigh, snapPostsCity, snapPostsNeigh] = await Promise.all([
+                    getDocs(qRecsCity), getDocs(qRecsNeigh),
+                    getDocs(qPostsCity), getDocs(qPostsNeigh)
                 ]);
 
-                const totalPosts = snapRecs.size + snapPosts.size;
+                const recsMap = new Map();
+                snapRecsCity.docs.forEach(d => recsMap.set(d.id, d.data()));
+                snapRecsNeigh.docs.forEach(d => recsMap.set(d.id, d.data()));
+
+                const postsMap = new Map();
+                snapPostsCity.docs.forEach(d => postsMap.set(d.id, d.data()));
+                snapPostsNeigh.docs.forEach(d => postsMap.set(d.id, d.data()));
+
+                const totalPosts = recsMap.size + postsMap.size;
                 const uniqueAuthors = new Set([
-                    ...snapRecs.docs.map(d => d.data().userId),
-                    ...snapPosts.docs.map(d => d.data().userId)
+                    ...Array.from(recsMap.values()).map((d: any) => d.userId),
+                    ...Array.from(postsMap.values()).map((d: any) => d.userId)
                 ]);
                 const activeUsers = uniqueAuthors.size;
 
@@ -474,7 +475,7 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
                     setRegisterOpen(false);
                     setNewNeighborhoodName('');
                     setNewCountryName('');
-                    updateNeighborhood(result.slug || result.name); // Redirect
+                    updateNeighborhood(result.name); // Redirect using proper Name, NOT Slug
                 } else if (result.created) {
                     toast({
                         title: "¡Barrio creado!",
@@ -484,7 +485,7 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
                     setRegisterOpen(false);
                     setNewNeighborhoodName('');
                     setNewCountryName('');
-                    updateNeighborhood(result.slug || result.name); // Redirect
+                    updateNeighborhood(result.name); // Redirect using proper Name, NOT Slug
                 }
             } else {
                 toast({
@@ -596,15 +597,27 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
                                             </div>
                                         )}
 
+                                        {/* Quick Jump to Favorite Neighborhood */}
+                                        {favoriteNeighborhood && favoriteNeighborhood !== neighborhoodName && (
+                                            <Button
+                                                variant="outline"
+                                                className="w-full text-pink-600 hover:text-pink-800 hover:bg-pink-50 mb-4 border-pink-200"
+                                                onClick={() => updateNeighborhood(favoriteNeighborhood)}
+                                            >
+                                                <Heart className="h-4 w-4 mr-2 fill-current" />
+                                                {t('community.jump_favorite', 'Ir a mi favorito:')} {favoriteNeighborhood}
+                                            </Button>
+                                        )}
+
                                         {/* Link back to City if in a neighborhood */}
-                                        {!isCity && neighborhoodConfig?.city && (
+                                        {!isCity && (
                                             <Button
                                                 variant="outline"
                                                 className="w-full text-blue-600 hover:text-blue-800 hover:bg-blue-50 mb-2"
-                                                onClick={() => updateNeighborhood(neighborhoodConfig.city)}
+                                                onClick={() => updateNeighborhood(neighborhoodConfig?.city || 'Hamburg')}
                                             >
                                                 <ChevronRight className="h-4 w-4 rotate-180 mr-2" />
-                                                {t('back', 'Volver a')} {neighborhoodConfig.city}
+                                                {t('back', 'Volver a')} {neighborhoodConfig?.city || 'Hamburg'}
                                             </Button>
                                         )}
 

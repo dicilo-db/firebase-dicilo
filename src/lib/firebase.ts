@@ -7,7 +7,7 @@ export const firebaseConfig = {
   appId: '1:382703499489:web:88d6bf76f4cffe84d15fa0',
   storageBanner: 'geosearch-fq4i9.firebasestorage.app',
   storageBucket: 'geosearch-fq4i9.firebasestorage.app',
-  apiKey: 'AIzaSyCCGBqtGt-sefut4RHfwaTs4bDGCfPjp9E',
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: 'geosearch-fq4i9.firebaseapp.com',
   messagingSenderId: '382703499489',
 };
