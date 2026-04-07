@@ -68,6 +68,7 @@ export default function LocationsPage() {
     const [locations, setLocations] = useState<LocationData[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
+    const [openAccordion, setOpenAccordion] = useState<string | undefined>(undefined);
 
     // Add Country State
     const [isAddCountryOpen, setIsAddCountryOpen] = useState(false);
@@ -326,7 +327,7 @@ export default function LocationsPage() {
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <Accordion type="single" collapsible className="w-full">
+                            <Accordion type="single" collapsible value={openAccordion} onValueChange={setOpenAccordion} className="w-full">
                                 {filteredLocations.map((loc) => (
                                     <AccordionItem key={loc.id} value={loc.id}>
                                         <AccordionTrigger className="hover:no-underline px-4 bg-slate-50/50 dark:bg-slate-900/20 rounded mb-2">
@@ -354,124 +355,110 @@ export default function LocationsPage() {
                                                 </Button>
                                             </div>
 
-                                            <Table>
-                                                <TableHeader>
-                                                    <TableRow>
-                                                        <TableHead className="w-[30%]">{t('admin.locations.city', "Ciudad")}</TableHead>
-                                                        <TableHead className="w-[50%]">{t('admin.locations.districts', "Barrios (Stadtteile)")}</TableHead>
-                                                        <TableHead className="text-right">{t('admin.locations.actions', "Acciones")}</TableHead>
-                                                    </TableRow>
-                                                </TableHeader>
-                                                <TableBody>
-                                                    {loc.cities
-                                                        .filter(city =>
-                                                            searchTerm === '' ||
-                                                            loc.countryName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                                                            city.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                                                            city.districts.some(dist => dist.toLowerCase().includes(searchTerm.toLowerCase()))
-                                                        )
-                                                        .sort((a, b) => a.name.localeCompare(b.name))
-                                                        .map((city) => (
-                                                            <TableRow key={city.name}>
-                                                                <TableCell className="font-medium">
-                                                                    <div className="flex items-center gap-2">
-                                                                        <Building2 className="h-4 w-4 text-muted-foreground" />
-                                                                        {city.name}
-                                                                    </div>
-                                                                </TableCell>
-                                                                <TableCell>
-                                                                    <div className="flex flex-wrap gap-1">
-                                                                        {city.districts.sort().map(dist => (
-                                                                            <Badge key={dist} variant="outline" className="text-xs">
-                                                                                {dist}
-                                                                                <span
-                                                                                    className="ml-1 cursor-pointer hover:text-red-500 font-bold px-1"
-                                                                                    onClick={() => handleRemoveDistrict(loc.id, city.name, dist)}
-                                                                                >
-                                                                                    ×
-                                                                                </span>
-                                                                            </Badge>
-                                                                        ))}
-                                                                        <Dialog>
-                                                                            <DialogTrigger asChild>
-                                                                                <Button
-                                                                                    variant="ghost"
-                                                                                    size="sm"
-                                                                                    className="h-6 w-6 p-0 rounded-full border border-dashed"
-                                                                                    onClick={() => {
-                                                                                        setActiveCityForDistrict({ countryId: loc.id, cityName: city.name });
-                                                                                        setNewDistrictName('');
-                                                                                    }}
-                                                                                >
-                                                                                    <Plus className="h-3 w-3" />
-                                                                                </Button>
-                                                                            </DialogTrigger>
-                                                                            <DialogContent className="sm:max-w-[425px]">
-                                                                                <DialogHeader>
-                                                                                    <DialogTitle>{t('admin.locations.add_district_to', `Agregar Barrio a ${city.name}`, { city: city.name })}</DialogTitle>
-                                                                                </DialogHeader>
-                                                                                <div className="grid gap-4 py-4">
-                                                                                    <div className="grid gap-2">
-                                                                                        <Label htmlFor="district-name">{t('admin.locations.district_name', "Nombre del Barrio")}</Label>
-                                                                                        <Input
-                                                                                            id="district-name"
-                                                                                            value={newDistrictName}
-                                                                                            onChange={(e) => setNewDistrictName(e.target.value)}
-                                                                                            placeholder="Ej: Mitte"
-                                                                                            onKeyDown={(e) => {
-                                                                                                if (e.key === 'Enter') handleAddDistrict();
-                                                                                            }}
-                                                                                        />
-                                                                                    </div>
-                                                                                </div>
-                                                                                <DialogFooter>
-                                                                                    <Button type="button" onClick={handleAddDistrict}>{t('admin.locations.save', "Guardar")}</Button>
-                                                                                </DialogFooter>
-                                                                            </DialogContent>
-                                                                        </Dialog>
-                                                                    </div>
-                                                                </TableCell>
-                                                                <TableCell className="text-right">
-                                                                    <Button
-                                                                        variant="ghost"
-                                                                        size="icon"
-                                                                        className="h-8 w-8 text-muted-foreground hover:text-red-500"
-                                                                        onClick={() => handleRemoveCity(loc.id, city.name)}
-                                                                    >
-                                                                        <Trash2 className="h-4 w-4" />
-                                                                    </Button>
-                                                                </TableCell>
-                                                            </TableRow>
-                                                        ))}
-                                                    <TableRow className="bg-slate-50 dark:bg-slate-900/50">
-                                                        <TableCell colSpan={3}>
-                                                            <div className="flex items-center gap-2">
-                                                                <Input
-                                                                    placeholder={t('admin.locations.new_city_placeholder', "Nueva ciudad...")}
-                                                                    className="h-8 w-48 bg-white dark:bg-slate-800"
-                                                                    value={activeCountryId === loc.id ? newCityName : ''}
-                                                                    onChange={(e) => {
-                                                                        setActiveCountryId(loc.id);
-                                                                        setNewCityName(e.target.value);
-                                                                    }}
-                                                                    onKeyDown={(e) => {
-                                                                        if (e.key === 'Enter') handleAddCity(loc.id);
-                                                                    }}
-                                                                />
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                {loc.cities
+                                                    .filter(city =>
+                                                        searchTerm === '' ||
+                                                        loc.countryName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                                        city.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                                        city.districts.some(dist => dist.toLowerCase().includes(searchTerm.toLowerCase()))
+                                                    )
+                                                    .sort((a, b) => a.name.localeCompare(b.name))
+                                                    .map((city) => (
+                                                        <div key={city.name} className="flex flex-col p-4 border rounded-lg bg-white dark:bg-slate-900 shadow-sm">
+                                                            <div className="flex justify-between items-start mb-3">
+                                                                <div className="flex items-center gap-2 font-medium text-slate-800 dark:text-slate-200">
+                                                                    <Building2 className="h-4 w-4 text-muted-foreground" />
+                                                                    {city.name}
+                                                                </div>
                                                                 <Button
-                                                                    size="sm"
-                                                                    variant="outline"
-                                                                    className="h-8"
-                                                                    onClick={() => handleAddCity(loc.id)}
-                                                                    disabled={!newCityName || activeCountryId !== loc.id}
+                                                                    variant="ghost"
+                                                                    size="icon"
+                                                                    className="h-6 w-6 text-muted-foreground hover:text-red-500 -mt-1 -mr-1"
+                                                                    onClick={() => handleRemoveCity(loc.id, city.name)}
                                                                 >
-                                                                    <Plus className="h-3 w-3 mr-1" /> {t('admin.locations.add_city_btn', "Agregar Ciudad")}
+                                                                    <Trash2 className="h-3.5 w-3.5" />
                                                                 </Button>
                                                             </div>
-                                                        </TableCell>
-                                                    </TableRow>
-                                                </TableBody>
-                                            </Table>
+                                                            <div className="flex flex-wrap gap-1">
+                                                                {city.districts.sort().map(dist => (
+                                                                    <Badge key={dist} variant="outline" className="text-xs bg-slate-50 dark:bg-slate-800">
+                                                                        {dist}
+                                                                        <span
+                                                                            className="ml-1 cursor-pointer hover:text-red-500 font-bold px-1"
+                                                                            onClick={() => handleRemoveDistrict(loc.id, city.name, dist)}
+                                                                        >
+                                                                            ×
+                                                                        </span>
+                                                                    </Badge>
+                                                                ))}
+                                                                <Dialog>
+                                                                    <DialogTrigger asChild>
+                                                                        <Button
+                                                                            variant="ghost"
+                                                                            size="sm"
+                                                                            className="h-6 w-6 p-0 rounded-full border border-dashed text-slate-400 hover:text-slate-600"
+                                                                            onClick={() => {
+                                                                                setActiveCityForDistrict({ countryId: loc.id, cityName: city.name });
+                                                                                setNewDistrictName('');
+                                                                            }}
+                                                                        >
+                                                                            <Plus className="h-3 w-3" />
+                                                                        </Button>
+                                                                    </DialogTrigger>
+                                                                    <DialogContent className="sm:max-w-[425px]">
+                                                                        <DialogHeader>
+                                                                            <DialogTitle>{t('admin.locations.add_district_to', `Agregar Barrio a ${city.name}`, { city: city.name })}</DialogTitle>
+                                                                        </DialogHeader>
+                                                                        <div className="grid gap-4 py-4">
+                                                                            <div className="grid gap-2">
+                                                                                <Label htmlFor="district-name">{t('admin.locations.district_name', "Nombre del Barrio")}</Label>
+                                                                                <Input
+                                                                                    id="district-name"
+                                                                                    value={newDistrictName}
+                                                                                    onChange={(e) => setNewDistrictName(e.target.value)}
+                                                                                    placeholder="Ej: Mitte"
+                                                                                    onKeyDown={(e) => {
+                                                                                        if (e.key === 'Enter') handleAddDistrict();
+                                                                                    }}
+                                                                                />
+                                                                            </div>
+                                                                        </div>
+                                                                        <DialogFooter>
+                                                                            <Button type="button" onClick={handleAddDistrict}>{t('admin.locations.save', "Guardar")}</Button>
+                                                                        </DialogFooter>
+                                                                    </DialogContent>
+                                                                </Dialog>
+                                                            </div>
+                                                        </div>
+                                                    ))}
+
+                                                {/* Input for new city */}
+                                                <div className="flex flex-col p-4 border border-dashed rounded-lg bg-slate-50 dark:bg-slate-900/50 justify-center">
+                                                    <div className="flex items-center gap-2">
+                                                        <Input
+                                                            placeholder={t('admin.locations.new_city_placeholder', "Agregar ciudad...")}
+                                                            className="h-9 bg-white dark:bg-slate-800"
+                                                            value={activeCountryId === loc.id ? newCityName : ''}
+                                                            onChange={(e) => {
+                                                                setActiveCountryId(loc.id);
+                                                                setNewCityName(e.target.value);
+                                                            }}
+                                                            onKeyDown={(e) => {
+                                                                if (e.key === 'Enter') handleAddCity(loc.id);
+                                                            }}
+                                                        />
+                                                        <Button
+                                                            size="icon"
+                                                            className="h-9 w-9 shrink-0"
+                                                            onClick={() => handleAddCity(loc.id)}
+                                                            disabled={!newCityName || activeCountryId !== loc.id}
+                                                        >
+                                                            <Plus className="h-4 w-4" />
+                                                        </Button>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </AccordionContent>
                                     </AccordionItem>
                                 ))}
