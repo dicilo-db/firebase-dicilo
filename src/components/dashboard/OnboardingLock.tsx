@@ -12,8 +12,7 @@ import { completeOnboarding } from '@/app/actions/profile';
 import { Checkbox } from '@/components/ui/checkbox';
 import categoriesData from '@/data/categories.json';
 import { ALL_COUNTRIES } from '@/data/countries';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
+
 import { cn } from '@/lib/utils';
 
 const formSchema = z.object({
@@ -76,55 +75,26 @@ export function OnboardingLock({
                                 render={({ field }) => (
                                     <FormItem className="flex flex-col">
                                         <FormLabel className="font-bold mt-2">País</FormLabel>
-                                        <Popover modal={true} open={openCountry} onOpenChange={setOpenCountry}>
-                                            <PopoverTrigger asChild>
-                                                <FormControl>
-                                                    <Button
-                                                        variant="outline"
-                                                        role="combobox"
-                                                        className={cn(
-                                                            "justify-between",
-                                                            !field.value && "text-muted-foreground"
-                                                        )}
-                                                    >
-                                                        {field.value
-                                                            ? ALL_COUNTRIES.find((c) => c.value === field.value)?.label
-                                                            : "Selecciona país..."}
-                                                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                                    </Button>
-                                                </FormControl>
-                                            </PopoverTrigger>
-                                            <PopoverContent className="p-0 z-[110] w-[var(--radix-popover-trigger-width)] min-w-[280px] max-h-[60vh] overflow-hidden">
-                                                <Command>
-                                                    <CommandInput placeholder="Buscar país..." />
-                                                    <CommandList>
-                                                        <CommandEmpty>No se encontró el país.</CommandEmpty>
-                                                        <CommandGroup>
-                                                            {ALL_COUNTRIES.map((c) => (
-                                                                <CommandItem
-                                                                    value={c.label}
-                                                                    key={c.value}
-                                                                    onSelect={() => {
-                                                                        form.setValue("country", c.value);
-                                                                        setOpenCountry(false);
-                                                                    }}
-                                                                >
-                                                                    <Check
-                                                                        className={cn(
-                                                                            "mr-2 h-4 w-4",
-                                                                            c.value === field.value
-                                                                                ? "opacity-100"
-                                                                                : "opacity-0"
-                                                                        )}
-                                                                    />
-                                                                    {c.label}
-                                                                </CommandItem>
-                                                            ))}
-                                                        </CommandGroup>
-                                                    </CommandList>
-                                                </Command>
-                                            </PopoverContent>
-                                        </Popover>
+                                        <FormControl>
+                                            <div className="relative">
+                                                <select
+                                                    className={cn(
+                                                        "flex h-10 w-full appearance-none rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+                                                        !field.value && "text-muted-foreground"
+                                                    )}
+                                                    value={field.value || ""}
+                                                    onChange={field.onChange}
+                                                >
+                                                    <option value="" disabled>Selecciona país...</option>
+                                                    {ALL_COUNTRIES.map((c) => (
+                                                        <option key={c.value} value={c.value}>
+                                                            {c.label}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                                <ChevronsUpDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 shrink-0 opacity-50" />
+                                            </div>
+                                        </FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
