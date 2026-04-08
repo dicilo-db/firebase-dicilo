@@ -22,14 +22,22 @@ service cloud.firestore {
       return request.auth.token.role == 'admin' || isSuperAdmin();
     }
 
+    // Granular Permissions check
+    function hasPermission(perm) {
+      // We check if the token has a permissions array and the required perm is in it.
+      // In Firestore rules, we can check if a list has a value using `in`.
+      let perms = request.auth.token.permissions;
+      return perms != null && perm in perms;
+    }
+
     // Team Office: Can edit text of records/registrations. (Includes Admin and Superadmin)
     function isTeamOffice() {
       return request.auth.token.role == 'team_office' || isAdmin();
     }
 
-    // General Access: Anyone with admin: true claim (view access)
+    // General Access: Anyone with admin: true claim (view access) or specific access_admin_panel permission
     function hasDashboardAccess() {
-      return request.auth.token.admin == true; 
+      return request.auth.token.admin == true || hasPermission('access_admin_panel'); 
     }
 
     // Registrations collection
@@ -90,7 +98,7 @@ service cloud.firestore {
     // Ad Banners (Config - Admin/Superadmin)
     match /ads_banners/{bannerId} {
       allow read: if true;
-      allow write: if isAdmin();
+      allow write: if isAdmin() || hasPermission('access_ads_manager');
     }
     
     // Ad Events (Admin/API write only, Admin read)
@@ -138,7 +146,7 @@ service cloud.firestore {
     // Categories collection (Config - Admin/Superadmin)
     match /categories/{categoryId} {
       allow read: if true;
-      allow write: if isAdmin(); 
+      allow write: if isAdmin() || hasPermission('manage_products'); 
     }
 
     // General Information (Admin Dashboard Calendar & Notes)

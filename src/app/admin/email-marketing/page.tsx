@@ -44,7 +44,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 
 export default function EmailMarketingPage() {
-    useAuthGuard(['admin', 'superadmin']);
+    useAuthGuard(['admin', 'superadmin'], 'manage_campaigns');
     const { t } = useTranslation('admin');
     const { toast } = useToast();
     

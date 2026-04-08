@@ -61,6 +61,7 @@ import * as Icons from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { CategoryDialog } from './components/CategoryDialog';
 import { SubcategoryDialog } from './components/SubcategoryDialog';
+import { useAuthGuard } from '@/hooks/useAuthGuard';
 
 // Helper to render dynamic icon
 const DynamicIcon = ({ name, className }: { name: string; className?: string }) => {
@@ -70,6 +71,7 @@ const DynamicIcon = ({ name, className }: { name: string; className?: string }) 
 };
 
 export default function CategoriesPage() {
+    useAuthGuard(['admin', 'superadmin'], 'manage_products');
     const { t } = useTranslation('admin');
     const { toast } = useToast();
     const [categories, setCategories] = useState<Category[]>([]);

@@ -116,7 +116,7 @@ const DashboardContent: React.FC = () => {
   // Hooks
   console.log('DashboardContent mounting');
   // Hooks
-  useAuthGuard(['admin', 'superadmin', 'team_office'], 'access_admin_panel'); // Allow explicit permission access
+  useAuthGuard(['admin', 'superadmin'], 'access_admin_panel'); // Allow explicit permission access
   console.log('useAuthGuard returns');
   console.log('useAuthGuard returns');
   const router = useRouter();

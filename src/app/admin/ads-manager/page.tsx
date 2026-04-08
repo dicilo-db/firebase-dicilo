@@ -60,7 +60,7 @@ interface AdBanner {
 
 export default function AdsManagerPage() {
     // Permission Check: Requires 'access_ads_manager' OR admin/superadmin role
-    useAuthGuard(['admin', 'superadmin', 'team_office', 'freelancer'], 'access_ads_manager');
+    useAuthGuard(['admin', 'superadmin'], 'access_ads_manager');
 
     const [ads, setAds] = useState<AdBanner[]>([]);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
