@@ -219,6 +219,22 @@ service cloud.firestore {
       allow read, write: if isAuthenticated() && (request.auth.uid == userId || hasDashboardAccess());
     }
 
+    // Locations ecosystem (Read by client SDK in dashboards)
+    match /system_locations/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    match /neighborhoods/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    match /location_suggestions/{docId} {
+      allow read, write: if isAdmin();
+      allow create: if isAuthenticated();
+    }
+
     // Default deny
     match /{document=**} {
       allow read, write: if false;

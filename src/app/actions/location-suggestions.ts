@@ -94,7 +94,14 @@ export async function getPendingSuggestions(): Promise<{success: boolean, data?:
     try {
         const db = getAdminDb();
         const snap = await db.collection(COLLECTION_NAME).orderBy('createdAt', 'desc').get();
-        const docs = snap.docs.map(doc => ({ id: doc.id, ...doc.data() })) as LocationSuggestion[];
+        const docs = snap.docs.map(doc => {
+            const data = doc.data();
+            return { 
+                id: doc.id, 
+                ...data, 
+                createdAt: data.createdAt ? data.createdAt.toMillis() : Date.now() 
+            };
+        }) as LocationSuggestion[];
         return { success: true, data: docs };
     } catch (e: any) {
         console.error(e);

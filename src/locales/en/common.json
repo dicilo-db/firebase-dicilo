@@ -932,6 +932,8 @@
         }
     },
     "community": {
+        "select_business_or_recommend": "Select a business or recommend a new one in your area",
+        "select_business_option": "Choose a business",
         "global_wall": "Global Wall",
         "photo": "Photo",
         "like": "Like",
@@ -1049,7 +1051,9 @@
         "verifying": "Verifying...",
         "verify_create": "Verify & Create",
         "media": "Media",
-        "emoji": "Emoji"
+        "emoji": "Emoji",
+        "search_global": "Explore Communities",
+        "search_neighborhoods_global": "Search city, neighborhood..."
     },
     "finances": {
         "lockedTitle": "Earn money while recommending Dicilo",

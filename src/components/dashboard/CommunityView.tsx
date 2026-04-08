@@ -183,6 +183,18 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
 
                 sysSnapshot.docs.forEach(doc => {
                     const data = doc.data();
+                    
+                    // Push Country itself
+                    if (data.name) {
+                        newSystemDocs.push({
+                            id: data.name,
+                            name: data.name,
+                            city: data.name,
+                            type: 'pais',
+                            location: null
+                        });
+                    }
+
                     // Flatten Country -> Cities -> Districts
                     if (data.cities) {
                         data.cities.forEach((cityObj: any) => {
@@ -282,8 +294,9 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
             // 2. If we ARE searching, include anything matching the name, even from other cities? 
             // User requested: "si no esta hay registrado, lo busque en el modulo de la Gestion de paises"
 
+            const searchNorm = searchTerm.trim().toLowerCase();
             const isSameCity = dbN.city === currentCity;
-            const matchesSearch = searchTerm && dbN.name.toLowerCase().includes(searchTerm.toLowerCase());
+            const matchesSearch = searchNorm && dbN.name.toLowerCase().includes(searchNorm);
 
             if (isSameCity || matchesSearch) {
                 const existingIndex = merged.findIndex(m => m.name.toLowerCase() === dbN.name.toLowerCase());
@@ -320,7 +333,7 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
         // Default sort (Validation: maybe alphabetical?)
         return merged.sort((a, b) => a.name.localeCompare(b.name));
 
-    }, [neighborhoodConfig, isCity, dbNeighborhoods, neighborhoodName, userLocation]);
+    }, [neighborhoodConfig, isCity, dbNeighborhoods, neighborhoodName, userLocation, searchTerm]);
 
     // Helper for formatting
     const displayNeighborhood = React.useMemo(() => {
@@ -535,29 +548,6 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
                     <p className="text-muted-foreground text-lg mt-1">{t('community.explore_desc', 'Explora lo que sucede en tu barrio y conecta con tus vecinos.')}</p>
                 </div>
 
-                {/* Create Recommendation Action */}
-                <Dialog open={open} onOpenChange={setOpen}>
-                    <DialogTrigger asChild>
-                        <Button size="lg" className="bg-green-600 hover:bg-green-700 text-white shadow-md transition-all hover:scale-105">
-                            <PlusCircle className="mr-2 h-5 w-5" />
-                            {t('community.new_recommendation', 'Nueva Recomendación')}
-                        </Button>
-                    </DialogTrigger>
-                    <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-                        <DialogHeader>
-                            <DialogTitle>{t('community.new_recommendation', 'Nueva Recomendación')}</DialogTitle>
-                            <DialogDescription>
-                                {t('community.share_place', 'Comparte un lugar, servicio o experiencia con tus vecinos.', { name: displayNeighborhood })}
-                            </DialogDescription>
-                        </DialogHeader>
-                        <div className="mt-4">
-                            <RecommendationFormContent
-                                onSuccess={() => setOpen(false)}
-                                onCancel={() => setOpen(false)}
-                            />
-                        </div>
-                    </DialogContent>
-                </Dialog>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -578,7 +568,7 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
                             <CardHeader className="pb-3 flex flex-row items-center justify-between">
                                 <CardTitle className="text-lg flex items-center gap-2">
                                     <MapPin className="h-5 w-5 text-blue-500" />
-                                    {t('community.search_in', 'Busca en')} {displayNeighborhood}
+                                    {t('community.search_global', 'Explorar Comunidades')}
                                 </CardTitle>
                             </CardHeader>
                             <CardContent>
@@ -589,7 +579,7 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
                                         {subNeighborhoods.length > 0 && (
                                             <div className="relative">
                                                 <Input
-                                                    placeholder={t('community.search_neighborhoods', 'Buscar barrios...')}
+                                                    placeholder={t('community.search_neighborhoods_global', 'Buscar ciudad, barrio...')}
                                                     className="pl-9"
                                                     value={searchTerm}
                                                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -628,7 +618,7 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
                                                 {/* Group by City (even if mostly one city, covers future expansion) */}
                                                 {(() => {
                                                     const grouped = subNeighborhoods
-                                                        .filter(nb => nb.name.toLowerCase().includes(searchTerm.toLowerCase()))
+                                                        .filter(nb => nb.name.toLowerCase().includes(searchTerm.trim().toLowerCase()))
                                                         .reduce((acc, nb) => {
                                                             const city = nb.city || (isCity ? neighborhoodName : 'Hamburg');
                                                             if (!acc[city]) acc[city] = [];
@@ -676,7 +666,7 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
                                                 })()}
 
                                 {/* Empty State */}
-                                                {searchTerm && subNeighborhoods.filter(nb => nb.name.toLowerCase().includes(searchTerm.toLowerCase())).length === 0 && (
+                                                {searchTerm && subNeighborhoods.filter(nb => nb.name.toLowerCase().includes(searchTerm.trim().toLowerCase())).length === 0 && (
                                                     <p className="text-sm text-muted-foreground text-center py-2">No se encontraron barrios.</p>
                                                 )}
                                             </div>

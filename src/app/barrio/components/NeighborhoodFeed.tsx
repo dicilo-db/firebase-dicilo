@@ -80,8 +80,8 @@ export default function NeighborhoodFeed({ neighborhood }: NeighborhoodFeedProps
                 <div className="text-center py-10">{t('community.feed.loading', 'Cargando actividad...')}</div>
             ) : posts.length === 0 ? (
                 <div className="bg-white rounded-lg p-10 text-center shadow-sm border border-dashed border-gray-200">
-                    <p className="text-gray-500 text-lg">Aún no hay empresas destacadas recientemente en {displayNeighborhood}.</p>
-                    <p className="text-gray-400 text-sm mt-2">¡Utiliza la caja de arriba para ser el primero en destacar un negocio local!</p>
+                    <p className="text-gray-500 text-lg">{t('community.feed.empty_businesses', 'Aún no hay empresas destacadas recientemente en {{city}}.', { city: displayNeighborhood })}</p>
+                    <p className="text-gray-400 text-sm mt-2">{t('community.feed.empty_businesses_prompt', '¡Utiliza la caja de arriba para ser el primero en destacar un negocio local!')}</p>
                 </div>
             ) : (
                 <>

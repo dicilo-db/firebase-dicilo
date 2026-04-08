@@ -98,7 +98,20 @@
         "verifying": "Wird überprüft...",
         "verify_create": "Überprüfen & Erstellen",
         "media": "Medien",
-        "emoji": "Emoji"
+        "emoji": "Emoji",
+        "select_business_or_recommend": "Wählen Sie ein Unternehmen aus oder empfehlen Sie ein neues in Ihrer Nähe",
+        "select_business_option": "Unternehmen auswählen",
+        "search_global": "Gemeinschaften erkunden",
+        "search_neighborhoods_global": "Stadt, Viertel suchen...",
+        "feed": {
+            "empty_global": "Noch keine Aktivität in der {{name}}-Community.",
+            "be_first": "Seien Sie der Erste, der etwas teilt!",
+            "whats_happening": "Was passiert in {{name}}?",
+            "wall": "Soziale Wand",
+            "recommendations": "Highlights",
+            "empty_businesses": "Es gibt noch keine kürzlich bewerteten Unternehmen in {{city}}.",
+            "empty_businesses_prompt": "Nutzen Sie das obige Feld, um das erste lokale Unternehmen hervorzuheben!"
+        }
     },
     "header": {
         "nav": {

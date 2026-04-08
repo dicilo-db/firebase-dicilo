@@ -6,10 +6,12 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { getFirestore, collection, query, where, getDocs } from 'firebase/firestore';
 import { app } from '@/lib/firebase';
-import { Loader2, Star, Image as ImageIcon, CheckCircle2 } from 'lucide-react';
+import { Loader2, Star, Image as ImageIcon, CheckCircle2, PlusCircle } from 'lucide-react';
 import { submitQuickHighlight } from '@/app/actions/quick-highlight';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { Label } from '@/components/ui/label';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { RecommendationFormContent } from '@/components/RecommendationForm';
 
 export function QuickHighlightForm({ neighborhood, onSuccess }: { neighborhood: string, onSuccess: () => void }) {
     const { t } = useTranslation('common');
@@ -23,8 +25,9 @@ export function QuickHighlightForm({ neighborhood, onSuccess }: { neighborhood: 
     const [comment, setComment] = useState('');
     const [rating, setRating] = useState(4);
     const [media, setMedia] = useState<File[]>([]);
-    const [isExpanded, setIsExpanded] = useState(false);
+    const [isExpanded, setIsExpanded] = useState(true); // Always expanded by default to show the button
     const [successMessage, setSuccessMessage] = useState('');
+    const [openDialog, setOpenDialog] = useState(false);
 
     useEffect(() => {
         if (!neighborhood || !isExpanded) return;
@@ -145,13 +148,37 @@ export function QuickHighlightForm({ neighborhood, onSuccess }: { neighborhood: 
 
     return (
         <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-md border border-slate-200 p-5 space-y-4 animate-in slide-in-from-top-2 fade-in">
-            <h3 className="font-bold text-slate-800 text-lg flex items-center gap-2">
-                <Star className="text-amber-500 fill-amber-500 w-5 h-5" />
-                Destacar una Empresa en {neighborhood}
-            </h3>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <h3 className="font-bold text-slate-800 text-lg flex items-center gap-2">
+                    <Star className="text-amber-500 fill-amber-500 w-5 h-5" />
+                    Destacar una Empresa en {neighborhood}
+                </h3>
+                <Dialog open={openDialog} onOpenChange={setOpenDialog}>
+                    <DialogTrigger asChild>
+                        <Button size="sm" type="button" className="bg-green-600 hover:bg-green-700 text-white shadow-sm transition-all hover:scale-105 whitespace-nowrap">
+                            <PlusCircle className="mr-2 h-4 w-4" />
+                            {t('community.new_recommendation', 'Nueva Recomendación')}
+                        </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                        <DialogHeader>
+                            <DialogTitle>{t('community.new_recommendation', 'Nueva Recomendación')}</DialogTitle>
+                            <DialogDescription>
+                                {t('community.share_place', 'Comparte un lugar, servicio o experiencia con tus vecinos.', { name: neighborhood })}
+                            </DialogDescription>
+                        </DialogHeader>
+                        <div className="mt-4">
+                            <RecommendationFormContent
+                                onSuccess={() => { setOpenDialog(false); onSuccess(); }}
+                                onCancel={() => setOpenDialog(false)}
+                            />
+                        </div>
+                    </DialogContent>
+                </Dialog>
+            </div>
             
-            <div className="space-y-2">
-                <Label>Selecciona el negocio local</Label>
+            <div className="space-y-2 mt-4">
+                <Label>{t('community.select_business_or_recommend', 'Selecciona una empresa o recomienda una nueva, en tu zona')}</Label>
                 {loading ? (
                     <div className="flex items-center gap-2 text-sm text-slate-500 p-2 bg-slate-50 rounded">
                         <Loader2 className="animate-spin w-4 h-4" /> Cargando negocios del barrio...
@@ -167,7 +194,7 @@ export function QuickHighlightForm({ neighborhood, onSuccess }: { neighborhood: 
                         onChange={(e) => setSelectedBusiness(e.target.value)}
                         required
                     >
-                        <option value="">-- Elige una empresa --</option>
+                        <option value="">-- {t('community.select_business_option', 'Elige una empresa')} --</option>
                         {businesses.map(b => (
                             <option key={b.id} value={b.id}>{b.companyName}</option>
                         ))}

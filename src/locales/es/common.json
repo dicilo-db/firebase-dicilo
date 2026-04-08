@@ -125,7 +125,20 @@
         "verifying": "Verificando...",
         "verify_create": "Verificar y Crear",
         "media": "Multimedia",
-        "emoji": "Emoji"
+        "emoji": "Emoji",
+        "select_business_or_recommend": "Selecciona una empresa o recomienda una nueva, en tu zona",
+        "select_business_option": "Elige una empresa",
+        "feed": {
+            "empty_global": "Aún no hay actividad en la comunidad de {{name}}.",
+            "be_first": "¡Sé el primero en compartir algo!",
+            "whats_happening": "¿Qué está pasando en {{name}}?",
+            "wall": "Muro Social",
+            "recommendations": "Destacados",
+            "empty_businesses": "Aún no hay empresas destacadas recientemente en {{city}}.",
+            "empty_businesses_prompt": "¡Utiliza la caja de arriba para ser el primero en destacar un negocio local!"
+        },
+        "search_global": "Explorar Comunidades",
+        "search_neighborhoods_global": "Buscar ciudad, barrio..."
     },
     "dicipoints": {
         "whatIs": {
