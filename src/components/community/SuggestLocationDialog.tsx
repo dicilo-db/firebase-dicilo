@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Building2, MapPin, Loader2, PlusCircle } from 'lucide-react';
 
 import { suggestLocation } from '@/app/actions/location-suggestions';
+import { validateLocationOSM } from '@/app/actions/osm-validation';
 import { getLocations, LocationData, City } from '@/app/actions/admin-locations';
 import { useToast } from '@/hooks/use-toast';
 
@@ -63,6 +64,48 @@ export function SuggestLocationDialog({ currentUser }: { currentUser?: User | nu
             return;
         }
 
+        let targetCity = activeTab === 'city' ? newCityName : selectedCityName;
+        let targetDistrict = activeTab === 'district' ? newDistrictName : undefined;
+
+        // 1. Validar contra OpenStreetMap / LocationIQ
+        const osmRes = await validateLocationOSM(targetCountry.countryName, targetCity, targetDistrict);
+        
+        let isVerified = false;
+        let submitLat = undefined;
+        let submitLon = undefined;
+        let finalCityName = targetCity;
+        let finalDistrictName = targetDistrict;
+
+        if (osmRes.exists) {
+            if (osmRes.exactMatch) {
+               isVerified = true;
+               submitLat = osmRes.lat;
+               submitLon = osmRes.lon;
+            } else if (osmRes.suggestedName) {
+               const useSuggestion = window.confirm(`El sistema de mapas globales sugiere el nombre oficial:\n\n"${osmRes.suggestedName}"\n\n¿Deseas usar esta corrección automáticamente? (Si cancelas, tu sugerencia original irá a revisión manual).`);
+               if (useSuggestion) {
+                   isVerified = true;
+                   submitLat = osmRes.lat;
+                   submitLon = osmRes.lon;
+                   if (activeTab === 'district') {
+                       finalDistrictName = osmRes.suggestedName;
+                   } else {
+                       finalCityName = osmRes.suggestedName;
+                   }
+               }
+            }
+        } else {
+            if (osmRes.error) {
+                toast({ title: "Aviso de red", description: osmRes.error, variant: 'destructive' });
+            } else {
+                const proceed = window.confirm(`Atención: "${targetDistrict || targetCity}" no ha sido encontrado en los datos globales de mapas.\n\n¿Deseas enviar esta ubicación a nuestro equipo para que la revisen y aprueben de forma manual?`);
+                if (!proceed) {
+                    setIsSubmitting(false);
+                    return;
+                }
+            }
+        }
+
         let res;
         if (activeTab === 'city') {
             res = await suggestLocation({
@@ -70,7 +113,10 @@ export function SuggestLocationDialog({ currentUser }: { currentUser?: User | nu
                 userId: currentUser.uid,
                 countryId: targetCountry.id,
                 countryName: targetCountry.countryName,
-                cityName: newCityName,
+                cityName: finalCityName,
+                isVerified,
+                lat: submitLat,
+                lon: submitLon
             });
         } else {
             res = await suggestLocation({
@@ -78,8 +124,11 @@ export function SuggestLocationDialog({ currentUser }: { currentUser?: User | nu
                 userId: currentUser.uid,
                 countryId: targetCountry.id,
                 countryName: targetCountry.countryName,
-                cityName: selectedCityName,
-                districtName: newDistrictName,
+                cityName: selectedCityName, // the parent city name is fixed from dropdown
+                districtName: finalDistrictName,
+                isVerified,
+                lat: submitLat,
+                lon: submitLon
             });
         }
 
