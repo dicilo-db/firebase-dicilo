@@ -32,40 +32,45 @@ export function QuickHighlightForm({ neighborhood, onSuccess }: { neighborhood: 
             setLoading(true);
             try {
                 const db = getFirestore(app);
-                // We fetch businesses matching either 'neighborhood' or 'city' field from both 'businesses' and 'clients' collections
+                // Para evitar problemas con índices de Firebase o campos "city" y "neighborhood" no creados explícitamente, 
+                // bajamos la colección y filtramos de forma robusta con Javascript (similar al buscador principal)
                 const colNames = ['businesses', 'clients'];
                 const map = new Map();
+                const searchStr = neighborhood.toLowerCase();
 
                 for (const col of colNames) {
-                    const q1 = query(collection(db, col), where('neighborhood', '==', neighborhood));
-                    const snap1 = await getDocs(q1);
-                    
-                    const q2 = query(collection(db, col), where('city', '==', neighborhood));
-                    const snap2 = await getDocs(q2);
+                    const snap = await getDocs(collection(db, col));
 
-                    snap1.docs.forEach(d => {
+                    snap.docs.forEach(d => {
                         const data = d.data();
-                        if (data.status === 'approved' || data.status === 'active') {
-                            map.set(d.id, { id: d.id, ...data });
-                        }
-                    });
-                    
-                    snap2.docs.forEach(d => {
-                        const data = d.data();
-                        if (data.status === 'approved' || data.status === 'active') {
+                        
+                        // Solo aceptamos aprobados o activos
+                        if (data.status !== 'approved' && data.status !== 'active' && data.active !== true) return;
+
+                        const cityField = (data.city || data.address?.city || '').toLowerCase();
+                        const neighField = (data.neighborhood || data.address?.neighborhood || '').toLowerCase();
+                        const locField = (data.location || data.address?.street || '').toLowerCase();
+
+                        // Verificamos si la zona (ej. "Hamburg") está en alguno de esos campos
+                        const isMatch = cityField.includes(searchStr) || 
+                                        neighField.includes(searchStr) || 
+                                        locField.includes(searchStr) ||
+                                        (String(data.country || '').toLowerCase().includes(searchStr) && cityField === ''); // fall back
+
+                        if (isMatch) {
                             map.set(d.id, { id: d.id, ...data });
                         }
                     });
                 }
 
-                // If some companies use clientName instead of companyName (as in tools.ts)
+                // Normalizamos el nombre a mostrar (usado en businesses y clients)
                 setBusinesses(Array.from(map.values()).sort((a, b) => {
                     const nameA = a.companyName || a.clientName || a.name || 'A';
                     const nameB = b.companyName || b.clientName || b.name || 'B';
                     return nameA.localeCompare(nameB);
                 }).map(b => ({
                     ...b,
-                    companyName: b.companyName || b.clientName || b.name
+                    companyName: b.companyName || b.clientName || b.name || 'Sin Nombre'
                 })));
             } catch (err) {
                 console.error("Error fetching local businesses", err);
