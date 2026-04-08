@@ -32,28 +32,41 @@ export function QuickHighlightForm({ neighborhood, onSuccess }: { neighborhood: 
             setLoading(true);
             try {
                 const db = getFirestore(app);
-                // We fetch businesses matching either 'neighborhood' or 'city' field
-                const q1 = query(collection(db, 'businesses'), where('neighborhood', '==', neighborhood));
-                const snap1 = await getDocs(q1);
-                
-                const q2 = query(collection(db, 'businesses'), where('city', '==', neighborhood));
-                const snap2 = await getDocs(q2);
-
+                // We fetch businesses matching either 'neighborhood' or 'city' field from both 'businesses' and 'clients' collections
+                const colNames = ['businesses', 'clients'];
                 const map = new Map();
-                snap1.docs.forEach(d => {
-                    const data = d.data();
-                    if (data.status === 'approved' || data.status === 'active') {
-                        map.set(d.id, { id: d.id, ...data });
-                    }
-                });
-                snap2.docs.forEach(d => {
-                    const data = d.data();
-                    if (data.status === 'approved' || data.status === 'active') {
-                        map.set(d.id, { id: d.id, ...data });
-                    }
-                });
 
-                setBusinesses(Array.from(map.values()).sort((a, b) => a.companyName.localeCompare(b.companyName)));
+                for (const col of colNames) {
+                    const q1 = query(collection(db, col), where('neighborhood', '==', neighborhood));
+                    const snap1 = await getDocs(q1);
+                    
+                    const q2 = query(collection(db, col), where('city', '==', neighborhood));
+                    const snap2 = await getDocs(q2);
+
+                    snap1.docs.forEach(d => {
+                        const data = d.data();
+                        if (data.status === 'approved' || data.status === 'active') {
+                            map.set(d.id, { id: d.id, ...data });
+                        }
+                    });
+                    
+                    snap2.docs.forEach(d => {
+                        const data = d.data();
+                        if (data.status === 'approved' || data.status === 'active') {
+                            map.set(d.id, { id: d.id, ...data });
+                        }
+                    });
+                }
+
+                // If some companies use clientName instead of companyName (as in tools.ts)
+                setBusinesses(Array.from(map.values()).sort((a, b) => {
+                    const nameA = a.companyName || a.clientName || a.name || 'A';
+                    const nameB = b.companyName || b.clientName || b.name || 'B';
+                    return nameA.localeCompare(nameB);
+                }).map(b => ({
+                    ...b,
+                    companyName: b.companyName || b.clientName || b.name
+                })));
             } catch (err) {
                 console.error("Error fetching local businesses", err);
             } finally {
