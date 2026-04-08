@@ -94,6 +94,32 @@ export async function sendProspectInvitation(prospectId: string, templateIdOverr
             validatedAt: new Date(),
         });
 
+        // Award 20 DP for sending the invitation (if not already awarded)
+        if (data.userId && !data.invitationRewardPaid) {
+            
+            await db.runTransaction(async (t) => {
+                const walletRef = db.collection('wallets').doc(data.userId);
+                t.set(walletRef, {
+                    balance: admin.firestore.FieldValue.increment(20),
+                    totalEarned: admin.firestore.FieldValue.increment(20),
+                    updatedAt: admin.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+
+                const trxRef = db.collection('wallet_transactions').doc();
+                t.set(trxRef, {
+                    userId: data.userId,
+                    amount: 20,
+                    type: 'PROSPECT_INVITATION_REWARD',
+                    description: `Recompensa por enviar invitación a prospecto (${data.companyName || 'Prospecto'})`,
+                    timestamp: admin.firestore.FieldValue.serverTimestamp()
+                });
+            });
+
+            await prospectRef.update({
+                invitationRewardPaid: true
+            });
+        }
+
         return { success: true, securityKey };
 
     } catch (error: any) {

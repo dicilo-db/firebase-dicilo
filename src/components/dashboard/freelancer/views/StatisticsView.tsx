@@ -5,6 +5,10 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/context/AuthContext';
 import { getFreelancerStats, FreelancerStats } from '@/app/actions/freelancer-stats';
 import { getMarketingSends, MarketingSend } from '@/app/actions/marketing-sends';
+import { checkAdminRole } from '@/lib/auth';
+import { getFirestore, doc, getDoc } from 'firebase/firestore';
+import { app } from '@/lib/firebase';
+import { ProspectValidationDialog } from '@/components/admin/ProspectValidationDialog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
@@ -59,15 +63,27 @@ export function StatisticsView() {
     const [marketingSends, setMarketingSends] = useState<MarketingSend[]>([]);
     const [activeSection, setActiveSection] = useState<string | null>(null);
 
+    const [userRole, setUserRole] = useState<string>('user');
+    const [isValidationOpen, setIsValidationOpen] = useState(false);
+    const [validationProspect, setValidationProspect] = useState<any>(null);
+
+    // Determines if user can validate prospects directly
+    const hasValidationAccess = ['team_office', 'team_leader', 'admin', 'superadmin'].includes(userRole);
+
     useEffect(() => {
         if (!user) return;
         async function load() {
             setIsLoading(true);
             try {
-                const [statsRes, sendsRes] = await Promise.all([
+                const [statsRes, sendsRes, adminData] = await Promise.all([
                     getFreelancerStats(user!.uid),
-                    getMarketingSends(user!.uid)
+                    getMarketingSends(user!.uid),
+                    checkAdminRole(user!)
                 ]);
+
+                if (adminData) {
+                    setUserRole(adminData.role);
+                }
 
                 if (statsRes.success && statsRes.stats) {
                     setStats(statsRes.stats);
@@ -105,6 +121,28 @@ export function StatisticsView() {
                     el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
             }, 100);
+        }
+    };
+
+    const handleVerifyClick = async (prospectId: string) => {
+        if (!hasValidationAccess) {
+            toast({ title: t('common.error', 'Error'), description: t('freelancer_views.statistics.no_permission', 'No tienes permiso para realizar esta acción.'), variant: 'destructive' });
+            return;
+        }
+        
+        try {
+            const db = getFirestore(app);
+            const docRef = doc(db, 'recommendations', prospectId);
+            const snap = await getDoc(docRef);
+            if (snap.exists()) {
+                setValidationProspect({ id: snap.id, ...snap.data() });
+                setIsValidationOpen(true);
+            } else {
+                toast({ title: 'Error', description: 'No se encontró la recomendación.' });
+            }
+        } catch (error) {
+            console.error(error);
+            toast({ title: 'Error', description: 'Error al abrir la recomendación.' });
         }
     };
 
@@ -260,14 +298,20 @@ export function StatisticsView() {
                                                 </div>
                                             </td>
                                             <td className="px-3 py-2 text-right whitespace-nowrap">
-                                                <Button variant="ghost" size="sm" className="h-8 text-xs font-semibold text-blue-600" onClick={() => {
-                                                    toast({
-                                                        title: prospect.companyName,
-                                                        description: `${t('common.date', 'Fecha')}: ${new Date(prospect.date).toLocaleDateString()}`,
-                                                    });
-                                                }}>
-                                                    {t('recommendations.actions.view', 'Ver')}
-                                                </Button>
+                                                {hasValidationAccess ? (
+                                                    <Button variant="ghost" size="sm" className="h-8 text-xs font-semibold text-blue-600" onClick={() => handleVerifyClick(prospect.id)}>
+                                                        {t('recommendations.actions.view', 'Ver')}
+                                                    </Button>
+                                                ) : (
+                                                    <Button variant="ghost" size="sm" className="h-8 text-xs font-semibold text-slate-500" onClick={() => {
+                                                        toast({
+                                                            title: prospect.companyName,
+                                                            description: `${t('common.date', 'Fecha')}: ${new Date(prospect.date).toLocaleDateString()}`,
+                                                        });
+                                                    }}>
+                                                        {t('recommendations.actions.details', 'Detalles')}
+                                                    </Button>
+                                                )}
                                             </td>
                                         </tr>
                                     ))}
@@ -538,6 +582,28 @@ export function StatisticsView() {
                     })}
                 </Accordion>
             </div>
+
+            {hasValidationAccess && validationProspect && (
+                <ProspectValidationDialog
+                    prospect={validationProspect}
+                    isOpen={isValidationOpen}
+                    onOpenChange={setIsValidationOpen}
+                    onUpdate={(updatedProspect) => {
+                        // Optimistically update the list if needed, or simply reload stats.
+                        // Ideally we update the specific item in stats.recentProspects.
+                        if (stats) {
+                            setStats({
+                                ...stats,
+                                recentProspects: stats.recentProspects.map(p => 
+                                    p.id === updatedProspect.id 
+                                        ? { ...p, status: updatedProspect.status || p.status, converted: updatedProspect.converted }
+                                        : p
+                                )
+                            });
+                        }
+                    }}
+                />
+            )}
         </div>
     );
 }

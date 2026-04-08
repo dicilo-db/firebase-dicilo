@@ -45,16 +45,13 @@ export async function checkAndUpgradeRank(uid: string) {
         
     const directsCount = directsSnap.size;
     
-    // 3. Compute Directs with at least 1 referral of their own
-    let directsWithAtLeastOne = 0;
+    // 3. Compute Directs that have reached Freelancer rank (or higher)
+    let freelancersCount = 0;
     
     for (const doc of directsSnap.docs) {
-        const subDirectsSnap = await db.collection('private_profiles')
-            .where('referredBy', '==', doc.id)
-            .count()
-            .get();
-        if (subDirectsSnap.data().count >= 1) {
-            directsWithAtLeastOne++;
+        const role = doc.data().role;
+        if (['freelancer', 'team_leader', 'team_office', 'admin', 'superadmin'].includes(role)) {
+            freelancersCount++;
         }
     }
 
@@ -62,7 +59,7 @@ export async function checkAndUpgradeRank(uid: string) {
     let upgraded = false;
 
     // Conditions:
-    if (directsCount >= 20 && directsWithAtLeastOne >= 3) {
+    if (directsCount >= 20 && freelancersCount >= 3) {
         if (newRole !== 'team_leader') {
             newRole = 'team_leader';
             upgraded = true;

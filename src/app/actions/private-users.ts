@@ -2,6 +2,7 @@
 
 import { getAdminDb } from '@/lib/firebase-admin';
 import * as admin from 'firebase-admin';
+import { checkAndUpgradeRank } from './mlm-actions';
 
 /**
  * Toggles the disabled status of a private user.
@@ -207,6 +208,9 @@ export async function setReferrer(uid: string, referrerCode: string) {
             })
         });
 
+        // 4. Run Auto-Promotion Audit
+        await checkAndUpgradeRank(referrerId);
+
         return { success: true, message: `Referrer linked to ${referrerCode}` };
 
     } catch (error: any) {
@@ -214,6 +218,8 @@ export async function setReferrer(uid: string, referrerCode: string) {
         return { success: false, error: error.message };
     }
 }
+
+
 
 /**
  * Fetches details for a list of users by UID.

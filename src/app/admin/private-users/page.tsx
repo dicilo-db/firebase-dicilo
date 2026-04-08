@@ -394,7 +394,7 @@ export default function PrivateUsersPage() {
                                                                     if (res.success) {
                                                                         toast({ title: 'Rol actualizado', description: res.message });
                                                                         // Optimistic update
-                                                                        setUsers(users.map(u => u.id === user.id ? { ...u, role: newRole, isFreelancer: ['freelancer', 'team_office', 'admin', 'superadmin'].includes(newRole) } : u));
+                                                                        setUsers(users.map(u => u.id === user.id ? { ...u, role: newRole, isFreelancer: ['freelancer', 'team_leader', 'team_office', 'admin', 'superadmin'].includes(newRole) } : u));
                                                                     } else {
                                                                         toast({ title: 'Fehler', description: res.error, variant: 'destructive' });
                                                                     }
@@ -404,13 +404,15 @@ export default function PrivateUsersPage() {
                                                             <SelectTrigger className={`h-8 w-[130px] ${(user.role === 'superadmin') ? 'border-red-500 bg-red-50' :
                                                                 (user.role === 'admin') ? 'border-purple-500 bg-purple-50' :
                                                                     (user.role === 'team_office') ? 'border-orange-500 bg-orange-50' :
-                                                                        (user.role === 'freelancer' || user.isFreelancer) ? 'border-blue-500 bg-blue-50' : ''
+                                                                        (user.role === 'team_leader') ? 'border-blue-700 bg-blue-100' :
+                                                                            (user.role === 'freelancer' || user.isFreelancer) ? 'border-blue-500 bg-blue-50' : ''
                                                                 }`}>
                                                                 <SelectValue />
                                                             </SelectTrigger>
                                                             <SelectContent>
                                                                 <SelectItem value="user">Usuario</SelectItem>
                                                                 <SelectItem value="freelancer">Freelancer</SelectItem>
+                                                                <SelectItem value="team_leader">Team Leader</SelectItem>
                                                                 <SelectItem value="team_office">Team Office</SelectItem>
                                                                 <SelectItem value="admin">Admin</SelectItem>
                                                                 <SelectItem value="superadmin">Superadmin</SelectItem>
@@ -420,13 +422,15 @@ export default function PrivateUsersPage() {
                                                         <span className={`px-2 py-1 rounded text-xs font-medium border ${(user.role === 'superadmin') ? 'border-red-200 bg-red-100 text-red-800' :
                                                             (user.role === 'admin') ? 'border-purple-200 bg-purple-100 text-purple-800' :
                                                                 (user.role === 'team_office') ? 'border-orange-200 bg-orange-100 text-orange-800' :
-                                                                    (user.role === 'freelancer' || user.isFreelancer) ? 'border-blue-200 bg-blue-100 text-blue-800' :
-                                                                        'border-gray-200 bg-gray-100 text-gray-800'
+                                                                    (user.role === 'team_leader') ? 'border-blue-300 bg-blue-200 text-blue-900' :
+                                                                        (user.role === 'freelancer' || user.isFreelancer) ? 'border-blue-200 bg-blue-100 text-blue-800' :
+                                                                            'border-gray-200 bg-gray-100 text-gray-800'
                                                             }`}>
                                                             {user.role === 'team_office' ? 'Team Office' :
-                                                                user.role === 'superadmin' ? 'Superadmin' :
-                                                                    user.role === 'admin' ? 'Admin' :
-                                                                        (user.role === 'freelancer' || user.isFreelancer) ? 'Freelancer' : 'Usuario'}
+                                                                user.role === 'team_leader' ? 'Team Leader' :
+                                                                    user.role === 'superadmin' ? 'Superadmin' :
+                                                                        user.role === 'admin' ? 'Admin' :
+                                                                            (user.role === 'freelancer' || user.isFreelancer) ? 'Freelancer' : 'Usuario'}
                                                         </span>
                                                     )}
                                                 </div>
