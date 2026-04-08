@@ -98,10 +98,26 @@ export async function setPrivateUserRole(uid: string, role: string) {
             updatedAt: admin.firestore.FieldValue.serverTimestamp(),
         });
 
-        // Also update Custom Claims in Auth if needed? 
-        // For now, we stick to Firestore profile based RBAC as per current architecture.
+        // Actualizar Custom Claims de Firebase Auth fusionando con los que ya tenga
+        const isAdminClaim = role === 'superadmin' || role === 'admin' || role === 'team_office';
+        
+        try {
+            const userRecord = await admin.auth().getUser(uid);
+            const currentClaims = userRecord.customClaims || {};
 
-        return { success: true, message: `User role updated to ${role}.` };
+            await admin.auth().setCustomUserClaims(uid, { 
+                ...currentClaims,
+                role: role,
+                admin: isAdminClaim 
+            });
+            // Revocamos tokens para forzar refresco y que Firebase Rules agarre los permisos de inmediato
+            await admin.auth().revokeRefreshTokens(uid);
+        } catch (authErr) {
+            console.error("Failed to set Custom Claims on Auth object:", authErr);
+            // Seguimos adelante, es posible que el usuario solo exista en BD y no en Auth
+        }
+
+        return { success: true, message: `User role updated to ${role} and claims refreshed.` };
     } catch (error: any) {
         console.error('Error updating user role:', error);
         return { success: false, error: error.message };
@@ -119,6 +135,21 @@ export async function updateUserPermissions(uid: string, permissions: string[]) 
             permissions: permissions,
             updatedAt: admin.firestore.FieldValue.serverTimestamp(),
         });
+
+        // Actualizar Custom Claims
+        try {
+            const userRecord = await admin.auth().getUser(uid);
+            const currentClaims = userRecord.customClaims || {};
+
+            await admin.auth().setCustomUserClaims(uid, { 
+                ...currentClaims,
+                permissions: permissions 
+            });
+            await admin.auth().revokeRefreshTokens(uid);
+        } catch (authErr) {
+            console.error("Failed to set Custom Claims on Auth object:", authErr);
+        }
+
         return { success: true, message: 'Permissions updated successfully.' };
     } catch (error: any) {
         console.error('Error updating permissions:', error);
