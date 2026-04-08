@@ -578,7 +578,7 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
                             <CardHeader className="pb-3 flex flex-row items-center justify-between">
                                 <CardTitle className="text-lg flex items-center gap-2">
                                     <MapPin className="h-5 w-5 text-blue-500" />
-                                    {t('community.neighborhoods_of', 'Barrios de')} {isCity ? displayNeighborhood : neighborhoodConfig?.city || 'Hamburg'}
+                                    {t('community.search_in', 'Busca en')} {displayNeighborhood}
                                 </CardTitle>
                             </CardHeader>
                             <CardContent>
