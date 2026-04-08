@@ -6,6 +6,7 @@ import { randomUUID } from 'crypto';
 import { headers } from 'next/headers';
 import { checkRateLimit } from '@/lib/rate-limit';
 import { registerNewProspect } from './dicipoints'; // Used for Dicipoints logic
+import { moderateContentSkill } from '@/ai/moderation';
 import { z } from 'zod';
 
 const quickHighlightSchema = z.object({
@@ -45,7 +46,22 @@ export async function submitQuickHighlight(formData: FormData) {
             return { success: false, error: parsed.error.errors[0].message };
         }
 
-        const { businessId, businessName, neighborhood, userId, userName, comments, rating } = parsed.data;
+        let { businessId, businessName, neighborhood, userId, userName, comments, rating } = parsed.data;
+
+        // --- AI MODERATION SHIELD ---
+        const moderationResult = await moderateContentSkill(comments);
+        if (!moderationResult.isSafe) {
+            return { 
+                success: false, 
+                error: moderationResult.reason || 'El contenido contiene palabras inapropiadas o no cumple las normas de la comunidad.' 
+            };
+        }
+        
+        // Use cleaned text (e.g. asterisks) if modified
+        if (moderationResult.cleanedText) {
+            comments = moderationResult.cleanedText;
+        }
+        // -----------------------------
 
         // Process media if any
         const mediaFiles = formData.getAll('media') as File[];
