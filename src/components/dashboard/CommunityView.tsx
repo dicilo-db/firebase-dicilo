@@ -684,7 +684,7 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
                                     </div>
                                 )}
 
-                                <SuggestLocationDialog />
+                                <SuggestLocationDialog currentUser={currentUser} />
                             </CardContent>
                         </Card>
 

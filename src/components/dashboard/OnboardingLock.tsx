@@ -36,6 +36,7 @@ export function OnboardingLock({
     onSuccess: () => void
 }) {
     const [isSaving, setIsSaving] = useState(false);
+    const [openCountry, setOpenCountry] = useState(false);
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -75,7 +76,7 @@ export function OnboardingLock({
                                 render={({ field }) => (
                                     <FormItem className="flex flex-col">
                                         <FormLabel className="font-bold mt-2">País</FormLabel>
-                                        <Popover modal={true}>
+                                        <Popover modal={true} open={openCountry} onOpenChange={setOpenCountry}>
                                             <PopoverTrigger asChild>
                                                 <FormControl>
                                                     <Button
@@ -104,7 +105,8 @@ export function OnboardingLock({
                                                                     value={c.label}
                                                                     key={c.value}
                                                                     onSelect={() => {
-                                                                        form.setValue("country", c.value)
+                                                                        form.setValue("country", c.value);
+                                                                        setOpenCountry(false);
                                                                     }}
                                                                 >
                                                                     <Check

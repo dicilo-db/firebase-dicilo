@@ -8,14 +8,15 @@ import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Building2, MapPin, Loader2, PlusCircle } from 'lucide-react';
-import { useAuthGuard } from '@/hooks/useAuthGuard';
+
 import { suggestLocation } from '@/app/actions/location-suggestions';
 import { getLocations, LocationData, City } from '@/app/actions/admin-locations';
 import { useToast } from '@/hooks/use-toast';
 
-export function SuggestLocationDialog() {
+import { User } from 'firebase/auth';
+
+export function SuggestLocationDialog({ currentUser }: { currentUser?: User | null }) {
     const { t } = useTranslation('common');
-    const { currentUser } = useAuthGuard();
     const { toast } = useToast();
     
     const [open, setOpen] = useState(false);
