@@ -33,15 +33,25 @@ export function QuickHighlightForm({ neighborhood, onSuccess }: { neighborhood: 
             try {
                 const db = getFirestore(app);
                 // We fetch businesses matching either 'neighborhood' or 'city' field
-                const q1 = query(collection(db, 'businesses'), where('neighborhood', '==', neighborhood), where('status', '==', 'approved'));
+                const q1 = query(collection(db, 'businesses'), where('neighborhood', '==', neighborhood));
                 const snap1 = await getDocs(q1);
                 
-                const q2 = query(collection(db, 'businesses'), where('city', '==', neighborhood), where('status', '==', 'approved'));
+                const q2 = query(collection(db, 'businesses'), where('city', '==', neighborhood));
                 const snap2 = await getDocs(q2);
 
                 const map = new Map();
-                snap1.docs.forEach(d => map.set(d.id, { id: d.id, ...d.data() }));
-                snap2.docs.forEach(d => map.set(d.id, { id: d.id, ...d.data() }));
+                snap1.docs.forEach(d => {
+                    const data = d.data();
+                    if (data.status === 'approved' || data.status === 'active') {
+                        map.set(d.id, { id: d.id, ...data });
+                    }
+                });
+                snap2.docs.forEach(d => {
+                    const data = d.data();
+                    if (data.status === 'approved' || data.status === 'active') {
+                        map.set(d.id, { id: d.id, ...data });
+                    }
+                });
 
                 setBusinesses(Array.from(map.values()).sort((a, b) => a.companyName.localeCompare(b.companyName)));
             } catch (err) {
