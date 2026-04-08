@@ -75,7 +75,7 @@ export function OnboardingLock({
                                 render={({ field }) => (
                                     <FormItem className="flex flex-col">
                                         <FormLabel className="font-bold mt-2">País</FormLabel>
-                                        <Popover>
+                                        <Popover modal={true}>
                                             <PopoverTrigger asChild>
                                                 <FormControl>
                                                     <Button
@@ -93,7 +93,7 @@ export function OnboardingLock({
                                                     </Button>
                                                 </FormControl>
                                             </PopoverTrigger>
-                                            <PopoverContent className="p-0">
+                                            <PopoverContent className="p-0 z-[110] w-[var(--radix-popover-trigger-width)] min-w-[280px] max-h-[60vh] overflow-hidden">
                                                 <Command>
                                                     <CommandInput placeholder="Buscar país..." />
                                                     <CommandList>

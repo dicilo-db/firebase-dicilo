@@ -28,6 +28,7 @@ interface BarometerStats {
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CommunityFeed } from '../community/CommunityFeed';
+import { SuggestLocationDialog } from '@/components/community/SuggestLocationDialog';
 import { SocialPanel } from './social/SocialPanel';
 import { TrustBoardGuard } from '../community/trustboard/TrustBoardGuard';
 import { TrustBoardView } from '../community/trustboard/TrustBoardView';
@@ -674,7 +675,7 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
                                                     ));
                                                 })()}
 
-                                                {/* Empty State */}
+                                {/* Empty State */}
                                                 {searchTerm && subNeighborhoods.filter(nb => nb.name.toLowerCase().includes(searchTerm.toLowerCase())).length === 0 && (
                                                     <p className="text-sm text-muted-foreground text-center py-2">No se encontraron barrios.</p>
                                                 )}
@@ -683,47 +684,7 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
                                     </div>
                                 )}
 
-                                {/* Register Neighborhood Button */}
-                                <Dialog open={registerOpen} onOpenChange={setRegisterOpen}>
-                                    <DialogTrigger asChild>
-                                        <Button variant="ghost" size="sm" className="w-full text-xs text-muted-foreground hover:text-primary border-t pt-4 mt-2">
-                                            <Building2 className="mr-2 h-3 w-3" />
-                                            {t('community.register_neighborhood_btn', 'Registrar Barrio')}
-                                        </Button>
-                                    </DialogTrigger>
-                                    <DialogContent>
-                                        <DialogHeader>
-                                            <DialogTitle>{t('community.register_neighborhood', 'Registrar Barrio')}</DialogTitle>
-                                            <DialogDescription>
-                                                {t('community.register_neighborhood_desc', '¿No encuentras tu barrio? Regístralo aquí para empezar a conectar con tus vecinos.')}
-                                            </DialogDescription>
-                                        </DialogHeader>
-                                        <div className="space-y-4 py-4">
-                                            <div className="space-y-2">
-                                                <Label>{t('form.neighborhoodName', 'Nombre del Barrio')}</Label>
-                                                <Input
-                                                    placeholder="Ej. Sternschanze"
-                                                    value={newNeighborhoodName}
-                                                    onChange={(e) => setNewNeighborhoodName(e.target.value)}
-                                                />
-                                            </div>
-                                            <div className="space-y-2">
-                                                <Label>{t('form.countryName', 'País (Opcional)')}</Label>
-                                                <Input
-                                                    placeholder="Ej. Alemania"
-                                                    value={newCountryName}
-                                                    onChange={(e) => setNewCountryName(e.target.value)}
-                                                />
-                                            </div>
-                                        </div>
-                                        <DialogFooter>
-                                            <Button onClick={handleRegisterNeighborhood} disabled={!newNeighborhoodName || isRegistering}>
-                                                {isRegistering && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                                                {isRegistering ? t('community.verifying', 'Verificando...') : t('community.verify_create', 'Verificar y Crear')}
-                                            </Button>
-                                        </DialogFooter>
-                                    </DialogContent>
-                                </Dialog>
+                                <SuggestLocationDialog />
                             </CardContent>
                         </Card>
 
@@ -785,7 +746,7 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
                                 </TabsTrigger>
                                 <TabsTrigger value="recommendations" className="py-2 text-xs sm:text-sm whitespace-normal h-full">
                                     <MapPin className="h-4 w-4 mr-1 sm:mr-2 flex-shrink-0" />
-                                    <span className="hidden sm:inline">{t('community.feed.recommendations', 'Recomendaciones')}</span>
+                                    <span className="hidden sm:inline">{t('community.feed.recommendations', 'Destacados')}</span>
                                     <span className="sm:hidden">Recoms</span>
                                 </TabsTrigger>
                                 <TabsTrigger value="social" className="py-2 text-xs sm:text-sm whitespace-normal h-full">

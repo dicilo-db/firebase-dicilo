@@ -15,6 +15,11 @@ import { Badge } from '@/components/ui/badge';
 import { MapPin, Plus, Trash2, Globe, Search, Loader2, ArrowLeft, Building2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import {
+    getPendingSuggestions,
+    deleteSuggestion,
+    LocationSuggestion
+} from '@/app/actions/location-suggestions';
+import {
     getLocations,
     addCountry,
     deleteCountry,
@@ -84,11 +89,16 @@ export default function LocationsPage() {
     // Add District State
     const [activeCityForDistrict, setActiveCityForDistrict] = useState<{ countryId: string, cityName: string } | null>(null);
     const [newDistrictName, setNewDistrictName] = useState('');
+    const [pendingSuggestions, setPendingSuggestions] = useState<LocationSuggestion[]>([]);
 
     const fetchData = async () => {
         setIsLoading(true);
         try {
-            const res = await getLocations();
+            const [res, suggRes] = await Promise.all([getLocations(), getPendingSuggestions()]);
+            if (suggRes.success && suggRes.data) {
+                setPendingSuggestions(suggRes.data);
+            }
+            
             if (res.success && res.data) {
                 setLocations(res.data);
             } else {
@@ -212,7 +222,46 @@ export default function LocationsPage() {
             </header>
 
             <main className="flex-grow p-8 container mx-auto max-w-6xl">
-                <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                
+                    {pendingSuggestions.length > 0 && (
+                        <div className="mb-8 p-4 bg-orange-50 border border-orange-200 rounded-lg">
+                            <h2 className="text-xl font-bold text-orange-800 mb-4 flex items-center gap-2">
+                                <Building2 className="w-5 h-5" /> Sugerencias Pendientes ({pendingSuggestions.length})
+                            </h2>
+                            <div className="space-y-2">
+                                {pendingSuggestions.map(s => (
+                                    <div key={s.id} className="bg-white p-3 rounded shadow-sm border flex items-center justify-between">
+                                        <div>
+                                            <Badge variant="outline" className="mb-1 bg-slate-100">{s.type === 'city' ? 'Nueva Ciudad' : 'Nuevo Barrio'}</Badge>
+                                            <p className="font-bold text-slate-800">
+                                                {s.type === 'city' ? s.cityName : `${s.districtName} (en ${s.cityName})`}
+                                            </p>
+                                            <p className="text-sm text-slate-500">País: {s.countryName}</p>
+                                        </div>
+                                        <div className="flex gap-2">
+                                            <Button size="sm" variant="outline" className="text-red-600 hover:text-red-700 hover:bg-red-50" onClick={async () => {
+                                                if(confirm('¿Rechazar esta sugerencia?')) {
+                                                    await deleteSuggestion(s.id);
+                                                    fetchData();
+                                                }
+                                            }}>Rechazar</Button>
+                                            <Button size="sm" onClick={async () => {
+                                                if (s.type === 'city') {
+                                                    await addCity(s.countryId, s.cityName);
+                                                } else {
+                                                    await addDistrict(s.countryId, s.cityName, s.districtName!);
+                                                }
+                                                await deleteSuggestion(s.id);
+                                                fetchData();
+                                            }}>Aprobar e Insertar</Button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+    
+                    <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
                         <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100 flex items-center gap-2">
                             <Globe className="h-8 w-8 text-primary" />
