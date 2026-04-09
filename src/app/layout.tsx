@@ -15,6 +15,9 @@ const AiChatWidget = dynamic(
   { ssr: false } // Client-side only
 );
 
+import { TrackingScript } from '@/components/TrackingScript';
+import { SocialProofBanner } from '@/components/SocialProofBanner';
+
 export const metadata: Metadata = {
   metadataBase: new URL('https://dicilo.net'),
   title: 'Dicilo.net',
@@ -50,7 +53,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
       >
         <I18nProvider>
           <AuthProvider>
+            <TrackingScript />
             <div className="flex-grow">{children}</div>
+            <SocialProofBanner />
             <AiChatWidget />
             <Toaster />
           </AuthProvider>

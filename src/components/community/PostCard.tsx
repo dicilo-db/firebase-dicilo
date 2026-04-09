@@ -141,6 +141,10 @@ export function PostCard({ post, currentUserId, readOnly = false }: PostCardProp
     };
 
     const handleTranslate = async (targetLang: string) => {
+        if (readOnly) {
+            toast({ title: t('common:login.required', 'Inicio de sesión requerido'), description: t('common:community.login_to_interact', 'Regístrate para usar traducciones.') });
+            return;
+        }
         // If already showing this language, do nothing
         if (showTranslated && currentTranslationLang === targetLang) return;
 
@@ -202,6 +206,10 @@ export function PostCard({ post, currentUserId, readOnly = false }: PostCardProp
     };
 
     const handleSocialShare = async (platform: string) => {
+        if (readOnly) {
+            toast({ title: t('common:login.required', 'Inicio de sesión requerido'), description: t('common:community.login_to_interact', 'Regístrate para compartir contenido.') });
+            return;
+        }
         // Unique post URL
         const domain = window.location.origin;
         const url = `${domain}/post/${post.id}`;
@@ -252,6 +260,10 @@ export function PostCard({ post, currentUserId, readOnly = false }: PostCardProp
     };
 
     const handleDownload = async () => {
+        if (readOnly) {
+            toast({ title: t('common:login.required', 'Inicio de sesión requerido'), description: t('common:community.login_to_interact', 'Regístrate para descargar contenido.') });
+            return;
+        }
         if (!post.imageUrl) return;
         try {
             // Use proxy to avoid CORS
@@ -426,7 +438,12 @@ export function PostCard({ post, currentUserId, readOnly = false }: PostCardProp
                                             variant="secondary"
                                             size="icon"
                                             className="absolute top-2 right-2 h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity bg-black/50 hover:bg-black/70 text-white border-none"
-                                            onClick={() => {
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                if (readOnly) {
+                                                    toast({ title: t('common:login.required', 'Inicio de sesión requerido'), description: t('common:community.login_to_interact', 'Regístrate para descargar contenido.') });
+                                                    return;
+                                                }
                                                 // Existing handleDownload logic adapted for specific URL
                                                 const handleSingleDownload = async (url: string) => {
                                                     try {

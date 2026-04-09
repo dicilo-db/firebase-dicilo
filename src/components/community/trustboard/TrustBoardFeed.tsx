@@ -33,7 +33,7 @@ export function TrustBoardFeed({ neighborhood, activeCategory }: { neighborhood:
     const { t, i18n } = useTranslation('common');
     const { user } = useAuth();
     const { toast } = useToast();
-    const currentLang = i18n.language.substring(0, 2);
+    const currentLang = (i18n.language || 'es').substring(0, 2);
 
     useEffect(() => {
         if (!neighborhood) return;

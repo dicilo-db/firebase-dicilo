@@ -12,9 +12,10 @@ import { TrustBoardFeed } from './TrustBoardFeed';
 
 interface TrustBoardViewProps {
     neighborhood: string;
+    readOnly?: boolean;
 }
 
-export function TrustBoardView({ neighborhood }: TrustBoardViewProps) {
+export function TrustBoardView({ neighborhood, readOnly }: TrustBoardViewProps) {
     const { t } = useTranslation('common');
     const [activeCategory, setActiveCategory] = useState<'all' | 'jobs' | 'living' | 'talent' | 'swap'>('all');
     const [searchTerm, setSearchTerm] = useState('');
@@ -40,26 +41,28 @@ export function TrustBoardView({ neighborhood }: TrustBoardViewProps) {
                     />
                     <Search className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
                 </div>
-                <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-                    <DialogTrigger asChild>
-                        <Button className="w-full md:w-auto bg-primary hover:bg-primary/90 text-white shadow-sm font-semibold">
-                            + {t('community.trustboard.new_post', 'Nuevo Anuncio')}
-                        </Button>
-                    </DialogTrigger>
-                    <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-                        <DialogHeader>
-                            <DialogTitle>{t('community.trustboard.form.dialog_title', 'Crear Anuncio Local')}</DialogTitle>
-                            <DialogDescription>
-                                {t('community.trustboard.form.dialog_desc', 'Publica tu anuncio en {{name}}. Sé claro y profesional.', { name: neighborhood })}
-                            </DialogDescription>
-                        </DialogHeader>
-                        <TrustBoardPostForm 
-                            neighborhood={neighborhood} 
-                            onSuccess={() => setIsFormOpen(false)} 
-                            onCancel={() => setIsFormOpen(false)} 
-                        />
-                    </DialogContent>
-                </Dialog>
+                {!readOnly && (
+                    <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+                        <DialogTrigger asChild>
+                            <Button className="w-full md:w-auto bg-primary hover:bg-primary/90 text-white shadow-sm font-semibold">
+                                + {t('community.trustboard.new_post', 'Nuevo Anuncio')}
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                            <DialogHeader>
+                                <DialogTitle>{t('community.trustboard.form.dialog_title', 'Crear Anuncio Local')}</DialogTitle>
+                                <DialogDescription>
+                                    {t('community.trustboard.form.dialog_desc', 'Publica tu anuncio en {{name}}. Sé claro y profesional.', { name: neighborhood })}
+                                </DialogDescription>
+                            </DialogHeader>
+                            <TrustBoardPostForm 
+                                neighborhood={neighborhood} 
+                                onSuccess={() => setIsFormOpen(false)} 
+                                onCancel={() => setIsFormOpen(false)} 
+                            />
+                        </DialogContent>
+                    </Dialog>
+                )}
             </div>
 
             <div className="flex overflow-x-auto gap-3 pb-2 scrollbar-hide">

@@ -777,6 +777,32 @@
   },
   "statistics": {
     "title": "Statistics",
+    "clientsStatsTitle": "Client Statistics",
+    "ranges": {
+      "24h": "Last 24 hours",
+      "48h": "Last 48 hours",
+      "7d": "Last 7 days",
+      "30d": "Last Month",
+      "1y": "Last Year",
+      "all": "All Time"
+    },
+    "events": {
+      "search": "🔍 Directory Search",
+      "cardClick": "👆 Business Card Click",
+      "popupClick": "⭐ Lead Interaction (Popup)",
+      "adImpression": "👁️ Profile Impression"
+    },
+    "general": {
+      "title": "Global Metrics",
+      "description": "Aggregated performance of real interactions",
+      "topLocationsTitle": "Top Locations (Global)",
+      "topLocationsSub": "Aggregated visitor origins",
+      "noLocationData": "No location data available yet.",
+      "totalSearches": "Total Searches",
+      "totalCardClicks": "Total Card Clicks",
+      "totalLeads": "Generated Leads",
+      "interactionsChart": "Interactions over time"
+    },
     "totalVisits": "Total Visits",
     "totalRegistrations": "Total Registrations",
     "totalSearches": "Total Searches",

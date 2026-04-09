@@ -7,7 +7,7 @@ const db = getFirestore(app);
 export interface AdminUser {
   uid: string;
   email: string | null;
-  role: 'admin' | 'superadmin' | 'team_office' | 'freelancer';
+  role: 'admin' | 'superadmin' | 'team_office' | 'team_leader' | 'freelancer';
   permissions: string[];
 }
 
@@ -45,7 +45,7 @@ export async function checkAdminRole(user: User): Promise<AdminUser | null> {
     }
 
     // Determine effective role
-    const finalRole = (dbRole === 'superadmin' || dbRole === 'admin' || dbRole === 'team_office' || dbRole === 'freelancer')
+    const finalRole = (dbRole === 'superadmin' || dbRole === 'admin' || dbRole === 'team_office' || dbRole === 'team_leader' || dbRole === 'freelancer')
       ? dbRole
       : (isAdminClaim ? 'admin' : undefined);
 
@@ -53,7 +53,7 @@ export async function checkAdminRole(user: User): Promise<AdminUser | null> {
       return {
         uid: user.uid,
         email: user.email,
-        role: finalRole as 'admin' | 'superadmin' | 'team_office' | 'freelancer', // Added freelancer to type
+        role: finalRole as 'admin' | 'superadmin' | 'team_office' | 'team_leader' | 'freelancer',
         permissions: permissions
       };
     }

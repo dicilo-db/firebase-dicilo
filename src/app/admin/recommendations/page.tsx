@@ -144,18 +144,6 @@ export default function RecommendationsPage() {
         }
     }, [editingRec]);
 
-        } finally {
-            setIsSavingEdit(false);
-        }
-    };
-
-    // Removed inline Verification, GenerateKey, SendInvitation handlers
-    // as they are now handled by ProspectValidationDialog.
-
-            setIsSendingEmail(false);
-        }
-    };
-
     // --- Convert Logic ---
     const handleConvertClick = (rec: any) => {
         setConvertingRec(rec);

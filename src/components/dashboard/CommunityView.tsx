@@ -47,7 +47,8 @@ function getNeighborhood(slugOrName: string) {
     return ALL_NEIGHBORHOODS.find(n => n.id.toLowerCase() === normalized || n.name.toLowerCase() === normalized);
 }
 
-export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: { defaultNeighborhood?: string, currentUser: User }) {
+export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: { defaultNeighborhood?: string, currentUser: User | null }) {
+    const isReadOnly = !currentUser;
     const { t } = useTranslation('common');
     const { toast } = useToast();
     const router = useRouter();
@@ -368,6 +369,10 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
 
     // Handle Favorite Toggle
     const handleToggleFavorite = async () => {
+        if (isReadOnly) {
+            toast({ title: t('common:login.required', 'Inicio de sesión requerido'), description: 'Regístrate para guardar tu barrio favorito.' });
+            return;
+        }
         const newStatus = !isFavorite;
         // Optimistic UI handled by listener mostly, but we can force it if slow
         try {
@@ -521,7 +526,7 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
         }
     };
 
-    const [activeTab, setActiveTab] = useState("wall");
+    const [activeTab, setActiveTab] = useState("social");
     // Hide sidebar for both Social Panel (Chats) and Wall (Feed) to provide full width space
     const isFullWidthTab = activeTab === 'social' || activeTab === 'wall' || activeTab === 'trustboard';
 
@@ -674,7 +679,9 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
                                     </div>
                                 )}
 
-                                <SuggestLocationDialog currentUser={currentUser} />
+                                {!isReadOnly && currentUser && (
+                                    <SuggestLocationDialog currentUser={currentUser} />
+                                )}
                             </CardContent>
                         </Card>
 
@@ -729,24 +736,24 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
                     <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
                         <div className="flex items-center justify-between">
                             <TabsList className="grid w-full grid-cols-4 lg:w-[600px] h-auto p-1">
-                                <TabsTrigger value="wall" className="py-2 text-xs sm:text-sm whitespace-normal h-full">
-                                    <MessageSquare className="h-4 w-4 mr-1 sm:mr-2 flex-shrink-0" />
-                                    <span className="hidden sm:inline">{t('community.feed.wall', 'Muro Social')}</span>
-                                    <span className="sm:hidden">Muro</span>
+                                <TabsTrigger value="social" className="py-2 text-xs sm:text-sm whitespace-normal h-full">
+                                    <Users className="h-4 w-4 mr-1 sm:mr-2 flex-shrink-0" />
+                                    <span className="hidden sm:inline">{t('navigation.social_network', 'Mi Círculo')}</span>
+                                    <span className="sm:hidden">Círculo</span>
                                 </TabsTrigger>
                                 <TabsTrigger value="recommendations" className="py-2 text-xs sm:text-sm whitespace-normal h-full">
                                     <MapPin className="h-4 w-4 mr-1 sm:mr-2 flex-shrink-0" />
                                     <span className="hidden sm:inline">{t('community.feed.recommendations', 'Destacados')}</span>
                                     <span className="sm:hidden">Recoms</span>
                                 </TabsTrigger>
-                                <TabsTrigger value="social" className="py-2 text-xs sm:text-sm whitespace-normal h-full">
-                                    <Users className="h-4 w-4 mr-1 sm:mr-2 flex-shrink-0" />
-                                    <span className="hidden sm:inline">{t('navigation.social_network', 'Mi Círculo')}</span>
-                                    <span className="sm:hidden">Círculo</span>
+                                <TabsTrigger value="wall" className="py-2 text-xs sm:text-sm whitespace-normal h-full">
+                                    <MessageSquare className="h-4 w-4 mr-1 sm:mr-2 flex-shrink-0" />
+                                    <span className="hidden sm:inline">{t('community.feed.wall', 'Muro Social')}</span>
+                                    <span className="sm:hidden">Muro</span>
                                 </TabsTrigger>
                                 <TabsTrigger value="trustboard" className="py-2 text-xs sm:text-sm whitespace-normal h-full text-blue-700 bg-blue-50/50">
                                     <Search className="h-4 w-4 mr-1 sm:mr-2 text-blue-600 flex-shrink-0" />
-                                    <span className="font-semibold">TrustBoard</span>
+                                    <span className="font-semibold">{t('navigation.trustboard', 'Pizarra')}</span>
                                 </TabsTrigger>
                             </TabsList>
                         </div>
@@ -755,7 +762,7 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
                             {/* Pass selected neighborhood to feed */}
                             <CommunityFeed
                                 neighborhood={neighborhoodName}
-                                userId={currentUser.uid}
+                                userId={currentUser?.uid || ''}
                             />
                         </TabsContent>
 
@@ -774,7 +781,15 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
                                     {t('navigation.social_network', 'Mi Círculo')}
                                 </h3>
                             </div>
-                            <SocialPanel neighborhood={neighborhoodName} />
+                            {isReadOnly ? (
+                                <div className="p-8 text-center bg-white rounded-xl border shadow-sm">
+                                    <h4 className="text-lg font-semibold text-slate-800 mb-2">Acceso a Círculo Privado</h4>
+                                    <p className="text-slate-600 mb-4">Inicia sesión para conectar con personas en tu barrio.</p>
+                                    <Button asChild><Link href="/registrieren">Crear Cuenta</Link></Button>
+                                </div>
+                            ) : (
+                                <SocialPanel neighborhood={neighborhoodName} />
+                            )}
                         </TabsContent>
 
                         <TabsContent value="trustboard" className="space-y-4 animate-in fade-in slide-in-from-bottom-2">
@@ -784,9 +799,7 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
                                     {t('community.trustboard.tab_title', 'Mercado Local & Servicios')}
                                 </h3>
                             </div>
-                            <TrustBoardGuard currentUser={currentUser}>
-                                <TrustBoardView neighborhood={neighborhoodName} />
-                            </TrustBoardGuard>
+                            <TrustBoardView neighborhood={neighborhoodName} readOnly={isReadOnly} />
                         </TabsContent>
                     </Tabs>
                 </div>

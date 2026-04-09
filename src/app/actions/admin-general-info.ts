@@ -132,7 +132,11 @@ export async function broadcastGeneralInfoNewsletter(payload: BroadcastPayload) 
             return { success: false, error: firstError?.value?.error || 'Error desconocido de SMTP' };
         }
 
-        return { success: true, count: sentCount };
+        if (sentCount === 0 && failedCount === 0 && users.length > 0) {
+            return { success: false, error: 'Ningún correo se pudo enviar (Verifique si la plantilla tiene asuntos y cuerpos válidos)' };
+        }
+
+        return { success: true, count: sentCount, failed: failedCount };
     } catch (error: any) {
         console.error('Failed to broadcast general info newsletter:', error);
         return { success: false, error: error.message || String(error) };

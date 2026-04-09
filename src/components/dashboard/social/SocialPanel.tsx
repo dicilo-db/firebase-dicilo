@@ -28,7 +28,7 @@ import { CommunityFeed } from '../../community/CommunityFeed';
 import { NotificationBell } from '../../notifications/NotificationBell';
 
 export function SocialPanel({ neighborhood = 'Hamburg' }: { neighborhood?: string }) {
-    const { t } = useTranslation('social');
+    const { t } = useTranslation('common');
     const { user } = useAuth();
     const { suggestedNeighbors, pendingRequests, sendFriendRequest, respondToFriendRequest, friends } = useFriends();
 

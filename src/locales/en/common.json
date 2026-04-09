@@ -1154,10 +1154,45 @@
         "monitored_env": "Monitored Environment",
         "monitored_desc": "Posts here are exclusive to your contacts, but the environment is subject to preventive auditing by DiciBot Brain to detect violations of community guidelines.",
         "your_private_circle": "Your Private Circle",
-        "create_post_private": "What are you thinking? (Only for your friends)"
+        "create_post_private": "What are you thinking? (Only for your friends)",
+        "tabs": {
+            "chats": "Chats",
+            "friends": "Friends"
+        },
+        "placeholder": {
+            "search_neighbor": "Search neighbors...",
+            "type_message": "Type a message..."
+        },
+        "list": {
+            "no_chats": "You have no active chats.",
+            "request_from": "Request from",
+            "user_label": "User",
+            "unknown_neighborhood": "Unknown neighborhood"
+        },
+        "headers": {
+            "pending_requests": "Pending Requests",
+            "my_friends": "My Friends",
+            "suggested_neighbors": "Suggested Neighbors",
+            "no_new_neighbors": "No new neighbors to add"
+        },
+        "actions": {
+            "reject_request": "Reject",
+            "accept_request": "Accept",
+            "start_chat": "Start Chat",
+            "add_friend": "Add Friend",
+            "send": "Send"
+        },
+        "status": {
+            "online": "Online"
+        }
     },
     "validUntil": "Valid until:",
     "downloadPDF": "Download PDF",
     "downloadJPG": "Download JPG",
-    "searching": "Searching..."
+    "searching": "Searching...",
+    "social_proof": {
+        "joined": "just joined Dicilo",
+        "from": "from",
+        "user_label": "User"
+    }
 }

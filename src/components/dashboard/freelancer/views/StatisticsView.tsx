@@ -221,7 +221,7 @@ export function StatisticsView() {
                     onClick={() => handleCardClick("Envíos de E-Mail Marketing")}
                     isActive={activeSection === 'marketing'}
                 />
-                <KpiCard icon={Users} label={t('freelancer_views.statistics.followers')} value="200" onClick={() => handleCardClick(t('freelancer_views.statistics.followers'))} />
+                <KpiCard icon={Users} label={t('freelancer_views.statistics.referred_users', 'Usuarios en mi Red')} value={stats?.totalReferredUsers || 0} onClick={() => handleCardClick(t('freelancer_views.statistics.referred_users', 'Usuarios en mi Red'))} />
             </div>
 
             {/* Recent Prospects List */}

@@ -138,12 +138,16 @@ export function RegistrationForm() {
     const ref = searchParams.get('ref');
     const inviteId = searchParams.get('inviteId'); 
     const regType = searchParams.get('type');
-    if (ref) setValue('referralCode', ref);
+    if (ref) {
+      setValue('referralCode', ref);
+    } else {
+      if (!getValues('referralCode')) setValue('referralCode', 'DCLSYSTEM01');
+    }
     if (inviteId) setValue('inviteId', inviteId);
     if (regType && ['private', 'donor', 'retailer', 'premium'].includes(regType)) {
       setValue('registrationType', regType as any, { shouldValidate: true, shouldDirty: true });
     }
-  }, [searchParams, setValue]);
+  }, [searchParams, setValue, getValues]);
 
   const handleGeocode = React.useCallback(
     async (addressToGeocode: string) => {
@@ -481,6 +485,9 @@ export function RegistrationForm() {
                 {...register('referralCode')} 
                 className="bg-white transition-all focus:ring-2 focus:ring-blue-400 focus:border-transparent"
               />
+              <p className="text-[10px] text-muted-foreground leading-tight mt-1">
+                {t('register.fields.referralHint', 'Si has sido invitado por un amigo, por favor cambia este código por el de la persona que te invitó.')}
+              </p>
             </div>
           </div>
 

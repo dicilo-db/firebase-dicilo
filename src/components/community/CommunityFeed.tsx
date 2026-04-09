@@ -15,11 +15,12 @@ interface CommunityFeedProps {
     userId: string;
     mode?: 'public' | 'private';
     friendIds?: string[];
+    readOnly?: boolean;
 }
 
 import { useTranslation } from 'react-i18next';
 
-export function CommunityFeed({ neighborhood, userId, mode = 'public', friendIds = [] }: CommunityFeedProps) {
+export function CommunityFeed({ neighborhood, userId, mode = 'public', friendIds = [], readOnly = false }: CommunityFeedProps) {
     const { t } = useTranslation('common');
     const [viewMode, setViewMode] = useState<'global' | 'local'>(neighborhood ? 'local' : 'global');
     const [posts, setPosts] = useState<CommunityPost[]>([]);
@@ -116,13 +117,15 @@ export function CommunityFeed({ neighborhood, userId, mode = 'public', friendIds
 
     return (
         <div className="w-full max-w-2xl mx-auto space-y-6">
-            <CreatePost
-                userId={userId}
-                neighborhood={viewMode === 'global' ? 'Global' : displayNeighborhood}
-                neighborhoodId={viewMode === 'global' ? 'Global' : neighborhood} // Pass 'Global' ID for global posts
-                onPostCreated={handlePostCreated}
-                mode={mode}
-            />
+            {!readOnly && (
+                <CreatePost
+                    userId={userId}
+                    neighborhood={viewMode === 'global' ? 'Global' : displayNeighborhood}
+                    neighborhoodId={viewMode === 'global' ? 'Global' : neighborhood} // Pass 'Global' ID for global posts
+                    onPostCreated={handlePostCreated}
+                    mode={mode}
+                />
+            )}
 
 
             {mode === 'public' && (
@@ -164,6 +167,7 @@ export function CommunityFeed({ neighborhood, userId, mode = 'public', friendIds
                             key={post.id}
                             post={post}
                             currentUserId={userId}
+                            readOnly={readOnly}
                         />
                     ))
                 )}

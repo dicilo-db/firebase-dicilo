@@ -29,6 +29,7 @@ import { NotificationBell } from './notifications/NotificationBell';
 
 // Desktop visible links
 const desktopLinks = [
+  { href: '/la-comunidad', labelKey: 'header.nav.community', defaultText: 'Comunidad' },
   { href: '/vorteile', labelKey: 'header.nav.benefits' },
   { href: '/planes', labelKey: 'header.nav.planes' },
   { href: '/ueber-uns', labelKey: 'header.nav.about' },
@@ -37,6 +38,7 @@ const desktopLinks = [
 // Mobile menu links (Hamburguesa)
 const mobileLinks = [
   { href: '/dicicoin', labelKey: 'header.nav.dicicoin' },
+  { href: '/la-comunidad', labelKey: 'header.nav.community', defaultText: 'Comunidad' },
   { href: '/registrieren', labelKey: 'header.nav.register' }, // Registrieren
   { href: '/verzeichnis', labelKey: 'header.nav.directory' }, // Kategorie/Verzeichnis
   { href: '/impressum', labelKey: 'header.nav.imprint' },
@@ -144,7 +146,7 @@ const Header = () => {
                   className="h-auto p-0 text-base font-medium text-foreground"
                   key={link.href}
                 >
-                  <Link href={link.href}>{t(link.labelKey)}</Link>
+                  <Link href={link.href}>{t(link.labelKey, (link as any).defaultText)}</Link>
                 </Button>
               ))}
             </nav>
@@ -160,7 +162,7 @@ const Header = () => {
                 {mobileLinks.map((link) => (
                   <DropdownMenuItem key={link.href} asChild>
                     <Link href={link.href} className="cursor-pointer">
-                      {t(link.labelKey)}
+                      {t(link.labelKey, (link as any).defaultText)}
                     </Link>
                   </DropdownMenuItem>
                 ))}
@@ -311,7 +313,7 @@ const Header = () => {
                           variant="ghost"
                           className="w-full justify-start py-3 text-left text-lg pl-2 border-l-4 border-transparent hover:border-primary"
                         >
-                          <Link href={link.href}>{t(link.labelKey)}</Link>
+                          <Link href={link.href}>{t(link.labelKey, (link as any).defaultText)}</Link>
                         </Button>
                       </SheetClose>
                     ))}

@@ -166,7 +166,7 @@ export async function importBusinessesFromExcel(formData: FormData) {
 
             const rawActive = row.activo !== undefined ? row.activo : row.active;
             let active = false;
-            if (rawActive === true || rawActive === 'true' || rawActive === '1' || rawActive === 1) active = true;
+            if (rawActive === true || rawActive === 'true' || String(rawActive) === '1') active = true;
 
             const tier_level = (row.tipo || row.tier_level || 'basic').toString().toLowerCase().trim() === 'premium' ? 'premium' : 'basic';
 

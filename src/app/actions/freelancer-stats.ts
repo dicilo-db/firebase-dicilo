@@ -10,6 +10,7 @@ export interface FreelancerStats {
     totalPosts: number;
     totalClicks: number;
     totalBusinessesRegistered: number;
+    totalReferredUsers: number; // Added to track MLM downline
     recentTransactions: Transaction[];
     performanceByCampaign: { campaignName: string, earnings: number, posts: number }[];
     recentProspects: Prospect[];
@@ -131,19 +132,37 @@ export async function getFreelancerStats(userId: string): Promise<{ success: boo
 
         const pendingPayout = totalEarnings - paidPayout;
 
-        // 3. Fetch Registered Businesses (Recommendations/Prospects)
-        const prospectsSnap = await db.collection('recommendations')
+        // 3. Fetch user profile for diciloCode
+        const profileSnap = await db.collection('private_profiles').doc(userId).get();
+        const pd = profileSnap.data();
+        const diciloCode = pd?.diciloCode || pd?.uniqueCode || pd?.referralCode || null;
+
+        // 4. Fetch Registered Businesses (Recommendations/Prospects)
+        const prospectsByUserId = await db.collection('recommendations')
             .where('userId', '==', userId)
-            // .orderBy('createdAt', 'desc') // Removed to avoid index requirement
             .get();
         
-        const totalBusinessesRegistered = prospectsSnap.size;
+        const prospectsMap = new Map<string, admin.firestore.DocumentData & {id: string}>();
+        
+        prospectsByUserId.docs.forEach(doc => {
+            prospectsMap.set(doc.id, { id: doc.id, ...doc.data() });
+        });
 
-        const recentProspects: Prospect[] = prospectsSnap.docs
-            .map(doc => {
-                const data = doc.data();
+        if (diciloCode) {
+            const prospectsByCode = await db.collection('recommendations')
+                .where('diciloCode', '==', diciloCode)
+                .get();
+            prospectsByCode.docs.forEach(doc => {
+                prospectsMap.set(doc.id, { id: doc.id, ...doc.data() });
+            });
+        }
+
+        const totalBusinessesRegistered = prospectsMap.size;
+
+        const recentProspects: Prospect[] = Array.from(prospectsMap.values())
+            .map(data => {
                 return {
-                    id: doc.id,
+                    id: data.id,
                     companyName: data.companyName || 'Unknown',
                     contactName: data.contactName || 'Unknown',
                     phone: data.phone || data.companyPhone || '',
@@ -158,11 +177,19 @@ export async function getFreelancerStats(userId: string): Promise<{ success: boo
                     pointsPaid: !!data.pointsPaid,
                     rewardAmount: data.rewardAmount || 10,
                     converted: !!data.converted,
-                    date: data.createdAt?.toDate().toISOString() || data.timestamp?.toDate().toISOString() || new Date().toISOString()
+                    date: data.createdAt?.toDate?.()?.toISOString() || data.timestamp?.toDate?.()?.toISOString() || new Date().toISOString()
                 };
             })
-            .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-            .slice(0, 10);
+            .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+        // 5. Fetch Referred Users (Network/MLM)
+        let totalReferredUsers = 0;
+        if (diciloCode) {
+            const referredSnap = await db.collection('private_profiles')
+                .where('inviteId', '==', diciloCode)
+                .get();
+            totalReferredUsers = referredSnap.size;
+        }
 
         return {
             success: true,
@@ -173,6 +200,7 @@ export async function getFreelancerStats(userId: string): Promise<{ success: boo
                 totalPosts,
                 totalClicks, 
                 totalBusinessesRegistered,
+                totalReferredUsers,
                 recentTransactions,
                 performanceByCampaign: Array.from(campaignMap.values()),
                 recentProspects,

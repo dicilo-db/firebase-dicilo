@@ -49,10 +49,13 @@ export default function Error({
     console.error('Dashboard Error:', error);
     
     // Detect preferred language
-    if (typeof navigator !== 'undefined') {
+    if (typeof window !== 'undefined') {
+      const savedLang = localStorage.getItem('i18nextLng')?.split('-')[0];
       const browserLang = navigator.language.split('-')[0];
-      if (TRANSLATIONS[browserLang]) {
-        setLang(browserLang);
+      const prefLang = savedLang || browserLang;
+
+      if (TRANSLATIONS[prefLang]) {
+        setLang(prefLang);
       } else {
         setLang('en');
       }

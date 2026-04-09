@@ -41,16 +41,22 @@ export default function Error({
     const [lang, setLang] = useState('de');
 
     useEffect(() => {
-        console.error(error);
+        // Log the error to an error reporting service
+        console.error('Dashboard Error:', error);
+        
+        // Detect preferred language
         if (typeof window !== 'undefined') {
             const isChunkLoadError = error?.name === 'ChunkLoadError' || error?.message?.includes('Loading chunk');
             if (isChunkLoadError) {
                 window.location.reload();
             }
             
+            const savedLang = localStorage.getItem('i18nextLng')?.split('-')[0];
             const browserLang = navigator.language.split('-')[0];
-            if (TRANSLATIONS[browserLang]) {
-                setLang(browserLang);
+            const prefLang = savedLang || browserLang;
+
+            if (TRANSLATIONS[prefLang]) {
+                setLang(prefLang);
             } else {
                 setLang('en');
             }

@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Loader2, Send } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useTranslation } from 'react-i18next';
 
 const db = getFirestore(app);
 const auth = getAuth(app);
@@ -16,6 +17,7 @@ export function GeneralInfoComments({ infoId }: { infoId: string }) {
     const [isLoading, setIsLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const { toast } = useToast();
+    const { t } = useTranslation('common');
 
     useEffect(() => {
         if (!infoId) return;
@@ -39,7 +41,11 @@ export function GeneralInfoComments({ infoId }: { infoId: string }) {
     const handleSubmit = async () => {
         const user = auth.currentUser;
         if (!user) {
-            toast({ title: 'Error', description: 'Debes iniciar sesión para comentar.', variant: 'destructive' });
+            toast({ 
+                title: t('auth.login_required', 'Registro Requerido'), 
+                description: t('community.comment_login_required', 'Gracias por querer dejar su comentario, por favor regístrese para que pueda dejar su comentario.'), 
+                variant: 'destructive' 
+            });
             return;
         }
         if (!newComment.trim()) return;

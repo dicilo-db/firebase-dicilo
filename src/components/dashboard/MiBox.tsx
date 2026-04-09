@@ -38,7 +38,7 @@ export function MiBox({ user }: MiBoxProps) {
             try {
                 // 1. Fetch User Profile
                 const userDoc = await getDoc(doc(db, 'private_profiles', user.uid));
-                let profileData = {};
+                let profileData: any = {};
                 if (userDoc.exists()) {
                     profileData = userDoc.data();
                     setUserProfile(profileData);
@@ -73,7 +73,7 @@ export function MiBox({ user }: MiBoxProps) {
                         // Assuming new interests use Firebase IDs, but just in case we also check c.category string loosely
                         // The user's interests array contains the exact IDs they checked.
                         const cCatLower = c.category?.toLowerCase();
-                        if (interests.some(i => i.toLowerCase() === cCatLower)) {
+                        if (interests.some((i: string) => i.toLowerCase() === cCatLower)) {
                             isInterestMatch = true;
                         }
 
@@ -128,7 +128,7 @@ export function MiBox({ user }: MiBoxProps) {
 
             const originalTransform = element.style.transform;
             element.style.transform = "none";
-            const canvas = await html2canvas(element, { scale: 2, useCORS: true });
+            const canvas = await html2canvas(element, { scale: 2, useCORS: true } as any);
             element.style.transform = originalTransform;
 
             if (type === 'jpg') {

@@ -68,6 +68,16 @@ export function CommentSection({ postId, currentUserId, currentUserAvatar }: Com
             e.stopPropagation();
         }
         if (!newComment.trim()) return;
+
+        if (!currentUserId) {
+            toast({
+                title: t('auth.login_required', 'Registro Requerido'),
+                description: t('community.comment_login_required', 'Gracias por querer dejar su comentario, por favor regístrese para que pueda dejar su comentario.'),
+                variant: 'destructive'
+            });
+            return;
+        }
+
         setIsSubmitting(true);
 
         const result = await addComment(postId, newComment, currentUserId);

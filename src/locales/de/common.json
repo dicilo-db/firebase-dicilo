@@ -24,13 +24,6 @@
         "share_text": "Sieh dir diesen Beitrag von {{user}} in {{neighborhood}} an",
         "link_copied": "Link in Zwischenablage kopiert",
         "copy_link": "Link kopieren",
-        "feed": {
-            "empty_global": "Noch keine Aktivität in der {{name}}-Community.",
-            "be_first": "Seien Sie der Erste, der etwas teilt!",
-            "whats_happening": "Was passiert in {{name}}?",
-            "wall": "Soziale Wand",
-            "recommendations": "Highlights"
-        },
         "post_btn": "Veröffentlichen",
         "recommend_business": "Geschäft empfehlen",
         "recommend_desc": "Laden Sie ein Foto hoch und erzählen Sie uns von Ihrer Erfahrung, um Punkte zu sammeln.",
@@ -1161,10 +1154,45 @@
         "monitored_env": "Überwachte Umgebung",
         "monitored_desc": "Beiträge hier sind exklusiv für Ihre Kontakte, aber die Umgebung unterliegt einer präventiven Überprüfung durch den DiciBot-Brain, um Verstöße gegen die Community-Richtlinien zu erkennen.",
         "your_private_circle": "Dein privater Kreis",
-        "create_post_private": "Was denkst du? (Nur für deine Freunde)"
+        "create_post_private": "Was denkst du? (Nur für deine Freunde)",
+        "tabs": {
+            "chats": "Chats",
+            "friends": "Freunde"
+        },
+        "placeholder": {
+            "search_neighbor": "Nachbarn suchen...",
+            "type_message": "Schreibe eine Nachricht..."
+        },
+        "list": {
+            "no_chats": "Du hast keine aktiven Chats.",
+            "request_from": "Anfrage von",
+            "user_label": "Benutzer",
+            "unknown_neighborhood": "Nachbarschaft unbekannt"
+        },
+        "headers": {
+            "pending_requests": "Ausstehende Anfragen",
+            "my_friends": "Meine Freunde",
+            "suggested_neighbors": "Vorgeschlagene Nachbarn",
+            "no_new_neighbors": "Keine neuen Nachbarn zum Hinzufügen"
+        },
+        "actions": {
+            "reject_request": "Ablehnen",
+            "accept_request": "Akzeptieren",
+            "start_chat": "Chat starten",
+            "add_friend": "Freund hinzufügen",
+            "send": "Senden"
+        },
+        "status": {
+            "online": "Online"
+        }
     },
     "validUntil": "Gültig bis:",
     "downloadPDF": "PDF herunterladen",
     "downloadJPG": "JPG herunterladen",
-    "searching": "Suchen..."
+    "searching": "Suchen...",
+    "social_proof": {
+        "joined": "ist gerade beigetreten",
+        "from": "aus",
+        "user_label": "Benutzer"
+    }
 }

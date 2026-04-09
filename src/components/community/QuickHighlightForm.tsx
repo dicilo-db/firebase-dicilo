@@ -8,14 +8,14 @@ import { getFirestore, collection, query, where, getDocs } from 'firebase/firest
 import { app } from '@/lib/firebase';
 import { Loader2, Star, Image as ImageIcon, CheckCircle2, PlusCircle } from 'lucide-react';
 import { submitQuickHighlight } from '@/app/actions/quick-highlight';
-import { useAuthGuard } from '@/hooks/useAuthGuard';
+import { useAuth } from '@/context/AuthContext';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { RecommendationFormContent } from '@/components/RecommendationForm';
 
 export function QuickHighlightForm({ neighborhood, onSuccess }: { neighborhood: string, onSuccess: () => void }) {
     const { t } = useTranslation('common');
-    const { currentUser, userProfile } = useAuthGuard();
+    const { user: currentUser } = useAuth();
     const [businesses, setBusinesses] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
     const [submitting, setSubmitting] = useState(false);
@@ -95,7 +95,7 @@ export function QuickHighlightForm({ neighborhood, onSuccess }: { neighborhood: 
         form.append('businessName', bName);
         form.append('neighborhood', neighborhood);
         form.append('userId', currentUser.uid);
-        form.append('userName', userProfile?.name || userProfile?.firstName || currentUser.displayName || 'Usuario');
+        form.append('userName', currentUser.displayName || 'Usuario');
         form.append('comments', comment);
         form.append('rating', rating.toString());
         
@@ -151,7 +151,7 @@ export function QuickHighlightForm({ neighborhood, onSuccess }: { neighborhood: 
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <h3 className="font-bold text-slate-800 text-lg flex items-center gap-2">
                     <Star className="text-amber-500 fill-amber-500 w-5 h-5" />
-                    Destacar una Empresa en {neighborhood}
+                    {t('community.highlight_business_in', { defaultValue: 'Destacar una Empresa en {{name}}', name: neighborhood })}
                 </h3>
                 <Dialog open={openDialog} onOpenChange={setOpenDialog}>
                     <DialogTrigger asChild>
@@ -202,22 +202,33 @@ export function QuickHighlightForm({ neighborhood, onSuccess }: { neighborhood: 
                 )}
             </div>
 
-            {selectedBusiness && (
+            {selectedBusiness && (() => {
+                const b = businesses.find(b => b.id === selectedBusiness);
+                return (
                 <>
-                    <div className="space-y-2">
-                        <Label>Puntuación</Label>
-                        <div className="flex gap-1">
-                            {[1, 2, 3, 4, 5].map((star) => (
-                                <button
-                                    key={star}
-                                    type="button"
-                                    onClick={() => setRating(star)}
-                                    className="focus:outline-none transition-transform hover:scale-110"
-                                >
-                                    <Star className={`w-8 h-8 ${star <= rating ? 'text-amber-500 fill-amber-500' : 'text-slate-300'}`} />
-                                </button>
-                            ))}
+                    <div className="flex justify-between items-center bg-slate-50 p-3 rounded-lg border border-slate-100 mb-4">
+                        <div className="space-y-2">
+                            <Label>{t('community.rating', 'Puntuación')}</Label>
+                            <div className="flex gap-1">
+                                {[1, 2, 3, 4, 5].map((star) => (
+                                    <button
+                                        key={star}
+                                        type="button"
+                                        onClick={() => setRating(star)}
+                                        className="focus:outline-none transition-transform hover:scale-110"
+                                    >
+                                        <Star className={`w-8 h-8 ${star <= rating ? 'text-amber-500 fill-amber-500' : 'text-slate-300'}`} />
+                                    </button>
+                                ))}
+                            </div>
                         </div>
+                        {(b?.photoUrl || b?.logo || b?.imageUrl) && (
+                            <img 
+                                src={b.photoUrl || b.logo || b.imageUrl} 
+                                alt={b.companyName} 
+                                className="w-16 h-16 rounded-full object-cover border shadow-sm shrink-0" 
+                            />
+                        )}
                     </div>
 
                     <div className="space-y-2">
@@ -259,7 +270,8 @@ export function QuickHighlightForm({ neighborhood, onSuccess }: { neighborhood: 
                         </Button>
                     </div>
                 </>
-            )}
+                );
+            })}
         </form>
     );
 }

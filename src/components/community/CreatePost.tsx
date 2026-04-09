@@ -189,6 +189,16 @@ export function CreatePost({ userId, neighborhood, neighborhoodId, onPostCreated
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        
+        if (!userId) {
+            toast({
+                title: t('auth.login_required', 'Registro Requerido'),
+                description: t('community.comment_login_required', 'Gracias por querer dejar su comentario, por favor regístrese para que pueda dejar su comentario.'),
+                variant: 'destructive'
+            });
+            return;
+        }
+
         if (!content.trim() && mediaItems.length === 0) return;
 
         // Check platform upload limits
@@ -324,8 +334,8 @@ export function CreatePost({ userId, neighborhood, neighborhoodId, onPostCreated
                         </div>
                     )}
 
-                    <div className="flex justify-between items-center">
-                        <div className="flex gap-2">
+                    <div className="flex flex-wrap justify-between items-center gap-2">
+                        <div className="flex flex-wrap gap-2">
                             <input
                                 type="file"
                                 accept="image/*,video/*"
