@@ -1,6 +1,7 @@
 'use server';
 
 import { getAdminDb } from '@/lib/firebase-admin';
+import * as admin from 'firebase-admin';
 import { getTemplate } from '@/actions/email-templates';
 import { sendSmtpEmail } from '@/lib/mail-service';
 import { randomBytes } from 'crypto';
