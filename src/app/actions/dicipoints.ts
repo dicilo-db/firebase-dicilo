@@ -155,9 +155,9 @@ export async function registerNewProspect(userId: string, prospectId: string, po
                 timestamp: admin.firestore.FieldValue.serverTimestamp()
             });
 
-            // 3. Mark Prospect as Paid
+            // 3. Mark Prospect Submission as Rewarded (Not Fully Paid!)
             const prospectRef = db.collection('recommendations').doc(prospectId);
-            t.update(prospectRef, { pointsPaid: true, pointsPaidAt: admin.firestore.FieldValue.serverTimestamp() });
+            t.update(prospectRef, { submissionRewardPaid: true, submissionRewardPaidAt: admin.firestore.FieldValue.serverTimestamp() });
         });
         return { success: true };
     } catch (e) {

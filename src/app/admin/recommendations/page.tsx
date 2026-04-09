@@ -440,7 +440,7 @@ export default function RecommendationsPage() {
                                                         </span>
                                                     ) : (
                                                         <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200 whitespace-nowrap" title="Los DiciPoints se pagarán automáticamente en cuanto la empresa complete su registro en la plataforma.">
-                                                            Bono en Espera (Al registrarse)
+                                                            Esperando registro del cliente
                                                         </span>
                                                     )}
                                                 </TableCell>
