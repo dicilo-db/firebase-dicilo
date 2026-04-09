@@ -15,8 +15,8 @@ export type RewardResolution = {
 export async function resolveRewards(inviteId?: string, email?: string): Promise<RewardResolution> {
     const db = getAdminDb();
     const result: RewardResolution = {
-        rewardSender: 50,
-        rewardReceiver: 50,
+        rewardSender: 30,
+        rewardReceiver: 100,
         referrerId: null,
         inviteId: inviteId || null,
         templateId: null

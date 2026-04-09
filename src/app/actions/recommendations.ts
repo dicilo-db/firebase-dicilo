@@ -215,12 +215,7 @@ export async function submitRecommendation(formData: FormData) {
             }
 
             // A. REWARD POINTS
-            if (userId && !isNaN(rewardAmount) && rewardAmount > 0) {
-                console.log(`[Post-Save] Registering reward for user ${userId}: ${rewardAmount} pts`);
-                await registerNewProspect(userId, ref.id, rewardAmount).catch(e => 
-                    console.error("[Post-Save] Error in registerNewProspect:", e)
-                );
-            }
+            // (Removed to avoid double padding. Points are now given purely by sendProspectInvitation: +20 DP)
 
             // B. BUSINESS NOTIFICATION EMAIL
             console.log(`[Post-Save] Sending automated invitation to: ${email}`);
