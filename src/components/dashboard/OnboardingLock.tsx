@@ -32,6 +32,8 @@ export function OnboardingLock({
     name: string,
     userType: 'private' | 'client',
     clientId?: string,
+    country?: string,
+    city?: string,
     onSuccess: () => void
 }) {
     const [isSaving, setIsSaving] = useState(false);
@@ -39,7 +41,7 @@ export function OnboardingLock({
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
-        defaultValues: { country: '', city: '', items: [] },
+        defaultValues: { country: country || '', city: city || '', items: [] },
     });
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {

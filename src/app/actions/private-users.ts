@@ -87,7 +87,7 @@ export async function toggleFreelancerStatus(uid: string, isFreelancer: boolean)
  * Security: UI prevents non-superadmins from calling, but valid security rules should enforce this in Firestore/Auth.
  */
 export async function setPrivateUserRole(uid: string, role: string) {
-    const validRoles = ['user', 'freelancer', 'team_office', 'admin', 'superadmin'];
+    const validRoles = ['user', 'freelancer', 'team_office', 'admin', 'superadmin', 'apoyo_social'];
     if (!validRoles.includes(role)) {
         return { success: false, error: 'Invalid role specified.' };
     }

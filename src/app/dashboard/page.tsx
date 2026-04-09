@@ -23,6 +23,7 @@ import { checkAdminRole } from '@/lib/auth';
 import { PrivateDashboard } from '@/components/dashboard/PrivateDashboard';
 import { getWalletData } from '@/app/actions/wallet';
 import { OnboardingLock } from '@/components/dashboard/OnboardingLock';
+import { ApoyoSocialDashboard } from '@/components/dashboard/ApoyoSocialDashboard';
 
 const auth = getAuth(app);
 const db = getFirestore(app);
@@ -238,6 +239,8 @@ export default function DashboardPage() {
                  name={name} 
                  userType={uType} 
                  clientId={clientData?.id} 
+                 country={clientData ? clientData.country : privateProfile?.country}
+                 city={clientData ? clientData.city : privateProfile?.city}
                  onSuccess={() => window.location.reload()} 
              />
         );
@@ -292,7 +295,11 @@ export default function DashboardPage() {
                 ) : clientData ? (
                     <EditClientForm initialData={clientData} />
                 ) : privateProfile && user ? (
-                    <PrivateDashboard user={user} profile={privateProfile} initialWalletData={walletData} />
+                    privateProfile.role === 'apoyo_social' ? (
+                        <ApoyoSocialDashboard user={user} profile={privateProfile} />
+                    ) : (
+                        <PrivateDashboard user={user} profile={privateProfile} initialWalletData={walletData} />
+                    )
                 ) : null}
             </main>
         </div>

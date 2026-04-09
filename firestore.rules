@@ -230,6 +230,13 @@ service cloud.firestore {
       allow create: if isAuthenticated();
     }
 
+    // Apoyo Social Requests
+    match /apoyo_social_requests/{requestId} {
+      allow create: if true; // Formularios públicos con token
+      allow read, update: if isAdmin();
+      allow delete: if isSuperAdmin();
+    }
+
     // Default deny
     match /{document=**} {
       allow read, write: if false;

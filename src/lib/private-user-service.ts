@@ -47,11 +47,13 @@ export async function createPrivateUserProfile(
         whatsapp?: string;
         phone?: string;
         contactType?: 'whatsapp' | 'telegram';
+        country: string;
+        city: string;
         referralCode?: string;
         inviteId?: string;
     }
 ) {
-    const { firstName, lastName, email, whatsapp, phone, contactType, referralCode, inviteId } = data;
+    const { firstName, lastName, email, whatsapp, phone, contactType, country, city, referralCode, inviteId } = data;
 
     const db = getAdminDb();
 
@@ -92,6 +94,8 @@ export async function createPrivateUserProfile(
         email,
         firstName,
         lastName,
+        country,
+        city,
         uniqueCode,
         emailVerificationCode: Math.floor(100000 + Math.random() * 900000).toString(),
         isEmailVerified: false,
@@ -185,6 +189,8 @@ export async function createPrivateUserProfile(
         firstName,
         lastName,
         email,
+        country,
+        city,
         whatsapp: whatsapp || phone || '',
         registrationType: 'private',
         status: 'active',

@@ -79,9 +79,9 @@ export async function sendWelcomeEmail(email: string, firstName: string, lang: s
                 <p style="font-size: 16px; line-height: 1.6; color: #475569;">${t.msg}</p>
                 
                 ${code ? `
-                <div style="margin: 30px 0; padding: 20px; text-align: center; background-color: #f8fafc; border-radius: 8px; border: 1px dashed #cbd5e1;">
-                    <p style="margin: 0 0 10px 0; color: #64748b; font-size: 14px;">${t.codeMsg}</p>
-                    <div style="font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #0f172a;">${code}</div>
+                <div style="margin: 30px 0; padding: 20px; text-align: center; border-radius: 8px; border: 2px solid #cbd5e1; background-color: #f8fafc;">
+                    <p style="margin: 0 0 10px 0; color: #475569; font-size: 16px;">${t.codeMsg}</p>
+                    <p style="margin: 0; font-size: 36px; font-weight: bold; letter-spacing: 8px; color: #000000;"><strong>${code}</strong></p>
                 </div>` : ''}
             </div>
 

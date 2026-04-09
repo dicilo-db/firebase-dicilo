@@ -30,6 +30,8 @@ const registrationSchema = z.object({
   firstName: z.string().min(1, 'register.errors.required'),
   lastName: z.string().min(1, 'register.errors.required'),
   email: z.string().email('register.errors.invalidEmail'),
+  country: z.string().min(1, 'register.errors.required'),
+  city: z.string().min(1, 'register.errors.required'),
   password: z.string().min(6, 'register.errors.passwordMinLength').optional(),
   confirmPassword: z.string().optional(),
   whatsapp: z.string().optional(),
@@ -253,6 +255,8 @@ export function RegistrationForm() {
             email: data.email,
             firstName: data.firstName,
             lastName: data.lastName,
+            country: data.country,
+            city: data.city,
             phoneNumber: data.phone || data.whatsapp, // Fallback
             contactType: data.contactType,
             referralCode: data.referralCode,
@@ -416,6 +420,41 @@ export function RegistrationForm() {
               {errors.lastName && (
                 <p className="text-sm text-destructive">
                   {t(errors.lastName.message as string)}
+                </p>
+              )}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="country" className="flex items-center gap-2">
+                <MapPin className="h-3.5 w-3.5 text-slate-400" />
+                {t('register.fields.country', 'País')} *
+              </Label>
+              <Input 
+                id="country" 
+                {...register('country')} 
+                className="bg-white transition-all focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+              />
+              {errors.country && (
+                <p className="text-sm text-destructive">
+                  {t(errors.country.message as string)}
+                </p>
+              )}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="city" className="flex items-center gap-2">
+                <MapPin className="h-3.5 w-3.5 text-slate-400" />
+                {t('register.fields.city', 'Ciudad')} *
+              </Label>
+              <Input 
+                id="city" 
+                {...register('city')} 
+                className="bg-white transition-all focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+              />
+              {errors.city && (
+                <p className="text-sm text-destructive">
+                  {t(errors.city.message as string)}
                 </p>
               )}
             </div>

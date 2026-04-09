@@ -229,6 +229,8 @@ export const notifyAdminOnTopUp = onDocumentCreated('transaction_requests/{reque
   }
 });
 
+/*
+// Se desactiva esta Cloud Function porque Next.js ya envía el correo robusto con i18n y el código de 6 dígitos mediante Resend.
 export const sendWelcomeEmail = onDocumentCreated('registrations/{registrationId}', async (event) => {
   const snapshot = event.data;
   if (!snapshot) return;
@@ -277,6 +279,7 @@ export const sendWelcomeEmail = onDocumentCreated('registrations/{registrationId
     );
   }
 });
+*/
 
 // --- Sync & Tools (v2) ---
 

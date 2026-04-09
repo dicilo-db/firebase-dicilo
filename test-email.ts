@@ -1,19 +1,7 @@
-import { broadcastGeneralInfoNewsletter } from './src/app/actions/admin-general-info';
-
+import { sendWelcomeEmail } from './src/lib/email';
 async function run() {
-    console.log("Testing broadcast...");
-    try {
-        const res = await broadcastGeneralInfoNewsletter({
-            type: 'event',
-            title: 'Prueba Local 2',
-            description: 'Probando',
-            url: 'https://test.com',
-            time: '14:00',
-            endTime: '15:00'
-        });
-        console.log("Result:", res);
-    } catch (e) {
-        console.error("Caught error:", e);
-    }
+  const code = Math.floor(100000 + Math.random() * 900000).toString();
+  await sendWelcomeEmail('test@example.com', 'Nilo', 'es', code);
+  console.log("Called with code:", code);
 }
 run();

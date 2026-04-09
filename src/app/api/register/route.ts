@@ -18,6 +18,8 @@ const registrationSchema = z.object({
   lastName: z.string().min(1),
   email: z.string().email(),
   password: z.string().min(6).optional(),
+  country: z.string().min(1, 'Country is required'),
+  city: z.string().min(1, 'City is required'),
   whatsapp: z.string().optional(),
   contactType: z.enum(['whatsapp', 'telegram']).optional(),
   registrationType: z.enum(['private', 'donor', 'retailer', 'premium']),
@@ -148,7 +150,7 @@ export async function POST(request: Request) {
     }
 
     const {
-      firstName, lastName, email, password, whatsapp, contactType, registrationType,
+      firstName, lastName, email, password, country, city, whatsapp, contactType, registrationType,
       businessName, category, description, location, address, phone, website,
       imageUrl, imageHint, rating, currentOfferUrl, mapUrl, coords, referralCode, inviteId, lang
     } = result.data;
@@ -205,7 +207,7 @@ export async function POST(request: Request) {
 
     // 3. Save to Firestore (Registrations)
     const registrationData: any = {
-      firstName, lastName, email, whatsapp: whatsapp || null,
+      firstName, lastName, email, country, city, whatsapp: whatsapp || null,
       contactType: contactType || 'whatsapp',
       registrationType,
       ownerUid,
@@ -265,7 +267,7 @@ export async function POST(request: Request) {
     // 5. Private Profile fallback (Legacy support if mixed types come here)
     if (registrationType === 'private' && ownerUid) {
       await createPrivateUserProfile(ownerUid, {
-        firstName, lastName, email, whatsapp, phone,
+        firstName, lastName, email, country, city, whatsapp, phone,
         contactType: contactType as 'whatsapp' | 'telegram' | undefined,
         // If it was REFONL, we pass undefined so the service doesn't try to look up a user
         referralCode: referrerData.isRefonl ? undefined : referrerData.code

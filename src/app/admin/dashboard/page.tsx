@@ -398,6 +398,20 @@ const DashboardContent: React.FC = () => {
                 </Card>
               </Link>
 
+              {/* Apoyo Social (DSA) */}
+              <Link href="/admin/apoyo-social" className="group">
+                <Card className="h-full bg-green-50/50 dark:bg-green-900/10 border-green-200 transition-all hover:shadow-md hover:border-green-500 cursor-pointer relative">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium text-green-700 dark:text-green-400">Moderación y Control</CardTitle>
+                    <LifeBuoy className="h-4 w-4 text-green-500 group-hover:scale-110 transition-transform" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-xl font-bold">Apoyo Social</div>
+                    <p className="text-xs text-muted-foreground mt-1">Revisar solicitudes pendientes</p>
+                  </CardContent>
+                </Card>
+              </Link>
+
               <Card className="bg-slate-100/50 dark:bg-slate-800/50 border-dashed border-slate-300 dark:border-slate-700">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm font-medium text-muted-foreground">

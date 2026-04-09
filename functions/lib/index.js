@@ -48,7 +48,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.cleanupDuplicates = exports.fixSuperAdmin = exports.seedCategories = exports.seedDatabase = exports.demoteToBasic = exports.promoteToClient = exports.notifyAdminOnClientRecommendation = exports.consentDecline = exports.consentAccept = exports.taskWorker = exports.submitRecommendation = exports.syncExistingCustomersToErp = exports.sendWelcomeEmail = exports.notifyAdminOnTopUp = exports.notifyAdminOnRegistration = exports.sendRegistrationToErp = exports.onAdminWrite = void 0;
+exports.cleanupDuplicates = exports.fixSuperAdmin = exports.seedCategories = exports.seedDatabase = exports.demoteToBasic = exports.promoteToClient = exports.notifyAdminOnClientRecommendation = exports.consentDecline = exports.consentAccept = exports.taskWorker = exports.submitRecommendation = exports.syncExistingCustomersToErp = exports.notifyAdminOnTopUp = exports.notifyAdminOnRegistration = exports.sendRegistrationToErp = exports.onAdminWrite = void 0;
 /**
  * @fileoverview Cloud Functions for Firebase (Gen 2).
  * Migrated to Gen 2 to support Node 20 and explicit CPU/Memory configuration.
@@ -231,21 +231,26 @@ exports.notifyAdminOnTopUp = (0, firestore_1.onDocumentCreated)('transaction_req
         logger.error(`Failed to send admin notification for top-up request ${requestId}:`, error);
     }
 }));
-exports.sendWelcomeEmail = (0, firestore_1.onDocumentCreated)('registrations/{registrationId}', (event) => __awaiter(void 0, void 0, void 0, function* () {
-    const snapshot = event.data;
-    if (!snapshot)
-        return;
-    const data = snapshot.data();
-    const registrationId = event.params.registrationId;
-    const email = data.email;
-    const name = `${data.firstName} ${data.lastName}`;
-    if (!email) {
-        logger.warn(`No email found for registration ${registrationId}, skipping welcome email.`);
-        return;
-    }
-    const subject = 'Willkommen bei Dicilo - Ihre Registrierung war erfolgreich!';
-    // Simple HTML template for welcome email
-    const html = `
+/*
+// Se desactiva esta Cloud Function porque Next.js ya envía el correo robusto con i18n y el código de 6 dígitos mediante Resend.
+export const sendWelcomeEmail = onDocumentCreated('registrations/{registrationId}', async (event) => {
+  const snapshot = event.data;
+  if (!snapshot) return;
+
+  const data = snapshot.data();
+  const registrationId = event.params.registrationId;
+  const email = data.email;
+  const name = `${data.firstName} ${data.lastName}`;
+
+  if (!email) {
+    logger.warn(`No email found for registration ${registrationId}, skipping welcome email.`);
+    return;
+  }
+
+  const subject = 'Willkommen bei Dicilo - Ihre Registrierung war erfolgreich!';
+
+  // Simple HTML template for welcome email
+  const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
       <h1 style="color: #333;">Willkommen bei Dicilo, ${data.firstName}!</h1>
       <p>Vielen Dank für Ihre Registrierung. Wir freuen uns, Sie in unserem Netzwerk begrüßen zu dürfen.</p>
@@ -261,18 +266,22 @@ exports.sendWelcomeEmail = (0, firestore_1.onDocumentCreated)('registrations/{re
       <p>Mit freundlichen Grüßen,<br/>Ihr Dicilo Team</p>
     </div>
   `;
-    try {
-        yield (0, email_1.sendMail)({
-            to: email,
-            subject: subject,
-            html: html,
-        });
-        logger.info(`Welcome email sent to ${email} for registration ${registrationId}`);
-    }
-    catch (error) {
-        logger.error(`Failed to send welcome email to ${email}:`, error);
-    }
-}));
+
+  try {
+    await sendMail({
+      to: email,
+      subject: subject,
+      html: html,
+    });
+    logger.info(`Welcome email sent to ${email} for registration ${registrationId}`);
+  } catch (error) {
+    logger.error(
+      `Failed to send welcome email to ${email}:`,
+      error
+    );
+  }
+});
+*/
 // --- Sync & Tools (v2) ---
 exports.syncExistingCustomersToErp = (0, https_1.onCall)((request) => __awaiter(void 0, void 0, void 0, function* () {
     if (!request.auth || request.auth.token.role !== 'superadmin') {
