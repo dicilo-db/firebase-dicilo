@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { getFirestore, collection, query, getDocs, orderBy, doc, updateDoc, setDoc } from 'firebase/firestore';
+import { getFirestore, collection, query, getDocs, doc, updateDoc } from 'firebase/firestore';
 import { app } from '@/lib/firebase';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from 'react-i18next';
@@ -19,11 +19,11 @@ import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
 import { Loader2, LayoutDashboard, CheckCircle, XCircle, Eye, RefreshCw, LifeBuoy } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 
 import { approveApoyoSocialRequest, sendApoyoSocialInvite } from '@/app/actions/apoyo-social';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+// The new ApoyoSocialInviteForm component provides the form. We can render it if needed, or stick to the dialog for backward compatibility but using the hook form.
+import { ApoyoSocialInviteForm } from '@/components/dashboard/apoyo-social/ApoyoSocialInviteForm';
+
 
 const db = getFirestore(app);
 
@@ -37,24 +37,22 @@ export default function ApoyoSocialAdminPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [detailDialogUser, setDetailDialogUser] = useState<any>(null);
     const [isInviteOpen, setIsInviteOpen] = useState(false);
-    const [inviteEmail, setInviteEmail] = useState('');
-    const [inviteName, setInviteName] = useState('');
-    const [inviteLang, setInviteLang] = useState('es');
-    const [isInviting, setIsInviting] = useState(false);
 
     const fetchData = async () => {
         setIsLoading(true);
         try {
-            // Fetch requests
-            const qReq = query(collection(db, 'apoyo_social_requests'), orderBy('createdAt', 'desc'));
+            // Fetch requests and sort client-side to avoid index composite requirement error
+            const qReq = query(collection(db, 'apoyo_social_requests'));
             const snapReq = await getDocs(qReq);
-            const dataReq = snapReq.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            let dataReq = snapReq.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            dataReq.sort((a: any, b: any) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
             setRequests(dataReq);
 
             // Fetch invites
-            const qInv = query(collection(db, 'apoyo_social_invites'), orderBy('lastSentAt', 'desc'));
+            const qInv = query(collection(db, 'apoyo_social_invites'));
             const snapInv = await getDocs(qInv);
-            const dataInv = snapInv.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            let dataInv = snapInv.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            dataInv.sort((a: any, b: any) => (b.lastSentAt?.seconds || 0) - (a.lastSentAt?.seconds || 0));
             setInvites(dataInv);
         } catch (error: any) {
             console.error('Error fetching data:', error);
@@ -64,18 +62,17 @@ export default function ApoyoSocialAdminPage() {
         }
     };
 
-
     useEffect(() => {
         fetchData();
     }, []);
 
     const handleApprove = async (request: any) => {
-        if (!confirm(`¿Estás seguro de APROBAR a ${request.name} para Apoyo Social?`)) return;
+        if (!confirm(`¿Estás seguro de que deseas aprobar a ${request.name}?`)) return;
         
         try {
             const res = await approveApoyoSocialRequest(request.id);
             if (res.success) {
-                toast({ title: 'Aprobado', description: res.message });
+                toast({ title: t('apoyo_social.statusApproved'), description: res.message });
                 fetchData();
             } else {
                 toast({ title: 'Error Backend', description: res.error, variant: 'destructive' });
@@ -92,63 +89,39 @@ export default function ApoyoSocialAdminPage() {
                 status: 'rejected',
                 rejectedAt: new Date()
             });
-            toast({ title: 'Rechazada', description: 'Solicitud rechazada.' });
+            toast({ title: t('apoyo_social.statusRejected'), description: 'Solicitud rechazada.' });
             fetchData();
         } catch (e: any) {
             toast({ title: 'Error', description: e.message, variant: 'destructive' });
         }
     };
 
-    const handleSendInvite = async () => {
-        if (!inviteEmail || !inviteName) {
-            toast({ title: 'Error', description: 'Por favor completa nombre y correo.', variant: 'destructive' });
-            return;
-        }
-        setIsInviting(true);
-        try {
-            const res = await sendApoyoSocialInvite(inviteEmail, inviteName, inviteLang);
-            if (res.success) {
-                toast({ title: 'Invitación Enviada', description: `Se ha enviado el enlace seguro a ${inviteEmail}` });
-                setIsInviteOpen(false);
-                setInviteEmail('');
-                setInviteName('');
-                setInviteLang('es');
-                fetchData();
-            } else {
-                toast({ title: 'Error', description: res.error, variant: 'destructive' });
-            }
-        } catch (e: any) {
-            toast({ title: 'Error', description: e.message, variant: 'destructive' });
-        } finally {
-            setIsInviting(false);
-        }
-    };
 
     return (
         <div className="flex min-h-screen flex-col bg-slate-50 dark:bg-slate-900">
             <main className="container mx-auto flex-grow p-8">
                 <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <h1 className="text-3xl font-bold flex items-center gap-3 text-green-700">
-                        <LifeBuoy className="h-8 w-8" /> Moderación: Apoyo Social
+                        <LifeBuoy className="h-8 w-8" /> {t('apoyo_social.title', 'Moderación: Apoyo Social')}
                     </h1>
                     <div className="flex flex-wrap gap-2">
                         <Button variant="outline" asChild>
                             <Link href="/admin/dashboard">
-                                <LayoutDashboard className="mr-2 h-4 w-4" /> Volver al Dashboard
+                                <LayoutDashboard className="mr-2 h-4 w-4" /> {t('apoyo_social.backToDashboard')}
                             </Link>
                         </Button>
                         <Button className="bg-green-600 hover:bg-green-700 text-white" onClick={() => setIsInviteOpen(true)}>
-                            Invitar Organización
+                            {t('apoyo_social.inviteOrg')}
                         </Button>
                         <Button variant="outline" onClick={fetchData} disabled={isLoading}>
-                            <RefreshCw className={`mr-2 h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} /> Refrescar
+                            <RefreshCw className={`mr-2 h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} /> {t('apoyo_social.refresh')}
                         </Button>
                     </div>
                 </div>
 
                 <Card className="border-green-200 shadow-sm">
                     <CardHeader className="bg-green-50/50 border-b border-green-100 pb-4">
-                        <CardTitle className="text-green-800">Solicitudes Pendientes</CardTitle>
+                        <CardTitle className="text-green-800">{t('apoyo_social.pendingRequests')}</CardTitle>
                     </CardHeader>
                     <CardContent className="p-0">
                         {isLoading ? (
@@ -159,47 +132,47 @@ export default function ApoyoSocialAdminPage() {
                             <Table>
                                 <TableHeader>
                                     <TableRow className="bg-slate-50/50 hover:bg-slate-50/50">
-                                        <TableHead>Causa / Proyecto</TableHead>
-                                        <TableHead>Categoría</TableHead>
-                                        <TableHead>Email de Alta</TableHead>
-                                        <TableHead>Estado</TableHead>
-                                        <TableHead>Fecha</TableHead>
-                                        <TableHead className="text-right">Acciones</TableHead>
+                                        <TableHead>{t('apoyo_social.causeProject')}</TableHead>
+                                        <TableHead>{t('apoyo_social.category')}</TableHead>
+                                        <TableHead>{t('apoyo_social.email')}</TableHead>
+                                        <TableHead>{t('apoyo_social.status')}</TableHead>
+                                        <TableHead>{t('apoyo_social.date')}</TableHead>
+                                        <TableHead className="text-right">{t('apoyo_social.actions')}</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
                                     {requests.map((req) => (
                                         <TableRow key={req.id}>
                                             <TableCell className="font-medium text-slate-900">
-                                                {req.name || 'Sin Nombre'}
+                                                {req.name || t('apoyo_social.noName')}
                                             </TableCell>
                                             <TableCell>
                                                 <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full font-semibold">
-                                                    {req.category || 'General'}
+                                                    {req.category || t('apoyo_social.general')}
                                                 </span>
                                             </TableCell>
                                             <TableCell>{req.email}</TableCell>
                                             <TableCell>
-                                                {req.status === 'pending' && <span className="text-amber-600 font-bold text-sm">Pendiente</span>}
-                                                {req.status === 'approved' && <span className="text-green-600 font-bold text-sm">Aprobado</span>}
-                                                {req.status === 'rejected' && <span className="text-red-600 font-bold text-sm">Rechazado</span>}
+                                                {req.status === 'pending' && <span className="text-amber-600 font-bold text-sm">{t('apoyo_social.statusPending')}</span>}
+                                                {req.status === 'approved' && <span className="text-green-600 font-bold text-sm">{t('apoyo_social.statusApproved')}</span>}
+                                                {req.status === 'rejected' && <span className="text-red-600 font-bold text-sm">{t('apoyo_social.statusRejected')}</span>}
                                             </TableCell>
                                             <TableCell>
                                                 {req.createdAt?.seconds 
                                                     ? new Date(req.createdAt.seconds * 1000).toLocaleDateString() 
-                                                    : 'Desconocida'}
+                                                    : t('apoyo_social.unknownDate')}
                                             </TableCell>
                                             <TableCell className="text-right">
                                                 <div className="flex items-center justify-end gap-2">
-                                                    <Button variant="ghost" size="sm" onClick={() => setDetailDialogUser(req)} title="Ver Detalles y PDF">
+                                                    <Button variant="ghost" size="sm" onClick={() => setDetailDialogUser(req)} title={t('apoyo_social.viewDetails')}>
                                                         <Eye className="h-4 w-4 text-blue-600" />
                                                     </Button>
                                                     {req.status === 'pending' && (
                                                         <>
-                                                            <Button variant="ghost" size="sm" onClick={() => handleApprove(req)} title="Aprobar">
+                                                            <Button variant="ghost" size="sm" onClick={() => handleApprove(req)} title={t('apoyo_social.approve')}>
                                                                 <CheckCircle className="h-4 w-4 text-green-600" />
                                                             </Button>
-                                                            <Button variant="ghost" size="sm" onClick={() => handleReject(req.id)} title="Rechazar">
+                                                            <Button variant="ghost" size="sm" onClick={() => handleReject(req.id)} title={t('apoyo_social.reject')}>
                                                                 <XCircle className="h-4 w-4 text-red-600" />
                                                             </Button>
                                                         </>
@@ -211,7 +184,7 @@ export default function ApoyoSocialAdminPage() {
                                     {requests.length === 0 && (
                                         <TableRow>
                                             <TableCell colSpan={6} className="text-center h-32 text-muted-foreground">
-                                                No hay solicitudes de Apoyo Social por el momento.
+                                                {t('apoyo_social.noRequests')}
                                             </TableCell>
                                         </TableRow>
                                     )}
@@ -223,7 +196,7 @@ export default function ApoyoSocialAdminPage() {
 
                 <Card className="border-blue-200 shadow-sm mt-8">
                     <CardHeader className="bg-blue-50/50 border-b border-blue-100 pb-4">
-                        <CardTitle className="text-blue-800">Invitaciones Enviadas</CardTitle>
+                        <CardTitle className="text-blue-800">{t('apoyo_social.sentInvites')}</CardTitle>
                     </CardHeader>
                     <CardContent className="p-0">
                         {isLoading ? (
@@ -234,24 +207,24 @@ export default function ApoyoSocialAdminPage() {
                             <Table>
                                 <TableHeader>
                                     <TableRow className="bg-slate-50/50 hover:bg-slate-50/50">
-                                        <TableHead>Organización</TableHead>
-                                        <TableHead>Email</TableHead>
-                                        <TableHead>Último Envío</TableHead>
-                                        <TableHead>Nº Envíos</TableHead>
-                                        <TableHead className="text-right">Acciones</TableHead>
+                                        <TableHead>{t('apoyo_social.organization')}</TableHead>
+                                        <TableHead>{t('apoyo_social.email')}</TableHead>
+                                        <TableHead>{t('apoyo_social.lastSent')}</TableHead>
+                                        <TableHead>{t('apoyo_social.sentCount')}</TableHead>
+                                        <TableHead className="text-right">{t('apoyo_social.actions')}</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
                                     {invites.map((inv) => (
                                         <TableRow key={inv.id}>
                                             <TableCell className="font-medium text-slate-900">
-                                                {inv.organizationName || 'Sin Nombre'}
+                                                {inv.organizationName || t('apoyo_social.noName')}
                                             </TableCell>
                                             <TableCell>{inv.email}</TableCell>
                                             <TableCell>
                                                 {inv.lastSentAt?.seconds 
                                                     ? new Date(inv.lastSentAt.seconds * 1000).toLocaleDateString() + ' ' + new Date(inv.lastSentAt.seconds * 1000).toLocaleTimeString()
-                                                    : 'Desconocida'}
+                                                    : t('apoyo_social.unknownDate')}
                                             </TableCell>
                                             <TableCell>
                                                 <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full font-semibold">
@@ -265,7 +238,7 @@ export default function ApoyoSocialAdminPage() {
                                                     try {
                                                         const res = await sendApoyoSocialInvite(inv.email, inv.organizationName, 'es');
                                                         if (res.success) {
-                                                            toast({ title: 'Reenviado', description: `Se reenvió la invitación a ${inv.email}` });
+                                                            toast({ title: t('apoyo_social.resend'), description: `Se reenvió la invitación a ${inv.email}` });
                                                             fetchData();
                                                         } else {
                                                             toast({ title: 'Error', description: res.error, variant: 'destructive' });
@@ -275,8 +248,8 @@ export default function ApoyoSocialAdminPage() {
                                                         toast({ title: 'Error', description: e.message, variant: 'destructive' });
                                                         setIsLoading(false);
                                                     }
-                                                }} title="Reenviar Invitación">
-                                                    <RefreshCw className="mr-2 h-4 w-4 text-blue-600" /> Reenviar
+                                                }} title={t('apoyo_social.resend')}>
+                                                    <RefreshCw className="mr-2 h-4 w-4 text-blue-600" /> {t('apoyo_social.resend')}
                                                 </Button>
                                             </TableCell>
                                         </TableRow>
@@ -284,7 +257,7 @@ export default function ApoyoSocialAdminPage() {
                                     {invites.length === 0 && (
                                         <TableRow>
                                             <TableCell colSpan={5} className="text-center h-32 text-muted-foreground">
-                                                No hay invitaciones registradas por el momento.
+                                                {t('apoyo_social.noInvites')}
                                             </TableCell>
                                         </TableRow>
                                     )}
@@ -300,19 +273,19 @@ export default function ApoyoSocialAdminPage() {
                 <DialogContent className="sm:max-w-xl">
                     <DialogHeader>
                         <DialogTitle className="flex items-center gap-2 text-xl text-green-700">
-                            <LifeBuoy className="h-5 w-5" /> Revisión Documental
+                            <LifeBuoy className="h-5 w-5" /> {t('apoyo_social.docReview')}
                         </DialogTitle>
                     </DialogHeader>
                     {detailDialogUser && (
                         <div className="space-y-4 py-4">
                             <div>
-                                <h4 className="text-sm font-semibold text-slate-500 uppercase tracking-wide">Proyecto / Nombre</h4>
+                                <h4 className="text-sm font-semibold text-slate-500 uppercase tracking-wide">{t('apoyo_social.causeProject')}</h4>
                                 <p className="font-medium text-lg">{detailDialogUser.name}</p>
                             </div>
                             <div>
-                                <h4 className="text-sm font-semibold text-slate-500 uppercase tracking-wide">Historia</h4>
+                                <h4 className="text-sm font-semibold text-slate-500 uppercase tracking-wide">{t('apoyo_social.story')}</h4>
                                 <p className="bg-slate-50 p-3 rounded border text-sm text-slate-700 mt-1 italic">
-                                    "{detailDialogUser.story || 'No proporcionó historia.'}"
+                                    "{detailDialogUser.story || t('apoyo_social.noStory')}"
                                 </p>
                             </div>
                             <div className="grid grid-cols-2 gap-4">
@@ -321,42 +294,42 @@ export default function ApoyoSocialAdminPage() {
                                     <p className="text-sm">{detailDialogUser.email}</p>
                                 </div>
                                 <div>
-                                    <h4 className="text-sm font-semibold text-slate-500 uppercase tracking-wide">Enlace Redes/WhatsApp</h4>
+                                    <h4 className="text-sm font-semibold text-slate-500 uppercase tracking-wide">{t('apoyo_social.helpLink')}</h4>
                                     <p className="text-sm">
                                         {detailDialogUser.helpLink ? (
                                             <a href={detailDialogUser.helpLink} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                                                Abrir Enlace
+                                                {t('apoyo_social.openLink')}
                                             </a>
                                         ) : 'N/A'}
                                     </p>
                                 </div>
                             </div>
                             <div className="pt-4 border-t">
-                                <h4 className="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-2">Comprobante (apoyo_social_docs)</h4>
+                                <h4 className="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-2">{t('apoyo_social.proofDoc')}</h4>
                                 {detailDialogUser.documentUrl ? (
                                     <div className="flex items-center gap-3">
                                         <Button asChild variant="secondary" className="w-full bg-green-50 text-green-700 hover:bg-green-100">
                                             <a href={detailDialogUser.documentUrl} target="_blank" rel="noopener noreferrer">
-                                                Ver PDF/JPG Adjunto
+                                                {t('apoyo_social.viewDoc')}
                                             </a>
                                         </Button>
                                     </div>
                                 ) : (
                                     <p className="text-sm text-red-500 font-medium bg-red-50 p-2 rounded border border-red-100">
-                                        No se proporcionó ningún documento verificador.
+                                        {t('apoyo_social.noDoc')}
                                     </p>
                                 )}
                             </div>
                         </div>
                     )}
                     <DialogFooter className="border-t pt-4">
-                        <Button variant="outline" onClick={() => setDetailDialogUser(null)}>Cerrar</Button>
+                        <Button variant="outline" onClick={() => setDetailDialogUser(null)}>{t('apoyo_social.close')}</Button>
                         {detailDialogUser?.status === 'pending' && (
                             <Button className="bg-green-600 hover:bg-green-700 text-white" onClick={() => {
                                 handleApprove(detailDialogUser);
                                 setDetailDialogUser(null);
                             }}>
-                                Aprobar Causa
+                                {t('apoyo_social.approveCause')}
                             </Button>
                         )}
                     </DialogFooter>
@@ -365,41 +338,7 @@ export default function ApoyoSocialAdminPage() {
 
             <Dialog open={isInviteOpen} onOpenChange={setIsInviteOpen}>
                 <DialogContent>
-                    <DialogHeader>
-                        <DialogTitle className="text-xl text-green-700 font-bold">Enviar Invitación Protegida</DialogTitle>
-                    </DialogHeader>
-                    <div className="space-y-4 py-4">
-                        <div className="space-y-2">
-                            <Label>Nombre de la Organización</Label>
-                            <Input placeholder="Ej: Protectora de Animales ABC" value={inviteName} onChange={e => setInviteName(e.target.value)} />
-                        </div>
-                        <div className="space-y-2">
-                            <Label>Correo Electrónico (El token se vinculará a este coreo)</Label>
-                            <Input placeholder="contacto@protectora.org" type="email" value={inviteEmail} onChange={e => setInviteEmail(e.target.value)} />
-                        </div>
-                        <div className="space-y-2">
-                            <Label>Idioma del Correo</Label>
-                            <Select value={inviteLang} onValueChange={setInviteLang}>
-                                <SelectTrigger>
-                                    <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="es">Español</SelectItem>
-                                    <SelectItem value="en">English</SelectItem>
-                                    <SelectItem value="de">Deutsch</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
-                        <p className="text-xs text-muted-foreground pt-2">
-                            Al enviar esta invitación, el destinatario recibirá un enlace único y ofuscado que le permitirá acceder exclusivamente al formulario de registro seguro.
-                        </p>
-                    </div>
-                    <DialogFooter>
-                        <Button variant="outline" onClick={() => setIsInviteOpen(false)}>Cancelar</Button>
-                        <Button className="bg-green-600 text-white" onClick={handleSendInvite} disabled={isInviting}>
-                            {isInviting ? 'Enviando...' : 'Enviar Invitación por Correo'}
-                        </Button>
-                    </DialogFooter>
+                    <ApoyoSocialInviteForm />
                 </DialogContent>
             </Dialog>
         </div>
