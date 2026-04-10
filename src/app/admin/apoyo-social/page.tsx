@@ -23,6 +23,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
 import { approveApoyoSocialRequest, sendApoyoSocialInvite } from '@/app/actions/apoyo-social';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const db = getFirestore(app);
 
@@ -38,6 +39,7 @@ export default function ApoyoSocialAdminPage() {
     const [isInviteOpen, setIsInviteOpen] = useState(false);
     const [inviteEmail, setInviteEmail] = useState('');
     const [inviteName, setInviteName] = useState('');
+    const [inviteLang, setInviteLang] = useState('es');
     const [isInviting, setIsInviting] = useState(false);
 
     const fetchData = async () => {
@@ -104,12 +106,13 @@ export default function ApoyoSocialAdminPage() {
         }
         setIsInviting(true);
         try {
-            const res = await sendApoyoSocialInvite(inviteEmail, inviteName);
+            const res = await sendApoyoSocialInvite(inviteEmail, inviteName, inviteLang);
             if (res.success) {
                 toast({ title: 'Invitación Enviada', description: `Se ha enviado el enlace seguro a ${inviteEmail}` });
                 setIsInviteOpen(false);
                 setInviteEmail('');
                 setInviteName('');
+                setInviteLang('es');
                 fetchData();
             } else {
                 toast({ title: 'Error', description: res.error, variant: 'destructive' });
@@ -260,7 +263,7 @@ export default function ApoyoSocialAdminPage() {
                                                     if (!confirm(`¿Reenviar invitación a ${inv.email}?`)) return;
                                                     setIsLoading(true);
                                                     try {
-                                                        const res = await sendApoyoSocialInvite(inv.email, inv.organizationName);
+                                                        const res = await sendApoyoSocialInvite(inv.email, inv.organizationName, 'es');
                                                         if (res.success) {
                                                             toast({ title: 'Reenviado', description: `Se reenvió la invitación a ${inv.email}` });
                                                             fetchData();
@@ -373,6 +376,19 @@ export default function ApoyoSocialAdminPage() {
                         <div className="space-y-2">
                             <Label>Correo Electrónico (El token se vinculará a este coreo)</Label>
                             <Input placeholder="contacto@protectora.org" type="email" value={inviteEmail} onChange={e => setInviteEmail(e.target.value)} />
+                        </div>
+                        <div className="space-y-2">
+                            <Label>Idioma del Correo</Label>
+                            <Select value={inviteLang} onValueChange={setInviteLang}>
+                                <SelectTrigger>
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="es">Español</SelectItem>
+                                    <SelectItem value="en">English</SelectItem>
+                                    <SelectItem value="de">Deutsch</SelectItem>
+                                </SelectContent>
+                            </Select>
                         </div>
                         <p className="text-xs text-muted-foreground pt-2">
                             Al enviar esta invitación, el destinatario recibirá un enlace único y ofuscado que le permitirá acceder exclusivamente al formulario de registro seguro.

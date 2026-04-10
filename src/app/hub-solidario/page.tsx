@@ -24,6 +24,11 @@ function HubSolidarioForm() {
     
     const token = searchParams.get('invitacion');
     const emailFromUrl = searchParams.get('email');
+    const lang = searchParams.get('lang') || 'es';
+    
+    let languageDisplay = 'Español';
+    if (lang === 'en') languageDisplay = 'English';
+    if (lang === 'de') languageDisplay = 'Deutsch';
 
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [file, setFile] = useState<File | null>(null);
@@ -109,6 +114,9 @@ function HubSolidarioForm() {
                             Invitación exclusiva para <strong>{emailFromUrl}</strong>.<br />
                             Cuéntanos tu historia para que podamos ayudarte a difundirla de manera profesional y gratuita.
                         </CardDescription>
+                        <div className="mt-4 inline-flex items-center px-3 py-1 bg-emerald-50 text-emerald-800 text-sm font-medium rounded-full border border-emerald-200">
+                            Idioma: {languageDisplay}
+                        </div>
                     </div>
                 </CardHeader>
                 <CardContent>
@@ -167,9 +175,6 @@ function HubSolidarioForm() {
                                 value={formData.helpLink}
                                 onChange={(e) => setFormData({...formData, helpLink: e.target.value})}
                             />
-                            <p className="text-xs text-muted-foreground mt-2">
-                                Donde quieres que la gente dé clic en tu banner.
-                            </p>
                         </div>
 
                         <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-justify leading-relaxed text-sm text-green-900 shadow-sm">

@@ -122,7 +122,7 @@ export async function approveApoyoSocialRequest(requestId: string) {
 
 import { headers } from 'next/headers';
 
-export async function sendApoyoSocialInvite(email: string, organizationName: string) {
+export async function sendApoyoSocialInvite(email: string, organizationName: string, lang: string = 'es') {
     try {
         const token = require('crypto').randomBytes(16).toString('hex');
         
@@ -134,37 +134,68 @@ export async function sendApoyoSocialInvite(email: string, organizationName: str
             // Silently fallback if headers() not available in some contexts
         }
         
-        const inviteLink = `${baseUrl}/hub-solidario?invitacion=${token}&email=${encodeURIComponent(email)}`;
+        const inviteLink = `${baseUrl}/hub-solidario?invitacion=${token}&email=${encodeURIComponent(email)}&lang=${lang}`;
+        
+        let subject = 'Invitación Privada: Programa de Apoyo Social Dicilo';
+        let title = 'Invitación Especial de Dicilo';
+        let greeting = `Hola <strong>${organizationName}</strong>,`;
+        let paragraph1 = 'Nos ponemos en contacto contigo porque valoramos el impacto positivo de tu causa.';
+        let paragraph2 = 'Como parte de nuestro programa de <strong>Responsabilidad Social y Apoyo Social</strong>, queremos invitarte de manera exclusiva a unirte a <strong>Dicilo.net</strong> sin ningún costo.';
+        let paragraph3 = 'Al registrarte, validaremos tu perfil y te proporcionaremos acceso a herramientas de difusión profesional gratuitas, para conectar tu cruzada con posibles prospectos que apoyen tu causa bajo un sello de confianza verificado.';
+        let buttonText = 'Acceder al Formulario Seguro';
+        let footerText = '* Este enlace ha sido generado exclusivamente para tu organización y es intransferible.';
+        let signature = 'Atentamente,<br><strong>El equipo de Dicilo.net</strong>';
+
+        if (lang === 'de') {
+            subject = 'Private Einladung: Dicilo Social Support Programm';
+            title = 'Besondere Einladung von Dicilo';
+            greeting = `Hallo <strong>${organizationName}</strong>,`;
+            paragraph1 = 'Wir kontaktieren Sie, weil wir die positiven Auswirkungen Ihres Anliegens schätzen.';
+            paragraph2 = 'Im Rahmen unseres <strong>Programms zur sozialen Verantwortung</strong> möchten wir Sie exklusiv einladen, kostenlos Mitglied von <strong>Dicilo.net</strong> zu werden.';
+            paragraph3 = 'Nach der Registrierung überprüfen wir Ihr Profil und bieten Ihnen Zugang zu kostenlosen professionellen Verbreitungs-Tools, um Ihre Sache mit potenziellen Unterstützern unter einem geprüften Vertrauenssiegel zu verbinden.';
+            buttonText = 'Sicheres Formular aufrufen';
+            footerText = '* Dieser Link wurde exklusiv für Ihre Organisation generiert und ist nicht übertragbar.';
+            signature = 'Mit freundlichen Grüßen,<br><strong>Das Team von Dicilo.net</strong>';
+        } else if (lang === 'en') {
+            subject = 'Private Invitation: Dicilo Social Support Program';
+            title = 'Special Invitation from Dicilo';
+            greeting = `Hello <strong>${organizationName}</strong>,`;
+            paragraph1 = 'We are reaching out to you because we value the positive impact of your cause.';
+            paragraph2 = 'As part of our <strong>Social Responsibility and Support Program</strong>, we exclusively invite you to join <strong>Dicilo.net</strong> at no cost.';
+            paragraph3 = 'Upon registration, we will validate your profile and provide access to free professional dissemination tools, connecting your crusade with potential prospects who support your cause under a verified trust seal.';
+            buttonText = 'Access Secure Form';
+            footerText = '* This link has been generated exclusively for your organization and is non-transferable.';
+            signature = 'Sincerely,<br><strong>The Dicilo.net Team</strong>';
+        }
         
         const htmlBody = `
             <!DOCTYPE html>
-            <html lang="es">
+            <html lang="${lang}">
             <head>
                 <meta charset="UTF-8">
             </head>
             <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
                 <div style="background-color: #8cc63f; padding: 20px; text-align: center;">
-                    <h1 style="color: white; margin: 0;">Invitación Especial de Dicilo</h1>
+                    <h1 style="color: white; margin: 0;">${title}</h1>
                 </div>
                 <div style="padding: 20px; color: #5a5a5a; line-height: 1.6;">
-                    <p>Hola <strong>${organizationName}</strong>,</p>
-                    <p>Nos ponemos en contacto contigo porque valoramos el impacto positivo de tu causa.</p>
-                    <p>Como parte de nuestro programa de <strong>Responsabilidad Social y Apoyo Social</strong>, queremos invitarte de manera exclusiva a unirte a <strong>Dicilo.net</strong> sin ningún costo.</p>
-                    <p>Al registrarte, validaremos tu perfil y te proporcionaremos acceso a herramientas de difusión profesional gratuitas, para conectar tu cruzada con posibles prospectos que apoyen tu causa bajo un sello de confianza verificado.</p>
+                    <p>${greeting}</p>
+                    <p>${paragraph1}</p>
+                    <p>${paragraph2}</p>
+                    <p>${paragraph3}</p>
                     
                     <div style="text-align: center; margin: 30px 0;">
                         <a href="${inviteLink}" style="background-color: #8cc63f; color: white; text-decoration: none; padding: 14px 28px; border-radius: 6px; font-weight: bold; display: inline-block;">
-                            Acceder al Formulario Seguro
+                            ${buttonText}
                         </a>
                     </div>
                     
                     <p style="font-size: 13px; color: #777; background-color: #f9f9f9; padding: 10px; border-left: 3px solid #8cc63f;">
-                        * Este enlace ha sido generado exclusivamente para tu organización y es intransferible.<br>
+                        ${footerText}<br>
                         URL: <span style="color: #66b266; word-break: break-all;">${inviteLink}</span>
                     </p>
                     
-                    <p>Atentamente,</p>
-                    <p><strong>El equipo de Dicilo.net</strong></p>
+                    <p>${signature}</p>
                 </div>
             </body>
             </html>
@@ -172,7 +203,7 @@ export async function sendApoyoSocialInvite(email: string, organizationName: str
 
         await sendSmtpEmail({
             to: email,
-            subject: 'Invitación Privada: Programa de Apoyo Social Dicilo',
+            subject: subject,
             html: htmlBody
         });
 
