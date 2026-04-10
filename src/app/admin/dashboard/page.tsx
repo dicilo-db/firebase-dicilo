@@ -949,6 +949,20 @@ const DashboardContent: React.FC = () => {
               </Card>
             </Link>
 
+            {/* Empresas Huérfanas */}
+            <Link href="/admin/orphan-businesses" className="group">
+              <Card className="h-full border-amber-200 transition-all hover:shadow-md hover:border-amber-500 cursor-pointer relative">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium text-amber-700">Accesos Pendientes</CardTitle>
+                  <ShieldAlert className="h-4 w-4 text-amber-500 group-hover:scale-110 transition-transform" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">Empresas Huérfanas</div>
+                  <p className="text-xs text-muted-foreground mt-1">Generar cuentas y contraseñas</p>
+                </CardContent>
+              </Card>
+            </Link>
+
           </div>
         </div>
       </main>

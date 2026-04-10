@@ -134,8 +134,9 @@ export async function completeOnboarding(
         } else if (userType === 'client' && clientId) {
             await db.collection('clients').doc(clientId).set({
                 ...updatePayload,
-                // Si la empresa no tenía categoría asignada, le ponemos la primera que eligió
-                category: data.items[0] || 'other' 
+                // Conservar compatibilidad guardando la principal y un arreglo completo
+                category: data.items[0] || 'other',
+                categories: data.items
             }, { merge: true });
         }
 

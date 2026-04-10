@@ -26,6 +26,8 @@ export function OnboardingLock({
     name,
     userType,
     clientId,
+    country,
+    city,
     onSuccess
 }: {
     uid: string,
@@ -65,7 +67,7 @@ export function OnboardingLock({
                 </div>
                 <h2 className="text-2xl font-black text-center mb-2">¡Hola, {name}! 👋</h2>
                 <p className="text-slate-500 text-center mb-8">
-                    Para ofrecerte una experiencia local y sugerencias relevantes, requerimos que confirmes tu ubicación actual y {userType === 'private' ? 'tus intereses.' : 'tu rubro principal.'}
+                    Para ofrecerte una experiencia local y sugerencias relevantes, requerimos que confirmes tu ubicación actual y {userType === 'private' ? 'tus intereses.' : 'las categorías de tu empresa.'}
                 </p>
 
                 <Form {...form}>
@@ -116,7 +118,7 @@ export function OnboardingLock({
                         <div className="space-y-3">
                             <FormLabel className="font-bold flex items-center gap-2">
                                 <Sparkles className="h-4 w-4 text-emerald-500" />
-                                {userType === 'private' ? 'Tus Intereses' : 'Categoría Principal de la Empresa'}
+                                {userType === 'private' ? 'Tus Intereses' : 'Categorías de la Empresa'}
                             </FormLabel>
                             <div className="grid grid-cols-2 gap-2 max-h-[200px] overflow-y-auto p-2 border rounded-xl bg-slate-50">
                                 {categoriesData.map((cat) => (
@@ -126,11 +128,8 @@ export function OnboardingLock({
                                                 <Checkbox
                                                     checked={field.value?.includes(cat.categoria)}
                                                     onCheckedChange={(checked) => {
-                                                        if (userType === 'client') {
-                                                            return checked ? field.onChange([cat.categoria]) : field.onChange([]);
-                                                        }
                                                         return checked
-                                                            ? field.onChange([...field.value, cat.categoria])
+                                                            ? field.onChange([...(field.value || []), cat.categoria])
                                                             : field.onChange(field.value?.filter((v) => v !== cat.categoria));
                                                     }}
                                                 />
