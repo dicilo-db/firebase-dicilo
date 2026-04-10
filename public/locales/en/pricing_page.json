@@ -1,0 +1,53 @@
+{
+  "plans_title": "Our Plans and Prices",
+  "plans_desc_1": "We offer a variety of plans to suit your needs. Whether you are an individual user, a small business, or a large corporation, we have the right plan for you.",
+  "plans_desc_2": "Our plans are designed to help you grow your business, with features that allow you to connect with your customers and promote your products and services.",
+  "plans_desc_3": "Choose the plan that best suits you and start growing your business today.",
+  "plans": {
+    "private": {
+      "title": "Private",
+      "price": "Free",
+      "period": "",
+      "features": {
+        "feature1": "Support by voting for your favorite businesses.",
+        "feature2": "Access to exclusive offers and promotions.",
+        "feature3": "Opportunity to earn rewards and discounts."
+      },
+      "cta": "register"
+    },
+    "donor": {
+      "title": "Donor",
+      "price": "€ 99",
+      "period": "/year",
+      "features": {
+        "feature1": "All the benefits of the Private plan.",
+        "feature2": "Support for community projects.",
+        "feature3": "Recognition on our social networks."
+      },
+      "cta": "register"
+    },
+    "retailer": {
+      "title": "Retailer",
+      "price": "€ 2,340",
+      "period": "/year",
+      "best_choice": "Best Choice",
+      "features": {
+        "feature1": "All the benefits of the Donor plan.",
+        "feature2": "Visibility in our directory.",
+        "feature3": "Marketing and advertising tools."
+      },
+      "cta": "register"
+    },
+    "premium": {
+      "title": "Premium",
+      "price": "€ 5,000",
+      "period": "/year",
+      "features": {
+        "feature1": "All the benefits of the Retailer plan.",
+        "feature2": "Priority support and personalized advice.",
+        "feature3": "Access to exclusive events and networking."
+      },
+      "cta": "register"
+    }
+  }
+}

@@ -1,0 +1,36 @@
+{
+    "social": {
+        "tabs": {
+            "friends": "Meine Nachbarn",
+            "chats": "Chats"
+        },
+        "actions": {
+            "send_message": "Senden",
+            "add_friend": "Zu meinen Nachbarn hinzufügen",
+            "accept_request": "Annehmen",
+            "reject_request": "Ablehnen",
+            "start_chat": "Chatten"
+        },
+        "status": {
+            "online": "Online",
+            "typing": "Schreibt...",
+            "offline": "Offline"
+        },
+        "placeholder": {
+            "search_neighbor": "Nachbarn suchen...",
+            "type_message": "Nachricht schreiben..."
+        },
+        "groups": {
+            "create_new": "Gruppe erstellen"
+        },
+        "headers": {
+            "suggested_neighbors": "Vorgeschlagene Nachbarn",
+            "pending_requests": "Ausstehende Anfragen",
+            "no_new_neighbors": "Keine neuen nahen Nachbarn gefunden."
+        },
+        "list": {
+            "user_label": "Benutzer",
+            "unknown_neighborhood": "Unbekannter Kiez"
+        }
+    }
+}

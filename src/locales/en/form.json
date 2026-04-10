@@ -1,0 +1,62 @@
+{
+  "form": {
+    "title": "Recommendation Form",
+    "name": "Your First & Last Name",
+    "email": "Your Email Address",
+    "promoCode": "Your Promo Code (optional)",
+    "newsletter": {
+      "label": "Would you like to receive our newsletter?",
+      "yes": "Yes, send me the newsletter",
+      "no": "No, I don't want the newsletter"
+    },
+    "recommendation": {
+      "label": "Your Message",
+      "labelPlaceholder": "Tell your friends and acquaintances about your great experiences with us..."
+    },
+    "source": {
+      "label": "How did you hear about us?",
+      "customer": "I'm a customer",
+      "facebook": "Facebook",
+      "instagram": "Instagram",
+      "telegram": "Telegram",
+      "youtube": "YouTube",
+      "twitter": "Twitter",
+      "linkedin": "LinkedIn",
+      "tiktok": "TikTok",
+      "recommendation": "Direct recommendation",
+      "googleads": "Google Ads / Advertising",
+      "dicilo": "DICILO",
+      "mhc": "MHC Representative",
+      "other": "Other"
+    },
+    "refer": {
+      "label": "Do you want to recommend us?",
+      "yes": "Yes, I want to invite acquaintances/friends",
+      "no": "No thanks, not at the moment"
+    },
+    "recipient": {
+      "name": "Recommended person's name",
+      "email": "Email (optional if WhatsApp provided)",
+      "whatsapp": "WhatsApp (optional if Email provided)",
+      "add": "Add another recommended person"
+    },
+    "membership": {
+      "label": "Are you a DICILO member?",
+      "yes": "I am a member",
+      "no": "I am not a member"
+    },
+    "privacyTitle": "Confirmation of Sending",
+    "submit": "Send Recommendation",
+    "required": "Required",
+    "infoText": "Your message: Tell your friends and acquaintances about your great experiences with us. With your exclusive recommendation, your friends secure special advantages such as discounts on future trips or participation in prize draws. We also keep you and your friends up to date on new travel destinations and offers.",
+    "inviteInfoTitle": "Perfect! Invite your friends:",
+    "communityText": "Help us grow the DICILO community. The more friends you invite, the more opportunities and benefits they will have.",
+    "productRecommendation": {
+      "label": "Which product would you like to recommend?",
+      "placeholder": "Select a product"
+    },
+    "captcha": {
+      "placeholder": "[reCAPTCHA v3 invisible]"
+    }
+  }
+}

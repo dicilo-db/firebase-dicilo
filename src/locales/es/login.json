@@ -1,0 +1,26 @@
+{
+    "title": "Iniciar Sesión",
+    "description": "Inicia sesión para gestionar tu negocio",
+    "emailLabel": "Correo electrónico",
+    "passwordLabel": "Contraseña",
+    "loginButton": "Iniciar Sesión",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "successTitle": "¡Bienvenido de nuevo!",
+    "successDescription": "Serás redirigido al panel de control.",
+    "error": {
+        "title": "Error de inicio de sesión",
+        "invalidCredentials": "Correo o contraseña incorrectos",
+        "generic": "Ocurrió un error."
+    },
+    "reset": {
+        "successTitle": "Correo enviado",
+        "successDescription": "Revisa tu bandeja de entrada.",
+        "errorTitle": "Error",
+        "emailRequired": "Correo requerido",
+        "userNotFound": "Usuario no encontrado",
+        "errorGeneric": "Error al enviar"
+    },
+    "showPassword": "Mostrar contraseña",
+    "logout": "Cerrar Sesión",
+    "adminPanel": "Panel de Admin"
+}

@@ -1,0 +1,23 @@
+{
+  "category": {
+    "health_wellness": "Gesundheit & Wellness",
+    "travel_tourism": "Reise & Tourismus",
+    "consulting_coaching": "Beratung & Coaching",
+    "gastronomy_culinary": "Gastronomie & Kulinarik",
+    "restaurant": "Restaurant",
+    "cafe_bistro": "Café & Bistro"
+  },
+  "subcategory": {
+    "hearing_systems": "Hörsysteme",
+    "travel_club": "Reiseclub",
+    "business_consulting": "Unternehmensberatung",
+    "restaurants": "Restaurants",
+    "travel_agencies": "Reisebüros",
+    "german": "Deutsch",
+    "mexican": "Mexikanisch",
+    "indian": "Indisch",
+    "french": "Französisch",
+    "italian": "Italienisch",
+    "fast_food": "Schnellimbiss"
+  }
+}

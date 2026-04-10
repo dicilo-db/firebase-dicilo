@@ -1,0 +1,19 @@
+{
+  "overview": "Overview",
+  "recommenders": "Recommenders",
+  "recommended": "Recommended",
+  "origin": "Origin",
+  "reports": "Reports",
+  "settings": "Settings",
+  "kpiTotal": "Total sent",
+  "kpiAccepted": "Accepted",
+  "kpiPending": "Pending",
+  "kpiRejected": "Rejected",
+  "topRecommenders": "Top Recommenders",
+  "listRecommenders": "Recommenders List",
+  "listRecommended": "Recommended List",
+  "originContacts": "Origin of Contacts",
+  "reportsTitle": "Reports",
+  "reportsConfig": "Configure reporting frequency (weekly, biweekly, monthly).",
+  "settingsTitle": "Client Settings"
+}

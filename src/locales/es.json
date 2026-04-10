@@ -1,0 +1,80 @@
+{
+  "header": {
+    "nav": {
+      "benefits": "Ventajas",
+      "planes": "Planes",
+      "about": "Sobre nosotros",
+      "directory": "Directorio",
+      "login": "Iniciar Sesión",
+      "register": "Registrarse",
+      "language": "Idioma"
+    }
+  },
+  "footer": {
+    "imprint": "Aviso Legal",
+    "privacy": "Privacidad",
+    "about": "Sobre nosotros",
+    "faq": "FAQ",
+    "register": "Registrarse"
+  },
+  "common": {
+    "search": {
+      "title": "Descubre Negocios Recomendados",
+      "businessType": "Negocio",
+      "locationType": "Ubicación",
+      "businessPlaceholder": "Nombre del negocio o palabra clave...",
+      "locationPlaceholder": "Ciudad, región o país...",
+      "searchLabel": "Buscar",
+      "useLocationLabel": "Ubicación Actual",
+      "locationErrorTitle": "Error de Ubicación",
+      "locationErrorDesc": "Dirección o ubicación desconocida.",
+      "geolocationErrorTitle": "Error de GPS",
+      "geolocationErrorDesc": "No pudimos obtener tu ubicación.",
+      "geolocationNotSupportedTitle": "GPS no Soportado",
+      "geolocationNotSupportedDesc": "Tu navegador no soporta la búsqueda por ubicación.",
+      "locationNotFoundTitle": "Ubicación no encontrada",
+      "locationNotFoundDesc": "No se encontró la ubicación '{query}'.",
+      "searchErrorTitle": "Error de Búsqueda",
+      "searchErrorDesc": "Ocurrió un error durante la búsqueda.",
+      "noResults": "No se encontraron resultados para '{query}'.",
+      "recommendBusiness": "Recomendar un negocio"
+    },
+    "businessCard": {
+      "currentOffer": "Oferta Actual"
+    },
+    "mapPopup": {
+      "website": "Sitio Web",
+      "offer": "Oferta",
+      "map": "Mapa"
+    },
+    "form": {
+      "title": "Recomendar una empresa",
+      "description": "Rellena este formulario para recomendar una empresa. Nos pondremos en contacto con ella para incluirla en nuestro directorio.",
+      "companyNamePlaceholder": "Nombre de la empresa*",
+      "companyNameRequired": "El nombre de la empresa es obligatorio.",
+      "invalidEmail": "Formato de correo electrónico inválido.",
+      "contactNamePlaceholder": "Tu nombre",
+      "emailPlaceholder": "Tu correo electrónico (opcional)",
+      "phonePlaceholder": "Tu número de teléfono (opcional)",
+      "categoryPlaceholder": "Categoría de la empresa (opcional)",
+      "commentsPlaceholder": "Tus comentarios (opcional)",
+      "submitButton": "Enviar recomendación",
+      "successTitle": "¡Recomendación enviada!",
+      "successDesc": "Gracias por tu recomendación. Nos pondremos en contacto con la empresa.",
+      "errorTitle": "¡Error al enviar!",
+      "errorDesc": "Hubo un problema al enviar tu recomendación. Por favor, inténtalo de nuevo más tarde."
+    },
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "yes": "Sí",
+    "no": "No",
+    "bestChoice": "Mejor Opción",
+    "days": {
+      "one": "día",
+      "other": "días"
+    },
+    "share": {
+      "emailSubject": "¡Mira esto!"
+    }
+  }
+}

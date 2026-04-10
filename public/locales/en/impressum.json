@@ -1,0 +1,40 @@
+{
+  "pageTitle": "Imprint",
+  "pageSubtitle": "Legal information and disclosures according to § 5 TMG.",
+  "cardTitle": "Imprint",
+  "legal": {
+    "title": "Information according to § 5 TMG",
+    "brand_of": "Dicilo is a brand of;",
+    "company_name": "Milenium Holding & Consulting UG – Group.",
+    "address_line1": "Mühlendamm 84a",
+    "address_line2": "22087 Hamburg"
+  },
+  "representedBy": {
+    "title": "Represented by:",
+    "name": "Nilo Escolar"
+  },
+  "contact": {
+    "title": "Contact",
+    "phone_label": "Phone",
+    "phone_number": "015678710511",
+    "email_label": "Email",
+    "email_address": "info@dicilo.net"
+  },
+  "vat": {
+    "title": "VAT ID",
+    "description": "VAT identification number according to § 27 a of the German VAT Act:",
+    "id": "DE323288362"
+  },
+  "responsible": {
+    "title": "Editorially responsible",
+    "name": "Nilo Escolar"
+  },
+  "dispute": {
+    "title": "EU Dispute Resolution",
+    "description": "The European Commission provides a platform for online dispute resolution (ODR): <a href='https://ec.europa.eu/consumers/odr/' target='_blank' rel='noopener noreferrer'>https://ec.europa.eu/consumers/odr/</a>. You can find our email address in the imprint above."
+  },
+  "consumerDispute": {
+    "title": "Consumer Dispute Resolution/Universal Arbitration Board",
+    "description": "We are not willing or obliged to participate in dispute resolution proceedings before a consumer arbitration board."
+  }
+}

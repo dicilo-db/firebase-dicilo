@@ -1,0 +1,53 @@
+{
+  "plans_title": "Unsere Pläne und Preise",
+  "plans_desc_1": "Wir bieten eine Vielzahl von Plänen an, die auf Ihre Bedürfnisse zugeschnitten sind. Egal, ob Sie ein einzelner Benutzer, ein kleines Unternehmen oder ein großes Unternehmen sind, wir haben den richtigen Plan für Sie.",
+  "plans_desc_2": "Unsere Pläne sind so konzipiert, dass sie Ihnen helfen, Ihr Geschäft auszubauen, mit Funktionen, die es Ihnen ermöglichen, mit Ihren Kunden in Kontakt zu treten und Ihre Produkte und Dienstleistungen zu bewerben.",
+  "plans_desc_3": "Wählen Sie den Plan, der am besten zu Ihnen passt, und beginnen Sie noch heute, Ihr Geschäft auszubauen.",
+  "plans": {
+    "private": {
+      "title": "Privat",
+      "price": "Kostenlos",
+      "period": "",
+      "features": {
+        "feature1": "Unterstützung durch Abstimmung für Ihre Lieblingsgeschäfte.",
+        "feature2": "Zugang zu exklusiven Angeboten und Aktionen.",
+        "feature3": "Möglichkeit, Prämien und Rabatte zu verdienen."
+      },
+      "cta": "register"
+    },
+    "donor": {
+      "title": "Spender",
+      "price": "€ 99",
+      "period": "/Jahr",
+      "features": {
+        "feature1": "Alle Vorteile des Privat-Plans.",
+        "feature2": "Unterstützung von Gemeinschaftsprojekten.",
+        "feature3": "Anerkennung in unseren sozialen Netzwerken."
+      },
+      "cta": "register"
+    },
+    "retailer": {
+      "title": "Einzelhändler",
+      "price": "€ 2.340",
+      "period": "/Jahr",
+      "best_choice": "Beste Wahl",
+      "features": {
+        "feature1": "Alle Vorteile des Spender-Plans.",
+        "feature2": "Sichtbarkeit in unserem Verzeichnis.",
+        "feature3": "Marketing- und Werbewerkzeuge."
+      },
+      "cta": "register"
+    },
+    "premium": {
+      "title": "Premium",
+      "price": "€ 5.000",
+      "period": "/Jahr",
+      "features": {
+        "feature1": "Alle Vorteile des Einzelhändler-Plans.",
+        "feature2": "Bevorzugter Support und persönliche Beratung.",
+        "feature3": "Zugang zu exklusiven Veranstaltungen und Networking."
+      },
+      "cta": "register"
+    }
+  }
+}

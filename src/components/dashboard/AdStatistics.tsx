@@ -1,0 +1,322 @@
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import {
+    Card,
+    CardContent,
+    CardHeader,
+    CardTitle,
+    CardDescription
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
+import { useTranslation } from 'react-i18next';
+import {
+    BarChart,
+    Bar,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Tooltip,
+    Legend,
+    ResponsiveContainer,
+    LineChart,
+    Line
+} from 'recharts';
+import { Loader2, Download, TrendingUp, MousePointerClick, Eye, Euro } from "lucide-react";
+import { getFirestore, collection, query, where, getDocs, orderBy } from 'firebase/firestore';
+import { app } from '@/lib/firebase';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import { subDays } from 'date-fns';
+
+interface DailyStat {
+    date: string;
+    views: number;
+    clicks: number;
+    cost: number;
+    ctr: number;
+    locations?: any;
+}
+
+interface AdStatisticsProps {
+    adId: string;
+}
+
+const db = getFirestore(app);
+
+export function AdStatistics({ adId }: AdStatisticsProps) {
+    const { t } = useTranslation('admin');
+    const [stats, setStats] = useState<DailyStat[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [range, setRange] = useState('7'); // days
+
+    useEffect(() => {
+        if (!adId) return;
+
+        const fetchStats = async () => {
+            setLoading(true);
+            try {
+                // Calculate date range
+                const endDate = new Date();
+                const startDate = subDays(endDate, parseInt(range));
+                const startDateStr = startDate.toISOString().split('T')[0];
+
+                // Query ad_stats_daily
+                // Ideally this should use a composite index on [adId, date]
+                // For now we query by adId and filter in client if needed or rely on ID structure
+
+                // Constructing query based on IDs might be more efficient if we had predictable IDs, 
+                // but standard query is safer.
+                const q = query(
+                    collection(db, 'ad_stats_daily'),
+                    where('adId', '==', adId),
+                    where('date', '>=', startDateStr),
+                    orderBy('date', 'asc')
+                );
+
+                const snapshot = await getDocs(q);
+                const data: DailyStat[] = snapshot.docs.map(doc => {
+                    const d = doc.data();
+                    const views = d.views || 0;
+                    const clicks = d.clicks || 0;
+                    return {
+                        date: d.date,
+                        views,
+                        clicks,
+                        cost: d.cost || 0,
+                        ctr: views > 0 ? (clicks / views) * 100 : 0,
+                        locations: d.locations // Pass locations for aggregation
+                    };
+                });
+
+                setStats(data);
+            } catch (error) {
+                console.error("Error fetching stats:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchStats();
+    }, [adId, range]);
+
+    // Totals
+    const totalViews = stats.reduce((acc, curr) => acc + curr.views, 0);
+    const totalClicks = stats.reduce((acc, curr) => acc + curr.clicks, 0);
+    const totalCost = stats.reduce((acc, curr) => acc + curr.cost, 0);
+    const avgCtr = totalViews > 0 ? (totalClicks / totalViews) * 100 : 0;
+
+    // Aggregate Locations
+    const locationStats: Record<string, number> = {};
+    stats.forEach(stat => {
+        if (stat.locations) {
+            Object.entries(stat.locations).forEach(([country, data]: [string, any]) => {
+                locationStats[country] = (locationStats[country] || 0) + (data.clicks || 0);
+                if (data.cities) {
+                    Object.entries(data.cities).forEach(([city, count]: [string, any]) => {
+                        const cityKey = `${city}, ${country}`;
+                        // Optional: Track city specific stats if needed
+                    });
+                }
+            });
+        }
+    });
+
+    const topLocations = Object.entries(locationStats)
+        .sort(([, a], [, b]) => b - a)
+        .slice(0, 5);
+
+
+    const downloadReport = () => {
+        const doc = new jsPDF();
+
+        doc.text(t('adStats.reportTitle', 'Ad Performance Report'), 14, 20);
+        doc.setFontSize(10);
+        doc.text(`${t('adStats.generatedOn', 'Generated on')}: ${new Date().toLocaleDateString()}`, 14, 30);
+
+        const tableData = stats.map(s => [
+            s.date,
+            s.views,
+            s.clicks,
+            s.ctr.toFixed(2) + '%',
+            s.cost.toFixed(2) + '€'
+        ]);
+
+        autoTable(doc, {
+            startY: 40,
+            head: [[
+                t('adStats.date', 'Date'),
+                t('adStats.views', 'Views'),
+                t('adStats.clicks', 'Clicks'),
+                t('adStats.ctr', 'CTR'),
+                t('adStats.cost', 'Cost')
+            ]],
+            body: tableData,
+            foot: [[
+                t('adStats.total', 'Total'),
+                totalViews,
+                totalClicks,
+                avgCtr.toFixed(2) + '%',
+                totalCost.toFixed(2) + '€'
+            ]]
+        });
+
+        doc.save(`ad-report-${adId}-${new Date().toISOString().split('T')[0]}.pdf`);
+    };
+
+    if (loading) {
+        return <div className="flex justify-center p-8"><Loader2 className="h-8 w-8 animate-spin text-blue-500" /></div>;
+    }
+
+    if (stats.length === 0) {
+        return (
+            <Card className="w-full">
+                <CardHeader>
+                    <CardTitle>{t('adStats.title', 'Ad Statistics')}</CardTitle>
+                    <CardDescription>{t('adStats.noData', 'No data available for the selected period.')}</CardDescription>
+                </CardHeader>
+            </Card>
+        );
+    }
+
+    return (
+        <div className="space-y-6">
+            {/* Header Controls */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <h2 className="text-2xl font-bold">{t('adStats.title', 'Ad Statistics')}</h2>
+                <div className="flex gap-2">
+                    <Select value={range} onValueChange={setRange}>
+                        <SelectTrigger className="w-[180px]">
+                            <SelectValue placeholder="Period" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="7">{t('adStats.last7Days', 'Last 7 Days')}</SelectItem>
+                            <SelectItem value="30">{t('adStats.last30Days', 'Last 30 Days')}</SelectItem>
+                            <SelectItem value="90">{t('adStats.last90Days', 'Last 3 Months')}</SelectItem>
+                        </SelectContent>
+                    </Select>
+                    <Button variant="outline" onClick={downloadReport}>
+                        <Download className="mr-2 h-4 w-4" />
+                        PDF
+                    </Button>
+                </div>
+            </div>
+
+            {/* KPI Cards */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">{t('adStats.views', 'Views')}</CardTitle>
+                        <Eye className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">{totalViews}</div>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">{t('adStats.clicks', 'Clicks')}</CardTitle>
+                        <MousePointerClick className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">{totalClicks}</div>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">CTR</CardTitle>
+                        <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">{avgCtr.toFixed(2)}%</div>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">{t('adStats.cost', 'Cost')}</CardTitle>
+                        <Euro className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">{totalCost.toFixed(2)}€</div>
+                    </CardContent>
+                </Card>
+            </div>
+
+            {/* Charts */}
+            <div className="grid md:grid-cols-2 gap-6">
+                <Card>
+                    <CardHeader>
+                        <CardTitle>{t('adStats.viewsAndClicks', 'Views & Clicks')}</CardTitle>
+                    </CardHeader>
+                    <CardContent className="h-[300px]">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <BarChart data={stats}>
+                                <CartesianGrid strokeDasharray="3 3" />
+                                <XAxis dataKey="date" tick={{ fontSize: 12 }} />
+                                <YAxis />
+                                <Tooltip />
+                                <Legend />
+                                <Bar dataKey="views" fill="#3b82f6" name={t('adStats.views', 'Views')} />
+                                <Bar dataKey="clicks" fill="#22c55e" name={t('adStats.clicks', 'Clicks')} />
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </CardContent>
+                </Card>
+
+                <Card>
+                    <CardHeader>
+                        <CardTitle>{t('adStats.costProgression', 'Cost Progression')}</CardTitle>
+                    </CardHeader>
+                    <CardContent className="h-[300px]">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <LineChart data={stats}>
+                                <CartesianGrid strokeDasharray="3 3" />
+                                <XAxis dataKey="date" tick={{ fontSize: 12 }} />
+                                <YAxis />
+                                <Tooltip />
+                                <Legend />
+                                <Line type="monotone" dataKey="cost" stroke="#ef4444" name={t('adStats.cost', 'Cost (€)')} />
+                            </LineChart>
+                        </ResponsiveContainer>
+                    </CardContent>
+                </Card>
+            </div>
+
+            {/* Top Locations - NEW */}
+            <Card>
+                <CardHeader>
+                    <CardTitle>Top Locations</CardTitle>
+                    <CardDescription>Where your clicks are coming from</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    {topLocations.length > 0 ? (
+                        <div className="space-y-4">
+                            {topLocations.map(([location, count], index) => (
+                                <div key={location} className="flex items-center justify-between">
+                                    <div className="flex items-center gap-2">
+                                        <div className="flex h-6 w-6 items-center justify-center rounded-full bg-muted text-xs font-bold">
+                                            {index + 1}
+                                        </div>
+                                        <span>{location}</span>
+                                    </div>
+                                    <div className="font-bold">{count} clicks</div>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="text-center text-muted-foreground py-4">
+                            No location data available yet.
+                        </div>
+                    )}
+                </CardContent>
+            </Card>
+        </div>
+    );
+}

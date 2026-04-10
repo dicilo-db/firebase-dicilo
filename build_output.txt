@@ -1,0 +1,1797 @@
+
+> nextn@0.1.0 build
+> next build
+
+  ▲ Next.js 14.2.35
+  - Environments: .env.local, .env
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully
+   Skipping validation of types
+   Skipping linting
+   Collecting page data ...
+Initializing new Firebase Admin App
+Initializing new Firebase Admin App
+   Generating static pages (0/94) ...
+
+Error occurred prerendering page "/api/admin/seed-templates". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/api/admin/seed-templates/route'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/future/helpers/module-loader/node-module-loader.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/future/helpers/module-loader/route-module-loader.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/routes/app-route.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/500". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/pages/_error.js'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-components.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/utils.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/api/admin/migration/legacy-users". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/api/admin/migration/legacy-users/route'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/future/helpers/module-loader/node-module-loader.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/future/helpers/module-loader/route-module-loader.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/routes/app-route.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/api/admin/backup". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/api/admin/backup/route'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/future/helpers/module-loader/node-module-loader.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/future/helpers/module-loader/route-module-loader.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/routes/app-route.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/404". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: ENOENT: no such file or directory, open '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/pages-manifest.json'
+    at readFileSync (node:fs:442:20)
+    at loadManifest (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-manifest.js:36:52)
+    at getMaybePagePath (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js:59:58)
+    at getPagePath (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js:92:22)
+    at requirePage (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js:99:22)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-components.js:72:65
+    at async Promise.all (index 0)
+    at async loadComponentsImpl (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-components.js:71:33)
+    at async exportPageImpl (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js:177:28)
+    at async Span.traceAsyncFn (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/trace/trace.js:154:20)
+
+Error occurred prerendering page "/api/currency". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/api/currency/route'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/future/helpers/module-loader/node-module-loader.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/future/helpers/module-loader/route-module-loader.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/routes/app-route.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/api/ads/click". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/api/ads/click/route'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/future/helpers/module-loader/node-module-loader.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/future/helpers/module-loader/route-module-loader.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/routes/app-route.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/api/ads/view". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/api/ads/view/route'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/future/helpers/module-loader/node-module-loader.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/future/helpers/module-loader/route-module-loader.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/routes/app-route.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/api/businesses". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/api/businesses/route'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/future/helpers/module-loader/node-module-loader.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/future/helpers/module-loader/route-module-loader.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/routes/app-route.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/api/private-user/create". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/api/private-user/create/route'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/future/helpers/module-loader/node-module-loader.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/future/helpers/module-loader/route-module-loader.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/routes/app-route.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/api/analytics/log". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/api/analytics/log/route'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/future/helpers/module-loader/node-module-loader.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/future/helpers/module-loader/route-module-loader.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/routes/app-route.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/api/proxy-image". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/api/proxy-image/route'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/future/helpers/module-loader/node-module-loader.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/future/helpers/module-loader/route-module-loader.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/routes/app-route.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/api/feedback". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/api/feedback/route'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/future/helpers/module-loader/node-module-loader.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/future/helpers/module-loader/route-module-loader.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/routes/app-route.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/api/shorten". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/api/shorten/route'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/future/helpers/module-loader/node-module-loader.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/future/helpers/module-loader/route-module-loader.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/routes/app-route.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/api/search-businesses". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/api/search-businesses/route'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/future/helpers/module-loader/node-module-loader.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/future/helpers/module-loader/route-module-loader.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/routes/app-route.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/api/register". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/api/register/route'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/future/helpers/module-loader/node-module-loader.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/future/helpers/module-loader/route-module-loader.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/routes/app-route.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/api/translate". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/api/translate/route'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/future/helpers/module-loader/node-module-loader.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/future/helpers/module-loader/route-module-loader.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/routes/app-route.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/api/wallet/request-topup". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/api/wallet/request-topup/route'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/future/helpers/module-loader/node-module-loader.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/future/helpers/module-loader/route-module-loader.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/routes/app-route.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/api/track/click". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/api/track/click/route'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/future/helpers/module-loader/node-module-loader.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/future/helpers/module-loader/route-module-loader.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/routes/app-route.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/favicon.ico". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/favicon.ico/route'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/future/helpers/module-loader/node-module-loader.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/future/helpers/module-loader/route-module-loader.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/routes/app-route.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/_not-found". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/_not-found/page.js'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-components.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/utils.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/admin/ai-chat". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: ENOENT: no such file or directory, open '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/font-manifest.json'
+    at readFileSync (node:fs:442:20)
+    at loadManifest (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-manifest.js:36:52)
+    at requireFontManifest (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js:117:57)
+    at exportPageImpl (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js:191:76)
+    at async Span.traceAsyncFn (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/trace/trace.js:154:20)
+    at async Object.exportPage (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js:237:20)
+
+Error occurred prerendering page "/admin/basic/new". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/admin/basic/new/page.js'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-components.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/utils.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+   Generating static pages (23/94) 
+
+Error occurred prerendering page "/admin/ads-manager". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/admin/ads-manager/page.js'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-components.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/utils.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/admin/businesses/new". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: ENOENT: no such file or directory, open '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/font-manifest.json'
+    at readFileSync (node:fs:442:20)
+    at loadManifest (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-manifest.js:36:52)
+    at requireFontManifest (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js:117:57)
+    at exportPageImpl (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js:191:76)
+    at async Span.traceAsyncFn (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/trace/trace.js:154:20)
+    at async Object.exportPage (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js:237:20)
+
+Error occurred prerendering page "/admin/businesses". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/admin/businesses/page.js'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-components.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/utils.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/admin/basic". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/admin/basic/page.js'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-components.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/utils.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/admin/backup_inhaltsverwaltung". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/admin/backup_inhaltsverwaltung/page.js'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-components.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/utils.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/admin/clients". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/admin/clients/page.js'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-components.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/utils.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/admin/clients/new". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: ENOENT: no such file or directory, open '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/font-manifest.json'
+    at readFileSync (node:fs:442:20)
+    at loadManifest (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-manifest.js:36:52)
+    at requireFontManifest (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js:117:57)
+    at exportPageImpl (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js:191:76)
+    at async Span.traceAsyncFn (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/trace/trace.js:154:20)
+    at async Object.exportPage (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js:237:20)
+
+Error occurred prerendering page "/admin/categories". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/admin/categories/page.js'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-components.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/utils.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/admin/coupons". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/admin/coupons/page.js'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-components.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/utils.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/admin/dashboard". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: ENOENT: no such file or directory, open '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/font-manifest.json'
+    at readFileSync (node:fs:442:20)
+    at loadManifest (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-manifest.js:36:52)
+    at requireFontManifest (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js:117:57)
+    at exportPageImpl (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js:191:76)
+    at async Span.traceAsyncFn (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/trace/trace.js:154:20)
+    at async Object.exportPage (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js:237:20)
+
+Error occurred prerendering page "/admin/dicicoin-purchasers". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/admin/dicicoin-purchasers/page.js'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-components.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/utils.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/admin/dicipoints". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: ENOENT: no such file or directory, open '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/font-manifest.json'
+    at readFileSync (node:fs:442:20)
+    at loadManifest (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-manifest.js:36:52)
+    at requireFontManifest (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js:117:57)
+    at exportPageImpl (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js:191:76)
+    at async Span.traceAsyncFn (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/trace/trace.js:154:20)
+    at async Object.exportPage (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js:237:20)
+
+Error occurred prerendering page "/admin/feedbacks". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/admin/feedbacks/page.js'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-components.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/utils.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/admin/forms-dashboard". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/admin/forms-dashboard/page.js'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-components.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/utils.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/admin/email-templates". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/admin/email-templates/page.js'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-components.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/utils.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/admin/locations". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: ENOENT: no such file or directory, open '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/font-manifest.json'
+    at readFileSync (node:fs:442:20)
+    at loadManifest (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-manifest.js:36:52)
+    at requireFontManifest (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js:117:57)
+    at exportPageImpl (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js:191:76)
+    at async Span.traceAsyncFn (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/trace/trace.js:154:20)
+    at async Object.exportPage (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js:237:20)
+
+Error occurred prerendering page "/admin/plans/new". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/admin/plans/new/page.js'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-components.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/utils.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/admin". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: ENOENT: no such file or directory, open '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/font-manifest.json'
+    at readFileSync (node:fs:442:20)
+    at loadManifest (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-manifest.js:36:52)
+    at requireFontManifest (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js:117:57)
+    at exportPageImpl (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js:191:76)
+    at async Span.traceAsyncFn (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/trace/trace.js:154:20)
+    at async Object.exportPage (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js:237:20)
+
+Error occurred prerendering page "/admin/freelancers". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/admin/freelancers/page.js'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-components.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/utils.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/admin/plans". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/admin/plans/page.js'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-components.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/utils.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/admin/private-users". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/admin/private-users/page.js'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-components.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/utils.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/admin/scan". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/admin/scan/page.js'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-components.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/utils.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/admin/registrations". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: ENOENT: no such file or directory, open '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/font-manifest.json'
+    at readFileSync (node:fs:442:20)
+    at loadManifest (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-manifest.js:36:52)
+    at requireFontManifest (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js:117:57)
+    at exportPageImpl (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js:191:76)
+    at async Span.traceAsyncFn (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/trace/trace.js:154:20)
+    at async Object.exportPage (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js:237:20)
+   Generating static pages (46/94) 
+
+Error occurred prerendering page "/admin/seed". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/admin/seed/page.js'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-components.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/utils.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/admin/marketing-reporting". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: ENOENT: no such file or directory, open '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/font-manifest.json'
+    at readFileSync (node:fs:442:20)
+    at loadManifest (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-manifest.js:36:52)
+    at requireFontManifest (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js:117:57)
+    at exportPageImpl (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js:191:76)
+    at async Span.traceAsyncFn (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/trace/trace.js:154:20)
+    at async Object.exportPage (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js:237:20)
+
+Error occurred prerendering page "/admin/recommendations". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/admin/recommendations/page.js'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-components.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/utils.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/admin/reviews". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: ENOENT: no such file or directory, open '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/font-manifest.json'
+    at readFileSync (node:fs:442:20)
+    at loadManifest (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-manifest.js:36:52)
+    at requireFontManifest (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js:117:57)
+    at exportPageImpl (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js:191:76)
+    at async Span.traceAsyncFn (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/trace/trace.js:154:20)
+    at async Object.exportPage (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js:237:20)
+
+Error occurred prerendering page "/admin/statistics". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/admin/statistics/page.js'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-components.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/utils.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/admin/tickets". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/admin/tickets/page.js'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-components.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/utils.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/dashboard/ads-manager". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/dashboard/ads-manager/page.js'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-components.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/utils.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/barrio/create". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/barrio/create/page.js'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-components.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/utils.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/dashboard/freelancer/payments". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/dashboard/freelancer/payments/page.js'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-components.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/utils.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/dashboard/dicicoin". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: ENOENT: no such file or directory, open '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/font-manifest.json'
+    at readFileSync (node:fs:442:20)
+    at loadManifest (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-manifest.js:36:52)
+    at requireFontManifest (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js:117:57)
+    at exportPageImpl (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js:191:76)
+    at async Span.traceAsyncFn (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/trace/trace.js:154:20)
+    at async Object.exportPage (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js:237:20)
+
+Error occurred prerendering page "/dashboard/freelancer/stats". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/dashboard/freelancer/stats/page.js'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-components.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/utils.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/dashboard/freelancer". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/dashboard/freelancer/page.js'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-components.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/utils.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/dashboard/tickets/create". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/dashboard/tickets/create/page.js'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-components.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/utils.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/dashboard/profile". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: ENOENT: no such file or directory, open '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/font-manifest.json'
+    at readFileSync (node:fs:442:20)
+    at loadManifest (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-manifest.js:36:52)
+    at requireFontManifest (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js:117:57)
+    at exportPageImpl (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js:191:76)
+    at async Span.traceAsyncFn (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/trace/trace.js:154:20)
+    at async Object.exportPage (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js:237:20)
+
+Error occurred prerendering page "/dicicoin". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/dicicoin/page.js'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-components.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/utils.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/faq". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/faq/page.js'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-components.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/utils.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/dashboard/tickets". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: ENOENT: no such file or directory, open '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/font-manifest.json'
+    at readFileSync (node:fs:442:20)
+    at loadManifest (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-manifest.js:36:52)
+    at requireFontManifest (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js:117:57)
+    at exportPageImpl (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js:191:76)
+    at async Span.traceAsyncFn (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/trace/trace.js:154:20)
+    at async Object.exportPage (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js:237:20)
+
+Error occurred prerendering page "/datenschutz". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/datenschutz/page.js'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-components.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/utils.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/login". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/login/page.js'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-components.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/utils.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/dashboard". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/dashboard/page.js'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-components.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/utils.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/impressum". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/impressum/page.js'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-components.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/utils.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/merchant/scan". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/merchant/scan/page.js'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-components.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/utils.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/planes". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: ENOENT: no such file or directory, open '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/font-manifest.json'
+    at readFileSync (node:fs:442:20)
+    at loadManifest (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-manifest.js:36:52)
+    at requireFontManifest (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js:117:57)
+    at exportPageImpl (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js:191:76)
+    at async Span.traceAsyncFn (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/trace/trace.js:154:20)
+    at async Object.exportPage (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js:237:20)
+
+Error occurred prerendering page "/ueber-uns". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/ueber-uns/page.js'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-components.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/utils.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+   Generating static pages (70/94) 
+
+Error occurred prerendering page "/registrieren". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: ENOENT: no such file or directory, open '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/font-manifest.json'
+    at readFileSync (node:fs:442:20)
+    at loadManifest (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-manifest.js:36:52)
+    at requireFontManifest (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js:117:57)
+    at exportPageImpl (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js:191:76)
+    at async Span.traceAsyncFn (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/trace/trace.js:154:20)
+    at async Object.exportPage (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js:237:20)
+
+Error occurred prerendering page "/verzeichnis". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/verzeichnis/page.js'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-components.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/utils.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/vorteile". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/vorteile/page.js'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-components.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/utils.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/client/xcala-travel". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/client/[clientSlug]/page.js'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-components.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/utils.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/client/club-inviajes". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/client/[clientSlug]/page.js'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-components.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/utils.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/client/hoercomfort". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: ENOENT: no such file or directory, open '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/font-manifest.json'
+    at readFileSync (node:fs:442:20)
+    at loadManifest (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-manifest.js:36:52)
+    at requireFontManifest (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js:117:57)
+    at exportPageImpl (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js:191:76)
+    at async Span.traceAsyncFn (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/trace/trace.js:154:20)
+    at async Object.exportPage (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js:237:20)
+
+Error occurred prerendering page "/client/kaffeersterei". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/client/[clientSlug]/page.js'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-components.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/utils.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/client/brueckenstern". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/client/[clientSlug]/page.js'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-components.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/utils.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/client/eneb". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: ENOENT: no such file or directory, open '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/font-manifest.json'
+    at readFileSync (node:fs:442:20)
+    at loadManifest (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-manifest.js:36:52)
+    at requireFontManifest (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js:117:57)
+    at exportPageImpl (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js:191:76)
+    at async Span.traceAsyncFn (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/trace/trace.js:154:20)
+    at async Object.exportPage (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js:237:20)
+
+Error occurred prerendering page "/client/perlas-de-claridad". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/client/[clientSlug]/page.js'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-components.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/utils.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/client/viajes-al-natural". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/client/[clientSlug]/page.js'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-components.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/utils.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/client/carlota-stockar". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: ENOENT: no such file or directory, open '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/font-manifest.json'
+    at readFileSync (node:fs:442:20)
+    at loadManifest (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-manifest.js:36:52)
+    at requireFontManifest (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js:117:57)
+    at exportPageImpl (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js:191:76)
+    at async Span.traceAsyncFn (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/trace/trace.js:154:20)
+    at async Object.exportPage (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js:237:20)
+
+Error occurred prerendering page "/client/sichtbar-augenoptik". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/client/[clientSlug]/page.js'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-components.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/utils.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/client/mhc-int". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/client/[clientSlug]/page.js'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-components.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/utils.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/client/indoroutes". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: ENOENT: no such file or directory, open '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/font-manifest.json'
+    at readFileSync (node:fs:442:20)
+    at loadManifest (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-manifest.js:36:52)
+    at requireFontManifest (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js:117:57)
+    at exportPageImpl (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js:191:76)
+    at async Span.traceAsyncFn (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/trace/trace.js:154:20)
+    at async Object.exportPage (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js:237:20)
+
+Error occurred prerendering page "/client/inviajes-reisen-club". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/client/[clientSlug]/page.js'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-components.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/utils.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/client/class-one-group". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/client/[clientSlug]/page.js'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-components.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/utils.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/client/hotel-suenos". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: ENOENT: no such file or directory, open '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/font-manifest.json'
+    at readFileSync (node:fs:442:20)
+    at loadManifest (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-manifest.js:36:52)
+    at requireFontManifest (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js:117:57)
+    at exportPageImpl (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js:191:76)
+    at async Span.traceAsyncFn (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/trace/trace.js:154:20)
+    at async Object.exportPage (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js:237:20)
+
+Error occurred prerendering page "/client/travelposting". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/client/[clientSlug]/page.js'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-components.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/utils.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/client/angel-cleaning". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/client/[clientSlug]/page.js'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-components.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/utils.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/client/servienvia". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: ENOENT: no such file or directory, open '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/font-manifest.json'
+    at readFileSync (node:fs:442:20)
+    at loadManifest (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-manifest.js:36:52)
+    at requireFontManifest (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js:117:57)
+    at exportPageImpl (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js:191:76)
+    at async Span.traceAsyncFn (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/trace/trace.js:154:20)
+    at async Object.exportPage (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/export/worker.js:237:20)
+
+Error occurred prerendering page "/client/zowar". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/client/[clientSlug]/page.js'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-components.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/utils.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/client/milenium-consulting". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/client/[clientSlug]/page.js'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-components.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/utils.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+
+Error occurred prerendering page "/". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module '/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/.next/server/app/page.js'
+Require stack:
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/load-components.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/utils.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/build/worker.js
+- /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at /Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+ ✓ Generating static pages (94/94)
+
+> Export encountered errors on following paths:
+	/_error: /404
+	/_error: /500
+	/_not-found/page: /_not-found
+	/admin/ads-manager/page: /admin/ads-manager
+	/admin/ai-chat/page: /admin/ai-chat
+	/admin/backup_inhaltsverwaltung/page: /admin/backup_inhaltsverwaltung
+	/admin/basic/new/page: /admin/basic/new
+	/admin/basic/page: /admin/basic
+	/admin/businesses/new/page: /admin/businesses/new
+	/admin/businesses/page: /admin/businesses
+	/admin/categories/page: /admin/categories
+	/admin/clients/new/page: /admin/clients/new
+	/admin/clients/page: /admin/clients
+	/admin/coupons/page: /admin/coupons
+	/admin/dashboard/page: /admin/dashboard
+	/admin/dicicoin-purchasers/page: /admin/dicicoin-purchasers
+	/admin/dicipoints/page: /admin/dicipoints
+	/admin/email-templates/page: /admin/email-templates
+	/admin/feedbacks/page: /admin/feedbacks
+	/admin/forms-dashboard/page: /admin/forms-dashboard
+	/admin/freelancers/page: /admin/freelancers
+	/admin/locations/page: /admin/locations
+	/admin/marketing-reporting/page: /admin/marketing-reporting
+	/admin/page: /admin
+	/admin/plans/new/page: /admin/plans/new
+	/admin/plans/page: /admin/plans
+	/admin/private-users/page: /admin/private-users
+	/admin/recommendations/page: /admin/recommendations
+	/admin/registrations/page: /admin/registrations
+	/admin/reviews/page: /admin/reviews
+	/admin/scan/page: /admin/scan
+	/admin/seed/page: /admin/seed
+	/admin/statistics/page: /admin/statistics
+	/admin/tickets/page: /admin/tickets
+	/api/admin/backup/route: /api/admin/backup
+	/api/admin/migration/legacy-users/route: /api/admin/migration/legacy-users
+	/api/admin/seed-templates/route: /api/admin/seed-templates
+	/api/ads/click/route: /api/ads/click
+	/api/ads/view/route: /api/ads/view
+	/api/analytics/log/route: /api/analytics/log
+	/api/businesses/route: /api/businesses
+	/api/currency/route: /api/currency
+	/api/feedback/route: /api/feedback
+	/api/private-user/create/route: /api/private-user/create
+	/api/proxy-image/route: /api/proxy-image
+	/api/register/route: /api/register
+	/api/search-businesses/route: /api/search-businesses
+	/api/shorten/route: /api/shorten
+	/api/track/click/route: /api/track/click
+	/api/translate/route: /api/translate
+	/api/wallet/request-topup/route: /api/wallet/request-topup
+	/barrio/create/page: /barrio/create
+	/client/[clientSlug]/page: /client/angel-cleaning
+	/client/[clientSlug]/page: /client/brueckenstern
+	/client/[clientSlug]/page: /client/carlota-stockar
+	/client/[clientSlug]/page: /client/class-one-group
+	/client/[clientSlug]/page: /client/club-inviajes
+	/client/[clientSlug]/page: /client/eneb
+	/client/[clientSlug]/page: /client/hoercomfort
+	/client/[clientSlug]/page: /client/hotel-suenos
+	/client/[clientSlug]/page: /client/indoroutes
+	/client/[clientSlug]/page: /client/inviajes-reisen-club
+	/client/[clientSlug]/page: /client/kaffeersterei
+	/client/[clientSlug]/page: /client/mhc-int
+	/client/[clientSlug]/page: /client/milenium-consulting
+	/client/[clientSlug]/page: /client/perlas-de-claridad
+	/client/[clientSlug]/page: /client/servienvia
+	/client/[clientSlug]/page: /client/sichtbar-augenoptik
+	/client/[clientSlug]/page: /client/travelposting
+	/client/[clientSlug]/page: /client/viajes-al-natural
+	/client/[clientSlug]/page: /client/xcala-travel
+	/client/[clientSlug]/page: /client/zowar
+	/dashboard/ads-manager/page: /dashboard/ads-manager
+	/dashboard/dicicoin/page: /dashboard/dicicoin
+	/dashboard/freelancer/page: /dashboard/freelancer
+	/dashboard/freelancer/payments/page: /dashboard/freelancer/payments
+	/dashboard/freelancer/stats/page: /dashboard/freelancer/stats
+	/dashboard/page: /dashboard
+	/dashboard/profile/page: /dashboard/profile
+	/dashboard/tickets/create/page: /dashboard/tickets/create
+	/dashboard/tickets/page: /dashboard/tickets
+	/datenschutz/page: /datenschutz
+	/dicicoin/page: /dicicoin
+	/faq/page: /faq
+	/favicon.ico/route: /favicon.ico
+	/impressum/page: /impressum
+	/login/page: /login
+	/merchant/scan/page: /merchant/scan
+	/page: /
+	/planes/page: /planes
+	/registrieren/page: /registrieren
+	/ueber-uns/page: /ueber-uns
+	/verzeichnis/page: /verzeichnis
+	/vorteile/page: /vorteile

@@ -1,0 +1,40 @@
+{
+  "pageTitle": "Impressum",
+  "pageSubtitle": "Rechtliche Informationen und Angaben gemäß § 5 TMG.",
+  "cardTitle": "Impressum",
+  "legal": {
+    "title": "Angaben gemäß § 5 TMG",
+    "brand_of": "Dicilo ist eine Marke der;",
+    "company_name": "Milenium Holding & Consulting UG – Group.",
+    "address_line1": "Mühlendamm 84a",
+    "address_line2": "22087 Hamburg"
+  },
+  "representedBy": {
+    "title": "Vertreten durch:",
+    "name": "Nilo Escolar"
+  },
+  "contact": {
+    "title": "Kontakt",
+    "phone_label": "Telefon",
+    "phone_number": "015678710511",
+    "email_label": "E-Mail",
+    "email_address": "info@dicilo.net"
+  },
+  "vat": {
+    "title": "Umsatzsteuer-ID",
+    "description": "Umsatzsteuer-Identifikationsnummer gemäß § 27 a Umsatzsteuergesetz:",
+    "id": "DE323288362"
+  },
+  "responsible": {
+    "title": "Redaktionell verantwortlich",
+    "name": "Nilo Escolar"
+  },
+  "dispute": {
+    "title": "EU-Streitschlichtung",
+    "description": "Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit: <a href='https://ec.europa.eu/consumers/odr/' target='_blank' rel='noopener noreferrer'>https://ec.europa.eu/consumers/odr/</a>. Unsere E-Mail-Adresse finden Sie oben im Impressum."
+  },
+  "consumerDispute": {
+    "title": "Verbraucherstreitbeilegung/Universalschlichtungsstelle",
+    "description": "Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen."
+  }
+}

@@ -1,0 +1,1465 @@
+{
+  "timestamp": "2025-12-19T12:52:48.102Z",
+  "collections": {
+    "ads_banners": [
+      {
+        "id": "7Wi8OCAmNrAEvjTOjfH0",
+        "title": "SICHTBAR",
+        "imageUrl": "https://storage.googleapis.com/geosearch-fq4i9.firebasestorage.app/ads/1766019624284_Banner_sichtbar.jpg",
+        "linkUrl": "https://www.sichtbar-ammersbek.de/",
+        "active": true,
+        "position": "directory",
+        "clientId": "Qt9u8Pd1Qi52AM0no2uw",
+        "createdAt": {
+          "_seconds": 1766019674,
+          "_nanoseconds": 441000000
+        },
+        "clicks": 6,
+        "totalCost": 0.15000000000000002,
+        "views": 72
+      },
+      {
+        "id": "FzyQrnsktx6UyPTh8hZg",
+        "title": "Perlas de Claridad",
+        "imageUrl": "https://storage.googleapis.com/geosearch-fq4i9.firebasestorage.app/ads/1766061246376_Perlas_de-Claridad_front_dc.jpg",
+        "active": true,
+        "position": "directory",
+        "clientId": "LyVAM6c7ZlOxs3Yr5RYQ",
+        "createdAt": {
+          "_seconds": 1766061281,
+          "_nanoseconds": 520000000
+        },
+        "linkUrl": "https://perlasdeclaridad.com",
+        "clicks": 5,
+        "totalCost": 0.15000000000000002,
+        "views": 53
+      },
+      {
+        "id": "ThLZa3j5Qvx7rH8XS8NA",
+        "title": "Hotel Sueños",
+        "imageUrl": "https://storage.googleapis.com/geosearch-fq4i9.firebasestorage.app/ads/1766061384461_Hotel_Suenos_front_dc.jpg",
+        "linkUrl": "https://www.hotelsuenoselsalvador.com",
+        "active": true,
+        "position": "directory",
+        "clientId": "hePuXXdLRK6w0xTU9vAv",
+        "createdAt": {
+          "_seconds": 1766061529,
+          "_nanoseconds": 860000000
+        },
+        "totalCost": 0.05,
+        "clicks": 2,
+        "views": 45
+      },
+      {
+        "id": "TnepTgNx8VqCzQldH5Es",
+        "title": "IndoRoutes",
+        "imageUrl": "https://storage.googleapis.com/geosearch-fq4i9.firebasestorage.app/ads/1766054505579_IndoRoutes_front_dc.jpg",
+        "linkUrl": "https://indoroutes.es",
+        "active": true,
+        "position": "directory",
+        "clientId": "UotzMyeA3Z50cQJTF7TR",
+        "createdAt": {
+          "_seconds": 1766054517,
+          "_nanoseconds": 660000000
+        },
+        "totalCost": 0.1,
+        "clicks": 4,
+        "views": 40
+      },
+      {
+        "id": "VmhQ13vdJf9GXa6M6axM",
+        "title": "HörComfort",
+        "linkUrl": "https://hoercomfort.de",
+        "active": true,
+        "position": "directory",
+        "clientId": "E6IUdKlV5OMlv2DWlNxE",
+        "createdAt": {
+          "_seconds": 1765988344,
+          "_nanoseconds": 780000000
+        },
+        "imageUrl": "https://storage.googleapis.com/geosearch-fq4i9.firebasestorage.app/ads/1766061295420_Hoercomfort_front_dc.jpg",
+        "clicks": 6,
+        "totalCost": 0.15000000000000002,
+        "views": 74
+      },
+      {
+        "id": "tQo7snilUh7TpwS71fKk",
+        "title": "Medien & Solutions",
+        "imageUrl": "https://storage.googleapis.com/geosearch-fq4i9.firebasestorage.app/ads/1766054552513_Medien_Solutions_front_dc.jpg",
+        "linkUrl": "https://mediensolutions.de",
+        "active": true,
+        "position": "directory",
+        "clientId": "y0RJBfd01465o5Tjpu9r",
+        "createdAt": {
+          "_seconds": 1766054592,
+          "_nanoseconds": 438000000
+        },
+        "clicks": 2,
+        "totalCost": 0.1,
+        "views": 53
+      }
+    ],
+    "clients": [
+      {
+        "id": "E6IUdKlV5OMlv2DWlNxE",
+        "clientTitle": "Willkommen bei HörComfort Services",
+        "clientSubtitle": "Ihr Experte für Hörsysteme in Ammersbek.",
+        "products": [],
+        "socialLinks": {
+          "instagram": "",
+          "facebook": "",
+          "linkedin": ""
+        },
+        "strengths": [],
+        "testimonials": [],
+        "translations": {},
+        "graphics": [],
+        "clientName": "HörComfort Services",
+        "clientLogoUrl": "https://hoercomfort.de/wp-content/uploads/2022/08/HC_Logo2020_Claim_weiss-1-scaled-1.gif",
+        "infoCards": [
+          {
+            "title": "Tag der offenen Tür",
+            "content": "<h2><strong>&nbsp;<span style=\"color: rgb(128, 0, 128);\">Tag der offenen Tür mit Jubiläums-Live-Konzerten</span></strong></h2><p style=\"text-align: justify;\"><strong>Unter dem Motto „Hören, Sehen, Pflegen &amp; Gesundheitssport“ öffnen die Ammersbeker Fachgeschäfte Sichtbar, HörComfort, elan und Pflegedienst Ammersbek am Samstag, den 27.09.2025, in der Zeit von 10.00 bis 14.00 Uhr für Sie ihre Türen<em>.</em></strong></p><p style=\"text-align: justify;\"><strong>Alle vier inhabergeführte Unternehmen feieren an diesem Tag ihre Jubiläen: Sichtbar ist bereits seit 20 Jahren, HörComfort seit 14 Jahren, elan seit 12 Jahren und der Pflegedienst Ammersbek seit 7 Jahren in der Georg-Sasse-Straße in Ammersbek ansässig.</strong></p><p style=\"text-align: justify;\"><strong>Nutzen Sie diese Gelegenheit, um die neuesten Fortschritte in der Audiologie, Optometrie, im Gesundheitssport sowie der Pflege &amp; Aromaberatung kennenzulernen. Unsere erfahrenen Beraterinnen und Berater stehen Ihnen für alle Fragen und kostenlose Beratungen zur Verfügung. Wir freuen uns darauf, Sie bei diesem besonderen Anlass begrüßen zu dürfen!</strong></p><p style=\"text-align: justify;\"><strong>Als Höhepunkt der Woche finden am Samstag, den 27.09.2025, unsere Jubiläums-Live-Konzerte statt. An diesem Tag können Sie in entspannter Atmosphäre mehr über die Leistungen der vier Unternehmen erfahren. Genießen Sie von 10.00 bis 18.00 Uhr ein einzigartiges musikalisches Erlebnis bei unseren Live-Konzerten, lassen Sie sich von erstklassigen Darbietungen begeistern und genießen Sie mit uns diesen besonderen Tag in vollen Zügen.</strong></p>"
+          },
+          {
+            "title": "Auracast & KI Testwoche",
+            "content": "<h3><strong>Auracast &amp; KI Testwoche</strong></h3><h3></h3><h3><strong>Hören Sie die Welt ganz neu mit Auracast™ und Hörsystemen mit KI</strong></h3><p style=\"text-align: justify;\"><strong>HörComfort Jubiläumswoche steht ganz im Zeichen revolutionärer Technologien und Philosophien. Entdecken Sie wegweisende Auracast™-Technologie, die es Ihnen ermöglicht, Audiosignale im Kino, in Museen, an Bahnhöfen oder Flughäfen direkt und in herausragender Qualität in Ihre Hörsysteme zu streamen. Auracast™ verbessert die Art und Weise, wie Sie zukünftig mit der Welt kommunizieren, indem es Audio in höchster Klarheit direkt an Sie überträgt. Es ist eine bahnbrechende Funktion, die die Grenzen des Hörens überwindet und Ihr Hörerlebnis personalisiert.</strong></p><h3><strong>Künstliche Intelligenz für bestes Hörverständnis</strong></h3><p style=\"text-align: justify;\"><strong>Durch den Einsatz von künstlicher Intelligenz (KI) ist es möglich, sich im Lärm auf das Wesentliche zu konzentrieren. Die KI filtert Störgeräusche aus dem Gesprochenen heraus und unterstützt Ihr Sprachverstehen, sodass Sie auch in lauten Umgebungen optimal hören können. Lassen Sie sich von einem faszinierenden Klangerlebnis begeistern und genießen Sie die Lebendigkeit des Lebens.</strong></p><h3 style=\"text-align: justify;\"><strong>Phonak Audéo Sphere Infinio</strong></h3><p style=\"text-align: justify;\"><strong>Phonak Audéo bietet Ihnen erstklassige Sprachverständlichkeit – egal, aus welcher Richtung der Schall kommt. Es filtert störende Geräusche heraus, damit Sie sich auch in den lautesten Umgebungen entspannt mit Freunden, Familie und Kollegen unterhalten können. Mit diesem Hörsystem beginnt eine neue Ära der Hörtechnologie.</strong></p><h3><strong>GN Resound: Lebendiger Klang dank KI</strong></h3><p style=\"text-align: justify;\"><strong>ReSound Vivia macht eine laute Welt schöner, indem es die natürliche Klangverarbeitung verbessert und Ihnen hilft, sich auf das Wesentliche zu konzentrieren. Freuen Sie sich auf ein faszinierendes Klangerlebnis und genießen Sie die Lebendigkeit des Lebens in vollen Zügen.</strong></p><h3><strong>Signia: Besser verstehen in lauten Gruppen</strong></h3><p style=\"text-align: justify;\"><strong>Die Signia Multi-Beamformer Technologie verbessert das Sprachverständnis in Gruppengesprächen mit lautem Hintergrund im Vergleich zum Wettbewerb deutlich.</strong></p>"
+          },
+          {
+            "title": "Ort / Zeit",
+            "content": "<h3><strong>Auracast &amp; KI Testwoche 2025</strong></h3><p><strong>📍Ort: HörComfort, Georg-Sasse-Straße 3, 22949 Ammersbek<br>🗓 Datum: 22/09/2025 – 27/09/2025<br>⏰Uhrzeit: Mo. – Sa. 9:00 – 18:00 Uhr</strong></p><p style=\"text-align: justify;\"><strong>Im Rahmen unserer HörComfort-Jubiläumswoche bieten wir Ihnen die Möglichkeit an, die modernsten Hörsysteme mit KI und mit Auracast™ bei uns kostenlos zu testen. Dazu laden wir Sie herzlich ein, ab dem 22.09.2025 Anpassungstermine bei uns zu vereinbaren&nbsp;und am Samstag, den 27.09.2025, die Jubiläums-Live-Konzerte in vollen Zügen zu genießen. Sie haben am Samstag auch die Gelegenheit, die Gespräche in lauter Umgebung, in großer Gesellschaft entspannt zu verfolgen.</strong></p><p style=\"text-align: justify;\"><strong>Bei HörComfort erwartet Sie eine professionelle und umfassende Beratung, die weit über einen einfachen Hörtest hinausgeht:</strong></p><ul><li><p><strong>Kostenlose Hörtests: Finden Sie heraus, wie gut Ihr Gehör wirklich ist.</strong></p></li><li><p><strong>Anpassung der Testhörsysteme mit Auracast™und KI: In der Woche vom Montag, den 22.09. bis Freitag, den 26.09.2025, passen wir die Testhörsysteme auf Ihr Hörvermögen an. Dazu vereinbaren Sie mit uns einen Termin.</strong></p></li><li><p><strong>Erleben Sie die Vorteile von Auracast™ Streaming während unserer Jubiläums-Live-Konzerte</strong></p></li><li><p><strong>Erleben Sie die Vorteile der Hörsysteme mit KI-Technologie in Gesprächen während unserer Jubiläums-Live-Konzerte&nbsp;</strong></p></li></ul><hr><p><strong>Willkommen bei HörComfort – Ihrem Experten für Hörsysteme und mehr! Im Rahmen der Ammersbeker Jubiläums-Woche möchten wir Ihnen die Gelegenheit geben, unser volles Potenzial kennenzulernen. Nutzen Sie die Chance und entdecken Sie, wie unsere innovativen Lösungen und Dienstleistungen Ihr Leben bereichern können. Ihre Zufriedenheit ist unser größter Erfolg!</strong></p><h3><strong>Ihre Chance auf perfekten Klang: Auracast™ &amp; weitere Spitzenprodukte</strong></h3><p style=\"text-align: justify;\"><strong>Als Ihr vertrauensvoller Partner in der Hörakustik freuen wir uns, Ihnen die neuesten Möglichkeiten der innovativen Technologie vorzustellen. Während der HörComfort-Jubiläumswoche können Sie nicht nur die Vorteile von Auracast™-Streaming und KI in Hörsystemen kennenlernen, sondern auch neueste Modelle der führenden Hersteller GN Resound, Phonak, Signia, Widex, Bernafon testen. Finden Sie das Hörsystem, das perfekt auf Ihre Bedürfnisse zugeschnitten ist, und erleben Sie eine Klangqualität, die Sie begeistern wird.</strong></p>"
+          },
+          {
+            "content": "<p><strong>Wir sorgen dafür, dass Sie besser hören können! Wie? Besuchen Sie uns in unserem HörComfort “Hörsysteme und mehr…” Fachgeschäft&nbsp;in der Georg-Sasse-Straße 3 in Ammersbek und finden Sie es heraus.&nbsp;Lassen Sie jetzt Ihr Gehör kostenlos testen.&nbsp;In ein paar Minuten können wir feststellen, ob Ihr Gehör voll intakt ist.</strong></p><p><strong>Testen Sie jetzt kostenlos die neuen Hörsysteme-Modelle. Wir freuen uns auf Ihren Besuch!</strong></p>",
+            "title": "Leistungen"
+          },
+          {
+            "content": "<p>Wir bieten <strong>individuelle Hörlösungen</strong>, damit Sie den besten Klang in Ihrem Alltag genießen können.</p><p>Unsere Hauptdienstleistungen umfassen:</p><ul><li><p><strong>Wartung und Reparatur:</strong> Mit unserem professionellen Service halten wir Ihre Hörsysteme in einwandfreiem Zustand.</p></li><li><p><strong>Kostenloser Hörtest:</strong> Wir bieten Ihnen einen kostenlosen und unverbindlichen Hörtest, um Ihre Bedürfnisse zu ermitteln.</p></li><li><p><strong>Maßgeschneiderte Hörsysteme:</strong> Wir entwickeln an Ihren Lebensstil angepasste Hörlösungen mit der Möglichkeit, verschiedene Modelle und Marken zu testen.</p></li><li><p><strong>Zubehör:</strong> Wir führen innovatives Zubehör, um Ihre Hörsysteme mit Fernseher, Mobiltelefon oder anderen Geräten zu verbinden. Außerdem erhalten Sie bei uns Batterien und Pflegeprodukte.</p></li><li><p><strong>Gehörschutz:</strong> Wir bieten maßgeschneiderte Gehörschutzlösungen für Beruf, Musik, Schlaf oder zum Schwimmen.</p></li></ul><p>Vereinbaren Sie einen Termin und entdecken Sie, was wir für Ihr Gehör tun können.</p>",
+            "title": "Service"
+          }
+        ],
+        "marqueeHeaderData": {
+          "marqueeText": "Unter dem Motto „Hören, Sehen, Pflegen & Gesundheitssport“ öffnen die Ammersbeker Fachgeschäfte Sichtbar, HörComfort, elan und Pflegedienst Ammersbek am Samstag, den 27.09.2025, in der Zeit von 10.00 bis 14.00 Uhr für Sie ihre Türen.",
+          "rightButton2Text": "Termin",
+          "leftButtonText": "Angebot",
+          "leftButtonLink": "https://hoercomfort.de/auracast/",
+          "offerEnabled": true,
+          "clubButtonLink": "https://hoercomfort.de/auracast/",
+          "rightButton2Link": "https://hoercomfort.de/termin",
+          "rightButton1Link": "https://hoercomfort.de/service/",
+          "enabled": true,
+          "rightButton1Text": "Reparatur",
+          "offerEndDate": null,
+          "clubButtonText": "Tag der offenen Tür",
+          "middleText": "365 Tage"
+        },
+        "bodyData": {
+          "title": "",
+          "ctaButtonLink": "",
+          "description": "<h2><strong>Über uns</strong></h2><p><strong>Bereits seit 2011 versorgen wir unsere Kunden erfolgreich mit innovativen Hörsystemen und begleiten sie auf dem Weg zum guten Hören und Verstehen. Zukunftsweisende Technologien und der „HörComfort“ des Kunden stehen dabei an erster Stelle.</strong></p>",
+          "imageUrl": "https://hoercomfort.de/wp-content/uploads/2024/12/1200x450px_2024_Banner_hp_team_PUR_20241130.jpg",
+          "videoUrl": "",
+          "ctaButtonText": "",
+          "layout": "image-right",
+          "body2BackgroundColor": "",
+          "imageHint": "",
+          "subtitle": ""
+        },
+        "ownerUid": "",
+        "total_invested": 0,
+        "headerData": {
+          "bannerImageUrl": "https://dicilo.net/wp-content/uploads/2024/10/Cupon-DICILO.webp",
+          "dividerLine": {
+            "color": "#FFFFFF",
+            "thickness": 2,
+            "enabled": true
+          },
+          "headerBackgroundImageUrl": "",
+          "bannerImageHeight": 160,
+          "bannerType": "upload",
+          "socialShareText": "Bereits seit 2011 versorgen wir unsere Kunden erfolgreich mit innovativen Hörsystemen und begleiten sie auf dem Weg zum guten Hören und Verstehen. Zukunftsweisende Technologien und der „HörComfort“ des Kunden stehen dabei an erster Stelle.",
+          "clientLogoWidth": 200,
+          "bannerShareUrl": "",
+          "bannerEmbedCode": "",
+          "headerBackgroundColor": "#763574",
+          "headerImageUrl": "https://hoercomfort.de/wp-content/uploads/2024/06/Banner-Descubre-6x6-1.jpg",
+          "welcomeText": "Hörsysteme und mehr…",
+          "socialLinks": [
+            {
+              "icon": "Facebook",
+              "url": "https://www.facebook.com/385777498158618"
+            },
+            {
+              "url": "https://www.instagram.com/hoercomfort/",
+              "icon": "Instagram"
+            },
+            {
+              "url": "https://hoercomfort.de/kontakt/",
+              "icon": "X"
+            },
+            {
+              "icon": "Whatsapp",
+              "url": "https://wa.me/message/PHHU4HF6KXHXG1"
+            },
+            {
+              "icon": "Hörtest",
+              "url": "https://hoercomfort.de/hoertest-online/"
+            },
+            {
+              "url": "https://hoercomfort.de/kontakt",
+              "icon": "Kontakt"
+            }
+          ],
+          "headerTextColor": "#ffffff",
+          "bannerImageWidth": 95
+        },
+        "layout": [],
+        "website": "https://hoercomfort.de/",
+        "phone": "040 / 238 004 770",
+        "slug": "hoercomfort",
+        "galleryImages": [],
+        "coordinates": {
+          "lat": 53.6783725,
+          "lng": 10.149361
+        },
+        "budget_remaining": 50,
+        "address": "Georg-Sasse-Straße 3, 22949 Ammersbek",
+        "clientType": "premium",
+        "email": "kontakt@hoercomfort.de"
+      },
+      {
+        "id": "FpzLzBXHbGvlGAFWzRtI",
+        "clientLogoUrl": "https://placehold.co/128x128.png",
+        "clientTitle": "Brückenstern - Restaurant & Jazz",
+        "clientSubtitle": "Genießen Sie gutes Essen und Live-Jazz in Hamburg.",
+        "products": [],
+        "socialLinks": {
+          "instagram": "",
+          "facebook": "",
+          "linkedin": ""
+        },
+        "strengths": [],
+        "testimonials": [],
+        "translations": {},
+        "clientType": "premium",
+        "headerData": {
+          "welcomeText": "",
+          "headerImageUrl": "",
+          "socialShareText": "",
+          "socialLinks": [],
+          "headerBackgroundColor": "",
+          "headerBackgroundImageUrl": "",
+          "clientLogoWidth": 80,
+          "headerTextColor": "#000000",
+          "dividerLine": {
+            "enabled": false,
+            "color": "#FFFFFF",
+            "thickness": 2
+          },
+          "bannerType": "embed",
+          "bannerEmbedCode": "",
+          "bannerImageUrl": "",
+          "bannerImageWidth": 0,
+          "bannerImageHeight": 0,
+          "bannerShareUrl": ""
+        },
+        "infoCards": [],
+        "marqueeHeaderData": {
+          "enabled": true,
+          "offerEnabled": false,
+          "offerEndDate": null,
+          "leftButtonText": "",
+          "leftButtonLink": "",
+          "middleText": "",
+          "clubButtonText": "",
+          "clubButtonLink": "",
+          "marqueeText": "",
+          "rightButton1Text": "",
+          "rightButton1Link": "",
+          "rightButton2Text": "",
+          "rightButton2Link": ""
+        },
+        "bodyData": {
+          "title": "",
+          "subtitle": "",
+          "description": "",
+          "imageUrl": "",
+          "imageHint": "",
+          "videoUrl": "",
+          "ctaButtonText": "",
+          "ctaButtonLink": "",
+          "layout": "image-right",
+          "body2BackgroundColor": ""
+        },
+        "graphics": [],
+        "slug": "brueckenstern",
+        "clientName": "Brückenstern"
+      },
+      {
+        "id": "H6O5FT2K9xmzyPBXuWTB",
+        "clientLogoUrl": "https://kopiba.de/img/roesterei-deathpresso.png",
+        "clientTitle": "Bienvenido a Kaffeerösterei Deathpresso",
+        "clientSubtitle": "Esta es tu página de aterrizaje. ¡Edítala desde el panel de administración!",
+        "products": [],
+        "socialLinks": {
+          "instagram": "",
+          "facebook": "",
+          "linkedin": ""
+        },
+        "strengths": [],
+        "testimonials": [],
+        "translations": {},
+        "ownerUid": "AYWwirViu6bIYUeIvaMXHVWkdbs2",
+        "registrationId": "UnOKjrWDf5417nplUtnV",
+        "category": "Gastronomie & Kulinarik",
+        "description": "BEST COFFEE\nKaffeespezialitäten perfekt zubereitet",
+        "location": "Hamburg, Germany",
+        "address": "Beim Grünen Jäger 24, 20359",
+        "coords": [
+          53.5588824,
+          9.9635239
+        ],
+        "phone": "+49 40 343824",
+        "website": "https://kopiba.de",
+        "currentOfferUrl": "https://shop.deathpresso.de/",
+        "headerData": {
+          "welcomeText": "",
+          "headerImageUrl": "",
+          "socialShareText": "",
+          "socialLinks": [],
+          "headerBackgroundColor": "",
+          "headerBackgroundImageUrl": "",
+          "clientLogoWidth": 80,
+          "headerTextColor": "#000000",
+          "dividerLine": {
+            "enabled": false,
+            "color": "#FFFFFF",
+            "thickness": 2
+          },
+          "bannerType": "embed",
+          "bannerEmbedCode": "",
+          "bannerImageUrl": "",
+          "bannerImageWidth": 0,
+          "bannerImageHeight": 0,
+          "bannerShareUrl": ""
+        },
+        "infoCards": [],
+        "clientType": "retailer",
+        "clientName": "Kopiba - Kaffeerösterei Deathpresso",
+        "marqueeHeaderData": {
+          "enabled": true,
+          "offerEnabled": false,
+          "offerEndDate": null,
+          "leftButtonText": "",
+          "leftButtonLink": "",
+          "middleText": "",
+          "clubButtonText": "",
+          "clubButtonLink": "",
+          "marqueeText": "",
+          "rightButton1Text": "",
+          "rightButton1Link": "",
+          "rightButton2Text": "",
+          "rightButton2Link": ""
+        },
+        "bodyData": {
+          "title": "",
+          "subtitle": "",
+          "description": "",
+          "imageUrl": "",
+          "imageHint": "",
+          "videoUrl": "",
+          "ctaButtonText": "",
+          "ctaButtonLink": "",
+          "layout": "image-right",
+          "body2BackgroundColor": ""
+        },
+        "graphics": [],
+        "slug": "kaffeersterei"
+      },
+      {
+        "id": "LyVAM6c7ZlOxs3Yr5RYQ",
+        "clientName": "Perlas de Claridad",
+        "slug": "perlas-de-claridad",
+        "clientLogoUrl": "https://perlasdeclaridad.com/wp-content/uploads/2024/09/WhatsApp-Image-2024-09-04-at-12.42.47.jpeg",
+        "clientTitle": "Willkommen bei Perlas de Claridad",
+        "clientSubtitle": "Entdecken Sie Perlas de Claridad",
+        "socialLinks": {
+          "instagram": "",
+          "facebook": "",
+          "linkedin": ""
+        },
+        "products": [],
+        "strengths": [],
+        "testimonials": [],
+        "translations": {},
+        "headerData": {
+          "welcomeText": "",
+          "headerImageUrl": "",
+          "socialShareText": "",
+          "socialLinks": [],
+          "headerBackgroundColor": "",
+          "headerBackgroundImageUrl": "",
+          "clientLogoWidth": 80,
+          "headerTextColor": "#000000",
+          "dividerLine": {
+            "enabled": false,
+            "color": "#FFFFFF",
+            "thickness": 2
+          },
+          "bannerType": "embed",
+          "bannerEmbedCode": "",
+          "bannerImageUrl": "",
+          "bannerImageWidth": 0,
+          "bannerImageHeight": 0,
+          "bannerShareUrl": ""
+        },
+        "website": "",
+        "infoCards": [],
+        "address": "",
+        "coordinates": {
+          "lat": 40.4168,
+          "lng": -3.7038
+        },
+        "graphics": [],
+        "total_invested": 0,
+        "layout": [],
+        "clientType": "",
+        "phone": "",
+        "marqueeHeaderData": {
+          "enabled": false,
+          "offerEnabled": false,
+          "offerEndDate": null,
+          "leftButtonText": "",
+          "leftButtonLink": "",
+          "middleText": "",
+          "clubButtonText": "",
+          "clubButtonLink": "",
+          "marqueeText": "",
+          "rightButton1Text": "",
+          "rightButton1Link": "",
+          "rightButton2Text": "",
+          "rightButton2Link": ""
+        },
+        "bodyData": {
+          "title": "",
+          "subtitle": "",
+          "description": "",
+          "imageUrl": "",
+          "imageHint": "",
+          "videoUrl": "",
+          "ctaButtonText": "",
+          "ctaButtonLink": "",
+          "layout": "image-right",
+          "body2BackgroundColor": ""
+        },
+        "ownerUid": "",
+        "email": "",
+        "galleryImages": [],
+        "budget_remaining": 49.900000000000006
+      },
+      {
+        "id": "QgdKT18PVZcKUcJvRVcG",
+        "clientName": "MHC - INT",
+        "clientLogoUrl": "https://mhc-int.com/wp-content/uploads/2022/03/cropped-logo_mhc.png",
+        "clientTitle": "Willkommen bei MHC - INT",
+        "clientSubtitle": "Entdecken Sie MHC - INT",
+        "socialLinks": {
+          "instagram": "",
+          "facebook": "",
+          "linkedin": ""
+        },
+        "products": [],
+        "strengths": [],
+        "testimonials": [],
+        "translations": {},
+        "headerData": {
+          "welcomeText": "",
+          "headerImageUrl": "",
+          "socialShareText": "",
+          "socialLinks": [],
+          "headerBackgroundColor": "",
+          "headerBackgroundImageUrl": "",
+          "clientLogoWidth": 80,
+          "headerTextColor": "#000000",
+          "dividerLine": {
+            "enabled": false,
+            "color": "#FFFFFF",
+            "thickness": 2
+          },
+          "bannerType": "embed",
+          "bannerEmbedCode": "",
+          "bannerImageUrl": "",
+          "bannerImageWidth": 0,
+          "bannerImageHeight": 0,
+          "bannerShareUrl": ""
+        },
+        "website": "",
+        "infoCards": [],
+        "address": "",
+        "coordinates": {
+          "lat": 40.4168,
+          "lng": -3.7038
+        },
+        "graphics": [],
+        "total_invested": 0,
+        "layout": [],
+        "budget_remaining": 500,
+        "phone": "",
+        "marqueeHeaderData": {
+          "enabled": false,
+          "offerEnabled": false,
+          "offerEndDate": null,
+          "leftButtonText": "",
+          "leftButtonLink": "",
+          "middleText": "",
+          "clubButtonText": "",
+          "clubButtonLink": "",
+          "marqueeText": "",
+          "rightButton1Text": "",
+          "rightButton1Link": "",
+          "rightButton2Text": "",
+          "rightButton2Link": ""
+        },
+        "bodyData": {
+          "title": "",
+          "subtitle": "",
+          "description": "",
+          "imageUrl": "",
+          "imageHint": "",
+          "videoUrl": "",
+          "ctaButtonText": "",
+          "ctaButtonLink": "",
+          "layout": "image-right",
+          "body2BackgroundColor": ""
+        },
+        "ownerUid": "",
+        "email": "",
+        "galleryImages": [],
+        "clientType": "",
+        "slug": "mhc-int"
+      },
+      {
+        "id": "Qt9u8Pd1Qi52AM0no2uw",
+        "clientName": "SiCHTBAR Augenoptik",
+        "slug": "sichtbar-augenoptik",
+        "clientTitle": "Willkommen bei SiCHTBAR Augenoptik",
+        "clientSubtitle": "Entdecken Sie SiCHTBAR Augenoptik",
+        "socialLinks": {
+          "instagram": "",
+          "facebook": "",
+          "linkedin": ""
+        },
+        "products": [],
+        "strengths": [],
+        "testimonials": [],
+        "translations": {},
+        "infoCards": [],
+        "graphics": [],
+        "total_invested": 0,
+        "layout": [],
+        "phone": "",
+        "marqueeHeaderData": {
+          "enabled": false,
+          "offerEnabled": false,
+          "offerEndDate": null,
+          "leftButtonText": "",
+          "leftButtonLink": "",
+          "middleText": "",
+          "clubButtonText": "",
+          "clubButtonLink": "",
+          "marqueeText": "",
+          "rightButton1Text": "",
+          "rightButton1Link": "",
+          "rightButton2Text": "",
+          "rightButton2Link": ""
+        },
+        "bodyData": {
+          "title": "",
+          "subtitle": "",
+          "description": "",
+          "imageUrl": "",
+          "imageHint": "",
+          "videoUrl": "",
+          "ctaButtonText": "",
+          "ctaButtonLink": "",
+          "layout": "image-right",
+          "body2BackgroundColor": ""
+        },
+        "ownerUid": "",
+        "galleryImages": [],
+        "budget_remaining": 49.95,
+        "clientType": "premium",
+        "headerData": {
+          "headerTextColor": "#000000",
+          "socialLinks": [],
+          "headerBackgroundImageUrl": "",
+          "dividerLine": {
+            "thickness": 2,
+            "color": "#FFFFFF",
+            "enabled": false
+          },
+          "bannerEmbedCode": "",
+          "bannerImageHeight": 0,
+          "socialShareText": "Was bieten wir Ihnen?\nBrillen natürlich. Aber nicht nur das. Service wird bei uns groß geschrieben.  Sehtest, Kontaktlinsenberatung und Anpassung, Brillenreparaturen und Ersatzteilservice sowie Beratung und Verkauf von vergrößernden Sehhilfen, z.B. Lupen gehören für uns selbstverständlich dazu. Unser ausgebildetes Fachpersonal besteht aus gelernten Augenoptikern. Wir passen Ihnen Ihre Kontaktlinsen an, messen Ihre Sehschärfe und beraten Sie individuell zu verschiedenen Brillenglasvarianten bei Kurzsichtigkeit, Weitsichtigkeit, Hornhautverkrümmung, Gleitsicht- und Arbeitsplatzbrillen. Mit Hilfe unser langjährigen Erfahrung ermitteln wir Ihr persönliches Sehprofil und machen dieses zur Grundlage für das bestmögliche Sehen.\n\nDafür berücksichtigen wir wichtige Parameter, wie den Sitz der Brille sowie die Individuelle Durchblicksposition Ihrer Augen.\n\nKlingt kompliziert ? Lehnen Sie sich entspannt zurück.\nWir kümmern uns darum.",
+          "bannerImageUrl": "",
+          "headerImageUrl": "",
+          "welcomeText": "Meine Brille so wie ich sie mag!",
+          "bannerType": "embed",
+          "clientLogoWidth": 80,
+          "bannerImageWidth": 0,
+          "bannerShareUrl": "https://www.sichtbar-ammersbek.de/leistungen/",
+          "headerBackgroundColor": ""
+        },
+        "website": "https://www.sichtbar-ammersbek.de/",
+        "address": "Georg-Sasse-Straße 11  22949 Ammersbek",
+        "coordinates": {
+          "lng": 10.1497804,
+          "lat": 53.6779082
+        },
+        "email": "sichtbar.ammersbek@gmx.de",
+        "clientLogoUrl": "https://wp.dicilo.net/wp-content/uploads/2025/02/Sichtbar-Logo-texto.jpeg"
+      },
+      {
+        "id": "R8rTHKgT5DtVGMq1Jwxe",
+        "clientName": "Carlota Stockar - Argentina",
+        "clientLogoUrl": "https://placehold.co/128x128.png",
+        "clientTitle": "Carlota Stockar - Reisen in Argentinien",
+        "clientSubtitle": "Erleben Sie die Wunder Argentiniens.",
+        "products": [],
+        "socialLinks": {
+          "instagram": "",
+          "facebook": "",
+          "linkedin": ""
+        },
+        "strengths": [],
+        "testimonials": [],
+        "translations": {},
+        "headerData": {
+          "welcomeText": "",
+          "headerImageUrl": "",
+          "socialShareText": "",
+          "socialLinks": [],
+          "headerBackgroundColor": "",
+          "headerBackgroundImageUrl": "",
+          "clientLogoWidth": 80,
+          "headerTextColor": "#000000",
+          "dividerLine": {
+            "enabled": false,
+            "color": "#FFFFFF",
+            "thickness": 2
+          },
+          "bannerType": "embed",
+          "bannerEmbedCode": "",
+          "bannerImageUrl": "",
+          "bannerImageWidth": 0,
+          "bannerImageHeight": 0,
+          "bannerShareUrl": ""
+        },
+        "infoCards": [],
+        "marqueeHeaderData": {
+          "enabled": true,
+          "offerEnabled": false,
+          "offerEndDate": null,
+          "leftButtonText": "",
+          "leftButtonLink": "",
+          "middleText": "",
+          "clubButtonText": "",
+          "clubButtonLink": "",
+          "marqueeText": "",
+          "rightButton1Text": "",
+          "rightButton1Link": "",
+          "rightButton2Text": "",
+          "rightButton2Link": ""
+        },
+        "bodyData": {
+          "title": "",
+          "subtitle": "",
+          "description": "",
+          "imageUrl": "",
+          "imageHint": "",
+          "videoUrl": "",
+          "ctaButtonText": "",
+          "ctaButtonLink": "",
+          "layout": "image-right",
+          "body2BackgroundColor": ""
+        },
+        "graphics": [],
+        "slug": "carlota-stockar",
+        "layout": [],
+        "website": "",
+        "clientType": "",
+        "address": "",
+        "budget_remaining": 50,
+        "phone": "",
+        "coordinates": {
+          "lat": 40.4168,
+          "lng": -3.7038
+        },
+        "ownerUid": "",
+        "email": "",
+        "total_invested": 0,
+        "galleryImages": []
+      },
+      {
+        "id": "UotzMyeA3Z50cQJTF7TR",
+        "clientName": "IndoRoutes - India",
+        "clientLogoUrl": "https://placehold.co/128x128.png",
+        "clientTitle": "IndoRoutes - Entdecken Sie Indien",
+        "clientSubtitle": "Ihre Reiseagentur für unvergessliche Erlebnisse in Asien.",
+        "products": [],
+        "socialLinks": {
+          "instagram": "",
+          "facebook": "",
+          "linkedin": ""
+        },
+        "strengths": [],
+        "testimonials": [],
+        "translations": {},
+        "headerData": {
+          "welcomeText": "",
+          "headerImageUrl": "",
+          "socialShareText": "",
+          "socialLinks": [],
+          "headerBackgroundColor": "",
+          "headerBackgroundImageUrl": "",
+          "clientLogoWidth": 80,
+          "headerTextColor": "#000000",
+          "dividerLine": {
+            "enabled": false,
+            "color": "#FFFFFF",
+            "thickness": 2
+          },
+          "bannerType": "embed",
+          "bannerEmbedCode": "",
+          "bannerImageUrl": "",
+          "bannerImageWidth": 0,
+          "bannerImageHeight": 0,
+          "bannerShareUrl": ""
+        },
+        "infoCards": [],
+        "marqueeHeaderData": {
+          "enabled": true,
+          "offerEnabled": false,
+          "offerEndDate": null,
+          "leftButtonText": "",
+          "leftButtonLink": "",
+          "middleText": "",
+          "clubButtonText": "",
+          "clubButtonLink": "",
+          "marqueeText": "",
+          "rightButton1Text": "",
+          "rightButton1Link": "",
+          "rightButton2Text": "",
+          "rightButton2Link": ""
+        },
+        "bodyData": {
+          "title": "",
+          "subtitle": "",
+          "description": "",
+          "imageUrl": "",
+          "imageHint": "",
+          "videoUrl": "",
+          "ctaButtonText": "",
+          "ctaButtonLink": "",
+          "layout": "image-right",
+          "body2BackgroundColor": ""
+        },
+        "graphics": [],
+        "slug": "indoroutes",
+        "layout": [],
+        "website": "",
+        "address": "",
+        "phone": "",
+        "coordinates": {
+          "lat": 40.4168,
+          "lng": -3.7038
+        },
+        "ownerUid": "",
+        "email": "",
+        "total_invested": 0,
+        "galleryImages": [],
+        "budget_remaining": 49.900000000000006,
+        "clientType": "premium"
+      },
+      {
+        "id": "YFKBaNoCmPzYmcF58kcY",
+        "clientName": "Inviajes - Reisen Club",
+        "clientLogoUrl": "https://placehold.co/128x128.png",
+        "clientTitle": "Inviajes - Reisen Club",
+        "clientSubtitle": "Entdecken Sie die Welt mit uns.",
+        "products": [],
+        "slug": "inviajes-reisen-club",
+        "socialLinks": {
+          "instagram": "",
+          "facebook": "",
+          "linkedin": ""
+        },
+        "strengths": [],
+        "testimonials": [],
+        "translations": {},
+        "clientType": "premium"
+      },
+      {
+        "id": "bQoExDRRgDBMvkHtF3PH",
+        "clientName": "Perlas de Claridad",
+        "slug": "perlas-de-claridad",
+        "clientLogoUrl": "https://perlasdeclaridad.com/wp-content/uploads/2024/09/WhatsApp-Image-2024-09-04-at-12.42.47.jpeg",
+        "clientTitle": "Willkommen bei Perlas de Claridad",
+        "clientSubtitle": "Entdecken Sie Perlas de Claridad",
+        "socialLinks": {
+          "instagram": "",
+          "facebook": "",
+          "linkedin": ""
+        },
+        "products": [],
+        "strengths": [],
+        "testimonials": [],
+        "translations": {},
+        "headerData": {
+          "welcomeText": "",
+          "headerImageUrl": "",
+          "socialShareText": "",
+          "socialLinks": [],
+          "headerBackgroundColor": "",
+          "headerBackgroundImageUrl": "",
+          "clientLogoWidth": 80,
+          "headerTextColor": "#000000",
+          "dividerLine": {
+            "enabled": false,
+            "color": "#FFFFFF",
+            "thickness": 2
+          },
+          "bannerType": "embed",
+          "bannerEmbedCode": "",
+          "bannerImageUrl": "",
+          "bannerImageWidth": 0,
+          "bannerImageHeight": 0,
+          "bannerShareUrl": ""
+        },
+        "website": "",
+        "infoCards": [],
+        "address": "",
+        "coordinates": {
+          "lat": 40.4168,
+          "lng": -3.7038
+        },
+        "graphics": [],
+        "total_invested": 0,
+        "layout": [],
+        "clientType": "",
+        "budget_remaining": 50,
+        "phone": "",
+        "marqueeHeaderData": {
+          "enabled": false,
+          "offerEnabled": false,
+          "offerEndDate": null,
+          "leftButtonText": "",
+          "leftButtonLink": "",
+          "middleText": "",
+          "clubButtonText": "",
+          "clubButtonLink": "",
+          "marqueeText": "",
+          "rightButton1Text": "",
+          "rightButton1Link": "",
+          "rightButton2Text": "",
+          "rightButton2Link": ""
+        },
+        "bodyData": {
+          "title": "",
+          "subtitle": "",
+          "description": "",
+          "imageUrl": "",
+          "imageHint": "",
+          "videoUrl": "",
+          "ctaButtonText": "",
+          "ctaButtonLink": "",
+          "layout": "image-right",
+          "body2BackgroundColor": ""
+        },
+        "ownerUid": "",
+        "email": "",
+        "galleryImages": []
+      },
+      {
+        "id": "hePuXXdLRK6w0xTU9vAv",
+        "clientName": "Hotel Sueños",
+        "clientLogoUrl": "https://www.hotelsuenoselsalvador.com/wp-content/uploads/elementor/thumbs/Logo_Hotel_Suenos_Blanco-reuk6u2hanx142kr4c94ffrpcm9vp5va1b93d2k81a.png",
+        "clientTitle": "Willkommen bei Hotel Sueños",
+        "clientSubtitle": "Entdecken Sie Hotel Sueños",
+        "socialLinks": {
+          "instagram": "",
+          "facebook": "",
+          "linkedin": ""
+        },
+        "products": [],
+        "strengths": [],
+        "testimonials": [],
+        "translations": {},
+        "headerData": {
+          "welcomeText": "",
+          "headerImageUrl": "",
+          "socialShareText": "",
+          "socialLinks": [],
+          "headerBackgroundColor": "",
+          "headerBackgroundImageUrl": "",
+          "clientLogoWidth": 80,
+          "headerTextColor": "#000000",
+          "dividerLine": {
+            "enabled": false,
+            "color": "#FFFFFF",
+            "thickness": 2
+          },
+          "bannerType": "embed",
+          "bannerEmbedCode": "",
+          "bannerImageUrl": "",
+          "bannerImageWidth": 0,
+          "bannerImageHeight": 0,
+          "bannerShareUrl": ""
+        },
+        "website": "",
+        "infoCards": [],
+        "address": "",
+        "coordinates": {
+          "lat": 40.4168,
+          "lng": -3.7038
+        },
+        "graphics": [],
+        "total_invested": 0,
+        "layout": [],
+        "phone": "",
+        "marqueeHeaderData": {
+          "enabled": false,
+          "offerEnabled": false,
+          "offerEndDate": null,
+          "leftButtonText": "",
+          "leftButtonLink": "",
+          "middleText": "",
+          "clubButtonText": "",
+          "clubButtonLink": "",
+          "marqueeText": "",
+          "rightButton1Text": "",
+          "rightButton1Link": "",
+          "rightButton2Text": "",
+          "rightButton2Link": ""
+        },
+        "bodyData": {
+          "title": "",
+          "subtitle": "",
+          "description": "",
+          "imageUrl": "",
+          "imageHint": "",
+          "videoUrl": "",
+          "ctaButtonText": "",
+          "ctaButtonLink": "",
+          "layout": "image-right",
+          "body2BackgroundColor": ""
+        },
+        "ownerUid": "",
+        "email": "",
+        "galleryImages": [],
+        "slug": "hotel-suenos",
+        "budget_remaining": 499.95,
+        "clientType": "premium"
+      },
+      {
+        "id": "p7HxaWiQqgrXGMx1wD12",
+        "clientName": "Angel Cleaning.de",
+        "clientLogoUrl": "",
+        "clientTitle": "Bienvenido a Angel Cleaning.de",
+        "clientSubtitle": "Esta es tu página de aterrizaje. ¡Edítala desde el panel de administración!",
+        "products": [],
+        "socialLinks": {
+          "instagram": "",
+          "facebook": "",
+          "linkedin": ""
+        },
+        "strengths": [],
+        "testimonials": [],
+        "translations": {},
+        "ownerUid": "L5KPtaMHpkNApr5fk4ZiTgECzNc2",
+        "registrationId": "EgH0a1slbUXvCAezf2c3",
+        "category": "Service / Reinigung",
+        "description": "Somos angel-cleaning.de",
+        "location": "Hamburg",
+        "address": "Mühlendamm 84a",
+        "coords": [
+          53.5631026,
+          10.0260013
+        ],
+        "phone": "+49 178 8338 735",
+        "website": "https://angel-cleaning.de",
+        "currentOfferUrl": "",
+        "headerData": {
+          "welcomeText": "",
+          "headerImageUrl": "",
+          "socialShareText": "",
+          "socialLinks": [],
+          "headerBackgroundColor": "",
+          "headerBackgroundImageUrl": "",
+          "clientLogoWidth": 80,
+          "headerTextColor": "#000000",
+          "dividerLine": {
+            "enabled": false,
+            "color": "#FFFFFF",
+            "thickness": 2
+          },
+          "bannerType": "embed",
+          "bannerEmbedCode": "",
+          "bannerImageUrl": "",
+          "bannerImageWidth": 0,
+          "bannerImageHeight": 0,
+          "bannerShareUrl": ""
+        },
+        "infoCards": [],
+        "marqueeHeaderData": {
+          "enabled": true,
+          "offerEnabled": false,
+          "offerEndDate": null,
+          "leftButtonText": "",
+          "leftButtonLink": "",
+          "middleText": "",
+          "clubButtonText": "",
+          "clubButtonLink": "",
+          "marqueeText": "",
+          "rightButton1Text": "",
+          "rightButton1Link": "",
+          "rightButton2Text": "",
+          "rightButton2Link": ""
+        },
+        "bodyData": {
+          "title": "",
+          "subtitle": "",
+          "description": "",
+          "imageUrl": "",
+          "imageHint": "",
+          "videoUrl": "",
+          "ctaButtonText": "",
+          "ctaButtonLink": "",
+          "layout": "image-right",
+          "body2BackgroundColor": ""
+        },
+        "graphics": [],
+        "slug": "angel-cleaning",
+        "layout": [],
+        "clientType": "premium",
+        "budget_remaining": 0,
+        "coordinates": {
+          "lat": 40.4168,
+          "lng": -3.7038
+        },
+        "email": "",
+        "total_invested": 0,
+        "galleryImages": []
+      },
+      {
+        "id": "vJ38lCv9ko1KH2UEvsb5",
+        "clientName": "MHC - INT",
+        "slug": "mhc---int",
+        "clientLogoUrl": "https://mhc-int.com/wp-content/uploads/2022/03/cropped-logo_mhc.png",
+        "clientTitle": "Willkommen bei MHC - INT",
+        "clientSubtitle": "Entdecken Sie MHC - INT",
+        "socialLinks": {
+          "instagram": "",
+          "facebook": "",
+          "linkedin": ""
+        },
+        "products": [],
+        "strengths": [],
+        "testimonials": [],
+        "translations": {},
+        "clientType": "premium"
+      },
+      {
+        "id": "w0H9T7HZIbCXRN8qC7wA",
+        "clientName": "Zowar",
+        "clientLogoUrl": "",
+        "clientTitle": "Bienvenido a Zowar",
+        "clientSubtitle": "Esta es tu página de aterrizaje. ¡Edítala desde el panel de administración!",
+        "products": [],
+        "slug": "zowar",
+        "socialLinks": {
+          "instagram": "",
+          "facebook": "",
+          "linkedin": ""
+        },
+        "strengths": [],
+        "testimonials": [],
+        "translations": {},
+        "ownerUid": "3ReMFyQJxjgUyVECZc6EiCxvZOu1",
+        "registrationId": "W0VUOQkJrTdbuI1uRjC9",
+        "category": "Hasoob Technology Co.",
+        "description": "Unit No. 155, Al Qiblatayn, 4422 Sultana Road, Madinah 42351, Saudi Arabia",
+        "location": "Saudi Arabia",
+        "address": "Unit No. 155, Al Qiblatayn 42351, ",
+        "coords": null,
+        "phone": "",
+        "website": "",
+        "currentOfferUrl": "",
+        "headerData": {
+          "headerImageUrl": ""
+        }
+      },
+      {
+        "id": "y0RJBfd01465o5Tjpu9r",
+        "clientName": "Medien & MCH",
+        "clientLogoUrl": "https://dicilo.net/wp-content/uploads/2024/06/Dicilo-logo_2024.png",
+        "clientTitle": "Bienvenido a Medien & MCH",
+        "clientSubtitle": "Esta es tu página de aterrizaje. ¡Edítala desde el panel de administración!",
+        "products": [],
+        "socialLinks": {
+          "instagram": "",
+          "facebook": "",
+          "linkedin": ""
+        },
+        "strengths": [],
+        "testimonials": [],
+        "translations": {},
+        "ownerUid": "VTpysNZSDiafqX9n2nMdrZ6KF3A3",
+        "registrationId": "QkZzsE9IIb6HQufDbDYZ",
+        "category": "Reise Agentur",
+        "description": "Somos medien und service",
+        "location": "Hamburg",
+        "address": "Mühlendamm 84a",
+        "coords": [
+          53.5631026,
+          10.0260013
+        ],
+        "phone": "+49 178 8338 735",
+        "website": "https://mhc-int.com",
+        "currentOfferUrl": "https://dicilo.net/preise/",
+        "headerData": {
+          "welcomeText": "",
+          "headerImageUrl": "",
+          "socialShareText": "",
+          "socialLinks": [],
+          "headerBackgroundColor": "",
+          "headerBackgroundImageUrl": "",
+          "clientLogoWidth": 80,
+          "headerTextColor": "#000000",
+          "dividerLine": {
+            "enabled": false,
+            "color": "#FFFFFF",
+            "thickness": 2
+          },
+          "bannerType": "embed",
+          "bannerEmbedCode": "",
+          "bannerImageUrl": "",
+          "bannerImageWidth": 0,
+          "bannerImageHeight": 0,
+          "bannerShareUrl": ""
+        },
+        "infoCards": [],
+        "marqueeHeaderData": {
+          "enabled": true,
+          "offerEnabled": false,
+          "offerEndDate": null,
+          "leftButtonText": "",
+          "leftButtonLink": "",
+          "middleText": "",
+          "clubButtonText": "",
+          "clubButtonLink": "",
+          "marqueeText": "",
+          "rightButton1Text": "",
+          "rightButton1Link": "",
+          "rightButton2Text": "",
+          "rightButton2Link": ""
+        },
+        "bodyData": {
+          "title": "",
+          "subtitle": "",
+          "description": "",
+          "imageUrl": "",
+          "imageHint": "",
+          "videoUrl": "",
+          "ctaButtonText": "",
+          "ctaButtonLink": "",
+          "layout": "image-right",
+          "body2BackgroundColor": ""
+        },
+        "graphics": [],
+        "slug": "medien-mch-int",
+        "total_invested": 0,
+        "layout": [],
+        "coordinates": {
+          "lat": 40.4168,
+          "lng": -3.7038
+        },
+        "email": "",
+        "galleryImages": [],
+        "budget_remaining": 49.95,
+        "clientType": "premium"
+      },
+      {
+        "id": "yeoyrIvSZplyomjvOKDn",
+        "clientName": "MILENIUM CONSULTING",
+        "clientLogoUrl": "",
+        "clientTitle": "Bienvenido a MILENIUM CONSULTING",
+        "clientSubtitle": "Esta es tu página de aterrizaje. ¡Edítala desde el panel de administración!",
+        "products": [],
+        "slug": "milenium-consulting",
+        "socialLinks": {
+          "instagram": "",
+          "facebook": "",
+          "linkedin": ""
+        },
+        "strengths": [],
+        "testimonials": [],
+        "translations": {},
+        "ownerUid": "",
+        "registrationId": "eWQv4zTxCJldmbjv94Cm",
+        "category": "",
+        "description": "",
+        "location": "",
+        "address": "",
+        "coords": null,
+        "phone": "",
+        "website": "",
+        "currentOfferUrl": "",
+        "headerData": {
+          "welcomeText": "",
+          "headerImageUrl": "",
+          "socialShareText": "",
+          "socialLinks": [],
+          "headerBackgroundColor": "",
+          "headerBackgroundImageUrl": "",
+          "clientLogoWidth": 80,
+          "headerTextColor": "#000000",
+          "dividerLine": {
+            "enabled": false,
+            "color": "#FFFFFF",
+            "thickness": 2
+          },
+          "bannerType": "embed",
+          "bannerEmbedCode": "",
+          "bannerImageUrl": "",
+          "bannerImageWidth": 0,
+          "bannerImageHeight": 0,
+          "bannerShareUrl": ""
+        },
+        "infoCards": [],
+        "clientType": "premium",
+        "marqueeHeaderData": {
+          "enabled": true,
+          "offerEnabled": false,
+          "offerEndDate": null,
+          "leftButtonText": "",
+          "leftButtonLink": "",
+          "middleText": "",
+          "clubButtonText": "",
+          "clubButtonLink": "",
+          "marqueeText": "",
+          "rightButton1Text": "",
+          "rightButton1Link": "",
+          "rightButton2Text": "",
+          "rightButton2Link": ""
+        },
+        "bodyData": {
+          "title": "",
+          "subtitle": "",
+          "description": "",
+          "imageUrl": "",
+          "imageHint": "",
+          "videoUrl": "",
+          "ctaButtonText": "",
+          "ctaButtonLink": "",
+          "layout": "image-right",
+          "body2BackgroundColor": ""
+        },
+        "graphics": []
+      }
+    ],
+    "private_profiles": [
+      {
+        "id": "0b5hqBnWIKRQDs1x9PKbnszL8km1",
+        "uid": "0b5hqBnWIKRQDs1x9PKbnszL8km1",
+        "email": "programmhh1@gmail.com",
+        "firstName": "mahmood",
+        "lastName": "alkhayyat",
+        "uniqueCode": "DHH25MA14201",
+        "contactPreferences": {
+          "whatsapp": "004917642984142",
+          "telegram": "",
+          "email": true,
+          "frequency": "weekly"
+        },
+        "profileData": {
+          "travelInterest": null,
+          "multiplierInterest": false,
+          "rewardPreference": null,
+          "hobbies": "",
+          "socialGroup": "none"
+        },
+        "referrals": [],
+        "createdAt": {
+          "_seconds": 1765752143,
+          "_nanoseconds": 3000000
+        },
+        "updatedAt": {
+          "_seconds": 1765752143,
+          "_nanoseconds": 3000000
+        },
+        "interests": [
+          "Finance",
+          "Gastronomy",
+          "Health",
+          "Social",
+          "Music",
+          "Food",
+          "Education",
+          "Real Estate"
+        ]
+      },
+      {
+        "id": "6OWAhwKRPZfaAUshsze7FUOsQ813",
+        "lastName": "MILENIUM HOLDING",
+        "uid": "6OWAhwKRPZfaAUshsze7FUOsQ813",
+        "phone": "+491788338735",
+        "adPreference": "relevant",
+        "email": "superadmin@dicilo.net",
+        "contactChannels": {
+          "whatsapp": true,
+          "phone": false,
+          "telegram": false,
+          "email": true
+        },
+        "uniqueCode": "DHH25NM00001",
+        "firstName": "Nilo",
+        "preferredLanguage": "german",
+        "newsletterFrequency": "monthly",
+        "interests": [
+          "Musik",
+          "Reise",
+          "Transport",
+          "Technologie",
+          "Immobilien",
+          "Bildung",
+          "Gastronomie",
+          "Music",
+          "Technology",
+          "Hospitality",
+          "Beratung"
+        ],
+        "updatedAt": {
+          "_seconds": 1766000506,
+          "_nanoseconds": 286000000
+        },
+        "contactPreferences": {
+          "frequency": "monthly"
+        },
+        "gender": "male"
+      },
+      {
+        "id": "GENeUlpAFNMut2kbXIYfH9p85Km1",
+        "uid": "GENeUlpAFNMut2kbXIYfH9p85Km1",
+        "email": "mohammedzaxo@outlook.de",
+        "firstName": "Mohammad",
+        "lastName": "Hassan",
+        "uniqueCode": "DHH25MH00001",
+        "contactPreferences": {
+          "whatsapp": "",
+          "telegram": "",
+          "email": true,
+          "frequency": "weekly"
+        },
+        "interests": [],
+        "profileData": {
+          "travelInterest": null,
+          "multiplierInterest": false,
+          "rewardPreference": null,
+          "hobbies": "",
+          "socialGroup": "none"
+        },
+        "referrals": [],
+        "createdAt": {
+          "_seconds": 1765752142,
+          "_nanoseconds": 191000000
+        },
+        "updatedAt": {
+          "_seconds": 1765752142,
+          "_nanoseconds": 191000000
+        }
+      },
+      {
+        "id": "WPExOfO2r9VjPfy8XM20gjn4r4b2",
+        "uid": "WPExOfO2r9VjPfy8XM20gjn4r4b2",
+        "email": "jaime.cedeno@outlook.com",
+        "firstName": "Jaime",
+        "lastName": "Cedeno",
+        "uniqueCode": "DHH25JC56801",
+        "contactPreferences": {
+          "whatsapp": "017636118568",
+          "telegram": "",
+          "email": true,
+          "frequency": "weekly"
+        },
+        "referrals": [],
+        "createdAt": {
+          "_seconds": 1765752144,
+          "_nanoseconds": 102000000
+        },
+        "updatedAt": {
+          "_seconds": 1765752144,
+          "_nanoseconds": 102000000
+        },
+        "interests": [
+          "Finance",
+          "Social",
+          "Travel",
+          "Consulting"
+        ],
+        "profileData": {
+          "travelInterest": null,
+          "multiplierInterest": false,
+          "hobbies": "",
+          "socialGroup": "none",
+          "rewardPreference": "cash"
+        }
+      },
+      {
+        "id": "zmTUuUblmwWH5MKDHvmUxXJLb7E2",
+        "uid": "zmTUuUblmwWH5MKDHvmUxXJLb7E2",
+        "email": "support@dicilo.net",
+        "firstName": "Support",
+        "lastName": "Dicilo",
+        "uniqueCode": "DHH25SD73501",
+        "contactPreferences": {
+          "whatsapp": "",
+          "telegram": "01788338735",
+          "email": true,
+          "frequency": "weekly"
+        },
+        "profileData": {
+          "travelInterest": null,
+          "multiplierInterest": false,
+          "rewardPreference": null,
+          "hobbies": "",
+          "socialGroup": "none"
+        },
+        "referrals": [],
+        "createdAt": {
+          "_seconds": 1765752142,
+          "_nanoseconds": 384000000
+        },
+        "updatedAt": {
+          "_seconds": 1765752142,
+          "_nanoseconds": 384000000
+        },
+        "interests": [
+          "Beauty & Wellness",
+          "Travel",
+          "Education",
+          "Transport",
+          "Technology",
+          "Gastronomy",
+          "Music",
+          "Hospitality",
+          "Consulting",
+          "Real Estate",
+          "Entertainment",
+          "Lifestyle"
+        ],
+        "gender": "male"
+      }
+    ]
+  }
+}

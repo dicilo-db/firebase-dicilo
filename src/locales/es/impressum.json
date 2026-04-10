@@ -1,0 +1,40 @@
+{
+  "pageTitle": "Aviso Legal",
+  "pageSubtitle": "Información según § 5 TMG",
+  "cardTitle": "Información de Contacto",
+  "legal": {
+    "title": "Información según § 5 TMG",
+    "brand_of": "Una marca de",
+    "company_name": "MILENIUM HOLDING & CONSULTING (UG)",
+    "address_line1": "Mühlendamm 84a",
+    "address_line2": "22087 Hamburgo - Alemania"
+  },
+  "representedBy": {
+    "title": "Representado por",
+    "name": "Nilo Escolar"
+  },
+  "contact": {
+    "title": "Contacto",
+    "phone_label": "Teléfono",
+    "phone_number": "+49 178 8338 735",
+    "email_label": "Correo electrónico",
+    "email_address": "info@dicilo.net"
+  },
+  "vat": {
+    "title": "ID de IVA",
+    "description": "Número de identificación del impuesto sobre el valor añadido según §27 a de la Ley del Impuesto sobre el Valor Añadido:",
+    "id": "DE323288362"
+  },
+  "responsible": {
+    "title": "Responsable editorial",
+    "name": "Nilo Escolar"
+  },
+  "dispute": {
+    "title": "Resolución de litigios de la UE",
+    "description": "La Comisión Europea ofrece una plataforma para la resolución de litigios en línea (ODR): <a href='https://ec.europa.eu/consumers/odr/' target='_blank' rel='noopener noreferrer'>https://ec.europa.eu/consumers/odr/</a>.<br>Nuestra dirección de correo electrónico se puede encontrar arriba en el aviso legal."
+  },
+  "consumerDispute": {
+    "title": "Resolución de litigios en materia de consumo/Junta arbitral universal",
+    "description": "No estamos dispuestos ni obligados a participar en procedimientos de resolución de litigios ante una junta de arbitraje de consumo."
+  }
+}

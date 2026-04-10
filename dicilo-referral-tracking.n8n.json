@@ -1,0 +1,125 @@
+{
+    "name": "Dicilo Referral Tracking",
+    "nodes": [
+        {
+            "parameters": {
+                "httpMethod": "GET",
+                "path": "dicilo-open-pixel",
+                "responseMode": "responseNode",
+                "options": {}
+            },
+            "id": "webhook_tracking",
+            "name": "Webhook (Pixel)",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                460,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "authentication": "oAuth2",
+                "operation": "append",
+                "documentId": {
+                    "__rl": true,
+                    "value": "DICILO_REFERRAL_LOGS",
+                    "mode": "name"
+                },
+                "sheetName": {
+                    "__rl": true,
+                    "value": "Sheet1",
+                    "mode": "name"
+                },
+                "columns": {
+                    "mappingMode": "defineBelow",
+                    "value": {
+                        "status": "OPENED",
+                        "referrer_id": "={{ $json.query.ref }}",
+                        "email": "={{ $json.query.email }}",
+                        "timestamp": "={{ new Date().toISOString() }}"
+                    }
+                },
+                "options": {}
+            },
+            "id": "log_open",
+            "name": "Log Opened (Google Sheets)",
+            "type": "n8n-nodes-base.googleSheets",
+            "typeVersion": 4,
+            "position": [
+                680,
+                300
+            ],
+            "credentials": {
+                "googleSheetsOAuth2Api": {
+                    "id": "YOUR_GSHEETS_CRED_ID",
+                    "name": "Google Sheets Account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "jsCode": "// Logic to generate 1x1 pixel base64\nconst pixelBase64 = 'R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';\nconst binaryData = Buffer.from(pixelBase64, 'base64');\n\nreturn {\n  json: { status: 'ok' },\n  binary: {\n    data: {\n      data: pixelBase64,\n      mimeType: 'image/gif',\n      fileName: 'pixel.gif'\n    }\n  }\n};"
+            },
+            "id": "generate_pixel",
+            "name": "Generate Pixel",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                900,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "respondWith": "binary",
+                "responseDataSource": "setBody",
+                "binaryPropertyName": "data",
+                "options": {}
+            },
+            "id": "respond_pixel",
+            "name": "Respond to Webhook",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1,
+            "position": [
+                1120,
+                300
+            ]
+        }
+    ],
+    "connections": {
+        "Webhook (Pixel)": {
+            "main": [
+                [
+                    {
+                        "node": "Log Opened (Google Sheets)",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Log Opened (Google Sheets)": {
+            "main": [
+                [
+                    {
+                        "node": "Generate Pixel",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Generate Pixel": {
+            "main": [
+                [
+                    {
+                        "node": "Respond to Webhook",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}

@@ -1,0 +1,142 @@
+{
+  "business": {
+    "chatbot": {
+      "title": "A.I. Assistant",
+      "desc": "Train your own customer service robot to answer questions about your business on your Dicilo Profile.",
+      "baseConfig": "Base Configuration",
+      "baseConfigDesc": "Define your bot's personality.",
+      "botName": "Assistant Name",
+      "botNameObj": "E.g. John from Napoli Pizzeria",
+      "greeting": "Welcome Message",
+      "greetingDesc": "This message will appear when the client opens the chat.",
+      "prompt": "Core Instructions (Prompt)",
+      "promptDesc": "Instruct the A.I. in detail on what tone to use and what info to prioritize.",
+      "saveArgs": "Save Changes",
+      "filesBox": "Knowledge Files",
+      "filesDesc": "Feed your A.I. with menus, catalogs, or FAQ PDFs.",
+      "uploadDoc": "Upload PDF File"
+    },
+    "campaigns": {
+      "title": "Custom Campaigns",
+      "desc": "Measure the performance of your email marketing and organic acquisition strategies managed in Dicilo.",
+      "requestNew": "Request New Campaign",
+      "emptyTitle": "No Active Campaigns",
+      "budgetLabel": "Budget",
+      "remainingLabel": "Remaining"
+    },
+    "market": {
+      "title": "Market Intelligence",
+      "desc": "Discover demographic insights, network competitiveness, and make data-driven decisions.",
+      "potentialUsers": "Potential Users",
+      "agencies": "Business Network",
+      "countries": "Demographic Reach",
+      "trendTitle": "Category Trend",
+      "aiTips": "A.I. Suggestions"
+    },
+    "geo": {
+      "title": "Hyperlocal Geomarketing",
+      "desc": "Attract customers walking near your business. Define your action radius and launch automatic PUSH notifications.",
+      "zoneParams": "Zone Parameters",
+      "radiusLabel": "Reach Radius (Kilometers)",
+      "zipLabel": "Priority Postal Codes (Optional)",
+      "pushLabel": "Flash Message (Push Notification)",
+      "simulator": "Impact Simulator",
+      "privacy": "Privacy Assured: Dicilo never shares exact locations..."
+    },
+    "products": {
+      "title": "Products and Services Management",
+      "desc": "Add, edit, and organize the items users will see on your Dicilo profile.",
+      "addProduct": "Add New Product",
+      "emptyCatalog": "Empty Catalog",
+      "productName": "Product/Service Name",
+      "price": "Price (€)",
+      "save": "Save Product"
+    },
+    "messages": {
+      "title": "Inquiries Inbox",
+      "desc": "Manage the messages and leads clients send from your Dicilo Profile.",
+      "noMessages": "No new inquiries",
+      "openChat": "Open WhatsApp",
+      "markRead": "Mark as read",
+      "delete": "Delete"
+    }
+  },
+  "community": {
+    "title": "Your Community",
+    "subtitle": "Explore what's happening in your neighborhood and connect with your neighbors.",
+    "ranking": {
+      "no_data": "Not enough data for the ranking yet."
+    },
+    "feed": {
+      "wall": "Social Wall",
+      "recommendations": "Recommendations",
+      "whats_happening": "Explore what's happening in {{name}}"
+    },
+    "trustboard": {
+      "tab_title": "Local Market & Services",
+      "new_post": "New Post",
+      "cat_all": "All",
+      "search_ph": "Search in the trust wall...",
+      "empty_title": "Start building the local ecosystem",
+      "empty_desc": "Add job ads, look for roommates, offer mentoring, or give away things you no longer use. This board is exclusive for verified residents of {{name}}.",
+      "untitled": "Untitled",
+      "connect": "Connect",
+      "admin": {
+        "translated": "Forced Translation Completed",
+        "translate_error": "Translation Error",
+        "translate_btn": "Translate (Admin)"
+      },
+      "form": {
+        "dialog_title": "Create Local Ad",
+        "dialog_desc": "Publish your ad in {{name}}. Be clear and professional.",
+        "category": "Category",
+        "cat_placeholder": "Select a specialty",
+        "title": "Ad Title",
+        "title_ph": "E.g. German Classes Level C1",
+        "desc": "Description",
+        "desc_ph": "Detail what you offer or what you are looking for...",
+        "note": "Note: This ad will be published in",
+        "note_premium": "If you are a premium user, Cerebro DiciBot will automatically translate this ad to the other 11 languages.",
+        "cancel": "Cancel",
+        "submit": "Publish Ad",
+        "success_title": "Ad Published!",
+        "success_desc": "Your ad will pass through Dicilo's automatic review and will be visible soon.",
+        "error_title": "Limit Reached or Error",
+        "unexpected_title": "Unexpected Error",
+        "unexpected_desc": "Check your connection and try again."
+      },
+      "cat_jobs": "Dicilo Jobs (Local jobs)",
+      "cat_living": "Dicilo Living (Housing/Roommates)",
+      "cat_talent": "Dicilo Talent (Services/Mentors)",
+      "cat_swap": "Gift/Swap (Exchange/Gifts)"
+    },
+    "trustboard_guard": {
+      "verifying": "Verifying Login Credentials...",
+      "restricted": "Restricted Access to TrustBoard",
+      "general": "To keep our community safe and spam-free, the \"Trust Wall\" requires all users to have their profile 100% validated to interact or publish.",
+      "req_name": "Identifiable Real Name",
+      "req_photo": "Profile Photo (Person or business visible)",
+      "req_email": "Email Verified",
+      "req_location": "Location / Neighborhood Confirmed",
+      "action_complete": "Complete Profile Now"
+    },
+    "actions": {
+      "is_favorite": "My Neighborhood",
+      "set_favorite": "Set as My Neighborhood"
+    },
+    "your_community": "Your Community",
+    "explore_desc": "Explore what's happening in your neighborhood and connect with your neighbors.",
+    "new_recommendation": "New Recommendation",
+    "share_place": "Share a place, service, or experience with your neighbors.",
+    "neighborhoods_of": "Neighborhoods of",
+    "search_neighborhoods": "Search neighborhoods...",
+    "register_neighborhood_btn": "Register Neighborhood",
+    "register_neighborhood": "Register Neighborhood",
+    "register_neighborhood_desc": "Can't find your neighborhood? Register it here to start connecting with your neighbors.",
+    "verifying": "Verifying...",
+    "verify_create": "Verify & Create"
+  },
+  "navigation": {
+    "social_network": "My Circle"
+  }
+}

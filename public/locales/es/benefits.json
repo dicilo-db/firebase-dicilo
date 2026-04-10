@@ -1,0 +1,105 @@
+{
+  "page_title": "Beneficios de Usar Nuestra Plataforma",
+  "page_subtitle": "Descubre por qué Dicilo es la mejor opción para tu negocio y para ti como consumidor.",
+  "size": {
+    "title": "Nuestro Tamaño",
+    "description": "Contamos con más de 15,000 usuarios registrados y más de 600 empresas en más de 100 categorías. Somos el portal de recomendaciones más grande de Alemania."
+  },
+  "experience": {
+    "title": "Nuestra Experiencia",
+    "description": "Con más de 20 años de experiencia en marketing, ventas y tecnología, garantizamos soluciones efectivas e innovadoras."
+  },
+  "two_reasons": {
+    "title": "Dos Grandes Razones para Confiar en Nosotros",
+    "description": "Ofrecemos una doble ventaja al proporcionar beneficios invaluables tanto para las empresas como para los usuarios, creando un ecosistema de beneficio mutuo."
+  },
+  "for_companies": {
+    "title": "Para Empresas",
+    "item1": {
+      "title": "Mayor Visibilidad",
+      "description": "Llega a miles de clientes potenciales."
+    },
+    "item2": {
+      "title": "Herramientas de Marketing",
+      "description": "Utiliza nuestras herramientas para promocionar tus productos y servicios."
+    },
+    "item3": {
+      "title": "Soporte Técnico",
+      "description": "Recibe ayuda de nuestros expertos para hacer crecer tu negocio."
+    }
+  },
+  "for_users": {
+    "title": "Para Usuarios",
+    "item1": {
+      "title": "Ofertas Exclusivas",
+      "description": "Accede a promociones y descuentos especiales."
+    },
+    "item2": {
+      "title": "Variedad de Opciones",
+      "description": "Encuentra todo lo que necesitas en un solo lugar."
+    },
+    "item3": {
+      "title": "Comunidad de Confianza",
+      "description": "Interactúa con empresas y usuarios verificados."
+    }
+  },
+  "network": {
+    "title": "Una Red de Contactos Única",
+    "description": "Dicilo es más que un portal; es una red de contactos basada en la confianza y la reciprocidad, pensada tanto para empresas como para particulares.",
+    "for_companies": {
+      "title": "Para Empresas",
+      "description": "Ofrecemos una plataforma para promocionar tus productos y servicios, y la oportunidad de conectar con otras empresas y clientes potenciales."
+    },
+    "for_users": {
+      "title": "Para Usuarios",
+      "description": "Encuentra las mejores ofertas, descubre nuevos productos y conecta con una comunidad que comparte tus intereses. También puedes donar artículos que ya no usas."
+    },
+    "cta_text": "Únete a nuestra red y descubre todas las ventajas que tenemos para ofrecer.",
+    "cta_button_company": "Registrar Empresa",
+    "cta_button_user": "Registrar Usuario"
+  },
+  "social": {
+    "title": "Únete a Nuestra Comunidad en Redes Sociales",
+    "description": "Forma parte de nuestra creciente comunidad. Únete a nuestros grupos de WhatsApp y Telegram, donde podrás encontrar ofertas exclusivas, vender tus productos, hacer nuevos contactos y mucho más. Además, síguenos en nuestras redes sociales para estar siempre al día."
+  },
+  "testimonials": {
+    "title": "Lo que Dicen Nuestros Clientes",
+    "subtitle": "No te fíes solo de nuestra palabra, ¡deja que nuestros clientes hablen por sí mismos!",
+    "carla": {
+      "name": "Carla M.",
+      "role": "Vendedora de productos artesanales",
+      "quote": "Dicilo fue la plataforma perfecta para hacer crecer mi negocio. Pude registrar mis productos rápidamente y atraer a nuevos clientes. Gracias a las herramientas de marketing y al soporte técnico, he aumentado mis ventas considerablemente."
+    },
+    "tomas": {
+      "name": "Tomás R.",
+      "role": "Comprador habitual",
+      "quote": "He encontrado productos fantásticos a precios inesperadamente bajos. Las ofertas que recibo a través de los boletines y el Instapost me ayudan a ahorrar mucho y a descubrir nuevos servicios que son realmente útiles."
+    },
+    "lucia": {
+      "name": "Lucía G.",
+      "role": "Usuaria que donó artículos",
+      "quote": "Tenía varios artículos que ya no usaba y Dicilo me facilitó la posibilidad de regalarlos a personas que realmente los necesitaban. La plataforma es fácil de usar y quedé encantada con la experiencia."
+    }
+  },
+  "feedback": {
+    "title": "Tu Opinión Nos Importa",
+    "name": "Nombre completo",
+    "email": "Correo electrónico",
+    "country": "País",
+    "customerType": "Tipo de Cliente",
+    "customerTypePlaceholder": "Selecciona un tipo",
+    "customerTypeOptions": {
+      "private": "Particular",
+      "donor": "Donante",
+      "company": "Empresa",
+      "premium": "Premium"
+    },
+    "rating": "Calificación",
+    "message": "Mensaje",
+    "submit": "Enviar opinión",
+    "successTitle": "Opinión enviada",
+    "successDesc": "¡Gracias por tu opinión!",
+    "errorTitle": "Error al enviar",
+    "errorDesc": "Por favor, inténtalo de nuevo más tarde."
+  }
+}

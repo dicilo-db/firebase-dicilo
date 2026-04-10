@@ -1,0 +1,79 @@
+# ESTRUCTURA DE PÁGINAS Y MÓDULOS - DICILO.NET
+
+Este documento resume las principales páginas y módulos funcionales de la aplicación a fecha de 20 de Septiembre de 2025.
+
+---
+## 1. PÁGINAS PÚBLICAS (Accesibles para todos los usuarios)
+---
+
+### 1.1. Página Principal / Búsqueda
+- **Ruta:** `/`
+- **Archivo Principal:** `src/app/page.tsx` -> `src/components/dicilo-search-page.tsx`
+- **Descripción:** Es la página de inicio. Contiene la funcionalidad de búsqueda de empresas por nombre y ubicación, con un mapa interactivo y una lista de resultados.
+
+### 1.2. Landing Pages de Clientes
+- **Ruta:** `/client/[clientSlug]` (Ruta dinámica)
+- **Archivo Principal:** `src/app/client/[clientSlug]/page.tsx` -> `src/components/ClientLandingPage.tsx`
+- **Descripción:** Páginas de aterrizaje personalizadas para cada cliente 'retailer' o 'premium'. El contenido (header, texto, tarjetas, gráficos) se gestiona desde el panel de administración.
+
+### 1.3. Páginas de Contenido Estático
+- **/planes:** Muestra los planes de precios. (`src/app/planes/page.tsx`)
+- **/vorteile:** Página de "Ventajas", explicando los beneficios de Dicilo. (`src/app/vorteile/page.tsx`)
+- **/ueber-uns:** Página "Sobre Nosotros". (`src/app/ueber-uns/page.tsx`)
+- **/faq:** Página de preguntas frecuentes. (`src/app/faq/page.tsx`)
+- **/impressum:** Aviso legal. (`src/app/impressum/page.tsx`)
+- **/datenschutz:** Política de privacidad. (`src/app/datenschutz/page.tsx`)
+
+### 1.4. Página de Registro
+- **Ruta:** `/registrieren`
+- **Archivo Principal:** `src/app/registrieren/page.tsx`
+- **Descripción:** Página con dos formularios: uno para que los usuarios se registren y otro para recomendar nuevas empresas que no están en el portal.
+
+---
+## 2. PANEL DE ADMINISTRACIÓN (Rutas bajo `/admin`)
+---
+
+### 2.1. Login
+- **Ruta:** `/admin`
+- **Archivo Principal:** `src/app/admin/page.tsx`
+- **Descripción:** Portal de inicio de sesión seguro para acceder al panel de administración.
+
+### 2.2. Dashboard Principal
+- **Ruta:** `/admin/dashboard`
+- **Archivo Principal:** `src/app/admin/dashboard/page.tsx`
+- **Descripción:** Página principal del administrador. Muestra la bienvenida, el área de superadministrador (con acciones para poblar la BBDD y sincronizar con ERP) y los enlaces a las demás secciones de gestión.
+
+### 2.3. Gestión de Empresas (Businesses)
+- **Listado:** `/admin/businesses` (`src/app/admin/businesses/page.tsx`)
+- **Crear Nuevo:** `/admin/businesses/new` (`src/app/admin/businesses/new/page.tsx`)
+- **Editar Existente:** `/admin/businesses/[id]/edit` (`src/app/admin/businesses/[id]/edit/page.tsx`)
+- **Descripción:** Módulo CRUD completo para gestionar las empresas que aparecen en el buscador público. Permite crear, ver, editar y eliminar empresas, así como geolocalizarlas en el mapa.
+
+### 2.4. Gestión de Clientes (Clients)
+- **Listado:** `/admin/clients` (`src/app/admin/clients/page.tsx`)
+- **Crear Nuevo:** `/admin/clients/new` (`src/app/admin/clients/new/page.tsx`)
+- **Editar Existente:** `/admin/clients/[id]/edit` (`src/app/admin/clients/[id]/edit/page.tsx` y `EditClientForm.tsx`)
+- **Descripción:** Este es el módulo que usted mencionó. Es un editor muy completo basado en pestañas para gestionar todo el contenido de las Landing Pages de los clientes (tipo, logo, header, cuerpo, tarjetas de información, productos, gráficos, traducciones y formulario de recomendación).
+
+### 2.5. Gestión de Planes de Precios (Plans)
+- **Listado:** `/admin/plans` (`src/app/admin/plans/page.tsx`)
+- **Crear Nuevo:** `/admin/plans/new` (`src/app/admin/plans/new/page.tsx`)
+- **Editar Existente:** `/admin/plans/[id]/edit` (`src/app/admin/plans/[id]/edit/page.tsx`)
+- **Descripción:** Módulo CRUD para gestionar los planes de precios que se muestran en la página `/planes`.
+
+### 2.6. Visualización de Datos
+- **Registros:** `/admin/registrations` (`src/app/admin/registrations/page.tsx`). Muestra en tiempo real todos los registros de usuarios y empresas, con filtros por tipo.
+- **Feedbacks:** `/admin/feedbacks` (`src/app/admin/feedbacks/page.tsx`). Muestra en tiempo real los comentarios y valoraciones enviados por los usuarios.
+- **Estadísticas:** `/admin/statistics` (`src/app/admin/statistics/page.tsx`). Muestra estadísticas de uso como número de búsquedas y clics.
+- **Dashboard de Formularios:** `/admin/forms-dashboard` (`src/app/admin/forms-dashboard/page.tsx`). Un dashboard específico para la gestión y visualización de datos relacionados con los formularios de recomendación.
+
+### 2.7. Página de Configuración Inicial (Seed)
+- **Ruta:** `/admin/seed`
+- **Archivo Principal:** `src/app/admin/seed/page.tsx`
+- **Descripción:** Una página de instrucciones estática que guía al superadministrador sobre cómo crear el primer usuario y configurar la base de datos para el primer uso.
+
+---
+## 3. MÓDULOS INTERNOS (APIs y Cloud Functions)
+---
+- **APIs:** Rutas en `src/app/api/...` para registrar analíticas, obtener negocios, etc.
+- **Cloud Functions:** Lógica de backend en `src/functions/src/index.ts` para tareas como asignar roles de administrador, sincronizar con el ERP y gestionar el proceso de envío de recomendaciones.
