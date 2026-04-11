@@ -2,7 +2,7 @@
 
 import { getAdminAuth, getAdminDb } from '@/lib/firebase-admin';
 
-export async function processOrphanBusiness(clientId: string, newEmail: string) {
+export async function processOrphanBusiness(clientId: string, newEmail: string, sourceCollection: string = 'clients') {
     try {
         const auth = getAdminAuth();
         const db = getAdminDb();
@@ -25,21 +25,56 @@ export async function processOrphanBusiness(clientId: string, newEmail: string) 
             }
         }
 
-        // Recuperar el cliente
-        const clientRef = db.collection('clients').doc(clientId);
-        const doc = await clientRef.get();
+        // Recuperar la entidad original
+        const entityRef = db.collection(sourceCollection).doc(clientId);
+        const doc = await entityRef.get();
         
         if (!doc.exists) {
-            return { success: false, error: 'Cliente no encontrado en la base de datos' };
+            return { success: false, error: 'Empresa no encontrada en la base de datos' };
         }
 
         const data = doc.data() || {};
         
-        // Actualizamos base de datos Clients
-        await clientRef.update({
+        // Actualizamos base de datos original
+        await entityRef.update({
             email: newEmail,
             ownerUid: user.uid
         });
+
+        // Si viene de 'businesses', necesitamos asegurarnos de que exista un registro en 'clients'
+        // para que el usuario pueda hacer login en el Dashboard (ya que este busca en clients)
+        if (sourceCollection === 'businesses') {
+            const existingClients = await db.collection('clients').where('businessId', '==', clientId).get();
+            if (existingClients.empty) {
+                const newClientRef = db.collection('clients').doc();
+                await newClientRef.set({
+                    businessId: clientId,
+                    clientName: data.name || data.clientName || 'Desconocido',
+                    clientType: 'starter', // Nivel básico con acceso al Dashboard
+                    email: newEmail,
+                    phone: data.phone || '',
+                    active: true,
+                    createdAt: new Date(),
+                    ownerUid: user.uid
+                });
+            } else {
+                // Actualizar el cliente existente vinculado
+                await existingClients.docs[0].ref.update({
+                    email: newEmail,
+                    ownerUid: user.uid
+                });
+            }
+        } else if (data.businessId) {
+            // Si el origen era 'clients', pero tiene un businessId vinculado, le asignamos el ownerUid también al business
+            const linkedBusinessRef = db.collection('businesses').doc(data.businessId);
+            const linkedBusinessSnap = await linkedBusinessRef.get();
+            if (linkedBusinessSnap.exists) {
+                await linkedBusinessRef.update({
+                    ownerUid: user.uid,
+                    email: newEmail
+                });
+            }
+        }
 
         // Crear registro en la colección "users" para habilitar el loginCount (Max 5 accesos)
         const userRef = db.collection('users').doc(user.uid);
@@ -75,14 +110,14 @@ export async function processOrphanBusiness(clientId: string, newEmail: string) 
     }
 }
 
-export async function sendOrphanBusinessEmail(clientId: string, email: string, templateId: string, password: string = 'DiciloAcceso2026*') {
+export async function sendOrphanBusinessEmail(clientId: string, email: string, templateId: string, password: string = 'DiciloAcceso2026*', sourceCollection: string = 'clients') {
     try {
         const { getTemplate } = await import('@/actions/email-templates');
         const { sendSmtpEmail } = await import('@/lib/mail-service');
         const db = getAdminDb();
 
-        const clientRef = db.collection('clients').doc(clientId);
-        const doc = await clientRef.get();
+        const entityRef = db.collection(sourceCollection).doc(clientId);
+        const doc = await entityRef.get();
         
         if (!doc.exists) {
             return { success: false, error: 'Cliente no encontrado' };

@@ -46,27 +46,25 @@ export default function OrphanBusinessesPage() {
         const fetchOrphans = async () => {
             try {
                 const db = getFirestore(app);
-                const clientsRef = collection(db, 'clients');
                 
-                // Fetch all clients, since Firestore doesn't easily let us query "where field does not exist"
-                // We'll filter them locally. If they have over 100 it's totally fine.
-                const snap = await getDocs(clientsRef);
                 const orphanList: any[] = [];
                 const emailMap: { [key: string]: string } = {};
 
-                snap.forEach(doc => {
+                // Fetch from clients (Starter, Retailer, Premium)
+                const clientsRef = collection(db, 'clients');
+                const clientsSnap = await getDocs(clientsRef);
+                
+                clientsSnap.forEach(doc => {
                     const data = doc.data();
-                    // Identify orphans: ownerUid is missing or empty
                     if (!data.ownerUid || data.ownerUid.trim() === '') {
                         orphanList.push({
                             id: doc.id,
+                            sourceCollection: 'clients',
                             ...data
                         });
                         
-                        // Suggest an email
                         let suggestedEmail = data.email || '';
                         if (suggestedEmail.includes('@')) {
-                            // If it's something like kontakt@domain.com, replace with dicilo@
                             const domain = suggestedEmail.split('@')[1];
                             suggestedEmail = `dicilo@${domain}`;
                         }
@@ -74,11 +72,38 @@ export default function OrphanBusinessesPage() {
                     }
                 });
 
+                // Fetch from businesses (Basic entries from Recommendations)
+                const businessesRef = collection(db, 'businesses');
+                const businessesSnap = await getDocs(businessesRef);
+                
+                businessesSnap.forEach(doc => {
+                    const data = doc.data();
+                    // Identify orphans: ownerUid is missing or empty
+                    if (!data.ownerUid || data.ownerUid.trim() === '') {
+                        // Check if we didn't already capture this via a master client that has this businessId
+                        const alreadyLinked = orphanList.some(o => o.sourceCollection === 'clients' && o.businessId === doc.id);
+                        if (!alreadyLinked) {
+                            orphanList.push({
+                                id: doc.id,
+                                sourceCollection: 'businesses',
+                                ...data
+                            });
+                            
+                            let suggestedEmail = data.email || '';
+                            if (suggestedEmail.includes('@')) {
+                                const domain = suggestedEmail.split('@')[1];
+                                suggestedEmail = `dicilo@${domain}`;
+                            }
+                            emailMap[doc.id] = suggestedEmail;
+                        }
+                    }
+                });
+
                 setOrphans(orphanList);
                 setEmails(emailMap);
             } catch (err) {
                 console.error(err);
-                toast({ title: 'Error cargando clientes', variant: 'destructive' });
+                toast({ title: 'Error cargando empresas huidas', variant: 'destructive' });
             } finally {
                 setLoading(false);
             }
@@ -91,7 +116,7 @@ export default function OrphanBusinessesPage() {
         setEmails(prev => ({ ...prev, [id]: newEmail }));
     };
 
-    const handleProcess = async (clientId: string) => {
+    const handleProcess = async (clientId: string, sourceCollection: string) => {
         const targetEmail = emails[clientId];
         if (!targetEmail || !targetEmail.includes('@')) {
             toast({ title: 'Email inválido', description: 'Por favor asigna un email válido.', variant: 'destructive' });
@@ -100,7 +125,7 @@ export default function OrphanBusinessesPage() {
 
         setProcessingId(clientId);
         try {
-            const result = await processOrphanBusiness(clientId, targetEmail);
+            const result = await processOrphanBusiness(clientId, targetEmail, sourceCollection);
             if (result.success) {
                 toast({
                     title: '¡Acceso Generado!',
@@ -113,6 +138,7 @@ export default function OrphanBusinessesPage() {
                     id: clientId, 
                     email: targetEmail, 
                     password: result.credentials?.password, 
+                    sourceCollection,
                     name: orphans.find(o => o.id === clientId)?.clientName || orphans.find(o => o.id === clientId)?.name 
                 });
                 setIsEmailOpen(true);
@@ -133,7 +159,7 @@ export default function OrphanBusinessesPage() {
         if (!emailTarget || !selectedTemplate) return;
         setIsSending(true);
         try {
-            const res = await sendOrphanBusinessEmail(emailTarget.id, emailTarget.email, selectedTemplate, emailTarget.password);
+            const res = await sendOrphanBusinessEmail(emailTarget.id, emailTarget.email, selectedTemplate, emailTarget.password, emailTarget.sourceCollection);
             if (res.success) {
                 toast({ title: 'Email enviado', description: 'La campaña se ha enviado al cliente.' });
                 setIsEmailOpen(false);
@@ -192,6 +218,7 @@ export default function OrphanBusinessesPage() {
                                 <thead className="text-xs text-slate-500 uppercase bg-slate-50 border-b">
                                     <tr>
                                         <th className="px-4 py-3">Empresa</th>
+                                        <th className="px-4 py-3">Origen</th>
                                         <th className="px-4 py-3">Email Original</th>
                                         <th className="px-4 py-3">Email de Acceso (Nuevo)</th>
                                         <th className="px-4 py-3 text-right">Acción</th>
@@ -203,6 +230,10 @@ export default function OrphanBusinessesPage() {
                                             <td className="px-4 py-3 font-medium text-slate-900">
                                                 {orphan.clientName || orphan.name || 'Sin Nombre'}
                                                 <div className="text-xs text-slate-400 font-mono mt-1">{orphan.id}</div>
+                                            </td>
+                                            <td className="px-4 py-3 font-medium text-xs">
+                                                {orphan.sourceCollection === 'businesses' ? 'Basic (Business)' :
+                                                 orphan.clientType || 'Desconocido'}
                                             </td>
                                             <td className="px-4 py-3 text-slate-500">
                                                 {orphan.email || '-'}
@@ -217,7 +248,7 @@ export default function OrphanBusinessesPage() {
                                             <td className="px-4 py-3 text-right">
                                                 <Button 
                                                     disabled={processingId === orphan.id}
-                                                    onClick={() => handleProcess(orphan.id)}
+                                                    onClick={() => handleProcess(orphan.id, orphan.sourceCollection)}
                                                     className="bg-emerald-600 hover:bg-emerald-700"
                                                     size="sm"
                                                 >

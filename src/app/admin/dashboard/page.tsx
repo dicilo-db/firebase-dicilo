@@ -37,7 +37,8 @@ import {
   Globe,
   Mail,
   Ticket,
-  Settings
+  Settings,
+  ShieldAlert
 } from 'lucide-react';
 import { useAdminUser, useAuthGuard } from '@/hooks/useAuthGuard';
 import { useServerAction } from '@/hooks/useServerAction';
