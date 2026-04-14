@@ -18,34 +18,118 @@ interface PremiumRecommendationFormProps {
     clientData: ClientData;
 }
 
-const LEGAL_TRANSLATIONS: Record<string, any> = {
+const TRANSLATIONS: Record<string, any> = {
     es: {
         legal1Title: "De Acuerdo",
         legal1Text: "Al enviar esta recomendación, declara estar de acuerdo con nuestra Política de Privacidad. Nos pondremos en contacto con usted y con la persona que nos indicó a la mayor brevedad posible para aclarar los detalles de su descuento exclusivo. ¡Muchas gracias por su apoyo!",
         legal2Title: "Confirmación del Envío:",
         legal2Text: "Envío este correo electrónico de manera completamente independiente de Dicilo.net. Tomo esta decisión por cuenta propia y asumo toda la responsabilidad al respecto. Mis amigos serán informados de que los contacto por iniciativa propia.",
-        privacyLink: "Política de Privacidad"
+        privacyLink: "Política de Privacidad",
+        placeholders: {
+            name: "Juan Pérez",
+            email: "juan@ejemplo.com",
+            code: "Ingresar código",
+            select: "Por favor seleccione...",
+            product: "Ej. Audífono Modelo X",
+            msg: "¡Hola! Estuve en este negocio y me encantó. ¡Lo recomiendo totalmente!",
+            friendName: "Nombre de su amigo/a",
+            friendContact: "Email o Teléfono"
+        },
+        ui: {
+            msgDisclaimer: "Este mensaje se enviará en el correo de recomendación a sus amigos si participa en el programa.",
+            yesNews: "Sí, por favor. Quiero recibir sus boletines.",
+            noNews: "No, gracias. No quiero recibir boletines.",
+            isMember: "Soy miembro de DICILO.",
+            notMember: "No soy miembro de DICILO y quiero registrarme.",
+            noReferral: "No gracias, por el momento no",
+            yesReferral: "Con gusto invitaré a mis conocidos/amigos.",
+            friendTitle: "Amigo/a #",
+            friendNameLabel: "Nombre y Apellido del Referido",
+            friendContactLabel: "E-Mail o Whatsapp",
+            addFriendBtn: "+ Añadir otro amigo",
+            solveCaptcha: "Resolver pregunta de seguridad",
+            sending: "Enviando...",
+            submitBtn: "Enviar / Recomendar",
+            repDicilo: "Soy Representante Dicilo",
+            referralCat: "Recomendación"
+        }
     },
     en: {
         legal1Title: "I Agree",
         legal1Text: "By submitting this recommendation, you agree to our Privacy Policy. We will contact you and the person you mentioned immediately to clarify the details of your exclusive discount. Thank you for your support!",
         legal2Title: "Confirmation of Sending:",
         legal2Text: "I am sending this email completely independently of Dicilo.net. I make this decision independently and take full responsibility for it. My friends will be informed that I am contacting them on my own initiative.",
-        privacyLink: "Privacy Policy"
+        privacyLink: "Privacy Policy",
+        placeholders: {
+            name: "John Doe",
+            email: "john@example.com",
+            code: "Enter code",
+            select: "Please select...",
+            product: "E.g. Hearing Aid Model X",
+            msg: "Hi! I visited this business and I loved it. I highly recommend it!",
+            friendName: "Friend's name",
+            friendContact: "Email or Phone"
+        },
+        ui: {
+            msgDisclaimer: "This message will be sent in the recommendation email to your friends if you participate in the program.",
+            yesNews: "Yes, please. I want to receive your newsletters.",
+            noNews: "No, thanks. I do not want to receive newsletters.",
+            isMember: "I am a DICILO member.",
+            notMember: "I am not a DICILO member and want to sign up.",
+            noReferral: "No thanks, not at the moment",
+            yesReferral: "I am happy to invite my friends/acquaintances.",
+            friendTitle: "Friend #",
+            friendNameLabel: "Referred Person's Name & Surname",
+            friendContactLabel: "E-Mail or Whatsapp",
+            addFriendBtn: "+ Add another friend",
+            solveCaptcha: "Solve security question",
+            sending: "Sending...",
+            submitBtn: "Submit / Recommend",
+            repDicilo: "I am a Dicilo Representative",
+            referralCat: "Recommendation"
+        }
     },
     de: {
         legal1Title: "Einverstanden",
         legal1Text: "Indem Sie diese Empfehlung absenden, erklären Sie sich mit unserer Datenschutzerklärung einverstanden. Wir melden uns umgehend bei Ihnen und der von Ihnen genannten Person, um die Details zu Ihrem exklusiven Rabatt zu klären. Vielen Dank für Ihre Unterstützung!",
         legal2Title: "Bestätigung des Versands:",
         legal2Text: "Diese E-Mail versende ich vollkommen unabhängig von Dicilo.net. Ich treffe diese Entscheidung eigenständig und übernehme dafür die volle Verantwortung. Meine Freunde werden darüber informiert, dass ich sie aus eigener Initiative kontaktiere.",
-        privacyLink: "Datenschutzerklärung"
+        privacyLink: "Datenschutzerklärung",
+        placeholders: {
+            name: "Max Mustermann",
+            email: "max@example.com",
+            code: "Code eingeben",
+            select: "Bitte wählen...",
+            product: "Z.B. Hörgerät Modell X",
+            msg: "Hallo! Ich war bei diesem Geschäft und es hat mir super gefallen. Kann ich nur weiterempfehlen!",
+            friendName: "Name des Freundes",
+            friendContact: "Email oder Nummer"
+        },
+        ui: {
+            msgDisclaimer: "Diese Nachricht wird in der Empfehlungs-E-Mail an Ihre Freunde gesendet, falls Sie am Wachstumsprogramm teilnehmen.",
+            yesNews: "Ja, gerne. Ich möchte Ihre Newsletter erhalten.",
+            noNews: "Nein, danke. Ich möchte keine Newsletter erhalten.",
+            isMember: "Ich bin Mitglied bei DICILO.",
+            notMember: "Ich bin kein Mitglied bei DICILO und möchte mich anmelden.",
+            noReferral: "Nein danke, momentan nicht",
+            yesReferral: "Ich freue mich, meine Bekannten/Freunde einzuladen.",
+            friendTitle: "Freund #",
+            friendNameLabel: "Vorname & Nachname des Geworbenen",
+            friendContactLabel: "E-Mail oder Whatsapp",
+            addFriendBtn: "+ Weiteren Freund hinzufügen",
+            solveCaptcha: "Sicherheitsfrage lösen",
+            sending: "Wird gesendet...",
+            submitBtn: "Senden / Empfehlen",
+            repDicilo: "Bin Dicilo Repräsentant",
+            referralCat: "Empfehlung"
+        }
     }
 };
 
 export const PremiumRecommendationForm: React.FC<PremiumRecommendationFormProps> = ({ clientData }) => {
     const { t, i18n } = useTranslation('client');
     const lang = i18n.language?.split('-')[0] || 'de';
-    const l = LEGAL_TRANSLATIONS[lang] || LEGAL_TRANSLATIONS.de;
+    const l = TRANSLATIONS[lang] || TRANSLATIONS.de;
     const { toast } = useToast();
 
     // Estado principal del Formulario "Growth Engine"
@@ -211,7 +295,7 @@ export const PremiumRecommendationForm: React.FC<PremiumRecommendationFormProps>
                             <Label className="text-gray-700 font-semibold">{t('leadForm.name', 'Ihr Vorname & Nachname')} *</Label>
                             <Input
                                 className="bg-white/50 backdrop-blur-sm border-gray-200 focus:border-blue-500 rounded-xl h-12"
-                                placeholder="Max Mustermann"
+                                placeholder={l.placeholders.name}
                                 value={formData.name}
                                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                 required
@@ -222,7 +306,7 @@ export const PremiumRecommendationForm: React.FC<PremiumRecommendationFormProps>
                             <Input
                                 type="email"
                                 className="bg-white/50 backdrop-blur-sm border-gray-200 focus:border-blue-500 rounded-xl h-12"
-                                placeholder="max@example.com"
+                                placeholder={l.placeholders.email}
                                 value={formData.email}
                                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                 required
@@ -235,7 +319,7 @@ export const PremiumRecommendationForm: React.FC<PremiumRecommendationFormProps>
                             <Label className="text-gray-700 font-semibold">{t('leadForm.coupon', 'Ihr Gutschein (Optional)')}</Label>
                             <Input
                                 className="bg-white/50 backdrop-blur-sm border-gray-200 focus:border-blue-500 rounded-xl h-12"
-                                placeholder="Code eingeben"
+                                placeholder={l.placeholders.code}
                                 value={formData.gutschein}
                                 onChange={(e) => setFormData({ ...formData, gutschein: e.target.value })}
                             />
@@ -244,7 +328,7 @@ export const PremiumRecommendationForm: React.FC<PremiumRecommendationFormProps>
                             <Label className="text-gray-700 font-semibold">{t('leadForm.source', 'Wie haben Sie von uns erfahren?')}</Label>
                             <Select value={formData.fuente} onValueChange={(v) => setFormData({ ...formData, fuente: v })}>
                                 <SelectTrigger className="bg-white/50 backdrop-blur-sm border-gray-200 rounded-xl h-12">
-                                    <SelectValue placeholder="Bitte wählen..." />
+                                    <SelectValue placeholder={l.placeholders.select} />
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="Facebook">Facebook</SelectItem>
@@ -255,8 +339,8 @@ export const PremiumRecommendationForm: React.FC<PremiumRecommendationFormProps>
                                     <SelectItem value="Pinterest">Pinterest</SelectItem>
                                     <SelectItem value="Linkedin">Linkedin</SelectItem>
                                     <SelectItem value="Tik Tok">Tik Tok</SelectItem>
-                                    <SelectItem value="Empfehlung">Empfehlung</SelectItem>
-                                    <SelectItem value="Dicilo Repräsentant">Bin Dicilo Repräsentant</SelectItem>
+                                    <SelectItem value="Empfehlung">{l.ui.referralCat}</SelectItem>
+                                    <SelectItem value="Dicilo Repräsentant">{l.ui.repDicilo}</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
@@ -266,7 +350,7 @@ export const PremiumRecommendationForm: React.FC<PremiumRecommendationFormProps>
                         <Label className="text-gray-700 font-semibold">{t('leadForm.productRec', 'Welches Produkt möchten Sie empfehlen? Bitte tragen Sie es hier ein.')}</Label>
                         <Input
                             className="bg-white/50 backdrop-blur-sm border-gray-200 focus:border-blue-500 rounded-xl h-12"
-                            placeholder="Z.B. Hörgerät Modell X"
+                            placeholder={l.placeholders.product}
                             value={formData.producto_recomendado}
                             onChange={(e) => setFormData({ ...formData, producto_recomendado: e.target.value })}
                         />
@@ -276,11 +360,11 @@ export const PremiumRecommendationForm: React.FC<PremiumRecommendationFormProps>
                         <Label className="text-gray-700 font-semibold">{t('leadForm.comment', 'Ihre persönliche Nachricht an Ihre Freunde (Optional)')}</Label>
                         <textarea
                             className="w-full bg-white/50 backdrop-blur-sm border border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl p-4 min-h-[100px] shadow-sm resize-y"
-                            placeholder="Hallo! Ich war bei diesem Geschäft und es hat mir super gefallen. Kann ich nur weiterempfehlen!"
+                            placeholder={l.placeholders.msg}
                             value={formData.comment}
                             onChange={(e) => setFormData({ ...formData, comment: e.target.value })}
                         />
-                        <p className="text-xs text-gray-400">Diese Nachricht wird in der Empfehlungs-E-Mail an Ihre Freunde gesendet, falls Sie am Wachstumsprogramm teilnehmen.</p>
+                        <p className="text-xs text-gray-400">{l.ui.msgDisclaimer}</p>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -291,8 +375,8 @@ export const PremiumRecommendationForm: React.FC<PremiumRecommendationFormProps>
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="ja">Ja, gerne. Ich möchte Ihre Newsletter erhalten.</SelectItem>
-                                    <SelectItem value="nein">Nein, danke. Ich möchte keine Newsletter erhalten.</SelectItem>
+                                    <SelectItem value="ja">{l.ui.yesNews}</SelectItem>
+                                    <SelectItem value="nein">{l.ui.noNews}</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
@@ -303,8 +387,8 @@ export const PremiumRecommendationForm: React.FC<PremiumRecommendationFormProps>
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="mitglied">Ich bin Mitglied bei DICILO.</SelectItem>
-                                    <SelectItem value="kein_mitglied">Ich bin kein Mitglied bei DICILO und möchte mich anmelden.</SelectItem>
+                                    <SelectItem value="mitglied">{l.ui.isMember}</SelectItem>
+                                    <SelectItem value="kein_mitglied">{l.ui.notMember}</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
@@ -319,8 +403,8 @@ export const PremiumRecommendationForm: React.FC<PremiumRecommendationFormProps>
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="nein">Nein danke, momentan nicht</SelectItem>
-                                    <SelectItem value="ja">Ich freue mich, meine Bekannten/Freunde einzuladen.</SelectItem>
+                                    <SelectItem value="nein">{l.ui.noReferral}</SelectItem>
+                                    <SelectItem value="ja">{l.ui.yesReferral}</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
@@ -349,22 +433,22 @@ export const PremiumRecommendationForm: React.FC<PremiumRecommendationFormProps>
                                 {referrals.map((ref, index) => (
                                     <Card key={ref.id} className="border-blue-100 shadow-sm rounded-xl bg-white/80 overflow-hidden">
                                         <CardContent className="p-4 py-5 shadow-inner">
-                                            <h4 className="text-sm font-bold text-blue-800 mb-3 uppercase tracking-wider">Freund #{index + 1}</h4>
+                                            <h4 className="text-sm font-bold text-blue-800 mb-3 uppercase tracking-wider">{l.ui.friendTitle}{index + 1}</h4>
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                 <div className="space-y-1">
-                                                    <Label className="text-xs text-gray-500">Vorname & Nachname des Geworbenen</Label>
+                                                    <Label className="text-xs text-gray-500">{l.ui.friendNameLabel}</Label>
                                                     <Input
                                                         className="h-10 rounded-lg text-sm bg-gray-50 border-gray-200 focus:bg-white"
-                                                        placeholder="Name des Freundes"
+                                                        placeholder={l.placeholders.friendName}
                                                         value={ref.name}
                                                         onChange={(e) => handleReferralChange(ref.id, 'name', e.target.value)}
                                                     />
                                                 </div>
                                                 <div className="space-y-1">
-                                                    <Label className="text-xs text-gray-500">E-Mail oder Whatsapp</Label>
+                                                    <Label className="text-xs text-gray-500">{l.ui.friendContactLabel}</Label>
                                                     <Input
                                                         className="h-10 rounded-lg text-sm bg-gray-50 border-gray-200 focus:bg-white"
-                                                        placeholder="Email oder Nummer"
+                                                        placeholder={l.placeholders.friendContact}
                                                         value={ref.contact}
                                                         onChange={(e) => handleReferralChange(ref.id, 'contact', e.target.value)}
                                                     />
@@ -380,7 +464,7 @@ export const PremiumRecommendationForm: React.FC<PremiumRecommendationFormProps>
                                         onClick={handleAddReferral}
                                         className="w-full border-dashed border-2 border-blue-300 text-blue-600 bg-blue-50/50 hover:bg-blue-100/50 rounded-xl h-12"
                                     >
-                                        + Weiteren Freund hinzufügen
+                                        {l.ui.addFriendBtn}
                                     </Button>
                                 )}
                             </div>
@@ -418,7 +502,7 @@ export const PremiumRecommendationForm: React.FC<PremiumRecommendationFormProps>
                                 className="w-24 text-center text-lg font-bold border-gray-300 h-12 rounded-xl"
                                 placeholder="?"
                             />
-                            <span className="text-xs text-gray-400">Sicherheitsfrage lösen</span>
+                            <span className="text-xs text-gray-400">{l.ui.solveCaptcha}</span>
                         </div>
                     </div>
 
@@ -428,7 +512,7 @@ export const PremiumRecommendationForm: React.FC<PremiumRecommendationFormProps>
                         disabled={isSubmitting}
                         className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl h-14 font-bold text-lg shadow-xl shadow-blue-500/20 transition-all hover:scale-[1.01] active:scale-[0.99] gap-2 mt-4"
                     >
-                        {isSubmitting ? 'Wird gesendet...' : 'Senden / Empfehlen'} 
+                        {isSubmitting ? l.ui.sending : l.ui.submitBtn} 
                         <Send className="ml-2 h-5 w-5" />
                     </Button>
                 </form>
