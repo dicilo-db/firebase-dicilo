@@ -89,14 +89,14 @@ export const PremiumActionCards: React.FC<PremiumActionCardsProps> = ({ clientDa
     const activeTab = tabs.find((t) => t.id === activeTabId) || tabs[0];
 
     return (
-        <div className="rounded-[2rem] border border-gray-100 bg-white/60 backdrop-blur-3xl shadow-[0_8px_40px_rgb(0,0,0,0.04)] overflow-hidden flex flex-col h-[550px] relative">
+        <div className="rounded-[2rem] border border-gray-100 bg-white/60 backdrop-blur-3xl shadow-[0_8px_40px_rgb(0,0,0,0.04)] overflow-hidden flex flex-col min-h-[550px] md:h-[550px] relative">
             {/* Background Glows */}
             <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-400/10 rounded-full blur-[80px] pointer-events-none" />
             <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-400/10 rounded-full blur-[80px] pointer-events-none" />
 
             {/* Segmented Control Header */}
-            <div className="relative z-10 px-6 pt-6 pb-2">
-                <div className="flex overflow-x-auto bg-gray-100/80 backdrop-blur-md p-1.5 rounded-2xl scrollbar-none shadow-inner border border-white/50">
+            <div className="relative z-10 px-4 md:px-6 pt-4 md:pt-6 pb-2">
+                <div className="flex overflow-x-auto bg-gray-100/80 backdrop-blur-md p-1.5 rounded-2xl scrollbar-none shadow-inner border border-white/50 snap-x snap-mandatory hide-scrollbar">
                     {tabs.map((tab) => {
                         const isActive = activeTabId === tab.id;
                         return (
@@ -104,10 +104,10 @@ export const PremiumActionCards: React.FC<PremiumActionCardsProps> = ({ clientDa
                                 key={tab.id}
                                 onClick={() => setActiveTabId(tab.id)}
                                 className={cn(
-                                    'flex items-center gap-2 px-5 py-2.5 text-[15px] font-semibold rounded-xl transition-all duration-300 min-w-[140px] justify-center whitespace-nowrap relative',
+                                    'flex items-center gap-2 px-4 md:px-5 py-2 md:py-2.5 text-[14px] md:text-[15px] font-semibold rounded-xl transition-all duration-300 min-w-max md:min-w-[140px] justify-center whitespace-nowrap relative flex-shrink-0 snap-start',
                                     isActive
                                         ? 'text-blue-700 shadow-sm bg-white border border-gray-200/50'
-                                        : 'text-gray-500 hover:text-gray-800 hover:bg-gray-200/50 hover:scale-[1.02]'
+                                        : 'text-gray-500 hover:text-gray-800 hover:bg-gray-200/50'
                                 )}
                             >
                                 {tab.icon}
