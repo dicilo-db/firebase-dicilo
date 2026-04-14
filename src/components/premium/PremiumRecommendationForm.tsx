@@ -45,7 +45,19 @@ export const PremiumRecommendationForm: React.FC<PremiumRecommendationFormProps>
     ]);
 
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const expectedCaptcha = '17'; // 15 + 2
+    
+    // CAPTCHA Dinámico y Aleatorio
+    const [captchaConfig, setCaptchaConfig] = useState<{ a: number, b: number, expected: number } | null>(null);
+
+    React.useEffect(() => {
+        // Generar un captcha aleatorio al cargar el componente
+        const generateCaptcha = () => {
+            const a = Math.floor(Math.random() * 20) + 1; // 1 to 20
+            const b = Math.floor(Math.random() * 20) + 1; // 1 to 20
+            setCaptchaConfig({ a, b, expected: a + b });
+        };
+        generateCaptcha();
+    }, []);
 
     const handleAddReferral = () => {
         if (referrals.length < 5) {
@@ -66,7 +78,7 @@ export const PremiumRecommendationForm: React.FC<PremiumRecommendationFormProps>
             return;
         }
 
-        if (formData.captcha.trim() !== expectedCaptcha) {
+        if (!captchaConfig || parseInt(formData.captcha.trim()) !== captchaConfig.expected) {
             toast({ title: t('form.errorCaptcha', 'Incorrect CAPTCHA answer.'), variant: 'destructive' });
             return;
         }
@@ -117,6 +129,11 @@ export const PremiumRecommendationForm: React.FC<PremiumRecommendationFormProps>
                 bestatigung_versand: false, mitglied_status: 'mitglied', captcha: ''
             });
             setReferrals([{ id: 1, name: '', contact: '' }]);
+            
+            // Regenerate captcha for next time
+            const a = Math.floor(Math.random() * 20) + 1;
+            const b = Math.floor(Math.random() * 20) + 1;
+            setCaptchaConfig({ a, b, expected: a + b });
 
         } catch (error) {
             console.error('Error submitting form:', error);
@@ -371,7 +388,9 @@ export const PremiumRecommendationForm: React.FC<PremiumRecommendationFormProps>
                         </div>
 
                         <div className="flex items-center gap-4 bg-gray-50 p-4 rounded-xl border border-gray-100">
-                            <Label className="whitespace-nowrap font-bold text-xl text-gray-700 tracking-wider">15 + 2 =</Label>
+                            <Label className="whitespace-nowrap font-bold text-xl text-gray-700 tracking-wider">
+                                {captchaConfig ? `${captchaConfig.a} + ${captchaConfig.b} =` : '... + ... ='}
+                            </Label>
                             <Input
                                 type="number"
                                 required
