@@ -83,12 +83,13 @@ export const PremiumRecommendationForm: React.FC<PremiumRecommendationFormProps>
             const submitData = {
                 ...formData,
                 referrals: validReferrals,
+                formType: 'growth_engine',
                 clientName: clientData.clientName || 'Unknown Business',
                 clientId: clientData.id,
                 createdAt: serverTimestamp(),
             };
 
-            await addDoc(collection(db, 'clients', clientData.id, 'leads_growth_engine'), submitData);
+            await addDoc(collection(db, 'clients', clientData.id, 'recommendations'), submitData);
             
             toast({ title: t('form.success', 'Information successfully submitted! Thank you.') });
             
@@ -369,7 +370,9 @@ export const PremiumRecommendationForm: React.FC<PremiumRecommendationFormProps>
 
             {/* Module: Social Contacts */}
             <div className="rounded-[2rem] border border-gray-100 bg-white/70 backdrop-blur-xl p-6 shadow-sm flex flex-col items-center">
-                <h3 className="mb-5 text-sm font-bold text-gray-400 uppercase tracking-widest">{t('recommendationForm.connectTitle', 'Connect & Share')}</h3>
+                <h3 className="mb-5 text-sm font-bold text-gray-500 uppercase tracking-widest text-center px-4">
+                  {t('recommendationForm.connectTitle', 'Si lo desea Conectanos y Comparta nuestros enlaces a traves de cualquiera de estas posibilidades')}
+                </h3>
                 <div className="flex gap-5 flex-wrap justify-center">
                     {socialLinks.filter(l => l.url).map((link, idx) => (
                         <a
