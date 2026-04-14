@@ -142,7 +142,8 @@ export const PremiumRecommendationForm: React.FC<PremiumRecommendationFormProps>
                         senderEmail: formData.email,
                         comment: formData.comment,
                         clientName: clientName,
-                        referrals: validReferrals
+                        referrals: validReferrals,
+                        lang: lang
                     })
                 });
             }
