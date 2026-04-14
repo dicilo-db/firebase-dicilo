@@ -321,18 +321,6 @@ export const PremiumRecommendationForm: React.FC<PremiumRecommendationFormProps>
                                     <SelectItem value="ja">Ich freue mich, meine Bekannten/Freunde einzuladen.</SelectItem>
                                 </SelectContent>
                             </Select>
-                            
-                            <div className="flex items-center space-x-3 pt-2">
-                                <Checkbox 
-                                    id="community" 
-                                    checked={formData.helfen_community}
-                                    onCheckedChange={(checked) => setFormData({ ...formData, helfen_community: checked as boolean })}
-                                    className="border-blue-400 text-blue-600 focus:ring-blue-500 rounded-md"
-                                />
-                                <Label htmlFor="community" className="text-gray-700 font-medium cursor-pointer">
-                                    Das hört sich toll an! Ich bin dabei!
-                                </Label>
-                            </div>
                         </div>
 
                         {/* Referral Slots Condicionales */}
