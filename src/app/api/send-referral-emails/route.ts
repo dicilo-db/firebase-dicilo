@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getAdminDb } from '@/lib/firebase-admin';
-import { Resend } from 'resend';
+import { sendSmtpEmail } from '@/lib/mail-service';
 
 export async function POST(req: Request) {
     try {
@@ -11,15 +11,13 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
         }
 
-        const resend = new Resend(process.env.RESEND_API_KEY!);
-
         const emailPromises = referrals.map(async (ref: { name: string; contact: string }) => {
             // Unicamente enviamos si nos dieron un email valido (contiene @)
-            if (!ref.contact || !ref.contact.includes('@')) return;
+            if (!ref.contact || !ref.contact.includes('@')) return { success: false, reason: 'Invalid Email' };
 
-            return resend.emails.send({
+            return sendSmtpEmail({
                 from: 'Dicilo Empfehlung <info@dicilo.net>',
-                to: [ref.contact],
+                to: ref.contact,
                 subject: `${senderName} hat dir ${clientName} empfohlen!`,
                 html: `
                     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
@@ -54,9 +52,16 @@ export async function POST(req: Request) {
             });
         });
 
-        await Promise.all(emailPromises);
+        const results = await Promise.all(emailPromises);
+        
+        // Log potential errors
+        for (const res of results) {
+            if (res && res.success === false) {
+                console.error('SMTP Mail Failed:', res.error);
+            }
+        }
 
-        return NextResponse.json({ success: true });
+        return NextResponse.json({ success: true, results });
     } catch (error: any) {
         console.error('Error sending referral APIs:', error);
         return NextResponse.json({ error: error.message }, { status: 500 });
