@@ -51,7 +51,8 @@ const TRANSLATIONS: Record<string, any> = {
             sending: "Enviando...",
             submitBtn: "Enviar / Recomendar",
             repDicilo: "Soy Representante Dicilo",
-            referralCat: "Recomendación"
+            referralCat: "Recomendación",
+            connectTitle: "Si lo desea Conéctenos y Comparta nuestros enlaces a través de cualquiera de estas posibilidades"
         }
     },
     en: {
@@ -86,7 +87,8 @@ const TRANSLATIONS: Record<string, any> = {
             sending: "Sending...",
             submitBtn: "Submit / Recommend",
             repDicilo: "I am a Dicilo Representative",
-            referralCat: "Recommendation"
+            referralCat: "Recommendation",
+            connectTitle: "If you wish, connect with us and share our links via any of these possibilities"
         }
     },
     de: {
@@ -121,7 +123,8 @@ const TRANSLATIONS: Record<string, any> = {
             sending: "Wird gesendet...",
             submitBtn: "Senden / Empfehlen",
             repDicilo: "Bin Dicilo Repräsentant",
-            referralCat: "Empfehlung"
+            referralCat: "Empfehlung",
+            connectTitle: "Wenn Sie möchten, verbinden Sie sich mit uns und teilen Sie unsere Links über eine dieser Möglichkeiten"
         }
     }
 };
@@ -521,7 +524,7 @@ export const PremiumRecommendationForm: React.FC<PremiumRecommendationFormProps>
             {/* Module: Social Contacts */}
             <div className="rounded-[2rem] border border-gray-100 bg-white/70 backdrop-blur-xl p-6 shadow-sm flex flex-col items-center">
                 <h3 className="mb-5 text-sm font-bold text-gray-500 uppercase tracking-widest text-center px-4">
-                  {t('recommendationForm.connectTitle', 'Si lo desea Conectanos y Comparta nuestros enlaces a traves de cualquiera de estas posibilidades')}
+                  {l.ui.connectTitle}
                 </h3>
                 <div className="flex gap-5 flex-wrap justify-center">
                     {socialLinks.filter(l => l.url).map((link, idx) => (
