@@ -29,6 +29,7 @@ export const PremiumRecommendationForm: React.FC<PremiumRecommendationFormProps>
         gutschein: '',
         newsletter: 'ja',
         producto_recomendado: '',
+        comment: '',
         fuente: '',
         weiterempfehlen: 'nein',
         helfen_community: false,
@@ -79,23 +80,39 @@ export const PremiumRecommendationForm: React.FC<PremiumRecommendationFormProps>
         try {
             const db = getFirestore(app);
             const validReferrals = formData.weiterempfehlen === 'ja' ? referrals.filter(r => r.name && r.contact) : [];
+            const clientName = clientData.clientName || 'Unknown Business';
 
             const submitData = {
                 ...formData,
                 referrals: validReferrals,
                 formType: 'growth_engine',
-                clientName: clientData.clientName || 'Unknown Business',
+                clientName: clientName,
                 clientId: clientData.id,
                 createdAt: serverTimestamp(),
             };
 
             await addDoc(collection(db, 'clients', clientData.id, 'recommendations'), submitData);
             
+            // Send emails to the referrals if applicable
+            if (validReferrals.length > 0) {
+                await fetch('/api/send-referral-emails', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        senderName: formData.name,
+                        senderEmail: formData.email,
+                        comment: formData.comment,
+                        clientName: clientName,
+                        referrals: validReferrals
+                    })
+                });
+            }
+            
             toast({ title: t('form.success', 'Information successfully submitted! Thank you.') });
             
             // Reset
             setFormData({
-                name: '', email: '', gutschein: '', newsletter: 'ja', producto_recomendado: '',
+                name: '', email: '', gutschein: '', newsletter: 'ja', producto_recomendado: '', comment: '',
                 fuente: '', weiterempfehlen: 'nein', helfen_community: false, datenschutz: false,
                 bestatigung_versand: false, mitglied_status: 'mitglied', captcha: ''
             });
@@ -200,7 +217,7 @@ export const PremiumRecommendationForm: React.FC<PremiumRecommendationFormProps>
                         </div>
                     </div>
 
-                    <div className="space-y-2">
+                    <div className="space-y-3">
                         <Label className="text-gray-700 font-semibold">{t('leadForm.productRec', 'Welches Produkt möchten Sie empfehlen? Bitte tragen Sie es hier ein.')}</Label>
                         <Input
                             className="bg-white/50 backdrop-blur-sm border-gray-200 focus:border-blue-500 rounded-xl h-12"
@@ -208,6 +225,17 @@ export const PremiumRecommendationForm: React.FC<PremiumRecommendationFormProps>
                             value={formData.producto_recomendado}
                             onChange={(e) => setFormData({ ...formData, producto_recomendado: e.target.value })}
                         />
+                    </div>
+
+                    <div className="space-y-3">
+                        <Label className="text-gray-700 font-semibold">{t('leadForm.comment', 'Ihre persönliche Nachricht an Ihre Freunde (Optional)')}</Label>
+                        <textarea
+                            className="w-full bg-white/50 backdrop-blur-sm border border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl p-4 min-h-[100px] shadow-sm resize-y"
+                            placeholder="Hallo! Ich war bei diesem Geschäft und es hat mir super gefallen. Kann ich nur weiterempfehlen!"
+                            value={formData.comment}
+                            onChange={(e) => setFormData({ ...formData, comment: e.target.value })}
+                        />
+                        <p className="text-xs text-gray-400">Diese Nachricht wird in der Empfehlungs-E-Mail an Ihre Freunde gesendet, falls Sie am Wachstumsprogramm teilnehmen.</p>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
