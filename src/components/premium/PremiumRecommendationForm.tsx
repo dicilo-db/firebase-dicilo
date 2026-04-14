@@ -18,8 +18,34 @@ interface PremiumRecommendationFormProps {
     clientData: ClientData;
 }
 
+const LEGAL_TRANSLATIONS: Record<string, any> = {
+    es: {
+        legal1Title: "De Acuerdo",
+        legal1Text: "Al enviar esta recomendación, declara estar de acuerdo con nuestra Política de Privacidad. Nos pondremos en contacto con usted y con la persona que nos indicó a la mayor brevedad posible para aclarar los detalles de su descuento exclusivo. ¡Muchas gracias por su apoyo!",
+        legal2Title: "Confirmación del Envío:",
+        legal2Text: "Envío este correo electrónico de manera completamente independiente de Dicilo.net. Tomo esta decisión por cuenta propia y asumo toda la responsabilidad al respecto. Mis amigos serán informados de que los contacto por iniciativa propia.",
+        privacyLink: "Política de Privacidad"
+    },
+    en: {
+        legal1Title: "I Agree",
+        legal1Text: "By submitting this recommendation, you agree to our Privacy Policy. We will contact you and the person you mentioned immediately to clarify the details of your exclusive discount. Thank you for your support!",
+        legal2Title: "Confirmation of Sending:",
+        legal2Text: "I am sending this email completely independently of Dicilo.net. I make this decision independently and take full responsibility for it. My friends will be informed that I am contacting them on my own initiative.",
+        privacyLink: "Privacy Policy"
+    },
+    de: {
+        legal1Title: "Einverstanden",
+        legal1Text: "Indem Sie diese Empfehlung absenden, erklären Sie sich mit unserer Datenschutzerklärung einverstanden. Wir melden uns umgehend bei Ihnen und der von Ihnen genannten Person, um die Details zu Ihrem exklusiven Rabatt zu klären. Vielen Dank für Ihre Unterstützung!",
+        legal2Title: "Bestätigung des Versands:",
+        legal2Text: "Diese E-Mail versende ich vollkommen unabhängig von Dicilo.net. Ich treffe diese Entscheidung eigenständig und übernehme dafür die volle Verantwortung. Meine Freunde werden darüber informiert, dass ich sie aus eigener Initiative kontaktiere.",
+        privacyLink: "Datenschutzerklärung"
+    }
+};
+
 export const PremiumRecommendationForm: React.FC<PremiumRecommendationFormProps> = ({ clientData }) => {
-    const { t } = useTranslation('client');
+    const { t, i18n } = useTranslation('client');
+    const lang = i18n.language?.split('-')[0] || 'de';
+    const l = LEGAL_TRANSLATIONS[lang] || LEGAL_TRANSLATIONS.de;
     const { toast } = useToast();
 
     // Estado principal del Formulario "Growth Engine"
@@ -315,7 +341,7 @@ export const PremiumRecommendationForm: React.FC<PremiumRecommendationFormProps>
                                 <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-xl mb-4 text-sm text-yellow-800 flex gap-3 items-start">
                                     <ShieldCheck className="w-5 h-5 flex-shrink-0 text-yellow-600 mt-0.5" />
                                     <div>
-                                        <strong>{t('leadForm.legalConfirmTitle', 'Bestätigung des Versands')} *</strong><br/>
+                                        <strong>{l.legal2Title} *</strong><br/>
                                         <label className="flex items-start gap-2 mt-2 cursor-pointer">
                                             <Checkbox 
                                                 checked={formData.bestatigung_versand}
@@ -324,7 +350,7 @@ export const PremiumRecommendationForm: React.FC<PremiumRecommendationFormProps>
                                                 required
                                             />
                                             <span className="text-xs leading-tight">
-                                                Diese E-Mail versende ich vollkommen unabhängig von Dicilo.net. Ich treffe diese Entscheidung eigenständig und versichere, dass die Empfänger dem Erhalt zustimmen.
+                                                {l.legal2Text}
                                             </span>
                                         </label>
                                     </div>
@@ -382,8 +408,11 @@ export const PremiumRecommendationForm: React.FC<PremiumRecommendationFormProps>
                                 required
                             />
                             <Label htmlFor="datenschutz" className="text-sm text-gray-600 leading-relaxed cursor-pointer font-normal">
-                                <strong>Einverstanden *</strong><br/>
-                                Indem Sie diese Empfehlung absenden, erklären Sie sich mit unserer Datenschutzerklärung einverstanden und willigen in die Verarbeitung Ihrer Daten ein.
+                                <strong>{l.legal1Title} *</strong><br/>
+                                {l.legal1Text}{' '}
+                                <a href="https://dicilo.net/datenschutz" target="_blank" rel="noreferrer" className="text-blue-600 hover:text-blue-800 underline">
+                                    ({l.privacyLink})
+                                </a>
                             </Label>
                         </div>
 
