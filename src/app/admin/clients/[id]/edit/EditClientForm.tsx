@@ -47,6 +47,7 @@ import {
   ArrowDown,
   Eye,
   EyeOff,
+  UserPlus
 } from 'lucide-react';
 // ... existing imports ...
 
@@ -2937,10 +2938,17 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                   <CardDescription>
                     Configure contact form settings.
                   </CardDescription>
-                  <Alert>
-                    <AlertTitle>Not Implemented Yet</AlertTitle>
-                    <AlertDescription>
-                      This section will allow you to configure custom fields for the contact form.
+                  <Alert className="bg-blue-50 border-blue-200">
+                    <UserPlus className="h-4 w-4 text-blue-600" />
+                    <AlertTitle className="text-blue-800">Growth Engine (Viral Form) is Active</AlertTitle>
+                    <AlertDescription className="text-blue-700 mt-2">
+                      <p>
+                        This client is currently using the <strong>Dicilo Growth Engine</strong> form on their public profile. 
+                        This form automatically captures leads, referrals (up to 5 friends), tracks traffic sources, captures Gutscheins (coupons), and ensures GDPR compliance.
+                      </p>
+                      <p className="mt-2 text-sm italic">
+                        Note: Custom field configuration via this editor is temporarily disabled as the Premium layout guarantees the strongest lead generation flow. Custom form builders will be added in future updates.
+                      </p>
                     </AlertDescription>
                   </Alert>
                 </TabsContent>
