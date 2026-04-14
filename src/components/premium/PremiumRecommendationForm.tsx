@@ -126,6 +126,7 @@ export const PremiumRecommendationForm: React.FC<PremiumRecommendationFormProps>
                 formType: 'growth_engine',
                 clientName: clientName,
                 clientId: clientData.id,
+                country: clientData.country || 'Deutschland',
                 createdAt: serverTimestamp(),
             };
 
