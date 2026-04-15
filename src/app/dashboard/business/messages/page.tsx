@@ -28,17 +28,18 @@ interface BusinessMessage {
 
 export default function MessagesPage() {
     const { t } = useTranslation('common');
-    const { businessId, plan, isLoading } = useBusinessAccess();
+    const { businessId, clientId, plan, isLoading } = useBusinessAccess();
+    const activeId = businessId || clientId;
     const { toast } = useToast();
     const [messages, setMessages] = useState<BusinessMessage[]>([]);
     const [loadingData, setLoadingData] = useState(false);
 
     useEffect(() => {
         async function fetchMessages() {
-            if (!businessId) return;
+            if (!activeId) return;
             setLoadingData(true);
             try {
-                const q = query(collection(db, 'business_messages'), where('businessId', '==', businessId), orderBy('createdAt', 'desc'));
+                const q = query(collection(db, 'business_messages'), where('businessId', '==', activeId), orderBy('createdAt', 'desc'));
                 const snap = await getDocs(q);
                 const msgs = snap.docs.map(doc => ({ id: doc.id, ...doc.data() } as BusinessMessage));
                 setMessages(msgs);
@@ -48,10 +49,10 @@ export default function MessagesPage() {
                 setLoadingData(false);
             }
         }
-        if (!isLoading && businessId) {
+        if (!isLoading && activeId) {
             fetchMessages();
         }
-    }, [businessId, isLoading]);
+    }, [activeId, isLoading]);
 
     const markAsRead = async (id: string, currentStatus: boolean) => {
         if (currentStatus) return;
@@ -84,7 +85,7 @@ export default function MessagesPage() {
         );
     }
 
-    if (plan === 'basic' || !businessId) {
+    if (plan === 'basic' || !activeId) {
         return (
             <div className="p-8 max-w-6xl mx-auto space-y-8">
                 <div className="bg-amber-50 border border-amber-200 text-amber-800 p-4 rounded-lg flex items-start gap-4 text-sm font-medium mt-6">

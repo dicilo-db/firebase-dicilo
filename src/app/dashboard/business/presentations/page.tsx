@@ -10,10 +10,10 @@ export default function PresentationsVipPage() {
                     <div>
                         <h1 className="text-3xl font-extrabold flex items-center gap-3">
                             <Video className="w-8 h-8" />
-                            6 Presentaciones Online
+                            Webinars y Demostraciones
                         </h1>
                         <p className="mt-3 text-red-100 max-w-xl text-lg">
-                            Reúnete en vivo con el equipo experto de Dicilo para presentar tus productos, recibir mentorías de ventas y trazar estrategias anuales.
+                            Haz presentaciones en vivo de tus productos o servicios. Reúnete directamente con tus prospectos de Dicilo y construye tu propia red de clientes leales (Netzwerk).
                         </p>
                     </div>
                 </div>
@@ -25,9 +25,9 @@ export default function PresentationsVipPage() {
                         <CalendarDays className="w-6 h-6 text-red-600" />
                     </div>
                     <div>
-                        <h3 className="font-bold text-slate-800 text-lg mb-1">Agendar Presentación</h3>
+                        <h3 className="font-bold text-slate-800 text-lg mb-1">Agendar Transmisión</h3>
                         <p className="text-slate-500 text-sm">
-                            Consulta la disponibilidad del equipo y reserva una de tus 6 sesiones garantizadas anuales.
+                            Programa una fecha para tu próxima presentación y nosotros notificaremos a tu audiencia y prospectos interesados en tu categoría.
                         </p>
                     </div>
                 </div>
@@ -36,9 +36,9 @@ export default function PresentationsVipPage() {
                         <Projector className="w-6 h-6 text-orange-600" />
                     </div>
                     <div>
-                        <h3 className="font-bold text-slate-800 text-lg mb-1">Sala de Reunión Privada</h3>
+                        <h3 className="font-bold text-slate-800 text-lg mb-1">Sala en Vivo y Networking</h3>
                         <p className="text-slate-500 text-sm">
-                            El link de Microsoft Teams o Google Meet se autogenerará aquí cuando la sesión se confirme.
+                            Tu link de videoconferencia se mostrará aquí. Únete, haz demostraciones de tus productos, responde preguntas en tiempo real y cierra negocios al instante.
                         </p>
                     </div>
                 </div>

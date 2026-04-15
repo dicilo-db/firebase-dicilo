@@ -40,7 +40,8 @@ interface CampaignData {
 
 export default function CampaignsPage() {
     const { t } = useTranslation('common');
-    const { businessId, plan, name, isLoading } = useBusinessAccess();
+    const { businessId, clientId, plan, name, isLoading } = useBusinessAccess();
+    const activeId = businessId || clientId;
     const { toast } = useToast();
     
     const [campaigns, setCampaigns] = useState<CampaignData[]>([]);
@@ -52,12 +53,12 @@ export default function CampaignsPage() {
 
     useEffect(() => {
         async function fetchCampaigns() {
-            if (!businessId) return;
+            if (!activeId) return;
             setLoadingData(true);
             try {
                 const q = query(
                     collection(db, 'campaigns'), 
-                    where('clientId', '==', businessId)
+                    where('clientId', '==', activeId)
                 );
                 const snap = await getDocs(q);
                 const results: CampaignData[] = [];
@@ -82,10 +83,10 @@ export default function CampaignsPage() {
                 setLoadingData(false);
             }
         }
-        if (!isLoading && businessId) {
+        if (!isLoading && activeId) {
             fetchCampaigns();
         }
-    }, [businessId, isLoading]);
+    }, [activeId, isLoading]);
 
     const handleSendRequest = async () => {
         if (!requestData.goal || !requestData.budget) {
@@ -95,7 +96,7 @@ export default function CampaignsPage() {
         setSendingRequest(true);
         try {
             await addDoc(collection(db, 'campaign_requests'), {
-                clientId: businessId,
+                clientId: activeId,
                 clientName: name,
                 goal: requestData.goal,
                 budget: requestData.budget,
@@ -123,7 +124,7 @@ export default function CampaignsPage() {
         );
     }
 
-    if (plan === 'basic' || !businessId) {
+    if (plan === 'basic' || !activeId) {
         return (
             <div className="p-8 max-w-6xl mx-auto space-y-8">
                 <div className="bg-amber-50 border border-amber-200 text-amber-800 p-4 rounded-lg flex items-start gap-4 text-sm font-medium mt-6">

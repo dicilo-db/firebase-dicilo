@@ -21,6 +21,12 @@ const nextConfig = {
       asyncWebAssembly: true,
     };
 
+    // Alias global para evitar que Konva cause problemas con 'canvas' nativo
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      canvas: false,
+    };
+
     // Ignore Node.js built-in modules on the client side
     if (!isServer) {
       config.resolve.fallback = {
@@ -32,6 +38,7 @@ const nextConfig = {
         dns: false,
         os: false,
         http2: false,
+        canvas: false,
         'node:events': false,
         'node:util': false,
         'node:path': false,

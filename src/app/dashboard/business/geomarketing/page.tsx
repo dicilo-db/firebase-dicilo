@@ -27,7 +27,8 @@ interface GeoConfig {
 
 export default function GeomarketingPage() {
     const { t } = useTranslation('common');
-    const { businessId, plan, isLoading } = useBusinessAccess();
+    const { businessId, clientId, plan, isLoading } = useBusinessAccess();
+    const activeId = businessId || clientId;
     const { toast } = useToast();
     
     const [config, setConfig] = useState<GeoConfig>({
@@ -41,12 +42,12 @@ export default function GeomarketingPage() {
     const [loadingData, setLoadingData] = useState(true);
 
     useEffect(() => {
-        if (!businessId) return;
+        if (!activeId) return;
 
         const fetchData = async () => {
             setLoadingData(true);
             try {
-                const docRef = doc(db, 'clients', businessId);
+                const docRef = doc(db, 'clients', activeId);
                 const snap = await getDoc(docRef);
                 if (snap.exists() && snap.data().geomarketingConfig) {
                     setConfig(snap.data().geomarketingConfig);
@@ -60,13 +61,13 @@ export default function GeomarketingPage() {
         };
 
         fetchData();
-    }, [businessId, toast]);
+    }, [activeId, toast]);
 
     const handleSaveConfig = async () => {
-        if (!businessId) return;
+        if (!activeId) return;
         setSaving(true);
         try {
-            const docRef = doc(db, 'clients', businessId);
+            const docRef = doc(db, 'clients', activeId);
             await updateDoc(docRef, { geomarketingConfig: config });
             toast({ title: 'Configuración Espacial Guardada' });
         } catch (e) {
@@ -86,7 +87,7 @@ export default function GeomarketingPage() {
         );
     }
 
-    if (plan === 'basic' || plan === 'starter' || !businessId) {
+    if (plan === 'basic' || plan === 'starter' || !activeId) {
         return (
             <div className="p-8 max-w-6xl mx-auto space-y-8 animate-in fade-in duration-500">
                 <div className="bg-amber-50 border border-amber-200 text-amber-800 p-4 rounded-lg flex items-start gap-4 text-sm font-medium mt-6">

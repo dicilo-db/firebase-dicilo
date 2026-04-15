@@ -28,6 +28,7 @@ interface ClientProductManagerProps {
 
 export function ClientProductManager({ companyId }: ClientProductManagerProps) {
     const { toast } = useToast();
+    const { t } = useTranslation(['admin', 'common']);
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);

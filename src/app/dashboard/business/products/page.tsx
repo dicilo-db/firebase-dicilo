@@ -6,7 +6,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { ClientProductManager } from '@/components/dashboard/ClientProductManager';
 
 export default function ProductsPage() {
-    const { businessId, plan, isLoading } = useBusinessAccess();
+    const { businessId, clientId, plan, isLoading } = useBusinessAccess();
+    const activeId = businessId || clientId;
 
     if (isLoading) {
         return (
@@ -17,7 +18,7 @@ export default function ProductsPage() {
         );
     }
 
-    if (plan === 'basic' || !businessId) {
+    if (plan === 'basic' || !activeId) {
         return (
             <div className="p-8 max-w-6xl mx-auto space-y-8">
                 <div className="bg-amber-50 border border-amber-200 text-amber-800 p-4 rounded-lg flex items-start gap-4 text-sm font-medium mt-6">
@@ -38,7 +39,7 @@ export default function ProductsPage() {
             </div>
 
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                <ClientProductManager companyId={businessId} />
+                <ClientProductManager companyId={activeId as string} />
             </div>
         </div>
     );

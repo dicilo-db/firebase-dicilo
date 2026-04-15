@@ -23,6 +23,7 @@ interface BotConfig {
     botName: string;
     greetingMessage: string;
     systemPrompt: string;
+    avatarUrl?: string;
 }
 
 interface KnowledgeFile {
@@ -36,14 +37,16 @@ interface KnowledgeFile {
 
 export default function ChatbotPage() {
     const { t } = useTranslation('common');
-    const { businessId, plan, isLoading } = useBusinessAccess();
+    const { businessId, clientId, plan, isLoading } = useBusinessAccess();
+    const activeId = businessId || clientId;
     const { toast } = useToast();
     
     const [config, setConfig] = useState<BotConfig>({
         isActive: false,
         botName: 'Asistente Virtual',
         greetingMessage: '¡Hola! ¿En qué puedo ayudarte hoy?',
-        systemPrompt: ''
+        systemPrompt: '',
+        avatarUrl: ''
     });
     const [saving, setSaving] = useState(false);
     const [loadingData, setLoadingData] = useState(true);
@@ -52,13 +55,13 @@ export default function ChatbotPage() {
     const [uploading, setUploading] = useState(false);
 
     useEffect(() => {
-        if (!businessId) return;
+        if (!activeId) return;
 
         const fetchData = async () => {
             setLoadingData(true);
             try {
                 // Fetch Config
-                const docRef = doc(db, 'clients', businessId);
+                const docRef = doc(db, 'clients', activeId);
                 const snap = await getDoc(docRef);
                 if (snap.exists()) {
                     const data = snap.data();
@@ -70,7 +73,7 @@ export default function ChatbotPage() {
                 // Fetch Knowledge Files
                 const q = query(
                     collection(db, 'ai_knowledge_files'), 
-                    where('clientId', '==', businessId)
+                    where('clientId', '==', activeId)
                 );
                 const fileSnap = await getDocs(q);
                 const fList: KnowledgeFile[] = [];
@@ -88,13 +91,13 @@ export default function ChatbotPage() {
         };
 
         fetchData();
-    }, [businessId, toast]);
+    }, [activeId, toast]);
 
     const handleSaveConfig = async () => {
-        if (!businessId) return;
+        if (!activeId) return;
         setSaving(true);
         try {
-            const docRef = doc(db, 'clients', businessId);
+            const docRef = doc(db, 'clients', activeId);
             await updateDoc(docRef, { chatbotConfig: config });
             toast({ title: 'Configuración guardada' });
         } catch (e) {
@@ -107,7 +110,7 @@ export default function ChatbotPage() {
 
     const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
-        if (!file || !businessId) return;
+        if (!file || !activeId) return;
         
         if (file.type !== 'application/pdf') {
             toast({ title: 'Formato inválido', description: 'Por favor, sube un archivo PDF.', variant: 'destructive' });
@@ -122,7 +125,7 @@ export default function ChatbotPage() {
         setUploading(true);
         try {
             const fileId = Date.now().toString();
-            const storagePath = `clients/${businessId}/knowledge/${fileId}_${file.name}`;
+            const storagePath = `clients/${activeId}/knowledge/${fileId}_${file.name}`;
             const storageRef = ref(storage, storagePath);
 
             const uploadTask = await uploadBytesResumable(storageRef, file);
@@ -130,7 +133,7 @@ export default function ChatbotPage() {
 
             // Record in firestore
             const fileData = {
-                clientId: businessId,
+                clientId: activeId,
                 fileName: file.name,
                 url: downloadUrl,
                 storagePath: storagePath,
@@ -189,7 +192,7 @@ export default function ChatbotPage() {
         );
     }
 
-    if (plan === 'basic' || plan === 'starter' || !businessId) {
+    if (plan === 'basic' || plan === 'starter' || !activeId) {
         return (
             <div className="p-8 max-w-5xl animate-in fade-in duration-500">
                 <div className="bg-amber-50 border border-amber-200 text-amber-800 p-4 rounded-lg flex items-start gap-4 text-sm font-medium mt-6">
@@ -252,7 +255,16 @@ export default function ChatbotPage() {
                                         onChange={e => setConfig({...config, greetingMessage: e.target.value})}
                                         placeholder="¡Hola! Soy Juan, ¿tienes hambre?"
                                     />
-                                    <p className="text-xs text-slate-500">Este mensaje aparecerá cuando el cliente abra el chat.</p>
+                                    <p className="text-xs text-slate-500">Este mensaje aparecerá cuando o cliente abra el chat.</p>
+                                </div>
+                                <div className="space-y-2">
+                                    <Label>URL del Avatar (Opcional)</Label>
+                                    <Input 
+                                        value={config.avatarUrl || ''} 
+                                        onChange={e => setConfig({...config, avatarUrl: e.target.value})}
+                                        placeholder="https://tulogo.com/robot.png"
+                                    />
+                                    <p className="text-xs text-slate-500">Puedes colocar una imagen que actuará como rostro de tu I.A.</p>
                                 </div>
                                 <div className="space-y-2">
                                     <Label>{t('business.chatbot.prompt', 'Instrucciones Centrales (Prompt)')}</Label>
