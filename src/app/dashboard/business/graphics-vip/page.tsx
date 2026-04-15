@@ -5,6 +5,7 @@ import { ImagePlus, Sparkles, Upload, Image as ImageIcon, Download } from 'lucid
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
+import { useTranslation } from 'react-i18next';
 import dynamic from 'next/dynamic';
 
 // Carga dinámica exclusiva en el cliente porque el canvas requiere interactuar con el DOM
@@ -14,6 +15,7 @@ const FilerobotImageEditor = dynamic(
 );
 
 export default function GraphicsVipPage() {
+    const { t } = useTranslation('common');
     const { toast } = useToast();
     const [isEditorOpen, setIsEditorOpen] = useState(false);
     const [sourceImage, setSourceImage] = useState<string | null>(null);
@@ -24,7 +26,7 @@ export default function GraphicsVipPage() {
 
         // Limitar tamaño por seguridad del navegador
         if (file.size > 8 * 1024 * 1024) {
-            toast({ title: 'Archivo muy grande', description: 'Por favor usa una imagen menor a 8MB', variant: 'destructive' });
+            toast({ title: t('business.graphicsVip.fileTooLargeTitle', 'Archivo muy grande'), description: t('business.graphicsVip.fileTooLargeDesc', 'Por favor usa una imagen menor a 8MB'), variant: 'destructive' });
             return;
         }
 
@@ -44,7 +46,7 @@ export default function GraphicsVipPage() {
         const finalImageBase64 = editedImageObject.imageBase64;
         
         // Aquí conectaremos luego la subida a Firebase Storage
-        toast({ title: '¡Edición Exitosa!', description: 'La imagen fue procesada por el Estudio Mágico.' });
+        toast({ title: t('business.graphicsVip.editSuccessTitle', '¡Edición Exitosa!'), description: t('business.graphicsVip.editSuccessDesc', 'La imagen fue procesada por el Estudio Mágico.') });
         
         // Cierra el editor para volver al panel
         setIsEditorOpen(false);
@@ -58,10 +60,10 @@ export default function GraphicsVipPage() {
                     <div>
                         <h1 className="text-3xl font-extrabold flex items-center gap-3">
                             <ImagePlus className="w-8 h-8" />
-                            Estudio Gráfico Avanzado VIP
+                            {t('business.graphicsVip.title', 'Estudio Gráfico Avanzado VIP')}
                         </h1>
                         <p className="mt-3 text-amber-100 max-w-xl text-lg">
-                            Servicio exclusivo Premium. Edita, recorta, aplica filtros y pon tu marca de agua al instante con nuestro motor nativo avanzado.
+                            {t('business.graphicsVip.description', 'Servicio exclusivo Premium. Edita, recorta, aplica filtros y pon tu marca de agua al instante con nuestro motor nativo avanzado.')}
                         </p>
                     </div>
                 </div>
@@ -78,12 +80,12 @@ export default function GraphicsVipPage() {
                             onChange={handleFileUpload}
                         />
                         <Upload className="w-16 h-16 text-amber-500 mb-4 group-hover:scale-110 transition-transform" />
-                        <h2 className="text-xl font-bold text-slate-800 mb-2">Editor Filerobot Nativo</h2>
+                        <h2 className="text-xl font-bold text-slate-800 mb-2">{t('business.graphicsVip.uploadTitle', 'Editor Filerobot Nativo')}</h2>
                         <p className="text-slate-500 max-w-sm mb-6">
-                            Haz clic aquí o arrastra la foto cruda de tu negocio, tu equipo o producto para abrir el cuarto de revelado.
+                            {t('business.graphicsVip.uploadDesc', 'Haz clic aquí o arrastra la foto cruda de tu negocio, tu equipo o producto para abrir el cuarto de revelado.')}
                         </p>
                         <Button className="bg-amber-600 hover:bg-amber-700 pointer-events-none">
-                            Iniciar Editor
+                            {t('business.graphicsVip.startButton', 'Iniciar Editor')}
                         </Button>
                     </Card>
 
@@ -91,21 +93,21 @@ export default function GraphicsVipPage() {
                     <Card className="border border-slate-200 bg-white p-10 flex flex-col justify-center relative overflow-hidden shadow-sm">
                         <div className="absolute top-0 right-0 p-32 bg-amber-400/10 rounded-full blur-3xl -mr-16 -mt-16"></div>
                         <Sparkles className="w-12 h-12 text-amber-400 mb-4 relative z-10" />
-                        <h2 className="text-2xl font-bold text-slate-800 mb-2 relative z-10">Borrador I.A. Mágico</h2>
+                        <h2 className="text-2xl font-bold text-slate-800 mb-2 relative z-10">{t('business.graphicsVip.aiTitle', 'Borrador I.A. Mágico')}</h2>
                         <div className="inline-flex items-center gap-2 bg-amber-100 text-amber-800 px-3 py-1 rounded-full text-xs font-bold w-fit mb-4 relative z-10">
-                            Próximamente
+                            {t('business.graphicsVip.soon', 'Próximamente')}
                         </div>
                         <p className="text-slate-500 relative z-10 mb-6">
-                            Como cliente VIP, recibirás un bono mensual para utilizar la I.A. que elimina fondos automáticamente, dejando el producto transparente y listo para publicidad.
+                            {t('business.graphicsVip.aiDesc', 'Como cliente VIP, recibirás un bono mensual para utilizar la I.A. que elimina fondos automáticamente, dejando el producto transparente y listo para publicidad.')}
                         </p>
                     </Card>
                 </div>
             ) : (
                 <Card className="border-slate-300 shadow-xl overflow-hidden h-[800px] w-full animate-in slide-in-from-bottom flex flex-col">
                     <div className="bg-slate-800 text-white px-4 py-3 flex justify-between items-center">
-                        <h3 className="font-bold flex items-center gap-2"><ImageIcon className="w-5 h-5"/> Area de Trabajo Visual</h3>
+                        <h3 className="font-bold flex items-center gap-2"><ImageIcon className="w-5 h-5"/> {t('business.graphicsVip.workspace', 'Area de Trabajo Visual')}</h3>
                         <Button variant="ghost" size="sm" className="hover:bg-slate-700 text-slate-300" onClick={() => setIsEditorOpen(false)}>
-                            Cancelar Edición
+                            {t('business.graphicsVip.cancelEdit', 'Cancelar Edición')}
                         </Button>
                     </div>
                     <div className="flex-grow bg-slate-100 relative">
