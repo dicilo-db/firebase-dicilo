@@ -1,4 +1,4 @@
-import { Lock, LayoutDashboard, Wallet, Ticket, Package, MessageSquare, BarChart, FileCode2, Megaphone, LifeBuoy, CircleHelp, BrainCircuit, Share2, MapPin, Bot, GraduationCap, Palette, ClipboardList, HeadphonesIcon, ImagePlus, Type, Video, MessageCircle, HeartHandshake, ScanLine } from 'lucide-react';
+import { BriefcaseBusiness, Lock, LayoutDashboard, Wallet, Ticket, Package, MessageSquare, BarChart, FileCode2, Megaphone, LifeBuoy, CircleHelp, BrainCircuit, Share2, MapPin, Bot, GraduationCap, Palette, ClipboardList, HeadphonesIcon, ImagePlus, Type, Video, MessageCircle, HeartHandshake, ScanLine } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
@@ -10,7 +10,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 export default function BusinessSidebar({ plan, isLoading }: { plan: string, isLoading: boolean }) {
     const pathname = usePathname();
-    const { t } = useTranslation('business');
+    const { t } = useTranslation('common');
     const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
     const [lockedFeature, setLockedFeature] = useState('');
 
@@ -25,34 +25,35 @@ export default function BusinessSidebar({ plan, isLoading }: { plan: string, isL
     const currentLvl = levels[plan as keyof typeof levels] || 0;
 
     const navItems = [
-        { label: t('sidebar.dashboard', 'Resumen'), href: '/dashboard/business', icon: LayoutDashboard, reqLvl: 1 },
-        { label: t('sidebar.financials', 'Mi Wallet'), href: '/dashboard/business/financials', icon: Wallet, reqLvl: 1 },
-        { label: t('sidebar.scanner', 'Scanner de Cobros'), href: '/dashboard/business/scanner', icon: ScanLine, reqLvl: 2 },
-        { label: t('sidebar.coupons', 'Mis Cupones'), href: '/dashboard/business/coupons', icon: Ticket, reqLvl: 2 },
-        { label: t('sidebar.products', 'Gestión de Productos'), href: '/dashboard/business/products', icon: Package, reqLvl: 2 },
-        { label: t('sidebar.marketIntel', 'Inteligencia de Mercado'), href: '/dashboard/business/market-intelligence', icon: BrainCircuit, reqLvl: 2 },
-        { label: t('sidebar.socialMedia', 'Redes Sociales'), href: '/dashboard/business/social-media', icon: Share2, reqLvl: 2 },
-        { label: t('sidebar.geomarketing', 'Geomarketing'), href: '/dashboard/business/geomarketing', icon: MapPin, reqLvl: 2 },
-        { label: t('sidebar.campaigns', 'Campañas Personalizadas'), href: '/dashboard/business/campaigns', icon: Megaphone, reqLvl: 2 },
-        { label: t('sidebar.messages', 'Consultas Comerciales'), href: '/dashboard/business/messages', icon: MessageSquare, reqLvl: 2 },
-        { label: t('sidebar.statistics', 'Estadísticas'), href: '/dashboard/business/statistics', icon: BarChart, reqLvl: 3 },
-        { label: t('sidebar.pageEditor', 'Landing Page'), href: '/dashboard/business/editor', icon: FileCode2, reqLvl: 3 },
-        { label: t('sidebar.chatbot', 'Asistente I.A.'), href: '/dashboard/business/chatbot', icon: Bot, reqLvl: 3 },
-        { label: t('sidebar.courses', 'Cursos I.A.'), href: '/dashboard/business/courses', icon: GraduationCap, reqLvl: 3 },
-        { label: t('sidebar.graphics', 'Herramientas Gráficas'), href: '/dashboard/business/graphics', icon: Palette, reqLvl: 3 },
-        { label: t('sidebar.leads', 'Captación de Leads'), href: '/dashboard/business/leads', icon: ClipboardList, reqLvl: 3 },
-        { label: t('sidebar.supportPremium', 'Soporte Técnico Premium'), href: '/dashboard/business/support-premium', icon: HeadphonesIcon, reqLvl: 3 },
+        { label: t('business.sidebar.dashboard', 'Resumen'), href: '/dashboard/business', icon: LayoutDashboard, reqLvl: 1 },
+        { label: t('business.sidebar.financials', 'Mi Wallet'), href: '/dashboard/business/financials', icon: Wallet, reqLvl: 1 },
+        { label: t('business.sidebar.scanner', 'Scanner de Cobros'), href: '/dashboard/business/scanner', icon: ScanLine, reqLvl: 2 },
+        { label: t('business.sidebar.coupons', 'Mis Cupones'), href: '/dashboard/business/coupons', icon: Ticket, reqLvl: 2 },
+        { label: t('business.sidebar.products', 'Gestión de Productos'), href: '/dashboard/business/products', icon: Package, reqLvl: 2 },
+        { label: t('business.sidebar.marketIntel', 'Inteligencia de Mercado'), href: '/dashboard/business/market-intelligence', icon: BrainCircuit, reqLvl: 2 },
+        { label: t('business.sidebar.socialMedia', 'Redes Sociales'), href: '/dashboard/business/social-media', icon: Share2, reqLvl: 2 },
+        { label: t('business.sidebar.geomarketing', 'Geomarketing'), href: '/dashboard/business/geomarketing', icon: MapPin, reqLvl: 2 },
+        { label: t('business.sidebar.campaigns', 'Campañas Personalizadas'), href: '/dashboard/business/campaigns', icon: Megaphone, reqLvl: 2 },
+        { label: t('business.sidebar.messages', 'Consultas Comerciales'), href: '/dashboard/business/messages', icon: MessageSquare, reqLvl: 2 },
+        { label: t('business.sidebar.statistics', 'Estadísticas'), href: '/dashboard/business/statistics', icon: BarChart, reqLvl: 3 },
+        { label: t('business.sidebar.pageEditor', 'Landing Page'), href: '/dashboard/business/editor', icon: FileCode2, reqLvl: 3 },
+        { label: t('business.sidebar.chatbot', 'Asistente I.A.'), href: '/dashboard/business/chatbot', icon: Bot, reqLvl: 3 },
+        { label: t('business.sidebar.courses', 'Cursos I.A.'), href: '/dashboard/business/courses', icon: GraduationCap, reqLvl: 3 },
+        { label: t('business.sidebar.graphics', 'Herramientas Gráficas'), href: '/dashboard/business/graphics', icon: Palette, reqLvl: 3 },
+        { label: t('business.sidebar.leads', 'Captación de Leads'), href: '/dashboard/business/leads', icon: ClipboardList, reqLvl: 3 },
+        { label: t('business.sidebar.supportPremium', 'Soporte Técnico Premium'), href: '/dashboard/business/support-premium', icon: HeadphonesIcon, reqLvl: 3 },
         
         // Premium (Level 4)
-        { label: t('sidebar.editGraphics', 'Edición de Gráficos VIP'), href: '/dashboard/business/graphics-vip', icon: ImagePlus, reqLvl: 4 },
-        { label: t('sidebar.editTexts', 'Edición de Textos VIP'), href: '/dashboard/business/texts-vip', icon: Type, reqLvl: 4 },
-        { label: t('sidebar.presentations', 'Presentaciones Online'), href: '/dashboard/business/presentations', icon: Video, reqLvl: 4 },
-        { label: t('sidebar.supportWhatsApp', 'Soporte WhatsApp'), href: '/dashboard/business/whatsapp', icon: MessageCircle, reqLvl: 4 },
-        { label: t('sidebar.supportIndividual', 'Soporte Individual'), href: '/dashboard/business/support-vip', icon: HeartHandshake, reqLvl: 4 },
+        { label: t('business.crm.title', 'Smart CRM & Cotizaciones'), href: '/dashboard/business/crm', icon: BriefcaseBusiness, reqLvl: 4 },
+        { label: t('business.sidebar.editGraphics', 'Edición de Gráficos VIP'), href: '/dashboard/business/graphics-vip', icon: ImagePlus, reqLvl: 4 },
+        { label: t('business.sidebar.editTexts', 'Edición de Textos VIP'), href: '/dashboard/business/texts-vip', icon: Type, reqLvl: 4 },
+        { label: t('business.sidebar.presentations', 'Presentaciones Online'), href: '/dashboard/business/presentations', icon: Video, reqLvl: 4 },
+        { label: t('business.sidebar.supportWhatsApp', 'Soporte WhatsApp'), href: '/dashboard/business/whatsapp', icon: MessageCircle, reqLvl: 4 },
+        { label: t('business.sidebar.supportIndividual', 'Soporte Individual'), href: '/dashboard/business/support-vip', icon: HeartHandshake, reqLvl: 4 },
 
         // Global utilities (Always permitted)
-        { label: t('sidebar.support', 'Soporte Técnico'), href: '/dashboard/business/support', icon: LifeBuoy, reqLvl: 1 },
-        { label: t('sidebar.faq', 'FAQs'), href: '/dashboard/business/faq', icon: CircleHelp, reqLvl: 1 },
+        { label: t('business.sidebar.support', 'Soporte Técnico'), href: '/dashboard/business/support', icon: LifeBuoy, reqLvl: 1 },
+        { label: t('business.sidebar.faq', 'FAQs'), href: '/dashboard/business/faq', icon: CircleHelp, reqLvl: 1 },
     ];
 
     const handleClickLocked = (e: React.MouseEvent, featureName: string) => {

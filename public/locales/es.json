@@ -305,6 +305,20 @@
       "openChat": "Abrir WhatsApp",
       "markRead": "Marcar como leído",
       "delete": "Eliminar"
+    },
+    "crm": {
+      "title": "Smart CRM & Cotizaciones",
+      "desc": "Gestiona tus oportunidades comerciales, elabora cotizaciones interactivas (Pro-formas) y envíalas con un clic.",
+      "leadsTitle": "Mis Clientes (Leads)",
+      "leadsDesc": "Contactos centralizados de la Bandeja Omnicanal.",
+      "dealsTitle": "Cotizaciones y Facturas Pro-forma",
+      "dealsDesc": "Envía ofertas web o PDF rápidamente extrayendo datos de tu catálogo Dicilo.",
+      "kanbanTitle": "Panel de Estado de Cotizaciones",
+      "kanbanDesc": "Mueve tus cotizaciones: Borrador -> Enviada -> Aceptada.",
+      "createOfferBtn": "Generar Nueva Oferta",
+      "manageLeadsBtn": "Ver Directorio de Clientes",
+      "openKanbanBtn": "Abrir Panel de Cierres",
+      "soonStatus": "Módulo en Construcción (Arquitectura lista)"
     }
   },
   "community": {

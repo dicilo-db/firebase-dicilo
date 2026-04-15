@@ -305,6 +305,20 @@
       "openChat": "WhatsApp öffnen",
       "markRead": "Als gelesen markieren",
       "delete": "Löschen"
+    },
+    "crm": {
+      "title": "Smart CRM & Angebote",
+      "desc": "Verwalten Sie Ihre Geschäftschancen, erstellen Sie interaktive Angebote (Pro-forma) und senden Sie diese mit einem Klick.",
+      "leadsTitle": "Meine Kunden (Leads)",
+      "leadsDesc": "Zentralisierte Kontakte aus dem Omnichannel-Posteingang.",
+      "dealsTitle": "Angebote und Pro-forma-Rechnungen",
+      "dealsDesc": "Senden Sie Web- oder PDF-Angebote schnell, indem Sie Daten aus Ihrem Dicilo-Katalog extrahieren.",
+      "kanbanTitle": "Angebotsstatus-Board",
+      "kanbanDesc": "Verschieben Sie Ihre Angebote: Entwurf -> Gesendet -> Akzeptiert.",
+      "createOfferBtn": "Neues Angebot erstellen",
+      "manageLeadsBtn": "Kundenverzeichnis anzeigen",
+      "openKanbanBtn": "Abschlussboard öffnen",
+      "soonStatus": "Modul in Arbeit (Architektur fertig)"
     }
   },
   "community": {

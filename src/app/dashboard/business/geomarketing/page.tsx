@@ -12,6 +12,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Slider } from '@/components/ui/slider';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useTranslation } from 'react-i18next';
 
 import { useToast } from '@/hooks/use-toast';
@@ -23,6 +24,9 @@ interface GeoConfig {
     radiusKm: number;
     targetZips: string;
     pushMessage: string;
+    visibility_settings?: {
+        active_range?: string;
+    };
 }
 
 export default function GeomarketingPage() {
@@ -150,6 +154,22 @@ export default function GeomarketingPage() {
                                     onValueChange={(val) => setConfig({...config, radiusKm: val[0]})}
                                 />
                                 <p className="text-xs text-slate-500">Un radio de {config.radiusKm}km abarca aproximadamente {Math.round(Math.PI * Math.pow(config.radiusKm, 2))} km² a tu alrededor.</p>
+                            </div>
+
+                            <div className="space-y-2 pt-2 border-t border-slate-100">
+                                <Label className="font-bold text-slate-800">{t('business.geo.visibilityRange', 'Alcance de Promoción (Visibilidad)')}</Label>
+                                <RadioGroup
+                                    value={config.visibility_settings?.active_range || 'national'}
+                                    onValueChange={(val) => setConfig({...config, visibility_settings: { ...config.visibility_settings, active_range: val }})}
+                                    className="flex flex-col space-y-1 mt-2"
+                                >
+                                    <div className="flex items-center space-x-2"><RadioGroupItem value="local" id="r-local" /><Label htmlFor="r-local">Local (50 km)</Label></div>
+                                    <div className="flex items-center space-x-2"><RadioGroupItem value="regional" id="r-regional" /><Label htmlFor="r-regional">Regional / Estatal</Label></div>
+                                    <div className="flex items-center space-x-2"><RadioGroupItem value="national" id="r-national" /><Label htmlFor="r-national">Nacional (Todo el país)</Label></div>
+                                    <div className="flex items-center space-x-2"><RadioGroupItem value="continental" id="r-continental" /><Label htmlFor="r-continental">Continental</Label></div>
+                                    <div className="flex items-center space-x-2"><RadioGroupItem value="international" id="r-international" /><Label htmlFor="r-international">Internacional (Global)</Label></div>
+                                </RadioGroup>
+                                <p className="text-xs text-slate-500 mt-2">Define hasta dónde quieres que llegue tu oferta en el catálogo principal.</p>
                             </div>
 
                             <div className="space-y-2 pt-2 border-t border-slate-100">

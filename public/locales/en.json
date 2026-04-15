@@ -305,6 +305,20 @@
       "openChat": "Open WhatsApp",
       "markRead": "Mark as read",
       "delete": "Delete"
+    },
+    "crm": {
+      "title": "Smart CRM & Quotes",
+      "desc": "Manage your commercial opportunities, build interactive quotes (Pro-formas), and send them with one click.",
+      "leadsTitle": "My Clients (Leads)",
+      "leadsDesc": "Centralized contacts from the Omnichannel Inbox.",
+      "dealsTitle": "Quotes and Pro-forma Invoices",
+      "dealsDesc": "Send web or PDF offers quickly by extracting data from your Dicilo catalog.",
+      "kanbanTitle": "Quote Status Board",
+      "kanbanDesc": "Move your quotes: Draft -> Sent -> Accepted.",
+      "createOfferBtn": "Generate New Offer",
+      "manageLeadsBtn": "View Client Directory",
+      "openKanbanBtn": "Open Closing Board",
+      "soonStatus": "Module under construction (Architecture ready)"
     }
   },
   "community": {

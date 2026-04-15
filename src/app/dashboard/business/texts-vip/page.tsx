@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslation } from 'react-i18next';
 import { Type, Edit3, Speech } from 'lucide-react';
 
 export default function TextsVipPage() {

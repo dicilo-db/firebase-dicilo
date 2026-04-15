@@ -1115,5 +1115,47 @@
   "validUntil": "Valid until:",
   "downloadPDF": "Download PDF",
   "downloadJPG": "Download JPG",
-  "searching": "Searching..."
+  "searching": "Searching...",
+  "business": {
+    "sidebar": {
+      "dashboard": "Overview",
+      "financials": "My Wallet",
+      "scanner": "Payment Scanner",
+      "coupons": "My Coupons",
+      "products": "Product Management",
+      "marketIntel": "Market Intelligence",
+      "socialMedia": "Social Media",
+      "geomarketing": "Geomarketing",
+      "campaigns": "Custom Campaigns",
+      "messages": "Commercial Inquiries",
+      "statistics": "Statistics",
+      "pageEditor": "Landing Page",
+      "chatbot": "A.I. Assistant",
+      "courses": "A.I. Courses",
+      "graphics": "Graphic Tools",
+      "leads": "Lead Capture",
+      "supportPremium": "Premium Support",
+      "editGraphics": "VIP Graphics Editing",
+      "editTexts": "VIP Texts Editing",
+      "presentations": "Online Presentations",
+      "supportWhatsApp": "WhatsApp Support",
+      "supportIndividual": "Individual Support",
+      "support": "Technical Support",
+      "faq": "FAQs"
+    },
+    "crm": {
+      "title": "Smart CRM & Quotes",
+      "desc": "Manage your commercial opportunities, build interactive quotes (Pro-formas), and send them with one click.",
+      "leadsTitle": "My Clients (Leads)",
+      "leadsDesc": "Centralized contacts from the Omnichannel Inbox.",
+      "dealsTitle": "Quotes and Pro-forma Invoices",
+      "dealsDesc": "Send web or PDF offers quickly by extracting data from your Dicilo catalog.",
+      "kanbanTitle": "Quote Status Board",
+      "kanbanDesc": "Move your quotes: Draft -> Sent -> Accepted.",
+      "createOfferBtn": "Generate New Offer",
+      "manageLeadsBtn": "View Client Directory",
+      "openKanbanBtn": "Open Closing Board",
+      "soonStatus": "Module under construction (Architecture ready)"
+    }
+  }
 }

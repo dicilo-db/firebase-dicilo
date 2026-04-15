@@ -1195,5 +1195,47 @@
   "validUntil": "Válido hasta:",
   "downloadPDF": "Descargar PDF",
   "downloadJPG": "Descargar JPG",
-  "searching": "Buscando..."
+  "searching": "Buscando...",
+  "business": {
+    "sidebar": {
+      "dashboard": "Resumen",
+      "financials": "Mi Wallet",
+      "scanner": "Scanner de Cobros",
+      "coupons": "Mis Cupones",
+      "products": "Gestión de Productos",
+      "marketIntel": "Inteligencia de Mercado",
+      "socialMedia": "Redes Sociales",
+      "geomarketing": "Geomarketing",
+      "campaigns": "Campañas Personalizadas",
+      "messages": "Consultas Comerciales",
+      "statistics": "Estadísticas",
+      "pageEditor": "Landing Page",
+      "chatbot": "Asistente I.A.",
+      "courses": "Cursos I.A.",
+      "graphics": "Herramientas Gráficas",
+      "leads": "Captación de Leads",
+      "supportPremium": "Soporte Técnico Premium",
+      "editGraphics": "Edición de Gráficos VIP",
+      "editTexts": "Edición de Textos VIP",
+      "presentations": "Presentaciones Online",
+      "supportWhatsApp": "Soporte WhatsApp",
+      "supportIndividual": "Soporte Individual",
+      "support": "Soporte Técnico",
+      "faq": "FAQs"
+    },
+    "crm": {
+      "title": "Smart CRM & Cotizaciones",
+      "desc": "Gestiona tus oportunidades comerciales, elabora cotizaciones interactivas (Pro-formas) y envíalas con un clic.",
+      "leadsTitle": "Mis Clientes (Leads)",
+      "leadsDesc": "Contactos centralizados de la Bandeja Omnicanal.",
+      "dealsTitle": "Cotizaciones y Facturas Pro-forma",
+      "dealsDesc": "Envía ofertas web o PDF rápidamente extrayendo datos de tu catálogo Dicilo.",
+      "kanbanTitle": "Panel de Estado de Cotizaciones",
+      "kanbanDesc": "Mueve tus cotizaciones: Borrador -> Enviada -> Aceptada.",
+      "createOfferBtn": "Generar Nueva Oferta",
+      "manageLeadsBtn": "Ver Directorio de Clientes",
+      "openKanbanBtn": "Abrir Panel de Cierres",
+      "soonStatus": "Módulo en Construcción (Arquitectura lista)"
+    }
+  }
 }
