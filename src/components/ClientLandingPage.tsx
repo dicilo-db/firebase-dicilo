@@ -371,7 +371,36 @@ export default function ClientLandingPage({ clientData, ad }: LandingPageProps) 
   const [isMounted, setIsMounted] = useState(false);
   useEffect(() => {
     setIsMounted(true);
-  }, []);
+    
+    // Analytics Page View Logger
+    const trackAnalytics = async () => {
+       const isMobile = window.innerWidth <= 768; // simple detection
+       const d = isMobile ? 'mobile' : 'desktop';
+       
+       // Detect visited session flag to prevent double counting in dev react strict mode
+       const sessionKey = `visited_${clientData.id}`;
+       if (!sessionStorage.getItem(sessionKey)) {
+         sessionStorage.setItem(sessionKey, 'true');
+         try {
+           await fetch('/api/analytics/log', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                type: 'pageView',
+                businessId: clientData.id,
+                businessName: clientData.clientName,
+                device: d,
+                isAd: false
+              })
+           });
+         } catch(e) {}
+       }
+    };
+    
+    if (clientData?.id) {
+       trackAnalytics();
+    }
+  }, [clientData?.id, clientData?.clientName]);
 
   // Use Premium Layout if client type is premium OR if layout data exists
   if (clientData.clientType === 'premium' || (clientData.layout && clientData.layout.length > 0)) {

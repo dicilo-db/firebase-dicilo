@@ -9,7 +9,7 @@ const db = getAdminDb();
 
 // Schema for validating incoming events
 const eventSchema = z.object({
-  type: z.enum(['search', 'cardClick', 'popupClick', 'driveToStore', 'socialClick']),
+  type: z.enum(['search', 'cardClick', 'popupClick', 'driveToStore', 'socialClick', 'pageView']),
   businessId: z.string().optional(),
   businessName: z.string().optional(),
   searchQuery: z.string().optional(),
@@ -17,6 +17,7 @@ const eventSchema = z.object({
   clickedElement: z.string().optional(), // e.g., 'website', 'offer', 'map'
   details: z.string().optional(), // For social network name etc.
   isAd: z.boolean().optional(), // [NEW] Flag to identify if the card was an Ad
+  device: z.string().optional(), // [NEW] 'mobile' or 'desktop'
 });
 
 export async function POST(request: NextRequest) {
@@ -42,7 +43,7 @@ export async function POST(request: NextRequest) {
 
     // Check if we need to update stats
     const isAdClick = validatedData.type === 'cardClick' && validatedData.isAd;
-    const isClientMetric = ['driveToStore', 'socialClick'].includes(validatedData.type);
+    const isClientMetric = ['driveToStore', 'socialClick', 'pageView'].includes(validatedData.type);
 
     if ((isAdClick || isClientMetric) && validatedData.businessId) {
       statsPromise = (async () => {
@@ -65,6 +66,16 @@ export async function POST(request: NextRequest) {
             updateData.driveToStoreCount = FieldValue.increment(1);
           } else if (validatedData.type === 'socialClick') {
             updateData.socialClickCount = FieldValue.increment(1);
+          } else if (validatedData.type === 'pageView') {
+            updateData.views = FieldValue.increment(1);
+            if (validatedData.device === 'mobile') {
+                updateData.mobileViews = FieldValue.increment(1);
+            } else {
+                updateData.desktopViews = FieldValue.increment(1);
+            }
+            // Basic country logic using vercel header or generic Unknown tracker if none
+            const userCountry = request.headers.get('x-vercel-ip-country') || 'Unknown';
+            updateData[`country_${userCountry}`] = FieldValue.increment(1);
           }
 
           await statsRef.set(updateData, { merge: true });
