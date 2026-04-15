@@ -1,16 +1,30 @@
 {
   "sidebar": {
-    "dashboard": "Übersicht",
+    "dashboard": "Zusammenfassung",
     "financials": "Mein Wallet",
+    "scanner": "Zahlungsscanner",
     "coupons": "Meine Gutscheine",
-    "products": "Katalog",
-    "messages": "Nachrichten",
+    "products": "Produktmanagement",
+    "marketIntel": "Marktintelligenz",
+    "socialMedia": "Soziale Medien",
+    "geomarketing": "Geomarketing",
+    "campaigns": "Benutzerdefinierte Kampagnen",
+    "messages": "Geschäftsanfragen",
     "statistics": "Statistiken",
-    "pageEditor": "Seiten-Builder",
-    "adManager": "B2B Werbung",
+    "pageEditor": "Landing Page",
+    "chatbot": "K.I.-Assistent",
+    "courses": "K.I.-Kurse",
+    "graphics": "Grafik-Tools",
+    "leads": "Lead-Generierung",
+    "supportPremium": "Premium-Support",
+    "editGraphics": "VIP Grafikbearbeitung",
+    "editTexts": "VIP Textbearbeitung",
+    "presentations": "Online-Präsentationen",
+    "supportWhatsApp": "WhatsApp-Support",
+    "supportIndividual": "Individueller Support",
     "support": "Technischer Support",
     "faq": "FAQs",
-    "locked": "Gesperrt",
-    "lockedDesc": "Erweitere deinen Plan, um auf dieses Tool zuzugreifen"
+    "locked": "Funktion Gesperrt",
+    "lockedDesc": "Verbessern Sie Ihren Plan, um auf dieses Tool zuzugreifen und Ihr Geschäft auf Dicilo zu fördern."
   }
 }
