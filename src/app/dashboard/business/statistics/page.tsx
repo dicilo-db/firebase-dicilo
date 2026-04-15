@@ -6,7 +6,7 @@ import { BarChart, AlertTriangle } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export default function StatisticsPage() {
-    const { businessId, plan, isLoading } = useBusinessAccess();
+    const { businessId, clientId, plan, isLoading } = useBusinessAccess();
 
     if (isLoading) {
         return (
@@ -17,9 +17,11 @@ export default function StatisticsPage() {
         );
     }
 
+    const targetId = businessId || clientId;
+
     // Stats requires logic that generally operates starting at Retailer or higher, 
     // but typically we can block 'basic' and 'starter' if we follow sidebar's 'reqLvl: 3'
-    if (plan === 'basic' || plan === 'starter' || !businessId) {
+    if (plan === 'basic' || plan === 'starter' || !targetId) {
         return (
             <div className="p-8 max-w-6xl mx-auto space-y-8">
                 <div className="bg-amber-50 border border-amber-200 text-amber-800 p-4 rounded-lg flex items-start gap-4 text-sm font-medium mt-6">
@@ -41,7 +43,7 @@ export default function StatisticsPage() {
             </div>
 
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                <AdStatistics adId={businessId} />
+                <AdStatistics adId={targetId} />
             </div>
         </div>
     );

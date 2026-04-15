@@ -16,7 +16,7 @@ interface BusinessContextData {
 }
 
 export function useBusinessAccess() {
-    const { user } = useAuth();
+    const { user, loading: authLoading } = useAuth();
     const [data, setData] = useState<BusinessContextData>({
         plan: 'none',
         businessId: null,
@@ -29,6 +29,8 @@ export function useBusinessAccess() {
         let isMounted = true;
 
         async function fetchBusinessTier() {
+            if (authLoading) return; // Wait for Auth context to verify user
+
             if (!user?.email) {
                 if (isMounted) setData(prev => ({ ...prev, isLoading: false }));
                 return;
@@ -93,7 +95,7 @@ export function useBusinessAccess() {
         fetchBusinessTier();
 
         return () => { isMounted = false; };
-    }, [user]);
+    }, [user, authLoading]);
 
     return data;
 }
