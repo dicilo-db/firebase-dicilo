@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { ScanLine, Search, Calculator, CheckCircle2, User } from 'lucide-react';
+import { ScanLine, Search, Calculator, CheckCircle2, User, History, ShoppingBag } from 'lucide-react';
 import { getWalletData, processQrPayment } from '@/app/actions/wallet';
 import { useBusinessAccess } from '@/hooks/useBusinessAccess';
 
@@ -182,6 +182,35 @@ export default function BusinessScannerPage() {
                                 </Button>
                             </div>
                         )}
+                    </CardContent>
+                </Card>
+            </div>
+
+            {/* Panel de Resumen Rápido (Historial Reciente) */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-12 max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom flex-wrap">
+                <Card className="bg-white border-slate-200 shadow-sm border-l-4 border-l-green-500">
+                    <CardHeader className="pb-2">
+                        <CardTitle className="text-sm font-medium text-slate-500 uppercase tracking-wider flex items-center justify-between">
+                            Último Cobro Recibido
+                            <History className="w-4 h-4 text-slate-400" />
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold text-slate-900">+150 DP</div>
+                        <p className="text-xs text-slate-500 mt-1">Hace 2 horas • Cliente Anónimo</p>
+                    </CardContent>
+                </Card>
+
+                <Card className="bg-white border-slate-200 shadow-sm border-l-4 border-l-blue-500">
+                    <CardHeader className="pb-2">
+                        <CardTitle className="text-sm font-medium text-slate-500 uppercase tracking-wider flex items-center justify-between">
+                            Último Producto Vendido
+                            <ShoppingBag className="w-4 h-4 text-slate-400" />
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-xl font-bold text-slate-900 truncate">Suscripción Manual / Genérico</div>
+                        <p className="text-xs text-slate-500 mt-1">Pagado con DiciPoints • Modo Offline</p>
                     </CardContent>
                 </Card>
             </div>

@@ -70,6 +70,12 @@ export default function DashboardPage() {
         return () => unsubscribe();
     }, [router]);
 
+    useEffect(() => {
+        if (clientData && clientData.country && clientData.city) {
+            router.push('/dashboard/business');
+        }
+    }, [clientData, router]);
+
     const fetchDashboardData = async (currentUser: User) => {
         try {
             const uid = currentUser.uid;
@@ -293,7 +299,10 @@ export default function DashboardPage() {
                         Error: {error}
                     </div>
                 ) : clientData ? (
-                    <EditClientForm initialData={clientData} />
+                    <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
+                        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                        <p className="text-muted-foreground text-lg">Redirigiendo a tu Portal B2B...</p>
+                    </div>
                 ) : privateProfile && user ? (
                     privateProfile.role === 'apoyo_social' ? (
                         <ApoyoSocialDashboard user={user} profile={privateProfile} />

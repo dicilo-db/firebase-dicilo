@@ -4,28 +4,29 @@ import { useBusinessAccess } from '@/hooks/useBusinessAccess';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowRightLeft, CreditCard, PiggyBank, ReceiptEuro, RefreshCw, AlertTriangle } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
 import { useState, useEffect } from 'react';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export default function BusinessFinancialsPage() {
-    const { businessId, plan, isLoading: authLoading } = useBusinessAccess();
+    const { plan, isLoading: authLoading } = useBusinessAccess();
+    const { user } = useAuth();
     const [balances, setBalances] = useState({ dp: 0, eur: 0 });
     const [loadingData, setLoadingData] = useState(true);
 
     useEffect(() => {
         let mounted = true;
         async function fetchBalances() {
-            if (!businessId) return;
+            if (!user?.uid) return;
             try {
-                const docRef = doc(db, 'businesses', businessId);
-                const ds = await getDoc(docRef);
-                if (ds.exists() && mounted) {
-                    const data = ds.data();
+                const { getWalletData } = await import('@/app/actions/wallet');
+                const walletData = await getWalletData(user.uid);
+                if (mounted) {
                     setBalances({
-                        dp: data.dpBalance || 0,
-                        eur: data.eurBalance || 0
+                        dp: walletData.balance || 0,
+                        eur: walletData.valueInEur || 0
                     });
                 }
             } catch (e) {
@@ -34,10 +35,15 @@ export default function BusinessFinancialsPage() {
                 if (mounted) setLoadingData(false);
             }
         }
-        if (!authLoading && businessId) {
-            fetchBalances();
+        
+        if (!authLoading) {
+            if (user?.uid) {
+                fetchBalances();
+            } else {
+                setLoadingData(false);
+            }
         }
-    }, [businessId, authLoading]);
+    }, [user, authLoading]);
 
     if (authLoading || loadingData) {
         return (
