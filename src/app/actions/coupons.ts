@@ -494,3 +494,33 @@ export async function shareCoupon(email: string, coupon: any) {
         return { success: false, error: error.message };
     }
 }
+
+/**
+ * Delete a Coupon
+ */
+export async function deleteCoupon(couponId: string) {
+    try {
+        if (!couponId) return { success: false, error: 'Coupon ID is required' };
+        
+        await getAdminDb().collection('coupons').doc(couponId).delete();
+        
+        // Also remove assignment records if necessary
+        const assignments = await getAdminDb().collection('coupon_assignments')
+            .where('couponId', '==', couponId)
+            .get();
+            
+        const batch = getAdminDb().batch();
+        assignments.docs.forEach(doc => {
+            batch.delete(doc.ref);
+        });
+        
+        if (!assignments.empty) {
+            await batch.commit();
+        }
+        
+        return { success: true };
+    } catch (error: any) {
+        console.error('Error deleting coupon:', error);
+        return { success: false, error: error.message };
+    }
+}

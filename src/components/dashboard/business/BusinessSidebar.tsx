@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 
-export default function BusinessSidebar({ plan, isLoading }: { plan: string, isLoading: boolean }) {
+export default function BusinessSidebar({ plan, email, isLoading }: { plan: string, email: string | null, isLoading: boolean }) {
     const pathname = usePathname();
     const { t } = useTranslation('common');
     const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
@@ -77,6 +77,11 @@ export default function BusinessSidebar({ plan, isLoading }: { plan: string, isL
         <div className="w-64 h-full bg-slate-50 border-r border-slate-200 flex flex-col">
             <div className="p-6">
                 <h2 className="text-xl font-bold text-slate-900 tracking-tight">Dicilo<span className="text-blue-600">Business</span></h2>
+                {email && (
+                    <div className="text-xs text-slate-500 mt-1 truncate" title={email}>
+                        {email}
+                    </div>
+                )}
                 <Badge variant="outline" className="mt-2 capitalize bg-white text-slate-700 font-medium">
                     Plan: {plan}
                 </Badge>

@@ -4,9 +4,9 @@ import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Plus, Tag, Calendar, MapPin, Euro, Percent, Type } from 'lucide-react';
+import { Loader2, Plus, Tag, Calendar, MapPin, Euro, Percent, Type, Pencil, Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { getCouponsByCompany } from '@/app/actions/coupons';
+import { getCouponsByCompany, deleteCoupon } from '@/app/actions/coupons';
 import { CouponForm } from '@/app/admin/coupons/components/CouponForm';
 import { useTranslation } from 'react-i18next';
 import { format } from 'date-fns';
@@ -244,16 +244,37 @@ export function ClientCouponManager({ companyId, companyName, category, clientLo
                                     <div className="flex justify-between items-start">
                                         <Badge variant="outline" className="text-xs font-mono bg-slate-100">{coupon.code}</Badge>
 
-                                        {/* EDIT BUTTON */}
-                                        <Button
-                                            variant="ghost"
-                                            size="sm"
-                                            onClick={() => handleEdit(coupon)}
-                                            className="h-6 px-2 text-slate-400 hover:text-primary"
-                                            data-html2canvas-ignore="true" // Ignore in screenshot
-                                        >
-                                            Edit
-                                        </Button>
+                                        {/* ACTION ICONS FOR EDIT AND DELETE ON THE HEADER */}
+                                        <div className="flex gap-1" data-html2canvas-ignore="true">
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                onClick={() => handleEdit(coupon)}
+                                                className="h-6 w-6 text-slate-400 hover:text-primary bg-slate-50"
+                                                title="Mejorar (Editar)"
+                                            >
+                                                <Pencil className="h-3 w-3" />
+                                            </Button>
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                onClick={async () => {
+                                                    if(confirm("¿Estás seguro de que quieres eliminar este cupón permanentemente?")) {
+                                                        const res = await deleteCoupon(coupon.id);
+                                                        if(res.success) {
+                                                            toast({ title: 'Cupón Eliminado. '});
+                                                            fetchCoupons();
+                                                        } else {
+                                                            toast({ title: 'Error', variant: 'destructive' });
+                                                        }
+                                                    }
+                                                }}
+                                                className="h-6 w-6 text-slate-400 hover:text-red-500 bg-slate-50 relative z-20"
+                                                title="Eliminar"
+                                            >
+                                                <Trash2 className="h-3 w-3" />
+                                            </Button>
+                                        </div>
                                     </div>
                                     <CardTitle className="text-lg mt-2 line-clamp-1" title={coupon.title}>{coupon.title}</CardTitle>
                                     <CardDescription className="line-clamp-2 min-h-[40px]">{coupon.description}</CardDescription>

@@ -43,13 +43,6 @@
     "translation_error": "Traducción fallida. Inténtalo más tarde.",
     "share_text": "Mira este post de {{user}} en {{neighborhood}}",
     "link_copied": "Enlace copiado al portapapeles",
-    "feed": {
-      "empty_global": "Aún no hay actividad en la comunidad de {{name}}.",
-      "be_first": "¡Sé el primero en compartir algo!",
-      "whats_happening": "¿Qué está pasando en {{name}}?",
-      "wall": "Muro Social",
-      "recommendations": "Recomendaciones"
-    },
     "post_btn": "Publicar",
     "recommend_business": "Recomendar Negocio",
     "recommend_desc": "Sube una foto y cuéntanos tu experiencia para ganar puntos.",
@@ -125,7 +118,20 @@
     "verifying": "Verificando...",
     "verify_create": "Verificar y Crear",
     "media": "Multimedia",
-    "emoji": "Emoji"
+    "emoji": "Emoji",
+    "select_business_or_recommend": "Selecciona una empresa o recomienda una nueva, en tu zona",
+    "select_business_option": "Elige una empresa",
+    "feed": {
+      "empty_global": "Aún no hay actividad en la comunidad de {{name}}.",
+      "be_first": "¡Sé el primero en compartir algo!",
+      "whats_happening": "¿Qué está pasando en {{name}}?",
+      "wall": "Muro Social",
+      "recommendations": "Destacados",
+      "empty_businesses": "Aún no hay empresas destacadas recientemente en {{city}}.",
+      "empty_businesses_prompt": "¡Utiliza la caja de arriba para ser el primero en destacar un negocio local!"
+    },
+    "search_global": "Explorar Comunidades",
+    "search_neighborhoods_global": "Buscar ciudad, barrio..."
   },
   "dicipoints": {
     "whatIs": {
@@ -1137,6 +1143,49 @@
   "show_original": "Ver original",
   "translate_ai": "Traducir con AI",
   "translation_error": "Error al traducir",
+  "validationDialog": {
+    "title": "Centro de Validación de Prospecto",
+    "description": "Revisa y verifica la información antes de enviar la invitación segura.",
+    "recommenderData": "Datos del Recomendador",
+    "recommenderName": "Nombre del recomendador",
+    "recommenderId": "ID del recomendador",
+    "unknown": "Desconocido",
+    "companyData": "Datos de la Empresa",
+    "companyName": "Nombre de Empresa",
+    "category": "Categoría",
+    "email": "Email General / Contacto",
+    "phone": "Teléfono",
+    "country": "País",
+    "city": "Ciudad",
+    "neighborhood": "Barrio / Zona",
+    "lang": "Idioma de Contacto",
+    "website": "Sitio Web / Redes Sociales",
+    "comments": "Comentarios del Recomendador",
+    "securityKey": "Clave Única de Registro",
+    "noKey": "Sin clave...",
+    "generate": "Generar",
+    "keyHint": "Esta clave servirá para verificar la autenticidad al momento de que la empresa se registre.",
+    "validationState": "Estado de Validación",
+    "stateValidated": "Datos Validados",
+    "statePending": "Pendiente de Revisión",
+    "emailSentNote": "Invitación ya enviada",
+    "saveWithoutSending": "Guardar Sin Enviar",
+    "verifyBtn": "Verificar Datos",
+    "sendEmailBtn": "Disparar Email de Invitación",
+    "updatedTitle": "Recomendación actualizada",
+    "updatedDesc": "Cambios guardados exitosamente.",
+    "verifiedTitle": "Datos verificados",
+    "verifiedDesc": "La información del prospecto es válida. Puedes enviar la invitación.",
+    "failedTitle": "Validación fallida",
+    "failedDesc": "Faltan campos obligatorios o el email es inválido.",
+    "keyGeneratedTitle": "Clave generada",
+    "keyGeneratedDesc": "Se ha generado una clave única para este prospecto.",
+    "emailSentTitle": "Invitación enviada",
+    "emailSentDesc": "El email de invitación se ha enviado exitosamente.",
+    "emailErrorTitle": "Error al enviar invitación",
+    "serverError": "El servidor no pudo ser contactado.",
+    "emailFailed": "Falló el envío de la invitación."
+  },
   "finances": {
     "lockedTitle": "Gana dinero mientras recomiendas Dicilo",
     "lockedSubtitle": "Conviértete en Freelancer y crece con nosotros",
@@ -1190,13 +1239,63 @@
     "monitored_env": "Entorno Monitoreado",
     "monitored_desc": "Las publicaciones aquí son exclusivas para tus contactos, pero el entorno está sujeto a la auditoría preventiva de Cerebro DiciBot para detectar violaciones a las normativas de la comunidad.",
     "your_private_circle": "Tu Círculo Privado",
-    "create_post_private": "¿Qué estás pensando? (Solo para tus amigos)"
+    "create_post_private": "¿Qué estás pensando? (Solo para tus amigos)",
+    "tabs": {
+      "chats": "Chats",
+      "friends": "Amigos"
+    },
+    "placeholder": {
+      "search_neighbor": "Buscar vecinos...",
+      "type_message": "Escribe un mensaje..."
+    },
+    "list": {
+      "no_chats": "No tienes chats activos.",
+      "request_from": "Solicitud de",
+      "user_label": "Usuario",
+      "unknown_neighborhood": "Vecindario desconocido"
+    },
+    "headers": {
+      "pending_requests": "Solicitudes pendientes",
+      "my_friends": "Mis amigos",
+      "suggested_neighbors": "Vecinos sugeridos",
+      "no_new_neighbors": "No hay vecinos nuevos para sugerir"
+    },
+    "actions": {
+      "reject_request": "Rechazar",
+      "accept_request": "Aceptar",
+      "start_chat": "Iniciar Chat",
+      "add_friend": "Añadir amigo",
+      "send": "Enviar"
+    },
+    "status": {
+      "online": "En línea"
+    }
   },
   "validUntil": "Válido hasta:",
   "downloadPDF": "Descargar PDF",
   "downloadJPG": "Descargar JPG",
   "searching": "Buscando...",
+  "social_proof": {
+    "joined": "se acaba de unir a Dicilo",
+    "from": "desde",
+    "user_label": "Usr"
+  },
   "business": {
+    "geo": {
+      "title": "Geomarketing Hyperlocal",
+      "desc": "Atrae clientes que caminan cerca de tu negocio.",
+      "zoneParams": "Parámetros de Zona",
+      "radiusLabel": "Radio de Alcance (Kilómetros)",
+      "zipLabel": "Códigos Postales Prioritarios",
+      "pushLabel": "Mensaje Flash",
+      "simulator": "Simulador de Impacto",
+      "visibilityRange": "Alcance de Promoción (Visibilidad)",
+      "visibilityLocal": "Local (50 km)",
+      "visibilityRegional": "Regional / Estatal",
+      "visibilityNational": "Nacional (Todo el país)",
+      "visibilityContinental": "Continental",
+      "visibilityInternational": "Internacional (Global)"
+    },
     "sidebar": {
       "dashboard": "Resumen",
       "financials": "Mi Wallet",
@@ -1235,7 +1334,69 @@
       "createOfferBtn": "Generar Nueva Oferta",
       "manageLeadsBtn": "Ver Directorio de Clientes",
       "openKanbanBtn": "Abrir Panel de Cierres",
-      "soonStatus": "Módulo en Construcción (Arquitectura lista)"
+      "soonStatus": "Módulo en Construcción (Arquitectura lista)",
+      "demo": {
+        "title": "Pipeline de Ventas (Demo)",
+        "drafts": "Borradores",
+        "card1": "Empresa Solar Tech",
+        "sent": "Enviadas",
+        "card2": "Clínica Dental",
+        "accepted": "Aceptadas",
+        "card3": "Pedro (Particular)"
+      }
+    },
+    "textsVip": {
+      "title": "Copywriter I.A. VIP",
+      "desc": "Crea textos persuasivos al instante. Deja que nuestro motor de Inteligencia Artificial redacte descripciones irresistibles para tus productos y anuncios publicitarios.",
+      "generatorTitle": "Generador Automático de Textos",
+      "generatorDesc": "Con tu suscripción Premium, solo tendrás que ingresar las características de tu producto y la I.A. te devolverá un copy de ventas perfectamente optimizado para captar clientes en Dicilo.",
+      "soon": "Motor I.A. en Preparación"
+    },
+    "dashboard": {
+      "title": "Portal",
+      "welcome": "Hola, <strong>{{name}}</strong>. Qué bueno tenerte de vuelta.",
+      "overviewTitle": "Visión General",
+      "planTitle": "Tu Plan Actual",
+      "planDesc": "Suscripción activa en Dicilo",
+      "visitsTitle": "Visitas a tu Perfil",
+      "visitsDesc": "Últimos 30 días",
+      "clicksTitle": "Clics en Botones",
+      "clicksDesc": "Hacia tu web / teléfono",
+      "couponsTitle": "Cupones Usados",
+      "couponsDesc": "Canjes validados",
+      "walletsTitle": "Tus Wallets",
+      "dicipointsTitle": "DiciPoints (Rewards)",
+      "dicipointsDesc": "Puntos disponibles para anuncios",
+      "prepaidTitle": "Saldo Prepago",
+      "prepaidDesc": "Fondos añadidos a tu billetera",
+      "servicesTitle": "Servicios & Análisis",
+      "socialTitle": "Redes Sociales",
+      "socialStatus": "Sin Vincular",
+      "socialDesc": "Conecta tus cuentas",
+      "geoTitle": "Geomarketing",
+      "geoStatus": "Activo",
+      "geoDesc": "Visibilidad en tu zona",
+      "campaignsTitle": "Campañas Personalizadas",
+      "campaignsStatus": "0 Activas",
+      "campaignsDesc": "Usa tus DiciPoints",
+      "inquiriesTitle": "Consultas Comerciales",
+      "inquiriesDesc": "Nuevos leads (B2B)",
+      "statsTitle": "Estadísticas",
+      "statsStatus": "Ver Reporte",
+      "statsDesc": "Analítica detallada",
+      "supportTitle": "Centro de Soporte",
+      "waTitle": "WhatsApp",
+      "waStatus": "Contactar Ahora",
+      "waDesc": "Asistencia en tiempo real",
+      "indivTitle": "Soporte Individual",
+      "indivStatus": "Agendar Llamada",
+      "indivDesc": "Asesoría personalizada",
+      "techTitle": "Soporte Técnico",
+      "techStatus": "Crear Ticket",
+      "techDesc": "Resolución de problemas",
+      "bannerTitle": "Desbloquea todo el potencial de {{name}}",
+      "bannerDesc": "Construye tu propia Micro-Web con nuestro \"Page Editor\", vende en línea, administra catálogos y paga anuncios usando los DiciPoints de tu Wallet cambiando a Premium.",
+      "bannerBtn": "Mejorar a Premium"
     }
   }
 }

@@ -13,6 +13,7 @@ interface BusinessContextData {
     clientId: string | null;
     isLoading: boolean;
     name: string | null;
+    email: string | null;
 }
 
 export function useBusinessAccess() {
@@ -22,7 +23,8 @@ export function useBusinessAccess() {
         businessId: null,
         clientId: null,
         isLoading: true,
-        name: null
+        name: null,
+        email: null
     });
 
     useEffect(() => {
@@ -58,7 +60,8 @@ export function useBusinessAccess() {
                             businessId: bId,
                             clientId: clientSnap.docs[0].id,
                             isLoading: false,
-                            name: clientData.clientName || clientData.name || null
+                            name: clientData.clientName || clientData.name || null,
+                            email: user.email || null
                         });
                     }
                     return;
@@ -77,7 +80,8 @@ export function useBusinessAccess() {
                             businessId: busSnap.docs[0].id,
                             clientId: null,
                             isLoading: false,
-                            name: busData.name || null
+                            name: busData.name || null,
+                            email: user.email || null
                         });
                     }
                     return;

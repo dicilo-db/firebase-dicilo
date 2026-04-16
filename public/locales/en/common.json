@@ -935,6 +935,8 @@
     }
   },
   "community": {
+    "select_business_or_recommend": "Select a business or recommend a new one in your area",
+    "select_business_option": "Choose a business",
     "global_wall": "Global Wall",
     "photo": "Photo",
     "like": "Like",
@@ -984,7 +986,7 @@
     },
     "feed": {
       "wall": "Social Wall",
-      "recommendations": "Recommendations",
+      "recommendations": "Featured",
       "whats_happening": "What's happening in {{name}}?",
       "loading": "Loading activity...",
       "empty": "No recent activity in {{name}}.",
@@ -1052,7 +1054,52 @@
     "verifying": "Verifying...",
     "verify_create": "Verify & Create",
     "media": "Media",
-    "emoji": "Emoji"
+    "emoji": "Emoji",
+    "search_global": "Explore Communities",
+    "search_neighborhoods_global": "Search city, neighborhood..."
+  },
+  "validationDialog": {
+    "title": "Prospect Validation Center",
+    "description": "Review and verify the information before sending the secure invitation.",
+    "recommenderData": "Recommender Data",
+    "recommenderName": "Recommender Name",
+    "recommenderId": "Recommender ID",
+    "unknown": "Unknown",
+    "companyData": "Company Data",
+    "companyName": "Company Name",
+    "category": "Category",
+    "email": "General / Contact Email",
+    "phone": "Phone",
+    "country": "Country",
+    "city": "City",
+    "neighborhood": "Neighborhood / Zone",
+    "lang": "Contact Language",
+    "website": "Website / Social Media",
+    "comments": "Recommender Comments",
+    "securityKey": "Unique Registration Key",
+    "noKey": "No key...",
+    "generate": "Generate",
+    "keyHint": "This key will serve to verify authenticity when the company registers.",
+    "validationState": "Validation State",
+    "stateValidated": "Data Validated",
+    "statePending": "Pending Review",
+    "emailSentNote": "Invitation already sent",
+    "saveWithoutSending": "Save Without Sending",
+    "verifyBtn": "Verify Data",
+    "sendEmailBtn": "Fire Invitation Email",
+    "updatedTitle": "Recommendation updated",
+    "updatedDesc": "Changes saved successfully.",
+    "verifiedTitle": "Data verified",
+    "verifiedDesc": "The prospect information is valid. You can send the invitation.",
+    "failedTitle": "Validation failed",
+    "failedDesc": "Missing required fields or invalid email.",
+    "keyGeneratedTitle": "Key generated",
+    "keyGeneratedDesc": "A unique key has been generated for this prospect.",
+    "emailSentTitle": "Invitation sent",
+    "emailSentDesc": "The invitation email has been sent successfully.",
+    "emailErrorTitle": "Error sending invitation",
+    "serverError": "The server could not be contacted.",
+    "emailFailed": "Sending the invitation failed."
   },
   "finances": {
     "lockedTitle": "Earn money while recommending Dicilo",
@@ -1110,13 +1157,63 @@
     "monitored_env": "Monitored Environment",
     "monitored_desc": "Posts here are exclusive to your contacts, but the environment is subject to preventive auditing by DiciBot Brain to detect violations of community guidelines.",
     "your_private_circle": "Your Private Circle",
-    "create_post_private": "What are you thinking? (Only for your friends)"
+    "create_post_private": "What are you thinking? (Only for your friends)",
+    "tabs": {
+      "chats": "Chats",
+      "friends": "Friends"
+    },
+    "placeholder": {
+      "search_neighbor": "Search neighbors...",
+      "type_message": "Type a message..."
+    },
+    "list": {
+      "no_chats": "You have no active chats.",
+      "request_from": "Request from",
+      "user_label": "User",
+      "unknown_neighborhood": "Unknown neighborhood"
+    },
+    "headers": {
+      "pending_requests": "Pending Requests",
+      "my_friends": "My Friends",
+      "suggested_neighbors": "Suggested Neighbors",
+      "no_new_neighbors": "No new neighbors to add"
+    },
+    "actions": {
+      "reject_request": "Reject",
+      "accept_request": "Accept",
+      "start_chat": "Start Chat",
+      "add_friend": "Add Friend",
+      "send": "Send"
+    },
+    "status": {
+      "online": "Online"
+    }
   },
   "validUntil": "Valid until:",
   "downloadPDF": "Download PDF",
   "downloadJPG": "Download JPG",
   "searching": "Searching...",
+  "social_proof": {
+    "joined": "just joined Dicilo",
+    "from": "from",
+    "user_label": "User"
+  },
   "business": {
+    "geo": {
+      "title": "Hyperlocal Geomarketing",
+      "desc": "Attract customers walking near your business.",
+      "zoneParams": "Zone Parameters",
+      "radiusLabel": "Reach Radius (Kilometers)",
+      "zipLabel": "Priority Zip Codes",
+      "pushLabel": "Flash Message",
+      "simulator": "Impact Simulator",
+      "visibilityRange": "Promotion Reach (Visibility)",
+      "visibilityLocal": "Local (50 km)",
+      "visibilityRegional": "Regional / State",
+      "visibilityNational": "National (Country-wide)",
+      "visibilityContinental": "Continental",
+      "visibilityInternational": "International (Global)"
+    },
     "sidebar": {
       "dashboard": "Overview",
       "financials": "My Wallet",
@@ -1155,7 +1252,69 @@
       "createOfferBtn": "Generate New Offer",
       "manageLeadsBtn": "View Client Directory",
       "openKanbanBtn": "Open Closing Board",
-      "soonStatus": "Module under construction (Architecture ready)"
+      "soonStatus": "Module under construction (Architecture ready)",
+      "demo": {
+        "title": "Sales Pipeline (Demo)",
+        "drafts": "Drafts",
+        "card1": "Solar Tech Company",
+        "sent": "Sent",
+        "card2": "Dental Clinic",
+        "accepted": "Accepted",
+        "card3": "Peter (Individual)"
+      }
+    },
+    "textsVip": {
+      "title": "VIP AI Copywriter",
+      "desc": "Create persuasive texts instantly. Let our Artificial Intelligence engine write irresistible descriptions for your products and advertisements.",
+      "generatorTitle": "Automatic Text Generator",
+      "generatorDesc": "With your Premium subscription, just input your product's features and the AI will return perfectly optimized sales copy to capture clients on Dicilo.",
+      "soon": "AI Engine in Preparation"
+    },
+    "dashboard": {
+      "title": "Portal",
+      "welcome": "Hello, <strong>{{name}}</strong>. Great to have you back.",
+      "overviewTitle": "Overview",
+      "planTitle": "Your Current Plan",
+      "planDesc": "Active Dicilo subscription",
+      "visitsTitle": "Profile Visits",
+      "visitsDesc": "Last 30 days",
+      "clicksTitle": "Button Clicks",
+      "clicksDesc": "To your website / phone",
+      "couponsTitle": "Coupons Used",
+      "couponsDesc": "Validated redemptions",
+      "walletsTitle": "Your Wallets",
+      "dicipointsTitle": "DiciPoints (Rewards)",
+      "dicipointsDesc": "Points available for ads",
+      "prepaidTitle": "Prepaid Balance",
+      "prepaidDesc": "Funds added to your wallet",
+      "servicesTitle": "Services & Analytics",
+      "socialTitle": "Social Media",
+      "socialStatus": "Unlinked",
+      "socialDesc": "Connect your accounts",
+      "geoTitle": "Geomarketing",
+      "geoStatus": "Active",
+      "geoDesc": "Visibility in your area",
+      "campaignsTitle": "Custom Campaigns",
+      "campaignsStatus": "0 Active",
+      "campaignsDesc": "Use your DiciPoints",
+      "inquiriesTitle": "Commercial Inquiries",
+      "inquiriesDesc": "New B2B leads",
+      "statsTitle": "Statistics",
+      "statsStatus": "View Report",
+      "statsDesc": "Detailed analytics",
+      "supportTitle": "Support Center",
+      "waTitle": "WhatsApp",
+      "waStatus": "Contact Now",
+      "waDesc": "Real-time assistance",
+      "indivTitle": "Individual Support",
+      "indivStatus": "Schedule Call",
+      "indivDesc": "Personalized advice",
+      "techTitle": "Technical Support",
+      "techStatus": "Create Ticket",
+      "techDesc": "Problem resolution",
+      "bannerTitle": "Unlock the full potential of {{name}}",
+      "bannerDesc": "Build your own Micro-Web with our \"Page Editor\", sell online, manage catalogs, and pay for ads using DiciPoints from your Wallet by upgrading to Premium.",
+      "bannerBtn": "Upgrade to Premium"
     }
   }
 }
