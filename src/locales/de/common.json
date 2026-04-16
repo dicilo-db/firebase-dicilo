@@ -1451,7 +1451,20 @@
       "uploadDoc": "PDF-Datei hochladen",
       "planReq": "Das Modul KI-Assistent erfordert einen Premium-Plan oder ein spezifisches Add-on.",
       "avatarUrl": "Avatar-URL (Optional)",
-      "alimenta": "Füttern Sie Ihre KI mit Menüs, Katalogen oder FAQs im PDF-Format."
+      "alimenta": "Füttern Sie Ihre KI mit Menüs, Katalogen oder FAQs im PDF-Format.",
+      "iaOn": "KI Aktiviert",
+      "iaOff": "KI Pausiert",
+      "msgHint": "Diese Nachricht wird angezeigt, wenn der Kunde den Chat öffnet.",
+      "imgHint": "Sie können ein Bild platzieren, das als Gesicht Ihrer KI fungiert.",
+      "promptHint": "Weisen Sie die KI detailliert an, welchen Ton sie verwenden und welche Informationen sie priorisieren soll.",
+      "save": "Änderungen Speichern",
+      "dragDrop": "Ziehen oder klicken Sie hier (Maximal 10MB)",
+      "trainedDocs": "Trainierte Dokumente",
+      "noDocs": "Noch keine Dokumente hochgeladen.",
+      "phName": "Bsp. Johann von der Pizzeria Napoli",
+      "phGreeting": "Hallo! Ich bin Johann. Hast du Hunger?",
+      "phUrl": "https://deinlogo.com/robot.png",
+      "phPrompt": "Du bist ein freundlicher Verkäufer. Dein Ziel ist es, unsere Pizzen zu empfehlen und Öffnungszeiten zu nennen..."
     },
     "presentations": {
       "title": "Webinare und Demos",

@@ -9,10 +9,17 @@ import { useTranslation } from 'react-i18next';
 import dynamic from 'next/dynamic';
 
 // Carga dinámica exclusiva en el cliente porque el canvas requiere interactuar con el DOM
+
+const LoaderComponent = () => {
+  const { t } = useTranslation('common');
+  return <div className="p-12 text-center text-amber-600 font-bold animate-pulse">{t('business.graphicsVip.engine', 'Cargando el Motor Biográfico de I.A...')}</div>;
+};
+
 const FilerobotImageEditor = dynamic(
   () => import('react-filerobot-image-editor'),
-  { ssr: false, loading: () => <div className="p-12 text-center text-amber-600 font-bold animate-pulse">{t('business.graphicsVip.engine', 'Cargando el Motor Biográfico de I.A...')}</div> }
+  { ssr: false, loading: () => <LoaderComponent /> }
 );
+
 
 export default function GraphicsVipPage() {
     const { t } = useTranslation('common');

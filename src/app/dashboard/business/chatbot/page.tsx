@@ -216,7 +216,7 @@ export default function ChatbotPage() {
                 </div>
                 <div className="flex items-center gap-3 shrink-0 mb-1">
                     <Label htmlFor="active-bot" className="text-sm font-medium text-slate-700">
-                        {config.isActive ? 'I.A. Activada' : 'I.A. Pausada'}
+                        {config.isActive ? t('business.chatbot.iaOn', 'I.A. Activada') : t('business.chatbot.iaOff', 'I.A. Pausada')}
                     </Label>
                     <Switch 
                         id="active-bot"
@@ -245,7 +245,7 @@ export default function ChatbotPage() {
                                     <Input 
                                         value={config.botName} 
                                         onChange={e => setConfig({...config, botName: e.target.value})}
-                                        placeholder="Ej. Juan de Pizzería Napoli"
+                                        placeholder={t('business.chatbot.phName', 'Ej. Juan de Pizzería Napoli')}
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -253,28 +253,28 @@ export default function ChatbotPage() {
                                     <Input 
                                         value={config.greetingMessage} 
                                         onChange={e => setConfig({...config, greetingMessage: e.target.value})}
-                                        placeholder="¡Hola! Soy Juan, ¿tienes hambre?"
+                                        placeholder={t('business.chatbot.phGreeting', '¡Hola! Soy Juan, ¿tienes hambre?')}
                                     />
-                                    <p className="text-xs text-slate-500">Este mensaje aparecerá cuando o cliente abra el chat.</p>
+                                    <p className="text-xs text-slate-500">{t('business.chatbot.msgHint', 'Este mensaje aparecerá cuando el cliente abra el chat.')}</p>
                                 </div>
                                 <div className="space-y-2">
                                     <Label>{t('business.chatbot.avatarUrl', 'URL del Avatar (Opcional)')}</Label>
                                     <Input 
                                         value={config.avatarUrl || ''} 
                                         onChange={e => setConfig({...config, avatarUrl: e.target.value})}
-                                        placeholder="https://tulogo.com/robot.png"
+                                        placeholder={t('business.chatbot.phUrl', 'https://tulogo.com/robot.png')}
                                     />
-                                    <p className="text-xs text-slate-500">Puedes colocar una imagen que actuará como rostro de tu I.A.</p>
+                                    <p className="text-xs text-slate-500">{t('business.chatbot.imgHint', 'Puedes colocar una imagen que actuará como rostro de tu I.A.')}</p>
                                 </div>
                                 <div className="space-y-2">
                                     <Label>{t('business.chatbot.prompt', 'Instrucciones Centrales (Prompt)')}</Label>
                                     <Textarea 
                                         value={config.systemPrompt} 
                                         onChange={e => setConfig({...config, systemPrompt: e.target.value})}
-                                        placeholder="Eres un agente de ventas amable. Tu objetivo es recomendar nuestras pizzas y proporcionar horarios..."
+                                        placeholder={t('business.chatbot.phPrompt', 'Eres un agente de ventas amable. Tu objetivo es recomendar nuestras pizzas y proporcionar horarios...')}
                                         rows={6}
                                     />
-                                    <p className="text-xs text-slate-500">Instruye detalladamente a la I.A. sobre qué tono usar y qué información priorizar.</p>
+                                    <p className="text-xs text-slate-500">{t('business.chatbot.promptHint', 'Instruye detalladamente a la I.A. sobre qué tono usar y qué información priorizar.')}</p>
                                 </div>
                                 <Button 
                                     className="w-full bg-indigo-600 hover:bg-indigo-700 text-white mt-4" 
@@ -282,7 +282,7 @@ export default function ChatbotPage() {
                                     disabled={saving}
                                 >
                                     {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
-                                    Guardar Cambios
+                                    {t('business.chatbot.save', 'Guardar Cambios')}
                                 </Button>
                             </CardContent>
                         </Card>
@@ -315,15 +315,15 @@ export default function ChatbotPage() {
                                         <div className="flex flex-col items-center">
                                             <Upload className="w-10 h-10 text-indigo-400 mb-3" />
                                             <p className="font-semibold text-slate-700">{t('business.chatbot.uploadDoc', 'Cargar Archivo PDF')}</p>
-                                            <p className="text-sm text-slate-500 mt-1 max-w-xs">Arrastra o haz clic aquí (Máximo 10MB)</p>
+                                            <p className="text-sm text-slate-500 mt-1 max-w-xs">{t('business.chatbot.dragDrop', 'Arrastra o haz clic aquí (Máximo 10MB)')}</p>
                                         </div>
                                     )}
                                 </div>
 
                                 <div className="mt-6 space-y-3">
-                                    <h4 className="font-semibold text-sm text-slate-700 uppercase tracking-wider mb-3">Documentos Entrenados</h4>
+                                    <h4 className="font-semibold text-sm text-slate-700 uppercase tracking-wider mb-3">{t('business.chatbot.trainedDocs', 'Documentos Entrenados')}</h4>
                                     {files.length === 0 ? (
-                                        <p className="text-sm text-slate-500 italic">No hay documentos subidos todavía.</p>
+                                        <p className="text-sm text-slate-500 italic">{t('business.chatbot.noDocs', 'No hay documentos subidos todavía.')}</p>
                                     ) : (
                                         files.map(file => (
                                             <div key={file.id} className="flex items-center justify-between p-3 bg-white border border-slate-200 rounded-lg shadow-sm">
