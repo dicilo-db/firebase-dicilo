@@ -1199,6 +1199,33 @@
     "user_label": "User"
   },
   "business": {
+    "coupons": {
+      "planRequired": "The Coupons module requires a Starter plan or higher.",
+      "pageTitle": "Coupon <span class=\"text-pink-600\">Manager</span>",
+      "pageDesc": "Create and manage attractive offers to draw local customers to your business.",
+      "statusActive": "Active",
+      "statusExpired": "Expired",
+      "statusScheduled": "Scheduled",
+      "offerLabel": "Offer",
+      "promptEmail": "Which email should the coupon be sent to?",
+      "sending": "Sending...",
+      "pleaseWait": "Please wait.",
+      "emailSent": "Email sent to ${email}.",
+      "emailError": "Could not send email.",
+      "myCoupons": "My Coupons",
+      "manageDesc": "Manage your campaigns and discounts here.",
+      "createBtn": "Create New Coupon",
+      "emptyTitle": "No coupons available",
+      "emptyDesc": "Create your first coupon to win customers with attractive offers.",
+      "createNow": "Create Now",
+      "editTip": "Edit",
+      "confirmDelete": "Are you sure you want to permanently delete this coupon?",
+      "deletedMsg": "Coupon Deleted",
+      "deleteTip": "Delete",
+      "saveImageTip": "Save as Image",
+      "savePdfTip": "Save as PDF",
+      "sendEmailTip": "Send via Email"
+    },
     "geo": {
       "title": "Hyperlocal Geomarketing",
       "desc": "Attract customers walking near your business.",

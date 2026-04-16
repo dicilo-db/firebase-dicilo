@@ -62,11 +62,11 @@ export function ClientCouponManager({ companyId, companyName, category, clientLo
     const getStatusBadge = (status: string) => {
         switch (status) {
             case 'active':
-                return <Badge className="bg-green-500">Aktiv</Badge>;
+                return <Badge className="bg-green-500">{t('business.coupons.statusActive', 'Activo')}</Badge>;
             case 'expired':
-                return <Badge variant="destructive">Abgelaufen</Badge>;
+                return <Badge variant="destructive">{t('business.coupons.statusExpired', 'Expirado')}</Badge>;
             case 'scheduled':
-                return <Badge variant="outline" className="text-blue-500 border-blue-500">Geplant</Badge>;
+                return <Badge variant="outline" className="text-blue-500 border-blue-500">{t('business.coupons.statusScheduled', 'Programado')}</Badge>;
             default:
                 return <Badge variant="secondary">{status}</Badge>;
         }
@@ -75,7 +75,7 @@ export function ClientCouponManager({ companyId, companyName, category, clientLo
     // Helper to render discount badge
     const renderDiscountBadge = (coupon: any) => {
         if (!coupon.discountType || coupon.discountType === 'text') {
-            return <Badge variant="secondary" className="gap-1"><Type className="h-3 w-3" /> Angebot</Badge>;
+            return <Badge variant="secondary" className="gap-1"><Type className="h-3 w-3" /> {t('business.coupons.offerLabel', 'Oferta')}</Badge>;
         }
         if (coupon.discountType === 'percent') {
             return <Badge variant="secondary" className="gap-1 bg-blue-100 text-blue-800"><Percent className="h-3 w-3" /> {coupon.discountValue}%</Badge>;
@@ -144,19 +144,19 @@ export function ClientCouponManager({ companyId, companyName, category, clientLo
     };
 
     const handleSendEmail = async (coupon: any) => {
-        const email = prompt("An welche Email soll der Coupon gesendet werden?");
+        const email = prompt(t('business.coupons.promptEmail', "¿A qué email enviar el cupón?"));
         if (!email) return;
 
-        toast({ title: 'Sende Email...', description: 'Bitte warten.' });
+        toast({ title: t('business.coupons.sending', 'Enviando...'), description: t('business.coupons.pleaseWait', 'Por favor, espera.') });
 
         // Dynamic import to avoid server-side issues if any, though actions are safe
         const { shareCoupon } = await import('@/app/actions/coupons');
 
         const res = await shareCoupon(email, coupon);
         if (res.success) {
-            toast({ title: 'Erfolg', description: `Email an ${email} gesendet.` });
+            toast({ title: t('success', 'Éxito'), description: t('business.coupons.emailSent', `Email enviado a ${email}.`).replace('${email}', email) });
         } else {
-            toast({ title: 'Fehler', description: res.error || 'Email konnte nicht gesendet werden.', variant: 'destructive' });
+            toast({ title: t('error', 'Error'), description: res.error || t('business.coupons.emailError', 'No se pudo enviar.'), variant: 'destructive' });
         }
     };
 
@@ -170,14 +170,14 @@ export function ClientCouponManager({ companyId, companyName, category, clientLo
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <div>
-                    <h3 className="text-lg font-medium">Meine Coupons</h3>
+                    <h3 className="text-lg font-medium">{t('business.coupons.myCoupons', 'Mis Cupones')}</h3>
                     <p className="text-sm text-muted-foreground">
-                        Verwalten Sie hier Ihre Rabattaktionen und Angebote.
+                        {t('business.coupons.manageDesc', 'Administra aquí tus campañas y descuentos.')}
                     </p>
                 </div>
                 <Button type="button" onClick={() => { setEditingCoupon(null); setIsCreateOpen(true); }}>
                     <Plus className="mr-2 h-4 w-4" />
-                    Neuen Coupon erstellen
+                    {t('business.coupons.createBtn', 'Crear Cupón Nuevo')}
                 </Button>
             </div>
 
@@ -189,12 +189,12 @@ export function ClientCouponManager({ companyId, companyName, category, clientLo
                 <Card className="border-dashed">
                     <CardContent className="flex flex-col items-center justify-center py-10 text-center">
                         <Tag className="h-10 w-10 text-muted-foreground mb-4" />
-                        <h3 className="text-lg font-medium">Keine Coupons vorhanden</h3>
+                        <h3 className="text-lg font-medium">{t('business.coupons.emptyTitle', 'No tienes cupones')}</h3>
                         <p className="text-sm text-muted-foreground max-w-sm mt-2 mb-6">
-                            Erstellen Sie Ihren ersten Coupon, um Kunden mit attraktiven Angeboten zu gewinnen.
+                            {t('business.coupons.emptyDesc', 'Crea tu primer cupón para ganar clientes con ofertas atractivas.')}
                         </p>
                         <Button type="button" variant="outline" onClick={() => { setEditingCoupon(null); setIsCreateOpen(true); }}>
-                            Jetzt erstellen
+                            {t('business.coupons.createNow', 'Crear Ahora')}
                         </Button>
                     </CardContent>
                 </Card>
@@ -251,7 +251,7 @@ export function ClientCouponManager({ companyId, companyName, category, clientLo
                                                 size="icon"
                                                 onClick={() => handleEdit(coupon)}
                                                 className="h-6 w-6 text-slate-400 hover:text-primary bg-slate-50"
-                                                title="Mejorar (Editar)"
+                                                title={t('business.coupons.editTip', 'Editar')}
                                             >
                                                 <Pencil className="h-3 w-3" />
                                             </Button>
@@ -259,18 +259,18 @@ export function ClientCouponManager({ companyId, companyName, category, clientLo
                                                 variant="ghost"
                                                 size="icon"
                                                 onClick={async () => {
-                                                    if(confirm("¿Estás seguro de que quieres eliminar este cupón permanentemente?")) {
+                                                    if(confirm(t('business.coupons.confirmDelete', '¿Deseas eliminar permanentemente este cupón?'))) {
                                                         const res = await deleteCoupon(coupon.id);
                                                         if(res.success) {
-                                                            toast({ title: 'Cupón Eliminado. '});
+                                                            toast({ title: t('business.coupons.deletedMsg', 'Cupón Eliminado') });
                                                             fetchCoupons();
                                                         } else {
-                                                            toast({ title: 'Error', variant: 'destructive' });
+                                                            toast({ title: t('error', 'Error'), variant: 'destructive' });
                                                         }
                                                     }
                                                 }}
                                                 className="h-6 w-6 text-slate-400 hover:text-red-500 bg-slate-50 relative z-20"
-                                                title="Eliminar"
+                                                title={t('business.coupons.deleteTip', 'Eliminar')}
                                             >
                                                 <Trash2 className="h-3 w-3" />
                                             </Button>
@@ -301,13 +301,13 @@ export function ClientCouponManager({ companyId, companyName, category, clientLo
 
                             {/* ACTION BUTTONS */}
                             <div className="grid grid-cols-3 gap-1">
-                                <Button variant="secondary" size="sm" onClick={() => handleDownloadJPG(coupon)} title="Als Bild speichern">
+                                <Button variant="secondary" size="sm" onClick={() => handleDownloadJPG(coupon)} title={t('business.coupons.saveImageTip', 'Guardar como imagen')}>
                                     JPG
                                 </Button>
-                                <Button variant="secondary" size="sm" onClick={() => handleDownloadPDF(coupon)} title="Als PDF speichern">
+                                <Button variant="secondary" size="sm" onClick={() => handleDownloadPDF(coupon)} title={t('business.coupons.savePdfTip', 'Guardar como PDF')}>
                                     PDF
                                 </Button>
-                                <Button variant="secondary" size="sm" onClick={() => handleSendEmail(coupon)} title="Per Email senden">
+                                <Button variant="secondary" size="sm" onClick={() => handleSendEmail(coupon)} title={t('business.coupons.sendEmailTip', 'Enviar por email')}>
                                     Email
                                 </Button>
                             </div>

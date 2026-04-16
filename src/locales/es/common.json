@@ -1281,6 +1281,33 @@
     "user_label": "Usr"
   },
   "business": {
+    "coupons": {
+      "planRequired": "El módulo de Cupones requiere plan Starter o superior.",
+      "pageTitle": "Gestor de <span class=\"text-pink-600\">Cupones</span>",
+      "pageDesc": "Crea y administra ofertas atractivas para atraer clientes locales a tu negocio.",
+      "statusActive": "Activo",
+      "statusExpired": "Expirado",
+      "statusScheduled": "Programado",
+      "offerLabel": "Oferta",
+      "promptEmail": "¿A qué email enviar el cupón?",
+      "sending": "Enviando...",
+      "pleaseWait": "Por favor, espera.",
+      "emailSent": "Email enviado a ${email}.",
+      "emailError": "No se pudo enviar el email.",
+      "myCoupons": "Mis Cupones",
+      "manageDesc": "Administra aquí tus campañas y descuentos.",
+      "createBtn": "Crear Cupón Nuevo",
+      "emptyTitle": "No tienes cupones",
+      "emptyDesc": "Crea tu primer cupón para ganar clientes con ofertas atractivas.",
+      "createNow": "Crear Ahora",
+      "editTip": "Editar",
+      "confirmDelete": "¿Deseas eliminar permanentemente este cupón?",
+      "deletedMsg": "Cupón Eliminado",
+      "deleteTip": "Eliminar",
+      "saveImageTip": "Guardar como imagen",
+      "savePdfTip": "Guardar como PDF",
+      "sendEmailTip": "Enviar por email"
+    },
     "geo": {
       "title": "Geomarketing Hyperlocal",
       "desc": "Atrae clientes que caminan cerca de tu negocio.",

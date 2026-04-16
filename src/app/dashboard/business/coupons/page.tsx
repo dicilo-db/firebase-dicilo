@@ -4,10 +4,12 @@ import { useBusinessAccess } from '@/hooks/useBusinessAccess';
 import { ClientCouponManager } from '@/components/dashboard/ClientCouponManager';
 import { Ticket } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useTranslation } from 'react-i18next';
 
 export default function CouponsPage() {
     const { businessId, clientId, plan, name, isLoading } = useBusinessAccess();
     const activeId = businessId || clientId;
+    const { t } = useTranslation('common');
 
     if (isLoading) {
         return (
@@ -22,7 +24,7 @@ export default function CouponsPage() {
         return (
             <div className="p-8 max-w-6xl mx-auto space-y-8">
                 <div className="bg-amber-50 border border-amber-200 text-amber-800 p-4 rounded-lg flex items-start gap-4 text-sm font-medium mt-6">
-                    <p>El módulo de Cupones requiere plan Starter o superior.</p>
+                    <p>{t('business.coupons.planRequired', 'El módulo de Cupones requiere plan Starter o superior.')}</p>
                 </div>
             </div>
         );
@@ -33,9 +35,9 @@ export default function CouponsPage() {
             <div className="pb-4 border-b border-slate-200 text-left">
                 <h1 className="text-3xl font-bold tracking-tight text-slate-900 flex items-center gap-2">
                     <Ticket className="w-8 h-8 text-pink-600" />
-                    Gestor de <span className="text-pink-600">Cupones</span>
+                    <span dangerouslySetInnerHTML={{ __html: t('business.coupons.pageTitle', 'Gestor de <span class="text-pink-600">Cupones</span>') }}></span>
                 </h1>
-                <p className="text-slate-500 mt-2 text-lg">Crea y administra ofertas atractivas para atraer clientes locales a tu negocio.</p>
+                <p className="text-slate-500 mt-2 text-lg">{t('business.coupons.pageDesc', 'Crea y administra ofertas atractivas para atraer clientes locales a tu negocio.')}</p>
             </div>
 
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">

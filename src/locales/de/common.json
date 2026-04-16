@@ -1199,6 +1199,33 @@
     "user_label": "Benutzer"
   },
   "business": {
+    "coupons": {
+      "planRequired": "Das Gutscheinmodul erfordert einen Starter- oder höheren Plan.",
+      "pageTitle": "Gutschein-<span class=\"text-pink-600\">Manager</span>",
+      "pageDesc": "Erstellen und verwalten Sie attraktive Angebote, um lokale Kunden für Ihr Geschäft zu gewinnen.",
+      "statusActive": "Aktiv",
+      "statusExpired": "Abgelaufen",
+      "statusScheduled": "Geplant",
+      "offerLabel": "Angebot",
+      "promptEmail": "An welche E-Mail soll der Gutschein gesendet werden?",
+      "sending": "Sende...",
+      "pleaseWait": "Bitte warten.",
+      "emailSent": "E-Mail an ${email} gesendet.",
+      "emailError": "E-Mail konnte nicht gesendet werden.",
+      "myCoupons": "Meine Gutscheine",
+      "manageDesc": "Verwalten Sie hier Ihre Rabattaktionen und Angebote.",
+      "createBtn": "Neuen Gutschein erstellen",
+      "emptyTitle": "Keine Gutscheine vorhanden",
+      "emptyDesc": "Erstellen Sie Ihren ersten Gutschein, um Kunden mit attraktiven Angeboten zu gewinnen.",
+      "createNow": "Jetzt erstellen",
+      "editTip": "Bearbeiten",
+      "confirmDelete": "Möchten Sie diesen Gutschein wirklich dauerhaft löschen?",
+      "deletedMsg": "Gutschein gelöscht",
+      "deleteTip": "Löschen",
+      "saveImageTip": "Als Bild speichern",
+      "savePdfTip": "Als PDF speichern",
+      "sendEmailTip": "Per E-Mail senden"
+    },
     "geo": {
       "title": "Hyperlokales Geomarketing",
       "desc": "Ziehen Sie Kunden an, die an Ihrem Geschäft vorbeigehen.",
