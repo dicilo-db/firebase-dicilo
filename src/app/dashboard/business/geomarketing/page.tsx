@@ -39,7 +39,7 @@ export default function GeomarketingPage() {
         isActive: false,
         radiusKm: 2,
         targetZips: '',
-        pushMessage: '¡Hola! Estás cerca de nuestra tienda. Entra hoy y recibe un 10% de descuento.'
+        pushMessage: ''
     });
     
     const [saving, setSaving] = useState(false);
@@ -187,7 +187,7 @@ export default function GeomarketingPage() {
                                 <Textarea 
                                     placeholder={t('business.geo.pushPlaceholder', 'El mensaje que recibirá la persona al pasar cerca.')}
                                     rows={3}
-                                    value={config.pushMessage}
+                                    value={config.pushMessage || t('business.geo.pushDefault', '¡Hola! Estás cerca de nuestra tienda. Entra hoy y recibe un 10% de descuento.')}
                                     onChange={(e) => setConfig({...config, pushMessage: e.target.value})}
                                 />
                                 <p className="text-xs text-slate-500">{t('business.geo.pushInfo', 'Asegúrate de incluir un "Ganchop" rápido. Hazlo irresistible.')}</p>

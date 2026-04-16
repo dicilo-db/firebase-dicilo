@@ -1342,7 +1342,8 @@
       "privacyText": "Dicilo teilt niemals die genauen Standorte von Nutzern mit Unternehmen. Das Spatial Matching erfolgt intern und 100% anonym.",
       "toastConnError": "Verbindungsfehler",
       "toastSaved": "Geodaten gespeichert",
-      "toastUpdError": "Aktualisierungsfehler"
+      "toastUpdError": "Aktualisierungsfehler",
+      "pushDefault": "Hallo! Sie sind in der Nähe unseres Geschäfts. Kommen Sie heute herein und erhalten Sie 10% Rabatt."
     },
     "sidebar": {
       "dashboard": "Übersicht",

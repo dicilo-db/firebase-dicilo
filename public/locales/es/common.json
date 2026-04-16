@@ -1424,7 +1424,8 @@
       "privacyText": "Dicilo nunca comparte la ubicación exacta de los usuarios con los negocios. El cruce espacial ocurre internamente y de forma 100% anonimizada.",
       "toastConnError": "Error de conexión",
       "toastSaved": "Configuración Espacial Guardada",
-      "toastUpdError": "Error al actualizar"
+      "toastUpdError": "Error al actualizar",
+      "pushDefault": "¡Hola! Estás cerca de nuestra tienda. Entra hoy y recibe un 10% de descuento."
     },
     "sidebar": {
       "dashboard": "Resumen",
