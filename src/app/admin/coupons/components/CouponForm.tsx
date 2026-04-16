@@ -310,22 +310,22 @@ export function CouponForm({ isOpen, onClose, onSuccess, category, fixedCompanyI
                                 name="discountType"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Tipo de Descuento</FormLabel>
+                                        <FormLabel>{t('contracts.coupons.discountType', 'Tipo de Descuento')}</FormLabel>
                                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                                             <FormControl>
                                                 <SelectTrigger>
-                                                    <SelectValue placeholder="Seleccionar" />
+                                                    <SelectValue placeholder={t('contracts.coupons.select', 'Seleccionar')} />
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
                                                 <SelectItem value="text">
-                                                    <div className="flex items-center gap-2"><Type className="h-4 w-4" /> Texto Libre</div>
+                                                    <div className="flex items-center gap-2"><Type className="h-4 w-4" /> {t('contracts.coupons.freeText', 'Texto Libre')}</div>
                                                 </SelectItem>
                                                 <SelectItem value="percent">
-                                                    <div className="flex items-center gap-2"><Percent className="h-4 w-4" /> Porcentaje (%)</div>
+                                                    <div className="flex items-center gap-2"><Percent className="h-4 w-4" /> {t('contracts.coupons.percentage', 'Porcentaje (%)')}</div>
                                                 </SelectItem>
                                                 <SelectItem value="euro">
-                                                    <div className="flex items-center gap-2"><Euro className="h-4 w-4" /> Importe (€)</div>
+                                                    <div className="flex items-center gap-2"><Euro className="h-4 w-4" /> {t('contracts.coupons.amount', 'Importe (€)')}</div>
                                                 </SelectItem>
                                             </SelectContent>
                                         </Select>
@@ -340,7 +340,7 @@ export function CouponForm({ isOpen, onClose, onSuccess, category, fixedCompanyI
                                     name="discountValue"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Valor ({discountType === 'percent' ? '%' : '€'})</FormLabel>
+                                            <FormLabel>{t('contracts.coupons.discountValue', 'Valor')} ({discountType === 'percent' ? '%' : '€'})</FormLabel>
                                             <FormControl>
                                                 <Input type="number" placeholder="20" {...field} />
                                             </FormControl>
@@ -442,8 +442,8 @@ export function CouponForm({ isOpen, onClose, onSuccess, category, fixedCompanyI
                                 {t('contracts.coupons.cancelButton', 'Cancelar')}
                             </Button>
                             <Button type="button" onClick={handleManualSubmit} disabled={isLoading}>
-                                {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : (initialData ? 'Guardar Cambios' : t('contracts.coupons.createButton', 'Crear Cupón'))}
-                            </Button>
+                                                {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : (initialData ? t('contracts.coupons.saveChanges', 'Guardar Cambios') : t('contracts.coupons.createButton', 'Crear Cupón'))}
+                                            </Button>
                         </DialogFooter>
                     </div>
                 </Form>

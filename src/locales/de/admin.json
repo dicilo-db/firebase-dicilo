@@ -851,6 +851,13 @@
   },
   "contracts": {
     "coupons": {
+      "discountType": "Rabattart",
+      "select": "Auswählen",
+      "freeText": "Freitext",
+      "percentage": "Prozentsatz (%)",
+      "amount": "Betrag (€)",
+      "discountValue": "Wert",
+      "saveChanges": "Änderungen speichern",
       "createTitle": "Neuen Coupon erstellen",
       "createDescription": "Registrieren Sie einen neuen Rabatt für die Kategorie: {{category}}",
       "searchPlaceholder": "Firmenamen suchen...",

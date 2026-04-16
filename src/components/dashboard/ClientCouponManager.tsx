@@ -21,7 +21,7 @@ interface ClientCouponManagerProps {
 
 export function ClientCouponManager({ companyId, companyName, category, clientLogoUrl }: ClientCouponManagerProps) {
     const { toast } = useToast();
-    const { t } = useTranslation(['admin', 'common']);
+    const { t } = useTranslation('common');
     const [coupons, setCoupons] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isCreateOpen, setIsCreateOpen] = useState(false);

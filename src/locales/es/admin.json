@@ -881,7 +881,14 @@
       "successTitle": "Cupón creado",
       "successDesc": "Código generado: {{code}}",
       "errorTitle": "Error",
-      "errorDesc": "Ocurrió un error al crear el cupón."
+      "errorDesc": "Ocurrió un error al crear el cupón.",
+      "discountType": "Tipo de Descuento",
+      "select": "Seleccionar",
+      "freeText": "Texto Libre",
+      "percentage": "Porcentaje (%)",
+      "amount": "Importe (€)",
+      "discountValue": "Valor",
+      "saveChanges": "Guardar Cambios"
     }
   },
   "formsDashboard": {
