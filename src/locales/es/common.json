@@ -1281,6 +1281,21 @@
     "user_label": "Usr"
   },
   "business": {
+    "financials": {
+      "title": "Wallet <span class=\"text-blue-600\">Empresarial</span>",
+      "desc": "Consulta y gestiona tus saldo en puntos y comisiones disponibles.",
+      "dpTitle": "Dicilo Puntos (DP)",
+      "accumulated": "Acumulados",
+      "dpDesc": "Puntos recibidos de los usuarios como descuento.",
+      "dpEquivalent": "Equivale a ${EUR}€ para pago de publicidad B2B.",
+      "payAdsBtn": "Pagar Anuncios con DP",
+      "eurTitle": "Comisiones Efectivas",
+      "eurDesc": "Saldo generado por referir otras empresas a Dicilo.",
+      "eurAvailable": "Disponible de inmediato para retiro o facturación.",
+      "paySubBtn": "Pagar Suscripción",
+      "withdrawBtn": "Iniciar Retiro a Banco",
+      "basicWarning": "Tu plan ${plan} solo te permite observar el saldo. Necesitas mejorar al menos a Starter para recibir comisiones B2B operativas."
+    },
     "coupons": {
       "planRequired": "El módulo de Cupones requiere plan Starter o superior.",
       "pageTitle": "Gestor de <span class=\"text-pink-600\">Cupones</span>",

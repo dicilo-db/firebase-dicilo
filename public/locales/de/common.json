@@ -1199,6 +1199,21 @@
     "user_label": "Benutzer"
   },
   "business": {
+    "financials": {
+      "title": "Unternehmens-<span class=\"text-blue-600\">Wallet</span>",
+      "desc": "Überprüfen und verwalten Sie Ihr Guthaben an DiciPoints und verfügbaren Provisionen.",
+      "dpTitle": "Dicilo Punkte (DP)",
+      "accumulated": "Gesammelt",
+      "dpDesc": "Von Benutzern erhaltene Punkte als Rabatt.",
+      "dpEquivalent": "Entspricht ${EUR}€ für B2B-Werbeausgaben.",
+      "payAdsBtn": "Anzeigen mit DP bezahlen",
+      "eurTitle": "Bargeld-Provisionen",
+      "eurDesc": "Guthaben durch Empfehlung anderer Unternehmen generiert.",
+      "eurAvailable": "Sofort verfügbar für Auszahlung oder Abrechnung.",
+      "paySubBtn": "Abonnement bezahlen",
+      "withdrawBtn": "Auszahlung starten",
+      "basicWarning": "Ihr ${plan} Plan erlaubt es Ihnen nur, das Guthaben einzusehen. Ein Upgrade auf Starter ist erforderlich, um Provisionen zu erhalten."
+    },
     "coupons": {
       "planRequired": "Das Gutscheinmodul erfordert einen Starter- oder höheren Plan.",
       "pageTitle": "Gutschein-<span class=\"text-pink-600\">Manager</span>",
