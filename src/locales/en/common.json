@@ -1448,7 +1448,10 @@
       "greeting": "Welcome Message",
       "prompt": "Core Instructions (Prompt)",
       "filesBox": "Knowledge Files",
-      "uploadDoc": "Upload PDF File"
+      "uploadDoc": "Upload PDF File",
+      "planReq": "The AI Assistant module requires a Premium plan or specific add-on.",
+      "avatarUrl": "Avatar URL (Optional)",
+      "alimenta": "Feed your AI with menus, catalogs, or FAQs in PDF."
     },
     "presentations": {
       "title": "Webinars and Demos",
@@ -1596,14 +1599,24 @@
       "empty": "No registered questions"
     },
     "socialMedia": {
-      "title": "Social Media",
+      "title": "Automated Presence",
       "desc": "Connect your social networks.",
-      "editor": "Programming Editor in Development"
+      "editor": "Programming Editor in Development",
+      "desc1": "Automatically generate and schedule up to ",
+      "descBold": "12 monthly posts on 3 channels",
+      "desc2": ". Designed to maximize your business visibility with AI.",
+      "connectFB": "Connect Facebook",
+      "connectIG": "Connect Instagram",
+      "connectLI": "Connect LinkedIn",
+      "soon": "Soon you'll be able to visualize your media plan on a calendar and instruct AI to write your store news."
     },
     "editor": {
       "title": "My Business Profile",
       "desc": "Edit your business's public information.",
-      "editorDev": "Editor in Development"
+      "editorDev": "Editor in Development",
+      "noProfile": "Active business profile could not be located. Please contact support if the problem persists.",
+      "pageTitle": "Content Manager & Advanced Tools",
+      "pageDesc": "From here you can manage texts, banners, integrated coupon systems and invitations to new customers (Your Classic Panel)."
     }
   }
 }

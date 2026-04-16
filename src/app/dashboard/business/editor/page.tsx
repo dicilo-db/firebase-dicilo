@@ -53,7 +53,7 @@ export default function PageEditorPage() {
         return (
             <div className="p-8 max-w-6xl mx-auto space-y-8 animate-in fade-in duration-500">
                 <div className="bg-amber-50 border border-amber-200 text-amber-800 p-4 rounded-lg flex items-start gap-4 text-sm font-medium mt-6">
-                    <p>No se pudo localizar el perfil comercial activo. Por favor, contacta con soporte si el problema persiste.</p>
+                    <p>{t('business.editor.noProfile', 'No se pudo localizar el perfil comercial activo. Por favor, contacta con soporte si el problema persiste.')}</p>
                 </div>
             </div>
         );
@@ -66,10 +66,10 @@ export default function PageEditorPage() {
                     <div>
                         <h1 className="text-3xl font-extrabold flex items-center gap-3">
                             <LayoutTemplate className="w-8 h-8" />
-                            Gestor de Contenidos & Herramientas Avanzadas
+                            {t('business.editor.pageTitle', 'Gestor de Contenidos & Herramientas Avanzadas')}
                         </h1>
                         <p className="mt-2 text-blue-200 max-w-3xl text-lg">
-                            Desde aquí puedes administrar los textos, banners, sistema de cupones integrados y las invitaciones a nuevos clientes (Tu Panel Clásico).
+                            {t('business.editor.pageDesc', 'Desde aquí puedes administrar los textos, banners, sistema de cupones integrados y las invitaciones a nuevos clientes (Tu Panel Clásico).')}
                         </p>
                     </div>
                 </div>

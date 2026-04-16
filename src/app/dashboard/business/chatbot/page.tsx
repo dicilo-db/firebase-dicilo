@@ -196,7 +196,7 @@ export default function ChatbotPage() {
         return (
             <div className="p-8 max-w-5xl animate-in fade-in duration-500">
                 <div className="bg-amber-50 border border-amber-200 text-amber-800 p-4 rounded-lg flex items-start gap-4 text-sm font-medium mt-6">
-                    <p>El módulo Asistente I.A. requiere plan Premium o un add-on específico.</p>
+                    <p>{t('business.chatbot.planReq', 'El módulo Asistente I.A. requiere plan Premium o un add-on específico.')}</p>
                 </div>
             </div>
         );
@@ -258,7 +258,7 @@ export default function ChatbotPage() {
                                     <p className="text-xs text-slate-500">Este mensaje aparecerá cuando o cliente abra el chat.</p>
                                 </div>
                                 <div className="space-y-2">
-                                    <Label>URL del Avatar (Opcional)</Label>
+                                    <Label>{t('business.chatbot.avatarUrl', 'URL del Avatar (Opcional)')}</Label>
                                     <Input 
                                         value={config.avatarUrl || ''} 
                                         onChange={e => setConfig({...config, avatarUrl: e.target.value})}
@@ -295,7 +295,7 @@ export default function ChatbotPage() {
                                 <CardTitle className="text-xl flex items-center gap-2">
                                     <Globe className="w-5 h-5 text-indigo-600" /> {t('business.chatbot.filesBox', 'Archivos de Conocimiento')}
                                 </CardTitle>
-                                <CardDescription>Alimenta a tu I.A. con menús, catálogos o preguntas frecuentes en PDF.</CardDescription>
+                                <CardDescription>{t('business.chatbot.alimenta', 'Alimenta a tu I.A. con menús, catálogos o preguntas frecuentes en PDF.')}</CardDescription>
                             </CardHeader>
                             <CardContent>
                                 <div className="border-2 border-dashed border-slate-200 rounded-xl p-8 text-center bg-slate-50 relative hover:bg-slate-100 transition-colors cursor-pointer">

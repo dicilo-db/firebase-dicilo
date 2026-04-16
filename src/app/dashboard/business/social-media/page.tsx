@@ -12,11 +12,10 @@ export default function SocialMediaPage() {
                     <div>
                         <h1 className="text-3xl font-extrabold flex items-center gap-3">
                             <Share2 className="w-8 h-8" />
-                            Presencia Automatizada
+                            {t('business.socialMedia.title', 'Presencia Automatizada')}
                         </h1>
                         <p className="mt-3 text-pink-100 max-w-xl text-lg">
-                            Genera y programa automáticamente hasta <strong>12 posts mensuales en 3 canales</strong>.
-                            Diseñado para maximizar la visibilidad de tu negocio con Inteligencia Artificial.
+                            {t('business.socialMedia.desc1', 'Genera y programa automáticamente hasta ')}<strong>{t('business.socialMedia.descBold', '12 posts mensuales en 3 canales')}</strong>{t('business.socialMedia.desc2', '. Diseñado para maximizar la visibilidad de tu negocio con Inteligencia Artificial.')}
                         </p>
                     </div>
                 </div>
@@ -25,15 +24,15 @@ export default function SocialMediaPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                 <div className="bg-white p-6 rounded-2xl border shadow-sm flex flex-col items-center">
                     <Facebook className="text-blue-600 w-12 h-12 mb-4" />
-                    <h3 className="font-bold text-slate-800">Conectar Facebook</h3>
+                    <h3 className="font-bold text-slate-800">{t('business.socialMedia.connectFB', 'Conectar Facebook')}</h3>
                 </div>
                 <div className="bg-white p-6 rounded-2xl border shadow-sm flex flex-col items-center">
                     <Instagram className="text-pink-600 w-12 h-12 mb-4" />
-                    <h3 className="font-bold text-slate-800">Conectar Instagram</h3>
+                    <h3 className="font-bold text-slate-800">{t('business.socialMedia.connectIG', 'Conectar Instagram')}</h3>
                 </div>
                 <div className="bg-white p-6 rounded-2xl border shadow-sm flex flex-col items-center">
                     <Linkedin className="text-blue-800 w-12 h-12 mb-4" />
-                    <h3 className="font-bold text-slate-800">Conectar LinkedIn</h3>
+                    <h3 className="font-bold text-slate-800">{t('business.socialMedia.connectLI', 'Conectar LinkedIn')}</h3>
                 </div>
             </div>
 
@@ -41,7 +40,7 @@ export default function SocialMediaPage() {
                 <CalendarClock className="w-16 h-16 mx-auto text-slate-300 mb-6" />
                 <h2 className="text-2xl font-bold text-slate-700 mb-2">{t('business.socialMedia.editor', 'Editor de Programación en Desarrollo')}</h2>
                 <p className="text-slate-500 max-w-lg mx-auto">
-                    Pronto podrás visualizar todo tu plan de medios en un calendario e instruir a la IA a escribir las novedades de tu tienda.
+                    {t('business.socialMedia.soon', 'Pronto podrás visualizar todo tu plan de medios en un calendario e instruir a la IA a escribir las novedades de tu tienda.')}
                 </p>
             </div>
         </div>

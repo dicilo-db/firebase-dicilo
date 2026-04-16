@@ -1530,7 +1530,10 @@
       "greeting": "Mensaje de Bienvenida",
       "prompt": "Instrucciones Centrales (Prompt)",
       "filesBox": "Archivos de Conocimiento",
-      "uploadDoc": "Cargar Archivo PDF"
+      "uploadDoc": "Cargar Archivo PDF",
+      "planReq": "El módulo Asistente I.A. requiere plan Premium o un add-on específico.",
+      "avatarUrl": "URL del Avatar (Opcional)",
+      "alimenta": "Alimenta a tu I.A. con menús, catálogos o preguntas frecuentes en PDF."
     },
     "presentations": {
       "title": "Webinars y Demostraciones",
@@ -1678,14 +1681,24 @@
       "empty": "No hay preguntas registradas"
     },
     "socialMedia": {
-      "title": "Social Media",
+      "title": "Presencia Automatizada",
       "desc": "Conecta tus redes sociales y unifica tu presencia.",
-      "editor": "Editor de Programación en Desarrollo"
+      "editor": "Editor de Programación en Desarrollo",
+      "desc1": "Genera y programa automáticamente hasta ",
+      "descBold": "12 posts mensuales en 3 canales",
+      "desc2": ". Diseñado para maximizar la visibilidad de tu negocio con Inteligencia Artificial.",
+      "connectFB": "Conectar Facebook",
+      "connectIG": "Conectar Instagram",
+      "connectLI": "Conectar LinkedIn",
+      "soon": "Pronto podrás visualizar todo tu plan de medios en un calendario e instruir a la IA a escribir las novedades de tu tienda."
     },
     "editor": {
       "title": "Mi Ficha de Negocio",
       "desc": "Edita la información pública de tu negocio.",
-      "editorDev": "Editor en Desarrollo"
+      "editorDev": "Editor en Desarrollo",
+      "noProfile": "No se pudo localizar el perfil comercial activo. Por favor, contacta con soporte si el problema persiste.",
+      "pageTitle": "Gestor de Contenidos & Herramientas Avanzadas",
+      "pageDesc": "Desde aquí puedes administrar los textos, banners, sistema de cupones integrados y las invitaciones a nuevos clientes (Tu Panel Clásico)."
     }
   }
 }

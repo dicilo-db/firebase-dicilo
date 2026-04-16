@@ -1448,7 +1448,10 @@
       "greeting": "Willkommensnachricht",
       "prompt": "Zentrale Anweisungen (Prompt)",
       "filesBox": "Wissensdateien",
-      "uploadDoc": "PDF-Datei hochladen"
+      "uploadDoc": "PDF-Datei hochladen",
+      "planReq": "Das Modul KI-Assistent erfordert einen Premium-Plan oder ein spezifisches Add-on.",
+      "avatarUrl": "Avatar-URL (Optional)",
+      "alimenta": "Füttern Sie Ihre KI mit Menüs, Katalogen oder FAQs im PDF-Format."
     },
     "presentations": {
       "title": "Webinare und Demos",
@@ -1596,14 +1599,24 @@
       "empty": "Keine Fragen registriert"
     },
     "socialMedia": {
-      "title": "Social Media",
+      "title": "Automatisierte Präsenz",
       "desc": "Verbinden Sie Ihre sozialen Netzwerke.",
-      "editor": "Programmier-Editor in Entwicklung"
+      "editor": "Programmier-Editor in Entwicklung",
+      "desc1": "Generieren und planen Sie automatisch bis zu ",
+      "descBold": "12 monatliche Posts auf 3 Kanälen",
+      "desc2": " Entworfen, um die Sichtbarkeit Ihres Unternehmens mit KI zu maximieren.",
+      "connectFB": "Facebook Verbinden",
+      "connectIG": "Instagram Verbinden",
+      "connectLI": "LinkedIn Verbinden",
+      "soon": "Bald können Sie Ihren Medienplan in einem Kalender visualisieren und die KI anweisen, Neuigkeiten aus Ihrem Shop zu schreiben."
     },
     "editor": {
       "title": "Mein Geschäftsprofil",
       "desc": "Bearbeiten Sie die öffentlichen Informationen Ihres Unternehmens.",
-      "editorDev": "Editor in Entwicklung"
+      "editorDev": "Editor in Entwicklung",
+      "noProfile": "Aktives Geschäftsprofil konnte nicht gefunden werden. Bitte kontaktieren Sie den Support, wenn das Problem weiterhin besteht.",
+      "pageTitle": "Inhaltsmanager & Erweiterte Werkzeuge",
+      "pageDesc": "Von hier aus können Sie Texte, Banner, integrierte Gutscheinsysteme und Einladungen an neue Kunden verwalten (Ihr Klassisches Panel)."
     }
   }
 }
