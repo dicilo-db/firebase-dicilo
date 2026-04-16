@@ -1433,7 +1433,7 @@
       "desc": "Gestiona tus oportunidades comerciales, elabora cotizaciones interactivas (Pro-formas) y envíalas con un clic.",
       "leadsTitle": "Mis Clientes (Leads)",
       "leadsDesc": "Contactos centralizados de la Bandeja Omnicanal.",
-      "dealsTitle": "Cotizaciones y Facturas Pro-forma",
+      "dealsTitle": "Cotizaciones y Facturas",
       "dealsDesc": "Envía ofertas web o PDF rápidamente extrayendo datos de tu catálogo Dicilo.",
       "kanbanTitle": "Panel de Estado de Cotizaciones",
       "kanbanDesc": "Mueve tus cotizaciones: Borrador -> Enviada -> Aceptada.",
@@ -1441,15 +1441,7 @@
       "manageLeadsBtn": "Ver Directorio de Clientes",
       "openKanbanBtn": "Abrir Panel de Cierres",
       "soonStatus": "Módulo en Construcción (Arquitectura lista)",
-      "demo": {
-        "title": "Pipeline de Ventas (Demo)",
-        "drafts": "Borradores",
-        "card1": "Empresa Solar Tech",
-        "sent": "Enviadas",
-        "card2": "Clínica Dental",
-        "accepted": "Aceptadas",
-        "card3": "Pedro (Particular)"
-      }
+      "demo": "Pedro (Particular)"
     },
     "textsVip": {
       "title": "Copywriter I.A. VIP",
@@ -1503,6 +1495,83 @@
       "bannerTitle": "Desbloquea todo el potencial de {{name}}",
       "bannerDesc": "Construye tu propia Micro-Web con nuestro \"Page Editor\", vende en línea, administra catálogos y paga anuncios usando los DiciPoints de tu Wallet cambiando a Premium.",
       "bannerBtn": "Mejorar a Premium"
+    },
+    "chatbot": {
+      "title": "Asistente I.A.",
+      "desc": "Entrena a tu propio robot de atención al cliente para que responda dudas sobre tu negocio en tu Ficha Dicilo.",
+      "baseConfig": "Configuración Base",
+      "baseConfigDesc": "Define la personalidad de tu bot.",
+      "botName": "Nombre del Asistente",
+      "greeting": "Mensaje de Bienvenida",
+      "prompt": "Instrucciones Centrales (Prompt)",
+      "filesBox": "Archivos de Conocimiento",
+      "uploadDoc": "Cargar Archivo PDF"
+    },
+    "presentations": {
+      "title": "Webinars y Demostraciones",
+      "desc": "Haz presentaciones en vivo de tus productos o servicios. Reúnete directamente con tus prospectos de Dicilo y construye tu propia red de clientes leales (Netzwerk).",
+      "scheduleTitle": "Agendar Transmisión",
+      "scheduleDesc": "Programa una fecha para tu próxima presentación y nosotros notificaremos a tu audiencia y prospectos interesados en tu categoría.",
+      "roomTitle": "Sala en Vivo y Networking",
+      "roomDesc": "Tu link de videoconferencia se mostrará aquí. Únete, haz demostraciones de tus productos, responde preguntas en tiempo real y cierra negocios al instante."
+    },
+    "market": {
+      "title": "Inteligencia de Mercado",
+      "desc": "Descubre insights demográficos, competitividad en red y toma decisiones basadas en la data de Dicilo.",
+      "potentialUsers": "Usuarios Potenciales",
+      "agencies": "Red de Comercios",
+      "countries": "Alcance Demográfico",
+      "trendTitle": "Tendencia de Categoría",
+      "aiTips": "Sugerencias I.A.",
+      "planReq": "El módulo de Inteligencia de Mercado requiere plan Retailer o Premium.",
+      "growing": "En constante crecimiento global",
+      "corporatePartners": "Socios corporativos activos",
+      "connectedCountries": "Países conectados en la plataforma",
+      "searchVolume": "Volumen de búsquedas estimadas y clics de la comunidad local.",
+      "tip1": "Tu sector ({businessCategory}) tiene un 40% más de retención si rotas las ofertas quincenalmente.",
+      "tip2": "Descubrimos que las fichas con imágenes subidas este mes tienen un 2.5x más tiempo de visita.",
+      "tip3": "Generador de Keywords para aparecer primero en las búsquedas zonales.",
+      "downloadPdf": "Descargar Reporte PDF",
+      "uploadCoupons": "Sube 2 nuevos cupones",
+      "updatePhotos": "Actualiza tus fotos"
+    },
+    "campaigns": {
+      "title": "Campañas Personalizadas",
+      "desc": "Mide el rendimiento de tus estrategias de email marketing y captación orgánica administradas en Dicilo.",
+      "requestNew": "Solicitar Nueva Campaña",
+      "emptyTitle": "Sin Campañas Activas"
+    },
+    "graphicsVip": {
+      "fileTooLargeTitle": "Archivo muy grande",
+      "fileTooLargeDesc": "Por favor usa una imagen menor a 8MB",
+      "editSuccessTitle": "¡Edición Exitosa!",
+      "editSuccessDesc": "La imagen fue procesada por el Estudio Mágico.",
+      "title": "Estudio Gráfico Avanzado VIP",
+      "description": "Servicio exclusivo Premium. Edita, recorta, aplica filtros y pon tu marca de agua al instante con nuestro motor nativo avanzado.",
+      "uploadTitle": "Editor Filerobot Nativo",
+      "uploadDesc": "Haz clic aquí o arrastra la foto cruda de tu negocio, tu equipo o producto para abrir el cuarto de revelado.",
+      "startButton": "Iniciar Editor",
+      "aiTitle": "Borrador I.A. Mágico",
+      "soon": "Próximamente",
+      "aiDesc": "Como cliente VIP, recibirás un bono mensual para utilizar la I.A. que elimina fondos automáticamente, dejando el producto transparente y listo para publicidad.",
+      "workspace": "Area de Trabajo Visual",
+      "cancelEdit": "Cancelar Edición"
+    },
+    "whatsapp": {
+      "title": "Bandeja Omnicanal (WhatsApp & Telegram)",
+      "desc": "Centraliza los mensajes de tus clientes. Responde desde un solo lugar o configura tu propio bot de auto-respuesta 24/7.",
+      "inboxTitle": "Bandeja Centralizada",
+      "inboxDesc": "Unifica tus conversaciones de WhatsApp API, Instagram y Facebook Messenger. Responde todo desde un solo entorno al estilo Mateo.",
+      "inboxButton": "Abrir Inbox Multi-red",
+      "integrationStatus": "Integración en curso",
+      "teamTitle": "Asignación al Equipo",
+      "teamDesc": "Asigna chats específicos a diferentes miembros de tu equipo. Coordina internamente de forma invisible para el cliente.",
+      "teamButton": "Gestionar Equipo",
+      "prepStatus": "En Preparación",
+      "reviewsTitle": "Cosechadora de Reseñas",
+      "reviewsDesc": "Configura el bot para enviar plantillas automatizadas invitando al cliente a dejarte 5 estrellas en tu Ficha cuando un chat se cierra.",
+      "reviewsButton": "Campañas de Feedback",
+      "soonStatus": "Próximamente"
     }
   }
 }

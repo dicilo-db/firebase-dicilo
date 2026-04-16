@@ -59,7 +59,7 @@ export default function MarketIntelligencePage() {
         return (
             <div className="p-8 max-w-6xl mx-auto space-y-8">
                 <div className="bg-amber-50 border border-amber-200 text-amber-800 p-4 rounded-lg flex items-start gap-4 text-sm font-medium mt-6">
-                    <p>El módulo de Inteligencia de Mercado requiere plan Retailer o Premium.</p>
+                    <p>{t('business.market.planReq', 'El módulo de Inteligencia de Mercado requiere plan Retailer o Premium.')}</p>
                 </div>
             </div>
         );
@@ -101,7 +101,7 @@ export default function MarketIntelligencePage() {
                         </CardHeader>
                         <CardContent>
                             <div className="text-3xl font-bold text-slate-800">{globalData?.totalUsers.toLocaleString() || '---'}</div>
-                            <p className="text-xs text-blue-600 mt-1 flex items-center"><TrendingUp className="w-3 h-3 mr-1"/> En constante crecimiento global</p>
+                            <p className="text-xs text-blue-600 mt-1 flex items-center"><TrendingUp className="w-3 h-3 mr-1"/> {t('business.market.growing', 'En constante crecimiento global')}</p>
                         </CardContent>
                     </Card>
 
@@ -113,7 +113,7 @@ export default function MarketIntelligencePage() {
                         </CardHeader>
                         <CardContent>
                             <div className="text-3xl font-bold text-slate-800">{globalData?.totalAgencies.toLocaleString() || '---'}</div>
-                            <p className="text-xs text-indigo-600 mt-1 flex items-center"><Target className="w-3 h-3 mr-1"/> Socios corporativos activos</p>
+                            <p className="text-xs text-indigo-600 mt-1 flex items-center"><Target className="w-3 h-3 mr-1"/> {t('business.market.corporatePartners', 'Socios corporativos activos')}</p>
                         </CardContent>
                     </Card>
 
@@ -125,7 +125,7 @@ export default function MarketIntelligencePage() {
                         </CardHeader>
                         <CardContent>
                             <div className="text-3xl font-bold text-slate-800">{globalData?.totalCountriesPotential || 0}</div>
-                            <p className="text-xs text-violet-600 mt-1">Países conectados en la plataforma</p>
+                            <p className="text-xs text-violet-600 mt-1">{t('business.market.connectedCountries', 'Países conectados en la plataforma')}</p>
                         </CardContent>
                     </Card>
                 </div>
@@ -139,7 +139,7 @@ export default function MarketIntelligencePage() {
                         <CardTitle className="text-xl text-slate-800 flex items-center gap-2">
                             <LineChart className="w-5 h-5 text-blue-500"/> {t('business.market.trendTitle', 'Tendencia de Categoría')}: {businessCategory}
                         </CardTitle>
-                        <CardDescription>Volumen de búsquedas estimadas y clics de la comunidad local.</CardDescription>
+                        <CardDescription>{t('business.market.searchVolume', 'Volumen de búsquedas estimadas y clics de la comunidad local.')}</CardDescription>
                     </CardHeader>
                     <CardContent className="h-80 w-full pl-0">
                         <ResponsiveContainer width="100%" height="100%">
@@ -179,29 +179,29 @@ export default function MarketIntelligencePage() {
                         <div className="bg-white p-4 rounded-xl shadow-sm border border-indigo-100 flex gap-3">
                             <span className="text-2xl">🔥</span>
                             <div>
-                                <h4 className="font-bold text-sm text-slate-800">Sube 2 nuevos cupones</h4>
-                                <p className="text-xs text-slate-500 mt-1">Tu sector ({businessCategory}) tiene un 40% más de retención si rotas las ofertas quincenalmente.</p>
+                                <h4 className="font-bold text-sm text-slate-800">{t('business.market.uploadCoupons', 'Sube 2 nuevos cupones')}</h4>
+                                <p className="text-xs text-slate-500 mt-1">{t('business.market.tip1', 'Tu sector ({businessCategory}) tiene un 40% más de retención si rotas las ofertas quincenalmente.').replace('{businessCategory}', businessCategory)}</p>
                             </div>
                         </div>
                         <div className="bg-white p-4 rounded-xl shadow-sm border border-indigo-100 flex gap-3">
                             <span className="text-2xl">📸</span>
                             <div>
-                                <h4 className="font-bold text-sm text-slate-800">Actualiza tus fotos</h4>
-                                <p className="text-xs text-slate-500 mt-1">Descubrimos que las fichas con imágenes subidas este mes tienen un 2.5x más tiempo de visita.</p>
+                                <h4 className="font-bold text-sm text-slate-800">{t('business.market.updatePhotos', 'Actualiza tus fotos')}</h4>
+                                <p className="text-xs text-slate-500 mt-1">{t('business.market.tip2', 'Descubrimos que las fichas con imágenes subidas este mes tienen un 2.5x más tiempo de visita.')}</p>
                             </div>
                         </div>
                         <div className="bg-white p-4 rounded-xl shadow-sm border border-indigo-100 flex gap-3 opacity-70">
                             <span className="text-2xl">📈</span>
                             <div>
                                 <h4 className="font-bold text-sm text-slate-800 flex justify-between">
-                                    SEO Local <Badge variant="secondary" className="text-[10px] py-0 h-4">Pronto</Badge>
+                                    SEO Local <Badge variant="secondary" className="text-[10px] py-0 h-4">{t('soon', 'Pronto')}</Badge>
                                 </h4>
-                                <p className="text-xs text-slate-500 mt-1">Generador de Keywords para aparecer primero en las búsquedas zonales.</p>
+                                <p className="text-xs text-slate-500 mt-1">{t('business.market.tip3', 'Generador de Keywords para aparecer primero en las búsquedas zonales.')}</p>
                             </div>
                         </div>
 
                         <Button className="w-full mt-4 bg-indigo-600 hover:bg-indigo-700 text-white font-medium">
-                            Descargar Reporte PDF
+                            {t('business.market.downloadPdf', 'Descargar Reporte PDF')}
                         </Button>
                     </CardContent>
                 </Card>
