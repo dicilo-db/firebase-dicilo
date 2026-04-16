@@ -1,8 +1,10 @@
 'use client';
 
+import { useTranslation } from 'react-i18next';
 import { Share2, Facebook, Instagram, Linkedin, CalendarClock } from 'lucide-react';
 
 export default function SocialMediaPage() {
+    const { t } = useTranslation('common');
     return (
         <div className="p-8 max-w-5xl animate-in fade-in zoom-in duration-500">
             <div className="bg-gradient-to-r from-pink-500 to-rose-600 p-8 rounded-3xl text-white shadow-xl mb-8 relative overflow-hidden">
@@ -37,7 +39,7 @@ export default function SocialMediaPage() {
 
             <div className="bg-white rounded-2xl p-16 text-center border border-slate-200 shadow-sm">
                 <CalendarClock className="w-16 h-16 mx-auto text-slate-300 mb-6" />
-                <h2 className="text-2xl font-bold text-slate-700 mb-2">Editor de Programación en Desarrollo</h2>
+                <h2 className="text-2xl font-bold text-slate-700 mb-2">{t('business.socialMedia.editor', 'Editor de Programación en Desarrollo')}</h2>
                 <p className="text-slate-500 max-w-lg mx-auto">
                     Pronto podrás visualizar todo tu plan de medios en un calendario e instruir a la IA a escribir las novedades de tu tienda.
                 </p>

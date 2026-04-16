@@ -1479,10 +1479,14 @@
       "updatePhotos": "Update your photos"
     },
     "campaigns": {
-      "title": "Custom Campaigns",
-      "desc": "Measure the performance of your email marketing and organic capture strategies managed on Dicilo.",
-      "requestNew": "Request New Campaign",
-      "emptyTitle": "No Active Campaigns"
+      "title": "Individual Campaigns",
+      "desc": "Request one of our integrated campaigns.",
+      "requestNew": "Request Ad Campaign",
+      "emptyTitle": "No Active Campaigns",
+      "planReq": "The Campaigns module requires a Starter plan or higher.",
+      "ph1": "Ex: Sell old stock, more web traffic...",
+      "ph2": "Neighborhood or Demographics (Optional)",
+      "ph3": "Ex: Women 25-45 years old near my store"
     },
     "graphicsVip": {
       "fileTooLargeTitle": "File too large",
@@ -1498,7 +1502,8 @@
       "soon": "Coming Soon",
       "aiDesc": "As a VIP client, you receive a monthly bonus to use the AI that automatically removes backgrounds, leaving the product transparent and ready for advertising.",
       "workspace": "Visual Workspace",
-      "cancelEdit": "Cancel Edit"
+      "cancelEdit": "Cancel Edit",
+      "engine": "Loading AI Biographical Engine..."
     },
     "whatsapp": {
       "title": "Omnichannel Inbox (WhatsApp & Telegram)",
@@ -1573,6 +1578,32 @@
       "helpDesc": "We group all assistance through a Smart Tickets portal.",
       "newTicketBtn": "Create New Ticket",
       "monitorTicketsBtn": "View Open Tickets"
+    },
+    "statistics": {
+      "planReq": "The Advanced Statistics module requires a Retailer or Premium plan. Upgrade to analyze your audience's performance in detail.",
+      "title": "Statistics",
+      "desc": "Measure the impact of your business and review click metrics, ad views, and local demographics."
+    },
+    "messages": {
+      "planReq": "The Inquiries module requires a Starter plan or higher.",
+      "title": "Messages & Inquiries",
+      "desc": "Centralize local communication and receive leads from your Dicilo Profile.",
+      "emptyBox": "Empty Inbox"
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "desc": "Here appear all user questions to your AI that the bot couldn't answer.",
+      "empty": "No registered questions"
+    },
+    "socialMedia": {
+      "title": "Social Media",
+      "desc": "Connect your social networks.",
+      "editor": "Programming Editor in Development"
+    },
+    "editor": {
+      "title": "My Business Profile",
+      "desc": "Edit your business's public information.",
+      "editorDev": "Editor in Development"
     }
   }
 }

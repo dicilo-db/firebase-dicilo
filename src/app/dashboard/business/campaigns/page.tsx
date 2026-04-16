@@ -128,7 +128,7 @@ export default function CampaignsPage() {
         return (
             <div className="p-8 max-w-6xl mx-auto space-y-8">
                 <div className="bg-amber-50 border border-amber-200 text-amber-800 p-4 rounded-lg flex items-start gap-4 text-sm font-medium mt-6">
-                    <p>El módulo de Campañas requiere plan Starter o superior.</p>
+                    <p>{t('business.campaigns.planReq', 'El módulo de Campañas requiere plan Starter o superior.')}</p>
                 </div>
             </div>
         );
@@ -155,7 +155,7 @@ export default function CampaignsPage() {
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-[425px]">
                         <DialogHeader>
-                            <DialogTitle>Solicitar Campaña Publicitaria</DialogTitle>
+                            <DialogTitle>{t('business.campaigns.requestNew', 'Solicitar Campaña Publicitaria')}</DialogTitle>
                             <DialogDescription>
                                 Nuestro equipo diseñará la segmentación perfecta y el copy de éxito para ti.
                             </DialogDescription>
@@ -163,15 +163,15 @@ export default function CampaignsPage() {
                         <div className="gap-4 py-4 space-y-4">
                             <div className="space-y-2">
                                 <Label htmlFor="goal" className="text-sm font-medium">Objetivo principal <span className="text-red-500">*</span></Label>
-                                <Input id="goal" placeholder="Ej: Vender stock antiguo, más tráfico web..." value={requestData.goal} onChange={e => setRequestData({...requestData, goal: e.target.value})} />
+                                <Input id="goal" placeholder={t('business.campaigns.ph1', 'Ej: Vender stock antiguo, más tráfico web...')} value={requestData.goal} onChange={e => setRequestData({...requestData, goal: e.target.value})} />
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="budget" className="text-sm font-medium">Presupuesto Sugerido (€) <span className="text-red-500">*</span></Label>
                                 <Input id="budget" type="number" placeholder="Ej: 50" value={requestData.budget} onChange={e => setRequestData({...requestData, budget: e.target.value})} />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="audience" className="text-sm font-medium">Vecindario o Demografía (Opcional)</Label>
-                                <Textarea id="audience" placeholder="Ej: Mujeres de 25-45 años cerca de mi local" rows={3} value={requestData.audience} onChange={e => setRequestData({...requestData, audience: e.target.value})} />
+                                <Label htmlFor="audience" className="text-sm font-medium">{t('business.campaigns.ph2', 'Vecindario o Demografía (Opcional)')}</Label>
+                                <Textarea id="audience" placeholder={t('business.campaigns.ph3', 'Ej: Mujeres de 25-45 años cerca de mi local')} rows={3} value={requestData.audience} onChange={e => setRequestData({...requestData, audience: e.target.value})} />
                             </div>
                         </div>
                         <Button 

@@ -1479,10 +1479,14 @@
       "updatePhotos": "Aktualisieren Sie Ihre Fotos"
     },
     "campaigns": {
-      "title": "Benutzerdefinierte Kampagnen",
-      "desc": "Messen Sie die Leistung Ihrer E-Mail-Marketing- und organischen Gewinnungsstrategien in Dicilo.",
-      "requestNew": "Neue Kampagne anfragen",
-      "emptyTitle": "Keine aktiven Kampagnen"
+      "title": "Individuelle Kampagnen",
+      "desc": "Fordern Sie eine unserer integrierten Kampagnen an.",
+      "requestNew": "Werbekampagne anfordern",
+      "emptyTitle": "Keine aktiven Kampagnen",
+      "planReq": "Das Kampagnenmodul erfordert einen Starter-Plan oder höher.",
+      "ph1": "Bsp.: Alten Bestand verkaufen, mehr Web-Traffic...",
+      "ph2": "Nachbarschaft oder Demografie (Optional)",
+      "ph3": "Bsp.: Frauen im Alter von 25-45 Jahren in meiner Nähe"
     },
     "graphicsVip": {
       "fileTooLargeTitle": "Datei zu groß",
@@ -1498,7 +1502,8 @@
       "soon": "Bald verfügbar",
       "aiDesc": "Als VIP-Kunde erhalten Sie einen monatlichen Bonus für die KI, die automatisch Hintergründe entfernt und das Produkt transparent und bereit für Werbung macht.",
       "workspace": "Visueller Arbeitsbereich",
-      "cancelEdit": "Bearbeitung abbrechen"
+      "cancelEdit": "Bearbeitung abbrechen",
+      "engine": "KI-Biografiemotor wird geladen..."
     },
     "whatsapp": {
       "title": "Omnichannel-Posteingang (WhatsApp & Telegram)",
@@ -1573,6 +1578,32 @@
       "helpDesc": "Wir bündeln den gesamten Support über ein Smart Ticket Portal, in dem Sie Belege anhängen können.",
       "newTicketBtn": "Neues Ticket erstellen",
       "monitorTicketsBtn": "Offene Tickets anzeigen"
+    },
+    "statistics": {
+      "planReq": "Das Modul für erweiterte Statistiken erfordert einen Retailer- oder Premium-Plan. Upgraden Sie, um die Leistung Ihres Publikums im Detail zu analysieren.",
+      "title": "Statistiken",
+      "desc": "Messen Sie die Auswirkungen Ihres Unternehmens und überprüfen Sie Klickmetriken, Anzeigenaufrufe und lokale demografische Daten."
+    },
+    "messages": {
+      "planReq": "Das Modul für Anfragen erfordert einen Starter-Plan oder höher.",
+      "title": "Nachrichten & Anfragen",
+      "desc": "Zentralisieren Sie die lokale Kommunikation und erhalten Sie Leads aus Ihrem Dicilo-Profil.",
+      "emptyBox": "Leerer Posteingang"
+    },
+    "faq": {
+      "title": "Häufig Gestellte Fragen",
+      "desc": "Hier erscheinen alle Nutzerfragen an Ihre KI, die der Bot nicht beantworten konnte.",
+      "empty": "Keine Fragen registriert"
+    },
+    "socialMedia": {
+      "title": "Social Media",
+      "desc": "Verbinden Sie Ihre sozialen Netzwerke.",
+      "editor": "Programmier-Editor in Entwicklung"
+    },
+    "editor": {
+      "title": "Mein Geschäftsprofil",
+      "desc": "Bearbeiten Sie die öffentlichen Informationen Ihres Unternehmens.",
+      "editorDev": "Editor in Entwicklung"
     }
   }
 }

@@ -89,7 +89,7 @@ export default function MessagesPage() {
         return (
             <div className="p-8 max-w-6xl mx-auto space-y-8">
                 <div className="bg-amber-50 border border-amber-200 text-amber-800 p-4 rounded-lg flex items-start gap-4 text-sm font-medium mt-6">
-                    <p>El módulo de Consultas requiere plan Starter o superior.</p>
+                    <p>{t('business.messages.planReq', 'El módulo de Consultas requiere plan Starter o superior.')}</p>
                 </div>
             </div>
         );
@@ -102,7 +102,7 @@ export default function MessagesPage() {
                     <MessageSquare className="w-8 h-8 text-emerald-600" />
                     Bandeja de Entrada <span className="text-emerald-600">B2C</span>
                 </h1>
-                <p className="text-slate-500 mt-2 text-lg">Centraliza la comunicación local y recibe los leads o consultas enviados desde tu Ficha Dicilo.</p>
+                <p className="text-slate-500 mt-2 text-lg">{t('business.messages.desc', 'Centraliza la comunicación local y recibe los leads o consultas enviados desde tu Ficha Dicilo.')}</p>
             </div>
 
             {loadingData ? (
@@ -113,7 +113,7 @@ export default function MessagesPage() {
             ) : messages.length === 0 ? (
                 <div className="bg-slate-50/80 rounded-2xl p-16 text-center border shadow-sm">
                     <MailWarning className="w-16 h-16 mx-auto text-slate-300 mb-6" />
-                    <h2 className="text-2xl font-bold text-slate-700 mb-2">Bandeja Vacía</h2>
+                    <h2 className="text-2xl font-bold text-slate-700 mb-2">{t('business.messages.emptyBox', 'Bandeja Vacía')}</h2>
                     <p className="text-slate-500 max-w-md mx-auto">
                         Aún no tienes mensajes nuevos de clientes. Cuando un visitante use el formulario de contacto de tu perfil público, aparecerá aquí.
                     </p>

@@ -1561,10 +1561,14 @@
       "updatePhotos": "Actualiza tus fotos"
     },
     "campaigns": {
-      "title": "Campañas Personalizadas",
-      "desc": "Mide el rendimiento de tus estrategias de email marketing y captación orgánica administradas en Dicilo.",
-      "requestNew": "Solicitar Nueva Campaña",
-      "emptyTitle": "Sin Campañas Activas"
+      "title": "Campañas Individuales",
+      "desc": "Solicita una de nuestras campañas integradas.",
+      "requestNew": "Solicitar Campaña Publicitaria",
+      "emptyTitle": "Sin Campañas Activas",
+      "planReq": "El módulo de Campañas requiere plan Starter o superior.",
+      "ph1": "Ej: Vender stock antiguo, más tráfico web...",
+      "ph2": "Vecindario o Demografía (Opcional)",
+      "ph3": "Ej: Mujeres de 25-45 años cerca de mi local"
     },
     "graphicsVip": {
       "fileTooLargeTitle": "Archivo muy grande",
@@ -1580,7 +1584,8 @@
       "soon": "Próximamente",
       "aiDesc": "Como cliente VIP, recibirás un bono mensual para utilizar la I.A. que elimina fondos automáticamente, dejando el producto transparente y listo para publicidad.",
       "workspace": "Area de Trabajo Visual",
-      "cancelEdit": "Cancelar Edición"
+      "cancelEdit": "Cancelar Edición",
+      "engine": "Cargando el Motor Biográfico de I.A..."
     },
     "whatsapp": {
       "title": "Bandeja Omnicanal (WhatsApp & Telegram)",
@@ -1655,6 +1660,32 @@
       "helpDesc": "Para brindarte un mejor servicio, agrupamos toda la asistencia mediante un portal de Tickets Inteligentes donde puedes adjuntar comprobantes o capturas.",
       "newTicketBtn": "Crear Ticket Nuevo",
       "monitorTicketsBtn": "Ver Monitoreo de Tickets Abiertos"
+    },
+    "statistics": {
+      "planReq": "El módulo de Estadísticas Avanzadas requiere un plan Retailer o Premium. Sube de plan para analizar el rendimiento de tu audiencia en detalle.",
+      "title": "Estadísticas",
+      "desc": "Mide el impacto de tu negocio y revisa las métricas de clics, vistas de anuncios y demografía local."
+    },
+    "messages": {
+      "planReq": "El módulo de Consultas requiere plan Starter o superior.",
+      "title": "Mensajes & Consultas",
+      "desc": "Centraliza la comunicación local y recibe los leads o consultas enviados desde tu Ficha Dicilo.",
+      "emptyBox": "Bandeja Vacía"
+    },
+    "faq": {
+      "title": "Preguntas Frecuentes",
+      "desc": "Aquí aparecen todas las preguntas que los usuarios han hecho a tu I.A. que el robot no ha sabido responder.",
+      "empty": "No hay preguntas registradas"
+    },
+    "socialMedia": {
+      "title": "Social Media",
+      "desc": "Conecta tus redes sociales y unifica tu presencia.",
+      "editor": "Editor de Programación en Desarrollo"
+    },
+    "editor": {
+      "title": "Mi Ficha de Negocio",
+      "desc": "Edita la información pública de tu negocio.",
+      "editorDev": "Editor en Desarrollo"
     }
   }
 }
