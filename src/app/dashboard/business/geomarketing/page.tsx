@@ -58,7 +58,7 @@ export default function GeomarketingPage() {
                 }
             } catch (err) {
                 console.error(err);
-                toast({ title: 'Error de conexión', variant: 'destructive' });
+                toast({ title: t('business.geo.toastConnError', 'Error de conexión'), variant: 'destructive' });
             } finally {
                 setLoadingData(false);
             }
@@ -73,10 +73,10 @@ export default function GeomarketingPage() {
         try {
             const docRef = doc(db, 'clients', activeId);
             await updateDoc(docRef, { geomarketingConfig: config });
-            toast({ title: 'Configuración Espacial Guardada' });
+            toast({ title: t('business.geo.toastSaved', 'Configuración Espacial Guardada') });
         } catch (e) {
             console.error(e);
-            toast({ title: 'Error al actualizar', variant: 'destructive' });
+            toast({ title: t('business.geo.toastUpdError', 'Error al actualizar'), variant: 'destructive' });
         } finally {
             setSaving(false);
         }
@@ -95,7 +95,7 @@ export default function GeomarketingPage() {
         return (
             <div className="p-8 max-w-6xl mx-auto space-y-8 animate-in fade-in duration-500">
                 <div className="bg-amber-50 border border-amber-200 text-amber-800 p-4 rounded-lg flex items-start gap-4 text-sm font-medium mt-6">
-                    <p>El radar de Geomarketing requiere plan Retailer o Premium.</p>
+                    <p>{t('business.geo.planReq', 'El radar de Geomarketing requiere plan Retailer o Premium.')}</p>
                 </div>
             </div>
         );
@@ -115,7 +115,7 @@ export default function GeomarketingPage() {
                 </div>
                 <div className="flex items-center gap-3 shrink-0 mb-1 bg-white border border-slate-200 px-4 py-2 rounded-xl shadow-sm">
                     <Label htmlFor="active-radar" className="text-sm font-bold text-slate-700">
-                        {config.isActive ? 'Radar Activado' : 'Radar Apagado'}
+                        {config.isActive ? t('business.geo.radarOn', 'Radar Activado') : t('business.geo.radarOff', 'Radar Apagado')}
                     </Label>
                     <Switch 
                         id="active-radar"
@@ -137,7 +137,7 @@ export default function GeomarketingPage() {
                             <CardTitle className="text-xl flex items-center gap-2">
                                 <LocateFixed className="w-5 h-5 text-emerald-600" /> {t('business.geo.zoneParams', 'Parámetros de Zona')}
                             </CardTitle>
-                            <CardDescription>Ajusta cómo la app de Dicilo detecta y aborda a los clientes potenciales.</CardDescription>
+                            <CardDescription>{t('business.geo.zoneParamsDesc', 'Ajusta cómo la app de Dicilo detecta y aborda a los clientes potenciales.')}</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-6">
                             
@@ -153,7 +153,7 @@ export default function GeomarketingPage() {
                                     step={1}
                                     onValueChange={(val) => setConfig({...config, radiusKm: val[0]})}
                                 />
-                                <p className="text-xs text-slate-500">Un radio de {config.radiusKm}km abarca aproximadamente {Math.round(Math.PI * Math.pow(config.radiusKm, 2))} km² a tu alrededor.</p>
+                                <p className="text-xs text-slate-500">{t('business.geo.radiusInfo', 'Un radio de {{km}}km abarca aproximadamente {{area}} km² a tu alrededor.').replace('{{km}}', config.radiusKm.toString()).replace('{{area}}', Math.round(Math.PI * Math.pow(config.radiusKm, 2)).toString())}</p>
                             </div>
 
                             <div className="space-y-2 pt-2 border-t border-slate-100">
@@ -163,34 +163,34 @@ export default function GeomarketingPage() {
                                     onValueChange={(val) => setConfig({...config, visibility_settings: { ...config.visibility_settings, active_range: val }})}
                                     className="flex flex-col space-y-1 mt-2"
                                 >
-                                    <div className="flex items-center space-x-2"><RadioGroupItem value="local" id="r-local" /><Label htmlFor="r-local">Local (50 km)</Label></div>
-                                    <div className="flex items-center space-x-2"><RadioGroupItem value="regional" id="r-regional" /><Label htmlFor="r-regional">Regional / Estatal</Label></div>
-                                    <div className="flex items-center space-x-2"><RadioGroupItem value="national" id="r-national" /><Label htmlFor="r-national">Nacional (Todo el país)</Label></div>
-                                    <div className="flex items-center space-x-2"><RadioGroupItem value="continental" id="r-continental" /><Label htmlFor="r-continental">Continental</Label></div>
-                                    <div className="flex items-center space-x-2"><RadioGroupItem value="international" id="r-international" /><Label htmlFor="r-international">Internacional (Global)</Label></div>
+                                    <div className="flex items-center space-x-2"><RadioGroupItem value="local" id="r-local" /><Label htmlFor="r-local">{t('business.geo.local', 'Local (50 km)')}</Label></div>
+                                    <div className="flex items-center space-x-2"><RadioGroupItem value="regional" id="r-regional" /><Label htmlFor="r-regional">{t('business.geo.regional', 'Regional / Estatal')}</Label></div>
+                                    <div className="flex items-center space-x-2"><RadioGroupItem value="national" id="r-national" /><Label htmlFor="r-national">{t('business.geo.national', 'Nacional (Todo el país)')}</Label></div>
+                                    <div className="flex items-center space-x-2"><RadioGroupItem value="continental" id="r-continental" /><Label htmlFor="r-continental">{t('business.geo.continental', 'Continental')}</Label></div>
+                                    <div className="flex items-center space-x-2"><RadioGroupItem value="international" id="r-international" /><Label htmlFor="r-international">{t('business.geo.international', 'Internacional (Global)')}</Label></div>
                                 </RadioGroup>
-                                <p className="text-xs text-slate-500 mt-2">Define hasta dónde quieres que llegue tu oferta en el catálogo principal.</p>
+                                <p className="text-xs text-slate-500 mt-2">{t('business.geo.visibilityInfo', 'Define hasta dónde quieres que llegue tu oferta en el catálogo principal.')}</p>
                             </div>
 
                             <div className="space-y-2 pt-2 border-t border-slate-100">
                                 <Label className="font-bold text-slate-800">{t('business.geo.zipLabel', 'Códigos Postales Prioritarios')}</Label>
                                 <Input 
-                                    placeholder="Ej: 28014, 28015"
+                                    placeholder={t('business.geo.zipPlaceholder', 'Ej: 28014, 28015')}
                                     value={config.targetZips}
                                     onChange={(e) => setConfig({...config, targetZips: e.target.value})}
                                 />
-                                <p className="text-xs text-slate-500">El sistema enfocará el 70% de las impresiones publicitarias a los usuarios que residen en estos códigos.</p>
+                                <p className="text-xs text-slate-500">{t('business.geo.zipInfo', 'El sistema enfocará el 70% de las impresiones publicitarias a los usuarios que residen en estos códigos.')}</p>
                             </div>
 
                             <div className="space-y-2 pt-2 border-t border-slate-100">
                                 <Label className="font-bold text-slate-800">{t('business.geo.pushLabel', 'Mensaje Flash')}</Label>
                                 <Textarea 
-                                    placeholder="El mensaje que recibirá la persona al pasar cerca."
+                                    placeholder={t('business.geo.pushPlaceholder', 'El mensaje que recibirá la persona al pasar cerca.')}
                                     rows={3}
                                     value={config.pushMessage}
                                     onChange={(e) => setConfig({...config, pushMessage: e.target.value})}
                                 />
-                                <p className="text-xs text-slate-500">Asegúrate de incluir un "Ganchop" rápido. Hazlo irresistible.</p>
+                                <p className="text-xs text-slate-500">{t('business.geo.pushInfo', 'Asegúrate de incluir un "Ganchop" rápido. Hazlo irresistible.')}</p>
                             </div>
 
                             <Button 
@@ -199,7 +199,7 @@ export default function GeomarketingPage() {
                                 disabled={saving}
                             >
                                 {saving ? <Loader2 className="w-5 h-5 mr-2 animate-spin" /> : <Save className="w-5 h-5 mr-2" />}
-                                Guardar Perímetro
+                                {t('business.geo.saveBtn', 'Guardar Perímetro')}
                             </Button>
 
                         </CardContent>
@@ -222,8 +222,7 @@ export default function GeomarketingPage() {
                             </CardHeader>
                             <CardContent className="relative z-10 space-y-4">
                                 <p className="text-slate-300 text-sm">
-                                    Con tu configuración actual de <strong className="text-emerald-400">{config.radiusKm} km</strong>, 
-                                    este es el pronóstico automático basado en el histórico de Dicilo en las últimas 72 horas:
+                                    {t('business.geo.simIntro1', 'Con tu configuración actual de ')}<strong className="text-emerald-400">{config.radiusKm} km</strong>{t('business.geo.simIntro2', ', este es el pronóstico automático basado en el histórico de Dicilo en las últimas 72 horas:')}
                                 </p>
                                 
                                 <div className="grid grid-cols-2 gap-4 mt-4">
@@ -231,14 +230,14 @@ export default function GeomarketingPage() {
                                         <div className="text-3xl font-bold text-white mb-1">
                                             {Math.floor(config.radiusKm * 1450).toLocaleString()}
                                         </div>
-                                        <div className="text-xs text-slate-400 font-medium">Vecinos en la zona</div>
+                                        <div className="text-xs text-slate-400 font-medium">{t('business.geo.neighbors', 'Vecinos en la zona')}</div>
                                     </div>
                                     <div className="bg-slate-900/60 p-4 rounded-xl backdrop-blur-sm border border-slate-700">
                                         <div className="text-3xl font-bold text-emerald-400 mb-1">
                                             {Math.floor(config.radiusKm * 89).toLocaleString()}
                                         </div>
                                         <div className="text-xs text-emerald-600/80 font-medium flex items-center">
-                                            <Navigation className="w-3 h-3 mr-1"/> Caminantes (Móvil)
+                                            <Navigation className="w-3 h-3 mr-1"/> {t('business.geo.walkers', 'Caminantes (Móvil)')}
                                         </div>
                                     </div>
                                 </div>
@@ -248,7 +247,7 @@ export default function GeomarketingPage() {
                         <div className="bg-emerald-50 text-emerald-800 p-4 rounded-xl border border-emerald-200 text-sm flex gap-3">
                             <Target className="w-6 h-6 shrink-0 text-emerald-600" />
                             <p>
-                                <strong>Privacidad Asegurada:</strong> Dicilo nunca comparte la ubicación exacta de los usuarios con los negocios. El cruce espacial ocurre internamente y de forma 100% anonimizada.
+                                <strong>{t('business.geo.privacyTitle', 'Privacidad Asegurada:')}</strong> {t('business.geo.privacyText', 'Dicilo nunca comparte la ubicación exacta de los usuarios con los negocios. El cruce espacial ocurre internamente y de forma 100% anonimizada.')}
                             </p>
                         </div>
                     </div>
