@@ -1515,6 +1515,64 @@
       "reviewsDesc": "Set up the bot to send automated templates inviting the customer to leave 5 stars on your Profile when a chat is closed.",
       "reviewsButton": "Feedback Campaigns",
       "soonStatus": "Coming Soon"
+    },
+    "courses": {
+      "title": "AI Academy (Courses)",
+      "desc": "Access your 4 annual courses to master AI tools as a merchant.",
+      "copyTitle": "AI Copywriting for Stores (Coming Soon)",
+      "copyDesc": "Learn to write magnetic product descriptions and increase sales.",
+      "modulesLabel": "4 Modules",
+      "imagesTitle": "Images with GenAI (Locked)",
+      "imagesDesc": "Discover how to automatically retouch catalog photos.",
+      "juneLabel": "Available in June",
+      "expertTitle": "Become a Retail Expert",
+      "expertDesc": "Certificates and recordings will be unlocked once we implement the learning system."
+    },
+    "graphics": {
+      "title": "Graphics Tools",
+      "desc": "Design banners, edit product photos and create ads directly in Dicilo.",
+      "editorLabel": "Retouch Editor",
+      "editorDesc": "Light correction, contrast and cropping for catalog images without Photoshop.",
+      "templatesTitle": "Magic Templates",
+      "templatesDesc": "Offer templates that automatically apply to your product covers.",
+      "canvaTitle": "Canva Integration Coming",
+      "canvaDesc": "We are integrating the visual SDK so you can drag and drop design elements.",
+      "devLabel": "In Development"
+    },
+    "leads": {
+      "title": "Lead Capture",
+      "desc": "Design and embed a General Registration Form to capture potential customer data.",
+      "crmTitle": "Contacts CRM",
+      "crmDesc": "Centrally manage all users who leave inquiries, download coupons or fill out your form.",
+      "exportTitle": "Data Exporter",
+      "exportDesc": "Download your prospect base in Excel/CSV to use in external platforms.",
+      "builderTitle": "Form Builder Inactive",
+      "builderDesc": "The dynamic system to capture specific data will enter production soon."
+    },
+    "supportPremium": {
+      "title": "Premium Support",
+      "desc": "Preferred email support channel exclusive to retail businesses. Available Mon-Fri.",
+      "vipTitle": "You have VIP Priority",
+      "vipDesc": "Your inquiries skip the general Dicilo queue.",
+      "ticketsTitle": "Internal Ticket Module",
+      "ticketsDesc": "Soon you will be able to open support tickets directly from here."
+    },
+    "supportVip": {
+      "title": "Individual Support (No AI)",
+      "desc": "Say goodbye to robots. Our top-level human agents will answer all your concerns.",
+      "agentTitle": "Assigned Agent",
+      "agentDesc": "Your Dicilo account will be managed by a dedicated Account Executive.",
+      "guaranteeTitle": "Resolution Guarantee",
+      "guaranteeDesc": "Any critical technical problem is escalated to engineering immediately."
+    },
+    "support": {
+      "title": "Support",
+      "b2b": "B2B Tech",
+      "desc": "Contact the human tech team for assistance.",
+      "helpTitle": "Help Center",
+      "helpDesc": "We group all assistance through a Smart Tickets portal.",
+      "newTicketBtn": "Create New Ticket",
+      "monitorTicketsBtn": "View Open Tickets"
     }
   }
 }

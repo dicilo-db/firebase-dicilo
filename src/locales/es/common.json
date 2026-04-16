@@ -1597,6 +1597,64 @@
       "reviewsDesc": "Configura el bot para enviar plantillas automatizadas invitando al cliente a dejarte 5 estrellas en tu Ficha cuando un chat se cierra.",
       "reviewsButton": "Campañas de Feedback",
       "soonStatus": "Próximamente"
+    },
+    "courses": {
+      "title": "Academia de I.A. (Cursos)",
+      "desc": "Accede a tus 4 cursos anuales para dominar las herramientas de Inteligencia Artificial como comerciante.",
+      "copyTitle": "Copywriting con IA para Tiendas (Próximamente)",
+      "copyDesc": "Aprende a redactar descripciones magnéticas de tus productos y aumentar ventas.",
+      "modulesLabel": "4 Módulos",
+      "imagesTitle": "Imágenes con GenAI (Bloqueado)",
+      "imagesDesc": "Descubre cómo retocar fotografías de catálogo automáticamente.",
+      "juneLabel": "Disponible en Junio",
+      "expertTitle": "Conviértete en un Minorista Experto",
+      "expertDesc": "Los certificados y las grabaciones se activarán una vez hayamos implementado el sistema de aprendizaje en el dashboard de Minorista."
+    },
+    "graphics": {
+      "title": "Herramientas Gráficas",
+      "desc": "Diseña banners, edita fotos de productos y crea anuncios directamente en Dicilo usando nuestras herramientas en la nube.",
+      "editorLabel": "Editor de Retoque",
+      "editorDesc": "Corrección de luz, contraste y recortes para imágenes de catálogo directamente sin Photoshop.",
+      "templatesTitle": "Templates Mágicos",
+      "templatesDesc": "Plantillas de \"Oferta\" y \"En Rebaja\" que se aplican automáticamente sobre tus portadas de producto.",
+      "canvaTitle": "Canva Integrado en Camino",
+      "canvaDesc": "Estamos integrando el SDK visual para que puedas arrastrar y soltar elementos de diseño.",
+      "devLabel": "En Desarrollo"
+    },
+    "leads": {
+      "title": "Captación de Leads",
+      "desc": "Diseña e incrusta un Formulario de Registro General para capturar los datos de clientes potenciales interesados en tus productos o servicios.",
+      "crmTitle": "CRM de Contactos",
+      "crmDesc": "Administra centralizadamente a todos los usuarios que dejen sus consultas, descarguén cupones o llenen tu formulario principal.",
+      "exportTitle": "Exportador Datos",
+      "exportDesc": "Descarga tu base de prospectos en Excel/CSV para utilizarla en plataformas externas de automatización.",
+      "builderTitle": "Constructor de Formularios Inactivo",
+      "builderDesc": "El sistema dinámico para captar datos específicos (como preferencias y presupuestos de tus prospectos) entrará pronto en producción."
+    },
+    "supportPremium": {
+      "title": "Soporte Técnico Premium",
+      "desc": "Canal de atención preferente por email exclusivo para negocios minoristas. Disponible de Lunes a Viernes.",
+      "vipTitle": "Tienes Prioridad VIP",
+      "vipDesc": "Tus consultas omiten la cola general de Dicilo.",
+      "ticketsTitle": "Módulo de Tickets Interno",
+      "ticketsDesc": "Pronto podrás abrir tickets de soporte directamente desde aquí sin tener que ir a tu correo personal."
+    },
+    "supportVip": {
+      "title": "Soporte Individual (No I.A.)",
+      "desc": "Despídete de los robots. Nuestros agentes humanos de nivel superior responderán todas tus inquietudes garantizando la mejor experiencia Premium.",
+      "agentTitle": "Agente Asignado",
+      "agentDesc": "Tu cuenta Dicilo será administrada por un Ejecutivo de Cuenta dedicado que conocerá tu negocio y trayectoria corporativa a detalle.",
+      "guaranteeTitle": "Garantía de Resolución",
+      "guaranteeDesc": "Cualquier problema técnico crítico es escalado a nivel de ingeniería de inmediato en lugar del soporte tradicional."
+    },
+    "support": {
+      "title": "Soporte",
+      "b2b": "Técnico B2B",
+      "desc": "Acude al equipo técnico humano para asistencia sobre la plataforma, pagos o facturación.",
+      "helpTitle": "Centro de Ayuda",
+      "helpDesc": "Para brindarte un mejor servicio, agrupamos toda la asistencia mediante un portal de Tickets Inteligentes donde puedes adjuntar comprobantes o capturas.",
+      "newTicketBtn": "Crear Ticket Nuevo",
+      "monitorTicketsBtn": "Ver Monitoreo de Tickets Abiertos"
     }
   }
 }

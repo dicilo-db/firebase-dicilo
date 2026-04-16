@@ -1515,6 +1515,64 @@
       "reviewsDesc": "Richten Sie den Bot so ein, dass automatisierte Vorlagen gesendet werden, die den Kunden einladen, Ihnen 5 Sterne zu hinterlassen.",
       "reviewsButton": "Feedback-Kampagnen",
       "soonStatus": "Bald verfügbar"
+    },
+    "courses": {
+      "title": "KI-Akademie (Kurse)",
+      "desc": "Greifen Sie auf Ihre 4 jährlichen Kurse zu, um KI-Tools als Händler zu beherrschen.",
+      "copyTitle": "KI-Copywriting für Geschäfte (Demnächst)",
+      "copyDesc": "Lernen Sie, anziehende Produktbeschreibungen zu verfassen und den Umsatz zu steigern.",
+      "modulesLabel": "4 Module",
+      "imagesTitle": "Bilder mit GenAI (Gesperrt)",
+      "imagesDesc": "Entdecken Sie, wie Sie Katalogfotos automatisch retuschieren.",
+      "juneLabel": "Verfügbar im Juni",
+      "expertTitle": "Werden Sie ein Einzelhandelsexperte",
+      "expertDesc": "Zertifikate und Aufzeichnungen werden freigeschaltet, sobald wir das Lernsystem im Einzelhändler-Dashboard implementiert haben."
+    },
+    "graphics": {
+      "title": "Grafik-Tools",
+      "desc": "Entwerfen Sie Banner, bearbeiten Sie Produktfotos und erstellen Sie Anzeigen direkt in Dicilo mit unseren Cloud-Tools.",
+      "editorLabel": "Retusche-Editor",
+      "editorDesc": "Lichtkorrektur, Kontrast und Zuschnitt für Katalogbilder direkt ohne Photoshop.",
+      "templatesTitle": "Magische Vorlagen",
+      "templatesDesc": "\"Angebot\"- und \"Im Sale\"-Vorlagen, die automatisch auf Ihre Produktcover angewendet werden.",
+      "canvaTitle": "Canva Integration Unterwegs",
+      "canvaDesc": "Wir integrieren das visuelle SDK, damit Sie Designelemente per Drag-and-Drop verschieben können.",
+      "devLabel": "In Entwicklung"
+    },
+    "leads": {
+      "title": "Lead-Erfassung",
+      "desc": "Entwerfen und binden Sie ein allgemeines Registrierungsformular ein, um Daten potenzieller Kunden zu erfassen.",
+      "crmTitle": "Kontakt-CRM",
+      "crmDesc": "Verwalten Sie zentral alle Nutzer, die Anfragen stellen, Gutscheine herunterladen oder Ihr Formular ausfüllen.",
+      "exportTitle": "Datenexporteur",
+      "exportDesc": "Laden Sie Ihre Interessentenbasis in Excel/CSV herunter, um sie auf externen Automatisierungsplattformen zu verwenden.",
+      "builderTitle": "Formularersteller Inaktiv",
+      "builderDesc": "Das dynamische System zur Erfassung spezifischer Daten wird bald in Produktion gehen."
+    },
+    "supportPremium": {
+      "title": "Plan: Premium",
+      "desc": "Bevorzugter E-Mail-Support-Kanal exklusiv für Einzelhandelsunternehmen. Verfügbar von Montag bis Freitag.",
+      "vipTitle": "Sie haben VIP-Priorität",
+      "vipDesc": "Ihre Anfragen umgehen die allgemeine Dicilo-Warteschlange.",
+      "ticketsTitle": "Internes Ticketmodul",
+      "ticketsDesc": "Bald können Sie Support-Tickets direkt hier öffnen, ohne zu Ihrer persönlichen E-Mail gehen zu müssen."
+    },
+    "supportVip": {
+      "title": "Individueller Support (Keine KI)",
+      "desc": "Verabschieden Sie sich von Robotern. Unsere menschlichen Agenten beantworten alle Ihre Anliegen für das beste Premium-Erlebnis.",
+      "agentTitle": "Zugewiesener Agent",
+      "agentDesc": "Ihr Konto wird von einem dedizierten Account Executive verwaltet, der Ihr Geschäft im Detail kennt.",
+      "guaranteeTitle": "Lösungsgarantie",
+      "guaranteeDesc": "Jedes kritische technische Problem wird sofort an die Technik eskaliert."
+    },
+    "support": {
+      "title": "Support",
+      "b2b": "B2B Technik",
+      "desc": "Wenden Sie sich an das menschliche Technikteam für Unterstützung bei der Plattform, Zahlungen oder Abrechnung.",
+      "helpTitle": "Hilfezentrum",
+      "helpDesc": "Wir bündeln den gesamten Support über ein Smart Ticket Portal, in dem Sie Belege anhängen können.",
+      "newTicketBtn": "Neues Ticket erstellen",
+      "monitorTicketsBtn": "Offene Tickets anzeigen"
     }
   }
 }
