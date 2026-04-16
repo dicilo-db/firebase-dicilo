@@ -11,7 +11,6 @@ import {
 } from '@/components/ui/accordion';
 
 export default function BusinessFaqsPage() {
-    const { t } = useTranslation('common');
     const { t } = useTranslation('faq');
 
     // Mapeo idéntico al de dicilo.net/faq (22 preguntas)
