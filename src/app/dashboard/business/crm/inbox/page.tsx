@@ -7,6 +7,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useBusinessAccess } from '@/hooks/useBusinessAccess';
+import { useAdminUser } from '@/hooks/useAuthGuard';
 import { collection, query, onSnapshot, orderBy, addDoc, updateDoc, doc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -14,7 +15,8 @@ import { useToast } from '@/hooks/use-toast';
 
 export default function OmnichannelInboxPage() {
     const { t } = useTranslation('common');
-    const { role, plan, isLoading } = useBusinessAccess();
+    const { plan, isLoading } = useBusinessAccess();
+    const { user: adminUser } = useAdminUser();
     const { toast } = useToast();
     
     const [messages, setMessages] = useState<any[]>([]);
@@ -53,7 +55,7 @@ export default function OmnichannelInboxPage() {
     if (isLoading) return <div className="p-8"><Skeleton className="w-full h-96" /></div>;
 
     // Solo Admin y Team Office
-    if (!['admin', 'superadmin', 'team_office'].includes(role) && plan !== 'premium') {
+    if (!['admin', 'superadmin', 'team_office'].includes(adminUser?.role || '') && plan !== 'premium') {
         return (
             <div className="p-8 text-center text-rose-600 font-bold">
                 Acceso Restringido. Bandeja Unificada exclusiva para Gestión Operativa.

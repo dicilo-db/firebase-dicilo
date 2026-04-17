@@ -38,8 +38,10 @@ import {
   Mail,
   Ticket,
   Settings,
-  ShieldAlert
+  ShieldAlert,
+  CalendarCheck2
 } from 'lucide-react';
+
 import { useAdminUser, useAuthGuard } from '@/hooks/useAuthGuard';
 import { useServerAction } from '@/hooks/useServerAction';
 import {
@@ -539,6 +541,34 @@ const DashboardContent: React.FC = () => {
                 <CardContent className="relative z-10">
                   <div className="text-2xl font-black">Panel Empresarial</div>
                   <p className="text-xs text-slate-400 mt-1">Gestor Maestro de Fichas y Módulos</p>
+                </CardContent>
+              </Card>
+            </Link>
+
+            {/* Omnichannel Inbox Direct Link (NEW) */}
+            <Link href="/dashboard/business/crm/inbox" className="group">
+              <Card className="h-full bg-blue-50/50 dark:bg-blue-900/10 border-blue-200 transition-all hover:shadow-md hover:border-blue-600 cursor-pointer relative">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-bold text-blue-700 dark:text-blue-400">Team Office CRM</CardTitle>
+                  <MessageSquare className="h-4 w-4 text-blue-600 group-hover:scale-110 transition-transform" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-black">Bandeja Unificada</div>
+                  <p className="text-xs text-muted-foreground mt-1">Chat Central (WhatsApp/Tel/Web)</p>
+                </CardContent>
+              </Card>
+            </Link>
+
+            {/* Master Calendar Direct Link (NEW) */}
+            <Link href="/dashboard/business/crm/calendar" className="group">
+              <Card className="h-full bg-emerald-50/50 dark:bg-emerald-900/10 border-emerald-200 transition-all hover:shadow-md hover:border-emerald-600 cursor-pointer relative">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-bold text-emerald-700 dark:text-emerald-400">Team Office CRM</CardTitle>
+                  <CalendarCheck2 className="h-4 w-4 text-emerald-600 group-hover:scale-110 transition-transform" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-black">Calendario Maestro</div>
+                  <p className="text-xs text-muted-foreground mt-1">Reservas Centralizadas Calendly</p>
                 </CardContent>
               </Card>
             </Link>

@@ -2,6 +2,7 @@ import { BriefcaseBusiness, Lock, LayoutDashboard, Wallet, Ticket, Package, Mess
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
+import { useAdminUser } from '@/hooks/useAuthGuard';
 import { useState } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -11,6 +12,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 export default function BusinessSidebar({ plan, email, isLoading }: { plan: string, email: string | null, isLoading: boolean }) {
     const pathname = usePathname();
     const { t } = useTranslation('common');
+    const { user: adminUser } = useAdminUser();
     const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
     const [lockedFeature, setLockedFeature] = useState('');
 

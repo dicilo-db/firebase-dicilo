@@ -134,7 +134,8 @@ service cloud.firestore {
     // Feedbacks collection
     match /feedbacks/{feedbackId} {
       allow create: if isAuthenticated();
-      allow read, update: if isAdmin();
+      allow read: if resource.data.status == 'approved' || isAdmin();
+      allow update: if isAdmin();
       allow delete: if isSuperAdmin();
     }
 

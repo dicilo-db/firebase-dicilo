@@ -30,6 +30,7 @@ import {
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import NativeBookingDialog from '@/components/shared/NativeBookingDialog';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/context/AuthContext';
 import { uploadImage } from '@/app/actions/upload';
@@ -47,7 +48,7 @@ type NavItem = {
     id: string;
     label: string;
     icon: React.ElementType;
-    type: 'view' | 'link' | 'dialog';
+    type: 'view' | 'link' | 'dialog' | 'contact-dialog';
     href?: string;
 };
 
@@ -130,6 +131,7 @@ export function Sidebar({ userData, onViewChange, currentView }: SidebarProps) {
         { id: 'tickets', label: t('tickets.title', 'Tickets'), icon: LifeBuoy, type: 'view' },
         { id: 'faqs', label: t('freelancer_menu.faqs', 'FAQs'), icon: HelpCircle, type: 'view' },
         { id: 'dicipoints-info', label: t('dicipoints.whatIs.title', 'What are DiciPoints?'), icon: Info, type: 'dialog' },
+        { id: 'contact', label: t('dashboard.contact', 'Contactar al Team Dicilo'), icon: HelpCircle, type: 'contact-dialog' },
     ];
 
     // Add Scanner Pro for Freelancers+
@@ -252,6 +254,19 @@ export function Sidebar({ userData, onViewChange, currentView }: SidebarProps) {
                                 <item.icon size={18} />
                                 {item.label}
                             </Button>
+                        );
+                    }
+                    if (item.type === 'contact-dialog') {
+                        return (
+                            <NativeBookingDialog key={item.id} trigger={
+                                <Button
+                                    variant="ghost"
+                                    className="w-full justify-start gap-3"
+                                >
+                                    <item.icon size={18} />
+                                    {item.label}
+                                </Button>
+                            } />
                         );
                     }
 

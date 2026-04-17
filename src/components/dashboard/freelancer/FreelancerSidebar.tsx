@@ -23,6 +23,7 @@ import {
     Building2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import NativeBookingDialog from '@/components/shared/NativeBookingDialog';
 
 interface FreelancerSidebarProps {
     className?: string;
@@ -111,6 +112,12 @@ export function FreelancerSidebar({ className, onViewChange, onMobileClose }: Fr
             id: 'recommend_company',
             label: t('freelancer_menu.new_recommendation', 'Nueva Recomendación'),
             icon: Building2
+        },
+        {
+            id: 'contact',
+            label: t('dashboard.contact', 'Contactar al Team Dicilo'),
+            icon: HelpCircle,
+            isContact: true
         }
     ];
 
@@ -158,25 +165,40 @@ export function FreelancerSidebar({ className, onViewChange, onMobileClose }: Fr
 
                             return (
                                 <div key={item.id} className="space-y-1">
-                                    <button
-                                        onClick={() => handleNavigation(item.id)}
-                                        className={cn(
-                                            "w-full flex items-center justify-between rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors",
-                                            isActive ? "bg-accent text-accent-foreground" : "transparent",
-                                            item.isHeading && "hover:bg-transparent cursor-default mt-4 mb-1 px-0"
-                                        )}
-                                        disabled={item.isHeading}
-                                    >
-                                        <div className="flex items-center">
-                                            {item.icon && <item.icon className="mr-2 h-4 w-4" />}
-                                            <span className={cn(item.isHeading && "font-bold text-slate-900 dark:text-slate-100 uppercase text-[11px] tracking-wider")}>
-                                                {item.label}
-                                            </span>
-                                        </div>
-                                        {hasChildren && (
-                                            isExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />
-                                        )}
-                                    </button>
+                                    {item.isContact ? (
+                                        <NativeBookingDialog trigger={
+                                            <button
+                                                className={cn(
+                                                    "w-full flex items-center justify-between rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors transparent"
+                                                )}
+                                            >
+                                                <div className="flex items-center">
+                                                    {item.icon && <item.icon className="mr-2 h-4 w-4" />}
+                                                    <span>{item.label}</span>
+                                                </div>
+                                            </button>
+                                        } />
+                                    ) : (
+                                        <button
+                                            onClick={() => handleNavigation(item.id)}
+                                            className={cn(
+                                                "w-full flex items-center justify-between rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors",
+                                                isActive ? "bg-accent text-accent-foreground" : "transparent",
+                                                item.isHeading && "hover:bg-transparent cursor-default mt-4 mb-1 px-0"
+                                            )}
+                                            disabled={item.isHeading}
+                                        >
+                                            <div className="flex items-center">
+                                                {item.icon && <item.icon className="mr-2 h-4 w-4" />}
+                                                <span className={cn(item.isHeading && "font-bold text-slate-900 dark:text-slate-100 uppercase text-[11px] tracking-wider")}>
+                                                    {item.label}
+                                                </span>
+                                            </div>
+                                            {hasChildren && (
+                                                isExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />
+                                            )}
+                                        </button>
+                                    )}
 
                                     {/* Children (Sub-menu) */}
                                     {hasChildren && isExpanded && (

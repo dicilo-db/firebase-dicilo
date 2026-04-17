@@ -3,6 +3,7 @@
 import React from 'react';
 import BusinessSidebar from '@/components/dashboard/business/BusinessSidebar';
 import { useBusinessAccess } from '@/hooks/useBusinessAccess';
+import { useAdminUser } from '@/hooks/useAuthGuard';
 import { useRouter } from 'next/navigation';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -11,15 +12,18 @@ import { Button } from '@/components/ui/button';
 
 export default function BusinessLayout({ children }: { children: React.ReactNode }) {
     const { plan, email, isLoading } = useBusinessAccess();
+    const { user: adminUser } = useAdminUser();
     const router = useRouter();
 
     React.useEffect(() => {
-        if (!isLoading && plan === 'none') {
+        const isAdmin = ['admin', 'superadmin', 'team_office'].includes(adminUser?.role || '');
+        if (!isLoading && plan === 'none' && !isAdmin) {
             router.push('/dashboard'); // Kick out normal users automatically
         }
-    }, [isLoading, plan, router]);
+    }, [isLoading, plan, adminUser?.role, router]);
 
-    if (isLoading || plan === 'none') {
+    const isAdmin = ['admin', 'superadmin', 'team_office'].includes(adminUser?.role || '');
+    if (isLoading || (plan === 'none' && !isAdmin)) {
         return (
             <div className="flex w-full h-[calc(100vh-64px)] overflow-hidden bg-slate-50">
                 <BusinessSidebar plan="loading" email={null} isLoading={true} />

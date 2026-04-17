@@ -121,7 +121,8 @@
       "myNeighborhood": "Mein Kiez",
       "communityLabel": "Community",
       "dicicoin": "DiciCoin",
-      "logout": "Abmelden"
+      "logout": "Abmelden",
+      "contact": "Kontakt"
     }
   },
   "dicipoints": {
@@ -1631,5 +1632,59 @@
       "pageTitle": "Inhaltsmanager & Erweiterte Werkzeuge",
       "pageDesc": "Von hier aus können Sie Texte, Banner, integrierte Gutscheinsysteme und Einladungen an neue Kunden verwalten (Ihr Klassisches Panel)."
     }
+  },
+  "contact": {
+    "title": "Dicilo Kontaktzentrum",
+    "subtitle": "Wenden Sie sich an unser Team Office. Wir sind bereit, Ihnen zu helfen, Ihr Geschäft anzukurbeln.",
+    "book": {
+      "title": "Meeting buchen",
+      "desc": "Haben Sie Fragen zur Skalierung Ihres Unternehmens? Vereinbaren Sie einen 30-minütigen Videoanruf mit einem persönlichen Berater. Wählen Sie die Zeit, die am besten zu Ihrem Zeitplan passt.",
+      "button": "Verfügbarkeit prüfen und buchen"
+    },
+    "office": {
+      "title": "Unsere Büros",
+      "hq": "Hauptsitz",
+      "phone": "Telefonischer Support",
+      "mon_fri": "Montag bis Freitag",
+      "note": "* Persönliche Besuche erfordern eine vorherige Terminvereinbarung."
+    }
+  },
+  "booking": {
+    "title": "Meeting",
+    "title2": "buchen",
+    "subtitle": "Persönliche Beratung durch das Dicilo Team Office.",
+    "duration": "30 Minuten",
+    "your_timezone": "Ihre Zeitzone",
+    "timezone_expl": "Alle unten angegebenen Zeiten werden zur Vermeidung von Verwirrung in Ihrer Ortszeit gemäß Ihrem Gerät angezeigt.",
+    "selected": "Ausgewählter Termin",
+    "select_day": "Wählen Sie den Tag aus",
+    "select_day_desc": "Klicken Sie im Kalender auf einen verfügbaren Tag.",
+    "choose_time": "Zeit auswählen und bestätigen",
+    "available_for": "Verfügbare Zeiten am ",
+    "name": "Vollständiger Name",
+    "name_ph": "Z.B. Max Mustermann",
+    "reason": "Worüber möchten Sie sprechen?",
+    "reason_ph": "Worum geht es bei dem Meeting...",
+    "confirming": "Wird bestätigt...",
+    "confirm": "Reservierung bestätigen",
+    "success_title": "Termin bestätigt!",
+    "success_msg1": "Ihr Meeting wurde erfolgreich geplant für",
+    "success_msg2": "Neue Details und der Link zum Anruf erhalten Sie in Kürze per WhatsApp.",
+    "close": "Fenster schließen"
+  },
+  "cookies": {
+    "title": "Cookie-Einstellungen",
+    "desc": "Wählen Sie aus, welche Cookies Sie zulassen möchten. Notwendige Cookies sind immer aktiv, da sie für den Betrieb der Website erforderlich sind.",
+    "necessary": "Notwendig",
+    "necessary_desc": "Erforderlich für Sicherheit, Navigation und Grundfunktionen.",
+    "analytics": "Analyse",
+    "analytics_desc": "Hilft uns zu verstehen, wie Besucher die Website nutzen.",
+    "preferences": "Präferenzen",
+    "preferences_desc": "Speichert Sprach- oder Oberflächeneinstellungen.",
+    "marketing": "Marketing",
+    "marketing_desc": "Für Kampagnen, Messung und Remarketing.",
+    "only_necessary": "Nur notwendige",
+    "save": "Einstellungen speichern",
+    "floating_btn": "Cookie-Einstellungen"
   }
 }

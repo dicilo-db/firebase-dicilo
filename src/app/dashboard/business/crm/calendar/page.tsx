@@ -6,6 +6,7 @@ import { Calendar as CalendarIcon, Clock, ChevronLeft, ChevronRight, User, Phone
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useBusinessAccess } from '@/hooks/useBusinessAccess';
+import { useAdminUser } from '@/hooks/useAuthGuard';
 import { format, addMonths, subMonths, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, parseISO } from 'date-fns';
 import { es, de, enUS } from 'date-fns/locale';
 import { collection, query, onSnapshot, orderBy } from 'firebase/firestore';
@@ -14,7 +15,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 export default function MasterCalendarPage() {
     const { t, i18n } = useTranslation('common');
-    const { role, plan, isLoading } = useBusinessAccess();
+    const { plan, isLoading } = useBusinessAccess();
+    const { user: adminUser } = useAdminUser();
     
     const [currentDate, setCurrentDate] = useState(new Date());
     const [appointments, setAppointments] = useState<any[]>([]);
@@ -48,7 +50,7 @@ export default function MasterCalendarPage() {
     if (isLoading) return <div className="p-8"><Skeleton className="w-full h-96" /></div>;
 
     // Solo Admin y Team Office
-    if (!['admin', 'superadmin', 'team_office'].includes(role) && plan !== 'premium') {
+    if (!['admin', 'superadmin', 'team_office'].includes(adminUser?.role || '') && plan !== 'premium') {
         return (
             <div className="p-8 text-center text-rose-600 font-bold">
                 Acceso Restringido. Esta vista es exclusiva para Gestión Operativa y Team Office.

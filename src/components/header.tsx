@@ -33,6 +33,7 @@ const desktopLinks = [
   { href: '/vorteile', labelKey: 'header.nav.benefits' },
   { href: '/planes', labelKey: 'header.nav.planes' },
   { href: '/ueber-uns', labelKey: 'header.nav.about' },
+  { href: '/contacto', labelKey: 'header.nav.contact', defaultText: 'Contacto' },
 ];
 
 // Mobile menu links (Hamburguesa)
@@ -44,6 +45,7 @@ const mobileLinks = [
   { href: '/impressum', labelKey: 'header.nav.imprint' },
   { href: '/datenschutz', labelKey: 'header.nav.privacy' },
   { href: '/faq', labelKey: 'header.nav.faq' },
+  { href: '/contacto', labelKey: 'header.nav.contact', defaultText: 'Contacto' },
 ];
 
 const Header = () => {

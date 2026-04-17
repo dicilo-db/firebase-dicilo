@@ -16,7 +16,8 @@
       "myNeighborhood": "Mi Barrio",
       "faq": "Preguntas Frecuentes",
       "dicicoin": "DiciCoin",
-      "logout": "Cerrar Sesión"
+      "logout": "Cerrar Sesión",
+      "contact": "Contacto"
     }
   },
   "navigation": {
@@ -1700,5 +1701,59 @@
       "pageTitle": "Gestor de Contenidos & Herramientas Avanzadas",
       "pageDesc": "Desde aquí puedes administrar los textos, banners, sistema de cupones integrados y las invitaciones a nuevos clientes (Tu Panel Clásico)."
     }
+  },
+  "contact": {
+    "title": "Central de Contacto Dicilo",
+    "subtitle": "Acércate a nuestro Team Office. Estamos listos para ayudarte a potenciar tu negocio.",
+    "book": {
+      "title": "Agenda una Reunión",
+      "desc": "¿Tienes dudas sobre cómo escalar tu negocio? Agenda una videollamada de 30 minutos con un asesor personalizado. Elige el horario que mejor se adapte a tu posibilidad.",
+      "button": "Ver Disponibilidad y Agendar"
+    },
+    "office": {
+      "title": "Nuestras Oficinas",
+      "hq": "Sede Principal",
+      "phone": "Atención Telefónica",
+      "mon_fri": "Lunes a Viernes",
+      "note": "* Las visitas presenciales requieren cita previa."
+    }
+  },
+  "booking": {
+    "title": "Agendar",
+    "title2": "Reunión",
+    "subtitle": "Asesoría personalizada con el Team Office de Dicilo.",
+    "duration": "30 Minutos",
+    "your_timezone": "Tú: Zona horaria",
+    "timezone_expl": "Todas las horas abajo se muestran en tu hora local según tu dispositivo, para que no haya confusiones.",
+    "selected": "Cita Seleccionada",
+    "select_day": "Selecciona el Día",
+    "select_day_desc": "Haz clic en un día disponible del calendario.",
+    "choose_time": "Elige la Hora y Confirma",
+    "available_for": "Horarios Disponibles para el ",
+    "name": "Nombre Completo",
+    "name_ph": "Ej. Carlos Martínez",
+    "reason": "¿Sobre qué te gustaría hablar?",
+    "reason_ph": "Para qué es la reunión...",
+    "confirming": "Confirmando...",
+    "confirm": "Confirmar Reserva",
+    "success_title": "¡Cita Confirmada!",
+    "success_msg1": "Tu reunión ha sido agendada con éxito para el",
+    "success_msg2": "Nuevos detalles y el enlace a la llamada te llegarán muy pronto a tu WhatsApp.",
+    "close": "Cerrar Ventana"
+  },
+  "cookies": {
+    "title": "Configuración de Cookies",
+    "desc": "Elija qué cookies desea permitir. Las cookies necesarias siempre están activas, ya que son esenciales para el funcionamiento del sitio web.",
+    "necessary": "Necesarias",
+    "necessary_desc": "Requeridas para seguridad, navegación y funciones básicas.",
+    "analytics": "Análisis",
+    "analytics_desc": "Nos ayuda a entender cómo interactúan los visitantes con el sitio web.",
+    "preferences": "Preferencias",
+    "preferences_desc": "Guarda sus preferencias de idioma o interfaz.",
+    "marketing": "Marketing",
+    "marketing_desc": "Utilizadas para campañas, medición y remarketing.",
+    "only_necessary": "Solo necesarias",
+    "save": "Guardar configuración",
+    "floating_btn": "Ajustes de Cookies"
   }
 }

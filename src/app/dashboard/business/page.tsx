@@ -3,6 +3,7 @@
 import { useTranslation } from 'react-i18next';
 import { useBusinessAccess } from '@/hooks/useBusinessAccess';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import NativeBookingDialog from '@/components/shared/NativeBookingDialog';
 import { 
     Zap, Eye, MousePointerClick, CalendarRange, 
     Share2, MapPin, Megaphone, Briefcase, BarChart, 
@@ -174,16 +175,18 @@ export default function BusinessDashboardPage() {
                         </CardContent>
                     </Card>
 
-                    <Card className="bg-blue-50 border-blue-100 shadow-sm hover:bg-blue-100 transition-colors cursor-pointer">
-                        <CardHeader className="flex flex-row items-center justify-between pb-2">
-                            <CardTitle className="text-sm font-medium text-blue-700 uppercase tracking-wider">{t('business.dashboard.indivTitle', 'Soporte Individual')}</CardTitle>
-                            <UserPlus className="w-4 h-4 text-blue-600" />
-                        </CardHeader>
-                        <CardContent>
-                            <div className="text-lg font-bold text-blue-900 mt-1">{t('business.dashboard.indivStatus', 'Agendar Llamada')}</div>
-                            <p className="text-xs text-blue-700 mt-1">{t('business.dashboard.indivDesc', 'Asesoría personalizada')}</p>
-                        </CardContent>
-                    </Card>
+                    <NativeBookingDialog trigger={
+                        <Card className="h-full bg-blue-50 border-blue-100 shadow-sm hover:bg-blue-100 transition-colors cursor-pointer hover:shadow-md outline-none">
+                            <CardHeader className="flex flex-row items-center justify-between pb-2">
+                                <CardTitle className="text-sm font-medium text-blue-700 uppercase tracking-wider">{t('business.dashboard.indivTitle', 'Soporte Individual')}</CardTitle>
+                                <UserPlus className="w-4 h-4 text-blue-600" />
+                            </CardHeader>
+                            <CardContent>
+                                <div className="text-lg font-bold text-blue-900 mt-1">{t('business.dashboard.indivStatus', 'Agendar Llamada')}</div>
+                                <p className="text-xs text-blue-700 mt-1">{t('business.dashboard.indivDesc', 'Asesoría personalizada')}</p>
+                            </CardContent>
+                        </Card>
+                    } />
 
                     <Card className="bg-slate-50 border-slate-200 shadow-sm hover:bg-slate-100 transition-colors cursor-pointer">
                         <CardHeader className="flex flex-row items-center justify-between pb-2">

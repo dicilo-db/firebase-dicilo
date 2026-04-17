@@ -89,7 +89,7 @@ export function SocialProofBanner() {
     const currentUser = usersList[currentUserIndex];
 
     return (
-        <div className="fixed bottom-6 left-6 z-50 animate-in slide-in-from-bottom-5 fade-in duration-500">
+        <div className="fixed bottom-[4.5rem] left-6 z-[9995] animate-in slide-in-from-bottom-5 fade-in duration-500">
             <div className="bg-white dark:bg-slate-800 border-l-4 border-teal-500 p-4 shadow-xl rounded-r-xl rounded-bl-xl max-w-[320px] flex items-center gap-4">
                 <div className="rounded-full bg-teal-100 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400 h-10 w-10 shrink-0 flex items-center justify-center shadow-inner">
                     <UserPlus className="h-5 w-5" />
