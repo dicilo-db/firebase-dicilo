@@ -114,6 +114,7 @@ async function resolveReferrer(db: admin.firestore.Firestore, code: string | und
         id: refDoc.id, // UID
         code: data.uniqueCode,
         role: data.role || 'user', // Assuming role is in profile
+        name: `${data.firstName || ''} ${data.lastName || ''}`.trim(),
         isValid: true,
         isRefonl: false
       };
@@ -128,6 +129,7 @@ async function resolveReferrer(db: admin.firestore.Firestore, code: string | und
     id: 'SYSTEM_REFONL',
     code: refonlCode,
     role: 'system',
+    name: 'Dicilo Team',
     isValid: true,
     isRefonl: true
   };
@@ -231,6 +233,7 @@ export async function POST(request: Request) {
       uniqueCode: userCode,
       referrerId: referrerData.id,
       referrerCode: referrerData.code,
+      referrerName: referrerData.name,
       inviteId: inviteId || null,
 
       // EMAIL VERIFICATION
@@ -354,7 +357,7 @@ export async function POST(request: Request) {
       await fetch(N8N_WEBHOOK_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...result.data, firestoreId: registrationDocRef.id, ownerUid, userCode, referrerCode: referrerData.code }),
+        body: JSON.stringify({ ...result.data, firestoreId: registrationDocRef.id, ownerUid, userCode, referrerCode: referrerData.code, referrerName: referrerData.name }),
       });
     } catch (e) { /* ignore */ }
 

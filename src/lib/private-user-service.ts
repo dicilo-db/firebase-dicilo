@@ -78,11 +78,21 @@ export async function createPrivateUserProfile(
     }
 
     // 2. Fallback: Validate via Standard Referral Code (if no invitation found)
+    let referrerName = 'Dicilo Team';
     if (!referrerUid && referralCode) {
-        referrerUid = await validateReferralCode(referralCode);
-        if (referrerUid) {
+        const validated = await validateReferralCode(referralCode);
+        if (validated) {
+            referrerUid = validated.uid;
+            referrerName = validated.name;
             initialBalance = 50; // Welcome Bonus standard
             referrerReward = 50; // Referrer reward standard
+        }
+    } else if (referrerUid) {
+        // We got referrerUid from rewards, let's fetch their name
+        const refProfile = await db.collection('private_profiles').doc(referrerUid).get();
+        if (refProfile.exists) {
+            const rData = refProfile.data();
+            referrerName = `${rData?.firstName || ''} ${rData?.lastName || ''}`.trim();
         }
     }
 
@@ -197,7 +207,9 @@ export async function createPrivateUserProfile(
         createdAt: admin.firestore.FieldValue.serverTimestamp(),
         // optional source tracking
         source: 'private-signup',
-        uid: uid
+        uid: uid,
+        referrerId: referrerUid || null,
+        referrerName: referrerName || null
     });
 
     await batch.commit();
@@ -213,9 +225,9 @@ export async function createPrivateUserProfile(
 }
 
 /**
- * Validates a referral code and returns the referrer's UID if valid.
+ * Validates a referral code and returns the referrer's UID and Name if valid.
  */
-async function validateReferralCode(code: string): Promise<string | null> {
+async function validateReferralCode(code: string): Promise<{uid: string, name: string} | null> {
     if (!code) return null;
     const db = getAdminDb();
     const snapshot = await db.collection('private_profiles')
@@ -224,5 +236,9 @@ async function validateReferralCode(code: string): Promise<string | null> {
         .get();
 
     if (snapshot.empty) return null;
-    return snapshot.docs[0].id;
+    const data = snapshot.docs[0].data();
+    return {
+        uid: snapshot.docs[0].id,
+        name: `${data?.firstName || ''} ${data?.lastName || ''}`.trim()
+    };
 }
