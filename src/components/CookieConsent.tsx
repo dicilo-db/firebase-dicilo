@@ -78,7 +78,7 @@ export function CookieConsent() {
             {!isOpen && (
                 <button 
                     onClick={() => setIsOpen(true)}
-                    className="fixed bottom-4 left-4 z-[9990] bg-white hover:bg-slate-50 transition-colors text-[#5a5a5a] text-xs font-semibold px-4 py-2 rounded-full shadow-lg border-2 border-[#8cc63f]"
+                    className="fixed bottom-2 left-2 z-[9990] bg-white/90 backdrop-blur-sm hover:bg-slate-50 transition-all text-[#5a5a5a] text-[10px] sm:text-xs font-medium px-3 py-1.5 rounded-full shadow-md border border-[#8cc63f] hover:scale-105 opacity-80 hover:opacity-100 max-w-[140px] truncate"
                 >
                     {t('cookies.floating_btn', 'Cookie-Einstellungen')}
                 </button>
