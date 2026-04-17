@@ -235,10 +235,29 @@ async function validateReferralCode(code: string): Promise<{uid: string, name: s
         .limit(1)
         .get();
 
-    if (snapshot.empty) return null;
-    const data = snapshot.docs[0].data();
-    return {
-        uid: snapshot.docs[0].id,
-        name: `${data?.firstName || ''} ${data?.lastName || ''}`.trim()
-    };
+    if (!snapshot.empty) {
+        const data = snapshot.docs[0].data();
+        return {
+            uid: snapshot.docs[0].id,
+            name: `${data?.firstName || ''} ${data?.lastName || ''}`.trim()
+        };
+    }
+
+    // Check clients for businesses
+    const clientSnapshot = await db.collection('clients')
+        .where('uniqueCode', '==', code)
+        .limit(1)
+        .get();
+
+    if (!clientSnapshot.empty) {
+        const data = clientSnapshot.docs[0].data();
+        // Return ownerUid because rewards belong to the owner, not the business doc ID.
+        // Fallback to doc id if ownerUid is missing to not fail entirely.
+        return {
+            uid: data?.ownerUid || clientSnapshot.docs[0].id,
+            name: data?.clientName || 'Business Ref'
+        };
+    }
+
+    return null;
 }

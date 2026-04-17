@@ -119,8 +119,21 @@ async function resolveReferrer(db: admin.firestore.Firestore, code: string | und
         isRefonl: false
       };
     }
-    // Also check 'registrations' if companies refer companies?
-    // For now, assuming standard referrers are in private_profiles.
+    
+    // Check 'clients' (Businesses)
+    const clientQuery = await db.collection('clients').where('uniqueCode', '==', code).limit(1).get();
+    if (!clientQuery.empty) {
+      const clientDoc = clientQuery.docs[0];
+      const data = clientDoc.data();
+      return {
+        id: data.ownerUid || clientDoc.id, // UID of the owner or fallback
+        code: data.uniqueCode,
+        role: 'business',
+        name: data.clientName || 'Business Ref',
+        isValid: true,
+        isRefonl: false
+      };
+    }
   }
 
   // CASE B: Empty or Invalid -> Assign REFONL

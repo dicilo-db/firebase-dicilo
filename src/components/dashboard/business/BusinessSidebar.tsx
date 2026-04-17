@@ -1,4 +1,4 @@
-import { BriefcaseBusiness, Lock, LayoutDashboard, Wallet, Ticket, Package, MessageSquare, BarChart, FileCode2, Megaphone, LifeBuoy, CircleHelp, BrainCircuit, Share2, MapPin, Bot, GraduationCap, Palette, ClipboardList, HeadphonesIcon, ImagePlus, Type, Video, MessageCircle, HeartHandshake, ScanLine } from 'lucide-react';
+import { BriefcaseBusiness, Lock, LayoutDashboard, Wallet, Ticket, Package, MessageSquare, BarChart, FileCode2, Megaphone, LifeBuoy, CircleHelp, BrainCircuit, Share2, MapPin, Bot, GraduationCap, Palette, ClipboardList, HeadphonesIcon, ImagePlus, Type, Video, MessageCircle, HeartHandshake, ScanLine, Gift } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
@@ -29,6 +29,7 @@ export default function BusinessSidebar({ plan, email, isLoading }: { plan: stri
     const navItems = [
         { label: t('business.sidebar.dashboard', 'Resumen'), href: '/dashboard/business', icon: LayoutDashboard, reqLvl: 1 },
         { label: t('business.sidebar.financials', 'Mi Wallet'), href: '/dashboard/business/financials', icon: Wallet, reqLvl: 1 },
+        { label: t('business.sidebar.invite', 'Invitar Amigos'), href: '/dashboard/business/invite', icon: Gift, reqLvl: 1 },
         { label: t('business.sidebar.scanner', 'Scanner de Cobros'), href: '/dashboard/business/scanner', icon: ScanLine, reqLvl: 2 },
         { label: t('business.sidebar.coupons', 'Mis Cupones'), href: '/dashboard/business/coupons', icon: Ticket, reqLvl: 2 },
         { label: t('business.sidebar.products', 'Gestión de Productos'), href: '/dashboard/business/products', icon: Package, reqLvl: 2 },

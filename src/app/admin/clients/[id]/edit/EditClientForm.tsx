@@ -1455,7 +1455,6 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                     {t('clients.tabs.translations')}
                   </TabsTrigger>
                   <TabsTrigger value="coupons">{t('clients.tabs.coupons')}</TabsTrigger>
-                  <TabsTrigger value="invite" className="text-green-600 font-bold">Invitar Amigos</TabsTrigger>
                 </TabsList>
 
 
@@ -3020,20 +3019,6 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                   />
                 </TabsContent>
 
-                <TabsContent value="invite">
-                  <div className="p-4 space-y-4">
-                    <CardTitle>Invitar Amigos</CardTitle>
-                    <CardDescription>Invita a amigos y gana recompensas para tu negocio.</CardDescription>
-                    {uniqueCode ? (
-                      <InviteFriendSection uniqueCode={uniqueCode} referrals={[]} />
-                    ) : (
-                      <div className="p-8 text-center text-muted-foreground">
-                        <Loader2 className="h-8 w-8 animate-spin mx-auto mb-2" />
-                        Generando código de invitación...
-                      </div>
-                    )}
-                  </div>
-                </TabsContent>
 
               </Tabs>
             </CardContent>
