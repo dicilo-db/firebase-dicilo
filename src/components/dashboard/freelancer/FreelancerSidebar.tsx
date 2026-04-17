@@ -72,16 +72,9 @@ export function FreelancerSidebar({ className, onViewChange, onMobileClose }: Fr
             ]
         },
         {
-            id: 'marketing_emails',
+            id: 'marketing_templates',
             label: t('freelancer_menu.email_marketing', 'Email - Marketing'),
-            icon: Mail,
-            children: [
-                {
-                    id: 'marketing_templates',
-                    label: t('freelancer_menu.templates', 'Vorlagen'),
-                    icon: LayoutTemplate
-                }
-            ]
+            icon: Mail
         },
         {
             id: 'my_postings',
@@ -161,7 +154,7 @@ export function FreelancerSidebar({ className, onViewChange, onMobileClose }: Fr
                             const isActive = currentTab === item.id;
                             const hasChildren = item.children && item.children.length > 0;
                             const isChildActive = hasChildren && item.children?.some(child => currentTab === child.id);
-                            const isExpanded = isActive || isChildActive || (item.id === 'all_campaigns' && !!selectedCampaignId) || (item.id === 'marketing_emails' && !!selectedCampaignId);
+                            const isExpanded = isActive || isChildActive || (item.id === 'all_campaigns' && !!selectedCampaignId);
 
                             return (
                                 <div key={item.id} className="space-y-1">
