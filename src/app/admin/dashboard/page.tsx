@@ -156,6 +156,8 @@ const DashboardContent: React.FC = () => {
 
   // --- EFECTOS ---
   useEffect(() => {
+    if (isUserLoading || !isAdminOrSuper) return;
+
     const fetchCounts = async () => {
       try {
         const clientsCol = collection(db, 'clients');
@@ -200,7 +202,7 @@ const DashboardContent: React.FC = () => {
     };
 
     fetchCounts();
-  }, []);
+  }, [isUserLoading, isAdminOrSuper]);
 
   // --- MANEJADORES DE EVENTOS ---
 
