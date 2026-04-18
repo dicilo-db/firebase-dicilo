@@ -66,7 +66,7 @@ export async function sendBusinessDirectInvite(opts: {
                 </div>
                 
                 <div style="text-align: center; margin-top: 30px;">
-                    <a href="https://dicilo.net/registrieren?inviteId=${uniqueCode}" style="background-color: #2563eb; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: 600; display: inline-block;">
+                    <a href="https://dicilo.net/registrieren?ref=${uniqueCode}&inviteId=${uniqueCode}&type=retailer" style="background-color: #2563eb; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: 600; display: inline-block;">
                         ${t.button}
                     </a>
                 </div>
