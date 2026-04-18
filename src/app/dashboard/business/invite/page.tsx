@@ -12,7 +12,8 @@ import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useTranslation } from 'react-i18next';
 import { toast } from '@/hooks/use-toast';
-import { sendBusinessDirectInvite, fetchBusinessInviteData } from '@/app/actions/business-invites';
+import { sendBusinessDirectInvite, fetchBusinessInviteData, INVITATION_TEMPLATES } from '@/app/actions/business-invites';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 export default function BusinessInvitePage() {
     const { t } = useTranslation('common');
@@ -22,6 +23,7 @@ export default function BusinessInvitePage() {
 
     const [inviteEmail, setInviteEmail] = useState('');
     const [inviteName, setInviteName] = useState('');
+    const [lang, setLang] = useState('es');
     const [isSending, setIsSending] = useState(false);
 
     const activeId = businessId || clientId;
@@ -97,7 +99,7 @@ export default function BusinessInvitePage() {
                 friendName: inviteName,
                 businessName: businessName,
                 uniqueCode: uniqueCode,
-                lang: 'es' // Defaulting to ES for now, could be dynamic
+                lang: lang
             });
 
             if (res.success) {
@@ -201,9 +203,37 @@ export default function BusinessInvitePage() {
                                     />
                                 </div>
                                 
+                                <div className="space-y-2">
+                                    <Label htmlFor="lang">Idioma del Correo</Label>
+                                    <Select value={lang} onValueChange={setLang}>
+                                        <SelectTrigger className="w-full bg-white">
+                                            <SelectValue placeholder="Seleccione un idioma" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="es">🇪🇸 Español</SelectItem>
+                                            <SelectItem value="en">🇬🇧 English</SelectItem>
+                                            <SelectItem value="de">🇩🇪 Deutsch</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+
+                                {/* Preview Zone */}
+                                <div className="mt-4 border border-slate-200 rounded-lg overflow-hidden bg-slate-50">
+                                    <div className="bg-slate-200 p-2 text-xs font-semibold text-slate-600 flex justify-between items-center">
+                                        <span>Vista Previa del Email ({lang.toUpperCase()})</span>
+                                        <span className="text-[10px] bg-slate-300 px-2 py-0.5 rounded">Asunto: {INVITATION_TEMPLATES[lang]?.subject.replace('[Empresa]', businessName)}</span>
+                                    </div>
+                                    <div className="p-4 text-sm text-slate-700 bg-white">
+                                        <p className="font-bold mb-2">{INVITATION_TEMPLATES[lang]?.greeting.replace('[Nombre]', inviteName || 'Carlos')}</p>
+                                        <p className="mb-2" dangerouslySetInnerHTML={{ __html: INVITATION_TEMPLATES[lang]?.msg.replace('[Empresa]', businessName) }}></p>
+                                        <p className="mb-3 text-slate-500 italic border-l-2 pl-2">{INVITATION_TEMPLATES[lang]?.benefits}</p>
+                                        <p className="font-medium text-blue-600 max-w-full truncate">{INVITATION_TEMPLATES[lang]?.cta.replace('[Empresa]', businessName)} {uniqueCode}</p>
+                                    </div>
+                                </div>
+                                
                                 <div className="bg-blue-50 text-blue-800 p-4 rounded-lg text-sm border border-blue-100 mt-4 flex items-start gap-3">
                                     <CheckCircle2 className="w-5 h-5 shrink-0 text-blue-500" />
-                                    <p>El destinatario recibirá un elegante email indicando que <strong>{businessName}</strong> le ha invitado, y el enlace de afiliación estará automáticamente configurado.</p>
+                                    <p>El destinatario recibirá el email exacto que se muestra arriba, y el enlace de afiliación estará automáticamente configurado.</p>
                                 </div>
 
                                 <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white" disabled={isSending}>

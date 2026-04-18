@@ -1,7 +1,34 @@
 'use server';
 
-import { sendSmtpEmail } from '@/lib/email';
+import { sendSmtpEmail } from '@/lib/mail-service';
 import { getAdminDb } from '@/lib/firebase-admin';
+
+export const INVITATION_TEMPLATES: Record<string, { subject: string, greeting: string, msg: string, benefits: string, cta: string, team: string }> = {
+    es: {
+        subject: `[Empresa] te invita a unirte a Dicilo`,
+        greeting: `¡Hola [Nombre]!`,
+        msg: `La empresa <strong>[Empresa]</strong> cree que Dicilo puede ser una excelente herramienta para ti.`,
+        benefits: `Dicilo es la plataforma líder en networking y fidelización. Únete gratis y descubre cómo optimizar tus conexiones.`,
+        cta: `Utiliza el siguiente código exclusivo de invitación al registrarte para vincularte con [Empresa]:`,
+        team: 'Tu Equipo Dicilo'
+    },
+    en: {
+        subject: `[Empresa] invites you to join Dicilo`,
+        greeting: `Hello [Nombre]!`,
+        msg: `The company <strong>[Empresa]</strong> believes Dicilo could be an excellent tool for you.`,
+        benefits: `Dicilo is the leading platform for networking and loyalty. Join for free and discover how to optimize your connections.`,
+        cta: `Use the following exclusive invitation code when registering to connect with [Empresa]:`,
+        team: 'Your Dicilo Team'
+    },
+    de: {
+        subject: `[Empresa] lädt Sie ein, Dicilo beizutreten`,
+        greeting: `Hallo [Nombre]!`,
+        msg: `Das Unternehmen <strong>[Empresa]</strong> glaubt, dass Dicilo ein hervorragendes Werkzeug für Sie sein könnte.`,
+        benefits: `Dicilo ist die führende Plattform für Networking und Kundenbindung. Treten Sie kostenlos bei und entdecken Sie, wie Sie Ihre Verbindungen optimieren können.`,
+        cta: `Verwenden Sie den folgenden exklusiven Einladungscode bei der Registrierung, um sich mit [Empresa] zu verbinden:`,
+        team: 'Ihr Dicilo Team'
+    }
+};
 
 export async function sendBusinessDirectInvite(opts: {
     friendEmail: string;
