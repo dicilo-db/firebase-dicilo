@@ -100,7 +100,7 @@ export default function BusinessInvitePage() {
 
     const uniqueCode = clientData.uniqueCode;
     const businessName = clientData.clientName || 'Tu Empresa';
-    const inviteLink = `https://dicilo.net/register?invite=${uniqueCode}`;
+    const inviteLink = `https://dicilo.net/registrieren?inviteId=${uniqueCode}`;
 
     const handleCopyLink = () => {
         navigator.clipboard.writeText(inviteLink);

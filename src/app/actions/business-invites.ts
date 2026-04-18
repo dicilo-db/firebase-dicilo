@@ -23,7 +23,8 @@ export async function sendBusinessDirectInvite(opts: {
             msg: `La empresa <strong>${businessName}</strong> cree que Dicilo puede ser una excelente herramienta para ti.`,
             benefits: `Dicilo es la plataforma líder en networking y fidelización. Únete gratis y descubre cómo optimizar tus conexiones.`,
             cta: `Utiliza el siguiente código exclusivo de invitación al registrarte para vincularte con ${businessName}:`,
-            team: 'Tu Equipo Dicilo'
+            team: 'Tu Equipo Dicilo',
+            button: 'Regístrate Ahora'
         },
         en: {
             subject: `${businessName} invites you to join Dicilo`,
@@ -31,7 +32,8 @@ export async function sendBusinessDirectInvite(opts: {
             msg: `The company <strong>${businessName}</strong> believes Dicilo could be an excellent tool for you.`,
             benefits: `Dicilo is the leading platform for networking and loyalty. Join for free and discover how to optimize your connections.`,
             cta: `Use the following exclusive invitation code when registering to connect with ${businessName}:`,
-            team: 'Your Dicilo Team'
+            team: 'Your Dicilo Team',
+            button: 'Register Now'
         },
         de: {
             subject: `${businessName} lädt Sie ein, Dicilo beizutreten`,
@@ -39,7 +41,8 @@ export async function sendBusinessDirectInvite(opts: {
             msg: `Das Unternehmen <strong>${businessName}</strong> glaubt, dass Dicilo ein hervorragendes Werkzeug für Sie sein könnte.`,
             benefits: `Dicilo ist die führende Plattform für Networking und Kundenbindung. Treten Sie kostenlos bei und entdecken Sie, wie Sie Ihre Verbindungen optimieren können.`,
             cta: `Verwenden Sie den folgenden exklusiven Einladungscode bei der Registrierung, um sich mit ${businessName} zu verbinden:`,
-            team: 'Ihr Dicilo Team'
+            team: 'Ihr Dicilo Team',
+            button: 'Jetzt Registrieren'
         }
     };
 
@@ -59,12 +62,12 @@ export async function sendBusinessDirectInvite(opts: {
                 <p style="font-size: 16px; line-height: 1.6; color: #475569; margin-top: 30px;">${t.cta}</p>
                 
                 <div style="margin: 20px 0; padding: 20px; text-align: center; border-radius: 8px; border: 2px solid #3b82f6; background-color: #eff6ff;">
-                    <p style="margin: 0; font-size: 32px; font-weight: bold; letter-spacing: 4px; color: #1e3a8a;">${uniqueCode}</p>
+                    <p style="margin: 0; font-size: 24px; font-weight: bold; letter-spacing: 2px; color: #1e3a8a;">${uniqueCode}</p>
                 </div>
                 
                 <div style="text-align: center; margin-top: 30px;">
-                    <a href="https://dicilo.net/register?invite=${uniqueCode}" style="background-color: #2563eb; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: 600; display: inline-block;">
-                        Regístrate Ahora
+                    <a href="https://dicilo.net/registrieren?inviteId=${uniqueCode}" style="background-color: #2563eb; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: 600; display: inline-block;">
+                        ${t.button}
                     </a>
                 </div>
             </div>
