@@ -12,7 +12,7 @@ import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useTranslation } from 'react-i18next';
 import { toast } from '@/hooks/use-toast';
-import { sendBusinessDirectInvite } from '@/app/actions/business-invites';
+import { sendBusinessDirectInvite, fetchBusinessInviteData } from '@/app/actions/business-invites';
 
 export default function BusinessInvitePage() {
     const { t } = useTranslation('common');
@@ -35,10 +35,9 @@ export default function BusinessInvitePage() {
 
         async function fetchClient() {
             try {
-                const docRef = doc(db, 'clients', activeId as string);
-                const snapshot = await getDoc(docRef);
-                if (mounted && snapshot.exists()) {
-                    setClientData({ id: snapshot.id, ...snapshot.data() });
+                const result = await fetchBusinessInviteData(activeId as string);
+                if (mounted && result.success) {
+                    setClientData(result.clientData);
                 }
             } catch (err) {
                 console.error("Error fetching client for invite:", err);

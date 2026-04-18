@@ -89,3 +89,36 @@ export async function sendBusinessDirectInvite(opts: {
         return { success: false, message: e.message || 'Error temporal al enviar correo.' };
     }
 }
+
+export async function fetchBusinessInviteData(clientId: string) {
+    if (!clientId) return { success: false, message: 'No client ID provided' };
+
+    try {
+        const db = getAdminDb();
+        const docRef = db.collection('clients').doc(clientId);
+        const snapshot = await docRef.get();
+
+        if (!snapshot.exists) return { success: false, message: 'Client not found' };
+
+        const data = snapshot.data();
+        let uniqueCode = data?.uniqueCode;
+
+        if (!uniqueCode) {
+            // Generar código EMDC retroactivo para clientes antiguos
+            uniqueCode = `EMDC-${clientId.substring(0, 5).toUpperCase()}${Math.floor(Math.random() * 100)}`;
+            await docRef.update({ uniqueCode: uniqueCode });
+        }
+
+        return { 
+            success: true, 
+            clientData: { 
+                id: snapshot.id, 
+                uniqueCode: uniqueCode,
+                clientName: data?.clientName || data?.name || 'Tu Empresa' 
+            } 
+        };
+    } catch (e: any) {
+        console.error("Error fetching invite data", e);
+        return { success: false, message: e.message };
+    }
+}
