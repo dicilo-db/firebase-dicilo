@@ -12,8 +12,35 @@ import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useTranslation } from 'react-i18next';
 import { toast } from '@/hooks/use-toast';
-import { sendBusinessDirectInvite, fetchBusinessInviteData, INVITATION_TEMPLATES } from '@/app/actions/business-invites';
+import { sendBusinessDirectInvite, fetchBusinessInviteData } from '@/app/actions/business-invites';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+
+const PREVIEW_TEMPLATES: Record<string, { subject: string, greeting: string, msg: string, benefits: string, cta: string, team: string }> = {
+    es: {
+        subject: `[Empresa] te invita a unirte a Dicilo`,
+        greeting: `¡Hola [Nombre]!`,
+        msg: `La empresa <strong>[Empresa]</strong> cree que Dicilo puede ser una excelente herramienta para ti.`,
+        benefits: `Dicilo es la plataforma líder en networking y fidelización. Únete gratis y descubre cómo optimizar tus conexiones.`,
+        cta: `Utiliza el siguiente código exclusivo de invitación al registrarte para vincularte con [Empresa]:`,
+        team: 'Tu Equipo Dicilo'
+    },
+    en: {
+        subject: `[Empresa] invites you to join Dicilo`,
+        greeting: `Hello [Nombre]!`,
+        msg: `The company <strong>[Empresa]</strong> believes Dicilo could be an excellent tool for you.`,
+        benefits: `Dicilo is the leading platform for networking and loyalty. Join for free and discover how to optimize your connections.`,
+        cta: `Use the following exclusive invitation code when registering to connect with [Empresa]:`,
+        team: 'Your Dicilo Team'
+    },
+    de: {
+        subject: `[Empresa] lädt Sie ein, Dicilo beizutreten`,
+        greeting: `Hallo [Nombre]!`,
+        msg: `Das Unternehmen <strong>[Empresa]</strong> glaubt, dass Dicilo ein hervorragendes Werkzeug für Sie sein könnte.`,
+        benefits: `Dicilo ist die führende Plattform für Networking und Kundenbindung. Treten Sie kostenlos bei und entdecken Sie, wie Sie Ihre Verbindungen optimieren können.`,
+        cta: `Verwenden Sie den folgenden exklusiven Einladungscode bei der Registrierung, um sich mit [Empresa] zu verbinden:`,
+        team: 'Ihr Dicilo Team'
+    }
+};
 
 export default function BusinessInvitePage() {
     const { t } = useTranslation('common');
@@ -221,13 +248,13 @@ export default function BusinessInvitePage() {
                                 <div className="mt-4 border border-slate-200 rounded-lg overflow-hidden bg-slate-50">
                                     <div className="bg-slate-200 p-2 text-xs font-semibold text-slate-600 flex justify-between items-center">
                                         <span>Vista Previa del Email ({lang.toUpperCase()})</span>
-                                        <span className="text-[10px] bg-slate-300 px-2 py-0.5 rounded">Asunto: {INVITATION_TEMPLATES[lang]?.subject.replace('[Empresa]', businessName)}</span>
+                                        <span className="text-[10px] bg-slate-300 px-2 py-0.5 rounded">Asunto: {PREVIEW_TEMPLATES[lang]?.subject.replace('[Empresa]', businessName)}</span>
                                     </div>
                                     <div className="p-4 text-sm text-slate-700 bg-white">
-                                        <p className="font-bold mb-2">{INVITATION_TEMPLATES[lang]?.greeting.replace('[Nombre]', inviteName || 'Carlos')}</p>
-                                        <p className="mb-2" dangerouslySetInnerHTML={{ __html: INVITATION_TEMPLATES[lang]?.msg.replace('[Empresa]', businessName) }}></p>
-                                        <p className="mb-3 text-slate-500 italic border-l-2 pl-2">{INVITATION_TEMPLATES[lang]?.benefits}</p>
-                                        <p className="font-medium text-blue-600 max-w-full truncate">{INVITATION_TEMPLATES[lang]?.cta.replace('[Empresa]', businessName)} {uniqueCode}</p>
+                                        <p className="font-bold mb-2">{PREVIEW_TEMPLATES[lang]?.greeting.replace('[Nombre]', inviteName || 'Carlos')}</p>
+                                        <p className="mb-2" dangerouslySetInnerHTML={{ __html: PREVIEW_TEMPLATES[lang]?.msg.replace('[Empresa]', businessName) }}></p>
+                                        <p className="mb-3 text-slate-500 italic border-l-2 pl-2">{PREVIEW_TEMPLATES[lang]?.benefits}</p>
+                                        <p className="font-medium text-blue-600 max-w-full truncate">{PREVIEW_TEMPLATES[lang]?.cta.replace('[Empresa]', businessName)} {uniqueCode}</p>
                                     </div>
                                 </div>
                                 
