@@ -122,10 +122,21 @@ export async function fetchBusinessInviteData(clientId: string) {
 
     try {
         const db = getAdminDb();
-        const docRef = db.collection('clients').doc(clientId);
-        const snapshot = await docRef.get();
+        
+        let docRef = db.collection('clients').doc(clientId);
+        let snapshot = await docRef.get();
+        let collectionType = 'clients';
 
-        if (!snapshot.exists) return { success: false, message: 'Client not found' };
+        if (!snapshot.exists) {
+            // Might be a basic business
+            docRef = db.collection('businesses').doc(clientId);
+            snapshot = await docRef.get();
+            collectionType = 'businesses';
+            
+            if (!snapshot.exists) {
+                return { success: false, message: 'Client not found' };
+            }
+        }
 
         const data = snapshot.data();
         let uniqueCode = data?.uniqueCode;
@@ -133,6 +144,8 @@ export async function fetchBusinessInviteData(clientId: string) {
         if (!uniqueCode) {
             // Generar código EMDC retroactivo para clientes antiguos
             uniqueCode = `EMDC-${clientId.substring(0, 5).toUpperCase()}${Math.floor(Math.random() * 100)}`;
+            
+            // Only update the found collection
             await docRef.update({ uniqueCode: uniqueCode });
         }
 
@@ -141,7 +154,7 @@ export async function fetchBusinessInviteData(clientId: string) {
             clientData: { 
                 id: snapshot.id, 
                 uniqueCode: uniqueCode,
-                clientName: data?.clientName || data?.name || 'Tu Empresa' 
+                clientName: data?.clientName || data?.name || data?.businessName || 'Tu Empresa' 
             } 
         };
     } catch (e: any) {

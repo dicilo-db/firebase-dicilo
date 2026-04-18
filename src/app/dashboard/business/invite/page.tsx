@@ -26,7 +26,7 @@ export default function BusinessInvitePage() {
     const [lang, setLang] = useState('es');
     const [isSending, setIsSending] = useState(false);
 
-    const activeId = businessId || clientId;
+    const activeId = clientId || businessId;
 
     useEffect(() => {
         let mounted = true;
