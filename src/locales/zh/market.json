@@ -1,0 +1,43 @@
+{
+  "title": "商业资产与大宗商品市场",
+  "description": "查找和发布高价值资产的需求与报价。",
+  "roles": {
+    "buyer": "买家",
+    "seller": "卖家"
+  },
+  "modalities": {
+    "direct": "直接",
+    "intermediary": "中介 / 经纪人"
+  },
+  "categories": {
+    "energy": "能源（石油，天然气等）",
+    "real_estate": "房地产",
+    "transport": "交通与机械",
+    "agriculture": "农业",
+    "precious_metals": "贵金属",
+    "other": "其他"
+  },
+  "form": {
+    "primaryRoleLabel": "您在此次操作中的主要角色是什么？",
+    "modalityLabel": "您的操作模式是什么？",
+    "categoryLabel": "分类 / 行业",
+    "subCategoryLabel": "子分类或特定产品（如航空煤油、房屋等）",
+    "provisionIntermediaryLabel": "预期佣金",
+    "provisionDirectLabel": "提供佣金",
+    "provisionTypeLabel": "佣金类型",
+    "provisionValueLabel": "佣金金额",
+    "provisionDescriptionLabel": "佣金的额外说明（可选）",
+    "provisionPercentage": "百分比 (%)",
+    "provisionFixed": "固定金额",
+    "titleLabel": "您的报价/需求标题",
+    "descriptionLabel": "详细描述",
+    "volumeLabel": "体积或数量（可选）",
+    "submit": "发布到市场",
+    "success": "发布成功。"
+  },
+  "list": {
+    "myOffers": "我的发布",
+    "empty": "您没有活跃的发布。",
+    "createButton": "创建新发布"
+  }
+}

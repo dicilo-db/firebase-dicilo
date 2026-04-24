@@ -1,0 +1,43 @@
+{
+  "title": "Mercado Comercial y Activos",
+  "description": "Encuentra y publica requerimientos y ofertas de activos de alto valor.",
+  "roles": {
+    "buyer": "Comprador",
+    "seller": "Vendedor"
+  },
+  "modalities": {
+    "direct": "Directo",
+    "intermediary": "Intermediario"
+  },
+  "categories": {
+    "energy": "Energía (Petróleo, Gas, etc.)",
+    "real_estate": "Bienes Raíces",
+    "transport": "Transporte y Maquinaria",
+    "agriculture": "Agricultura",
+    "precious_metals": "Metales Preciosos",
+    "other": "Otros"
+  },
+  "form": {
+    "primaryRoleLabel": "¿Cuál es tu rol principal en esta operación?",
+    "modalityLabel": "¿Cuál es tu modalidad de operación?",
+    "categoryLabel": "Categoría / Rubro",
+    "subCategoryLabel": "Sub-categoría o producto específico (Ej. Jet Fuel, Casa, etc.)",
+    "provisionIntermediaryLabel": "Provisión Esperada",
+    "provisionDirectLabel": "Provisión Ofrecida",
+    "provisionTypeLabel": "Tipo de Provisión",
+    "provisionValueLabel": "Valor de la Provisión",
+    "provisionDescriptionLabel": "Descripción adicional de la provisión (opcional)",
+    "provisionPercentage": "Porcentaje (%)",
+    "provisionFixed": "Monto Fijo",
+    "titleLabel": "Título de tu Oferta/Requerimiento",
+    "descriptionLabel": "Descripción detallada",
+    "volumeLabel": "Volumen o Cantidad (opcional)",
+    "submit": "Publicar en el Mercado",
+    "success": "Publicación creada con éxito."
+  },
+  "list": {
+    "myOffers": "Mis Publicaciones",
+    "empty": "No tienes publicaciones activas.",
+    "createButton": "Crear Nueva Publicación"
+  }
+}

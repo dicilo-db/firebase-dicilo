@@ -1,0 +1,43 @@
+{
+  "title": "Commercial Assets Market",
+  "description": "Find and publish requirements and offers for high-value assets.",
+  "roles": {
+    "buyer": "Buyer",
+    "seller": "Seller"
+  },
+  "modalities": {
+    "direct": "Direct",
+    "intermediary": "Intermediary / Broker"
+  },
+  "categories": {
+    "energy": "Energy (Oil, Gas, etc.)",
+    "real_estate": "Real Estate",
+    "transport": "Transport & Machinery",
+    "agriculture": "Agriculture",
+    "precious_metals": "Precious Metals",
+    "other": "Other"
+  },
+  "form": {
+    "primaryRoleLabel": "What is your primary role in this operation?",
+    "modalityLabel": "What is your operating modality?",
+    "categoryLabel": "Category / Sector",
+    "subCategoryLabel": "Sub-category or specific product (E.g. Jet Fuel, House, etc.)",
+    "provisionIntermediaryLabel": "Expected Provision",
+    "provisionDirectLabel": "Offered Provision",
+    "provisionTypeLabel": "Provision Type",
+    "provisionValueLabel": "Provision Value",
+    "provisionDescriptionLabel": "Additional provision description (optional)",
+    "provisionPercentage": "Percentage (%)",
+    "provisionFixed": "Fixed Amount",
+    "titleLabel": "Title of your Offer/Requirement",
+    "descriptionLabel": "Detailed Description",
+    "volumeLabel": "Volume or Quantity (optional)",
+    "submit": "Publish to Market",
+    "success": "Publication created successfully."
+  },
+  "list": {
+    "myOffers": "My Publications",
+    "empty": "You have no active publications.",
+    "createButton": "Create New Publication"
+  }
+}

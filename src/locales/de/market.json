@@ -1,0 +1,43 @@
+{
+  "title": "Markt für Handelsgüter & Assets",
+  "description": "Finden und veröffentlichen Sie Anforderungen und Angebote für hochwertige Assets.",
+  "roles": {
+    "buyer": "Käufer",
+    "seller": "Verkäufer"
+  },
+  "modalities": {
+    "direct": "Direkt",
+    "intermediary": "Vermittler / Broker"
+  },
+  "categories": {
+    "energy": "Energie (Öl, Gas, etc.)",
+    "real_estate": "Immobilien",
+    "transport": "Transport & Maschinen",
+    "agriculture": "Landwirtschaft",
+    "precious_metals": "Edelmetalle",
+    "other": "Andere"
+  },
+  "form": {
+    "primaryRoleLabel": "Was ist Ihre primäre Rolle bei dieser Operation?",
+    "modalityLabel": "Was ist Ihre Betriebsmodalität?",
+    "categoryLabel": "Kategorie / Sektor",
+    "subCategoryLabel": "Unterkategorie oder spezifisches Produkt (z. B. Jet Fuel, Haus, etc.)",
+    "provisionIntermediaryLabel": "Erwartete Provision",
+    "provisionDirectLabel": "Angebotene Provision",
+    "provisionTypeLabel": "Art der Provision",
+    "provisionValueLabel": "Provisionswert",
+    "provisionDescriptionLabel": "Zusätzliche Beschreibung der Provision (optional)",
+    "provisionPercentage": "Prozentsatz (%)",
+    "provisionFixed": "Festbetrag",
+    "titleLabel": "Titel Ihres Angebots/Bedarfs",
+    "descriptionLabel": "Detaillierte Beschreibung",
+    "volumeLabel": "Volumen oder Menge (optional)",
+    "submit": "Auf dem Markt veröffentlichen",
+    "success": "Veröffentlichung erfolgreich erstellt."
+  },
+  "list": {
+    "myOffers": "Meine Veröffentlichungen",
+    "empty": "Sie haben keine aktiven Veröffentlichungen.",
+    "createButton": "Neue Veröffentlichung erstellen"
+  }
+}

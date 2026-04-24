@@ -1,0 +1,43 @@
+{
+  "title": "سوق الأصول التجارية",
+  "description": "ابحث وانشر متطلبات وعروض الأصول ذات القيمة العالية.",
+  "roles": {
+    "buyer": "مشتري",
+    "seller": "بائع"
+  },
+  "modalities": {
+    "direct": "مباشر",
+    "intermediary": "وسيط"
+  },
+  "categories": {
+    "energy": "الطاقة (نفط، غاز، إلخ)",
+    "real_estate": "عقارات",
+    "transport": "النقل والآلات",
+    "agriculture": "الزراعة",
+    "precious_metals": "المعادن الثمينة",
+    "other": "أخرى"
+  },
+  "form": {
+    "primaryRoleLabel": "ما هو دورك الأساسي في هذه العملية؟",
+    "modalityLabel": "ما هي طريقة التشغيل الخاصة بك؟",
+    "categoryLabel": "الفئة / القطاع",
+    "subCategoryLabel": "فئة فرعية أو منتج معين",
+    "provisionIntermediaryLabel": "العمولة المتوقعة",
+    "provisionDirectLabel": "العمولة المعروضة",
+    "provisionTypeLabel": "نوع العمولة",
+    "provisionValueLabel": "قيمة العمولة",
+    "provisionDescriptionLabel": "وصف إضافي للعمولة (اختياري)",
+    "provisionPercentage": "نسبة مئوية (%)",
+    "provisionFixed": "مبلغ ثابت",
+    "titleLabel": "عنوان عرضك/طلبك",
+    "descriptionLabel": "وصف مفصل",
+    "volumeLabel": "الحجم أو الكمية (اختياري)",
+    "submit": "نشر في السوق",
+    "success": "تم إنشاء المنشور بنجاح."
+  },
+  "list": {
+    "myOffers": "منشوراتي",
+    "empty": "ليس لديك منشورات نشطة.",
+    "createButton": "إنشاء منشور جديد"
+  }
+}
