@@ -6,14 +6,13 @@ export async function getSuperAdminDashboardStats() {
     try {
         const db = getAdminDb();
 
-        // 1. Empresas registradas (Según requerimiento: Recomendaciones/Prospectos + Marketing Campaigns)
-        // Recommendations -> prospectos / sugerencias orgánicas
-        // Referrals Pioneers -> email marketing / campaigns
-        const [recommendationsSnap, marketingSnap] = await Promise.all([
+        // 1. Empresas registradas (Recomendaciones + Marketing Campaigns + Base de Datos Principal)
+        const [recommendationsSnap, marketingSnap, businessesSnap] = await Promise.all([
             db.collection('recommendations').count().get(),
-            db.collection('referrals_pioneers').count().get()
+            db.collection('referrals_pioneers').count().get(),
+            db.collection('businesses').count().get()
         ]);
-        const totalEmpresas = recommendationsSnap.data().count + marketingSnap.data().count;
+        const totalEmpresas = recommendationsSnap.data().count + marketingSnap.data().count + businessesSnap.data().count;
 
         // 2 & 3. Usuarios activos y Freelancers
         const allProfilesSnap = await db.collection('private_profiles').select('role').get();
