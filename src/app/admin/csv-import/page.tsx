@@ -31,6 +31,7 @@ export default function CsvImportPage() {
   const { toast } = useToast();
 
   const [file, setFile] = useState<File | null>(null);
+  const [delimiter, setDelimiter] = useState<string>(','); // Default to comma
   const [csvHeaders, setCsvHeaders] = useState<string[]>([]);
   const [csvData, setCsvData] = useState<any[]>([]);
   const [mapping, setMapping] = useState<Record<string, string>>({}); // targetField -> csvHeader
@@ -38,17 +39,11 @@ export default function CsvImportPage() {
   const [progress, setProgress] = useState({ current: 0, total: 0 });
   const [isFinished, setIsFinished] = useState(false);
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const uploadedFile = e.target.files?.[0];
-    if (!uploadedFile) return;
-
-    setFile(uploadedFile);
-    setIsFinished(false);
-    setMapping({});
-
+  const processFile = (uploadedFile: File, selectedDelimiter: string) => {
     Papa.parse(uploadedFile, {
       header: true,
       skipEmptyLines: true,
+      delimiter: selectedDelimiter,
       complete: (results) => {
         if (results.meta.fields) {
           setCsvHeaders(results.meta.fields);
@@ -76,6 +71,23 @@ export default function CsvImportPage() {
     });
   };
 
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const uploadedFile = e.target.files?.[0];
+    if (!uploadedFile) return;
+
+    setFile(uploadedFile);
+    setIsFinished(false);
+    setMapping({});
+    processFile(uploadedFile, delimiter);
+  };
+
+  const handleDelimiterChange = (newDelimiter: string) => {
+    setDelimiter(newDelimiter);
+    if (file) {
+      processFile(file, newDelimiter);
+    }
+  };
+
   const handleImport = async () => {
     if (!mapping['name']) {
       toast({ title: 'Atención', description: 'El campo "Nombre" es obligatorio. Por favor mapea una columna para el Nombre.', variant: 'destructive' });
@@ -94,25 +106,35 @@ export default function CsvImportPage() {
       for (let i = 0; i < csvData.length; i++) {
         const row = csvData[i];
         
-        // Build document data based on mapping
+        // Base business data
         const businessData: any = {
-          description: '', // Default empty so they can edit later
+          description: '',
           country: 'Deutschland',
           active: true,
           tier_level: 'basic',
           createdAt: new Date().toISOString()
         };
 
+        // First, append ALL raw columns from the CSV dynamically so no data is lost
+        Object.keys(row).forEach(csvKey => {
+            if(csvKey && row[csvKey]) {
+                // Remove dots or invalid chars for Firestore keys
+                const safeKey = csvKey.replace(/\./g, '_');
+                businessData[safeKey] = row[csvKey];
+            }
+        });
+
+        // Then, specifically map the standard Dicilo target fields to ensure they are available in the form
         TARGET_FIELDS.forEach(field => {
           const mappedHeader = mapping[field.id];
           if (mappedHeader && row[mappedHeader]) {
             businessData[field.id] = row[mappedHeader].trim();
-          } else {
-            businessData[field.id] = ''; // Ensure field exists but empty
+          } else if (!businessData[field.id]) {
+            businessData[field.id] = ''; // Ensure standard field exists but empty
           }
         });
 
-        // Skip rows without a name
+        // Skip rows without a mapped name
         if (!businessData.name) continue;
 
         const newDocRef = doc(collection(db, 'businesses'));
@@ -165,6 +187,21 @@ export default function CsvImportPage() {
               <p className="text-sm text-muted-foreground max-w-md mt-2 mb-6">
                 Asegúrate de que tu archivo esté en formato .csv separado por comas. El sistema detectará automáticamente las columnas.
               </p>
+              
+              <div className="flex items-center gap-4 mb-6">
+                 <span className="text-sm font-medium">Separador del CSV:</span>
+                 <Select value={delimiter} onValueChange={setDelimiter}>
+                    <SelectTrigger className="w-40 bg-white">
+                        <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value=",">Coma (,)</SelectItem>
+                        <SelectItem value=";">Punto y coma (;)</SelectItem>
+                        <SelectItem value="\t">Tabulación</SelectItem>
+                    </SelectContent>
+                 </Select>
+              </div>
+
               <div className="relative">
                 <input
                   type="file"
@@ -181,10 +218,27 @@ export default function CsvImportPage() {
         {file && !isFinished && (
           <Card className="animate-in fade-in slide-in-from-bottom-4">
             <CardHeader>
-              <CardTitle>Mapeo de Columnas</CardTitle>
-              <CardDescription>
-                Empareja las columnas de tu archivo CSV con los campos de la plataforma Dicilo. Los datos se importarán como "Empresas Básicas".
-              </CardDescription>
+              <div className="flex items-center justify-between">
+                  <div>
+                      <CardTitle>Mapeo de Columnas</CardTitle>
+                      <CardDescription>
+                        Empareja las columnas de tu archivo CSV con los campos de la plataforma Dicilo.
+                      </CardDescription>
+                  </div>
+                  <div className="flex items-center gap-2">
+                     <span className="text-sm font-medium">Cambiar Separador:</span>
+                     <Select value={delimiter} onValueChange={handleDelimiterChange}>
+                        <SelectTrigger className="w-32 bg-white">
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value=",">Coma (,)</SelectItem>
+                            <SelectItem value=";">Punto y coma (;)</SelectItem>
+                            <SelectItem value="\t">Tabulación</SelectItem>
+                        </SelectContent>
+                     </Select>
+                  </div>
+              </div>
             </CardHeader>
             <CardContent>
               <div className="rounded-md border mb-6 overflow-x-auto">
