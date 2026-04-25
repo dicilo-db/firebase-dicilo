@@ -101,6 +101,11 @@ export default function EmailMarketingPage() {
         try {
             const sanitizedLead = JSON.parse(JSON.stringify(editingLead));
             const res = await updateMarketingLead(editingLead.id, sanitizedLead);
+            
+            if (!res) {
+                throw new Error('Sin respuesta del servidor. Verifica la conexión o el formato de los datos.');
+            }
+            
             if (res.success) {
                 toast({ title: 'Lead actualizado', description: 'Cambios guardados correctamente.' });
                 setLeads(prev => prev.map(l => l.id === editingLead.id ? editingLead : l));

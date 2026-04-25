@@ -73,8 +73,12 @@ export async function POST(request: NextRequest) {
             } else {
                 updateData.desktopViews = FieldValue.increment(1);
             }
-            // Basic country logic using vercel header or generic Unknown tracker if none
-            const userCountry = request.headers.get('x-vercel-ip-country') || 'Unknown';
+            // Basic country logic using multiple header fallbacks
+            const userCountry = request.headers.get('x-vercel-ip-country') 
+                             || request.headers.get('cf-ipcountry')
+                             || request.headers.get('x-country') 
+                             || request.headers.get('x-appengine-country') 
+                             || 'Unknown';
             updateData[`country_${userCountry}`] = FieldValue.increment(1);
           }
 

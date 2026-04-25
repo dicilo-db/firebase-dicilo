@@ -125,6 +125,12 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // Site Visits (for Admin Dashboard)
+    match /site_visits/{visitId} {
+      allow read: if hasDashboardAccess();
+      allow write: if false; // Written securely via Server Admin SDK
+    }
+
     // Daily Ad Stats (for Admin Dashboard)
     match /ad_stats_daily/{statId} {
       allow read: if hasDashboardAccess();

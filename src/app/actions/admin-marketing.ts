@@ -46,6 +46,18 @@ export async function getAllMarketingLeads() {
 
         const leads: MarketingLead[] = snapshot.docs.map(doc => {
             const data = doc.data();
+            let parsedCreatedAt = new Date().toISOString();
+            if (data.createdAt && typeof data.createdAt.toDate === 'function') {
+                parsedCreatedAt = data.createdAt.toDate().toISOString();
+            } else if (typeof data.createdAt === 'string') {
+                const dateAttempt = new Date(data.createdAt);
+                if (!isNaN(dateAttempt.getTime())) {
+                    parsedCreatedAt = dateAttempt.toISOString();
+                }
+            } else if (data.createdAt && typeof data.createdAt.seconds === 'number') {
+                parsedCreatedAt = new Date(data.createdAt.seconds * 1000).toISOString();
+            }
+
             return {
                 id: doc.id,
                 friendName: data.friendName || 'N/A',
@@ -59,7 +71,7 @@ export async function getAllMarketingLeads() {
                 template: data.template || 'default',
                 converted: !!data.converted,
                 convertedAt: data.convertedAt?.toDate ? data.convertedAt.toDate().toISOString() : undefined,
-                createdAt: data.createdAt?.toDate ? data.createdAt.toDate().toISOString() : new Date().toISOString(),
+                createdAt: parsedCreatedAt,
                 referrerId: data.referrerId || '',
                 referrerName: data.referrerName || '',
                 notes: data.notes || '',

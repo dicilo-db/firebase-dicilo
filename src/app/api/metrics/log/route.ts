@@ -7,6 +7,7 @@ export async function POST(req: Request) {
         
         // Extract headers for IP/Country
         const country = req.headers.get('x-vercel-ip-country') 
+                     || req.headers.get('cf-ipcountry')
                      || req.headers.get('x-country') 
                      || req.headers.get('x-appengine-country') 
                      || 'Unknown';

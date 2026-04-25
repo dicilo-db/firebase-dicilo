@@ -63,9 +63,34 @@ export async function sendPioneerInvitations(
             };
         }
 
+        const commonTypos: Record<string, string> = {
+            'gamil.com': 'gmail.com', 'gmai.com': 'gmail.com', 'gemail.com': 'gmail.com', 
+            'gmail.co': 'gmail.com', 'gmail.con': 'gmail.com', 'jmail.com': 'gmail.com', 'gmoil.com': 'gmail.com',
+            'homail.com': 'hotmail.com', 'hotmai.com': 'hotmail.com', 'hotmal.com': 'hotmail.com', 
+            'hotmail.con': 'hotmail.com', 'hormail.com': 'hotmail.com', 'hotmail.co': 'hotmail.com', 'jimeil.com': 'hotmail.com', 'hitmail.com': 'hotmail.com',
+            'yaho.com': 'yahoo.com', 'yajoo.com': 'yahoo.com', 'yahoo.con': 'yahoo.com', 'yahoo.co': 'yahoo.com',
+            'outlok.com': 'outlook.com', 'outlook.con': 'outlook.com', 'outloo.com': 'outlook.com',
+            'iclud.com': 'icloud.com', 'icloud.con': 'icloud.com'
+        };
+
         const generatedIds: string[] = [];
 
         for (const friend of friends) {
+            const email = friend.email.trim().toLowerCase();
+            const domainParts = email.split('@');
+            if (domainParts.length === 2) {
+                const domain = domainParts[1];
+                if (commonTypos[domain]) {
+                    return { success: false, error: `El correo "${email}" parece estar mal escrito. ¿Quisiste decir @${commonTypos[domain]}?` };
+                }
+            }
+
+            // Check duplicates in referrals_pioneers
+            const existPioneer = await referralsRef.where('friendEmail', '==', email).limit(1).get();
+            if (!existPioneer.empty) {
+                return { success: false, error: `El correo ${email} ya está registrado en la base de datos de prospectos.` };
+            }
+
             const newDocRef = referralsRef.doc();
             generatedIds.push(newDocRef.id);
 
@@ -73,7 +98,7 @@ export async function sendPioneerInvitations(
                 referrerId,
                 referrerName,
                 friendName: friend.name || '',
-                friendEmail: friend.email,
+                friendEmail: email,
                 companyName: friend.company || '',
                 lang: friend.lang.toLowerCase(),
                 status: 'sent', // Or 'draft' depending on email sending outcome

@@ -110,33 +110,41 @@ async function getUserGeo(): Promise<UserGeo | null> {
   const ip = xForwardedFor ? xForwardedFor.split(',')[0] : '127.0.0.1';
 
   if (ip === '127.0.0.1' || ip === '::1') {
-    // Default Localhost Fallback
     return null;
   }
 
-  try {
-    // 45 Requests per minute limit for free tier.
-    const response = await fetch(`http://ip-api.com/json/${ip}?fields=status,message,country,city,lat,lon,timezone`, { cache: 'no-store' });
-    const data = await response.json();
-    if (data.status === 'success') {
-      let continent = 'Europa'; // Defaulting to Europa for this context as it's a German app.
-      if (data.timezone.startsWith('America/')) continent = 'North America'; // Simplified
-      if (data.timezone.startsWith('Asia/')) continent = 'Asia';
+  // FAST PATH: Use Vercel / Cloudflare / Firebase Headers (Instant)
+  const city = headersList.get('x-vercel-ip-city') || headersList.get('cf-ipcity') || headersList.get('x-appengine-city');
+  const country = headersList.get('x-vercel-ip-country') || headersList.get('cf-ipcountry') || headersList.get('x-appengine-country') || headersList.get('x-country-code');
+  
+  let lat = parseFloat(headersList.get('x-vercel-ip-latitude') || headersList.get('cf-iplatitude') || '0');
+  let lon = parseFloat(headersList.get('x-vercel-ip-longitude') || headersList.get('cf-iplongitude') || '0');
 
-      return {
-        ip,
-        city: data.city,
-        country: data.country,
-        lat: data.lat,
-        lon: data.lon,
-        continent
-      };
+  // Firebase App Engine fallback for coordinates
+  const cityLatLong = headersList.get('x-appengine-citylatlong');
+  if (cityLatLong && (!lat || !lon)) {
+    const parts = cityLatLong.split(',');
+    if (parts.length === 2) {
+      lat = parseFloat(parts[0]);
+      lon = parseFloat(parts[1]);
     }
-  } catch (error) {
-    console.error('Geo lookup failed:', error);
   }
 
-  return { ip };
+  if (city && lat && lon) {
+    return {
+      ip,
+      city: decodeURIComponent(city),
+      country: country || 'Unknown',
+      lat,
+      lon,
+      continent: 'Europa' // Simplified default
+    };
+  }
+
+  // If no fast headers are available, return null. 
+  // We completely skip the slow external IP API call to guarantee blazing fast server response.
+  // The client-side will automatically handle geolocation via HTML5 or its own fast fallback.
+  return null;
 }
 
 function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
