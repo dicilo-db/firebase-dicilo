@@ -468,6 +468,26 @@ const DashboardContent: React.FC = () => {
               <Card className="bg-slate-100/50 dark:bg-slate-800/50 border-dashed border-slate-300 dark:border-slate-700">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm font-medium text-muted-foreground">
+                    Importación de CSV
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Button
+                    asChild
+                    className="w-full"
+                    variant="secondary"
+                  >
+                    <Link href="/admin/csv-import">
+                      <DownloadCloud className="mr-2 h-4 w-4" />
+                      Importar Base de Datos CSV
+                    </Link>
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-slate-100/50 dark:bg-slate-800/50 border-dashed border-slate-300 dark:border-slate-700">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">
                     {t('dashboard.cards.storageImport.title')}
                   </CardTitle>
                 </CardHeader>
