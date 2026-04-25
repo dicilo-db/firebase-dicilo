@@ -34,7 +34,9 @@ export default function CsvImportPage() {
   const [delimiter, setDelimiter] = useState<string>(','); // Default to comma
   const [csvHeaders, setCsvHeaders] = useState<string[]>([]);
   const [csvData, setCsvData] = useState<any[]>([]);
-  const [mapping, setMapping] = useState<Record<string, string>>({}); // targetField -> csvHeader
+  const [mappingType, setMappingType] = useState<Record<string, 'csv' | 'manual' | 'ignore'>>({}); 
+  const [mappingCsv, setMappingCsv] = useState<Record<string, string>>({}); // targetField -> csvHeader
+  const [mappingManual, setMappingManual] = useState<Record<string, string>>({}); // targetField -> manual string
   const [isProcessing, setIsProcessing] = useState(false);
   const [progress, setProgress] = useState({ current: 0, total: 0 });
   const [isFinished, setIsFinished] = useState(false);
@@ -46,22 +48,29 @@ export default function CsvImportPage() {
       delimiter: selectedDelimiter,
       complete: (results) => {
         if (results.meta.fields) {
-          setCsvHeaders(results.meta.fields);
+          // Filter out empty headers which crash Radix UI Select
+          const cleanHeaders = results.meta.fields.filter(h => h.trim() !== '');
+          setCsvHeaders(cleanHeaders);
           
           // Auto-mapping logic
-          const autoMap: Record<string, string> = {};
-          results.meta.fields.forEach(header => {
+          const autoMapCsv: Record<string, string> = {};
+          const autoMapType: Record<string, 'csv' | 'manual' | 'ignore'> = {};
+          
+          TARGET_FIELDS.forEach(f => autoMapType[f.id] = 'ignore');
+
+          cleanHeaders.forEach(header => {
             const h = header.toLowerCase().trim();
-            if (h.includes('nombre') || h.includes('name')) autoMap['name'] = header;
-            if (h.includes('dirección') || h.includes('direccion') || h.includes('address')) autoMap['address'] = header;
-            if (h.includes('teléfono') || h.includes('telefono') || h.includes('phone')) autoMap['phone'] = header;
-            if (h.includes('email') || h.includes('correo')) autoMap['email'] = header;
-            if (h.includes('sitio web') || h.includes('web') || h.includes('url')) autoMap['website'] = header;
-            if (h.includes('ciudad') || h.includes('city')) autoMap['city'] = header;
-            if (h.includes('postal') || h.includes('zip') || h.includes('plz')) autoMap['zip'] = header;
-            if (h.includes('categoría') || h.includes('categoria') || h.includes('category')) autoMap['category'] = header;
+            if (h.includes('nombre') || h.includes('name')) { autoMapCsv['name'] = header; autoMapType['name'] = 'csv'; }
+            if (h.includes('dirección') || h.includes('direccion') || h.includes('address')) { autoMapCsv['address'] = header; autoMapType['address'] = 'csv'; }
+            if (h.includes('teléfono') || h.includes('telefono') || h.includes('phone')) { autoMapCsv['phone'] = header; autoMapType['phone'] = 'csv'; }
+            if (h.includes('email') || h.includes('correo')) { autoMapCsv['email'] = header; autoMapType['email'] = 'csv'; }
+            if (h.includes('sitio web') || h.includes('web') || h.includes('url')) { autoMapCsv['website'] = header; autoMapType['website'] = 'csv'; }
+            if (h.includes('ciudad') || h.includes('city')) { autoMapCsv['city'] = header; autoMapType['city'] = 'csv'; }
+            if (h.includes('postal') || h.includes('zip') || h.includes('plz')) { autoMapCsv['zip'] = header; autoMapType['zip'] = 'csv'; }
+            if (h.includes('categoría') || h.includes('categoria') || h.includes('category')) { autoMapCsv['category'] = header; autoMapType['category'] = 'csv'; }
           });
-          setMapping(autoMap);
+          setMappingCsv(autoMapCsv);
+          setMappingType(autoMapType);
         }
         setCsvData(results.data);
       },
@@ -77,7 +86,9 @@ export default function CsvImportPage() {
 
     setFile(uploadedFile);
     setIsFinished(false);
-    setMapping({});
+    setMappingType({});
+    setMappingCsv({});
+    setMappingManual({});
     processFile(uploadedFile, delimiter);
   };
 
@@ -89,8 +100,8 @@ export default function CsvImportPage() {
   };
 
   const handleImport = async () => {
-    if (!mapping['name']) {
-      toast({ title: 'Atención', description: 'El campo "Nombre" es obligatorio. Por favor mapea una columna para el Nombre.', variant: 'destructive' });
+    if (mappingType['name'] === 'ignore' || (mappingType['name'] === 'csv' && !mappingCsv['name']) || (mappingType['name'] === 'manual' && !mappingManual['name'])) {
+      toast({ title: 'Atención', description: 'El campo "Nombre" es obligatorio. Por favor mapea una columna o escribe un valor manual.', variant: 'destructive' });
       return;
     }
 
@@ -117,20 +128,27 @@ export default function CsvImportPage() {
 
         // First, append ALL raw columns from the CSV dynamically so no data is lost
         Object.keys(row).forEach(csvKey => {
-            if(csvKey && row[csvKey]) {
+            if(csvKey && csvKey.trim() !== '' && row[csvKey]) {
                 // Remove dots or invalid chars for Firestore keys
                 const safeKey = csvKey.replace(/\./g, '_');
                 businessData[safeKey] = row[csvKey];
             }
         });
 
-        // Then, specifically map the standard Dicilo target fields to ensure they are available in the form
+        // Then, specifically map the standard Dicilo target fields
         TARGET_FIELDS.forEach(field => {
-          const mappedHeader = mapping[field.id];
-          if (mappedHeader && row[mappedHeader]) {
-            businessData[field.id] = row[mappedHeader].trim();
-          } else if (!businessData[field.id]) {
-            businessData[field.id] = ''; // Ensure standard field exists but empty
+          const type = mappingType[field.id] || 'ignore';
+          if (type === 'csv') {
+            const mappedHeader = mappingCsv[field.id];
+            if (mappedHeader && row[mappedHeader]) {
+              businessData[field.id] = row[mappedHeader].trim();
+            } else if (!businessData[field.id]) {
+              businessData[field.id] = '';
+            }
+          } else if (type === 'manual') {
+             businessData[field.id] = mappingManual[field.id] || '';
+          } else {
+             if (!businessData[field.id]) businessData[field.id] = '';
           }
         });
 
@@ -245,35 +263,60 @@ export default function CsvImportPage() {
                 <Table>
                   <TableHeader>
                     <TableRow className="bg-muted/50">
-                      <TableHead className="w-1/2">Campo en Dicilo</TableHead>
-                      <TableHead className="w-1/2">Columna en tu CSV</TableHead>
+                      <TableHead className="w-1/3">Campo en Dicilo</TableHead>
+                      <TableHead className="w-2/3">Columna en tu CSV o Valor Manual</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {TARGET_FIELDS.map((field) => (
+                    {TARGET_FIELDS.map((field) => {
+                      const currentType = mappingType[field.id] || 'ignore';
+                      const currentCsvVal = mappingCsv[field.id] || '';
+                      
+                      return (
                       <TableRow key={field.id}>
                         <TableCell className="font-medium">
                           {field.label} {field.id === 'name' && <span className="text-red-500">*</span>}
                         </TableCell>
                         <TableCell>
-                          <Select
-                            value={mapping[field.id] || "ignore"}
-                            onValueChange={(val) => setMapping({ ...mapping, [field.id]: val === "ignore" ? "" : val })}
-                            disabled={isProcessing}
-                          >
-                            <SelectTrigger className="bg-white">
-                              <SelectValue placeholder="Ignorar (Dejar vacío)" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="ignore" className="text-muted-foreground italic">-- Ignorar (Dejar vacío) --</SelectItem>
-                              {csvHeaders.map(header => (
-                                <SelectItem key={header} value={header}>{header}</SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                          <div className="flex items-center gap-3">
+                            <Select
+                              value={currentType === 'csv' ? `csv-${currentCsvVal}` : currentType}
+                              onValueChange={(val) => {
+                                if (val === 'ignore' || val === 'manual') {
+                                  setMappingType({ ...mappingType, [field.id]: val });
+                                } else if (val.startsWith('csv-')) {
+                                  setMappingType({ ...mappingType, [field.id]: 'csv' });
+                                  setMappingCsv({ ...mappingCsv, [field.id]: val.replace('csv-', '') });
+                                }
+                              }}
+                              disabled={isProcessing}
+                            >
+                              <SelectTrigger className="bg-white min-w-[200px] flex-1">
+                                <SelectValue placeholder="Ignorar (Dejar vacío)" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="ignore" className="text-muted-foreground italic">-- Ignorar (Dejar vacío) --</SelectItem>
+                                <SelectItem value="manual" className="font-semibold text-blue-600">✍️ Escribir valor manual...</SelectItem>
+                                {csvHeaders.map(header => (
+                                  <SelectItem key={header} value={`csv-${header}`}>{header}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+
+                            {currentType === 'manual' && (
+                                <input 
+                                   type="text"
+                                   placeholder={`Ej: Hamburg...`}
+                                   value={mappingManual[field.id] || ''}
+                                   onChange={(e) => setMappingManual({...mappingManual, [field.id]: e.target.value})}
+                                   className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 flex-1"
+                                   disabled={isProcessing}
+                                />
+                            )}
+                          </div>
                         </TableCell>
                       </TableRow>
-                    ))}
+                    )})}
                   </TableBody>
                 </Table>
               </div>
@@ -284,8 +327,14 @@ export default function CsvImportPage() {
                   <h4 className="text-sm font-semibold mb-2 text-muted-foreground">Vista Previa del primer registro:</h4>
                   <div className="p-4 bg-muted rounded-md text-sm">
                     {TARGET_FIELDS.map(f => {
-                      const csvCol = mapping[f.id];
-                      const val = csvCol && csvData[0][csvCol] ? csvData[0][csvCol] : '(Vacío)';
+                      const type = mappingType[f.id] || 'ignore';
+                      let val = '(Vacío)';
+                      if (type === 'csv' && mappingCsv[f.id] && csvData[0][mappingCsv[f.id]]) {
+                          val = csvData[0][mappingCsv[f.id]];
+                      } else if (type === 'manual' && mappingManual[f.id]) {
+                          val = mappingManual[f.id] + ' (Manual)';
+                      }
+                      
                       return (
                         <div key={f.id} className="grid grid-cols-3 py-1 border-b last:border-0 border-slate-200">
                           <span className="font-medium">{f.label}:</span>
@@ -308,7 +357,7 @@ export default function CsvImportPage() {
                       Procesando {progress.current} de {progress.total}...
                     </span>
                   )}
-                  <Button onClick={handleImport} disabled={isProcessing || !mapping['name']}>
+                  <Button onClick={handleImport} disabled={isProcessing}>
                     {isProcessing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                     Comenzar Importación
                   </Button>
