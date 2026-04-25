@@ -110,6 +110,9 @@ function NewBusinessPageContent() {
       .replace(/\s+/g, '_')
       .replace(/[^\w-]+/g, '');
 
+  const [manualCoords, setManualCoords] = useState<string>('');
+  const isTypingCoords = React.useRef(false);
+
   const {
     register,
     handleSubmit,
@@ -145,6 +148,14 @@ function NewBusinessPageContent() {
   const imageUrl = watch('imageUrl');
   const coords = watch('coords');
   const city = watch('city');
+
+  React.useEffect(() => {
+    if (coords && coords.length === 2 && !isTypingCoords.current) {
+      setManualCoords(`${coords[0].toFixed(6)}, ${coords[1].toFixed(6)}`);
+    } else if (!coords) {
+      setManualCoords('');
+    }
+  }, [coords]);
 
   // Determine available neighborhoods based on city
   const filteredNeighborhoods = React.useMemo(() => {
@@ -604,23 +615,32 @@ function NewBusinessPageContent() {
                     </p>
                   )}
                 </div>
-                {/* Coords */}
                 <div className="space-y-2 md:col-span-2">
                   <Label htmlFor="coords">
                     {t('businesses.fields.coords')}
                   </Label>
                   <Input
                     id="coords"
-                    value={
-                      coords
-                        ? `${coords[0].toFixed(6)}, ${coords[1].toFixed(6)}`
-                        : ''
-                    }
-                    readOnly
-                    disabled
+                    value={manualCoords}
+                    placeholder="Ej. 40.4168, -3.7038"
+                    onFocus={() => { isTypingCoords.current = true; }}
+                    onBlur={() => {
+                        isTypingCoords.current = false;
+                        if (coords && coords.length === 2) {
+                           setManualCoords(`${coords[0].toFixed(6)}, ${coords[1].toFixed(6)}`);
+                        }
+                    }}
+                    onChange={(e) => {
+                       const val = e.target.value;
+                       setManualCoords(val);
+                       const parts = val.split(',').map(s => parseFloat(s.trim()));
+                       if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+                         setValue('coords', [parts[0], parts[1]], { shouldValidate: true, shouldDirty: true });
+                       }
+                    }}
                   />
                   <p className="text-xs text-muted-foreground">
-                    {t('businesses.fields.coordsHelp')}
+                    {t('businesses.fields.coordsHelp')} O puedes escribirlas o pegarlas manualmente si la búsqueda falla.
                   </p>
                 </div>
               </div>

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { adminDb } from '@/lib/firebase-admin';
+import { getAdminDb } from '@/lib/firebase-admin';
 
 // Webhook central para recibir datos de n8n, Calendly, WhatsApp o Telegram
 export async function POST(req: NextRequest) {
@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
         if (payload.event === 'invitee.created' || payload.type === 'calendly') {
             const data = payload.payload ? payload.payload : payload;
             
-            const appointmentRef = adminDb.collection('crm_appointments').doc();
+            const appointmentRef = getAdminDb().collection('crm_appointments').doc();
             await appointmentRef.set({
                 source: 'calendly',
                 eventId: data.event || '',
@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
         if (payload.event === 'incoming_message' || payload.type === 'message') {
             const data = payload.data || payload;
             
-            const messageRef = adminDb.collection('crm_communications').doc();
+            const messageRef = getAdminDb().collection('crm_communications').doc();
             await messageRef.set({
                 source_channel: data.source || 'whatsapp', // whatsapp, telegram, web
                 senderId: data.sender_id || '',
