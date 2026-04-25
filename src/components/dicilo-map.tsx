@@ -344,9 +344,11 @@ const DiciloMap: React.FC<DiciloMapProps> = ({
           attributionControl: true,
         }).setView(safeCenter, zoom);
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+        // Using CartoDB Voyager for a modern, clean, premium look
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
           maxZoom: 20,
+          subdomains: 'abcd',
         }).addTo(map);
 
         mapRef.current = map;

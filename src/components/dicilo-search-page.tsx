@@ -389,15 +389,36 @@ export default function DiciloSearchPage({
     setIsGeocoding(true);
     setSelectedBusinessId(null);
     try {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(debouncedQuery)}&format=json&limit=1&accept-language=${locale}`
+      // Try Photon (Komoot) first for better fault tolerance with complex addresses
+      let response = await fetch(
+        `https://photon.komoot.io/api/?q=${encodeURIComponent(debouncedQuery)}&limit=1`
       );
-      const data = await response.json();
-      if (data && data.length > 0) {
-        const { lat, lon, type } = data[0];
-        const newCenter: [number, number] = [parseFloat(lat), parseFloat(lon)];
-        setMapCenter(newCenter);
-        setMapZoom(type === 'country' ? 5 : 14);
+      let data = await response.json();
+      
+      let foundCenter: [number, number] | null = null;
+      let foundZoom = 14;
+
+      if (data && data.features && data.features.length > 0) {
+        const [lon, lat] = data.features[0].geometry.coordinates;
+        const type = data.features[0].properties?.osm_value;
+        foundCenter = [lat, lon];
+        foundZoom = type === 'country' ? 5 : 14;
+      } else {
+        // Fallback to strict Nominatim
+        response = await fetch(
+          `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(debouncedQuery)}&format=json&limit=1&accept-language=${locale}`
+        );
+        data = await response.json();
+        if (data && data.length > 0) {
+          const { lat, lon, type } = data[0];
+          foundCenter = [parseFloat(lat), parseFloat(lon)];
+          foundZoom = type === 'country' ? 5 : 14;
+        }
+      }
+
+      if (foundCenter) {
+        setMapCenter(foundCenter);
+        setMapZoom(foundZoom);
         logAnalyticsEvent({
           type: 'search',
           searchQuery: debouncedQuery,
