@@ -165,6 +165,7 @@ const DashboardContent: React.FC = () => {
         const registrationsCol = collection(db, 'registrations');
         const recommendationsCol = collection(db, 'recommendations');
         const ticketsCol = collection(db, 'tickets');
+        const businessesCol = collection(db, 'businesses');
 
         const [
           basicSnap,
@@ -176,7 +177,7 @@ const DashboardContent: React.FC = () => {
           recommendationsSnap,
           ticketsSnap,
         ] = await Promise.all([
-          getCountFromServer(query(registrationsCol, where('registrationType', '==', 'donor'))),
+          getCountFromServer(businessesCol),
           getCountFromServer(query(clientsCol, where('clientType', '==', 'starter'))),
           getCountFromServer(query(clientsCol, where('clientType', '==', 'retailer'))),
           getCountFromServer(query(clientsCol, where('clientType', '==', 'premium'))),

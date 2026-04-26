@@ -733,7 +733,7 @@ export default function EditBusinessPage() {
           {t('businesses.edit.title')}
         </h1>
         <Button variant="outline" asChild>
-          <Link href="/admin/basic">
+          <Link href={isFreelancer ? "/dashboard?view=freelancer&tab=p2_records" : "/admin/basic"}>
             <ArrowLeft className="mr-2 h-4 w-4" />
             {t('businesses.edit.back')}
           </Link>
