@@ -101,8 +101,8 @@ const Header = () => {
                  Rule 1 states Desktop MUST show Full Logo. We adhere to Rule 1.
              */}
 
-            {/* Mobile Logo (Full Text) - Visible up to md (Request 2: Mobile must show Full Logo) */}
-            <div className="block md:hidden">
+            {/* Mobile Logo (Full Text) - Visible up to lg */}
+            <div className="block lg:hidden">
               <Image
                 src="/Logo negro dicilo.png"
                 alt="Dicilo Logo"
@@ -113,8 +113,8 @@ const Header = () => {
               />
             </div>
 
-            {/* Desktop Logo - Visible from md upwards */}
-            <div className="hidden md:block">
+            {/* Desktop Logo - Visible from lg upwards */}
+            <div className="hidden lg:block">
               {/* Request 1: Home Page shows Icon Only, Inner Pages show Full Logo */}
               {pathname === '/' ? (
                 <Image
@@ -138,8 +138,8 @@ const Header = () => {
             </div>
           </Link>
 
-          {/* DESKTOP MENU - Visible from md breakpoint */}
-          <div className="hidden items-center gap-4 md:flex">
+          {/* DESKTOP MENU - Visible from lg breakpoint */}
+          <div className="hidden items-center gap-4 lg:flex">
             <nav className="flex items-center gap-4">
               {desktopLinks.map((link) => (
                 <Button
@@ -175,8 +175,8 @@ const Header = () => {
               <div className="h-10 w-20 animate-pulse rounded bg-muted" />
             ) : user ? (
               <>
-                {/* Full User Menu (Visible on Large Screens) */}
-                <div className="hidden lg:flex items-center gap-2">
+                {/* Full User Menu (Visible on Extra Large Screens to prevent overflow) */}
+                <div className="hidden xl:flex items-center gap-2">
                   <Button asChild variant="ghost">
                     <Link href="/dashboard">
                       <UserIcon className="mr-2 h-4 w-4" />
@@ -198,8 +198,8 @@ const Header = () => {
                   <LanguageSelector />
                 </div>
 
-                {/* Compact User Menu (Visible on Medium Screens, Hidden on Large) */}
-                <div className="flex lg:hidden items-center">
+                {/* Compact User Menu (Visible on lg Screens, Hidden on xl) */}
+                <div className="flex xl:hidden items-center">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant="outline" className="gap-2">
@@ -249,8 +249,8 @@ const Header = () => {
             )}
           </div>
 
-          {/* MOBILE MENU (HAMBURGER) - Hidden on md breakpoint */}
-          <div className="flex items-center gap-2 md:hidden">
+          {/* MOBILE MENU (HAMBURGER) - Hidden on lg breakpoint */}
+          <div className="flex items-center gap-2 lg:hidden">
             {user && <NotificationBell />}
             <Sheet>
               <SheetTrigger asChild>
