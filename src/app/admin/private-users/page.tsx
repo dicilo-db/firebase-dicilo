@@ -622,6 +622,13 @@ export default function PrivateUsersPage() {
                                                 : 'N/A'}
                                         </span>
                                     </div>
+
+                                    <div className="flex justify-between border-b border-dotted pb-1 bg-red-50 p-1 rounded mt-1">
+                                        <span className="font-bold text-red-800">CÓDIGO DE VERIFICACIÓN (OTP)</span>
+                                        <span className="text-red-700 font-mono font-bold text-lg tracking-wider">
+                                            {detailDialogUser.emailVerificationCode || 'Verificado o N/A'}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
 

@@ -1,17 +1,7 @@
-import { Resend } from 'resend';
 import { getAdminDb } from './firebase-admin';
-const getResend = () => {
-    const key = process.env.RESEND_API_KEY;
-    if (!key) {
-        console.warn('RESEND_API_KEY is not set.');
-        return null;
-    }
-    return new Resend(key);
-};
+import { sendSmtpEmail } from './mail-service';
 
 export async function sendWelcomeEmail(email: string, firstName: string, lang: string = 'es', code: string = '') {
-    const resend = getResend();
-    if (!resend) return { success: false, error: 'Missing API Key' };
 
     try {
         const db = getAdminDb();
@@ -65,9 +55,8 @@ export async function sendWelcomeEmail(email: string, firstName: string, lang: s
         const t = tMap[lang]?.subject ? tMap[lang] : tMap['en'];
         const unsubscribeLink = `https://dicilo.net/api/unsubscribe?email=${encodeURIComponent(email)}&lang=${lang}`;
 
-        const { data, error } = await resend.emails.send({
-            from: 'Dicilo <onboarding@dicilo.net>',
-            to: [email],
+        const { success, error, messageId } = await sendSmtpEmail({
+            to: email,
             subject: t.subject,
             html: `
         <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; color: #333333;">
@@ -110,12 +99,12 @@ export async function sendWelcomeEmail(email: string, firstName: string, lang: s
       `,
         });
 
-        if (error) {
-            console.error('Resend Error:', error);
+        if (!success) {
+            console.error('SMTP Error:', error);
             return { success: false, error };
         }
 
-        return { success: true, data };
+        return { success: true, data: messageId };
     } catch (error) {
         console.error('Email Sending Error:', error);
         return { success: false, error };
@@ -123,13 +112,9 @@ export async function sendWelcomeEmail(email: string, firstName: string, lang: s
 }
 
 export async function sendCouponShareEmail(email: string, coupon: any) {
-    const resend = getResend();
-    if (!resend) return { success: false, error: 'Missing API Key' };
-
     try {
-        const { data, error } = await resend.emails.send({
-            from: 'Dicilo <info@dicilo.net>',
-            to: [email],
+        const { success, error, messageId } = await sendSmtpEmail({
+            to: email,
             subject: `Holen Sie sich diesen Coupon: ${coupon.title}`,
             html: `
                 <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
@@ -160,12 +145,12 @@ export async function sendCouponShareEmail(email: string, coupon: any) {
             `,
         });
 
-        if (error) {
-            console.error('Resend Error:', error);
+        if (!success) {
+            console.error('SMTP Error:', error);
             return { success: false, error };
         }
 
-        return { success: true, data };
+        return { success: true, data: messageId };
     } catch (error) {
         console.error('Email Sending Error:', error);
         return { success: false, error };
@@ -173,13 +158,9 @@ export async function sendCouponShareEmail(email: string, coupon: any) {
 }
 
 export async function sendTicketCreatedEmail(email: string, ticketId: string, title: string, description: string) {
-    const resend = getResend();
-    if (!resend) return { success: false, error: 'Missing API Key' };
-
     try {
-        const { data, error } = await resend.emails.send({
-            from: 'Dicilo Support <support@dicilo.net>',
-            to: [email],
+        const { success, error, messageId } = await sendSmtpEmail({
+            to: email,
             subject: `Ticket Received: ${title} (#${ticketId.slice(0, 8)})`,
             html: `
                 <div style="font-family: sans-serif; padding: 20px;">
@@ -199,12 +180,12 @@ export async function sendTicketCreatedEmail(email: string, ticketId: string, ti
             `,
         });
 
-        if (error) {
-            console.error('Resend Error:', error);
+        if (!success) {
+            console.error('SMTP Error:', error);
             return { success: false, error };
         }
 
-        return { success: true, data };
+        return { success: true, data: messageId };
     } catch (error) {
         console.error('Email Sending Error:', error);
         return { success: false, error };
@@ -212,13 +193,9 @@ export async function sendTicketCreatedEmail(email: string, ticketId: string, ti
 }
 
 export async function sendTicketReplyEmail(email: string, ticketId: string, title: string, replyMessage: string, senderName: string) {
-    const resend = getResend();
-    if (!resend) return { success: false, error: 'Missing API Key' };
-
     try {
-        const { data, error } = await resend.emails.send({
-            from: 'Dicilo Support <support@dicilo.net>',
-            to: [email],
+        const { success, error, messageId } = await sendSmtpEmail({
+            to: email,
             subject: `Re: ${title} (#${ticketId.slice(0, 8)})`,
             html: `
                 <div style="font-family: sans-serif; padding: 20px;">
@@ -235,12 +212,12 @@ export async function sendTicketReplyEmail(email: string, ticketId: string, titl
             `,
         });
 
-        if (error) {
-            console.error('Resend Error:', error);
+        if (!success) {
+            console.error('SMTP Error:', error);
             return { success: false, error };
         }
 
-        return { success: true, data };
+        return { success: true, data: messageId };
     } catch (error) {
         console.error('Email Sending Error:', error);
         return { success: false, error };
@@ -248,13 +225,9 @@ export async function sendTicketReplyEmail(email: string, ticketId: string, titl
 }
 
 export async function sendRecommendationNotification(email: string, clientName: string, reviewerName: string, rating: number, comment: string) {
-    const resend = getResend();
-    if (!resend) return { success: false, error: 'Missing API Key' };
-
     try {
-        const { data, error } = await resend.emails.send({
-            from: 'Dicilo <info@dicilo.net>',
-            to: [email],
+        const { success, error, messageId } = await sendSmtpEmail({
+            to: email,
             subject: `Neue Bewertung für ${clientName}`,
             html: `
                 <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
@@ -276,12 +249,12 @@ export async function sendRecommendationNotification(email: string, clientName: 
             `,
         });
 
-        if (error) {
-            console.error('Resend Error:', error);
+        if (!success) {
+            console.error('SMTP Error:', error);
             return { success: false, error };
         }
 
-        return { success: true, data };
+        return { success: true, data: messageId };
     } catch (error) {
         console.error('Email Sending Error:', error);
         return { success: false, error };
@@ -297,9 +270,6 @@ export async function sendBusinessRecommendationEmail(
     referrerName: string,
     lang: 'es' | 'en' | 'de' = 'es'
 ) {
-    const resend = getResend();
-    if (!resend) return { success: false, error: 'Missing API Key' };
-
     const content = {
         es: {
             subject: `¡Su empresa ha sido recomendada en Dicilo!`,
@@ -318,9 +288,8 @@ export async function sendBusinessRecommendationEmail(
     const t = content[lang] || content.es;
 
     try {
-        const { data, error } = await resend.emails.send({
-            from: 'Dicilo <info@dicilo.net>',
-            to: [email],
+        const { success, error, messageId } = await sendSmtpEmail({
+            to: email,
             subject: t.subject,
             html: `
                 <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
@@ -337,12 +306,12 @@ export async function sendBusinessRecommendationEmail(
             `,
         });
 
-        if (error) {
-            console.error('Resend Error:', error);
+        if (!success) {
+            console.error('SMTP Error:', error);
             return { success: false, error };
         }
 
-        return { success: true, data };
+        return { success: true, data: messageId };
     } catch (error) {
         console.error('Email Sending Error:', error);
         return { success: false, error };
