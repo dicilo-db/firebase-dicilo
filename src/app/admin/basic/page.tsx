@@ -142,6 +142,15 @@ export default function BusinessesPage() {
   const [filterCity, setFilterCity] = useState<string>('all');
   const [filterCategory, setFilterCategory] = useState<string>('all');
 
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 50;
+
+  // Reset page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, sortOrder, filterCountry, filterCity, filterCategory]);
+
   // Import State
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const [isImporting, setIsImporting] = useState(false);
@@ -473,7 +482,7 @@ export default function BusinessesPage() {
                 </TableRow>
               ))
             ) : filteredBusinesses.length > 0 ? (
-              filteredBusinesses.map((business) => (
+              filteredBusinesses.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((business) => (
                 <TableRow key={business.id}>
                   <TableCell className="font-medium">{business.name}</TableCell>
                   <TableCell>{business.category}</TableCell>
@@ -548,6 +557,33 @@ export default function BusinessesPage() {
             )}
           </TableBody>
         </Table>
+        
+        {/* Pagination Controls */}
+        {filteredBusinesses.length > itemsPerPage && (
+          <div className="flex items-center justify-between px-4 py-4 border-t">
+            <div className="text-sm text-muted-foreground">
+              Mostrando del {(currentPage - 1) * itemsPerPage + 1} al {Math.min(currentPage * itemsPerPage, filteredBusinesses.length)} de {filteredBusinesses.length} empresas
+            </div>
+            <div className="flex gap-2">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+              >
+                Anterior
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => setCurrentPage(p => Math.min(Math.ceil(filteredBusinesses.length / itemsPerPage), p + 1))}
+                disabled={currentPage >= Math.ceil(filteredBusinesses.length / itemsPerPage)}
+              >
+                Siguiente
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
