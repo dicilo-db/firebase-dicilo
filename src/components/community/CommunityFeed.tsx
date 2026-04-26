@@ -81,8 +81,14 @@ export function CommunityFeed({ neighborhood, userId, mode = 'public', friendIds
             });
             setPosts(fetchedPosts);
         } catch (error: any) {
-            console.error("Error fetching community posts:", error);
-            setErrorMsg(`Error loading posts: ${error.message}`);
+            if (error?.message?.includes('requires an index')) {
+                // Ignore index errors visibly for users, just log it. They will see an empty state until index is built.
+                console.warn("Index building in progress:", error.message);
+                setPosts([]);
+            } else {
+                console.error("Error fetching community posts:", error);
+                setErrorMsg(`Error loading posts: ${error.message}`);
+            }
         } finally {
             setLoading(false);
         }

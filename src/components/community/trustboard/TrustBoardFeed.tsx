@@ -212,11 +212,17 @@ export function TrustBoardFeed({ neighborhood, activeCategory }: { neighborhood:
 
     if (indexError) {
         return (
-            <div className="bg-red-50 text-red-600 p-4 rounded-md mt-6 border border-red-200 text-sm">
-                <p className="font-bold mb-2">Error de Base de Datos:</p>
-                <p>{indexError}</p>
-                <p className="mt-2 text-xs">Si la base de datos está construyendo los índices, esto desaparecerá en unos minutos.</p>
-            </div>
+            <Card className="border-dashed border-2 bg-slate-50/50 mt-6">
+                <CardContent className="flex flex-col items-center justify-center p-12 text-center text-muted-foreground">
+                    <Loader2 className="w-12 h-12 mb-4 text-slate-300 animate-spin" />
+                    <h3 className="text-lg font-medium text-slate-700 mb-2">
+                        Actualizando sistema...
+                    </h3>
+                    <p className="max-w-md mx-auto text-sm">
+                        Estamos optimizando la comunidad. Vuelve en unos minutos.
+                    </p>
+                </CardContent>
+            </Card>
         );
     }
 
