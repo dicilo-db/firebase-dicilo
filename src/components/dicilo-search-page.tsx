@@ -809,7 +809,21 @@ export default function DiciloSearchPage({
               }
             }}
           >
-            {businessesWithAds.length > 0 ? (
+            {isLoading && businesses.length === 0 ? (
+              // Initial Loading Skeletons
+              Array.from({ length: 5 }).map((_, i) => (
+                <div key={`skel-${i}`} className="p-4 border rounded-xl flex gap-4 bg-white/50 animate-pulse">
+                  <div className="h-16 w-16 rounded-full bg-slate-200" />
+                  <div className="flex-1 space-y-3 py-1">
+                    <div className="h-4 bg-slate-200 rounded w-3/4" />
+                    <div className="space-y-2">
+                      <div className="h-3 bg-slate-200 rounded w-full" />
+                      <div className="h-3 bg-slate-200 rounded w-5/6" />
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : businessesWithAds.length > 0 ? (
               businessesWithAds.map((item, idx) => {
                 // Calc Debug
                 let distDisplay = '';
