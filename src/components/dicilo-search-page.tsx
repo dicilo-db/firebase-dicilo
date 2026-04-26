@@ -95,8 +95,8 @@ export interface Ad {
 }
 
 interface DiciloSearchPageProps {
-  initialBusinesses: Business[];
   initialAds?: Ad[];
+  serverGeo?: any;
 }
 
 // AdCard removed, using AdBanner from '@/components/AdBanner'
@@ -145,8 +145,8 @@ const normalizeText = (text: string | null | undefined): string => {
 };
 
 export default function DiciloSearchPage({
-  initialBusinesses,
-  initialAds = []
+  initialAds = [],
+  serverGeo
 }: DiciloSearchPageProps) {
   const { toast } = useToast();
   const { t, i18n } = useTranslation('common');
@@ -230,7 +230,70 @@ export default function DiciloSearchPage({
   const [showMobileMap, setShowMobileMap] = useState(false);
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
   const [isMobileSearchHidden, setIsMobileSearchHidden] = useState(false);
-  const [visibleCount, setVisibleCount] = useState(50);
+  
+  const [businesses, setBusinesses] = useState<Business[]>([]);
+  const [page, setPage] = useState(0);
+  const [hasMore, setHasMore] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const fetchBusinesses = useCallback(async (resetPage: boolean = false) => {
+    const currentPage = resetPage ? 0 : page;
+    setIsLoading(true);
+
+    try {
+      const params = new URLSearchParams();
+      params.append('page', currentPage.toString());
+      params.append('limit', '50');
+      
+      if (debouncedQuery.trim()) {
+        params.append('q', debouncedQuery);
+      }
+      
+      if (userLocation) {
+        params.append('lat', userLocation[0].toString());
+        params.append('lng', userLocation[1].toString());
+      } else if (serverGeo && serverGeo.lat && serverGeo.lon) {
+        params.append('lat', serverGeo.lat.toString());
+        params.append('lng', serverGeo.lon.toString());
+      }
+
+      const res = await fetch(`/api/search/nearest?${params.toString()}`);
+      const data = await res.json();
+
+      if (data.data) {
+        if (resetPage) {
+          setBusinesses(data.data);
+        } else {
+          setBusinesses(prev => {
+            // Deduplicate to avoid key errors
+            const existingIds = new Set(prev.map(b => b.id));
+            const newItems = data.data.filter((b: any) => !existingIds.has(b.id));
+            return [...prev, ...newItems];
+          });
+        }
+        setHasMore(data.meta?.hasMore || false);
+      }
+    } catch (error) {
+      console.error('Error fetching businesses:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [debouncedQuery, userLocation, serverGeo, page]);
+
+  useEffect(() => {
+    setPage(0);
+    fetchBusinesses(true);
+  }, [debouncedQuery, userLocation]);
+
+  useEffect(() => {
+    if (page > 0) {
+      fetchBusinesses(false);
+    }
+  }, [page]);
+
+  const loadMore = () => {
+    setPage(p => p + 1);
+  };
 
   const selectedBusinessIdRef = React.useRef(selectedBusinessId);
   const [isListening, setIsListening] = useState(false);
@@ -449,74 +512,7 @@ export default function DiciloSearchPage({
     }
   }, [debouncedQuery, toast, t, locale]);
 
-  const filteredBusinesses = useMemo(() => {
-    const normalizedQuery = normalizeText(debouncedQuery);
-
-    let result = [...initialBusinesses];
-
-    if (normalizedQuery.trim()) {
-      if (searchType === 'business') {
-        result = initialBusinesses.filter((b) => {
-          const searchableText = [
-            b.name,
-            b.description,
-            b.category,
-            b.location,
-            b.address,
-          ]
-            .map(normalizeText)
-            .join(' ');
-          return searchableText.includes(normalizedQuery);
-        });
-      } else {
-        // Location search: only show active
-        result = initialBusinesses.filter((b) => b.active !== false);
-      }
-    } else {
-      // Default: only show active
-      result = initialBusinesses.filter((b) => b.active !== false);
-    }
-
-    // 2. Sort the result
-    if (userLocation) {
-      // Sort by distance if user location is known, BUT prioritize premium clients
-      return result.sort((a, b) => {
-        // Boost premium clients
-        if (a.clientType === 'premium' && b.clientType !== 'premium') return -1;
-        if (a.clientType !== 'premium' && b.clientType === 'premium') return 1;
-
-        if (!a.coords || a.coords.length !== 2) return 1;
-        if (!b.coords || b.coords.length !== 2) return -1;
-        const distA = haversineDistance(userLocation, a.coords);
-        const distB = haversineDistance(userLocation, b.coords);
-        return distA - distB;
-      });
-    } else if (searchType === 'business' && normalizedQuery.trim()) {
-      // If sorting by text relevance (primary match)
-      const primaryResult = result.find((b) =>
-        normalizeText(b.name).startsWith(normalizedQuery)
-      ) || result[0];
-
-      if (primaryResult) {
-        return result.sort((a, b) => {
-          // Boost premium clients even in text search
-          if (a.clientType === 'premium' && b.clientType !== 'premium') return -1;
-          if (a.clientType !== 'premium' && b.clientType === 'premium') return 1;
-
-          if (a.id === primaryResult.id) return -1;
-          if (b.id === primaryResult.id) return 1;
-          return a.name.localeCompare(b.name);
-        });
-      }
-    }
-
-    // Default fallback: Always boost premium
-    return result.sort((a, b) => {
-      if (a.clientType === 'premium' && b.clientType !== 'premium') return -1;
-      if (a.clientType !== 'premium' && b.clientType === 'premium') return 1;
-      return a.name.localeCompare(b.name);
-    });
-  }, [debouncedQuery, initialBusinesses, searchType, userLocation]);
+  const filteredBusinesses = businesses;
 
   const sortedAds = useMemo(() => {
     // 1. If no user location, return original list
@@ -528,7 +524,7 @@ export default function DiciloSearchPage({
       if (ad.coords) return ad;
 
       // Fallback: lookup in business list
-      const business = initialBusinesses.find((b) => b.id === ad.clientId);
+      const business = businesses.find((b) => b.id === ad.clientId);
       return {
         ...ad,
         coords: business?.coords,
@@ -567,7 +563,7 @@ export default function DiciloSearchPage({
       const distB = haversineDistance(userLocation, b.coords as [number, number]);
       return distA - distB;
     });
-  }, [initialAds, userLocation, initialBusinesses]);
+  }, [initialAds, userLocation, businesses]);
 
   const businessesWithAds = useMemo(() => {
     if (!sortedAds.length || !filteredBusinesses.length) return filteredBusinesses.map(b => ({ type: 'business', data: b }));
@@ -612,9 +608,7 @@ export default function DiciloSearchPage({
     return result;
   }, [filteredBusinesses, sortedAds]);
 
-  useEffect(() => {
-    setVisibleCount(50);
-  }, [debouncedQuery, searchType, mapCenter, mapZoom]);
+  const visibleBusinessesWithAds = businessesWithAds;
 
   useEffect(() => {
     if (searchType === 'location' && debouncedQuery.length >= 3) {
@@ -816,7 +810,7 @@ export default function DiciloSearchPage({
             }}
           >
             {businessesWithAds.length > 0 ? (
-              businessesWithAds.slice(0, visibleCount).map((item, idx) => {
+              businessesWithAds.map((item, idx) => {
                 // Calc Debug
                 let distDisplay = '';
                 let debugInfo = '';
@@ -829,7 +823,7 @@ export default function DiciloSearchPage({
                     debugInfo = 'No Coords';
                     if (item.data.clientId) {
                       // Try to find why lookup failed
-                      const linkedBiz = initialBusinesses.find(b => b.id === item.data.clientId);
+                      const linkedBiz = businesses.find(b => b.id === item.data.clientId);
                       if (!linkedBiz) debugInfo += ' (Client Not Found)';
                       else if (!linkedBiz.coords) debugInfo += ' (Client has No Coords)';
                     } else {
@@ -962,12 +956,14 @@ export default function DiciloSearchPage({
             )}
           </div>
           
-          {visibleCount < businessesWithAds.length && (
+          {hasMore && (
             <div className="flex justify-center pb-8 pt-4">
               <Button 
                 variant="outline" 
-                onClick={() => setVisibleCount(prev => prev + 50)}
+                onClick={loadMore}
+                disabled={isLoading}
               >
+                {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                 Cargar más empresas
               </Button>
             </div>

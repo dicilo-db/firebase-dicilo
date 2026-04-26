@@ -167,8 +167,18 @@ function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: numbe
 }
 
 
+// Cache for serverless instance
+let cachedBusinesses: Business[] | null = null;
+let cachedClientsRaw: any[] | null = null;
+let lastCacheTime = 0;
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
 async function getBusinesses(): Promise<{ businesses: Business[], clientsRaw: any[] }> {
   try {
+    if (cachedBusinesses && Date.now() - lastCacheTime < CACHE_TTL) {
+      return { businesses: cachedBusinesses, clientsRaw: cachedClientsRaw || [] };
+    }
+
     const db = getAdminDb();
 
     // Fetch from both collections in parallel
@@ -183,13 +193,14 @@ async function getBusinesses(): Promise<{ businesses: Business[], clientsRaw: an
     const clients = clientSnap.docs
       .map((doc) => serializeBusiness(doc.id, doc.data()));
 
-    // Extract raw client data for budget checking
     const clientsRawData = clientSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 
-    // Merge and deduplicate by ID
     const allBusinesses = [...businesses, ...clients];
 
-    // Return directly since serializeBusiness natively strips undefined fields
+    cachedBusinesses = allBusinesses;
+    cachedClientsRaw = clientsRawData;
+    lastCacheTime = Date.now();
+
     return {
       businesses: allBusinesses,
       clientsRaw: clientsRawData
@@ -320,8 +331,8 @@ export default async function SearchPage({ searchParams }: { searchParams: { [ke
   return (
     <main className="h-screen w-screen overflow-hidden">
       <DiciloSearchPage
-        initialBusinesses={businesses}
         initialAds={ads}
+        serverGeo={pageUserGeo}
       />
       {/* Dev helper to see what Geo is detected */}
       {process.env.NODE_ENV === 'development' && (
