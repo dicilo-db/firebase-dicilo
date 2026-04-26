@@ -97,6 +97,11 @@ export function FreelancerSidebar({ className, onViewChange, onMobileClose }: Fr
             icon: Link2
         },
         {
+            id: 'p2_records',
+            label: t('freelancer_menu.p2_records', 'Registros P2'),
+            icon: Building2
+        },
+        {
             id: 'section_recommendation',
             label: t('freelancer_menu.recommendation_section', 'Recomienda empresas'),
             isHeading: true
