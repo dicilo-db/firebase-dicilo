@@ -94,6 +94,8 @@ function serializeBusiness(docId: string, data: any): Business {
   if (data.category_key) biz.category_key = data.category_key;
   if (data.subcategory_key) biz.subcategory_key = data.subcategory_key;
   if (typeof data.rating === 'number') biz.rating = data.rating;
+  
+  biz.active = data.active !== false;
 
   return biz as Business;
 }
@@ -176,11 +178,9 @@ async function getBusinesses(): Promise<{ businesses: Business[], clientsRaw: an
     ]);
 
     const businesses = businessSnap.docs
-      .filter((doc) => doc.data().active !== false)
       .map((doc) => serializeBusiness(doc.id, doc.data()));
 
     const clients = clientSnap.docs
-      .filter((doc) => doc.data().active !== false)
       .map((doc) => serializeBusiness(doc.id, doc.data()));
 
     // Extract raw client data for budget checking
@@ -237,17 +237,17 @@ async function getAds(clientsRaw: any[], businesses: Business[], userGeo: UserGe
         }
       }
 
-      const sanitized = {
+      const sanitized: any = {
         id: doc.id,
-        imageUrl: data.imageUrl,
-        linkUrl: data.linkUrl,
-        title: data.title,
-        active: data.active,
-        position: data.position,
-        clientId: data.clientId,
-        coords: coords,
-        reach_config: data.reach_config, // Include reach config
       };
+      if (data.imageUrl !== undefined) sanitized.imageUrl = data.imageUrl;
+      if (data.linkUrl !== undefined) sanitized.linkUrl = data.linkUrl;
+      if (data.title !== undefined) sanitized.title = data.title;
+      if (data.active !== undefined) sanitized.active = data.active;
+      if (data.position !== undefined) sanitized.position = data.position;
+      if (data.clientId !== undefined) sanitized.clientId = data.clientId;
+      if (coords !== undefined) sanitized.coords = coords;
+      if (data.reach_config !== undefined) sanitized.reach_config = data.reach_config;
       return sanitized;
     }).filter(ad => {
       // [1] Must be active

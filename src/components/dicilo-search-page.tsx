@@ -70,6 +70,7 @@ export interface Business {
     de?: string;
   };
   activeCoupons?: any[];
+  active?: boolean;
 }
 
 export interface Ad {
@@ -451,22 +452,29 @@ export default function DiciloSearchPage({
   const filteredBusinesses = useMemo(() => {
     const normalizedQuery = normalizeText(debouncedQuery);
 
-    // 1. Filter by text (if query exists)
     let result = [...initialBusinesses];
 
-    if (searchType === 'business' && normalizedQuery.trim()) {
-      result = initialBusinesses.filter((b) => {
-        const searchableText = [
-          b.name,
-          b.description,
-          b.category,
-          b.location,
-          b.address,
-        ]
-          .map(normalizeText)
-          .join(' ');
-        return searchableText.includes(normalizedQuery);
-      });
+    if (normalizedQuery.trim()) {
+      if (searchType === 'business') {
+        result = initialBusinesses.filter((b) => {
+          const searchableText = [
+            b.name,
+            b.description,
+            b.category,
+            b.location,
+            b.address,
+          ]
+            .map(normalizeText)
+            .join(' ');
+          return searchableText.includes(normalizedQuery);
+        });
+      } else {
+        // Location search: only show active
+        result = initialBusinesses.filter((b) => b.active !== false);
+      }
+    } else {
+      // Default: only show active
+      result = initialBusinesses.filter((b) => b.active !== false);
     }
 
     // 2. Sort the result
@@ -853,17 +861,40 @@ export default function DiciloSearchPage({
                   <div key={business.id} className="relative">
                     <DebugBadge />
                     <div
-                      onClick={() => handleBusinessCardClick(business)}
+                      onClick={() => {
+                        if (business.active === false) {
+                          toast({
+                            title: 'Empresa en revisión',
+                            description: 'Esta empresa está registrada pero en espera de ser aprobada.',
+                          });
+                          return;
+                        }
+                        handleBusinessCardClick(business);
+                      }}
                       className={cn(
-                        'w-full cursor-pointer overflow-hidden rounded-xl bg-card p-4 shadow-md transition-all duration-200 relative', // Ensure relative for absolute child
-                        selectedBusinessId === business.id
+                        'w-full cursor-pointer overflow-hidden rounded-xl p-4 shadow-md transition-all duration-200 relative',
+                        business.active === false ? 'bg-muted/50 grayscale opacity-80' : 'bg-card',
+                        selectedBusinessId === business.id && business.active !== false
                           ? 'border-2 border-primary ring-2 ring-primary/20'
                           : 'border'
                       )}
                     >
+                      {business.active === false && (
+                        <div className="absolute inset-0 z-20 flex items-center justify-center bg-background/60 backdrop-blur-[2px]">
+                          <span className="rounded-md bg-secondary px-3 py-1 text-sm font-medium shadow-sm">
+                            En espera de aprobación
+                          </span>
+                        </div>
+                      )}
                       {/* FAVORITE BUTTON */}
                       <button
-                        onClick={(e) => toggleFavorite(e, business.id)}
+                        onClick={(e) => {
+                          if (business.active === false) {
+                            e.stopPropagation();
+                            return;
+                          }
+                          toggleFavorite(e, business.id);
+                        }}
                         className="absolute bottom-4 right-4 z-10 p-2 rounded-full hover:bg-slate-100 transition-colors"
                       >
                         <Heart
@@ -894,7 +925,7 @@ export default function DiciloSearchPage({
                       <div className="mt-2 truncate text-xs text-muted-foreground">
                         {business.location}
                       </div>
-                      {(business.clientSlug || business.currentOfferUrl) && (
+                      {(business.clientSlug || business.currentOfferUrl) && business.active !== false && (
                         <div onClick={(e) => e.stopPropagation()}>
                           <a
                             href={
@@ -904,7 +935,7 @@ export default function DiciloSearchPage({
                             }
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="mt-1 flex items-center gap-1 text-xs text-primary hover:underline"
+                            className="mt-1 flex items-center gap-1 text-xs text-primary hover:underline relative z-30"
                           >
                             {t('businessCard.currentOffer')}{' '}
                             <ExternalLink className="h-3 w-3" />
