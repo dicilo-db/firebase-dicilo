@@ -229,6 +229,7 @@ export default function DiciloSearchPage({
   const [showMobileMap, setShowMobileMap] = useState(false);
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
   const [isMobileSearchHidden, setIsMobileSearchHidden] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(50);
 
   const selectedBusinessIdRef = React.useRef(selectedBusinessId);
   const [isListening, setIsListening] = useState(false);
@@ -583,12 +584,10 @@ export default function DiciloSearchPage({
 
       // After every 10 businesses, inject the next 2 ads
       if ((index + 1) % 10 === 0) {
-        // First Ad of the block
         if (adIndex < sortedAds.length) {
           result.push({ type: 'ad', data: sortedAds[adIndex] });
           adIndex++;
         }
-        // Second Ad of the block
         if (adIndex < sortedAds.length) {
           result.push({ type: 'ad', data: sortedAds[adIndex] });
           adIndex++;
@@ -596,8 +595,18 @@ export default function DiciloSearchPage({
       }
     });
 
+    // If there are remaining ads, append them at the end
+    while (adIndex < sortedAds.length) {
+      result.push({ type: 'ad', data: sortedAds[adIndex] });
+      adIndex++;
+    }
+
     return result;
   }, [filteredBusinesses, sortedAds]);
+
+  useEffect(() => {
+    setVisibleCount(50);
+  }, [debouncedQuery, searchType, mapCenter, mapZoom]);
 
   useEffect(() => {
     if (searchType === 'location' && debouncedQuery.length >= 3) {
@@ -799,7 +808,7 @@ export default function DiciloSearchPage({
             }}
           >
             {businessesWithAds.length > 0 ? (
-              businessesWithAds.map((item, idx) => {
+              businessesWithAds.slice(0, visibleCount).map((item, idx) => {
                 // Calc Debug
                 let distDisplay = '';
                 let debugInfo = '';
@@ -921,6 +930,17 @@ export default function DiciloSearchPage({
               </div>
             )}
           </div>
+          
+          {visibleCount < businessesWithAds.length && (
+            <div className="flex justify-center pb-8 pt-4">
+              <Button 
+                variant="outline" 
+                onClick={() => setVisibleCount(prev => prev + 50)}
+              >
+                Cargar más empresas
+              </Button>
+            </div>
+          )}
         </ScrollArea>
       </div>
 
