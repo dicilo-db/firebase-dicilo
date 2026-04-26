@@ -62,19 +62,16 @@ function serializeBusiness(docId: string, data: any): Business {
     imageUrl = imageUrl.replace('http://', 'https://');
   }
 
-  // Return only fields defined in Business interface (no timestamps)
-  return {
+  const biz: any = {
     id: docId,
     name: data.clientName || data.name || 'Unbekanntes Unternehmen',
     category: data.category || 'Allgemein',
     description: data.description || data.bodyData?.description || data.headerData?.welcomeText || '',
-    description_translations: data.description_translations || data.translations || undefined,
     location: data.location || '',
     imageUrl: imageUrl,
     clientLogoUrl: data.clientLogoUrl || imageUrl,
-    coverImageUrl: data.headerData?.headerImageUrl || data.headerData?.headerBackgroundImageUrl || data.headerData?.backgroundImage || data.coverImage || imageUrl, // Fallback to logo if no cover
+    coverImageUrl: data.headerData?.headerImageUrl || data.headerData?.headerBackgroundImageUrl || data.headerData?.backgroundImage || data.coverImage || imageUrl,
     imageHint: data.imageHint || '',
-    coords: extractCoords(data.coordinates) || extractCoords(data),
     address: data.address || '',
     phone: data.phone || '',
     email: data.email || '',
@@ -83,15 +80,22 @@ function serializeBusiness(docId: string, data: any): Business {
         ? 'premium'
         : data.clientType || 'retailer',
     tier_level: data.tier_level || 'basic',
-    visibility_settings: data.visibility_settings || undefined,
     website: data.website || '',
     currentOfferUrl: data.currentOfferUrl || '',
     clientSlug: data.slug || '',
     mapUrl: data.mapUrl || '',
-    category_key: data.category_key,
-    subcategory_key: data.subcategory_key,
-    rating: typeof data.rating === 'number' ? data.rating : undefined,
   };
+
+  const coords = extractCoords(data.coordinates) || extractCoords(data);
+  if (coords) biz.coords = coords;
+
+  if (data.description_translations || data.translations) biz.description_translations = data.description_translations || data.translations;
+  if (data.visibility_settings) biz.visibility_settings = data.visibility_settings;
+  if (data.category_key) biz.category_key = data.category_key;
+  if (data.subcategory_key) biz.subcategory_key = data.subcategory_key;
+  if (typeof data.rating === 'number') biz.rating = data.rating;
+
+  return biz as Business;
 }
 
 // Types for Geolocation
@@ -185,9 +189,9 @@ async function getBusinesses(): Promise<{ businesses: Business[], clientsRaw: an
     // Merge and deduplicate by ID
     const allBusinesses = [...businesses, ...clients];
 
-    // Deep sanitize to ensure no non-serializable objects leak
+    // Return directly since serializeBusiness natively strips undefined fields
     return {
-      businesses: JSON.parse(JSON.stringify(allBusinesses)),
+      businesses: allBusinesses,
       clientsRaw: clientsRawData
     };
   } catch (error) {
@@ -288,7 +292,7 @@ async function getAds(clientsRaw: any[], businesses: Business[], userGeo: UserGe
       return true;
     });
 
-    return JSON.parse(JSON.stringify(ads));
+    return ads;
   } catch (error) {
     console.error('Error fetching ads (Admin SDK):', error);
     return [];
@@ -316,8 +320,8 @@ export default async function SearchPage({ searchParams }: { searchParams: { [ke
   return (
     <main className="h-screen w-screen overflow-hidden">
       <DiciloSearchPage
-        initialBusinesses={JSON.parse(JSON.stringify(businesses))}
-        initialAds={JSON.parse(JSON.stringify(ads))}
+        initialBusinesses={businesses}
+        initialAds={ads}
       />
       {/* Dev helper to see what Geo is detected */}
       {process.env.NODE_ENV === 'development' && (
