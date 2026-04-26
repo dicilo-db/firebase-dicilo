@@ -40,7 +40,7 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
-import { useAuthGuard } from '@/hooks/useAuthGuard';
+import { useAuthGuard, useAdminUser } from '@/hooks/useAuthGuard';
 import { seedCategories } from '@/lib/seed-categories';
 import { BERLIN_NEIGHBORHOODS, HAMBURG_NEIGHBORHOODS } from '@/data/neighborhoods';
 import {
@@ -144,7 +144,8 @@ const EditBusinessSkeleton = () => (
 );
 
 export default function EditBusinessPage() {
-  useAuthGuard();
+  const { user } = useAuthGuard(['admin', 'superadmin', 'team_office', 'freelancer']);
+  const isFreelancer = user?.role === 'freelancer' && !user?.permissions?.includes('admin');
   const db = getFirestore(app);
   const functions = getFunctions(app, 'europe-west1');
   const promoteToClientFn = httpsCallable(functions, 'promoteToClient');
@@ -748,20 +749,22 @@ export default function EditBusinessPage() {
                 {t('businesses.edit.cardDescription', { id })}
               </CardDescription>
             </div>
-            <Controller
-              control={control}
-              name="active"
-              render={({ field }) => (
-                <div className="flex flex-row items-center space-x-2 space-y-0">
-                  <Label htmlFor="active-switch" className="text-sm font-medium">Business Active</Label>
-                  <Switch
-                    id="active-switch"
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                </div>
-              )}
-            />
+            {!isFreelancer && (
+              <Controller
+                control={control}
+                name="active"
+                render={({ field }) => (
+                  <div className="flex flex-row items-center space-x-2 space-y-0">
+                    <Label htmlFor="active-switch" className="text-sm font-medium">Business Active</Label>
+                    <Switch
+                      id="active-switch"
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </div>
+                )}
+              />
+            )}
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">

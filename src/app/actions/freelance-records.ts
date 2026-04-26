@@ -2,6 +2,7 @@
 
 import { getAdminDb } from '@/lib/firebase-admin';
 import * as admin from 'firebase-admin';
+import { revalidatePath, unstable_noStore as noStore } from 'next/cache';
 
 export interface FreelanceRecord {
     id: string;
@@ -70,6 +71,7 @@ export async function claimRecordPackage(uid: string): Promise<{ success: boolea
             return { success: false, message: 'No hay registros disponibles en este momento. Intenta más tarde.' };
         }
 
+        revalidatePath('/dashboard/freelancer');
         return { success: true, message: `Se te han asignado ${count} registros exitosamente.`, count };
     } catch (error: any) {
         console.error("Error claiming records:", error);
@@ -79,14 +81,34 @@ export async function claimRecordPackage(uid: string): Promise<{ success: boolea
 
 export async function getAssignedRecords(uid: string): Promise<{ success: boolean; data?: FreelanceRecord[]; error?: string }> {
     try {
+        noStore();
         const db = getAdminDb();
         const snapshot = await db.collection('businesses')
             .where('assignedTo', '==', uid)
             .where('assignmentStatus', '==', 'assigned')
-            .orderBy('assignedAt', 'desc')
             .get();
 
-        const records = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as FreelanceRecord));
+        const records = snapshot.docs.map(doc => {
+            const data = doc.data();
+            // Convert any Firestore Timestamps to ISO strings
+            const serializedData = Object.entries(data).reduce((acc, [key, value]) => {
+                if (value && typeof value === 'object' && 'toDate' in value && typeof value.toDate === 'function') {
+                    acc[key] = value.toDate().toISOString();
+                } else if (value && typeof value === 'object' && !Array.isArray(value)) {
+                    // Just stringify/parse nested objects to avoid prototype issues
+                    try {
+                        acc[key] = JSON.parse(JSON.stringify(value));
+                    } catch(e) {
+                        acc[key] = null;
+                    }
+                } else {
+                    acc[key] = value;
+                }
+                return acc;
+            }, {} as any);
+            
+            return { id: doc.id, ...serializedData } as FreelanceRecord;
+        });
         return { success: true, data: records };
     } catch (error: any) {
         console.error("Error fetching assigned records:", error);
@@ -106,6 +128,7 @@ export async function saveRecordDraft(recordId: string, data: Partial<FreelanceR
             updatedAt: admin.firestore.FieldValue.serverTimestamp()
         });
         
+        revalidatePath('/dashboard/freelancer');
         return { success: true };
     } catch (error: any) {
         console.error("Error saving draft:", error);
@@ -113,20 +136,32 @@ export async function saveRecordDraft(recordId: string, data: Partial<FreelanceR
     }
 }
 
-export async function sendRecordToClient(recordId: string, data: Partial<FreelanceRecord>): Promise<{ success: boolean; error?: string }> {
+export async function sendRecordToClient(recordId: string): Promise<{ success: boolean; error?: string }> {
     try {
         const db = getAdminDb();
+        
+        // 1. Fetch latest data to ensure it is filled
+        const docRef = db.collection('businesses').doc(recordId);
+        const docSnap = await docRef.get();
+        if (!docSnap.exists) {
+            return { success: false, error: 'El registro ya no existe.' };
+        }
+        
+        const data = docSnap.data() as any;
+        const requiredFields = ['name', 'email', 'phone', 'category', 'city', 'country'];
+        const missingFields = requiredFields.filter(f => !data[f]);
+        
+        if (missingFields.length > 0) {
+            return { success: false, error: `Faltan campos obligatorios: ${missingFields.join(', ')}. Por favor, edita y guarda el registro completo primero.` };
+        }
+
         const crypto = await import('crypto');
         
         // Generate secure random token
         const token = crypto.randomBytes(32).toString('hex');
         const now = admin.firestore.FieldValue.serverTimestamp();
 
-        // Clean data
-        const cleanData = Object.fromEntries(Object.entries(data).filter(([_, v]) => v !== undefined));
-
-        await db.collection('businesses').doc(recordId).update({
-            ...cleanData,
+        await docRef.update({
             assignmentStatus: 'filled',
             verificationStatus: 'pending_client_approval',
             verificationToken: token,
@@ -138,7 +173,7 @@ export async function sendRecordToClient(recordId: string, data: Partial<Freelan
         const webhookUrl = process.env.N8N_WEBHOOK_URL;
         const payload = {
             businessId: recordId,
-            email: cleanData.email,
+            email: data.email,
             linkAceptar: `https://dicilo.net/api/verificar?action=accept&token=${token}`,
             linkRechazar: `https://dicilo.net/api/verificar?action=deny&token=${token}`
         };
@@ -158,6 +193,7 @@ export async function sendRecordToClient(recordId: string, data: Partial<Freelan
             console.log("No N8N_WEBHOOK_URL set. Payload would be:", payload);
         }
 
+        revalidatePath('/dashboard/freelancer');
         return { success: true };
     } catch (error: any) {
         console.error("Error sending to client:", error);

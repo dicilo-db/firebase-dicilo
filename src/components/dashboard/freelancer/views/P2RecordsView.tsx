@@ -8,8 +8,8 @@ import { FreelanceRecord, claimRecordPackage, getAssignedRecords } from '@/app/a
 import { Loader2, Plus, Edit2, AlertCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
-import { RecordEditorModal } from '@/components/freelancer/RecordEditorModal';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { sendRecordToClient } from '@/app/actions/freelance-records';
 
 export function P2RecordsView() {
     const { user } = useAuth();
@@ -17,10 +17,7 @@ export function P2RecordsView() {
     const [records, setRecords] = useState<FreelanceRecord[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isClaiming, setIsClaiming] = useState(false);
-    
-    // Modal state
-    const [selectedRecord, setSelectedRecord] = useState<FreelanceRecord | null>(null);
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [sendingId, setSendingId] = useState<string | null>(null);
 
     const loadRecords = async () => {
         if (!user) return;
@@ -29,9 +26,12 @@ export function P2RecordsView() {
             const res = await getAssignedRecords(user.uid);
             if (res.success && res.data) {
                 setRecords(res.data);
+            } else {
+                toast({ title: 'Error cargando', description: res.error || 'Error desconocido', variant: 'destructive' });
             }
-        } catch (e) {
+        } catch (e: any) {
             console.error(e);
+            toast({ title: 'Error', description: e.message, variant: 'destructive' });
         } finally {
             setIsLoading(false);
         }
@@ -59,15 +59,21 @@ export function P2RecordsView() {
         }
     };
 
-    const handleEditRecord = (record: FreelanceRecord) => {
-        setSelectedRecord(record);
-        setIsModalOpen(true);
-    };
-
-    const handleModalSuccess = () => {
-        setIsModalOpen(false);
-        setSelectedRecord(null);
-        loadRecords(); // Refresh list
+    const handleSendToClient = async (recordId: string) => {
+        setSendingId(recordId);
+        try {
+            const res = await sendRecordToClient(recordId);
+            if (res.success) {
+                toast({ title: 'Éxito', description: 'Registro enviado a validación.' });
+                loadRecords();
+            } else {
+                toast({ title: 'Aviso', description: res.error, variant: 'destructive' });
+            }
+        } catch (e: any) {
+            toast({ title: 'Error', description: e.message, variant: 'destructive' });
+        } finally {
+            setSendingId(null);
+        }
     };
 
     if (isLoading) {
@@ -155,9 +161,24 @@ export function P2RecordsView() {
                                                     </Badge>
                                                 </td>
                                                 <td className="px-4 py-3 text-right">
-                                                    <Button variant="ghost" size="sm" onClick={() => handleEditRecord(record)} className="text-blue-600">
-                                                        <Edit2 className="h-4 w-4 mr-2" /> Editar
-                                                    </Button>
+                                                    <div className="flex justify-end gap-2">
+                                                        <Button variant="ghost" size="sm" asChild className="text-blue-600">
+                                                            <a href={`/admin/basic/${record.id}/edit`} target="_blank" rel="noopener noreferrer">
+                                                                <Edit2 className="h-4 w-4 mr-2" /> Editar
+                                                            </a>
+                                                        </Button>
+                                                        {record.verificationStatus === 'draft' && (
+                                                            <Button 
+                                                                variant="default" 
+                                                                size="sm" 
+                                                                onClick={() => handleSendToClient(record.id)}
+                                                                disabled={sendingId === record.id}
+                                                                className="bg-green-600 hover:bg-green-700"
+                                                            >
+                                                                {sendingId === record.id ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Enviar a Cliente'}
+                                                            </Button>
+                                                        )}
+                                                    </div>
                                                 </td>
                                             </tr>
                                         );
@@ -168,13 +189,6 @@ export function P2RecordsView() {
                     )}
                 </CardContent>
             </Card>
-
-            <RecordEditorModal 
-                record={selectedRecord} 
-                isOpen={isModalOpen} 
-                onClose={() => setIsModalOpen(false)} 
-                onSuccess={handleModalSuccess} 
-            />
         </div>
     );
 }
