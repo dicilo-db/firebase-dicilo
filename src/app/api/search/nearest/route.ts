@@ -90,11 +90,12 @@ async function getCachedData() {
   // Use select() to strictly limit the data payload to kilobytes instead of megabytes
   const selectedFields = [
       'name', 'clientName', 'category', 'location', 
-      'coordinates', 'lat', 'lng', 'latitude', 'longitude', '_latitude', '_longitude',
+      'coordinates', 'coords', 'lat', 'lng', 'latitude', 'longitude', '_latitude', '_longitude',
       'visibility_settings', 'clientType', 'tier_level', 'active', 
       'clientLogoUrl', 'imageUrl', 'headerData', 'coverImage', 
       'address', 'phone', 'email', 'website', 'currentOfferUrl', 
-      'slug', 'mapUrl', 'category_key', 'subcategory_key', 'rating'
+      'slug', 'mapUrl', 'category_key', 'subcategory_key', 'rating',
+      'description', 'translations', 'description_translations'
   ];
 
   const [businessSnap, clientSnap] = await Promise.all([
