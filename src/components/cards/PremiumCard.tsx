@@ -49,6 +49,7 @@ export function PremiumCard({ business, isSelected, onClick, locale }: PremiumCa
                     src={media.url}
                     alt={`${business.name} media ${index + 1}`}
                     fill
+                    sizes="(max-width: 768px) 100vw, 400px"
                     className="object-cover transition-transform duration-500 hover:scale-105"
                 />
             </div>
@@ -74,6 +75,7 @@ export function PremiumCard({ business, isSelected, onClick, locale }: PremiumCa
                             src={business.imageUrl || 'https://placehold.co/64x64.png'}
                             alt="Logo"
                             fill
+                            sizes="56px"
                             className="object-cover"
                         />
                     </div>

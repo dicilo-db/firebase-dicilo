@@ -208,7 +208,7 @@ export function AiChatWidget() {
                     <CardHeader className="flex flex-row items-center justify-between p-4 border-b bg-primary/5">
                         <CardTitle className="text-sm font-medium flex items-center gap-2">
                             <div className="relative w-6 h-6 rounded-full overflow-hidden">
-                                <Image src="/dicibot.jpg" alt="DiciBot" fill className="object-cover" />
+                                <Image src="/dicibot.jpg" alt="DiciBot" fill sizes="24px" className="object-cover" />
                             </div>
                             DiciBot <span className="text-xs text-muted-foreground ml-1">(v2.0)</span>
                         </CardTitle>
@@ -233,7 +233,7 @@ export function AiChatWidget() {
                                                 <User className="w-4 h-4" />
                                             ) : (
                                                 <div className="relative w-5 h-5 rounded-full overflow-hidden">
-                                                    <Image src="/dicibot.jpg" alt="Bot" fill className="object-cover" />
+                                                    <Image src="/dicibot.jpg" alt="Bot" fill sizes="24px" className="object-cover" />
                                                 </div>
                                             )}
                                         </div>
@@ -294,7 +294,7 @@ export function AiChatWidget() {
                                 {isLoading && (
                                     <div className="flex gap-2 max-w-[80%]">
                                         <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center shrink-0 overflow-hidden relative">
-                                            <Image src="/dicibot.jpg" alt="Bot" fill className="object-cover" />
+                                            <Image src="/dicibot.jpg" alt="Bot" fill sizes="32px" className="object-cover" />
                                         </div>
                                         <div className="bg-muted rounded-lg p-3 flex items-center">
                                             <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
@@ -371,7 +371,7 @@ export function AiChatWidget() {
                     <X className="w-6 h-6" />
                 ) : (
                     <div className="relative w-full h-full rounded-full overflow-hidden">
-                        <Image src="/dicibot.jpg" alt="Chat" fill className="object-cover" />
+                        <Image src="/dicibot.jpg" alt="Chat" fill sizes="48px" className="object-cover" />
                     </div>
                 )}
             </Button>
