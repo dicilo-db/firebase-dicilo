@@ -176,7 +176,7 @@ const createPopupContent = (
     </div>`;
 
   // Phone
-  if (business.phone) {
+  if (business.tier_level === 'premium' && business.phone) {
     content += `<div style="display: flex; align-items: center; gap: 10px;">
             <span style="font-size: 15px; min-width: 18px;">📞</span> 
             <span>${business.phone}</span>
@@ -184,7 +184,7 @@ const createPopupContent = (
   }
 
   // Email
-  if (business.email) {
+  if (business.tier_level === 'premium' && business.email) {
     content += `<div style="display: flex; align-items: center; gap: 10px;">
             <span style="font-size: 15px; min-width: 18px;">✉️</span> 
             <a href="mailto:${business.email}" style="color: #333; text-decoration: none; border-bottom: 1px dotted #999;">${business.email}</a>

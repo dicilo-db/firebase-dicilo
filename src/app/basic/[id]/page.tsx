@@ -80,7 +80,7 @@ export default async function BasicBusinessPage({ params }: { params: { id: stri
                                         <span>Website</span>
                                     </a>
                                 )}
-                                {business.phone && (
+                                {business.tier_level === 'premium' && business.phone && (
                                     <div className="flex items-center gap-1">
                                         <Phone className="h-4 w-4" />
                                         <span>{business.phone}</span>

@@ -62,15 +62,15 @@ export function BasicCard({ business, isSelected, onClick, locale }: BasicCardPr
                         </div>
 
                         {/* Phone */}
-                        {business.phone && (
+                        {business.tier_level === 'premium' && business.phone && (
                             <div className="flex items-center gap-2">
                                 <Phone className="h-3.5 w-3.5 shrink-0" />
                                 <span className="truncate">{business.phone}</span>
                             </div>
                         )}
 
-                        {/* Email - VISIBLE NOW */}
-                        {business.email && (
+                        {/* Email - VISIBLE ONLY FOR PREMIUM */}
+                        {business.tier_level === 'premium' && business.email && (
                             <div className="flex items-center gap-2 text-foreground/80">
                                 <Mail className="h-3.5 w-3.5 shrink-0" />
                                 <a href={`mailto:${business.email}`} onClick={e => e.stopPropagation()} className="hover:underline hover:text-primary truncate">
