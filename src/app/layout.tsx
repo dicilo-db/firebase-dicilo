@@ -1,5 +1,4 @@
 // src/app/layout.tsx
-import 'leaflet/dist/leaflet.css';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import type { Metadata } from 'next';
