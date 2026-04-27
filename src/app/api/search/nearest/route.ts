@@ -84,7 +84,20 @@ function serializeBusiness(docId: string, data: any): Business {
   return biz as Business;
 }
 
+// Simple memory cache
+interface CacheData {
+  businesses: Business[];
+  timestamp: number;
+}
+let globalCache: CacheData | null = null;
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
 async function getCachedData() {
+  const now = Date.now();
+  if (globalCache && now - globalCache.timestamp < CACHE_TTL) {
+    return { businesses: globalCache.businesses };
+  }
+
   const db = getAdminDb();
   
   // Use select() to strictly limit the data payload to kilobytes instead of megabytes
@@ -110,6 +123,11 @@ async function getCachedData() {
     .map((doc) => serializeBusiness(doc.id, doc.data()));
 
   const allBusinesses = [...businesses, ...clients];
+
+  globalCache = {
+    businesses: allBusinesses,
+    timestamp: now
+  };
 
   return { businesses: allBusinesses };
 }
