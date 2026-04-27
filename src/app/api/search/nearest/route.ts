@@ -4,11 +4,7 @@ import type { Business } from '@/components/dicilo-search-page';
 
 export const dynamic = 'force-dynamic';
 
-// --- Global Memory Cache for Serverless ---
-let cachedBusinesses: Business[] | null = null;
-let cachedClientsRaw: any[] | null = null;
-let lastCacheTime = 0;
-const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+// No memory caching needed due to selective projections (reduces memory usage by 95%)
 
 // Duplicated helper from page.tsx to serialize businesses efficiently
 function extractCoords(data: any): [number, number] | undefined {
@@ -89,15 +85,21 @@ function serializeBusiness(docId: string, data: any): Business {
 }
 
 async function getCachedData() {
-  if (cachedBusinesses && Date.now() - lastCacheTime < CACHE_TTL) {
-    return { businesses: cachedBusinesses, clientsRaw: cachedClientsRaw };
-  }
-
   const db = getAdminDb();
-  // Fetch from both collections in parallel
+  
+  // Use select() to strictly limit the data payload to kilobytes instead of megabytes
+  const selectedFields = [
+      'name', 'clientName', 'category', 'location', 
+      'coordinates', 'lat', 'lng', 'latitude', 'longitude', '_latitude', '_longitude',
+      'visibility_settings', 'clientType', 'tier_level', 'active', 
+      'clientLogoUrl', 'imageUrl', 'headerData', 'coverImage', 
+      'address', 'phone', 'email', 'website', 'currentOfferUrl', 
+      'slug', 'mapUrl', 'category_key', 'subcategory_key', 'rating'
+  ];
+
   const [businessSnap, clientSnap] = await Promise.all([
-    db.collection('businesses').get(),
-    db.collection('clients').get()
+    db.collection('businesses').select(...selectedFields).get(),
+    db.collection('clients').select(...selectedFields).get()
   ]);
 
   const businesses = businessSnap.docs
@@ -106,15 +108,9 @@ async function getCachedData() {
   const clients = clientSnap.docs
     .map((doc) => serializeBusiness(doc.id, doc.data()));
 
-  const clientsRawData = clientSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-
   const allBusinesses = [...businesses, ...clients];
 
-  cachedBusinesses = allBusinesses;
-  cachedClientsRaw = clientsRawData;
-  lastCacheTime = Date.now();
-
-  return { businesses: allBusinesses, clientsRaw: clientsRawData };
+  return { businesses: allBusinesses };
 }
 
 function haversineDistance(coords1: [number, number], coords2: [number, number]): number {

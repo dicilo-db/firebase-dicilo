@@ -167,85 +167,56 @@ function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: numbe
 }
 
 
-// Cache for serverless instance
-let cachedBusinesses: Business[] | null = null;
-let cachedClientsRaw: any[] | null = null;
-let lastCacheTime = 0;
-const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+// getBusinesses has been removed to prevent OOM Full Table Scans.
 
-async function getBusinesses(): Promise<{ businesses: Business[], clientsRaw: any[] }> {
-  try {
-    if (cachedBusinesses && Date.now() - lastCacheTime < CACHE_TTL) {
-      return { businesses: cachedBusinesses, clientsRaw: cachedClientsRaw || [] };
-    }
-
-    const db = getAdminDb();
-
-    // Fetch from both collections in parallel
-    const [businessSnap, clientSnap] = await Promise.all([
-      db.collection('businesses').get(),
-      db.collection('clients').get()
-    ]);
-
-    const businesses = businessSnap.docs
-      .map((doc) => serializeBusiness(doc.id, doc.data()));
-
-    const clients = clientSnap.docs
-      .map((doc) => serializeBusiness(doc.id, doc.data()));
-
-    const clientsRawData = clientSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-
-    const allBusinesses = [...businesses, ...clients];
-
-    cachedBusinesses = allBusinesses;
-    cachedClientsRaw = clientsRawData;
-    lastCacheTime = Date.now();
-
-    return {
-      businesses: allBusinesses,
-      clientsRaw: clientsRawData
-    };
-  } catch (error) {
-    console.error('Error fetching businesses on server (Admin SDK):', error);
-    return { businesses: [], clientsRaw: [] };
-  }
-}
-
-async function getAds(clientsRaw: any[], businesses: Business[], userGeo: UserGeo | null) {
+async function getAds(userGeo: UserGeo | null) {
   try {
     const db = getAdminDb();
     const snapshot = await db.collection('ads_banners').get();
 
-    const clientMap = new Map(clientsRaw.map((c: any) => [c.id, c]));
-    const businessMap = new Map(businesses.map((b) => [b.id, b]));
-
-    const ads = snapshot.docs.map(doc => {
+    const adsPromises = snapshot.docs.map(async doc => {
       const data = doc.data();
-      const client = data.clientId ? clientMap.get(data.clientId) : null;
-      const business = data.clientId ? businessMap.get(data.clientId) : null;
+
+      // [1] Must be active
+      if (data.active === false) return null;
 
       let coords: [number, number] | undefined = undefined;
 
-      // 1. Try getting coords from Client (Raw)
-      if (client) {
-        coords = extractCoords(client);
+      // 1. Try getting coords directly from the ad doc
+      if (data.coords && Array.isArray(data.coords) && data.coords.length === 2) {
+         coords = data.coords as [number, number];
       }
 
-      // 2. Fallback: Try getting coords from Business (Sanitized)
-      if (!coords && business) {
-        coords = business.coords; // Business is already sanitized with extractCoords
+      // 2. Fallback: Fetch client or business to get coords and check budget
+      if (data.clientId) {
+         const clientDoc = await db.collection('clients').doc(data.clientId).get();
+         if (clientDoc.exists) {
+            const clientData = clientDoc.data();
+            if (!coords) coords = extractCoords(clientData);
+            
+            // Budget check
+            const budget = clientData?.budget_remaining || 0;
+            if (typeof budget === 'number' && budget <= 0.05) return null;
+         } else {
+            // Check businesses collection
+            const bizDoc = await db.collection('businesses').doc(data.clientId).get();
+            if (bizDoc.exists) {
+               if (!coords) coords = extractCoords(bizDoc.data());
+            }
+         }
       }
 
-      // 3. Fallback: Match by Name in Businesses
+      // 3. Fallback: Match by Name (Exact match query)
       if (!coords && data.title) {
-        const normalizedTitle = data.title.toLowerCase().trim();
-        const matchedBusiness = businesses.find(b =>
-          b.name.toLowerCase().trim() === normalizedTitle ||
-          (b.name.toLowerCase().trim().includes(normalizedTitle) && normalizedTitle.length > 5)
-        );
-        if (matchedBusiness && matchedBusiness.coords) {
-          coords = matchedBusiness.coords;
-        }
+         const exactMatch = await db.collection('clients').where('clientName', '==', data.title).limit(1).get();
+         if (!exactMatch.empty) {
+             coords = extractCoords(exactMatch.docs[0].data());
+         } else {
+             const bizMatch = await db.collection('businesses').where('name', '==', data.title).limit(1).get();
+             if (!bizMatch.empty) {
+                 coords = extractCoords(bizMatch.docs[0].data());
+             }
+         }
       }
 
       const sanitized: any = {
@@ -259,50 +230,40 @@ async function getAds(clientsRaw: any[], businesses: Business[], userGeo: UserGe
       if (data.clientId !== undefined) sanitized.clientId = data.clientId;
       if (coords !== undefined) sanitized.coords = coords;
       if (data.reach_config !== undefined) sanitized.reach_config = data.reach_config;
-      return sanitized;
-    }).filter(ad => {
-      // [1] Must be active
-      if (ad.active === false) return false;
+      
+      const ad = sanitized;
 
-      // [2] Budget check
-      if (ad.clientId) {
-        const client = clientMap.get(ad.clientId);
-        if (client) {
-          const budget = client.budget_remaining || 0;
-          if (typeof budget === 'number' && budget <= 0.05) return false;
-        }
-      }
-
-      // [3] Geographic Filtering
+      // Geographic Filtering
       if (userGeo && ad.reach_config) {
         const { type, value } = ad.reach_config;
         const radius = value?.radius_km || 50;
 
         // If User Geo failed, show all ads (Fail Open) to ensure visibility
-        if (!userGeo.lat && !userGeo.city) return true;
+        if (!userGeo.lat && !userGeo.city) return ad;
 
         if (type === 'local' && ad.coords && userGeo.lat && userGeo.lon) {
           const dist = calculateDistance(userGeo.lat, userGeo.lon, ad.coords[0], ad.coords[1]);
-          if (dist > radius) return false;
+          if (dist > radius) return null;
         }
 
         if (type === 'regional' && userGeo.city) {
-          if (value?.city && value.city.toLowerCase() !== userGeo.city.toLowerCase()) return false;
+          if (value?.city && value.city.toLowerCase() !== userGeo.city.toLowerCase()) return null;
         }
 
         if (type === 'national' && userGeo.country) {
-          if (value?.country && value.country.toLowerCase() !== userGeo.country.toLowerCase()) return false;
+          if (value?.country && value.country.toLowerCase() !== userGeo.country.toLowerCase()) return null;
         }
 
         if (type === 'continental' || type === 'international') {
           const allowed = value?.continents || [];
-          if (allowed.length > 0 && userGeo.continent && !allowed.includes(userGeo.continent)) return false;
+          if (allowed.length > 0 && userGeo.continent && !allowed.includes(userGeo.continent)) return null;
         }
       }
 
-      return true;
+      return ad;
     });
 
+    const ads = (await Promise.all(adsPromises)).filter(Boolean);
     return ads;
   } catch (error) {
     console.error('Error fetching ads (Admin SDK):', error);
@@ -324,9 +285,8 @@ export default async function SearchPage({ searchParams }: { searchParams: { [ke
     pageUserGeo = { ip: 'mock', city: 'Bogota', country: 'Colombia', lat: 4.71, lon: -74.07, continent: 'Sudamérica' };
   }
 
-  const { businesses, clientsRaw } = await getBusinesses();
   // Pass userGeo to filtering function
-  const ads = await getAds(clientsRaw, businesses, pageUserGeo);
+  const ads = await getAds(pageUserGeo);
 
   return (
     <main className="h-screen w-screen overflow-hidden">
