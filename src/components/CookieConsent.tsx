@@ -9,6 +9,7 @@ import { X } from 'lucide-react';
 export function CookieConsent() {
     const { t } = useTranslation('common');
     const [isOpen, setIsOpen] = useState(false);
+    const [showDetails, setShowDetails] = useState(false);
     const [analytics, setAnalytics] = useState(false);
     const [preferences, setPreferences] = useState(false);
     const [marketing, setMarketing] = useState(false);
@@ -70,6 +71,23 @@ export function CookieConsent() {
         aplicarCookies(consent);
     };
 
+    const handleAcceptAll = () => {
+        setAnalytics(true);
+        setPreferences(true);
+        setMarketing(true);
+        
+        const consent = {
+            analiticas: true,
+            preferencias: true,
+            marketing: true,
+            fecha: new Date().toISOString()
+        };
+        localStorage.setItem('dicilo_cookie_consent', JSON.stringify(consent));
+        setIsOpen(false);
+        setShowDetails(false);
+        aplicarCookies(consent);
+    };
+
     if (!isMounted) return null;
 
     return (
@@ -77,15 +95,51 @@ export function CookieConsent() {
             {/* Pill flotante para reabrir ajustes */}
             {!isOpen && (
                 <button 
-                    onClick={() => setIsOpen(true)}
+                    onClick={() => { setIsOpen(true); setShowDetails(true); }}
                     className="fixed bottom-2 left-2 z-[9990] bg-white/90 backdrop-blur-sm hover:bg-slate-50 transition-all text-[#5a5a5a] text-[10px] sm:text-xs font-medium px-3 py-1.5 rounded-full shadow-md border border-[#8cc63f] hover:scale-105 opacity-80 hover:opacity-100 max-w-[140px] truncate"
                 >
                     {t('cookies.floating_btn', 'Cookie-Einstellungen')}
                 </button>
             )}
 
-            {/* Modal Principal estilo Light Theme Corporativo */}
-            {isOpen && (
+            {/* Banner Simple Inicial */}
+            {isOpen && !showDetails && (
+                <div className="fixed bottom-0 left-0 right-0 z-[9999] p-4 bg-white shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] border-t border-slate-200 animate-in slide-in-from-bottom-full duration-300">
+                    <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div className="text-sm text-slate-600 flex-1">
+                            {t('cookies.banner_desc', 'Wir verwenden Cookies, um Ihre Erfahrung zu verbessern. Sie können alle akzeptieren oder Ihre Einstellungen anpassen.')}
+                        </div>
+                        <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-end">
+                            <Button 
+                                onClick={() => setShowDetails(true)}
+                                variant="outline" 
+                                size="sm"
+                                className="flex-1 sm:flex-none border-slate-300 text-slate-600"
+                            >
+                                {t('cookies.settings', 'Einstellungen')}
+                            </Button>
+                            <Button 
+                                onClick={handleOnlyNecessary}
+                                variant="outline" 
+                                size="sm"
+                                className="flex-1 sm:flex-none border-slate-300 text-slate-600"
+                            >
+                                {t('cookies.only_necessary', 'Nur notwendige')}
+                            </Button>
+                            <Button 
+                                onClick={handleAcceptAll}
+                                size="sm"
+                                className="flex-1 sm:flex-none bg-[#8cc63f] hover:bg-[#7ab133] text-white"
+                            >
+                                {t('cookies.accept_all', 'Alle akzeptieren')}
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Modal de Detalles (Preferences) */}
+            {isOpen && showDetails && (
                 <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
                     <div className="w-full max-w-xl bg-white text-[#5a5a5a] rounded-xl shadow-2xl border-t-4 border-[#8cc63f] flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
                         
