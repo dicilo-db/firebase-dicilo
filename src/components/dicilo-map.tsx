@@ -64,12 +64,7 @@ const createPopupContent = (
     if (business.address) {
       content += `<div style="margin-left: 24px; color: #666; margin-bottom: 6px; font-size: 12px;">${business.address}</div>`;
     }
-    if (business.phone) {
-      content += `<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;"><span style="font-size: 14px;">📞</span> <span>${business.phone}</span></div>`;
-    }
-    if (business.email) {
-      content += `<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;"><span style="font-size: 14px;">✉️</span> <a href="mailto:${business.email}" style="color: #444; text-decoration: none;">${business.email}</a></div>`;
-    }
+
     content += `</div>`;
 
     // Footer Links
