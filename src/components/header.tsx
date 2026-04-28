@@ -26,6 +26,7 @@ import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import { usePathname } from 'next/navigation';
 import { NotificationBell } from './notifications/NotificationBell';
+import { SmartNav } from './SmartNav';
 
 // Desktop visible links
 const desktopLinks = [
@@ -139,37 +140,10 @@ const Header = () => {
           </Link>
 
           {/* DESKTOP MENU - Visible from lg breakpoint */}
-          <div className="hidden items-center gap-4 lg:flex">
-            <nav className="flex items-center gap-4">
-              {desktopLinks.map((link) => (
-                <Button
-                  variant="link"
-                  asChild
-                  className="h-auto p-0 text-base font-medium text-foreground"
-                  key={link.href}
-                >
-                  <Link href={link.href}>{t(link.labelKey, (link as any).defaultText)}</Link>
-                </Button>
-              ))}
-            </nav>
-
-            {/* MORE MENU (Desktop) - Secondary Links */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" aria-label="More links">
-                  <Menu className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                {mobileLinks.map((link) => (
-                  <DropdownMenuItem key={link.href} asChild>
-                    <Link href={link.href} className="cursor-pointer">
-                      {t(link.labelKey, (link as any).defaultText)}
-                    </Link>
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
+          <div className="hidden items-center gap-4 lg:flex flex-1 min-w-0 justify-end">
+            <div className="flex-1 min-w-0 flex justify-end overflow-hidden">
+              <SmartNav desktopLinks={desktopLinks} mobileLinks={mobileLinks} />
+            </div>
 
             {loading ? (
               <div className="h-10 w-20 animate-pulse rounded bg-muted" />
