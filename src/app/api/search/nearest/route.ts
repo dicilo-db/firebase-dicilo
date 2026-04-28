@@ -195,6 +195,13 @@ export async function GET(request: NextRequest) {
         if (a.clientType === 'premium' && b.clientType !== 'premium') return -1;
         if (a.clientType !== 'premium' && b.clientType === 'premium') return 1;
 
+        // If there's a search query, words starting with the query go first
+        if (query.trim()) {
+           const aStarts = normalizeText(a.name).startsWith(query) ? -1 : 1;
+           const bStarts = normalizeText(b.name).startsWith(query) ? -1 : 1;
+           if (aStarts !== bStarts) return aStarts - bStarts;
+        }
+
         if (!a.coords || a.coords.length !== 2) return 1;
         if (!b.coords || b.coords.length !== 2) return -1;
         

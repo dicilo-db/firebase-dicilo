@@ -424,6 +424,13 @@ export default function DiciloSearchPage({
           }
           const { latitude, longitude } = pos.coords;
           updateLocationState(latitude, longitude);
+          
+          if (!isInitialLoad) {
+            toast({
+              title: "Ubicación actualizada",
+              description: "Resultados ordenados por cercanía."
+            });
+          }
         },
         async (error) => {
           await handleGeoError(error);
