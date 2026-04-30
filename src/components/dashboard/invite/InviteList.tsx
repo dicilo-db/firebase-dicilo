@@ -6,6 +6,9 @@ import { Badge } from '@/components/ui/badge';
 import { Eye, Mail, MessageSquare } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { Pen } from 'lucide-react';
+import { FichaTecnicaModal } from './FichaTecnicaModal';
+import { useState } from 'react';
 
 import { useTranslation } from 'react-i18next';
 
@@ -41,6 +44,18 @@ export function InviteList({ invites }: InviteListProps) {
         }
     };
 
+    const [selectedLead, setSelectedLead] = useState<any>(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const handleOpenFicha = (invite: any) => {
+        let leadToEdit = { ...invite };
+        if (!leadToEdit.companyName || leadToEdit.companyName.trim() === '') {
+            leadToEdit.companyName = leadToEdit.friendName;
+        }
+        setSelectedLead(leadToEdit);
+        setIsModalOpen(true);
+    };
+
     return (
         <Card className="mt-6 border-none shadow-none bg-transparent">
             <CardHeader className="px-0 pt-0">
@@ -72,14 +87,34 @@ export function InviteList({ invites }: InviteListProps) {
                                         <div className="text-xs text-muted-foreground">{invite.friendEmail}</div>
                                     </div>
                                 </div>
-                                <Badge variant="outline" className={cn("text-xs", getStatusColor(invite.status, invite.opened))}>
-                                    {getStatusLabel(invite.status)}
-                                </Badge>
+                                <div className="flex items-center gap-2">
+                                    <Badge variant="outline" className={cn("text-xs", getStatusColor(invite.status, invite.opened))}>
+                                        {getStatusLabel(invite.status)}
+                                    </Badge>
+                                    <Button 
+                                        variant="ghost" 
+                                        size="sm" 
+                                        className="h-8 text-blue-600 px-2 flex items-center gap-1"
+                                        onClick={() => handleOpenFicha(invite)}
+                                    >
+                                        <Pen className="w-3 h-3" /> Ficha
+                                    </Button>
+                                </div>
                             </div>
                         ))
                     )}
                 </div>
             </CardContent>
+
+            <FichaTecnicaModal 
+                open={isModalOpen} 
+                onOpenChange={setIsModalOpen} 
+                lead={selectedLead} 
+                onLeadUpdated={() => {
+                    // This relies on the firestore onSnapshot in InviteFriendSection to re-render, 
+                    // which is completely fine!
+                }} 
+            />
         </Card>
     );
 }

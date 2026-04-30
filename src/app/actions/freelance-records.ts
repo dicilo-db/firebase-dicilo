@@ -3,6 +3,7 @@
 import { getAdminDb } from '@/lib/firebase-admin';
 import * as admin from 'firebase-admin';
 import { revalidatePath, unstable_noStore as noStore } from 'next/cache';
+import { logActionAndReward } from './freelancer-rewards';
 
 export interface FreelanceRecord {
     id: string;
@@ -168,6 +169,11 @@ export async function sendRecordToClient(recordId: string): Promise<{ success: b
             sentAt: now,
             updatedAt: now
         });
+
+        // Trigger reward and log
+        if (data.assignedTo) {
+            await logActionAndReward(data.assignedTo, 'p2_sent_to_client', recordId, 'businesses');
+        }
 
         // Trigger N8N Webhook
         const webhookUrl = process.env.N8N_WEBHOOK_URL;

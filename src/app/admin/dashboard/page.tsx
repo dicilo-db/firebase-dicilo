@@ -139,6 +139,7 @@ const DashboardContent: React.FC = () => {
     registrations: 0,
     recommendations: 0,
     tickets: 0,
+    marketingLeads: 0,
   });
 
   // Security Dialog State
@@ -166,6 +167,7 @@ const DashboardContent: React.FC = () => {
         const recommendationsCol = collection(db, 'recommendations');
         const ticketsCol = collection(db, 'tickets');
         const businessesCol = collection(db, 'businesses');
+        const marketingLeadsCol = collection(db, 'referrals_pioneers');
 
         const [
           basicSnap,
@@ -176,6 +178,7 @@ const DashboardContent: React.FC = () => {
           registrationsSnap,
           recommendationsSnap,
           ticketsSnap,
+          marketingLeadsSnap,
         ] = await Promise.all([
           getCountFromServer(businessesCol),
           getCountFromServer(query(clientsCol, where('clientType', '==', 'starter'))),
@@ -185,6 +188,7 @@ const DashboardContent: React.FC = () => {
           getCountFromServer(registrationsCol),
           getCountFromServer(recommendationsCol),
           getCountFromServer(query(ticketsCol, where('status', 'in', ['open', 'in_progress']))),
+          getCountFromServer(marketingLeadsCol),
         ]);
 
         setCounts({
@@ -196,6 +200,7 @@ const DashboardContent: React.FC = () => {
           registrations: registrationsSnap.data().count,
           recommendations: recommendationsSnap.data().count,
           tickets: ticketsSnap.data().count,
+          marketingLeads: marketingLeadsSnap.data().count,
         });
       } catch (error) {
         console.error('Error fetching dashboard counts:', error);
@@ -665,6 +670,9 @@ const DashboardContent: React.FC = () => {
                 <CardContent>
                   <div className="text-2xl font-black">Email Marketing</div>
                   <p className="text-xs text-muted-foreground mt-1">Envío de Emails - Campañas de Marketing</p>
+                  <div className="absolute bottom-4 right-4 text-sm font-mono text-muted-foreground">
+                    {formatCount(counts.marketingLeads)}
+                  </div>
                 </CardContent>
               </Card>
             </Link>
