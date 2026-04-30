@@ -250,6 +250,24 @@ service cloud.firestore {
       allow write: if false; // Solo acciones del servidor pueden crear
     }
 
+    // CRM Appointments
+    match /crm_appointments/{appointmentId} {
+      allow read: if hasDashboardAccess(); // Admins / Team Office can read
+      allow write: if false; // Created via Server Actions
+    }
+
+    // Wallets
+    match /wallets/{walletId} {
+      allow read: if isAuthenticated() && (request.auth.uid == walletId || hasDashboardAccess());
+      allow write: if false; // Only updated securely via Server Actions or Cloud Functions
+    }
+
+    // Referrals Pioneers (Marketing Leads)
+    match /referrals_pioneers/{leadId} {
+      allow read: if isAuthenticated() && (resource.data.referrerId == request.auth.uid || hasDashboardAccess());
+      allow write: if false; // Updated securely via Server Actions
+    }
+
     // Default deny
     match /{document=**} {
       allow read, write: if false;

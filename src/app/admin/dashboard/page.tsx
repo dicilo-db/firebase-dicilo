@@ -160,6 +160,16 @@ const DashboardContent: React.FC = () => {
     if (isUserLoading || !isAdminOrSuper) return;
 
     const fetchCounts = async () => {
+      const safeCount = async (queryParam: any) => {
+        try {
+          const snap = await getCountFromServer(queryParam);
+          return snap.data().count;
+        } catch (e) {
+          console.error('Error fetching count for a collection:', e);
+          return 0;
+        }
+      };
+
       try {
         const clientsCol = collection(db, 'clients');
         const privateCol = collection(db, 'private_profiles');
@@ -170,37 +180,37 @@ const DashboardContent: React.FC = () => {
         const marketingLeadsCol = collection(db, 'referrals_pioneers');
 
         const [
-          basicSnap,
-          starterSnap,
-          retailerSnap,
-          premiumSnap,
-          privateSnap,
-          registrationsSnap,
-          recommendationsSnap,
-          ticketsSnap,
-          marketingLeadsSnap,
+          basicCount,
+          starterCount,
+          retailerCount,
+          premiumCount,
+          privateCount,
+          registrationsCount,
+          recommendationsCount,
+          ticketsCount,
+          marketingLeadsCount,
         ] = await Promise.all([
-          getCountFromServer(businessesCol),
-          getCountFromServer(query(clientsCol, where('clientType', '==', 'starter'))),
-          getCountFromServer(query(clientsCol, where('clientType', '==', 'retailer'))),
-          getCountFromServer(query(clientsCol, where('clientType', '==', 'premium'))),
-          getCountFromServer(privateCol),
-          getCountFromServer(registrationsCol),
-          getCountFromServer(recommendationsCol),
-          getCountFromServer(query(ticketsCol, where('status', 'in', ['open', 'in_progress']))),
-          getCountFromServer(marketingLeadsCol),
+          safeCount(businessesCol),
+          safeCount(query(clientsCol, where('clientType', '==', 'starter'))),
+          safeCount(query(clientsCol, where('clientType', '==', 'retailer'))),
+          safeCount(query(clientsCol, where('clientType', '==', 'premium'))),
+          safeCount(privateCol),
+          safeCount(registrationsCol),
+          safeCount(recommendationsCol),
+          safeCount(query(ticketsCol, where('status', 'in', ['open', 'in_progress']))),
+          safeCount(marketingLeadsCol),
         ]);
 
         setCounts({
-          basic: basicSnap.data().count,
-          starter: starterSnap.data().count,
-          retailer: retailerSnap.data().count,
-          premium: premiumSnap.data().count,
-          private: privateSnap.data().count,
-          registrations: registrationsSnap.data().count,
-          recommendations: recommendationsSnap.data().count,
-          tickets: ticketsSnap.data().count,
-          marketingLeads: marketingLeadsSnap.data().count,
+          basic: basicCount,
+          starter: starterCount,
+          retailer: retailerCount,
+          premium: premiumCount,
+          private: privateCount,
+          registrations: registrationsCount,
+          recommendations: recommendationsCount,
+          tickets: ticketsCount,
+          marketingLeads: marketingLeadsCount,
         });
       } catch (error) {
         console.error('Error fetching dashboard counts:', error);
