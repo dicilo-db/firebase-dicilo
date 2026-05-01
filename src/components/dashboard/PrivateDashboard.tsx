@@ -45,6 +45,7 @@ import { cn } from '@/lib/utils';
 import { ensureHttps, formatSocialUrl } from '@/lib/url-utils';
 import { VideoFeedbackUploader } from './VideoFeedbackUploader';
 import { FinancesSection } from './finances/FinancesSection';
+import MasterCalendarPage from '@/app/dashboard/business/crm/calendar/page';
 
 const db = getFirestore(app);
 // Private Dashboard Component
@@ -460,6 +461,8 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                 return <TicketsManager />;
             case 'ads-manager':
                 return <AdsDashboard />;
+            case 'calendar':
+                return <MasterCalendarPage />;
             case 'freelancer':
                 return <FreelancerPromoComposerPage />;
             case 'settings':

@@ -120,7 +120,7 @@ export function Sidebar({ userData, onViewChange, currentView }: SidebarProps) {
     // Explicitly type the array to avoid discriminated union inference issues
     const navItems: NavItem[] = [
         { id: 'overview', label: t('dashboard.overview'), icon: Home, type: 'view' },
-        { id: 'calendar', label: 'Calendario', icon: Calendar, type: 'link', href: '/dashboard/business/crm/calendar' },
+        { id: 'calendar', label: 'Calendario', icon: Calendar, type: 'view' },
         { id: 'freelancer', label: t('dashboard.freelancer_nav'), icon: Briefcase, type: 'view' },
         { id: 'ads-manager', label: 'Ads Manager', icon: Megaphone, type: 'view' },
         { id: 'wallet', label: t('dashboard.myWallet'), icon: Wallet, type: 'view' },
