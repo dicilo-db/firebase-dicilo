@@ -25,7 +25,8 @@ import {
     Scan,
     Share2,
     HelpCircle,
-    Network
+    Network,
+    Calendar
 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -119,6 +120,7 @@ export function Sidebar({ userData, onViewChange, currentView }: SidebarProps) {
     // Explicitly type the array to avoid discriminated union inference issues
     const navItems: NavItem[] = [
         { id: 'overview', label: t('dashboard.overview'), icon: Home, type: 'view' },
+        { id: 'calendar', label: 'Calendario', icon: Calendar, type: 'link', href: '/dashboard/business/crm/calendar' },
         { id: 'freelancer', label: t('dashboard.freelancer_nav'), icon: Briefcase, type: 'view' },
         { id: 'ads-manager', label: 'Ads Manager', icon: Megaphone, type: 'view' },
         { id: 'wallet', label: t('dashboard.myWallet'), icon: Wallet, type: 'view' },
