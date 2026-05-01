@@ -93,7 +93,7 @@ export default function AuditoriaPage() {
     const totalRegistros = filteredData.reduce((acc, curr) => acc + curr.totalBrought, 0);
     const cuentasActivas = filteredData.reduce((acc, curr) => acc + curr.activeCount, 0);
     const cuentasInactivas = filteredData.reduce((acc, curr) => acc + curr.inactiveCount, 0);
-    const dineroPagado = filteredData.reduce((acc, curr) => acc + curr.totalMoneyEarned, 0);
+    const dineroPorPagar = filteredData.reduce((acc, curr) => acc + curr.greenCardBalance, 0);
 
     if (loading) {
         return <div className="p-8 text-center">Cargando reporte de auditoría...</div>;
@@ -103,9 +103,9 @@ export default function AuditoriaPage() {
         <div className="p-6 max-w-[1400px] mx-auto space-y-6 print:p-0">
             <div className="flex justify-between items-center print:hidden">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Auditoría MLM y Referidos</h1>
+                    <h1 className="text-3xl font-bold tracking-tight">Auditoría MLM y Tarjetas</h1>
                     <p className="text-muted-foreground mt-2">
-                        Supervisa el rendimiento de los referidores, sus referidos y los pagos de comisiones automáticas.
+                        Supervisa las redes de referidos y el balance actual por pagar en sus billeteras.
                     </p>
                 </div>
                 <div className="flex items-center gap-3">
@@ -157,11 +157,11 @@ export default function AuditoriaPage() {
                 </Card>
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Dinero Pagado</CardTitle>
+                        <CardTitle className="text-sm font-medium">Tarjetas Verdes (Total por Pagar)</CardTitle>
                         <DollarSign className="h-4 w-4 text-blue-500" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">€{dineroPagado.toFixed(2)}</div>
+                        <div className="text-2xl font-bold text-green-600">€{dineroPorPagar.toFixed(2)}</div>
                     </CardContent>
                 </Card>
             </div>
@@ -229,9 +229,9 @@ export default function AuditoriaPage() {
 
             <Card>
                 <CardHeader>
-                    <CardTitle>Rendimiento por Referidor</CardTitle>
+                    <CardTitle>Saldos y Red de Referidores</CardTitle>
                     <CardDescription>
-                        Despliega cada fila para ver el detalle exacto de los usuarios que trajo cada referidor.
+                        Despliega cada fila para ver el detalle de los registros que conforman la red de este referidor.
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -243,8 +243,8 @@ export default function AuditoriaPage() {
                                 <TableHead>Rol y Ubicación</TableHead>
                                 <TableHead className="text-center">Total Traídos</TableHead>
                                 <TableHead className="text-center">Activos</TableHead>
-                                <TableHead className="text-center">Inactivos</TableHead>
-                                <TableHead className="text-right">Comisiones (€)</TableHead>
+                                <TableHead className="text-right">Tarjeta Negra (DP)</TableHead>
+                                <TableHead className="text-right text-green-600 font-bold">Tarjeta Verde (€)</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -274,9 +274,11 @@ export default function AuditoriaPage() {
                                         </TableCell>
                                         <TableCell className="text-center">{ref.totalBrought}</TableCell>
                                         <TableCell className="text-center text-green-600 font-semibold">{ref.activeCount}</TableCell>
-                                        <TableCell className="text-center text-red-600 font-semibold">{ref.inactiveCount}</TableCell>
-                                        <TableCell className="text-right font-bold text-blue-600">
-                                            €{ref.totalMoneyEarned.toFixed(2)}
+                                        <TableCell className="text-right font-bold">
+                                            {ref.blackCardBalance} DP
+                                        </TableCell>
+                                        <TableCell className="text-right font-bold text-green-600">
+                                            €{ref.greenCardBalance.toFixed(2)}
                                         </TableCell>
                                     </TableRow>
                                     
