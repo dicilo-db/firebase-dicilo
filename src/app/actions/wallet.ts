@@ -510,12 +510,12 @@ export async function adminProcessManualPayment(
 export async function getManualPaymentHistory() {
     const db = getAdminDb();
     try {
+        const manualTypes = ['MANUAL_POINTS', 'MANUAL_CASH', 'MANUAL_ADJUSTMENT'];
+        
+        // Fetch all manual transactions (should be a relatively small number)
         const snapshot = await db.collection('wallet_transactions')
-            .orderBy('timestamp', 'desc')
-            .limit(300)
+            .where('type', 'in', manualTypes)
             .get();
-
-        const manualTypes = ['MANUAL_POINTS', 'MANUAL_CASH'];
 
         const history = snapshot.docs
             .map(doc => {
@@ -531,7 +531,8 @@ export async function getManualPaymentHistory() {
                     currency: data.currency || 'DP'
                 };
             })
-            .filter(trx => manualTypes.includes(trx.type))
+            // Sort descending in memory
+            .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
             .slice(0, 50);
 
         return { success: true, data: history };
