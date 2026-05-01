@@ -379,7 +379,7 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
 
                                 {/* Prepaid Card (Image Background) */}
                                 <div className="flex flex-col gap-1 h-full">
-                                    <div className="rounded-xl overflow-hidden shadow-lg min-h-[180px] relative flex flex-col justify-between p-6 text-white group cursor-pointer transition-transform hover:scale-[1.02] flex-1">
+                                    <div className="rounded-xl overflow-hidden shadow-lg min-h-[180px] relative flex flex-col justify-between p-6 text-white group flex-1">
                                         {/* Background Image */}
                                         <div className="absolute inset-0 z-0">
                                             <Image
