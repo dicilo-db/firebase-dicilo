@@ -553,6 +553,20 @@ const DashboardContent: React.FC = () => {
                   </Button>
                 </CardContent>
               </Card>
+
+              {/* Auditoría MLM (Moved to Superadmin section) */}
+              <Link href="/admin/auditoria" className="group">
+                <Card className="h-full bg-orange-50/50 dark:bg-orange-900/10 border-orange-200 transition-all hover:shadow-md hover:border-orange-600 cursor-pointer relative">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-bold text-orange-700 dark:text-orange-400">Auditoría MLM</CardTitle>
+                    <BarChartHorizontal className="h-4 w-4 text-orange-600 group-hover:scale-110 transition-transform" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-black">Reportes y Comisiones</div>
+                    <p className="text-xs text-muted-foreground mt-1">Supervisar Activaciones y Pagos</p>
+                  </CardContent>
+                </Card>
+              </Link>
             </div>
           </div>
         )}
@@ -791,21 +805,6 @@ const DashboardContent: React.FC = () => {
                 </CardContent>
               </Card>
             </Link>
-
-            {/* Auditoría MLM (NEW) */}
-            <Link href="/admin/auditoria" className="group">
-              <Card className="h-full bg-orange-50/50 dark:bg-orange-900/10 border-orange-200 transition-all hover:shadow-md hover:border-orange-600 cursor-pointer relative">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-bold text-orange-700 dark:text-orange-400">Auditoría MLM</CardTitle>
-                  <BarChartHorizontal className="h-4 w-4 text-orange-600 group-hover:scale-110 transition-transform" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-black">Reportes y Comisiones</div>
-                  <p className="text-xs text-muted-foreground mt-1">Supervisar Activaciones y Pagos</p>
-                </CardContent>
-              </Card>
-            </Link>
-
             {/* Freelancer */}
             <Link href="/dashboard/freelancer" className="group">
               <Card className="h-full transition-all hover:shadow-md hover:border-blue-500/50 cursor-pointer relative">
