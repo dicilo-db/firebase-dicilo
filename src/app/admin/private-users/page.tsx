@@ -266,7 +266,7 @@ export default function PrivateUsersPage() {
                 <Card>
                     <CardHeader>
                         <CardTitle>{t('common:privateUsersList')}</CardTitle>
-                        <div className="grid grid-cols-1 gap-4 md:grid-cols-6 pt-4">
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-7 pt-4">
                             {/* Filter: Search */}
                             <div className="flex flex-col gap-2">
                                 <Label className="text-xs font-semibold">{t('privateUsers.filters.search')}</Label>
@@ -302,7 +302,7 @@ export default function PrivateUsersPage() {
                             </div>
 
                             {/* Filter: Date */}
-                            <div className="flex flex-col gap-2">
+                            <div className="flex flex-col gap-2 md:col-span-2">
                                 <Label className="text-xs font-semibold">{t('privateUsers.filters.date', 'Fecha')} (Desde - Hasta)</Label>
                                 <div className="flex gap-2">
                                     <Input
