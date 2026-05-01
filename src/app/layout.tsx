@@ -21,7 +21,7 @@ import { CookieConsent } from '@/components/CookieConsent';
 export const metadata: Metadata = {
   metadataBase: new URL('https://dicilo.net'),
   title: 'Dicilo.net',
-  description: 'Dicilo - La red global de recomendaciones y servicios profesionales.',
+  description: 'We connect your world',
   icons: {
     icon: '/favicon.ico',
     shortcut: '/favicon.png',
