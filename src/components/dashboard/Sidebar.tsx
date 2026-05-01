@@ -120,7 +120,6 @@ export function Sidebar({ userData, onViewChange, currentView }: SidebarProps) {
     // Explicitly type the array to avoid discriminated union inference issues
     const navItems: NavItem[] = [
         { id: 'overview', label: t('dashboard.overview'), icon: Home, type: 'view' },
-        { id: 'calendar', label: 'Calendario', icon: Calendar, type: 'view' },
         { id: 'freelancer', label: t('dashboard.freelancer_nav'), icon: Briefcase, type: 'view' },
         { id: 'ads-manager', label: 'Ads Manager', icon: Megaphone, type: 'view' },
         { id: 'wallet', label: t('dashboard.myWallet'), icon: Wallet, type: 'view' },
@@ -165,8 +164,14 @@ export function Sidebar({ userData, onViewChange, currentView }: SidebarProps) {
         navItems.push({ id: 'my-network', label: t('dashboard.myNetwork', 'Mi Red Dicilo'), icon: Network, type: 'view' });
     }
 
-    // Add Admin conditionally
+    // Add Admin and Calendar conditionally
     if (canSeeAdmin) {
+        const overviewIdx = navItems.findIndex(item => item.id === 'overview');
+        if (overviewIdx !== -1) {
+            navItems.splice(overviewIdx + 1, 0, { id: 'calendar', label: 'Calendario', icon: Calendar, type: 'view' });
+        } else {
+            navItems.unshift({ id: 'calendar', label: 'Calendario', icon: Calendar, type: 'view' });
+        }
         navItems.push({ id: 'admin', label: 'Admin Panel', icon: Shield, type: 'link', href: '/admin' });
     }
 
