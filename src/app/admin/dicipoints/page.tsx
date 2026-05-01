@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { ShieldAlert, RefreshCw, Save, Lock, Wallet, Search, UserPlus, Trash2, AlertTriangle, UserCog, UserCheck, Archive } from 'lucide-react';
+import { ShieldAlert, RefreshCw, Save, Lock, Wallet, Search, UserPlus, Trash2, AlertTriangle, UserCog, UserCheck, Archive, Users } from 'lucide-react';
 import { adminAdjustBalance, adminUpdatePointValue, isMasterPasswordSet, setMasterPassword, verifyMasterPassword, getManualPaymentHistory } from '@/app/actions/wallet';
 import { auditRetroactivePoints, reassignProspect, getFreelancerReportData, generateReferralAuditReport } from '@/app/actions/dicipoints';
 import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
@@ -678,29 +678,69 @@ export default function DicipointsControlCenter() {
                                         <div><span className="text-muted-foreground">Total a Pagar (EUR):</span> <span className="font-bold text-green-700">€{referralAuditData.summary.totalEUR.toFixed(2)}</span></div>
                                         <div><span className="text-muted-foreground">Total Dicipoints:</span> <span className="font-bold text-blue-700">{referralAuditData.summary.totalDP} DP</span></div>
                                     </div>
-                                    <Button size="sm" className="mt-4" onClick={() => {
-                                        // Simple CSV Export
-                                        const headers = ['Referidor,Codigo,Rol,Tarifa EUR,Total Invitados,Ganancia EUR,Ganancia DP,Usuarios Invitados'];
-                                        const rows = referralAuditData.details.map((d: any) => [
-                                            `"${d.referrer.name}"`,
-                                            d.referrer.code,
-                                            d.referrer.role,
-                                            d.payment.rateEUR,
-                                            d.totalInvited,
-                                            d.payment.earnedEUR,
-                                            d.payment.earnedDP,
-                                            `"${d.invitedUsers.map((u: any) => u.name).join(' | ')}"`
-                                        ].join(','));
-                                        const csvContent = [headers, ...rows].join('\n');
-                                        const blob = new Blob([csvContent], { type: 'text/csv' });
-                                        const url = window.URL.createObjectURL(blob);
-                                        const a = document.createElement('a');
-                                        a.href = url;
-                                        a.download = `referral_audit_${referralStartDate}_${referralEndDate}.csv`;
-                                        a.click();
-                                    }}>
-                                        <Download className="mr-2 h-4 w-4" /> Exportar a CSV
-                                    </Button>
+                                    <div className="flex gap-4 mt-4">
+                                        <Button size="sm" onClick={() => {
+                                            // Simple CSV Export
+                                            const headers = ['Referidor,Codigo,Rol,Tarifa EUR,Total Invitados,Ganancia EUR,Ganancia DP,Usuarios Invitados'];
+                                            const rows = referralAuditData.details.map((d: any) => [
+                                                `"${d.referrer.name}"`,
+                                                d.referrer.code,
+                                                d.referrer.role,
+                                                d.payment.rateEUR,
+                                                d.totalInvited,
+                                                d.payment.earnedEUR,
+                                                d.payment.earnedDP,
+                                                `"${d.invitedUsers.map((u: any) => u.name).join(' | ')}"`
+                                            ].join(','));
+                                            const csvContent = [headers, ...rows].join('\n');
+                                            const blob = new Blob([csvContent], { type: 'text/csv' });
+                                            const url = window.URL.createObjectURL(blob);
+                                            const a = document.createElement('a');
+                                            a.href = url;
+                                            a.download = `referral_audit_${referralStartDate}_${referralEndDate}.csv`;
+                                            a.click();
+                                        }}>
+                                            <Download className="mr-2 h-4 w-4" /> Exportar a CSV
+                                        </Button>
+
+                                        <Button size="sm" variant="outline" className="border-teal-600 text-teal-700 hover:bg-teal-50" onClick={() => {
+                                            const doc = new jsPDF();
+                                            doc.setFontSize(18);
+                                            doc.text('Auditoría de Comisiones por Referidos', 14, 22);
+                                            doc.setFontSize(11);
+                                            doc.text(`Periodo: ${referralStartDate} al ${referralEndDate}`, 14, 30);
+                                            doc.text(`Total Nuevos Usuarios: ${referralAuditData.summary.totalNewUsers}`, 14, 36);
+                                            doc.text(`Total a Pagar (EUR): €${referralAuditData.summary.totalEUR.toFixed(2)}`, 14, 42);
+                                            doc.text(`Total Dicipoints: ${referralAuditData.summary.totalDP} DP`, 14, 48);
+
+                                            const tableColumn = ["Referidor", "Código", "Rol", "Invitados", "Comisión EUR", "Comisión DP"];
+                                            const tableRows: any[] = [];
+
+                                            referralAuditData.details.forEach((d: any) => {
+                                                tableRows.push([
+                                                    d.referrer.name,
+                                                    d.referrer.code,
+                                                    d.referrer.role.toUpperCase(),
+                                                    d.totalInvited,
+                                                    `€${d.payment.earnedEUR.toFixed(2)}`,
+                                                    `${d.payment.earnedDP} DP`
+                                                ]);
+                                            });
+
+                                            autoTable(doc, {
+                                                head: [tableColumn],
+                                                body: tableRows,
+                                                startY: 55,
+                                                theme: 'grid',
+                                                styles: { fontSize: 9 },
+                                                headStyles: { fillColor: [13, 148, 136] }, // teal-600
+                                            });
+
+                                            doc.save(`referral_audit_${referralStartDate}_${referralEndDate}.pdf`);
+                                        }}>
+                                            <FileText className="mr-2 h-4 w-4" /> Exportar a PDF
+                                        </Button>
+                                    </div>
                                 </div>
 
                                 <div className="overflow-x-auto">
