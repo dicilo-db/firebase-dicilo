@@ -2,68 +2,98 @@
 
 import { getAdminDb } from '@/lib/firebase-admin';
 
-export interface AuditUserData {
-    userId: string;
-    name: string;
-    email: string;
-    role: string;
-    country: string;
-    city: string;
-    isActive: boolean;
-    isPaid: boolean;
-    paidAt: string | null;
-    createdAt: string;
-    referrerId: string | null;
-    referrerName: string | null;
+export interface AuditReferrerData {
+    referrerId: string;
+    referrerName: string;
+    referrerRole: string;
+    referrerCountry: string;
+    referrerCity: string;
+    totalBrought: number;
+    activeCount: number;
+    inactiveCount: number;
+    paidCount: number;
+    totalMoneyEarned: number;
+    referredUsers: {
+        registrationId: string;
+        name: string;
+        email: string;
+        isActive: boolean;
+        isPaid: boolean;
+        paidAt: string | null;
+        createdAt: string;
+    }[];
 }
 
-export async function getMLMAuditData(): Promise<AuditUserData[]> {
+export async function getMLMAuditData(): Promise<AuditReferrerData[]> {
     const db = getAdminDb();
     
-    // Fetch registrations
+    // 1. Fetch all registrations to group by referrer
     const registrationsSnap = await db.collection('registrations').get();
     
-    // Fetch profiles to get country, city, and role
+    const referrersMap = new Map<string, AuditReferrerData>();
+
+    // 2. Fetch profiles to map roles, country and city
     const profilesSnap = await db.collection('private_profiles').get();
     const profilesMap = new Map<string, { role: string, country: string, city: string }>();
-    
     profilesSnap.docs.forEach(doc => {
-        const data = doc.data();
+        const d = doc.data();
         profilesMap.set(doc.id, {
-            role: data.role || 'user',
-            country: data.country || '',
-            city: data.city || ''
+            role: d.role || 'user',
+            country: d.country || '',
+            city: d.city || ''
         });
     });
-
-    const flatUsers: AuditUserData[] = [];
 
     registrationsSnap.docs.forEach(doc => {
         const data = doc.data();
-        const userId = doc.id; // Usually registration ID or ownerUid
-        const profile = profilesMap.get(data.ownerUid || userId) || { role: 'user', country: data.country || '', city: data.city || '' };
+        const referrerId = data.referrerId || 'SIN_REFERIDOR';
+        
+        if (!referrersMap.has(referrerId)) {
+            const rProfile = profilesMap.get(referrerId) || { role: 'user', country: '', city: '' };
+            referrersMap.set(referrerId, {
+                referrerId: referrerId,
+                referrerName: data.referrerName || 'Desconocido',
+                referrerRole: rProfile.role,
+                referrerCountry: rProfile.country,
+                referrerCity: rProfile.city,
+                totalBrought: 0,
+                activeCount: 0,
+                inactiveCount: 0,
+                paidCount: 0,
+                totalMoneyEarned: 0,
+                referredUsers: []
+            });
+        }
 
+        const refData = referrersMap.get(referrerId)!;
+        // For backwards compatibility:
+        // Older registrations didn't have isEmailVerified or referralRewardPaid flags.
+        // Since old registrations were instantly active and paid, if the flag is undefined, we assume true.
         const isActive = data.isEmailVerified !== false;
         const isPaid = data.referralRewardPaid !== false;
 
-        flatUsers.push({
-            userId: userId,
+        refData.totalBrought++;
+        if (isActive) refData.activeCount++;
+        else refData.inactiveCount++;
+
+        if (isPaid) {
+            refData.paidCount++;
+            // If the referrer is PRO, they earned 0.50 per paid active user
+            if (['freelancer', 'team_leader', 'team_office', 'admin', 'superadmin'].includes(refData.referrerRole)) {
+                refData.totalMoneyEarned += 0.50; 
+            }
+        }
+
+        refData.referredUsers.push({
+            registrationId: doc.id,
             name: data.businessName || data.firstName + ' ' + (data.lastName || ''),
             email: data.email || '',
-            role: profile.role,
-            country: profile.country || data.country || '',
-            city: profile.city || data.city || '',
             isActive: isActive,
             isPaid: isPaid,
             paidAt: data.referralRewardPaidAt ? data.referralRewardPaidAt.toDate().toISOString() : null,
-            createdAt: data.createdAt ? data.createdAt.toDate().toISOString() : new Date().toISOString(),
-            referrerId: data.referrerId || null,
-            referrerName: data.referrerName || null
+            createdAt: data.createdAt ? data.createdAt.toDate().toISOString() : new Date().toISOString()
         });
     });
 
-    // Sort by created at descending
-    flatUsers.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-
-    return flatUsers;
+    return Array.from(referrersMap.values()).sort((a, b) => b.totalBrought - a.totalBrought);
 }
