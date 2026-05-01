@@ -917,3 +917,5 @@ __exportStar(require("./categories"), exports);
 __exportStar(require("./social"), exports);
 // --- MLM & Ranks ---
 __exportStar(require("./mlm"), exports);
+// --- Reports & Audits ---
+__exportStar(require("./reports"), exports);

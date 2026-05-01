@@ -253,6 +253,9 @@ export async function POST(request: Request) {
       emailVerificationCode: Math.floor(100000 + Math.random() * 900000).toString(),
       isEmailVerified: false,
 
+      // REWARDS
+      referralRewardPaid: false,
+
       createdAt: new Date(),
       status: 'pending',
     };
@@ -292,77 +295,7 @@ export async function POST(request: Request) {
       // We might have redundant IDs if we don't sync. But for now, company logic is priority.
     }
 
-    // 6. REWARD ENGINE (The "Kill Switch" Logic)
-    // Now uses resolveRewards to determine amounts for both parties.
-    try {
-        const rewards = await resolveRewards(inviteId, email);
-        const rewardSender = rewards.rewardSender;
-        const rewardReceiver = rewards.rewardReceiver;
-        const resolvedReferrerId = rewards.referrerId || (referrerData.id !== 'SYSTEM_REFONL' ? referrerData.id : null);
-
-        if (ownerUid) {
-            // A. Pay New User (Receiver)
-            await db.runTransaction(async (t) => {
-                const walletRef = db.collection('wallets').doc(ownerUid);
-                t.set(walletRef, {
-                    balance: admin.firestore.FieldValue.increment(rewardReceiver),
-                    totalEarned: admin.firestore.FieldValue.increment(rewardReceiver),
-                    updatedAt: admin.firestore.FieldValue.serverTimestamp()
-                }, { merge: true });
-
-                const trxRef = db.collection('wallet_transactions').doc();
-                t.set(trxRef, {
-                    userId: ownerUid,
-                    amount: rewardReceiver,
-                    type: 'WELCOME_BONUS',
-                    description: `Bono de bienvenida por registro${rewards.inviteId ? ' (Invitación)' : ''}`,
-                    timestamp: admin.firestore.FieldValue.serverTimestamp()
-                });
-            });
-
-            // B. Pay Referrer (Sender)
-            if (resolvedReferrerId && resolvedReferrerId !== ownerUid) {
-                await db.runTransaction(async (t) => {
-                    const refWalletRef = db.collection('wallets').doc(resolvedReferrerId);
-                    t.set(refWalletRef, {
-                        balance: admin.firestore.FieldValue.increment(rewardSender),
-                        totalEarned: admin.firestore.FieldValue.increment(rewardSender),
-                        updatedAt: admin.firestore.FieldValue.serverTimestamp()
-                    }, { merge: true });
-
-                    const trxRef = db.collection('wallet_transactions').doc();
-                    t.set(trxRef, {
-                        userId: resolvedReferrerId,
-                        amount: rewardSender,
-                        type: 'REFERRAL_REWARD_BUSINESS',
-                        description: `Bonus por registro de Empresa: ${businessName || 'Empresa'} (${userCode})`,
-                        relatedUserId: ownerUid,
-                        timestamp: admin.firestore.FieldValue.serverTimestamp()
-                    });
-                });
-                console.log(`[REWARD] Paid ${rewardSender}/${rewardReceiver} to ${resolvedReferrerId}/${ownerUid}`);
-            }
-        }
-
-        // C. Update invitation status if applicable
-        if (rewards.inviteId) {
-            await db.collection('referrals_pioneers').doc(rewards.inviteId).update({
-                status: 'converted',
-                converted: true,
-                convertedAt: admin.firestore.FieldValue.serverTimestamp(),
-                convertedUid: ownerUid || null
-            });
-        }
-
-        // D. MLM Check: See if Referrer should be upgraded to Freelancer or Team Leader
-        if (resolvedReferrerId && resolvedReferrerId !== ownerUid) {
-            await checkAndUpgradeRank(resolvedReferrerId).catch(err => 
-                console.error("[REWARD] MLM Upgrade Error:", err)
-            );
-        }
-    } catch (rewardErr) {
-        console.error("Reward Engine Error:", rewardErr);
-    }
+    // 6. REWARDS NOW MOVED TO EMAIL VERIFICATION (api/verify-email/route.ts)
 
 
     // 7. Webhook & Email

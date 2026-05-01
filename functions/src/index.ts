@@ -1050,3 +1050,6 @@ export * from './social';
 // --- MLM & Ranks ---
 export * from './mlm';
 
+// --- Reports & Audits ---
+export * from './reports';
+
