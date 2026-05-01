@@ -632,8 +632,6 @@ export default function DicipointsControlCenter() {
                     </CardContent>
                 </Card>
 
-                </Card>
-
                 {/* Referral Audit Report (New) */}
                 <Card className="border-teal-200 shadow-sm md:col-span-2">
                     <CardHeader>
