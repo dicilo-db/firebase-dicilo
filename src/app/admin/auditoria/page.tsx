@@ -48,10 +48,15 @@ export default function AuditoriaPage() {
                         Supervisa el rendimiento de los usuarios, sus referidos y los pagos de comisiones automáticas.
                     </p>
                 </div>
-                <Button onClick={handlePrint} className="bg-blue-600 hover:bg-blue-700">
-                    <Download className="mr-2 h-4 w-4" />
-                    Descargar PDF
-                </Button>
+                <div className="flex items-center gap-3">
+                    <Button variant="outline" onClick={() => window.history.back()}>
+                        Volver al Panel
+                    </Button>
+                    <Button onClick={handlePrint} className="bg-blue-600 hover:bg-blue-700">
+                        <Download className="mr-2 h-4 w-4" />
+                        Descargar PDF
+                    </Button>
+                </div>
             </div>
 
             {/* Print Header */}

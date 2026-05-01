@@ -58,8 +58,11 @@ export async function getMLMAuditData(): Promise<AuditReferrerData[]> {
         }
 
         const refData = referrersMap.get(referrerId)!;
-        const isActive = data.isEmailVerified === true;
-        const isPaid = data.referralRewardPaid === true;
+        // For backwards compatibility:
+        // Older registrations didn't have isEmailVerified or referralRewardPaid flags.
+        // Since old registrations were instantly active and paid, if the flag is undefined, we assume true.
+        const isActive = data.isEmailVerified !== false;
+        const isPaid = data.referralRewardPaid !== false;
 
         refData.totalBrought++;
         if (isActive) refData.activeCount++;
