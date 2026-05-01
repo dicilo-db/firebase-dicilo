@@ -131,7 +131,8 @@ export default function PrivateUsersPage() {
     }, []);
 
     // Filters
-    const [filterDate, setFilterDate] = useState<Date | undefined>(undefined);
+    const [filterDateStart, setFilterDateStart] = useState<Date | undefined>(undefined);
+    const [filterDateEnd, setFilterDateEnd] = useState<Date | undefined>(undefined);
     const [filterCountry, setFilterCountry] = useState('');
     const [filterCity, setFilterCity] = useState('');
     const [filterReferrer, setFilterReferrer] = useState('');
@@ -150,14 +151,28 @@ export default function PrivateUsersPage() {
             (user.referrerName?.toLowerCase() || '').includes(filterReferrer.toLowerCase());
 
         let matchesDate = true;
-        if (filterDate) {
+        if (filterDateStart || filterDateEnd) {
             if (!user.createdAt) {
                 matchesDate = false;
             } else {
                 const userDate = new Date(user.createdAt.seconds * 1000);
-                matchesDate = userDate.getDate() === filterDate.getDate() &&
-                    userDate.getMonth() === filterDate.getMonth() &&
-                    userDate.getFullYear() === filterDate.getFullYear();
+                userDate.setHours(0, 0, 0, 0);
+
+                let startMatch = true;
+                if (filterDateStart) {
+                    const start = new Date(filterDateStart);
+                    start.setHours(0, 0, 0, 0);
+                    startMatch = userDate >= start;
+                }
+
+                let endMatch = true;
+                if (filterDateEnd) {
+                    const end = new Date(filterDateEnd);
+                    end.setHours(0, 0, 0, 0);
+                    endMatch = userDate <= end;
+                }
+
+                matchesDate = startMatch && endMatch;
             }
         }
 
@@ -288,16 +303,29 @@ export default function PrivateUsersPage() {
 
                             {/* Filter: Date */}
                             <div className="flex flex-col gap-2">
-                                <Label className="text-xs font-semibold">{t('privateUsers.filters.date')}</Label>
-                                <Input
-                                    type="date"
-                                    value={filterDate ? filterDate.toISOString().split('T')[0] : ''}
-                                    onChange={(e) => {
-                                        const val = e.target.valueAsDate;
-                                        setFilterDate(val || undefined);
-                                    }}
-                                    className="w-full"
-                                />
+                                <Label className="text-xs font-semibold">{t('privateUsers.filters.date', 'Fecha')} (Desde - Hasta)</Label>
+                                <div className="flex gap-2">
+                                    <Input
+                                        type="date"
+                                        value={filterDateStart ? filterDateStart.toISOString().split('T')[0] : ''}
+                                        onChange={(e) => {
+                                            const val = e.target.valueAsDate;
+                                            setFilterDateStart(val || undefined);
+                                        }}
+                                        className="w-full text-xs px-2"
+                                        title="Fecha Desde"
+                                    />
+                                    <Input
+                                        type="date"
+                                        value={filterDateEnd ? filterDateEnd.toISOString().split('T')[0] : ''}
+                                        onChange={(e) => {
+                                            const val = e.target.valueAsDate;
+                                            setFilterDateEnd(val || undefined);
+                                        }}
+                                        className="w-full text-xs px-2"
+                                        title="Fecha Hasta"
+                                    />
+                                </div>
                             </div>
 
                             {/* Filter: Invited By */}
@@ -329,7 +357,7 @@ export default function PrivateUsersPage() {
                             </div>
                         </div>
                         {/* Clear Filters Button */}
-                        {(searchTerm || filterCountry || filterCity || filterDate || filterReferrer) && (
+                        {(searchTerm || filterCountry || filterCity || filterDateStart || filterDateEnd || filterReferrer) && (
                             <div className="flex justify-end pt-2">
                                 <Button
                                     variant="ghost"
@@ -339,7 +367,8 @@ export default function PrivateUsersPage() {
                                         setFilterCountry('');
                                         setFilterCity('');
                                         setFilterReferrer('');
-                                        setFilterDate(undefined);
+                                        setFilterDateStart(undefined);
+                                        setFilterDateEnd(undefined);
                                     }}
                                     className="text-muted-foreground hover:text-foreground h-8"
                                 >
