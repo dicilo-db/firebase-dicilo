@@ -268,7 +268,7 @@ export default function AuditoriaPage() {
                                             </div>
                                             {(ref.referrerCountry || ref.referrerCity) && (
                                                 <div className="text-xs text-muted-foreground mt-1">
-                                                    {ref.referrerCountry} {ref.referrerCity ? \`- \${ref.referrerCity}\` : ''}
+                                                    {ref.referrerCountry} {ref.referrerCity ? `- ${ref.referrerCity}` : ''}
                                                 </div>
                                             )}
                                         </TableCell>
