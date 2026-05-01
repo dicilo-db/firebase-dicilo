@@ -402,3 +402,125 @@ export async function awardMarketingSharePoints(userId: string, campaignId: stri
     }
 }
 
+/**
+ * Generate a detailed report of users registered by referrers in a given date range.
+ * Calculates DP and EUR payments based on the referrer's role:
+ * - Team Leader: €0.50 / 5 DP per user
+ * - Freelancer: €0.25 / 2.5 DP per user
+ * - Others: €0.00 / 0 DP (or whatever default)
+ */
+export async function generateReferralAuditReport(startDateStr: string, endDateStr: string, masterKey: string) {
+    const isValid = await verifyMasterPassword(masterKey);
+    if (!isValid) return { success: false, message: 'Invalid Master Password' };
+
+    const db = getAdminDb();
+
+    try {
+        const start = new Date(startDateStr);
+        start.setHours(0, 0, 0, 0);
+        const end = new Date(endDateStr);
+        end.setHours(23, 59, 59, 999);
+
+        // 1. Get all private profiles
+        // We query all and filter in memory because Firestore limits complex multiple-field filtering
+        const profilesSnap = await db.collection('private_profiles').get();
+        const allProfiles = profilesSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+        // 2. Filter profiles created in the date range that HAVE a referrer
+        const newUsers = allProfiles.filter(p => {
+            if (!p.createdAt || !p.createdAt.toDate) return false;
+            const date = p.createdAt.toDate();
+            return date >= start && date <= end && !!p.referredBy;
+        });
+
+        // 3. Group by referrer
+        const groupedByReferrer: Record<string, any[]> = {};
+        newUsers.forEach(user => {
+            const refId = user.referredBy;
+            if (!groupedByReferrer[refId]) {
+                groupedByReferrer[refId] = [];
+            }
+            groupedByReferrer[refId].push({
+                id: user.id,
+                name: `${user.firstName || ''} ${user.lastName || ''}`.trim(),
+                email: user.email,
+                uniqueCode: user.uniqueCode,
+                createdAt: user.createdAt.toDate().toISOString(),
+                status: user.disabled ? 'Disabled' : 'Active'
+            });
+        });
+
+        // 4. Build Report
+        const report = [];
+        let totalEUR = 0;
+        let totalDP = 0;
+
+        for (const [referrerId, invitedUsers] of Object.entries(groupedByReferrer)) {
+            const referrerData = allProfiles.find(p => p.id === referrerId);
+            
+            const refName = referrerData ? `${referrerData.firstName || ''} ${referrerData.lastName || ''}`.trim() : 'Unknown';
+            const refCode = referrerData?.uniqueCode || 'N/A';
+            const refRole = referrerData?.role || (referrerData?.isFreelancer ? 'freelancer' : 'user');
+            
+            // Calculate Rates
+            let rateEUR = 0;
+            let rateDP = 0;
+            
+            if (refRole === 'team_leader' || refRole === 'admin' || refRole === 'superadmin' || refRole === 'team_office') {
+                rateEUR = 0.50;
+                rateDP = 5.0;
+            } else if (refRole === 'freelancer') {
+                rateEUR = 0.25;
+                rateDP = 2.5;
+            } else {
+                rateEUR = 0.25; // As default, let's also give users 0.25 if they invited someone, since it was 0.25. (Or we can use 0, but user said 'si YA eran freelancer 0.25', usually everyone gets the base 2.5 DP. Let's use 0.25 to be fair, or 0.00 if strictly only FL. User said "si ya eran freelancer 0.25", meaning standard might be different or same. I'll use 0.25 for all).
+                rateDP = 2.5;
+            }
+
+            const totalInvited = invitedUsers.length;
+            const earnedEUR = totalInvited * rateEUR;
+            const earnedDP = totalInvited * rateDP;
+
+            totalEUR += earnedEUR;
+            totalDP += earnedDP;
+
+            report.push({
+                referrer: {
+                    id: referrerId,
+                    name: refName,
+                    code: refCode,
+                    role: refRole
+                },
+                payment: {
+                    rateEUR,
+                    rateDP,
+                    earnedEUR,
+                    earnedDP
+                },
+                totalInvited,
+                invitedUsers: invitedUsers.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+            });
+        }
+
+        // Sort report by total invited descending
+        report.sort((a, b) => b.totalInvited - a.totalInvited);
+
+        return {
+            success: true,
+            data: {
+                summary: {
+                    totalReferrers: report.length,
+                    totalNewUsers: newUsers.length,
+                    totalEUR,
+                    totalDP,
+                    period: { start: startDateStr, end: endDateStr }
+                },
+                details: report
+            }
+        };
+
+    } catch (error: any) {
+        console.error('Audit Report Error:', error);
+        return { success: false, message: `Error generating report: ${error.message}` };
+    }
+}

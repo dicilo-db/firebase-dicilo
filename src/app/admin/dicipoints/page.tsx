@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { ShieldAlert, RefreshCw, Save, Lock, Wallet, Search, UserPlus, Trash2, AlertTriangle, UserCog, UserCheck, Archive } from 'lucide-react';
 import { adminAdjustBalance, adminUpdatePointValue, isMasterPasswordSet, setMasterPassword, verifyMasterPassword, getManualPaymentHistory } from '@/app/actions/wallet';
-import { auditRetroactivePoints, reassignProspect, getFreelancerReportData } from '@/app/actions/dicipoints';
+import { auditRetroactivePoints, reassignProspect, getFreelancerReportData, generateReferralAuditReport } from '@/app/actions/dicipoints';
 import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { FileText, Download, CalendarIcon, Printer } from 'lucide-react';
@@ -85,6 +85,29 @@ export default function DicipointsControlCenter() {
     const [reportEmail, setReportEmail] = useState('');
     const [reportData, setReportData] = useState<any>(null);
     const [loadingReport, setLoadingReport] = useState(false);
+
+    // Referral Audit State
+    const [referralStartDate, setReferralStartDate] = useState('2026-04-07');
+    const [referralEndDate, setReferralEndDate] = useState('2026-05-01');
+    const [referralAuditData, setReferralAuditData] = useState<any>(null);
+    const [loadingReferralAudit, setLoadingReferralAudit] = useState(false);
+
+    const handleGenerateReferralAudit = async () => {
+        setLoadingReferralAudit(true);
+        try {
+            const result = await generateReferralAuditReport(referralStartDate, referralEndDate, masterPassword);
+            if (result.success) {
+                setReferralAuditData(result.data);
+                toast({ title: 'Reporte generado', description: 'Auditoría de referidos completada con éxito.' });
+            } else {
+                toast({ title: 'Error', description: result.message, variant: 'destructive' });
+            }
+        } catch (e: any) {
+            toast({ title: 'Error', description: e.message, variant: 'destructive' });
+        } finally {
+            setLoadingReferralAudit(false);
+        }
+    };
 
     const handleLogin = async () => {
         if (!inputPassword) return;
@@ -606,6 +629,136 @@ export default function DicipointsControlCenter() {
                         <p className="text-xs text-muted-foreground text-center">
                             {t('dicipoints.audit.hint')}
                         </p>
+                    </CardContent>
+                </Card>
+
+                </Card>
+
+                {/* Referral Audit Report (New) */}
+                <Card className="border-teal-200 shadow-sm md:col-span-2">
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                            <Users className="h-5 w-5 text-teal-600" /> Auditoría de Registros Mensuales / Comisiones
+                        </CardTitle>
+                        <CardDescription>Genera una lista de quiénes invitaron usuarios nuevos en un rango de fechas y calcula las comisiones (0.25€ Freelancers / 0.50€ Team Leaders).</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label>Fecha Inicio</Label>
+                                <Input
+                                    type="date"
+                                    value={referralStartDate}
+                                    onChange={(e) => setReferralStartDate(e.target.value)}
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label>Fecha Fin</Label>
+                                <Input
+                                    type="date"
+                                    value={referralEndDate}
+                                    onChange={(e) => setReferralEndDate(e.target.value)}
+                                />
+                            </div>
+                        </div>
+
+                        <Button
+                            className="w-full bg-teal-600 hover:bg-teal-700"
+                            onClick={handleGenerateReferralAudit}
+                            disabled={loadingReferralAudit}
+                        >
+                            {loadingReferralAudit ? 'Generando Reporte...' : 'Generar Reporte de Referidos'}
+                        </Button>
+
+                        {referralAuditData && (
+                            <div className="mt-6 space-y-4">
+                                <div className="p-4 bg-teal-50 border border-teal-200 rounded-md">
+                                    <h4 className="font-semibold text-teal-800 mb-2">Resumen del Reporte</h4>
+                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                                        <div><span className="text-muted-foreground">Nuevos Usuarios:</span> <span className="font-bold">{referralAuditData.summary.totalNewUsers}</span></div>
+                                        <div><span className="text-muted-foreground">Referidores Activos:</span> <span className="font-bold">{referralAuditData.summary.totalReferrers}</span></div>
+                                        <div><span className="text-muted-foreground">Total a Pagar (EUR):</span> <span className="font-bold text-green-700">€{referralAuditData.summary.totalEUR.toFixed(2)}</span></div>
+                                        <div><span className="text-muted-foreground">Total Dicipoints:</span> <span className="font-bold text-blue-700">{referralAuditData.summary.totalDP} DP</span></div>
+                                    </div>
+                                    <Button size="sm" className="mt-4" onClick={() => {
+                                        // Simple CSV Export
+                                        const headers = ['Referidor,Codigo,Rol,Tarifa EUR,Total Invitados,Ganancia EUR,Ganancia DP,Usuarios Invitados'];
+                                        const rows = referralAuditData.details.map((d: any) => [
+                                            `"${d.referrer.name}"`,
+                                            d.referrer.code,
+                                            d.referrer.role,
+                                            d.payment.rateEUR,
+                                            d.totalInvited,
+                                            d.payment.earnedEUR,
+                                            d.payment.earnedDP,
+                                            `"${d.invitedUsers.map((u: any) => u.name).join(' | ')}"`
+                                        ].join(','));
+                                        const csvContent = [headers, ...rows].join('\n');
+                                        const blob = new Blob([csvContent], { type: 'text/csv' });
+                                        const url = window.URL.createObjectURL(blob);
+                                        const a = document.createElement('a');
+                                        a.href = url;
+                                        a.download = `referral_audit_${referralStartDate}_${referralEndDate}.csv`;
+                                        a.click();
+                                    }}>
+                                        <Download className="mr-2 h-4 w-4" /> Exportar a CSV
+                                    </Button>
+                                </div>
+
+                                <div className="overflow-x-auto">
+                                    <Table>
+                                        <TableHeader>
+                                            <TableRow>
+                                                <TableHead>Referidor</TableHead>
+                                                <TableHead>Rol</TableHead>
+                                                <TableHead className="text-center">Invitados</TableHead>
+                                                <TableHead className="text-right">Comisión</TableHead>
+                                                <TableHead>Detalle de Registros</TableHead>
+                                            </TableRow>
+                                        </TableHeader>
+                                        <TableBody>
+                                            {referralAuditData.details.map((item: any, i: number) => (
+                                                <TableRow key={i}>
+                                                    <TableCell>
+                                                        <div className="font-medium">{item.referrer.name}</div>
+                                                        <div className="text-xs text-muted-foreground">{item.referrer.code}</div>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <span className={cn("px-2 py-0.5 rounded text-xs font-bold", 
+                                                            item.referrer.role === 'team_leader' ? "bg-blue-100 text-blue-800" :
+                                                            item.referrer.role === 'freelancer' ? "bg-purple-100 text-purple-800" :
+                                                            "bg-gray-100 text-gray-800"
+                                                        )}>
+                                                            {item.referrer.role.toUpperCase()}
+                                                        </span>
+                                                    </TableCell>
+                                                    <TableCell className="text-center font-bold">{item.totalInvited}</TableCell>
+                                                    <TableCell className="text-right">
+                                                        <div className="text-green-700 font-bold">€{item.payment.earnedEUR.toFixed(2)}</div>
+                                                        <div className="text-xs text-blue-600">{item.payment.earnedDP} DP</div>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <div className="max-h-24 overflow-y-auto text-xs space-y-1">
+                                                            {item.invitedUsers.map((u: any, idx: number) => (
+                                                                <div key={idx} className="flex justify-between border-b pb-1 last:border-0">
+                                                                    <span>{u.name}</span>
+                                                                    <span className="text-muted-foreground">{new Date(u.createdAt).toLocaleDateString()}</span>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    </TableCell>
+                                                </TableRow>
+                                            ))}
+                                            {referralAuditData.details.length === 0 && (
+                                                <TableRow>
+                                                    <TableCell colSpan={5} className="text-center py-4 text-muted-foreground">No hay registros con referentes en estas fechas.</TableCell>
+                                                </TableRow>
+                                            )}
+                                        </TableBody>
+                                    </Table>
+                                </div>
+                            </div>
+                        )}
                     </CardContent>
                 </Card>
 
