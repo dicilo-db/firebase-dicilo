@@ -69,7 +69,7 @@ exports.sendWeeklyAuditReport = (0, scheduler_1.onSchedule)({
     registrationsSnap.forEach((doc) => {
         const data = doc.data();
         totalNew++;
-        const isActive = data.isEmailVerified === true;
+        const isActive = data.isEmailVerified !== false;
         if (isActive) {
             totalActive++;
         }
@@ -78,7 +78,7 @@ exports.sendWeeklyAuditReport = (0, scheduler_1.onSchedule)({
         }
         const referrerId = data.referrerId || 'SIN_REFERIDOR';
         const referrerName = data.referrerName || 'Desconocido';
-        const isPaid = data.referralRewardPaid === true;
+        const isPaid = data.referralRewardPaid !== false;
         if (!referrersMap.has(referrerId)) {
             referrersMap.set(referrerId, { name: referrerName, active: 0, inactive: 0, paid: 0 });
         }
