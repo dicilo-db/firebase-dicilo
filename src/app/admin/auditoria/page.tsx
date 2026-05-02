@@ -34,6 +34,8 @@ export default function AuditoriaPage() {
     // Pagination
     const [currentPage, setCurrentPage] = useState(1);
 
+    const [isExportingPDF, setIsExportingPDF] = useState(false);
+
     useEffect(() => {
         getMLMAuditData().then(d => {
             setData(d);
@@ -45,8 +47,75 @@ export default function AuditoriaPage() {
         setExpandedRows(prev => ({ ...prev, [id]: !prev[id] }));
     };
 
-    const handlePrint = () => {
-        window.print();
+    const handleExportCSV = async () => {
+        try {
+            const Papa = await import('papaparse');
+            const csvData = filteredData.map(ref => ({
+                'Referidor ID': ref.referrerId,
+                'Referidor Nombre': ref.referrerName,
+                'Rol': ref.referrerRole,
+                'País': ref.referrerCountry || '',
+                'Ciudad': ref.referrerCity || '',
+                'Total Traídos': ref.totalBrought,
+                'Activos': ref.activeCount,
+                'Tarjeta Negra (DP)': ref.blackCardBalance,
+                'Tarjeta Verde (€)': ref.greenCardBalance.toFixed(2),
+            }));
+            
+            const csv = Papa.default.unparse(csvData);
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.setAttribute('href', url);
+            link.setAttribute('download', `auditoria_dicilo_${new Date().toISOString().split('T')[0]}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        } catch (error) {
+            console.error("Error exporting CSV:", error);
+            alert("Error al exportar CSV.");
+        }
+    };
+
+    const handleExportPDF = async () => {
+        setIsExportingPDF(true);
+        try {
+            const { default: jsPDF } = await import('jspdf');
+            const { default: autoTable } = await import('jspdf-autotable');
+            
+            const doc = new jsPDF('landscape');
+            
+            doc.setFontSize(16);
+            doc.text('Reporte de Auditoría Dicilo', 14, 15);
+            doc.setFontSize(10);
+            doc.text(`Generado el: ${new Date().toLocaleString()}`, 14, 22);
+            doc.text(`Total Registros: ${totalRegistros} | Activas: ${cuentasActivas} | Inactivas: ${cuentasInactivas}`, 14, 28);
+            
+            const tableColumn = ["Referidor", "Rol/Ubicación", "Traídos", "Activos", "Tarjeta Negra", "Tarjeta Verde"];
+            const tableRows = filteredData.map(ref => [
+                `${ref.referrerName}\n(${ref.referrerId})`,
+                `${ref.referrerRole.toUpperCase()}\n${ref.referrerCountry || ''} ${ref.referrerCity || ''}`,
+                ref.totalBrought.toString(),
+                ref.activeCount.toString(),
+                `${ref.blackCardBalance} DP`,
+                `€${ref.greenCardBalance.toFixed(2)}`
+            ]);
+
+            autoTable(doc, {
+                head: [tableColumn],
+                body: tableRows,
+                startY: 34,
+                styles: { fontSize: 8 },
+                headStyles: { fillColor: [41, 128, 185] },
+            });
+            
+            doc.save(`auditoria_dicilo_${new Date().toISOString().split('T')[0]}.pdf`);
+        } catch (error) {
+            console.error("Error generating PDF:", error);
+            alert("Hubo un error al generar el PDF. Por favor, intente nuevamente.");
+        } finally {
+            setIsExportingPDF(false);
+        }
     };
 
     // Derived State
@@ -112,9 +181,13 @@ export default function AuditoriaPage() {
                     <Button variant="outline" onClick={() => window.history.back()}>
                         Volver al Panel
                     </Button>
-                    <Button onClick={handlePrint} className="bg-blue-600 hover:bg-blue-700">
+                    <Button variant="outline" onClick={handleExportCSV} className="border-green-600 text-green-600 hover:bg-green-50">
                         <Download className="mr-2 h-4 w-4" />
-                        Descargar PDF
+                        Exportar CSV
+                    </Button>
+                    <Button onClick={handleExportPDF} disabled={isExportingPDF} className="bg-blue-600 hover:bg-blue-700">
+                        <Download className="mr-2 h-4 w-4" />
+                        {isExportingPDF ? "Generando..." : "Descargar PDF"}
                     </Button>
                 </div>
             </div>
