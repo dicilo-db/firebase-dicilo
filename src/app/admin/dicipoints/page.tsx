@@ -377,60 +377,83 @@ export default function DicipointsControlCenter() {
         if (!reportData) return;
 
         try {
-            const doc = new jsPDF();
+            const printWindow = window.open('', '_blank');
+            if (printWindow) {
+                const tableRowsHTML = reportData.transactions.map((trx: any) => `
+                    <tr>
+                        <td>${new Date(trx.timestamp).toLocaleDateString()}</td>
+                        <td>${trx.type}</td>
+                        <td>${trx.description}</td>
+                        <td>${trx.amount > 0 ? '+' : ''}${trx.amount}</td>
+                    </tr>
+                `).join('');
 
-            // Header
-            doc.setFontSize(20);
-            doc.setTextColor(40, 40, 40);
-            doc.text("Dicilo.net - Official Report", 14, 22);
+                printWindow.document.write(`
+                    <html>
+                        <head>
+                            <title>Transaction_Report_${reportData.user.uniqueCode}</title>
+                            <style>
+                                body { font-family: 'Helvetica', 'Arial', sans-serif; padding: 30px; color: #333; }
+                                .header { background-color: #3b82f6; color: white; padding: 20px; font-size: 24px; font-weight: bold; border-radius: 8px; margin-bottom: 20px; }
+                                .info-grid { display: flex; justify-content: space-between; margin-bottom: 30px; background-color: #f8fafc; padding: 20px; border-radius: 8px; }
+                                table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 14px; }
+                                th, td { border: 1px solid #e2e8f0; padding: 12px; text-align: left; }
+                                th { background-color: #f1f5f9; font-weight: bold; }
+                                .footer { margin-top: 50px; font-size: 12px; color: #64748b; border-top: 1px solid #e2e8f0; padding-top: 20px; }
+                            </style>
+                        </head>
+                        <body>
+                            <div class="header">Dicilo.net - Official Report</div>
+                            <p><strong>Generated:</strong> ${new Date(reportData.generatedAt).toLocaleString()}</p>
+                            
+                            <div class="info-grid">
+                                <div>
+                                    <h3 style="margin-top: 0;">Freelancer Details:</h3>
+                                    <p><strong>Name:</strong> ${reportData.user.name}</p>
+                                    <p><strong>Code:</strong> ${reportData.user.uniqueCode}</p>
+                                    <p><strong>Email:</strong> ${reportData.user.email}</p>
+                                </div>
+                                <div>
+                                    <h3 style="margin-top: 0;">Wallet Summary:</h3>
+                                    <p><strong>Current Balance:</strong> ${reportData.wallet.balance} DP</p>
+                                    <p><strong>Lifetime Earned:</strong> ${reportData.wallet.totalEarned} DP</p>
+                                </div>
+                            </div>
 
-            doc.setFontSize(10);
-            doc.text(`Generated: ${new Date(reportData.generatedAt).toLocaleString()}`, 14, 30);
-
-            // Freelancer Info
-            doc.setFontSize(12);
-            doc.setFont("helvetica", "bold");
-            doc.text("Freelancer Details:", 14, 45);
-            doc.setFont("helvetica", "normal");
-            doc.text(`Name: ${reportData.user.name}`, 14, 52);
-            doc.text(`Code: ${reportData.user.uniqueCode}`, 14, 59);
-            doc.text(`Email: ${reportData.user.email}`, 14, 66);
-
-            // Wallet Summary
-            doc.setFont("helvetica", "bold");
-            doc.text("Wallet Summary:", 120, 45);
-            doc.setFont("helvetica", "normal");
-            doc.text(`Current Balance: ${reportData.wallet.balance} DP`, 120, 52);
-            doc.text(`Lifetime Earned: ${reportData.wallet.totalEarned} DP`, 120, 59);
-
-            // Table
-            const tableColumn = ["Date", "Type", "Description", "Amount (DP)"];
-            const tableRows = reportData.transactions.map((trx: any) => [
-                new Date(trx.timestamp).toLocaleDateString(),
-                trx.type,
-                trx.description,
-                trx.amount > 0 ? `+${trx.amount}` : `${trx.amount}`
-            ]);
-
-            // @ts-ignore
-            autoTable(doc, {
-                head: [tableColumn],
-                body: tableRows,
-                startY: 75,
-                theme: 'grid',
-                styles: { fontSize: 8 },
-                headStyles: { fillColor: [66, 66, 66] }
-            });
-
-            // Footer
-            const finalY = (doc as any).lastAutoTable.finalY + 10;
-            doc.setFontSize(8);
-            doc.setTextColor(100);
-            doc.text("This document is an official record from the Dicilo Dicipoints Central System.", 14, finalY);
-
-            doc.save(`Transaction_Report_${reportData.user.uniqueCode}.pdf`);
-
-        } catch (e) {
+                            <h3 style="margin-bottom: 10px;">Transaction History</h3>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Type</th>
+                                        <th>Description</th>
+                                        <th>Amount (DP)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${tableRowsHTML}
+                                </tbody>
+                            </table>
+                            
+                            <div class="footer">
+                                This document is an official record from the Dicilo Dicipoints Central System.
+                            </div>
+                            <script>
+                                window.onload = function() { 
+                                    window.print(); 
+                                };
+                                window.onafterprint = function() {
+                                    window.close();
+                                };
+                            </script>
+                        </body>
+                    </html>
+                `);
+                printWindow.document.close();
+            } else {
+                alert("Please enable pop-ups to print the report.");
+            }
+        } catch (e: any) {
             console.error(e);
             toast({ title: "Error generating PDF", variant: "destructive" });
         }
