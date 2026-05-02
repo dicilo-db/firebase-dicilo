@@ -519,7 +519,7 @@ export async function adminProcessManualPayment(
             success: true,
             message: 'Transaction processed successfully',
             data: {
-                userName: userData?.name || 'Unknown',
+                userName: userData?.name || (userData?.firstName ? `${userData.firstName} ${userData.lastName || ''}`.trim() : 'Unknown'),
                 userEmail: userData?.email,
                 userCode: userData?.uniqueCode || 'N/A',
                 timestamp: timestamp.toISOString()
