@@ -450,6 +450,17 @@ export async function generateReferralAuditReport(startDateStr: string, endDateS
             });
         });
 
+        // 3.5 Fetch all wallets for current balances
+        const walletsSnap = await db.collection('wallets').get();
+        const walletsMap = new Map<string, { balance: number, eurBalance: number }>();
+        walletsSnap.docs.forEach(doc => {
+            const d = doc.data();
+            walletsMap.set(doc.id, {
+                balance: d.balance || 0,
+                eurBalance: d.eurBalance || 0
+            });
+        });
+
         // 4. Build Report
         const report = [];
         let totalEUR = 0;
@@ -484,12 +495,18 @@ export async function generateReferralAuditReport(startDateStr: string, endDateS
             totalEUR += earnedEUR;
             totalDP += earnedDP;
 
+            const rWallet = walletsMap.get(referrerId) || { balance: 0, eurBalance: 0 };
+
             report.push({
                 referrer: {
                     id: referrerId,
                     name: refName,
                     code: refCode,
-                    role: refRole
+                    role: refRole,
+                    wallet: {
+                        balance: rWallet.balance,
+                        eurBalance: rWallet.eurBalance
+                    }
                 },
                 payment: {
                     rateEUR,

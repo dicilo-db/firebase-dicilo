@@ -802,7 +802,8 @@ export default function DicipointsControlCenter() {
                                                 <TableHead>Referidor</TableHead>
                                                 <TableHead>Rol</TableHead>
                                                 <TableHead className="text-center">Invitados</TableHead>
-                                                <TableHead className="text-right">Comisión</TableHead>
+                                                <TableHead className="text-right">Comisión Periodo</TableHead>
+                                                <TableHead className="text-right">Balance Actual</TableHead>
                                                 <TableHead>Detalle de Registros</TableHead>
                                             </TableRow>
                                         </TableHeader>
@@ -827,6 +828,10 @@ export default function DicipointsControlCenter() {
                                                         <div className="text-green-700 font-bold">€{item.payment.earnedEUR.toFixed(2)}</div>
                                                         <div className="text-xs text-blue-600">{item.payment.earnedDP} DP</div>
                                                     </TableCell>
+                                                    <TableCell className="text-right">
+                                                        <div className="text-green-700 font-bold">€{(item.referrer.wallet?.eurBalance || 0).toFixed(2)}</div>
+                                                        <div className="text-xs text-blue-600">{(item.referrer.wallet?.balance || 0)} DP</div>
+                                                    </TableCell>
                                                     <TableCell>
                                                         <div className="max-h-24 overflow-y-auto text-xs space-y-1">
                                                             {item.invitedUsers.map((u: any, idx: number) => (
@@ -841,7 +846,7 @@ export default function DicipointsControlCenter() {
                                             ))}
                                             {referralAuditData.details.length === 0 && (
                                                 <TableRow>
-                                                    <TableCell colSpan={5} className="text-center py-4 text-muted-foreground">No hay registros con referentes en estas fechas.</TableCell>
+                                                    <TableCell colSpan={6} className="text-center py-4 text-muted-foreground">No hay registros con referentes en estas fechas.</TableCell>
                                                 </TableRow>
                                             )}
                                         </TableBody>
@@ -1088,7 +1093,7 @@ export default function DicipointsControlCenter() {
                                 const headers = ["Fecha", "UID", "Tipo", "Monto", "Descripcion"];
                                 const rows = paymentHistory.map(trx => [
                                     new Date(trx.timestamp).toLocaleString(),
-                                    trx.userId,
+                                    trx.userCode || trx.userId,
                                     trx.type === 'MANUAL_CASH' ? 'CASH' : 'POINTS',
                                     `${trx.amount > 0 ? '+' : ''}${trx.amount} ${trx.currency}`,
                                     trx.description
@@ -1112,7 +1117,7 @@ export default function DicipointsControlCenter() {
                                         const tableRowsHTML = paymentHistory.map(trx => `
                                             <tr>
                                                 <td>${new Date(trx.timestamp).toLocaleString()}</td>
-                                                <td>${trx.userId}</td>
+                                                <td>${trx.userCode || trx.userId}</td>
                                                 <td>${trx.type === 'MANUAL_CASH' ? 'CASH' : 'POINTS'}</td>
                                                 <td>${trx.amount > 0 ? '+' : ''}${trx.amount} ${trx.currency}</td>
                                                 <td>${trx.description}</td>
@@ -1205,7 +1210,7 @@ export default function DicipointsControlCenter() {
                                                         <TableRow key={trx.id}>
                                                             <TableCell className="text-muted-foreground text-xs">{(historyPage - 1) * itemsPerPage + idx + 1}</TableCell>
                                                             <TableCell className="font-mono text-xs text-nowrap">{new Date(trx.timestamp).toLocaleDateString()} {new Date(trx.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</TableCell>
-                                                            <TableCell className="font-mono text-xs max-w-[100px] truncate" title={trx.userId}>{trx.userId}</TableCell>
+                                                            <TableCell className="font-mono text-xs max-w-[100px] truncate" title={trx.userCode || trx.userId}>{trx.userCode || trx.userId}</TableCell>
                                                             <TableCell>
                                                                 <span className={cn("px-2 py-1 rounded text-xs font-medium",
                                                                     trx.type === 'MANUAL_CASH' ? "bg-emerald-100 text-emerald-800" : "bg-purple-100 text-purple-800"

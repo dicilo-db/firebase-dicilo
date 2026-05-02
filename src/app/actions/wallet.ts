@@ -545,7 +545,7 @@ export async function getManualPaymentHistory() {
             .where('type', 'in', manualTypes)
             .get();
 
-        const history = snapshot.docs
+        const rawHistory = snapshot.docs
             .map(doc => {
                 const data = doc.data();
                 return {
@@ -562,6 +562,25 @@ export async function getManualPaymentHistory() {
             // Sort descending in memory
             .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
             .slice(0, 1000);
+
+        const userIds = [...new Set(rawHistory.map(h => h.userId))];
+        const userCodes = new Map<string, string>();
+        
+        // Fetch profiles in chunks of 30 to avoid Firestore limits
+        for (let i = 0; i < userIds.length; i += 30) {
+            const chunk = userIds.slice(i, i + 30);
+            if (chunk.length > 0) {
+                const profiles = await db.collection('private_profiles').where(admin.firestore.FieldPath.documentId(), 'in', chunk).get();
+                profiles.docs.forEach(doc => {
+                    userCodes.set(doc.id, doc.data().uniqueCode || doc.id);
+                });
+            }
+        }
+
+        const history = rawHistory.map(h => ({
+            ...h,
+            userCode: userCodes.get(h.userId) || h.userId
+        }));
 
         return { success: true, data: history };
     } catch (error: any) {
