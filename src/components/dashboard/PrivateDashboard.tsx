@@ -68,7 +68,7 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
     const [feedbackRating, setFeedbackRating] = useState(0);
     const [isSubmittingFeedback, setIsSubmittingFeedback] = useState(false);
 
-    const [walletData, setWalletData] = useState<{ balance: number, valueInEur: number, pointValue: number } | null>(initialWalletData || null);
+    const [walletData, setWalletData] = useState<{ balance: number, valueInEur: number, valueInUsd?: number, pointValue: number } | null>(initialWalletData || null);
     const [registerUrl, setRegisterUrl] = useState('');
 
     // Fetch wallet data if not provided (fallback)
@@ -398,6 +398,11 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                                                 <div className="font-bold text-2xl drop-shadow-md">
                                                     € {walletData ? walletData.valueInEur.toFixed(2) : <Skeleton className="h-8 w-20 inline-block bg-emerald-400/30" />}
                                                 </div>
+                                                {walletData?.valueInUsd ? (
+                                                    <div className="font-bold text-lg text-emerald-200 drop-shadow-md mt-1">
+                                                        $ {walletData.valueInUsd.toFixed(2)}
+                                                    </div>
+                                                ) : null}
                                             </div>
                                         </div>
 

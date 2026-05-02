@@ -51,6 +51,7 @@ export async function getWalletData(uid: string) {
 
     // EUR Balance is now separate from DP, earned via commissions
     const valueInEur = walletData?.eurBalance || 0;
+    const valueInUsd = walletData?.usdBalance || 0;
 
     // Get History (Limit 20)
     let history: any[] = [];
@@ -75,6 +76,7 @@ export async function getWalletData(uid: string) {
         balance,
         pointValue,
         valueInEur,
+        valueInUsd,
         currency: 'EUR',
         history,
         totalEarned: walletData?.totalEarned || 0
