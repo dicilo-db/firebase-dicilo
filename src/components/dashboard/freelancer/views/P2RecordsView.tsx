@@ -10,6 +10,8 @@ import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { sendRecordToClient } from '@/app/actions/freelance-records';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { ChevronDown } from 'lucide-react';
 
 export function P2RecordsView() {
     const { user } = useAuth();
@@ -41,11 +43,11 @@ export function P2RecordsView() {
         loadRecords();
     }, [user]);
 
-    const handleClaimPackage = async () => {
+    const handleClaimPackage = async (languageCode?: string) => {
         if (!user) return;
         setIsClaiming(true);
         try {
-            const res = await claimRecordPackage(user.uid);
+            const res = await claimRecordPackage(user.uid, languageCode);
             if (res.success) {
                 toast({ title: 'Éxito', description: res.message });
                 loadRecords();
@@ -92,17 +94,35 @@ export function P2RecordsView() {
                 <div>
                     <h1 className="text-2xl font-bold">Gestión de Registros (P2)</h1>
                     <p className="text-muted-foreground mt-1">
-                        Solicita paquetes de empresas para completar sus datos y enviarlos a validación.
+                        Solicita paquetes de empresas junto al idioma que dominas para completar sus datos y enviarlos a validación.
                     </p>
                 </div>
-                <Button 
-                    onClick={handleClaimPackage} 
-                    disabled={isClaiming || hasPendingRecords}
-                    className="gap-2"
-                >
-                    {isClaiming ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
-                    Solicitar Paquete (50)
-                </Button>
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button 
+                            disabled={isClaiming || hasPendingRecords}
+                            className="gap-2"
+                        >
+                            {isClaiming ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
+                            Solicitar Paquete (50)
+                            <ChevronDown className="h-4 w-4 ml-1" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => handleClaimPackage('es')}>
+                            Español
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleClaimPackage('de')}>
+                            Alemán
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleClaimPackage('en')}>
+                            Inglés
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleClaimPackage('pt')}>
+                            Portugués
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </div>
 
             {hasPendingRecords && (

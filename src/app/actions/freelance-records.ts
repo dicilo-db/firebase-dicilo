@@ -32,7 +32,7 @@ export async function checkPendingRecords(uid: string): Promise<boolean> {
     return !snap.empty;
 }
 
-export async function claimRecordPackage(uid: string): Promise<{ success: boolean; message: string; count?: number }> {
+export async function claimRecordPackage(uid: string, languageCode?: string): Promise<{ success: boolean; message: string; count?: number }> {
     try {
         const db = getAdminDb();
         
@@ -44,9 +44,23 @@ export async function claimRecordPackage(uid: string): Promise<{ success: boolea
 
         const count = await db.runTransaction(async (transaction) => {
             // Find available records
-            const query = db.collection('businesses')
-                .where('assignmentStatus', '==', 'available')
-                .limit(50);
+            let query = db.collection('businesses')
+                .where('assignmentStatus', '==', 'available');
+
+            if (languageCode) {
+                let mappedCountries: string[] = [];
+                switch (languageCode) {
+                    case 'es': mappedCountries = ['Spain', 'Colombia', 'México', 'Argentina', 'Chile', 'Ecuador', 'Peru', 'España', 'Venezuela']; break;
+                    case 'de': mappedCountries = ['Deutschland', 'Alemania', 'Austria', 'Switzerland', 'Suiza']; break;
+                    case 'en': mappedCountries = ['United States', 'United Kingdom', 'Canada', 'Australia', 'USA', 'Inglaterra']; break;
+                    case 'pt': mappedCountries = ['Brazil', 'Brasil', 'Portugal']; break;
+                }
+                if (mappedCountries.length > 0) {
+                    query = query.where('country', 'in', mappedCountries);
+                }
+            }
+
+            query = query.limit(50);
                 
             const snapshot = await transaction.get(query);
             
