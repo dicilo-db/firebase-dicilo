@@ -19,9 +19,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { adminProcessManualPayment } from '@/app/actions/wallet';
-import { jsPDF } from 'jspdf';
-import autoTable from 'jspdf-autotable';
-
 export default function DicipointsControlCenter() {
     const { toast } = useToast();
     const { t } = useTranslation('admin');
@@ -240,81 +237,52 @@ export default function DicipointsControlCenter() {
         if (!paymentResult) return;
 
         try {
-            const doc = new jsPDF();
-
-            // Header
-            doc.setFillColor(34, 197, 94); // Green Header
-            doc.rect(0, 0, 210, 40, 'F');
-            doc.setTextColor(255, 255, 255);
-            doc.setFontSize(22);
-            doc.text("Dicilo Network - Recibo de Pago", 14, 25);
-
-            // Transaction Info
-            doc.setTextColor(0, 0, 0);
-            doc.setFontSize(10);
-            const yStart = 50;
-
-            doc.text(`Fecha de Transacción: ${new Date(paymentResult.timestamp).toLocaleString()}`, 14, yStart);
-            doc.text(`Referencia interna: ${paymentResult.referenceNote || 'N/A'}`, 14, yStart + 8);
-
-            // User Info Box
-            doc.setDrawColor(200);
-            doc.rect(14, yStart + 15, 180, 35);
-            doc.setFontSize(12);
-            doc.setFont("helvetica", "bold");
-            doc.text("Detalles del Usuario:", 20, yStart + 25);
-            doc.setFont("helvetica", "normal");
-            doc.text(`Nombre: ${paymentResult.userName}`, 20, yStart + 35);
-            doc.text(`Email: ${paymentResult.userEmail} | UID: ${targetUid}`, 20, yStart + 42);
-
-            // Payment Details Table
-            let currentY = yStart + 60;
-
-            if (paymentResult.pointsAmount !== 0) {
-                doc.setFillColor(240, 240, 240);
-                doc.rect(14, currentY, 180, 20, 'F');
-                doc.setFont("helvetica", "bold");
-                doc.text("DiciPoints (DP)", 20, currentY + 8);
-                doc.setFont("helvetica", "normal");
-                doc.text(`Cantidad: ${paymentResult.pointsAmount} DP`, 20, currentY + 16);
-                doc.text(`Motivo: ${paymentResult.pointsReason}`, 100, currentY + 16);
-                currentY += 25;
+            const printWindow = window.open('', '_blank');
+            if (printWindow) {
+                printWindow.document.write(`
+                    <html>
+                        <head>
+                            <title>Recibo_Dicilo_${new Date().getTime()}</title>
+                            <style>
+                                body { font-family: 'Helvetica', 'Arial', sans-serif; padding: 30px; }
+                                .header { background-color: #22c55e; color: white; padding: 20px; font-size: 24px; font-weight: bold; margin-bottom: 30px; border-radius: 8px; }
+                                .content { font-size: 14px; color: #333; line-height: 1.8; }
+                                .box { background-color: #f3f4f6; padding: 15px; margin-top: 15px; border-radius: 6px; }
+                                .footer { margin-top: 50px; font-size: 11px; color: #777; border-top: 1px solid #ddd; padding-top: 15px; }
+                            </style>
+                        </head>
+                        <body>
+                            <div class="header">Dicilo Network - Recibo de Pago</div>
+                            <div class="content">
+                                <h2>Detalles de la Transacción</h2>
+                                <p><strong>Fecha de Emisión:</strong> ${new Date(paymentResult.timestamp).toLocaleString()}</p>
+                                <p><strong>Nombre del Usuario:</strong> ${paymentResult.userName}</p>
+                                <p><strong>Email del Usuario:</strong> ${paymentResult.userEmail} | <strong>UID:</strong> ${targetUid}</p>
+                                
+                                ${paymentResult.pointsAmount ? `<div class="box"><strong>Inyección de Puntos:</strong> +${paymentResult.pointsAmount} DP<br><strong>Motivo:</strong> ${paymentResult.pointsReason}</div>` : ''}
+                                ${paymentResult.cashAmount ? `<div class="box"><strong>Pago Efectivo / Tarjeta (EUR):</strong> €${paymentResult.cashAmount}<br><strong>Motivo:</strong> ${paymentResult.cashReason}</div>` : ''}
+                                ${paymentResult.usdAmount ? `<div class="box"><strong>Pago Efectivo / Tarjeta (USD):</strong> $${paymentResult.usdAmount}<br><strong>Motivo:</strong> ${paymentResult.usdReason}</div>` : ''}
+                            </div>
+                            <div class="footer">
+                                Este documento sirve como comprobante de la transacción realizada en Dicilo Network.<br>
+                                Emitido por: Admin / ${new Date().toISOString()}
+                            </div>
+                            <script>
+                                window.onload = function() { 
+                                    window.print(); 
+                                    setTimeout(function() { window.close(); }, 500);
+                                };
+                            </script>
+                        </body>
+                    </html>
+                `);
+                printWindow.document.close();
+            } else {
+                alert("Por favor habilita las ventanas emergentes (pop-ups) para imprimir el recibo.");
             }
-
-            if (paymentResult.cashAmount !== 0) {
-                doc.setFillColor(240, 240, 240);
-                doc.rect(14, currentY, 180, 20, 'F');
-                doc.setFont("helvetica", "bold");
-                doc.text("Pago en Efectivo / Tarjeta (EUR)", 20, currentY + 8);
-                doc.setFont("helvetica", "normal");
-                doc.text(`Cantidad: €${paymentResult.cashAmount}`, 20, currentY + 16);
-                doc.text(`Motivo: ${paymentResult.cashReason}`, 100, currentY + 16);
-                currentY += 25;
-            }
-
-            if (paymentResult.usdAmount && paymentResult.usdAmount !== 0) {
-                doc.setFillColor(240, 240, 240);
-                doc.rect(14, currentY, 180, 20, 'F');
-                doc.setFont("helvetica", "bold");
-                doc.text("Pago en Efectivo / Tarjeta (USD)", 20, currentY + 8);
-                doc.setFont("helvetica", "normal");
-                doc.text(`Cantidad: $${paymentResult.usdAmount}`, 20, currentY + 16);
-                doc.text(`Motivo: ${paymentResult.usdReason}`, 100, currentY + 16);
-                currentY += 25;
-            }
-
-            // Footer
-            doc.setFontSize(9);
-            doc.setTextColor(100);
-            doc.text("Este documento sirve como comprobante de la transacción realizada en Dicilo Network.", 14, 280);
-            doc.text(`Emitido por: Admin / ${new Date().toISOString()}`, 14, 285);
-
-            doc.save(`Recibo_Dicilo_${new Date().getTime()}.pdf`);
-
         } catch (e: any) {
             console.error(e);
-            alert("Error PDF: " + (e.message || String(e)));
-            toast({ title: "Error PDF", description: e.message || "No se pudo generar el recibo.", variant: "destructive" });
+            toast({ title: "Error", description: "Fallo al abrir la ventana de impresión.", variant: "destructive" });
         }
     };
 
@@ -726,39 +694,70 @@ export default function DicipointsControlCenter() {
 
                                         <Button size="sm" variant="outline" className="border-teal-600 text-teal-700 hover:bg-teal-50" onClick={() => {
                                             try {
-                                                const doc = new jsPDF();
-                                                doc.setFontSize(18);
-                                                doc.text('Auditoría de Comisiones por Referidos', 14, 22);
-                                                doc.setFontSize(11);
-                                                doc.text(`Periodo: ${referralStartDate} al ${referralEndDate}`, 14, 30);
-                                                doc.text(`Total Nuevos Usuarios: ${referralAuditData.summary.totalNewUsers}`, 14, 36);
-                                                doc.text(`Total a Pagar (EUR): €${referralAuditData.summary.totalEUR.toFixed(2)}`, 14, 42);
-                                                doc.text(`Total Dicipoints: ${referralAuditData.summary.totalDP} DP`, 14, 48);
+                                                const printWindow = window.open('', '_blank');
+                                                if (printWindow) {
+                                                    const tableRowsHTML = referralAuditData.details.map((d: any) => `
+                                                        <tr>
+                                                            <td>${d.referrer.name}</td>
+                                                            <td>${d.referrer.code}</td>
+                                                            <td>${d.referrer.role.toUpperCase()}</td>
+                                                            <td style="text-align: center;">${d.totalInvited}</td>
+                                                            <td>€${d.payment.earnedEUR.toFixed(2)}</td>
+                                                            <td>${d.payment.earnedDP} DP</td>
+                                                        </tr>
+                                                    `).join('');
 
-                                                const tableColumn = ["Referidor", "Código", "Rol", "Invitados", "Comisión EUR", "Comisión DP"];
-                                                const tableRows: any[] = [];
-
-                                                referralAuditData.details.forEach((d: any) => {
-                                                    tableRows.push([
-                                                        d.referrer.name,
-                                                        d.referrer.code,
-                                                        d.referrer.role.toUpperCase(),
-                                                        d.totalInvited,
-                                                        `€${d.payment.earnedEUR.toFixed(2)}`,
-                                                        `${d.payment.earnedDP} DP`
-                                                    ]);
-                                                });
-
-                                                autoTable(doc, {
-                                                    head: [tableColumn],
-                                                    body: tableRows,
-                                                    startY: 55,
-                                                    theme: 'grid',
-                                                    styles: { fontSize: 9 },
-                                                    headStyles: { fillColor: [13, 148, 136] }, // teal-600
-                                                });
-
-                                                doc.save(`referral_audit_${referralStartDate}_${referralEndDate}.pdf`);
+                                                    printWindow.document.write(`
+                                                        <html>
+                                                            <head>
+                                                                <title>Auditoria_Referidos_${referralStartDate}_${referralEndDate}</title>
+                                                                <style>
+                                                                    body { font-family: 'Helvetica', 'Arial', sans-serif; padding: 20px; }
+                                                                    .header { background-color: #0f766e; color: white; padding: 15px; font-size: 20px; font-weight: bold; margin-bottom: 20px; border-radius: 5px; }
+                                                                    table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 12px; }
+                                                                    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                                                                    th { background-color: #f2f2f2; color: #333; }
+                                                                    .summary { margin-bottom: 20px; line-height: 1.6; }
+                                                                    .footer { margin-top: 30px; font-size: 10px; color: #666; }
+                                                                </style>
+                                                            </head>
+                                                            <body>
+                                                                <div class="header">Dicilo Network - Auditoría de Comisiones por Referidos</div>
+                                                                <div class="summary">
+                                                                    <p><strong>Periodo:</strong> ${referralStartDate} al ${referralEndDate}</p>
+                                                                    <p><strong>Total Nuevos Usuarios:</strong> ${referralAuditData.summary.totalNewUsers}</p>
+                                                                    <p><strong>Total a Pagar (EUR):</strong> €${referralAuditData.summary.totalEUR.toFixed(2)}</p>
+                                                                    <p><strong>Total Dicipoints:</strong> ${referralAuditData.summary.totalDP} DP</p>
+                                                                </div>
+                                                                <table>
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th>Referidor</th>
+                                                                            <th>Código</th>
+                                                                            <th>Rol</th>
+                                                                            <th style="text-align: center;">Invitados</th>
+                                                                            <th>Comisión EUR</th>
+                                                                            <th>Comisión DP</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        ${tableRowsHTML}
+                                                                    </tbody>
+                                                                </table>
+                                                                <div class="footer">Generado automáticamente el ${new Date().toLocaleString()}</div>
+                                                                <script>
+                                                                    window.onload = function() { 
+                                                                        window.print(); 
+                                                                        setTimeout(function() { window.close(); }, 500);
+                                                                    };
+                                                                </script>
+                                                            </body>
+                                                        </html>
+                                                    `);
+                                                    printWindow.document.close();
+                                                } else {
+                                                    alert("Por favor habilita las ventanas emergentes (pop-ups) para imprimir la auditoría.");
+                                                }
                                             } catch (e: any) {
                                                 console.error(e);
                                                 toast({ title: "Error PDF", description: e.message || "No se pudo generar el PDF", variant: "destructive" });
@@ -1079,37 +1078,64 @@ export default function DicipointsControlCenter() {
                             }}>
                                 <Download className="mr-2 h-4 w-4" /> Exportar a CSV
                             </Button>
-                            <Button size="sm" variant="outline" className="border-cyan-600 text-cyan-700 hover:bg-cyan-50" onClick={() => {
+                                <Button size="sm" variant="outline" className="border-cyan-600 text-cyan-700 hover:bg-cyan-50" onClick={() => {
                                 try {
-                                    const doc = new jsPDF();
-                                    doc.setFontSize(18);
-                                    doc.text('Historial de Caja Registradora', 14, 22);
-                                    doc.setFontSize(11);
-                                    doc.text(`Generado: ${new Date().toLocaleString()}`, 14, 30);
+                                    const printWindow = window.open('', '_blank');
+                                    if (printWindow) {
+                                        const tableRowsHTML = paymentHistory.map(trx => `
+                                            <tr>
+                                                <td>${new Date(trx.timestamp).toLocaleString()}</td>
+                                                <td>${trx.userId}</td>
+                                                <td>${trx.type === 'MANUAL_CASH' ? 'CASH' : 'POINTS'}</td>
+                                                <td>${trx.amount > 0 ? '+' : ''}${trx.amount} ${trx.currency}</td>
+                                                <td>${trx.description}</td>
+                                            </tr>
+                                        `).join('');
 
-                                    const tableColumn = ["Fecha", "UID", "Tipo", "Monto", "Descripción"];
-                                    const tableRows: any[] = [];
-
-                                    paymentHistory.forEach((trx) => {
-                                        tableRows.push([
-                                            new Date(trx.timestamp).toLocaleString(),
-                                            trx.userId,
-                                            trx.type === 'MANUAL_CASH' ? 'CASH' : 'POINTS',
-                                            `${trx.amount > 0 ? '+' : ''}${trx.amount} ${trx.currency}`,
-                                            trx.description
-                                        ]);
-                                    });
-
-                                    autoTable(doc, {
-                                        head: [tableColumn],
-                                        body: tableRows,
-                                        startY: 35,
-                                        theme: 'grid',
-                                        styles: { fontSize: 8 },
-                                        headStyles: { fillColor: [8, 145, 178] }, // cyan-600
-                                    });
-
-                                    doc.save(`historial_caja_${new Date().getTime()}.pdf`);
+                                        printWindow.document.write(`
+                                            <html>
+                                                <head>
+                                                    <title>Historial_Caja_${new Date().getTime()}</title>
+                                                    <style>
+                                                        body { font-family: 'Helvetica', 'Arial', sans-serif; padding: 20px; }
+                                                        .header { background-color: #0891b2; color: white; padding: 15px; font-size: 20px; font-weight: bold; margin-bottom: 20px; border-radius: 5px; }
+                                                        table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 12px; }
+                                                        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                                                        th { background-color: #f2f2f2; color: #333; }
+                                                        .footer { margin-top: 30px; font-size: 10px; color: #666; }
+                                                    </style>
+                                                </head>
+                                                <body>
+                                                    <div class="header">Dicilo Network - Historial de Caja Registradora</div>
+                                                    <p><strong>Generado el:</strong> ${new Date().toLocaleString()}</p>
+                                                    <table>
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Fecha</th>
+                                                                <th>UID</th>
+                                                                <th>Tipo</th>
+                                                                <th>Monto</th>
+                                                                <th>Descripción</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            ${tableRowsHTML}
+                                                        </tbody>
+                                                    </table>
+                                                    <div class="footer">Este documento sirve como comprobante de transacciones manuales.</div>
+                                                    <script>
+                                                        window.onload = function() { 
+                                                            window.print(); 
+                                                            setTimeout(function() { window.close(); }, 500);
+                                                        };
+                                                    </script>
+                                                </body>
+                                            </html>
+                                        `);
+                                        printWindow.document.close();
+                                    } else {
+                                        alert("Por favor habilita las ventanas emergentes (pop-ups) para imprimir el reporte.");
+                                    }
                                 } catch (e: any) {
                                     console.error(e);
                                     toast({ title: "Error PDF", description: e.message || "No se pudo generar el PDF", variant: "destructive" });
