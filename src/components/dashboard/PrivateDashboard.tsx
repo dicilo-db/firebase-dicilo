@@ -399,7 +399,7 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                                                     € {walletData ? walletData.valueInEur.toFixed(2) : <Skeleton className="h-8 w-20 inline-block bg-emerald-400/30" />}
                                                 </div>
                                                 {walletData?.valueInUsd ? (
-                                                    <div className="font-bold text-lg text-emerald-200 drop-shadow-md mt-1">
+                                                    <div className="font-bold text-lg text-white drop-shadow-md mt-1">
                                                         $ {walletData.valueInUsd.toFixed(2)}
                                                     </div>
                                                 ) : null}

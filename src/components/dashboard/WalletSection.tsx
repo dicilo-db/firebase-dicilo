@@ -146,7 +146,7 @@ export function WalletSection({ uid, uniqueCode, userProfile, initialData }: Wal
                                     € {data ? data.valueInEur.toFixed(2) : '0.00'}
                                 </div>
                                 {data?.valueInUsd ? (
-                                    <div className="text-lg font-bold tracking-tight text-emerald-200 drop-shadow-md mt-1">
+                                    <div className="text-lg font-bold tracking-tight text-white drop-shadow-md mt-1">
                                         $ {data.valueInUsd.toFixed(2)}
                                     </div>
                                 ) : null}

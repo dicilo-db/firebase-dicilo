@@ -238,8 +238,7 @@ export default function DicipointsControlCenter() {
         if (!paymentResult) return;
 
         try {
-            const jspdfModule = await import('jspdf');
-            const jsPDF = jspdfModule.default || jspdfModule.jsPDF;
+            const { jsPDF } = await import('jspdf');
             const doc = new jsPDF();
 
             // Header
@@ -1054,11 +1053,78 @@ export default function DicipointsControlCenter() {
 
                 {/* Payment History (Global Log) */}
                 <Card className="border-cyan-200 shadow-sm mt-6">
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                            <FileText className="h-5 w-5 text-cyan-600" /> {t('dicipoints.history.title')}
-                        </CardTitle>
-                        <CardDescription>{t('dicipoints.history.subtitle')}</CardDescription>
+                    <CardHeader className="flex flex-row items-center justify-between">
+                        <div>
+                            <CardTitle className="flex items-center gap-2">
+                                <FileText className="h-5 w-5 text-cyan-600" /> {t('dicipoints.history.title')}
+                            </CardTitle>
+                            <CardDescription>{t('dicipoints.history.subtitle')}</CardDescription>
+                        </div>
+                        <div className="flex gap-2">
+                            <Button size="sm" variant="outline" className="border-cyan-600 text-cyan-700 hover:bg-cyan-50" onClick={() => {
+                                const headers = ["Fecha", "UID", "Tipo", "Monto", "Descripcion"];
+                                const rows = paymentHistory.map(trx => [
+                                    new Date(trx.timestamp).toLocaleString(),
+                                    trx.userId,
+                                    trx.type === 'MANUAL_CASH' ? 'CASH' : 'POINTS',
+                                    `${trx.amount > 0 ? '+' : ''}${trx.amount} ${trx.currency}`,
+                                    trx.description
+                                ]);
+                                const csvContent = "data:text/csv;charset=utf-8," 
+                                    + headers.join(",") + "\n" 
+                                    + rows.map(e => e.join(",")).join("\n");
+                                const encodedUri = encodeURI(csvContent);
+                                const link = document.createElement("a");
+                                link.setAttribute("href", encodedUri);
+                                link.setAttribute("download", `historial_caja_${new Date().getTime()}.csv`);
+                                document.body.appendChild(link);
+                                link.click();
+                            }}>
+                                <Download className="mr-2 h-4 w-4" /> Exportar a CSV
+                            </Button>
+                            <Button size="sm" variant="outline" className="border-cyan-600 text-cyan-700 hover:bg-cyan-50" onClick={async () => {
+                                try {
+                                    const { jsPDF } = await import('jspdf');
+                                    const autoTableModule = await import('jspdf-autotable');
+                                    const autoTable = autoTableModule.default || autoTableModule;
+
+                                    const doc = new jsPDF();
+                                    doc.setFontSize(18);
+                                    doc.text('Historial de Caja Registradora', 14, 22);
+                                    doc.setFontSize(11);
+                                    doc.text(`Generado: ${new Date().toLocaleString()}`, 14, 30);
+
+                                    const tableColumn = ["Fecha", "UID", "Tipo", "Monto", "Descripción"];
+                                    const tableRows: any[] = [];
+
+                                    paymentHistory.forEach((trx) => {
+                                        tableRows.push([
+                                            new Date(trx.timestamp).toLocaleString(),
+                                            trx.userId,
+                                            trx.type === 'MANUAL_CASH' ? 'CASH' : 'POINTS',
+                                            `${trx.amount > 0 ? '+' : ''}${trx.amount} ${trx.currency}`,
+                                            trx.description
+                                        ]);
+                                    });
+
+                                    autoTable(doc, {
+                                        head: [tableColumn],
+                                        body: tableRows,
+                                        startY: 35,
+                                        theme: 'grid',
+                                        styles: { fontSize: 8 },
+                                        headStyles: { fillColor: [8, 145, 178] }, // cyan-600
+                                    });
+
+                                    doc.save(`historial_caja_${new Date().getTime()}.pdf`);
+                                } catch (e: any) {
+                                    console.error(e);
+                                    toast({ title: "Error PDF", description: e.message || "No se pudo generar el PDF", variant: "destructive" });
+                                }
+                            }}>
+                                <FileText className="mr-2 h-4 w-4" /> Exportar a PDF
+                            </Button>
+                        </div>
                     </CardHeader>
                     <CardContent>
                         <Table>
