@@ -167,6 +167,8 @@ export default function DicipointsControlCenter() {
     };
 
     const [paymentHistory, setPaymentHistory] = useState<any[]>([]);
+    const [historyPage, setHistoryPage] = useState(1);
+    const itemsPerPage = 50;
 
     useEffect(() => {
         // Initial fetch
@@ -1118,44 +1120,85 @@ export default function DicipointsControlCenter() {
                         </div>
                     </CardHeader>
                     <CardContent>
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>{t('dicipoints.history.colDate')}</TableHead>
-                                    <TableHead>{t('dicipoints.history.colUser')}</TableHead>
-                                    <TableHead>{t('dicipoints.history.colType')}</TableHead>
-                                    <TableHead>{t('dicipoints.history.colAmount')}</TableHead>
-                                    <TableHead>{t('dicipoints.history.colDesc')}</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {paymentHistory.length === 0 ? (
-                                    <TableRow>
-                                        <TableCell colSpan={5} className="text-center text-muted-foreground h-24">
-                                            {t('dicipoints.history.empty')}
-                                        </TableCell>
-                                    </TableRow>
-                                ) : (
-                                    paymentHistory.map((trx) => (
-                                        <TableRow key={trx.id}>
-                                            <TableCell className="font-mono text-xs text-nowrap">{new Date(trx.timestamp).toLocaleDateString()} {new Date(trx.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</TableCell>
-                                            <TableCell className="font-mono text-xs max-w-[100px] truncate" title={trx.userId}>{trx.userId}</TableCell>
-                                            <TableCell>
-                                                <span className={cn("px-2 py-1 rounded text-xs font-medium",
-                                                    trx.type === 'MANUAL_CASH' ? "bg-emerald-100 text-emerald-800" : "bg-purple-100 text-purple-800"
-                                                )}>
-                                                    {trx.type === 'MANUAL_CASH' ? 'CASH' : 'POINTS'}
-                                                </span>
-                                            </TableCell>
-                                            <TableCell className={cn("font-bold text-nowrap", trx.amount > 0 ? "text-green-600" : "text-red-600")}>
-                                                {trx.amount > 0 ? '+' : ''}{trx.amount} {trx.currency}
-                                            </TableCell>
-                                            <TableCell className="text-xs text-gray-600 max-w-[200px] truncate" title={trx.description}>{trx.description}</TableCell>
-                                        </TableRow>
-                                    ))
-                                )}
-                            </TableBody>
-                        </Table>
+                        {(() => {
+                            const totalPages = Math.ceil(paymentHistory.length / itemsPerPage);
+                            const currentHistory = paymentHistory.slice((historyPage - 1) * itemsPerPage, historyPage * itemsPerPage);
+                            
+                            return (
+                                <div className="space-y-4">
+                                    <Table>
+                                        <TableHeader>
+                                            <TableRow>
+                                                <TableHead>#</TableHead>
+                                                <TableHead>{t('dicipoints.history.colDate')}</TableHead>
+                                                <TableHead>{t('dicipoints.history.colUser')}</TableHead>
+                                                <TableHead>{t('dicipoints.history.colType')}</TableHead>
+                                                <TableHead>{t('dicipoints.history.colAmount')}</TableHead>
+                                                <TableHead>{t('dicipoints.history.colDesc')}</TableHead>
+                                            </TableRow>
+                                        </TableHeader>
+                                        <TableBody>
+                                            {currentHistory.length === 0 ? (
+                                                <TableRow>
+                                                    <TableCell colSpan={6} className="text-center text-muted-foreground h-24">
+                                                        {t('dicipoints.history.empty')}
+                                                    </TableCell>
+                                                </TableRow>
+                                            ) : (
+                                                currentHistory.map((trx, idx) => (
+                                                    <TableRow key={trx.id}>
+                                                        <TableCell className="text-muted-foreground text-xs">{(historyPage - 1) * itemsPerPage + idx + 1}</TableCell>
+                                                        <TableCell className="font-mono text-xs text-nowrap">{new Date(trx.timestamp).toLocaleDateString()} {new Date(trx.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</TableCell>
+                                                        <TableCell className="font-mono text-xs max-w-[100px] truncate" title={trx.userId}>{trx.userId}</TableCell>
+                                                        <TableCell>
+                                                            <span className={cn("px-2 py-1 rounded text-xs font-medium",
+                                                                trx.type === 'MANUAL_CASH' ? "bg-emerald-100 text-emerald-800" : "bg-purple-100 text-purple-800"
+                                                            )}>
+                                                                {trx.type === 'MANUAL_CASH' ? 'CASH' : 'POINTS'}
+                                                            </span>
+                                                        </TableCell>
+                                                        <TableCell className={cn("font-bold text-nowrap", trx.amount > 0 ? "text-green-600" : "text-red-600")}>
+                                                            {trx.amount > 0 ? '+' : ''}{trx.amount} {trx.currency}
+                                                        </TableCell>
+                                                        <TableCell className="text-xs text-gray-600 max-w-[200px] truncate" title={trx.description}>{trx.description}</TableCell>
+                                                    </TableRow>
+                                                ))
+                                            )}
+                                        </TableBody>
+                                    </Table>
+                                    
+                                    {/* Pagination Controls */}
+                                    {totalPages > 1 && (
+                                        <div className="flex items-center justify-between border-t pt-4">
+                                            <div className="text-sm text-muted-foreground">
+                                                Mostrando {(historyPage - 1) * itemsPerPage + 1} a {Math.min(historyPage * itemsPerPage, paymentHistory.length)} de {paymentHistory.length}
+                                            </div>
+                                            <div className="flex gap-2">
+                                                <Button 
+                                                    variant="outline" 
+                                                    size="sm" 
+                                                    onClick={() => setHistoryPage(p => Math.max(1, p - 1))}
+                                                    disabled={historyPage === 1}
+                                                >
+                                                    Anterior
+                                                </Button>
+                                                <div className="flex items-center justify-center text-sm font-medium px-2">
+                                                    Página {historyPage} de {totalPages}
+                                                </div>
+                                                <Button 
+                                                    variant="outline" 
+                                                    size="sm" 
+                                                    onClick={() => setHistoryPage(p => Math.min(totalPages, p + 1))}
+                                                    disabled={historyPage === totalPages}
+                                                >
+                                                    Siguiente
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            );
+                        })()}
                     </CardContent>
                 </Card>
 

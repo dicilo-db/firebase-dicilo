@@ -561,7 +561,7 @@ export async function getManualPaymentHistory() {
             })
             // Sort descending in memory
             .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
-            .slice(0, 50);
+            .slice(0, 1000);
 
         return { success: true, data: history };
     } catch (error: any) {
