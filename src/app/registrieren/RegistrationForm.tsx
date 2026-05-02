@@ -96,6 +96,7 @@ export function RegistrationForm() {
   const { t, i18n } = useTranslation('register');
   const locale = i18n.language;
   const searchParams = useSearchParams();
+  const isReferralLocked = Boolean(searchParams.get('ref') || searchParams.get('inviteId'));
   const getInitialType = () => {
     const regTypeParam = searchParams.get('type');
     return (regTypeParam && ['private', 'donor', 'retailer', 'premium'].includes(regTypeParam)) 
@@ -522,10 +523,13 @@ export function RegistrationForm() {
               <Input 
                 id="referralCode" 
                 {...register('referralCode')} 
-                className="bg-white transition-all focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+                readOnly={isReferralLocked}
+                className={cn("transition-all focus:ring-2 focus:ring-blue-400 focus:border-transparent", isReferralLocked ? "bg-slate-100 text-slate-500 cursor-not-allowed opacity-100" : "bg-white")}
               />
               <p className="text-[10px] text-muted-foreground leading-tight mt-1">
-                {t('register.fields.referralHint', 'Si has sido invitado por un amigo, por favor cambia este código por el de la persona que te invitó.')}
+                {isReferralLocked 
+                  ? t('register.fields.referralLockedHint', 'Este código ha sido asignado por tu enlace de invitación y no puede ser modificado.')
+                  : t('register.fields.referralHint', 'Si has sido invitado por un amigo, por favor cambia este código por el de la persona que te invitó.')}
               </p>
             </div>
           </div>
