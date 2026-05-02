@@ -238,7 +238,6 @@ export default function DicipointsControlCenter() {
         if (!paymentResult) return;
 
         try {
-            const { jsPDF } = await import('jspdf');
             const doc = new jsPDF();
 
             // Header
@@ -310,9 +309,10 @@ export default function DicipointsControlCenter() {
 
             doc.save(`Recibo_Dicilo_${new Date().getTime()}.pdf`);
 
-        } catch (e) {
+        } catch (e: any) {
             console.error(e);
-            toast({ title: "Error PDF", description: "No se pudo generar el recibo.", variant: "destructive" });
+            alert("Error PDF: " + (e.message || String(e)));
+            toast({ title: "Error PDF", description: e.message || "No se pudo generar el recibo.", variant: "destructive" });
         }
     };
 
@@ -722,13 +722,8 @@ export default function DicipointsControlCenter() {
                                             <Download className="mr-2 h-4 w-4" /> Exportar a CSV
                                         </Button>
 
-                                        <Button size="sm" variant="outline" className="border-teal-600 text-teal-700 hover:bg-teal-50" onClick={async () => {
+                                        <Button size="sm" variant="outline" className="border-teal-600 text-teal-700 hover:bg-teal-50" onClick={() => {
                                             try {
-                                                const jspdfModule = await import('jspdf');
-                                                const jsPDF = jspdfModule.default || jspdfModule.jsPDF;
-                                                const autoTableModule = await import('jspdf-autotable');
-                                                const autoTable = autoTableModule.default || autoTableModule;
-
                                                 const doc = new jsPDF();
                                                 doc.setFontSize(18);
                                                 doc.text('Auditoría de Comisiones por Referidos', 14, 22);
@@ -1070,24 +1065,20 @@ export default function DicipointsControlCenter() {
                                     `${trx.amount > 0 ? '+' : ''}${trx.amount} ${trx.currency}`,
                                     trx.description
                                 ]);
-                                const csvContent = "data:text/csv;charset=utf-8," 
-                                    + headers.join(",") + "\n" 
-                                    + rows.map(e => e.join(",")).join("\n");
-                                const encodedUri = encodeURI(csvContent);
+                                const csvContent = headers.join(",") + "\n" + rows.map(e => e.join(",")).join("\n");
+                                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                                const url = URL.createObjectURL(blob);
                                 const link = document.createElement("a");
-                                link.setAttribute("href", encodedUri);
+                                link.setAttribute("href", url);
                                 link.setAttribute("download", `historial_caja_${new Date().getTime()}.csv`);
                                 document.body.appendChild(link);
                                 link.click();
+                                document.body.removeChild(link);
                             }}>
                                 <Download className="mr-2 h-4 w-4" /> Exportar a CSV
                             </Button>
-                            <Button size="sm" variant="outline" className="border-cyan-600 text-cyan-700 hover:bg-cyan-50" onClick={async () => {
+                            <Button size="sm" variant="outline" className="border-cyan-600 text-cyan-700 hover:bg-cyan-50" onClick={() => {
                                 try {
-                                    const { jsPDF } = await import('jspdf');
-                                    const autoTableModule = await import('jspdf-autotable');
-                                    const autoTable = autoTableModule.default || autoTableModule;
-
                                     const doc = new jsPDF();
                                     doc.setFontSize(18);
                                     doc.text('Historial de Caja Registradora', 14, 22);
