@@ -62,6 +62,9 @@ export default function DicipointsControlCenter() {
     const [cashAmount, setCashAmount] = useState(0);
     const [cashReason, setCashReason] = useState('');
 
+    const [usdAmount, setUsdAmount] = useState(0);
+    const [usdReason, setUsdReason] = useState('');
+
     const [referenceNote, setReferenceNote] = useState('');
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
@@ -177,7 +180,7 @@ export default function DicipointsControlCenter() {
             toast({ title: t('dicipoints.cashRegister.toast.missingDataTitle'), description: t('dicipoints.cashRegister.toast.missingDataDesc'), variant: "destructive" });
             return;
         }
-        if (pointsAmount === 0 && cashAmount === 0) {
+        if (pointsAmount === 0 && cashAmount === 0 && usdAmount === 0) {
             toast({ title: t('dicipoints.cashRegister.toast.invalidAmountTitle'), description: t('dicipoints.cashRegister.toast.invalidAmountDesc'), variant: "destructive" });
             return;
         }
@@ -191,6 +194,8 @@ export default function DicipointsControlCenter() {
                 pointsReason,
                 cashAmount: Number(cashAmount),
                 cashReason,
+                usdAmount: Number(usdAmount),
+                usdReason,
                 referenceNote,
                 customDate: selectedDate.toISOString(),
                 masterKey: masterPassword
@@ -204,6 +209,8 @@ export default function DicipointsControlCenter() {
                     pointsReason,
                     cashAmount,
                     cashReason,
+                    usdAmount,
+                    usdReason,
                     referenceNote
                 });
 
@@ -280,6 +287,17 @@ export default function DicipointsControlCenter() {
                 doc.setFont("helvetica", "normal");
                 doc.text(`Cantidad: €${paymentResult.cashAmount}`, 20, currentY + 16);
                 doc.text(`Motivo: ${paymentResult.cashReason}`, 100, currentY + 16);
+                currentY += 25;
+            }
+
+            if (paymentResult.usdAmount && paymentResult.usdAmount !== 0) {
+                doc.setFillColor(240, 240, 240);
+                doc.rect(14, currentY, 180, 20, 'F');
+                doc.setFont("helvetica", "bold");
+                doc.text("Pago en Efectivo / Tarjeta (USD)", 20, currentY + 8);
+                doc.setFont("helvetica", "normal");
+                doc.text(`Cantidad: $${paymentResult.usdAmount}`, 20, currentY + 16);
+                doc.text(`Motivo: ${paymentResult.usdReason}`, 100, currentY + 16);
                 currentY += 25;
             }
 
@@ -926,6 +944,29 @@ export default function DicipointsControlCenter() {
                                         <SelectItem value="Venta: Reteil">Venta: Reteil</SelectItem>
                                         <SelectItem value="Venta: Premium">Venta: Premium</SelectItem>
                                         <SelectItem value="Deposito Efectivo">Deposito Efectivo</SelectItem>
+                                        <SelectItem value="Pago de Bonos por usuario">Pago de Bonos por usuario</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4 items-end">
+                            <div className="space-y-2">
+                                <Label>Cantidad ($)</Label>
+                                <Input type="number" value={usdAmount} onChange={(e) => setUsdAmount(Number(e.target.value))} />
+                            </div>
+                            <div className="space-y-2">
+                                <Label>Razón (USD)</Label>
+                                <Select value={usdReason} onValueChange={setUsdReason}>
+                                    <SelectTrigger><SelectValue placeholder="Seleccionar motivo" /></SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="Venta: Banner">Venta: Banner</SelectItem>
+                                        <SelectItem value="Venta: Campaña">Venta: Campaña</SelectItem>
+                                        <SelectItem value="Venta: Starter">Venta: Starter</SelectItem>
+                                        <SelectItem value="Venta: Reteil">Venta: Reteil</SelectItem>
+                                        <SelectItem value="Venta: Premium">Venta: Premium</SelectItem>
+                                        <SelectItem value="Deposito Efectivo">Deposito Efectivo</SelectItem>
+                                        <SelectItem value="Pago de Bonos por usuario">Pago de Bonos por usuario</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>

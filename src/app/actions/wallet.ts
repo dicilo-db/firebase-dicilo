@@ -360,6 +360,8 @@ export async function adminProcessManualPayment(
         pointsReason: string;
         cashAmount: number;
         cashReason: string;
+        usdAmount: number;
+        usdReason: string;
         referenceNote: string;
         customDate: string; // ISO String for backdating
         masterKey: string;
@@ -369,6 +371,7 @@ export async function adminProcessManualPayment(
         targetUid, targetEmail, targetCode,
         pointsAmount, pointsReason,
         cashAmount, cashReason,
+        usdAmount, usdReason,
         referenceNote, customDate, masterKey
     } = payload;
 
@@ -478,6 +481,29 @@ export async function adminProcessManualPayment(
             timestamp: firestoreTimestamp,
             meta: {
                 reasonCategory: cashReason,
+                manualNote: referenceNote,
+                source: 'CASH_REGISTER'
+            }
+        });
+    }
+
+    // 6. Handle USD Cash
+    if (usdAmount !== 0) {
+        batch.set(walletRef, {
+            usdBalance: admin.firestore.FieldValue.increment(usdAmount)
+        }, { merge: true });
+
+        const usdTrxRef = db.collection('wallet_transactions').doc();
+        batch.set(usdTrxRef, {
+            userId: finalUid,
+            amount: usdAmount,
+            currency: 'USD', // Mark as USD transaction
+            type: 'MANUAL_CASH',
+            description: `${usdReason} - ${referenceNote}`,
+            adminId: 'SUPERADMIN',
+            timestamp: firestoreTimestamp,
+            meta: {
+                reasonCategory: usdReason,
                 manualNote: referenceNote,
                 source: 'CASH_REGISTER'
             }
