@@ -270,7 +270,9 @@ export default function DicipointsControlCenter() {
                             <script>
                                 window.onload = function() { 
                                     window.print(); 
-                                    setTimeout(function() { window.close(); }, 500);
+                                };
+                                window.onafterprint = function() {
+                                    window.close();
                                 };
                             </script>
                         </body>
@@ -748,7 +750,9 @@ export default function DicipointsControlCenter() {
                                                                 <script>
                                                                     window.onload = function() { 
                                                                         window.print(); 
-                                                                        setTimeout(function() { window.close(); }, 500);
+                                                                    };
+                                                                    window.onafterprint = function() {
+                                                                        window.close();
                                                                     };
                                                                 </script>
                                                             </body>
@@ -1126,7 +1130,9 @@ export default function DicipointsControlCenter() {
                                                     <script>
                                                         window.onload = function() { 
                                                             window.print(); 
-                                                            setTimeout(function() { window.close(); }, 500);
+                                                        };
+                                                        window.onafterprint = function() {
+                                                            window.close();
                                                         };
                                                     </script>
                                                 </body>
@@ -1152,46 +1158,48 @@ export default function DicipointsControlCenter() {
                             
                             return (
                                 <div className="space-y-4">
-                                    <Table>
-                                        <TableHeader>
-                                            <TableRow>
-                                                <TableHead>#</TableHead>
-                                                <TableHead>{t('dicipoints.history.colDate')}</TableHead>
-                                                <TableHead>{t('dicipoints.history.colUser')}</TableHead>
-                                                <TableHead>{t('dicipoints.history.colType')}</TableHead>
-                                                <TableHead>{t('dicipoints.history.colAmount')}</TableHead>
-                                                <TableHead>{t('dicipoints.history.colDesc')}</TableHead>
-                                            </TableRow>
-                                        </TableHeader>
-                                        <TableBody>
-                                            {currentHistory.length === 0 ? (
+                                    <div className="max-h-[500px] overflow-y-auto border rounded-md">
+                                        <Table>
+                                            <TableHeader className="sticky top-0 bg-white z-10 shadow-sm">
                                                 <TableRow>
-                                                    <TableCell colSpan={6} className="text-center text-muted-foreground h-24">
-                                                        {t('dicipoints.history.empty')}
-                                                    </TableCell>
+                                                    <TableHead>#</TableHead>
+                                                    <TableHead>{t('dicipoints.history.colDate')}</TableHead>
+                                                    <TableHead>{t('dicipoints.history.colUser')}</TableHead>
+                                                    <TableHead>{t('dicipoints.history.colType')}</TableHead>
+                                                    <TableHead>{t('dicipoints.history.colAmount')}</TableHead>
+                                                    <TableHead>{t('dicipoints.history.colDesc')}</TableHead>
                                                 </TableRow>
-                                            ) : (
-                                                currentHistory.map((trx, idx) => (
-                                                    <TableRow key={trx.id}>
-                                                        <TableCell className="text-muted-foreground text-xs">{(historyPage - 1) * itemsPerPage + idx + 1}</TableCell>
-                                                        <TableCell className="font-mono text-xs text-nowrap">{new Date(trx.timestamp).toLocaleDateString()} {new Date(trx.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</TableCell>
-                                                        <TableCell className="font-mono text-xs max-w-[100px] truncate" title={trx.userId}>{trx.userId}</TableCell>
-                                                        <TableCell>
-                                                            <span className={cn("px-2 py-1 rounded text-xs font-medium",
-                                                                trx.type === 'MANUAL_CASH' ? "bg-emerald-100 text-emerald-800" : "bg-purple-100 text-purple-800"
-                                                            )}>
-                                                                {trx.type === 'MANUAL_CASH' ? 'CASH' : 'POINTS'}
-                                                            </span>
+                                            </TableHeader>
+                                            <TableBody>
+                                                {currentHistory.length === 0 ? (
+                                                    <TableRow>
+                                                        <TableCell colSpan={6} className="text-center text-muted-foreground h-24">
+                                                            {t('dicipoints.history.empty')}
                                                         </TableCell>
-                                                        <TableCell className={cn("font-bold text-nowrap", trx.amount > 0 ? "text-green-600" : "text-red-600")}>
-                                                            {trx.amount > 0 ? '+' : ''}{trx.amount} {trx.currency}
-                                                        </TableCell>
-                                                        <TableCell className="text-xs text-gray-600 max-w-[200px] truncate" title={trx.description}>{trx.description}</TableCell>
                                                     </TableRow>
-                                                ))
-                                            )}
-                                        </TableBody>
-                                    </Table>
+                                                ) : (
+                                                    currentHistory.map((trx, idx) => (
+                                                        <TableRow key={trx.id}>
+                                                            <TableCell className="text-muted-foreground text-xs">{(historyPage - 1) * itemsPerPage + idx + 1}</TableCell>
+                                                            <TableCell className="font-mono text-xs text-nowrap">{new Date(trx.timestamp).toLocaleDateString()} {new Date(trx.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</TableCell>
+                                                            <TableCell className="font-mono text-xs max-w-[100px] truncate" title={trx.userId}>{trx.userId}</TableCell>
+                                                            <TableCell>
+                                                                <span className={cn("px-2 py-1 rounded text-xs font-medium",
+                                                                    trx.type === 'MANUAL_CASH' ? "bg-emerald-100 text-emerald-800" : "bg-purple-100 text-purple-800"
+                                                                )}>
+                                                                    {trx.type === 'MANUAL_CASH' ? 'CASH' : 'POINTS'}
+                                                                </span>
+                                                            </TableCell>
+                                                            <TableCell className={cn("font-bold text-nowrap", trx.amount > 0 ? "text-green-600" : "text-red-600")}>
+                                                                {trx.amount > 0 ? '+' : ''}{trx.amount} {trx.currency}
+                                                            </TableCell>
+                                                            <TableCell className="text-xs text-gray-600 max-w-[200px] truncate" title={trx.description}>{trx.description}</TableCell>
+                                                        </TableRow>
+                                                    ))
+                                                )}
+                                            </TableBody>
+                                        </Table>
+                                    </div>
                                     
                                     {/* Pagination Controls */}
                                     {totalPages > 1 && (
