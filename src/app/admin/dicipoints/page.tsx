@@ -238,6 +238,8 @@ export default function DicipointsControlCenter() {
         if (!paymentResult) return;
 
         try {
+            const jspdfModule = await import('jspdf');
+            const jsPDF = jspdfModule.default || jspdfModule.jsPDF;
             const doc = new jsPDF();
 
             // Header
@@ -721,40 +723,50 @@ export default function DicipointsControlCenter() {
                                             <Download className="mr-2 h-4 w-4" /> Exportar a CSV
                                         </Button>
 
-                                        <Button size="sm" variant="outline" className="border-teal-600 text-teal-700 hover:bg-teal-50" onClick={() => {
-                                            const doc = new jsPDF();
-                                            doc.setFontSize(18);
-                                            doc.text('Auditoría de Comisiones por Referidos', 14, 22);
-                                            doc.setFontSize(11);
-                                            doc.text(`Periodo: ${referralStartDate} al ${referralEndDate}`, 14, 30);
-                                            doc.text(`Total Nuevos Usuarios: ${referralAuditData.summary.totalNewUsers}`, 14, 36);
-                                            doc.text(`Total a Pagar (EUR): €${referralAuditData.summary.totalEUR.toFixed(2)}`, 14, 42);
-                                            doc.text(`Total Dicipoints: ${referralAuditData.summary.totalDP} DP`, 14, 48);
+                                        <Button size="sm" variant="outline" className="border-teal-600 text-teal-700 hover:bg-teal-50" onClick={async () => {
+                                            try {
+                                                const jspdfModule = await import('jspdf');
+                                                const jsPDF = jspdfModule.default || jspdfModule.jsPDF;
+                                                const autoTableModule = await import('jspdf-autotable');
+                                                const autoTable = autoTableModule.default || autoTableModule;
 
-                                            const tableColumn = ["Referidor", "Código", "Rol", "Invitados", "Comisión EUR", "Comisión DP"];
-                                            const tableRows: any[] = [];
+                                                const doc = new jsPDF();
+                                                doc.setFontSize(18);
+                                                doc.text('Auditoría de Comisiones por Referidos', 14, 22);
+                                                doc.setFontSize(11);
+                                                doc.text(`Periodo: ${referralStartDate} al ${referralEndDate}`, 14, 30);
+                                                doc.text(`Total Nuevos Usuarios: ${referralAuditData.summary.totalNewUsers}`, 14, 36);
+                                                doc.text(`Total a Pagar (EUR): €${referralAuditData.summary.totalEUR.toFixed(2)}`, 14, 42);
+                                                doc.text(`Total Dicipoints: ${referralAuditData.summary.totalDP} DP`, 14, 48);
 
-                                            referralAuditData.details.forEach((d: any) => {
-                                                tableRows.push([
-                                                    d.referrer.name,
-                                                    d.referrer.code,
-                                                    d.referrer.role.toUpperCase(),
-                                                    d.totalInvited,
-                                                    `€${d.payment.earnedEUR.toFixed(2)}`,
-                                                    `${d.payment.earnedDP} DP`
-                                                ]);
-                                            });
+                                                const tableColumn = ["Referidor", "Código", "Rol", "Invitados", "Comisión EUR", "Comisión DP"];
+                                                const tableRows: any[] = [];
 
-                                            autoTable(doc, {
-                                                head: [tableColumn],
-                                                body: tableRows,
-                                                startY: 55,
-                                                theme: 'grid',
-                                                styles: { fontSize: 9 },
-                                                headStyles: { fillColor: [13, 148, 136] }, // teal-600
-                                            });
+                                                referralAuditData.details.forEach((d: any) => {
+                                                    tableRows.push([
+                                                        d.referrer.name,
+                                                        d.referrer.code,
+                                                        d.referrer.role.toUpperCase(),
+                                                        d.totalInvited,
+                                                        `€${d.payment.earnedEUR.toFixed(2)}`,
+                                                        `${d.payment.earnedDP} DP`
+                                                    ]);
+                                                });
 
-                                            doc.save(`referral_audit_${referralStartDate}_${referralEndDate}.pdf`);
+                                                autoTable(doc, {
+                                                    head: [tableColumn],
+                                                    body: tableRows,
+                                                    startY: 55,
+                                                    theme: 'grid',
+                                                    styles: { fontSize: 9 },
+                                                    headStyles: { fillColor: [13, 148, 136] }, // teal-600
+                                                });
+
+                                                doc.save(`referral_audit_${referralStartDate}_${referralEndDate}.pdf`);
+                                            } catch (e: any) {
+                                                console.error(e);
+                                                toast({ title: "Error PDF", description: e.message || "No se pudo generar el PDF", variant: "destructive" });
+                                            }
                                         }}>
                                             <FileText className="mr-2 h-4 w-4" /> Exportar a PDF
                                         </Button>
