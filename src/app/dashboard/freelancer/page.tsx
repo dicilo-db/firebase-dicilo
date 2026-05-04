@@ -14,6 +14,7 @@ import { PromoComposerView } from '@/components/dashboard/freelancer/views/Promo
 import { MarketingTemplatesView } from '@/components/dashboard/freelancer/views/MarketingTemplatesView';
 import { RecommendCompanyView } from '@/components/dashboard/freelancer/views/RecommendCompanyView';
 import { P2RecordsView } from '@/components/dashboard/freelancer/views/P2RecordsView';
+import { AcademiaView } from '@/components/dashboard/freelancer/views/AcademiaView';
 
 // Mapping of tabs to components
 const VIEWS: Record<string, React.ComponentType> = {
@@ -28,7 +29,8 @@ const VIEWS: Record<string, React.ComponentType> = {
     'online_reviews': OnlineReviewsView,
     'connections': ConnectionsView,
     'recommend_company': RecommendCompanyView,
-    'p2_records': P2RecordsView
+    'p2_records': P2RecordsView,
+    'academia': AcademiaView
 };
 
 import { useAuthGuard } from '@/hooks/useAuthGuard';

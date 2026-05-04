@@ -20,7 +20,8 @@ import {
     LayoutTemplate,
     ArrowLeft,
     Mail,
-    Building2
+    Building2,
+    GraduationCap
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import NativeBookingDialog from '@/components/shared/NativeBookingDialog';
@@ -90,6 +91,11 @@ export function FreelancerSidebar({ className, onViewChange, onMobileClose }: Fr
             id: 'online_reviews',
             label: t('freelancer_menu.online_reviews', 'Reseña Online'),
             icon: Star
+        },
+        {
+            id: 'academia',
+            label: t('freelancer_menu.academia', 'Academia'),
+            icon: GraduationCap
         },
         {
             id: 'connections',
