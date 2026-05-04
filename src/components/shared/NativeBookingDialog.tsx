@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { CalendarCheck2, Clock, Globe2, AlertCircle, CheckCircle2 } from 'lucide-react';
-import { addDoc, collection } from 'firebase/firestore';
+import { addDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -28,10 +28,12 @@ export default function NativeBookingDialog({ trigger }: NativeBookingDialogProp
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
     const [userTz, setUserTz] = useState('Local');
+    const [bookedTimes, setBookedTimes] = useState<string[]>([]);
 
     const [formData, setFormData] = useState({
         name: '',
         whatsapp: '',
+        email: '',
         reason: ''
     });
 
@@ -40,18 +42,44 @@ export default function NativeBookingDialog({ trigger }: NativeBookingDialogProp
         setUserTz(Intl.DateTimeFormat().resolvedOptions().timeZone);
     }, []);
 
-    // Generate timeslots whenever a date is selected
     useEffect(() => {
         if (!selectedDate) {
             setTimeSlots([]);
+            setBookedTimes([]);
             return;
         }
 
-        // We want to create slots for the selected day corresponding to 09:00 to 17:00 Berlin time.
-        // Since pure JS is tricky with parsing foreign timezones reliably across DST, 
-        // we'll approximate assuming Central European Time (CET/CEST) offsets via a neat trick:
-        // We iterate through UTC hours 07:00 to 15:00 (which safely covers ~09:00 to 17:00 EU time).
-        
+        const fetchBooked = async () => {
+            try {
+                // Rango de fechas basado en UTC para cubrir todo el día seleccionado
+                const startOfDay = new Date(selectedDate);
+                startOfDay.setHours(0, 0, 0, 0);
+                
+                const endOfDay = new Date(selectedDate);
+                endOfDay.setHours(23, 59, 59, 999);
+
+                const q = query(
+                    collection(db, 'crm_appointments'),
+                    where('startTime', '>=', startOfDay.toISOString()),
+                    where('startTime', '<=', endOfDay.toISOString())
+                );
+                
+                const snap = await getDocs(q);
+                const booked: string[] = [];
+                snap.forEach(doc => {
+                    const data = doc.data();
+                    if (data.startTime) {
+                        booked.push(new Date(data.startTime).toISOString());
+                    }
+                });
+                setBookedTimes(booked);
+            } catch(e) {
+                console.error("Error fetching booked slots", e);
+            }
+        };
+
+        fetchBooked();
+
         const slots = [];
         const baseDate = new Date(selectedDate);
         baseDate.setHours(0, 0, 0, 0); // Start of local day
@@ -105,6 +133,7 @@ export default function NativeBookingDialog({ trigger }: NativeBookingDialogProp
                     date: selectedTimeSlot.toISOString(),
                     client_name: formData.name,
                     client_phone: formData.whatsapp,
+                    client_email: formData.email,
                     client_reason: formData.reason
                 })
             });
@@ -124,7 +153,7 @@ export default function NativeBookingDialog({ trigger }: NativeBookingDialogProp
         setSelectedDate(undefined);
         setSelectedTimeSlot(null);
         setSuccess(false);
-        setFormData({ name: '', whatsapp: '', reason: '' });
+        setFormData({ name: '', whatsapp: '', email: '', reason: '' });
     };
 
     return (
@@ -205,17 +234,22 @@ export default function NativeBookingDialog({ trigger }: NativeBookingDialogProp
                                 <div className="space-y-2">
                                     <p className="text-sm font-semibold text-slate-700 mb-3">{t('booking.available_for', 'Horarios Disponibles para el ')} {selectedDate && format(selectedDate, "d 'de' MMMM", { locale: es })}</p>
                                     <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 max-h-[190px] overflow-y-auto pr-2 pb-4 border-b border-slate-100">
-                                        {timeSlots.map((slot, idx) => (
-                                            <button
-                                                key={idx}
-                                                type="button"
-                                                onClick={() => setSelectedTimeSlot(slot.date)}
-                                                className={`p-3 rounded-lg border text-center transition-all ${selectedTimeSlot?.getTime() === slot.date.getTime() ? 'bg-emerald-600 border-emerald-700 text-white shadow-md scale-[1.02]' : 'bg-white border-slate-200 text-slate-700 hover:border-emerald-500 hover:text-emerald-700'}`}
-                                            >
-                                                <div className="font-bold text-lg">{slot.localStr}</div>
-                                                <div className="text-[10px] opacity-70">Berlín: {slot.berlinStr}</div>
-                                            </button>
-                                        ))}
+                                        {timeSlots.map((slot, idx) => {
+                                            const isBooked = bookedTimes.includes(slot.date.toISOString());
+                                            return (
+                                                <button
+                                                    key={idx}
+                                                    type="button"
+                                                    disabled={isBooked}
+                                                    onClick={() => !isBooked && setSelectedTimeSlot(slot.date)}
+                                                    className={`p-3 rounded-lg border text-center transition-all ${isBooked ? 'bg-slate-100 border-slate-200 text-slate-400 cursor-not-allowed opacity-50' : selectedTimeSlot?.getTime() === slot.date.getTime() ? 'bg-emerald-600 border-emerald-700 text-white shadow-md scale-[1.02]' : 'bg-white border-slate-200 text-slate-700 hover:border-emerald-500 hover:text-emerald-700'}`}
+                                                >
+                                                    <div className={`font-bold text-lg ${isBooked ? 'line-through decoration-slate-400' : ''}`}>{slot.localStr}</div>
+                                                    <div className="text-[10px] opacity-70">Berlín: {slot.berlinStr}</div>
+                                                    {isBooked && <div className="text-[10px] text-rose-500 font-bold mt-1">Reservado</div>}
+                                                </button>
+                                            );
+                                        })}
                                     </div>
                                 </div>
 
@@ -230,6 +264,12 @@ export default function NativeBookingDialog({ trigger }: NativeBookingDialogProp
                                                 <Label htmlFor="whatsapp">WhatsApp / Teléfono</Label>
                                                 <Input required id="whatsapp" placeholder="+34 600..." value={formData.whatsapp} onChange={e => setFormData({ ...formData, whatsapp: e.target.value })} />
                                             </div>
+                                        </div>
+                                        <div className="space-y-1">
+                                            <Label htmlFor="email" className="flex items-center gap-2">
+                                                Email <span className="text-xs text-muted-foreground font-normal">(Opcional)</span>
+                                            </Label>
+                                            <Input type="email" id="email" placeholder="Déjenos su email por si no logramos contactarle..." value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} />
                                         </div>
                                         <div className="space-y-1 flex-1">
                                             <Label htmlFor="reason">{t('booking.reason', '¿Sobre qué te gustaría hablar?')}</Label>
