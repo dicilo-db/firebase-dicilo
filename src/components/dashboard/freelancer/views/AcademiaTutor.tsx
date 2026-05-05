@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Send, Bot, User, Sparkles, MessageSquare, ExternalLink } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import ReactMarkdown from 'react-markdown';
 
 interface Message {
   id: string;
@@ -110,9 +111,13 @@ export function AcademiaTutor() {
               <div className={`px-4 py-3 rounded-2xl max-w-[80%] text-sm ${
                 m.role === 'user' 
                   ? 'bg-indigo-600 text-white rounded-tr-none' 
-                  : 'bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 text-slate-700 dark:text-slate-300 rounded-tl-none shadow-sm'
+                  : 'bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 text-slate-700 dark:text-slate-300 rounded-tl-none shadow-sm prose prose-sm dark:prose-invert prose-p:leading-snug prose-ul:my-1 prose-li:my-0'
               }`}>
-                {m.content}
+                {m.role === 'assistant' ? (
+                  <ReactMarkdown>{m.content}</ReactMarkdown>
+                ) : (
+                  m.content
+                )}
               </div>
 
               {m.role === 'user' && (
