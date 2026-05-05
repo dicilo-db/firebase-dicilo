@@ -15,10 +15,11 @@ export interface RecursoWP {
   url_archivo: string;
   tipo: 'pdf' | 'audio'; // 'pdf' o 'audio'
   categoria?: string; 
+  idioma?: string;
 }
 
 export function BibliotecaRecursos() {
-  const { t } = useTranslation('common');
+  const { t, i18n } = useTranslation('common');
   const [recursos, setRecursos] = useState<RecursoWP[]>([]);
   const [cargando, setCargando] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -46,7 +47,15 @@ export function BibliotecaRecursos() {
   const recursosPorCategoria = useMemo(() => {
     if (!recursos.length) return {};
     const agrupado: Record<string, RecursoWP[]> = {};
+    const currentLang = i18n.language.split('-')[0]; // "es", "en", "de"
+
     recursos.forEach(recurso => {
+      // Filtrar por idioma
+      const recursoLang = recurso.idioma;
+      if (recursoLang && recursoLang !== 'all' && recursoLang !== currentLang) {
+        return; // Saltar recursos que no pertenecen a este idioma
+      }
+
       const apiCat = recurso.categoria;
       const cat = (!apiCat || apiCat === 'Documentos Generales')
         ? t('academia.resources.general', 'Documentos Generales')

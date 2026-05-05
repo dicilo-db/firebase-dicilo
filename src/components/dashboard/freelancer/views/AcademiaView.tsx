@@ -14,8 +14,9 @@ interface VideoWP {
   title: {
     rendered: string;
   };
-  url_del_video: string;
-  categoria?: string; // Campo futuro a mapear desde WordPress
+  url_del_video?: string;
+  categoria?: string;
+  idioma?: string;
 }
 
 export function AcademiaView() {
@@ -93,7 +94,15 @@ function ReproductorVideosDicilo() {
     if (!videos.length) return {};
     
     const agrupado: Record<string, VideoWP[]> = {};
+    const currentLang = i18n.language.split('-')[0]; // "es", "en", "de"
+
     videos.forEach(video => {
+      // Filtrar por idioma
+      const videoLang = video.idioma;
+      if (videoLang && videoLang !== 'all' && videoLang !== currentLang) {
+        return; // Saltar videos que no pertenecen a este idioma
+      }
+
       // Por defecto, si el desarrollador de WP aún no ha mapeado el campo "categoria" en el JSON, 
       // mostramos todos bajo "Contenido General"
       const apiCat = video.categoria;
