@@ -47,7 +47,10 @@ export function BibliotecaRecursos() {
     if (!recursos.length) return {};
     const agrupado: Record<string, RecursoWP[]> = {};
     recursos.forEach(recurso => {
-      const cat = recurso.categoria || t('academia.resources.general', 'Documentos Generales');
+      const apiCat = recurso.categoria;
+      const cat = (!apiCat || apiCat === 'Documentos Generales')
+        ? t('academia.resources.general', 'Documentos Generales')
+        : apiCat;
       if (!agrupado[cat]) agrupado[cat] = [];
       agrupado[cat].push(recurso);
     });

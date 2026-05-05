@@ -96,7 +96,10 @@ function ReproductorVideosDicilo() {
     videos.forEach(video => {
       // Por defecto, si el desarrollador de WP aún no ha mapeado el campo "categoria" en el JSON, 
       // mostramos todos bajo "Contenido General"
-      const cat = video.categoria || t('academia.videos.general', 'Contenido General');
+      const apiCat = video.categoria;
+      const cat = (!apiCat || apiCat === 'Contenido General') 
+        ? t('academia.videos.general', 'Contenido General') 
+        : apiCat;
       if (!agrupado[cat]) agrupado[cat] = [];
       agrupado[cat].push(video);
     });

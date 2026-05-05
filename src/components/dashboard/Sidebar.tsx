@@ -168,9 +168,9 @@ export function Sidebar({ userData, onViewChange, currentView }: SidebarProps) {
     if (canSeeAdmin) {
         const overviewIdx = navItems.findIndex(item => item.id === 'overview');
         if (overviewIdx !== -1) {
-            navItems.splice(overviewIdx + 1, 0, { id: 'calendar', label: 'Calendario', icon: Calendar, type: 'view' });
+            navItems.splice(overviewIdx + 1, 0, { id: 'calendar', label: t('dashboard.sidebar.calendar', 'Calendario'), icon: Calendar, type: 'view' });
         } else {
-            navItems.unshift({ id: 'calendar', label: 'Calendario', icon: Calendar, type: 'view' });
+            navItems.unshift({ id: 'calendar', label: t('dashboard.sidebar.calendar', 'Calendario'), icon: Calendar, type: 'view' });
         }
         navItems.push({ id: 'admin', label: 'Admin Panel', icon: Shield, type: 'link', href: '/admin' });
     }
