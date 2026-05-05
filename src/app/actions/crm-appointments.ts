@@ -27,3 +27,25 @@ export async function deleteAppointmentAction(id: string) {
         return { success: false, error: error.message };
     }
 }
+
+export async function createBlockAction(startTimeIso: string, isFullDay: boolean) {
+    try {
+        const db = getAdminDb();
+        const blockData = {
+            startTime: startTimeIso,
+            endTime: null,
+            status: 'blocked',
+            type: isFullDay ? 'full_day_block' : 'specific_hour_block',
+            clientName: 'BLOQUEO DE CALENDARIO',
+            clientPhone: '',
+            clientEmail: '',
+            reason: 'Vacaciones o Día no disponible',
+            createdAt: new Date().toISOString()
+        };
+        const ref = await db.collection('crm_appointments').add(blockData);
+        return { success: true, id: ref.id };
+    } catch (error: any) {
+        console.error('Error creating block:', error);
+        return { success: false, error: error.message };
+    }
+}

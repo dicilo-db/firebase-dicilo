@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Calendar as CalendarIcon, Clock, ChevronLeft, ChevronRight, User, Phone, Video, CalendarCheck2, ExternalLink, Trash2 } from 'lucide-react';
+import { Calendar as CalendarIcon, Clock, ChevronLeft, ChevronRight, User, Phone, Video, CalendarCheck2, ExternalLink, Trash2, Lock } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useBusinessAccess } from '@/hooks/useBusinessAccess';
@@ -11,10 +11,13 @@ import { format, addMonths, subMonths, startOfMonth, endOfMonth, eachDayOfInterv
 import { es, de, enUS } from 'date-fns/locale';
 import { collection, query, onSnapshot, orderBy } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import { updateAppointmentTimeAction, deleteAppointmentAction } from '@/app/actions/crm-appointments';
+import { updateAppointmentTimeAction, deleteAppointmentAction, createBlockAction } from '@/app/actions/crm-appointments';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Switch } from '@/components/ui/switch';
 
 export default function MasterCalendarPage() {
     const { t, i18n } = useTranslation('common');
@@ -28,6 +31,12 @@ export default function MasterCalendarPage() {
     const [selectedAppt, setSelectedAppt] = useState<any>(null);
     const [editTime, setEditTime] = useState('');
     const [savingTime, setSavingTime] = useState(false);
+
+    // Block States
+    const [blockDialogDay, setBlockDialogDay] = useState<Date | null>(null);
+    const [blockTime, setBlockTime] = useState<string>('09:00');
+    const [isFullDayBlock, setIsFullDayBlock] = useState<boolean>(true);
+    const [blocking, setBlocking] = useState(false);
 
     const locales: any = { es, de, en: enUS };
     const localeObj = locales[i18n.language] || es;
@@ -137,6 +146,29 @@ export default function MasterCalendarPage() {
         }
     };
 
+    const handleCreateBlock = async () => {
+        if (!blockDialogDay) return;
+        setBlocking(true);
+        const blockDate = new Date(blockDialogDay);
+        if (!isFullDayBlock) {
+            const [h, m] = blockTime.split(':').map(Number);
+            blockDate.setHours(h, m, 0, 0);
+        } else {
+            blockDate.setHours(0, 0, 0, 0);
+        }
+
+        try {
+            const res = await createBlockAction(blockDate.toISOString(), isFullDayBlock);
+            if (!res.success) throw new Error(res.error);
+            toast({ title: 'Bloqueo creado', description: 'El horario ha sido bloqueado con éxito.' });
+            setBlockDialogDay(null);
+        } catch (error) {
+            toast({ variant: 'destructive', title: 'Error', description: 'No se pudo crear el bloqueo.' });
+        } finally {
+            setBlocking(false);
+        }
+    };
+
     const monthStart = startOfMonth(currentDate);
     const monthEnd = endOfMonth(monthStart);
     const startDate = monthStart;
@@ -213,9 +245,15 @@ export default function MasterCalendarPage() {
                                 return (
                                     <div 
                                         key={day.toString()} 
-                                        className={`bg-white min-h-[120px] p-2 transition-colors hover:bg-slate-50 ${isToday ? 'ring-2 ring-inset ring-emerald-500 bg-emerald-50/10' : ''}`}
+                                        className={`bg-white min-h-[120px] p-2 transition-colors hover:bg-slate-50 ${adminUser?.role === 'superadmin' ? 'cursor-pointer' : ''} ${isToday ? 'ring-2 ring-inset ring-emerald-500 bg-emerald-50/10' : ''}`}
                                         onDragOver={(e) => e.preventDefault()}
                                         onDrop={(e) => handleDrop(e, day)}
+                                        onClick={(e) => {
+                                            // Only open block dialog if clicking empty space, not an appointment, and user is superadmin
+                                            if (e.target === e.currentTarget && adminUser?.role === 'superadmin') {
+                                                setBlockDialogDay(day);
+                                            }
+                                        }}
                                     >
                                         <div className={`text-right text-sm font-medium p-1 mb-1 ${isToday ? 'text-emerald-700 bg-emerald-100 rounded-md w-fit ml-auto px-2' : 'text-slate-500'}`}>
                                             {format(day, 'd')}
@@ -226,18 +264,19 @@ export default function MasterCalendarPage() {
                                                     key={appt.id || idx} 
                                                     draggable
                                                     onDragStart={(e) => e.dataTransfer.setData('apptId', appt.id)}
-                                                    onClick={() => {
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
                                                         setSelectedAppt(appt);
                                                         setEditTime(format(parseISO(appt.startTime), 'HH:mm'));
                                                     }}
-                                                    className="bg-indigo-50 border border-indigo-100 p-1.5 rounded text-xs animate-in fade-in cursor-grab hover:bg-indigo-100 transition-colors active:cursor-grabbing"
+                                                    className={`p-1.5 rounded text-xs animate-in fade-in cursor-grab hover:opacity-80 transition-opacity active:cursor-grabbing ${appt.type === 'full_day_block' ? 'bg-red-50 border border-red-200 text-red-800' : appt.type === 'specific_hour_block' ? 'bg-orange-50 border border-orange-200 text-orange-800' : 'bg-indigo-50 border border-indigo-100'}`}
                                                 >
-                                                    <div className="font-bold text-indigo-700 flex items-center mb-0.5">
-                                                        <Clock className="w-3 h-3 mr-1" />
-                                                        {format(parseISO(appt.startTime), 'HH:mm')}
+                                                    <div className={`font-bold flex items-center mb-0.5 ${appt.type?.includes('block') ? 'text-red-700' : 'text-indigo-700'}`}>
+                                                        {appt.type?.includes('block') ? <Lock className="w-3 h-3 mr-1" /> : <Clock className="w-3 h-3 mr-1" />}
+                                                        {appt.type === 'full_day_block' ? 'Todo el día' : format(parseISO(appt.startTime), 'HH:mm')}
                                                     </div>
-                                                    <div className="text-slate-700 font-medium truncate" title={appt.inviteeName}>
-                                                        {appt.inviteeName || 'Sin título'}
+                                                    <div className={`font-medium truncate ${appt.type?.includes('block') ? 'text-red-900' : 'text-slate-700'}`} title={appt.inviteeName || appt.clientName}>
+                                                        {appt.inviteeName || appt.clientName || 'Sin título'}
                                                     </div>
                                                 </div>
                                             ))}
@@ -255,7 +294,7 @@ export default function MasterCalendarPage() {
                     <DialogHeader>
                         <DialogTitle>Detalles de la Reunión</DialogTitle>
                         <DialogDescription>
-                            Información completa sobre la cita programada.
+                            Información completa sobre la cita programada o el bloqueo activo.
                         </DialogDescription>
                     </DialogHeader>
                     {selectedAppt && (
@@ -319,14 +358,62 @@ export default function MasterCalendarPage() {
                                 </div>
                             )}
 
-                            <div className="pt-4 border-t flex justify-end">
-                                <Button variant="destructive" onClick={handleDelete} className="w-full sm:w-auto">
-                                    <Trash2 className="w-4 h-4 mr-2" />
-                                    Cancelar y Eliminar Cita
-                                </Button>
+                            <div className="pt-4 border-t flex flex-col sm:flex-row justify-end gap-2">
+                                {selectedAppt.type?.includes('block') ? (
+                                    adminUser?.role === 'superadmin' && (
+                                        <Button variant="destructive" onClick={handleDelete} className="w-full sm:w-auto">
+                                            <Trash2 className="w-4 h-4 mr-2" />
+                                            Eliminar Bloqueo
+                                        </Button>
+                                    )
+                                ) : (
+                                    <Button variant="destructive" onClick={handleDelete} className="w-full sm:w-auto">
+                                        <Trash2 className="w-4 h-4 mr-2" />
+                                        Cancelar y Eliminar Cita
+                                    </Button>
+                                )}
                             </div>
                         </div>
                     )}
+                </DialogContent>
+            </Dialog>
+
+            {/* Dialog para Bloquear Día/Hora */}
+            <Dialog open={!!blockDialogDay} onOpenChange={(open) => !open && setBlockDialogDay(null)}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2">
+                            <Lock className="w-5 h-5 text-red-500" />
+                            Bloquear Horario
+                        </DialogTitle>
+                        <DialogDescription>
+                            Día seleccionado: <strong className="text-slate-800 dark:text-white">{blockDialogDay && format(blockDialogDay, 'PPPP', { locale: localeObj })}</strong>
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-6 pt-4">
+                        <div className="flex items-center space-x-3 bg-slate-50 dark:bg-slate-900 p-4 rounded-lg border border-slate-200 dark:border-slate-800 cursor-pointer" onClick={() => setIsFullDayBlock(!isFullDayBlock)}>
+                            <input type="checkbox" id="fullDay" checked={isFullDayBlock} readOnly className="w-5 h-5 rounded text-emerald-600 focus:ring-emerald-500" />
+                            <div className="flex flex-col">
+                                <label htmlFor="fullDay" className="text-sm font-bold text-slate-800 dark:text-white cursor-pointer">Bloquear todo el día</label>
+                                <span className="text-xs text-slate-500">Nadie podrá reservar en ninguna hora de este día.</span>
+                            </div>
+                        </div>
+
+                        {!isFullDayBlock && (
+                            <div className="flex flex-col space-y-2">
+                                <label className="text-sm font-bold text-slate-800 dark:text-white">Hora a bloquear</label>
+                                <div className="flex items-center gap-3">
+                                    <Clock className="w-5 h-5 text-slate-400" />
+                                    <input type="time" value={blockTime} onChange={(e) => setBlockTime(e.target.value)} className="border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-md px-3 py-2 flex-1 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                                </div>
+                                <span className="text-xs text-slate-500">Bloquearás específicamente esta hora para que no aparezca disponible.</span>
+                            </div>
+                        )}
+
+                        <Button onClick={handleCreateBlock} disabled={blocking} className="w-full bg-red-600 hover:bg-red-700 text-white font-bold h-12">
+                            {blocking ? 'Bloqueando...' : 'Confirmar Bloqueo'}
+                        </Button>
+                    </div>
                 </DialogContent>
             </Dialog>
         </div>

@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { AlertCircle, FileText, PlayCircle, Bot, Headphones } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { BibliotecaRecursos } from './BibliotecaRecursos';
 
 interface VideoWP {
   id: number;
@@ -51,11 +52,7 @@ export function AcademiaView() {
         </TabsContent>
         
         <TabsContent value="recursos" className="mt-0 animate-in fade-in duration-300">
-            <div className="p-16 text-center border-2 border-dashed rounded-2xl border-slate-200 dark:border-slate-800 text-slate-500 bg-white/50 dark:bg-slate-900/50">
-                <Headphones className="w-16 h-16 mx-auto mb-4 opacity-50 text-emerald-500" />
-                <h3 className="text-2xl font-bold text-slate-700 dark:text-slate-300">{t('academia.resources.title', 'Biblioteca de Recursos')}</h3>
-                <p className="mt-2 text-lg">{t('academia.resources.coming_soon', 'Próximamente: Documentos PDF (Guías) y Podcasts de Ventas (Audios).')}</p>
-            </div>
+            <BibliotecaRecursos />
         </TabsContent>
         
         <TabsContent value="tutor" className="mt-0 animate-in fade-in duration-300">

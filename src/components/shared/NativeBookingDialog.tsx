@@ -29,6 +29,7 @@ export default function NativeBookingDialog({ trigger }: NativeBookingDialogProp
     const [success, setSuccess] = useState(false);
     const [userTz, setUserTz] = useState('Local');
     const [bookedTimes, setBookedTimes] = useState<string[]>([]);
+    const [isFullDayBlocked, setIsFullDayBlocked] = useState(false);
 
     const [formData, setFormData] = useState({
         name: '',
@@ -66,12 +67,17 @@ export default function NativeBookingDialog({ trigger }: NativeBookingDialogProp
                 
                 const snap = await getDocs(q);
                 const booked: string[] = [];
+                let fullDayBlockFound = false;
                 snap.forEach(doc => {
                     const data = doc.data();
+                    if (data.type === 'full_day_block') {
+                        fullDayBlockFound = true;
+                    }
                     if (data.startTime) {
                         booked.push(new Date(data.startTime).toISOString());
                     }
                 });
+                setIsFullDayBlocked(fullDayBlockFound);
                 setBookedTimes(booked);
             } catch(e) {
                 console.error("Error fetching booked slots", e);
@@ -234,7 +240,11 @@ export default function NativeBookingDialog({ trigger }: NativeBookingDialogProp
                                 <div className="space-y-2">
                                     <p className="text-sm font-semibold text-slate-700 mb-3">{t('booking.available_for', 'Horarios Disponibles para el ')} {selectedDate && format(selectedDate, "d 'de' MMMM", { locale: es })}</p>
                                     <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 max-h-[190px] overflow-y-auto pr-2 pb-4 border-b border-slate-100">
-                                        {timeSlots.map((slot, idx) => {
+                                        {isFullDayBlocked ? (
+                                        <div className="col-span-2 md:col-span-3 lg:col-span-4 p-8 text-center text-red-600 bg-red-50 border border-red-200 rounded-xl font-medium animate-in fade-in">
+                                            Día no disponible para reservaciones.
+                                        </div>
+                                    ) : timeSlots.map((slot, idx) => {
                                             const isBooked = bookedTimes.includes(slot.date.toISOString());
                                             return (
                                                 <button
