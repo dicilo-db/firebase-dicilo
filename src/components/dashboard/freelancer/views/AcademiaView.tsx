@@ -94,7 +94,7 @@ function ReproductorVideosDicilo() {
     if (!videos.length) return {};
     
     const agrupado: Record<string, VideoWP[]> = {};
-    const currentLang = i18n.language.split('-')[0]; // "es", "en", "de"
+    const currentLang = (i18n.language || 'es').split('-')[0]; // "es", "en", "de"
 
     videos.forEach(video => {
       // Filtrar por idioma

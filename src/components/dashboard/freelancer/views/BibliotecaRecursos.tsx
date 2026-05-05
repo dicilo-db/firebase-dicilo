@@ -47,7 +47,7 @@ export function BibliotecaRecursos() {
   const recursosPorCategoria = useMemo(() => {
     if (!recursos.length) return {};
     const agrupado: Record<string, RecursoWP[]> = {};
-    const currentLang = i18n.language.split('-')[0]; // "es", "en", "de"
+    const currentLang = (i18n.language || 'es').split('-')[0]; // "es", "en", "de"
 
     recursos.forEach(recurso => {
       // Filtrar por idioma
