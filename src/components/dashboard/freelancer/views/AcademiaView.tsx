@@ -7,6 +7,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { AlertCircle, FileText, PlayCircle, Bot, Headphones } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BibliotecaRecursos } from './BibliotecaRecursos';
+import { AcademiaTutor } from './AcademiaTutor';
 
 interface VideoWP {
   id: number;
@@ -56,11 +57,7 @@ export function AcademiaView() {
         </TabsContent>
         
         <TabsContent value="tutor" className="mt-0 animate-in fade-in duration-300">
-            <div className="p-16 text-center border-2 border-dashed rounded-2xl border-slate-200 dark:border-slate-800 text-slate-500 bg-white/50 dark:bg-slate-900/50">
-                <Bot className="w-16 h-16 mx-auto mb-4 opacity-50 text-fuchsia-500" />
-                <h3 className="text-2xl font-bold text-slate-700 dark:text-slate-300">{t('academia.tutor.title', 'Tutor AI de Dicilo')}</h3>
-                <p className="mt-2 text-lg">{t('academia.tutor.coming_soon', 'Próximamente: Tu profesor particular 24/7 impulsado por IA, conectado a Telegram.')}</p>
-            </div>
+            <AcademiaTutor />
         </TabsContent>
       </Tabs>
     </div>
