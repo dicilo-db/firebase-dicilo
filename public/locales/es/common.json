@@ -1637,5 +1637,30 @@
     "success_msg1": "Tu reunión ha sido agendada con éxito para el",
     "success_msg2": "Nuevos detalles y el enlace a la llamada te llegarán muy pronto a tu WhatsApp.",
     "close": "Cerrar Ventana"
+  },
+  "academia": {
+    "subtitle": "Centro de estudios integral: videos, recursos y tutoría interactiva.",
+    "tabs": {
+      "videos": "Videos",
+      "resources": "Recursos",
+      "tutor": "Tutor AI"
+    },
+    "resources": {
+      "title": "Biblioteca de Recursos",
+      "coming_soon": "Próximamente: Documentos PDF (Guías) y Podcasts de Ventas (Audios)."
+    },
+    "tutor": {
+      "title": "Tutor AI de Dicilo",
+      "coming_soon": "Próximamente: Tu profesor particular 24/7 impulsado por IA, conectado a Telegram."
+    },
+    "videos": {
+      "general": "Contenido General",
+      "empty": "No hay videos disponibles.",
+      "unavailable": "Video no disponible",
+      "unsupported": "Tu navegador no soporta el formato de video."
+    },
+    "error": {
+      "title": "¡Ocurrió un error!"
+    }
   }
 }

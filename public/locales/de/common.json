@@ -1555,5 +1555,30 @@
     "success_msg1": "Ihr Meeting wurde erfolgreich geplant für",
     "success_msg2": "Neue Details und der Link zum Anruf erhalten Sie in Kürze per WhatsApp.",
     "close": "Fenster schließen"
+  },
+  "academia": {
+    "subtitle": "Umfassendes Studienzentrum: Videos, Ressourcen und interaktive Nachhilfe.",
+    "tabs": {
+      "videos": "Videos",
+      "resources": "Ressourcen",
+      "tutor": "KI-Tutor"
+    },
+    "resources": {
+      "title": "Ressourcenbibliothek",
+      "coming_soon": "Demnächst: PDF-Dokumente (Leitfäden) und Vertriebs-Podcasts (Audios)."
+    },
+    "tutor": {
+      "title": "Dicilo KI-Tutor",
+      "coming_soon": "Demnächst: Dein privater KI-Lehrer rund um die Uhr, verbunden mit Telegram."
+    },
+    "videos": {
+      "general": "Allgemeine Inhalte",
+      "empty": "Keine Videos verfügbar.",
+      "unavailable": "Video nicht verfügbar",
+      "unsupported": "Ihr Browser unterstützt das Videoformat nicht."
+    },
+    "error": {
+      "title": "Ein Fehler ist aufgetreten!"
+    }
   }
 }

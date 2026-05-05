@@ -1674,5 +1674,30 @@
     "only_necessary": "Only necessary",
     "save": "Save settings",
     "floating_btn": "Cookie Settings"
+  },
+  "academia": {
+    "subtitle": "Comprehensive study center: videos, resources, and interactive tutoring.",
+    "tabs": {
+      "videos": "Videos",
+      "resources": "Resources",
+      "tutor": "AI Tutor"
+    },
+    "resources": {
+      "title": "Resource Library",
+      "coming_soon": "Coming soon: PDF Documents (Guides) and Sales Podcasts (Audios)."
+    },
+    "tutor": {
+      "title": "Dicilo AI Tutor",
+      "coming_soon": "Coming soon: Your 24/7 private teacher powered by AI, connected to Telegram."
+    },
+    "videos": {
+      "general": "General Content",
+      "empty": "No videos available.",
+      "unavailable": "Video not available",
+      "unsupported": "Your browser does not support the video format."
+    },
+    "error": {
+      "title": "An error occurred!"
+    }
   }
 }
