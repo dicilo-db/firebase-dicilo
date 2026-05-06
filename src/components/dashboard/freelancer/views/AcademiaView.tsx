@@ -66,7 +66,7 @@ export function AcademiaView() {
 }
 
 function ReproductorVideosDicilo() {
-  const { t } = useTranslation('common');
+  const { t, i18n } = useTranslation('common');
   const [videos, setVideos] = useState<VideoWP[]>([]);
   const [cargando, setCargando] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
