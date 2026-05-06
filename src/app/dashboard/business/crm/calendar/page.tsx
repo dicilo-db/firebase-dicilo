@@ -11,7 +11,7 @@ import { format, addMonths, subMonths, startOfMonth, endOfMonth, eachDayOfInterv
 import { es, de, enUS } from 'date-fns/locale';
 import { collection, query, onSnapshot, orderBy } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import { updateAppointmentTimeAction, deleteAppointmentAction, createBlockAction } from '@/app/actions/crm-appointments';
+import { updateAppointmentTimeAction, deleteAppointmentAction, createBlockAction, updateAppointmentReasonAction } from '@/app/actions/crm-appointments';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
@@ -30,6 +30,7 @@ export default function MasterCalendarPage() {
     const [loadingData, setLoadingData] = useState(true);
     const [selectedAppt, setSelectedAppt] = useState<any>(null);
     const [editTime, setEditTime] = useState('');
+    const [editEndTime, setEditEndTime] = useState('');
     const [savingTime, setSavingTime] = useState(false);
 
     // Block States
@@ -38,9 +39,27 @@ export default function MasterCalendarPage() {
     const [endBlockTime, setEndBlockTime] = useState<string>('');
     const [isFullDayBlock, setIsFullDayBlock] = useState<boolean>(true);
     const [blocking, setBlocking] = useState(false);
+    const [blockReason, setBlockReason] = useState<string>('');
+
+    const [isEditingReason, setIsEditingReason] = useState(false);
+    const [editReasonText, setEditReasonText] = useState('');
+    const [savingReason, setSavingReason] = useState(false);
 
     const locales: any = { es, de, en: enUS };
     const localeObj = locales[i18n.language] || es;
+
+    useEffect(() => {
+        if (selectedAppt) {
+            setEditReasonText(selectedAppt.reason || '');
+            setIsEditingReason(false);
+            setEditTime(format(parseISO(selectedAppt.startTime), 'HH:mm'));
+            if (selectedAppt.endTime) {
+                setEditEndTime(format(parseISO(selectedAppt.endTime), 'HH:mm'));
+            } else {
+                setEditEndTime('');
+            }
+        }
+    }, [selectedAppt]);
 
     // Escuchar el Webhook en tiempo real desde Firestore
     useEffect(() => {
@@ -116,19 +135,43 @@ export default function MasterCalendarPage() {
     const handleSaveTime = async () => {
         if (!selectedAppt || !editTime) return;
         setSavingTime(true);
-        const [hours, minutes] = editTime.split(':').map(Number);
-        const newDate = new Date(parseISO(selectedAppt.startTime));
-        newDate.setHours(hours, minutes, 0, 0);
-
         try {
-            const res = await updateAppointmentTimeAction(selectedAppt.id, newDate.toISOString());
+            const date = parseISO(selectedAppt.startTime);
+            const [h, m] = editTime.split(':').map(Number);
+            const newDate = setMinutes(setHours(date, h), m);
+            
+            let newEndIso: string | undefined = undefined;
+            if (editEndTime) {
+                const endDate = parseISO(selectedAppt.endTime || selectedAppt.startTime);
+                const [endH, endM] = editEndTime.split(':').map(Number);
+                const newEndDate = setMinutes(setHours(endDate, endH), endM);
+                newEndIso = newEndDate.toISOString();
+            }
+
+            const res = await updateAppointmentTimeAction(selectedAppt.id, newDate.toISOString(), newEndIso);
             if (!res.success) throw new Error(res.error);
-            toast({ title: 'Horario actualizado', description: 'El horario se ha guardado correctamente.' });
-            setSelectedAppt({ ...selectedAppt, startTime: newDate.toISOString() });
+            toast({ title: 'Horario actualizado', description: 'La cita ha sido reprogramada.' });
+            setSelectedAppt({ ...selectedAppt, startTime: newDate.toISOString(), endTime: newEndIso || null });
         } catch (error) {
             toast({ variant: 'destructive', title: 'Error', description: 'No se pudo cambiar el horario.' });
         } finally {
             setSavingTime(false);
+        }
+    };
+
+    const handleSaveReason = async () => {
+        if (!selectedAppt) return;
+        setSavingReason(true);
+        try {
+            const res = await updateAppointmentReasonAction(selectedAppt.id, editReasonText);
+            if (!res.success) throw new Error(res.error);
+            toast({ title: 'Texto actualizado', description: 'Los detalles del evento han sido guardados.' });
+            setIsEditingReason(false);
+            setSelectedAppt({ ...selectedAppt, reason: editReasonText });
+        } catch (error) {
+            toast({ variant: 'destructive', title: 'Error', description: 'No se pudo guardar el texto.' });
+        } finally {
+            setSavingReason(false);
         }
     };
 
@@ -151,7 +194,7 @@ export default function MasterCalendarPage() {
         if (!blockDialogDay) return;
         setBlocking(true);
         const blockDate = new Date(blockDialogDay);
-        let endBlockIso: string | undefined = undefined;
+        let endBlockIso: string | null = null;
         if (!isFullDayBlock) {
             const [h, m] = blockTime.split(':').map(Number);
             blockDate.setHours(h, m, 0, 0);
@@ -167,11 +210,19 @@ export default function MasterCalendarPage() {
         }
 
         try {
-            const res = await createBlockAction(blockDate.toISOString(), isFullDayBlock, endBlockIso);
+            const res = await createBlockAction(
+                blockDate.toISOString(), 
+                isFullDayBlock, 
+                endBlockIso, 
+                blockReason || null
+            );
             if (!res.success) throw new Error(res.error);
+            
             toast({ title: 'Bloqueo creado', description: 'El horario ha sido bloqueado con éxito.' });
             setBlockDialogDay(null);
+            setBlockReason('');
         } catch (error) {
+            console.error(error);
             toast({ variant: 'destructive', title: 'Error', description: 'No se pudo crear el bloqueo.' });
         } finally {
             setBlocking(false);
@@ -261,6 +312,7 @@ export default function MasterCalendarPage() {
                                             // Only open block dialog if clicking empty space, not an appointment, and user is superadmin
                                             if (e.target === e.currentTarget && adminUser?.role === 'superadmin') {
                                                 setBlockDialogDay(day);
+                                                setBlockReason('');
                                             }
                                         }}
                                     >
@@ -276,7 +328,6 @@ export default function MasterCalendarPage() {
                                                     onClick={(e) => {
                                                         e.stopPropagation();
                                                         setSelectedAppt(appt);
-                                                        setEditTime(format(parseISO(appt.startTime), 'HH:mm'));
                                                     }}
                                                     className={`p-1.5 rounded text-xs animate-in fade-in cursor-grab hover:opacity-80 transition-opacity active:cursor-grabbing ${appt.type === 'full_day_block' ? 'bg-red-50 border border-red-200 text-red-800' : appt.type?.includes('block') ? 'bg-orange-50 border border-orange-200 text-orange-800' : 'bg-indigo-50 border border-indigo-100'}`}
                                                 >
@@ -284,8 +335,8 @@ export default function MasterCalendarPage() {
                                                         {appt.type?.includes('block') ? <Lock className="w-3 h-3 mr-1" /> : <Clock className="w-3 h-3 mr-1" />}
                                                         {appt.type === 'full_day_block' ? 'Todo el día' : appt.type === 'time_range_block' ? `${format(parseISO(appt.startTime), 'HH:mm')} - ${format(parseISO(appt.endTime), 'HH:mm')}` : format(parseISO(appt.startTime), 'HH:mm')}
                                                     </div>
-                                                    <div className={`font-medium truncate ${appt.type?.includes('block') ? 'text-red-900' : 'text-slate-700'}`} title={appt.inviteeName || appt.clientName}>
-                                                        {appt.inviteeName || appt.clientName || 'Sin título'}
+                                                    <div className={`font-medium truncate ${appt.type?.includes('block') ? 'text-red-900' : 'text-slate-700'}`} title={appt.type?.includes('block') ? (appt.reason || 'Bloqueado') : (appt.inviteeName || appt.clientName)}>
+                                                        {appt.type?.includes('block') ? (appt.reason || 'Bloqueado') : (appt.inviteeName || appt.clientName || 'Sin título')}
                                                     </div>
                                                 </div>
                                             ))}
@@ -299,7 +350,7 @@ export default function MasterCalendarPage() {
             </Card>
 
             <Dialog open={!!selectedAppt} onOpenChange={(open) => !open && setSelectedAppt(null)}>
-                <DialogContent className="sm:max-w-md">
+                <DialogContent className="w-[95vw] sm:max-w-2xl max-h-[90vh] overflow-y-auto">
                     <DialogHeader>
                         <DialogTitle>Detalles de la Reunión</DialogTitle>
                         <DialogDescription>
@@ -309,11 +360,51 @@ export default function MasterCalendarPage() {
                     {selectedAppt && (
                         <div className="space-y-4 py-4">
                             <div className="flex flex-col">
-                                <span className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">Invitado</span>
-                                <span className="text-lg font-medium text-slate-900 dark:text-slate-100 flex items-center gap-2 mt-1">
-                                    <User className="w-4 h-4" />
-                                    {selectedAppt.inviteeName || 'Desconocido'}
+                                <span className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">
+                                    {selectedAppt.type?.includes('block') ? 'Datos del evento / Motivo' : 'Invitado'}
                                 </span>
+                                {selectedAppt.type?.includes('block') ? (
+                                    isEditingReason ? (
+                                        <div className="mt-2 space-y-2">
+                                            <textarea 
+                                                value={editReasonText} 
+                                                onChange={(e) => setEditReasonText(e.target.value)} 
+                                                className="w-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 min-h-[150px]"
+                                            />
+                                            <div className="flex gap-2">
+                                                <Button size="sm" onClick={handleSaveReason} disabled={savingReason}>
+                                                    {savingReason ? 'Guardando...' : 'Guardar'}
+                                                </Button>
+                                                <Button size="sm" variant="ghost" onClick={() => setIsEditingReason(false)}>
+                                                    Cancelar
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="mt-2 group relative">
+                                            <div className="text-sm font-medium text-slate-900 dark:text-slate-100 whitespace-pre-wrap max-h-60 overflow-y-auto pr-2 bg-slate-50 dark:bg-slate-800 p-4 rounded-md border border-slate-200 dark:border-slate-700">
+                                                {selectedAppt.reason || 'Bloqueado'}
+                                            </div>
+                                            <Button 
+                                                size="sm" 
+                                                variant="outline" 
+                                                className="absolute top-2 right-4 opacity-0 group-hover:opacity-100 transition-opacity"
+                                                onClick={() => setIsEditingReason(true)}
+                                            >
+                                                Editar texto
+                                            </Button>
+                                            {/* Hint for mobile where hover doesn't exist */}
+                                            <div className="text-right mt-1 sm:hidden">
+                                                <button onClick={() => setIsEditingReason(true)} className="text-xs text-emerald-600 hover:underline">Editar texto</button>
+                                            </div>
+                                        </div>
+                                    )
+                                ) : (
+                                    <span className="text-lg font-medium text-slate-900 dark:text-slate-100 flex items-center gap-2 mt-1">
+                                        <User className="w-4 h-4" />
+                                        {selectedAppt.inviteeName || 'Desconocido'}
+                                    </span>
+                                )}
                             </div>
                             
                             {selectedAppt.inviteeEmail && (
@@ -327,23 +418,38 @@ export default function MasterCalendarPage() {
                                                 <span className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">Fecha y Hora</span>
                                                 <span className="text-sm font-medium mt-1 flex items-center gap-2 text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/30 p-2 rounded-md w-fit">
                                                     <CalendarIcon className="w-4 h-4" />
-                                                    {format(parseISO(selectedAppt.startTime), 'PPPPp', { locale: localeObj })}
+                                                    {format(parseISO(selectedAppt.startTime), 'PPPP', { locale: localeObj })}
+                                                    {selectedAppt.type === 'full_day_block' ? '' : (
+                                                        <> a las {format(parseISO(selectedAppt.startTime), 'HH:mm')} {selectedAppt.endTime ? `- ${format(parseISO(selectedAppt.endTime), 'HH:mm')}` : ''}</>
+                                                    )}
                                                 </span>
                                                 
-                                                <div className="mt-3 flex items-center gap-2 bg-slate-50 dark:bg-slate-800 p-2 rounded-md border border-slate-200 dark:border-slate-700">
-                                                    <Clock className="w-4 h-4 text-slate-500" />
-                                                    <input 
-                                                        type="time" 
-                                                        value={editTime}
-                                                        onChange={(e) => setEditTime(e.target.value)}
-                                                        className="bg-transparent border border-slate-300 dark:border-slate-600 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                                                    />
+                                                <div className="mt-3 flex items-center gap-2 bg-slate-50 dark:bg-slate-800 p-2 rounded-md border border-slate-200 dark:border-slate-700 flex-wrap">
+                                                    <div className="flex items-center gap-2">
+                                                        <Clock className="w-4 h-4 text-slate-500" />
+                                                        <input 
+                                                            type="time" 
+                                                            value={editTime}
+                                                            onChange={(e) => setEditTime(e.target.value)}
+                                                            className="bg-transparent border border-slate-300 dark:border-slate-600 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                                                        />
+                                                    </div>
+                                                    <span className="text-slate-400 font-bold">-</span>
+                                                    <div className="flex items-center gap-2">
+                                                        <input 
+                                                            type="time" 
+                                                            value={editEndTime}
+                                                            onChange={(e) => setEditEndTime(e.target.value)}
+                                                            placeholder="Fin"
+                                                            className="bg-transparent border border-slate-300 dark:border-slate-600 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                                                        />
+                                                    </div>
                                                     <Button 
                                                         size="sm" 
                                                         onClick={handleSaveTime} 
-                                                        disabled={savingTime || editTime === format(parseISO(selectedAppt.startTime), 'HH:mm')}
+                                                        disabled={savingTime || (editTime === format(parseISO(selectedAppt.startTime), 'HH:mm') && (!selectedAppt.endTime || editEndTime === format(parseISO(selectedAppt.endTime), 'HH:mm')))}
                                                     >
-                                                        {savingTime ? 'Guardando...' : 'Cambiar Horario'}
+                                                        {savingTime ? 'Guardando...' : 'Guardar'}
                                                     </Button>
                                                 </div>
                                             </div>
@@ -389,7 +495,7 @@ export default function MasterCalendarPage() {
 
             {/* Dialog para Bloquear Día/Hora */}
             <Dialog open={!!blockDialogDay} onOpenChange={(open) => !open && setBlockDialogDay(null)}>
-                <DialogContent>
+                <DialogContent className="w-[95vw] sm:max-w-xl max-h-[90vh] overflow-y-auto">
                     <DialogHeader>
                         <DialogTitle className="flex items-center gap-2">
                             <Lock className="w-5 h-5 text-red-500" />
@@ -427,6 +533,16 @@ export default function MasterCalendarPage() {
                                 </div>
                             </div>
                         )}
+
+                        <div>
+                            <label className="text-sm font-bold text-slate-800 dark:text-white">Datos del evento / Motivo del bloqueo</label>
+                            <textarea 
+                                value={blockReason} 
+                                onChange={(e) => setBlockReason(e.target.value)} 
+                                placeholder="Ej: Reunión con cliente, Evento especial, etc." 
+                                className="mt-1 w-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 min-h-[80px]"
+                            />
+                        </div>
 
                         <Button onClick={handleCreateBlock} disabled={blocking} className="w-full bg-red-600 hover:bg-red-700 text-white font-bold h-12">
                             {blocking ? 'Bloqueando...' : 'Confirmar Bloqueo'}

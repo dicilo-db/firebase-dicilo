@@ -52,15 +52,17 @@ function extractCoords(data: any): [number, number] | undefined {
   return undefined;
 }
 
-function serializeBusiness(docId: string, data: any): Business {
-  let imageUrl = data.clientLogoUrl || data.imageUrl;
-  if (!imageUrl || imageUrl.includes('1024terabox.com')) {
-    imageUrl = `https://placehold.co/128x128.png`;
+function sanitizeUrl(url: any): string {
+  if (typeof url !== 'string' || !url) return '';
+  if (url.startsWith('file://') || url.toLowerCase().endsWith('.pdf') || url.includes('1024terabox.com') || !url.startsWith('http')) {
+    return '';
   }
+  if (url.startsWith('http://')) return url.replace('http://', 'https://');
+  return url;
+}
 
-  if (imageUrl && imageUrl.startsWith('http://')) {
-    imageUrl = imageUrl.replace('http://', 'https://');
-  }
+function serializeBusiness(docId: string, data: any): Business {
+  let imageUrl = sanitizeUrl(data.clientLogoUrl) || sanitizeUrl(data.imageUrl) || `https://placehold.co/128x128.png`;
 
   const biz: any = {
     id: docId,
@@ -69,8 +71,8 @@ function serializeBusiness(docId: string, data: any): Business {
     description: data.description || data.bodyData?.description || data.headerData?.welcomeText || '',
     location: data.location || '',
     imageUrl: imageUrl,
-    clientLogoUrl: data.clientLogoUrl || imageUrl,
-    coverImageUrl: data.headerData?.headerImageUrl || data.headerData?.headerBackgroundImageUrl || data.headerData?.backgroundImage || data.coverImage || imageUrl,
+    clientLogoUrl: sanitizeUrl(data.clientLogoUrl) || imageUrl,
+    coverImageUrl: sanitizeUrl(data.headerData?.headerImageUrl) || sanitizeUrl(data.headerData?.headerBackgroundImageUrl) || sanitizeUrl(data.headerData?.backgroundImage) || sanitizeUrl(data.coverImage) || imageUrl,
     imageHint: data.imageHint || '',
     address: data.address || '',
     phone: data.phone || '',
@@ -222,7 +224,9 @@ async function getAds(userGeo: UserGeo | null) {
       const sanitized: any = {
         id: doc.id,
       };
-      if (data.imageUrl !== undefined) sanitized.imageUrl = data.imageUrl;
+      if (data.imageUrl !== undefined) {
+          sanitized.imageUrl = sanitizeUrl(data.imageUrl) || 'https://placehold.co/128x128.png';
+      }
       if (data.linkUrl !== undefined) sanitized.linkUrl = data.linkUrl;
       if (data.title !== undefined) sanitized.title = data.title;
       if (data.active !== undefined) sanitized.active = data.active;

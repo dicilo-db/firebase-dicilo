@@ -28,7 +28,7 @@ export default function NativeBookingDialog({ trigger }: NativeBookingDialogProp
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
     const [userTz, setUserTz] = useState('Local');
-    const [bookedTimes, setBookedTimes] = useState<string[]>([]);
+    const [bookedRanges, setBookedRanges] = useState<{start: number, end: number}[]>([]);
     const [isFullDayBlocked, setIsFullDayBlocked] = useState(false);
 
     const [formData, setFormData] = useState({
@@ -46,7 +46,7 @@ export default function NativeBookingDialog({ trigger }: NativeBookingDialogProp
     useEffect(() => {
         if (!selectedDate) {
             setTimeSlots([]);
-            setBookedTimes([]);
+            setBookedRanges([]);
             return;
         }
 
@@ -66,7 +66,7 @@ export default function NativeBookingDialog({ trigger }: NativeBookingDialogProp
                 );
                 
                 const snap = await getDocs(q);
-                const booked: string[] = [];
+                const ranges: {start: number, end: number}[] = [];
                 let fullDayBlockFound = false;
                 snap.forEach(doc => {
                     const data = doc.data();
@@ -74,11 +74,20 @@ export default function NativeBookingDialog({ trigger }: NativeBookingDialogProp
                         fullDayBlockFound = true;
                     }
                     if (data.startTime) {
-                        booked.push(new Date(data.startTime).toISOString());
+                        const startT = new Date(data.startTime).getTime();
+                        let endT = startT + 30 * 60 * 1000; // Default 30 mins for normal bookings
+                        
+                        if (data.endTime) {
+                            endT = new Date(data.endTime).getTime();
+                        } else if (data.type === 'specific_hour_block') {
+                            endT = startT + 60 * 60 * 1000; // 1 hora si es bloqueo especifico sin fin
+                        }
+                        
+                        ranges.push({ start: startT, end: endT });
                     }
                 });
                 setIsFullDayBlocked(fullDayBlockFound);
-                setBookedTimes(booked);
+                setBookedRanges(ranges);
             } catch(e) {
                 console.error("Error fetching booked slots", e);
             }
@@ -245,7 +254,14 @@ export default function NativeBookingDialog({ trigger }: NativeBookingDialogProp
                                             Día no disponible para reservaciones.
                                         </div>
                                     ) : timeSlots.map((slot, idx) => {
-                                            const isBooked = bookedTimes.includes(slot.date.toISOString());
+                                            const slotStart = slot.date.getTime();
+                                            const slotEnd = slotStart + 30 * 60 * 1000; // 30 minutes duration
+                                            
+                                            const isBooked = bookedRanges.some(range => {
+                                                // Check for overlap: max(start1, start2) < min(end1, end2)
+                                                return Math.max(slotStart, range.start) < Math.min(slotEnd, range.end);
+                                            });
+
                                             return (
                                                 <button
                                                     key={idx}

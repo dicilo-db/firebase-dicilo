@@ -17,6 +17,17 @@ export async function updateAppointmentTimeAction(id: string, startTime: string,
     }
 }
 
+export async function updateAppointmentReasonAction(id: string, reason: string) {
+    try {
+        const db = getAdminDb();
+        await db.collection('crm_appointments').doc(id).update({ reason });
+        return { success: true };
+    } catch (error: any) {
+        console.error('Error updating appointment reason:', error);
+        return { success: false, error: error.message };
+    }
+}
+
 export async function deleteAppointmentAction(id: string) {
     try {
         const db = getAdminDb();
@@ -28,7 +39,7 @@ export async function deleteAppointmentAction(id: string) {
     }
 }
 
-export async function createBlockAction(startTimeIso: string, isFullDay: boolean, endTimeIso?: string) {
+export async function createBlockAction(startTimeIso: string, isFullDay: boolean, endTimeIso?: string | null, reason?: string | null) {
     try {
         const db = getAdminDb();
         const blockData = {
@@ -39,7 +50,7 @@ export async function createBlockAction(startTimeIso: string, isFullDay: boolean
             clientName: 'BLOQUEO DE CALENDARIO',
             clientPhone: '',
             clientEmail: '',
-            reason: 'Vacaciones o Día no disponible',
+            reason: reason && reason.trim() !== '' ? reason : 'Bloqueo manual',
             createdAt: new Date().toISOString()
         };
         const ref = await db.collection('crm_appointments').add(blockData);
