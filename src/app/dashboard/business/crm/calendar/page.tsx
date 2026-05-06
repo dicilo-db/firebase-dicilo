@@ -35,6 +35,7 @@ export default function MasterCalendarPage() {
     // Block States
     const [blockDialogDay, setBlockDialogDay] = useState<Date | null>(null);
     const [blockTime, setBlockTime] = useState<string>('09:00');
+    const [endBlockTime, setEndBlockTime] = useState<string>('');
     const [isFullDayBlock, setIsFullDayBlock] = useState<boolean>(true);
     const [blocking, setBlocking] = useState(false);
 
@@ -150,15 +151,23 @@ export default function MasterCalendarPage() {
         if (!blockDialogDay) return;
         setBlocking(true);
         const blockDate = new Date(blockDialogDay);
+        let endBlockIso: string | undefined = undefined;
         if (!isFullDayBlock) {
             const [h, m] = blockTime.split(':').map(Number);
             blockDate.setHours(h, m, 0, 0);
+            
+            if (endBlockTime) {
+                const endDate = new Date(blockDialogDay);
+                const [endH, endM] = endBlockTime.split(':').map(Number);
+                endDate.setHours(endH, endM, 0, 0);
+                endBlockIso = endDate.toISOString();
+            }
         } else {
             blockDate.setHours(0, 0, 0, 0);
         }
 
         try {
-            const res = await createBlockAction(blockDate.toISOString(), isFullDayBlock);
+            const res = await createBlockAction(blockDate.toISOString(), isFullDayBlock, endBlockIso);
             if (!res.success) throw new Error(res.error);
             toast({ title: 'Bloqueo creado', description: 'El horario ha sido bloqueado con éxito.' });
             setBlockDialogDay(null);
@@ -269,11 +278,11 @@ export default function MasterCalendarPage() {
                                                         setSelectedAppt(appt);
                                                         setEditTime(format(parseISO(appt.startTime), 'HH:mm'));
                                                     }}
-                                                    className={`p-1.5 rounded text-xs animate-in fade-in cursor-grab hover:opacity-80 transition-opacity active:cursor-grabbing ${appt.type === 'full_day_block' ? 'bg-red-50 border border-red-200 text-red-800' : appt.type === 'specific_hour_block' ? 'bg-orange-50 border border-orange-200 text-orange-800' : 'bg-indigo-50 border border-indigo-100'}`}
+                                                    className={`p-1.5 rounded text-xs animate-in fade-in cursor-grab hover:opacity-80 transition-opacity active:cursor-grabbing ${appt.type === 'full_day_block' ? 'bg-red-50 border border-red-200 text-red-800' : appt.type?.includes('block') ? 'bg-orange-50 border border-orange-200 text-orange-800' : 'bg-indigo-50 border border-indigo-100'}`}
                                                 >
                                                     <div className={`font-bold flex items-center mb-0.5 ${appt.type?.includes('block') ? 'text-red-700' : 'text-indigo-700'}`}>
                                                         {appt.type?.includes('block') ? <Lock className="w-3 h-3 mr-1" /> : <Clock className="w-3 h-3 mr-1" />}
-                                                        {appt.type === 'full_day_block' ? 'Todo el día' : format(parseISO(appt.startTime), 'HH:mm')}
+                                                        {appt.type === 'full_day_block' ? 'Todo el día' : appt.type === 'time_range_block' ? `${format(parseISO(appt.startTime), 'HH:mm')} - ${format(parseISO(appt.endTime), 'HH:mm')}` : format(parseISO(appt.startTime), 'HH:mm')}
                                                     </div>
                                                     <div className={`font-medium truncate ${appt.type?.includes('block') ? 'text-red-900' : 'text-slate-700'}`} title={appt.inviteeName || appt.clientName}>
                                                         {appt.inviteeName || appt.clientName || 'Sin título'}
@@ -400,13 +409,22 @@ export default function MasterCalendarPage() {
                         </div>
 
                         {!isFullDayBlock && (
-                            <div className="flex flex-col space-y-2">
-                                <label className="text-sm font-bold text-slate-800 dark:text-white">Hora a bloquear</label>
-                                <div className="flex items-center gap-3">
-                                    <Clock className="w-5 h-5 text-slate-400" />
-                                    <input type="time" value={blockTime} onChange={(e) => setBlockTime(e.target.value)} className="border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-md px-3 py-2 flex-1 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                            <div className="flex flex-col space-y-4">
+                                <div>
+                                    <label className="text-sm font-bold text-slate-800 dark:text-white">Hora de inicio</label>
+                                    <div className="flex items-center gap-3 mt-1">
+                                        <Clock className="w-5 h-5 text-slate-400" />
+                                        <input type="time" value={blockTime} onChange={(e) => setBlockTime(e.target.value)} className="border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-md px-3 py-2 flex-1 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                                    </div>
                                 </div>
-                                <span className="text-xs text-slate-500">Bloquearás específicamente esta hora para que no aparezca disponible.</span>
+                                <div>
+                                    <label className="text-sm font-bold text-slate-800 dark:text-white">Hora de fin (Opcional)</label>
+                                    <div className="flex items-center gap-3 mt-1">
+                                        <Clock className="w-5 h-5 text-slate-400" />
+                                        <input type="time" value={endBlockTime} onChange={(e) => setEndBlockTime(e.target.value)} className="border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-md px-3 py-2 flex-1 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                                    </div>
+                                    <span className="text-xs text-slate-500 mt-2 block">Selecciona una hora de fin para bloquear un rango de horas, o déjalo vacío para bloquear solo una hora específica.</span>
+                                </div>
                             </div>
                         )}
 

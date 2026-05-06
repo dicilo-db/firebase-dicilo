@@ -28,14 +28,14 @@ export async function deleteAppointmentAction(id: string) {
     }
 }
 
-export async function createBlockAction(startTimeIso: string, isFullDay: boolean) {
+export async function createBlockAction(startTimeIso: string, isFullDay: boolean, endTimeIso?: string) {
     try {
         const db = getAdminDb();
         const blockData = {
             startTime: startTimeIso,
-            endTime: null,
+            endTime: isFullDay ? null : (endTimeIso || null),
             status: 'blocked',
-            type: isFullDay ? 'full_day_block' : 'specific_hour_block',
+            type: isFullDay ? 'full_day_block' : (endTimeIso ? 'time_range_block' : 'specific_hour_block'),
             clientName: 'BLOQUEO DE CALENDARIO',
             clientPhone: '',
             clientEmail: '',

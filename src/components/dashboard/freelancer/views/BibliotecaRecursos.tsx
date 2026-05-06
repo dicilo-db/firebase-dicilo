@@ -51,8 +51,13 @@ export function BibliotecaRecursos() {
 
     recursos.forEach(recurso => {
       // Filtrar por idioma
-      const recursoLang = recurso.idioma;
-      if (recursoLang && recursoLang !== 'all' && recursoLang !== currentLang) {
+      let recursoLang = recurso.idioma;
+      // Default 'all' or missing language to 'es' to prevent Spanish content leaking to other languages
+      if (!recursoLang || recursoLang === 'all') {
+        recursoLang = 'es';
+      }
+
+      if (recursoLang !== currentLang) {
         return; // Saltar recursos que no pertenecen a este idioma
       }
 

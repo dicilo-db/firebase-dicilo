@@ -98,8 +98,13 @@ function ReproductorVideosDicilo() {
 
     videos.forEach(video => {
       // Filtrar por idioma
-      const videoLang = video.idioma;
-      if (videoLang && videoLang !== 'all' && videoLang !== currentLang) {
+      let videoLang = video.idioma;
+      // Default 'all' or missing language to 'es' to prevent Spanish content leaking to other languages
+      if (!videoLang || videoLang === 'all') {
+        videoLang = 'es';
+      }
+
+      if (videoLang !== currentLang) {
         return; // Saltar videos que no pertenecen a este idioma
       }
 
