@@ -64,7 +64,7 @@ export function BibliotecaRecursos() {
       agrupado[cat].push(recurso);
     });
     return agrupado;
-  }, [recursos, t]);
+  }, [recursos, t, i18n.language]);
 
   if (cargando) {
     return (

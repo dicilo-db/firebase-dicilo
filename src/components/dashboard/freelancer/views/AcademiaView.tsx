@@ -114,7 +114,7 @@ function ReproductorVideosDicilo() {
     });
     
     return agrupado;
-  }, [videos]);
+  }, [videos, t, i18n.language]);
 
   if (cargando) {
     return (
