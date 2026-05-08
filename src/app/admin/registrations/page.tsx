@@ -63,6 +63,10 @@ interface Registration {
   clientSlug?: string;
   clientId?: string;
   businessName?: string;
+  city?: string;
+  country?: string;
+  phone?: string;
+  address?: string;
 }
 
 // --- COMPONENTES AUXILIARES ---
@@ -129,7 +133,7 @@ const ActionButton = ({ registration }: { registration: Registration }) => {
           {(!registration.clientId && registration.registrationType !== 'private') && (
             <DropdownMenuItem asChild>
               <Link 
-                href={`/admin/basic/new?name=${encodeURIComponent(registration.businessName || `${registration.firstName} ${registration.lastName}`)}&email=${encodeURIComponent(registration.email)}&tier=${registration.registrationType}`} 
+                href={`/admin/basic/new?name=${encodeURIComponent(registration.businessName || `${registration.firstName} ${registration.lastName}`)}&email=${encodeURIComponent(registration.email)}&tier=${registration.registrationType}&city=${encodeURIComponent(registration.city || '')}&country=${encodeURIComponent(registration.country || '')}&phone=${encodeURIComponent(registration.whatsapp || registration.phone || '')}&address=${encodeURIComponent(registration.address || '')}`} 
                 className="flex items-center cursor-pointer text-emerald-600 font-medium"
               >
                 <Edit className="mr-2 h-4 w-4" />
@@ -175,7 +179,7 @@ const RegistrationSkeleton = () => (
         <Table>
           <TableHeader>
             <TableRow>
-              {[...Array(5)].map((_, i) => (
+              {[...Array(6)].map((_, i) => (
                 <TableHead key={i}>
                   <Skeleton className="h-5 w-full" />
                 </TableHead>
@@ -185,7 +189,7 @@ const RegistrationSkeleton = () => (
           <TableBody>
             {[...Array(5)].map((_, i) => (
               <TableRow key={i}>
-                {[...Array(5)].map((_, j) => (
+                {[...Array(6)].map((_, j) => (
                   <TableCell key={j}>
                     <Skeleton className="h-5 w-full" />
                   </TableCell>
@@ -437,6 +441,7 @@ export default function RegistrationsPage() {
               <TableRow>
                 <TableHead>{t('registrations.table.name', { ns: 'admin' })}</TableHead>
                 <TableHead>{t('registrations.table.contact', { ns: 'admin' })}</TableHead>
+                <TableHead>Ubicación</TableHead>
                 <TableHead>{t('registrations.table.type', { ns: 'admin' })}</TableHead>
                 <TableHead>{t('registrations.table.date', { ns: 'admin' })}</TableHead>
                 <TableHead>{t('registrations.table.actions', { ns: 'admin' })}</TableHead>
@@ -459,6 +464,10 @@ export default function RegistrationsPage() {
                           {reg.whatsapp}
                         </div>
                       )}
+                    </TableCell>
+                    <TableCell>
+                      <div className="text-sm font-medium">{reg.city || 'Sin ciudad'}</div>
+                      <div className="text-xs text-muted-foreground">{reg.country || 'Sin país'}</div>
                     </TableCell>
                     <TableCell>
                       <Badge variant={
@@ -484,7 +493,7 @@ export default function RegistrationsPage() {
               ) : (
                 <TableRow>
                   <TableCell
-                    colSpan={5}
+                    colSpan={6}
                     className="h-24 text-center text-muted-foreground"
                   >
                     {t('registrations.noResults', { ns: 'admin' })}

@@ -97,6 +97,10 @@ function NewBusinessPageContent() {
   const prefillName = searchParams?.get('name') || '';
   const prefillTierRaw = searchParams?.get('tier') || 'basic';
   const prefillTier = ['premium', 'starter', 'retailer'].includes(prefillTierRaw) ? 'premium' : 'basic';
+  const prefillCity = searchParams?.get('city') || 'Hamburg';
+  const prefillCountry = searchParams?.get('country') || 'Deutschland';
+  const prefillPhone = searchParams?.get('phone') || '';
+  const prefillAddress = searchParams?.get('address') || '';
 
   const { toast } = useToast();
   const { t, i18n } = useTranslation('admin');
@@ -128,12 +132,12 @@ function NewBusinessPageContent() {
       category: '',
       description: '',
       location: '', // Deprecated but kept for backward compatibility if needed
-      address: '',
+      address: prefillAddress,
       zip: '',
-      city: 'Hamburg', // Default or empty
+      city: prefillCity, // Default or empty
       neighborhood: '',
-      country: 'Deutschland',
-      phone: '',
+      country: prefillCountry,
+      phone: prefillPhone,
       website: '',
       imageUrl: '',
       imageHint: '',

@@ -179,8 +179,8 @@ export default function NativeBookingDialog({ trigger }: NativeBookingDialogProp
             <DialogTrigger asChild>
                 {trigger}
             </DialogTrigger>
-            <DialogContent className="max-w-2xl p-0 overflow-hidden bg-white">
-                <div className="flex flex-col md:flex-row h-full">
+            <DialogContent className="max-w-2xl p-0 max-h-[95vh] overflow-y-auto bg-white">
+                <div className="flex flex-col md:flex-row min-h-full">
                     {/* Left Sidebar Info */}
                     <div className="bg-blue-600 border-r border-blue-700 p-8 w-full md:w-1/3 flex flex-col justify-between text-white">
                         <div>

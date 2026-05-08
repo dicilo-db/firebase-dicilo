@@ -300,10 +300,19 @@ export async function POST(request: Request) {
 
     // 7. Webhook & Email
     try {
+      const webhookRegistrationType = registrationType === 'donor' ? 'basic' : registrationType;
       await fetch(N8N_WEBHOOK_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...result.data, firestoreId: registrationDocRef.id, ownerUid, userCode, referrerCode: referrerData.code, referrerName: referrerData.name }),
+        body: JSON.stringify({ 
+          ...result.data, 
+          registrationType: webhookRegistrationType,
+          firestoreId: registrationDocRef.id, 
+          ownerUid, 
+          userCode, 
+          referrerCode: referrerData.code, 
+          referrerName: referrerData.name 
+        }),
       });
     } catch (e) { /* ignore */ }
 
