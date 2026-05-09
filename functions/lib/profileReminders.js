@@ -176,8 +176,8 @@ exports.checkIncompleteProfiles = (0, scheduler_1.onSchedule)('every day 10:00',
                         
                         <p class="ps-text">
                             PS: Recuerda que tu registro Básico es 100% gratis.<br><br>
-                            ¿Usted no se ha registrado personalmente en la plataforma o no ha hecho su registro?<br>
-                            <a href="https://dicilo.net/api/unsubscribe?email=\${encodeURIComponent(email)}&lang=es" style="color: #ef4444; text-decoration: underline;">Por favor dese de baja directamente en este link.</a>
+                            ¿No ha sido usted el que registró la empresa o su propio negocio?<br>
+                            <a href="https://dicilo.net/api/unsubscribe?email=\${encodeURIComponent(email)}&lang=es" style="color: #ef4444; text-decoration: underline;">En este enlace puede dar de baja su registro completamente gratis.</a>
                         </p>
                     </div>
                     <div class="footer">
