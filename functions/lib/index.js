@@ -48,7 +48,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.cleanupDuplicates = exports.fixSuperAdmin = exports.seedCategories = exports.seedDatabase = exports.demoteToBasic = exports.promoteToClient = exports.notifyAdminOnClientRecommendation = exports.consentDecline = exports.consentAccept = exports.taskWorker = exports.submitRecommendation = exports.syncExistingCustomersToErp = exports.notifyAdminOnTopUp = exports.notifyAdminOnRegistration = exports.sendRegistrationToErp = exports.onAdminWrite = void 0;
+exports.cleanupDuplicates = exports.fixSuperAdmin = exports.seedCategories = exports.checkIncompleteProfiles = exports.seedDatabase = exports.demoteToBasic = exports.promoteToClient = exports.notifyAdminOnClientRecommendation = exports.consentDecline = exports.consentAccept = exports.taskWorker = exports.submitRecommendation = exports.syncExistingCustomersToErp = exports.notifyAdminOnTopUp = exports.notifyAdminOnRegistration = exports.sendRegistrationToErp = exports.onAdminWrite = void 0;
 /**
  * @fileoverview Cloud Functions for Firebase (Gen 2).
  * Migrated to Gen 2 to support Node 20 and explicit CPU/Memory configuration.
@@ -693,6 +693,9 @@ exports.seedDatabase = (0, https_1.onRequest)({ timeoutSeconds: 540, memory: '51
         res.status(500).send(`Error seeding database: ${error.message}`);
     }
 }));
+// --- Cron Jobs ---
+var profileReminders_1 = require("./profileReminders");
+Object.defineProperty(exports, "checkIncompleteProfiles", { enumerable: true, get: function () { return profileReminders_1.checkIncompleteProfiles; } });
 exports.seedCategories = (0, https_1.onRequest)({ timeoutSeconds: 540, memory: '512MiB' }, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const batch = db.batch();
     const collectionRef = db.collection('categories');

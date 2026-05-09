@@ -798,6 +798,9 @@ export const seedDatabase = onRequest({ timeoutSeconds: 540, memory: '512MiB' },
   }
 });
 
+// --- Cron Jobs ---
+export { checkIncompleteProfiles } from './profileReminders';
+
 export const seedCategories = onRequest({ timeoutSeconds: 540, memory: '512MiB' }, async (req, res) => {
   const batch = db.batch();
   const collectionRef = db.collection('categories');
