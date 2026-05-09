@@ -131,7 +131,11 @@ export const checkIncompleteProfiles = onSchedule('every day 10:00', async (even
                         
                         <p>Gracias por ser parte de Dicilo.<br>Ten siempre en cuenta que Dicilo está para apoyarte y esperamos poder contactar contigo muy pronto.</p>
                         
-                        <p class="ps-text">PS: Recuerda que tu registro Básico es 100% gratis.</p>
+                        <p class="ps-text">
+                            PS: Recuerda que tu registro Básico es 100% gratis.<br><br>
+                            ¿Usted no se ha registrado personalmente en la plataforma o no ha hecho su registro?<br>
+                            <a href="https://dicilo.net/api/unsubscribe?email=\${encodeURIComponent(email)}&lang=es" style="color: #ef4444; text-decoration: underline;">Por favor dese de baja directamente en este link.</a>
+                        </p>
                     </div>
                     <div class="footer">
                         &copy; 2026 Dicilo Network. Todos los derechos reservados.

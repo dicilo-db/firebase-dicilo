@@ -110,7 +110,8 @@ exports.checkIncompleteProfiles = (0, scheduler_1.onSchedule)('every day 10:00',
                 <style>
                     body { font-family: 'Inter', Arial, sans-serif; background-color: #f4f4f5; margin: 0; padding: 20px; }
                     .container { background-color: #ffffff; max-width: 600px; margin: 0 auto; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-                    .header { background-color: #1e293b; padding: 30px 20px; text-align: center; }
+                    .header { background-color: #1e293b; padding: 30px 20px; display: flex; align-items: center; justify-content: center; gap: 15px; }
+                    .header img { height: 40px; display: block; }
                     .header h1 { margin: 0; color: #ffffff; font-size: 24px; font-weight: 700; letter-spacing: -0.5px; }
                     .content { padding: 40px 30px; color: #334155; line-height: 1.6; }
                     .content h2 { color: #0f172a; font-size: 20px; margin-top: 0; }
@@ -129,6 +130,7 @@ exports.checkIncompleteProfiles = (0, scheduler_1.onSchedule)('every day 10:00',
             <body>
                 <div class="container">
                     <div class="header">
+                        <img src="https://dicilo.net/logo.png" alt="Dicilo Logo">
                         <h1>Dicilo.net</h1>
                     </div>
                     <div class="content">
@@ -172,7 +174,11 @@ exports.checkIncompleteProfiles = (0, scheduler_1.onSchedule)('every day 10:00',
                         
                         <p>Gracias por ser parte de Dicilo.<br>Ten siempre en cuenta que Dicilo está para apoyarte y esperamos poder contactar contigo muy pronto.</p>
                         
-                        <p class="ps-text">PS: Recuerda que tu registro Básico es 100% gratis.</p>
+                        <p class="ps-text">
+                            PS: Recuerda que tu registro Básico es 100% gratis.<br><br>
+                            ¿Usted no se ha registrado personalmente en la plataforma o no ha hecho su registro?<br>
+                            <a href="https://dicilo.net/api/unsubscribe?email=\${encodeURIComponent(email)}&lang=es" style="color: #ef4444; text-decoration: underline;">Por favor dese de baja directamente en este link.</a>
+                        </p>
                     </div>
                     <div class="footer">
                         &copy; 2026 Dicilo Network. Todos los derechos reservados.

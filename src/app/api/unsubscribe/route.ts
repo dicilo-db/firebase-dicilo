@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getAdminDb } from '@/lib/firebase-admin';
+import { sendSmtpEmail } from '@/lib/mail-service';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -17,6 +18,21 @@ export async function GET(request: Request) {
       unsubscribedAt: new Date(),
       source: 'Email Footer - Unsubscribe Link'
     });
+    
+    // Notify admin
+    try {
+      await sendSmtpEmail({
+        to: 'central@mhc-int.com',
+        subject: `🚫 Alerta de Baja: ${email} se ha dado de baja`,
+        html: `
+          <p>Hola Administrador,</p>
+          <p>El usuario con el correo <strong>${email}</strong> se ha dado de baja (Unsubscribed) de las notificaciones comerciales a través del enlace de correo de recordatorio de perfil.</p>
+          <p>Su correo ha sido agregado a la lista negra (<code>email_blacklist</code>).</p>
+        `
+      });
+    } catch (mailErr) {
+      console.error('Failed to notify admin of unsubscribe:', mailErr);
+    }
     
     const messages: any = {
       es: { title: 'Baja Exitosa', text: `El correo <strong>${email}</strong> ha sido añadido exitosamente a nuestra lista negra. Ya no recibirás más comunicaciones comerciales nuestras.` },
