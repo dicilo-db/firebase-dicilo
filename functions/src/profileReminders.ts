@@ -17,9 +17,13 @@ export const checkIncompleteProfiles = onSchedule('every day 10:00', async (even
             .where('clientType', 'in', ['basic', 'starter', 'premium'])
             .get();
 
-        const promises: Promise<any>[] = [];
+        const BATCH_SIZE = 30;
+        let emailsSent = 0;
+        const allDocs = businessesSnapshot.docs;
 
-        businessesSnapshot.forEach((doc) => {
+        for (let i = 0; i < allDocs.length; i += BATCH_SIZE) {
+            const batchDocs = allDocs.slice(i, i + BATCH_SIZE);
+            const batchPromises = batchDocs.map(async (doc) => {
             const data = doc.data();
             const email = data.email;
             const clientName = data.clientName || data.name || 'Usuario';
@@ -159,11 +163,19 @@ export const checkIncompleteProfiles = onSchedule('every day 10:00', async (even
                 logger.error(`Error enviando email a ${email}:`, err);
             });
 
-            promises.push(promise);
+            await promise;
+            emailsSent++;
         });
 
-        await Promise.all(promises);
-        logger.info(`Cron job de recordatorios finalizado. Correos enviados: ${promises.length}`);
+        await Promise.all(batchPromises);
+
+        if (i + BATCH_SIZE < allDocs.length) {
+            // Esperar 2 segundos entre lotes para no saturar el servidor SMTP
+            await new Promise(resolve => setTimeout(resolve, 2000));
+        }
+    }
+
+    logger.info(`Cron job de recordatorios finalizado. Correos intentados: ${emailsSent}`);
         
     } catch (error) {
         logger.error('Error en el cron job checkIncompleteProfiles:', error);
