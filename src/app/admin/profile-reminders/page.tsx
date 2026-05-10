@@ -248,7 +248,7 @@ export default function ProfileRemindersPage() {
                         </Link>
                     </Button>
                     <Button onClick={fetchProfiles} variant="outline" disabled={isLoading}>
-                        <RefreshCw className={\`mr-2 h-4 w-4 \${isLoading ? 'animate-spin' : ''}\`} />
+                        <RefreshCw className={`mr-2 h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
                         Recargar
                     </Button>
                 </div>
