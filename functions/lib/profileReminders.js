@@ -59,51 +59,55 @@ exports.checkIncompleteProfiles = (0, scheduler_1.onSchedule)('every day 10:00',
         const businessesSnapshot = yield db.collection('businesses')
             .where('clientType', 'in', ['basic', 'starter', 'premium'])
             .get();
-        const promises = [];
-        businessesSnapshot.forEach((doc) => {
-            const data = doc.data();
-            const email = data.email;
-            const clientName = data.clientName || data.name || 'Usuario';
-            const clientType = data.clientType;
-            // Saltar si no hay email
-            if (!email)
-                return;
-            // Verificar si el recordatorio se envió hace menos de 3 días
-            if (data.profileReminderLastSentAt) {
-                const lastSentAt = data.profileReminderLastSentAt.toMillis();
-                if (now - lastSentAt < threeDaysInMillis) {
-                    return; // Han pasado menos de 3 días, saltar
+        const BATCH_SIZE = 30;
+        let emailsSent = 0;
+        const allDocs = businessesSnapshot.docs;
+        for (let i = 0; i < allDocs.length; i += BATCH_SIZE) {
+            const batchDocs = allDocs.slice(i, i + BATCH_SIZE);
+            const batchPromises = batchDocs.map((doc) => __awaiter(void 0, void 0, void 0, function* () {
+                const data = doc.data();
+                const email = data.email;
+                const clientName = data.clientName || data.name || 'Usuario';
+                const clientType = data.clientType;
+                // Saltar si no hay email
+                if (!email)
+                    return;
+                // Verificar si el recordatorio se envió hace menos de 3 días
+                if (data.profileReminderLastSentAt) {
+                    const lastSentAt = data.profileReminderLastSentAt.toMillis();
+                    if (now - lastSentAt < threeDaysInMillis) {
+                        return; // Han pasado menos de 3 días, saltar
+                    }
                 }
-            }
-            // Revisar qué campos faltan
-            const missingFields = [];
-            if (!data.clientLogoUrl && !data.imageUrl)
-                missingFields.push('✅ Logo de tu empresa o la URL del logo');
-            if (!data.phone)
-                missingFields.push('✅ Número de contacto (Teléfono)');
-            if (!data.address)
-                missingFields.push('✅ Dirección física (Calle y número)');
-            if (!data.zip)
-                missingFields.push('✅ Código Postal (PLZ / Zip)');
-            if (!data.city)
-                missingFields.push('✅ Ciudad');
-            if (!data.neighborhood)
-                missingFields.push('✅ Barrio o Sector (Stadtteil / Neighborhood)');
-            if (!data.country)
-                missingFields.push('✅ País');
-            if (!data.website)
-                missingFields.push('✅ Sitio Web');
-            if (!data.mapUrl && !data.location)
-                missingFields.push('✅ Ubicación real de tu negocio (URL Mapa)');
-            // Si el perfil está completo
-            if (missingFields.length === 0) {
-                return;
-            }
-            // Generar lista HTML
-            const missingListHtml = missingFields.map(f => `<li style="margin-bottom: 8px; color: #4b5563;">${f}</li>`).join('');
-            // Construir el enlace directo basado en el tipo de cliente
-            const editUrl = `https://dicilo.net/admin/${clientType}/${doc.id}/edit`;
-            const emailHtml = `
+                // Revisar qué campos faltan
+                const missingFields = [];
+                if (!data.clientLogoUrl && !data.imageUrl)
+                    missingFields.push('✅ Logo de tu empresa o la URL del logo');
+                if (!data.phone)
+                    missingFields.push('✅ Número de contacto (Teléfono)');
+                if (!data.address)
+                    missingFields.push('✅ Dirección física (Calle y número)');
+                if (!data.zip)
+                    missingFields.push('✅ Código Postal (PLZ / Zip)');
+                if (!data.city)
+                    missingFields.push('✅ Ciudad');
+                if (!data.neighborhood)
+                    missingFields.push('✅ Barrio o Sector (Stadtteil / Neighborhood)');
+                if (!data.country)
+                    missingFields.push('✅ País');
+                if (!data.website)
+                    missingFields.push('✅ Sitio Web');
+                if (!data.mapUrl && !data.location)
+                    missingFields.push('✅ Ubicación real de tu negocio (URL Mapa)');
+                // Si el perfil está completo
+                if (missingFields.length === 0) {
+                    return;
+                }
+                // Generar lista HTML
+                const missingListHtml = missingFields.map(f => `<li style="margin-bottom: 8px; color: #4b5563;">${f}</li>`).join('');
+                // Construir el enlace directo basado en la instrucción del usuario
+                const editUrl = `https://dicilo.net/login`;
+                const emailHtml = `
             <!DOCTYPE html>
             <html>
             <head>
@@ -187,23 +191,29 @@ exports.checkIncompleteProfiles = (0, scheduler_1.onSchedule)('every day 10:00',
             </body>
             </html>
             `;
-            const promise = (0, email_1.sendMail)({
-                to: email,
-                subject: '¡Tu perfil en Dicilo está casi listo! 🚀',
-                html: emailHtml
-            }).then(() => {
-                logger.info(`Recordatorio enviado a ${email} (${clientName})`);
-                // Actualizar el timestamp en la base de datos
-                return doc.ref.update({
-                    profileReminderLastSentAt: firestore_1.Timestamp.now()
+                const promise = (0, email_1.sendMail)({
+                    to: email,
+                    subject: '¡Tu perfil en Dicilo está casi listo! 🚀',
+                    html: emailHtml
+                }).then(() => {
+                    logger.info(`Recordatorio enviado a ${email} (${clientName})`);
+                    // Actualizar el timestamp en la base de datos
+                    return doc.ref.update({
+                        profileReminderLastSentAt: firestore_1.Timestamp.now()
+                    });
+                }).catch((err) => {
+                    logger.error(`Error enviando email a ${email}:`, err);
                 });
-            }).catch((err) => {
-                logger.error(`Error enviando email a ${email}:`, err);
-            });
-            promises.push(promise);
-        });
-        yield Promise.all(promises);
-        logger.info(`Cron job de recordatorios finalizado. Correos enviados: ${promises.length}`);
+                yield promise;
+                emailsSent++;
+            }));
+            yield Promise.all(batchPromises);
+            if (i + BATCH_SIZE < allDocs.length) {
+                // Esperar 2 segundos entre lotes para no saturar el servidor SMTP
+                yield new Promise(resolve => setTimeout(resolve, 2000));
+            }
+        }
+        logger.info(`Cron job de recordatorios finalizado. Correos intentados: ${emailsSent}`);
     }
     catch (error) {
         logger.error('Error en el cron job checkIncompleteProfiles:', error);

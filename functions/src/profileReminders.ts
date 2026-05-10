@@ -61,8 +61,8 @@ export const checkIncompleteProfiles = onSchedule('every day 10:00', async (even
             // Generar lista HTML
             const missingListHtml = missingFields.map(f => `<li style="margin-bottom: 8px; color: #4b5563;">${f}</li>`).join('');
 
-            // Construir el enlace directo basado en el tipo de cliente
-            const editUrl = `https://dicilo.net/admin/${clientType}/${doc.id}/edit`;
+            // Construir el enlace directo basado en la instrucción del usuario
+            const editUrl = `https://dicilo.net/login`;
 
             const emailHtml = `
             <!DOCTYPE html>
