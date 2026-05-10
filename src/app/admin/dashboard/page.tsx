@@ -39,7 +39,8 @@ import {
   Ticket,
   Settings,
   ShieldAlert,
-  CalendarCheck2
+  CalendarCheck2,
+  AlertCircle
 } from 'lucide-react';
 
 import { useAdminUser, useAuthGuard } from '@/hooks/useAuthGuard';
