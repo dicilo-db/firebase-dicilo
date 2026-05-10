@@ -11,9 +11,9 @@ import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { useTranslation } from 'react-i18next';
-import { BellRing } from 'lucide-react';
+import { BellRing, Settings } from 'lucide-react';
 
-type CategoryType = 'network_campaigns' | 'email_marketing' | 'referrals' | 'newsletters';
+type CategoryType = 'network_campaigns' | 'email_marketing' | 'referrals' | 'newsletters' | 'system';
 
 const CATEGORIES: { id: CategoryType; icon: any; color: string }[] = [
     {
@@ -35,6 +35,11 @@ const CATEGORIES: { id: CategoryType; icon: any; color: string }[] = [
         id: 'newsletters',
         icon: BellRing,
         color: 'text-orange-500 bg-orange-50 dark:bg-orange-900/10 border-orange-200'
+    },
+    {
+        id: 'system',
+        icon: Settings,
+        color: 'text-slate-500 bg-slate-50 dark:bg-slate-900/10 border-slate-200'
     }
 ];
 
@@ -89,8 +94,12 @@ export default function EmailTemplatesPage() {
 
     const categoriesData = CATEGORIES.map(cat => ({
         ...cat,
-        title: cat.id === 'newsletters' ? t(`emailTemplates.categories.${cat.id}.title`, 'Notificaciones a Usuarios') : t(`emailTemplates.categories.${cat.id}.title`),
-        description: cat.id === 'newsletters' ? t(`emailTemplates.categories.${cat.id}.description`, 'Newsletters y avisos de eventos para usuarios privados.') : t(`emailTemplates.categories.${cat.id}.description`)
+        title: cat.id === 'newsletters' ? t(`emailTemplates.categories.${cat.id}.title`, 'Notificaciones a Usuarios') :
+               cat.id === 'system' ? 'Sistema / Recordatorios' :
+               t(`emailTemplates.categories.${cat.id}.title`),
+        description: cat.id === 'newsletters' ? t(`emailTemplates.categories.${cat.id}.description`, 'Newsletters y avisos de eventos para usuarios privados.') :
+                     cat.id === 'system' ? 'Plantillas internas del sistema y recordatorios automáticos.' :
+                     t(`emailTemplates.categories.${cat.id}.description`)
     }));
 
     return (
