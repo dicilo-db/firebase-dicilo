@@ -2392,7 +2392,10 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                             toast({ title: 'Info', description: 'Please enter the email address in the "New Email Address" box above to target the reset.', variant: 'default' });
                             return;
                           }
-                          const result = await sendUserPasswordResetFn({ email: emailToReset });
+                          const result = await sendUserPasswordResetFn({ 
+                            email: emailToReset,
+                            returnUrl: window.location.origin + '/login'
+                          });
                           const data = result.data as any;
                           if (data.link) {
                             // Copy to clipboard

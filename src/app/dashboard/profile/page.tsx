@@ -510,13 +510,14 @@ export default function PrivateUserProfilePage() {
                                                         >
                                                             <FormControl>
                                                                 <Checkbox
-                                                                    checked={field.value?.includes(category.categoria)}
+                                                                    checked={field.value?.includes(category.categoria) || false}
                                                                     onCheckedChange={(checked) => {
+                                                                        const current = field.value || [];
                                                                         return checked
-                                                                            ? field.onChange([...field.value, category.categoria])
+                                                                            ? field.onChange([...current, category.categoria])
                                                                             : field.onChange(
-                                                                                field.value?.filter(
-                                                                                    (value) => value !== category.categoria
+                                                                                current.filter(
+                                                                                    (value: string) => value !== category.categoria
                                                                                 )
                                                                             )
                                                                     }}

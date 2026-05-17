@@ -44,6 +44,12 @@ const LoginForm = () => {
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    
+    // Verification state
+    const [verificationEmail, setVerificationEmail] = useState('');
+    const [verificationCode, setVerificationCode] = useState('');
+    const [isVerifying, setIsVerifying] = useState(false);
+    const [isResending, setIsResending] = useState(false);
 
     const checkVerificationStatus = async (uid: string, token: string) => {
         try {
@@ -73,14 +79,13 @@ const LoginForm = () => {
             const status = await checkVerificationStatus(userCredential.user.uid, token);
             
             if (!status.verified) {
-                // TODO: Show verification UI (this halts redirection)
                 toast({
                     title: 'Verificación pendiente',
                     description: 'Debes verificar tu correo introduciendo el código de 6 dígitos enviado.',
                     variant: 'destructive',
                 });
-                // Para simplificar la demo localmente, forzamos un logout para que no entre
                 await auth.signOut();
+                setVerificationEmail(email);
                 setIsSubmitting(false);
                 return;
             }
@@ -119,7 +124,11 @@ const LoginForm = () => {
         setIsSubmitting(true);
         try {
             const requestReset = httpsCallable(functions, 'requestPasswordReset');
-            await requestReset({ email, lang: i18n.language || 'es' });
+            await requestReset({ 
+                email, 
+                lang: i18n.language || 'es',
+                returnUrl: window.location.origin + '/login'
+            });
             
             toast({
                 title: t('reset.successTitle'),
@@ -136,6 +145,92 @@ const LoginForm = () => {
             setIsSubmitting(false);
         }
     };
+
+    const handleVerifyCode = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsVerifying(true);
+        try {
+            const res = await fetch('/api/verify-email', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: verificationEmail, code: verificationCode })
+            });
+            const data = await res.json();
+            if (res.ok && data.success) {
+                toast({ title: '¡Cuenta Activada!', description: 'Has verificado tu correo correctamente. Ahora puedes iniciar sesión.' });
+                setVerificationEmail('');
+                setVerificationCode('');
+            } else {
+                toast({ title: 'Error', description: data.message || 'Código inválido o expirado.', variant: 'destructive' });
+            }
+        } catch (error) {
+            toast({ title: 'Error', description: 'Ocurrió un problema al verificar el código.', variant: 'destructive' });
+        } finally {
+            setIsVerifying(false);
+        }
+    };
+
+    const handleResendCode = async () => {
+        setIsResending(true);
+        try {
+            const res = await fetch('/api/resend-verification', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: verificationEmail })
+            });
+            const data = await res.json();
+            if (res.ok && data.success) {
+                toast({ title: 'Código reenviado', description: 'Se ha enviado un nuevo código a tu correo electrónico.' });
+            } else {
+                toast({ title: 'Error', description: data.message || 'No se pudo reenviar el código.', variant: 'destructive' });
+            }
+        } catch (error) {
+            toast({ title: 'Error', description: 'Ocurrió un problema al intentar reenviar el código.', variant: 'destructive' });
+        } finally {
+            setIsResending(false);
+        }
+    };
+
+    if (verificationEmail) {
+        return (
+            <Card className="w-full max-w-md animate-in fade-in-50">
+                <CardHeader className="text-center">
+                    <CardTitle className="text-2xl">Verificar Cuenta</CardTitle>
+                    <CardDescription>Ingresa el código de 6 dígitos enviado a {verificationEmail}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <form onSubmit={handleVerifyCode} className="space-y-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="code">Código de Verificación</Label>
+                            <Input
+                                id="code"
+                                type="text"
+                                placeholder="123456"
+                                value={verificationCode}
+                                onChange={(e) => setVerificationCode(e.target.value)}
+                                required
+                                disabled={isVerifying}
+                                maxLength={6}
+                                className="text-center text-xl tracking-widest font-mono"
+                            />
+                        </div>
+                        <Button type="submit" className="w-full" disabled={isVerifying || verificationCode.length < 6}>
+                            {isVerifying ? <Loader2 className="animate-spin" /> : 'Confirmar Código'}
+                        </Button>
+                        <div className="flex flex-col space-y-2 mt-2">
+                            <Button type="button" variant="outline" className="w-full" onClick={handleResendCode} disabled={isResending}>
+                                {isResending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                                Reenviar Código
+                            </Button>
+                            <Button type="button" variant="ghost" className="w-full" onClick={() => setVerificationEmail('')}>
+                                Volver al Login
+                            </Button>
+                        </div>
+                    </form>
+                </CardContent>
+            </Card>
+        );
+    }
 
     return (
         <Card className="w-full max-w-md animate-in fade-in-50">

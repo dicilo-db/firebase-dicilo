@@ -59,7 +59,7 @@ export const sendUserPasswordReset = onCall(async (request) => {
         throw new HttpsError('unauthenticated', 'The function must be called while authenticated.');
     }
 
-    const { email } = request.data;
+    const { email, returnUrl } = request.data;
 
     if (!email) {
         throw new HttpsError('invalid-argument', 'The function must be called with an email.');
@@ -70,7 +70,8 @@ export const sendUserPasswordReset = onCall(async (request) => {
         await assertAdmin(request.auth.uid);
 
         // Generate the password reset link
-        const link = await getAuth().generatePasswordResetLink(email);
+        const actionCodeSettings = returnUrl ? { url: returnUrl } : undefined;
+        const link = await getAuth().generatePasswordResetLink(email, actionCodeSettings);
 
         // Send the email using our custom SMTP service
         const i18n = await getEmailI18n('es', getFirestore()); // Defaulting to ES for admin trigger or detect from doc
@@ -96,7 +97,7 @@ export const sendUserPasswordReset = onCall(async (request) => {
  * This is called from the login page by unauthenticated users.
  */
 export const requestPasswordReset = onCall(async (request) => {
-    const { email, lang = 'es' } = request.data;
+    const { email, lang = 'es', returnUrl } = request.data;
 
     if (!email) {
         throw new HttpsError('invalid-argument', 'Email is required.');
@@ -118,7 +119,8 @@ export const requestPasswordReset = onCall(async (request) => {
         }
 
         // 2. Generate the link
-        const link = await getAuth().generatePasswordResetLink(email);
+        const actionCodeSettings = returnUrl ? { url: returnUrl } : undefined;
+        const link = await getAuth().generatePasswordResetLink(email, actionCodeSettings);
 
         // 3. Send the email
         const i18n = await getEmailI18n(lang as Lang, getFirestore());

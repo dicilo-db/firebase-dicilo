@@ -93,7 +93,7 @@ exports.sendUserPasswordReset = (0, https_1.onCall)((request) => __awaiter(void 
     if (!request.auth) {
         throw new https_1.HttpsError('unauthenticated', 'The function must be called while authenticated.');
     }
-    const { email } = request.data;
+    const { email, returnUrl } = request.data;
     if (!email) {
         throw new https_1.HttpsError('invalid-argument', 'The function must be called with an email.');
     }
@@ -101,7 +101,8 @@ exports.sendUserPasswordReset = (0, https_1.onCall)((request) => __awaiter(void 
         // Verify admin privileges
         yield assertAdmin(request.auth.uid);
         // Generate the password reset link
-        const link = yield (0, auth_1.getAuth)().generatePasswordResetLink(email);
+        const actionCodeSettings = returnUrl ? { url: returnUrl } : undefined;
+        const link = yield (0, auth_1.getAuth)().generatePasswordResetLink(email, actionCodeSettings);
         // Send the email using our custom SMTP service
         const i18n = yield (0, i18n_1.getEmailI18n)('es', (0, firestore_1.getFirestore)()); // Defaulting to ES for admin trigger or detect from doc
         const html = (0, i18n_1.render)(i18n['passwordReset.body'], { link });
@@ -123,7 +124,7 @@ exports.sendUserPasswordReset = (0, https_1.onCall)((request) => __awaiter(void 
  * This is called from the login page by unauthenticated users.
  */
 exports.requestPasswordReset = (0, https_1.onCall)((request) => __awaiter(void 0, void 0, void 0, function* () {
-    const { email, lang = 'es' } = request.data;
+    const { email, lang = 'es', returnUrl } = request.data;
     if (!email) {
         throw new https_1.HttpsError('invalid-argument', 'Email is required.');
     }
@@ -143,7 +144,8 @@ exports.requestPasswordReset = (0, https_1.onCall)((request) => __awaiter(void 0
             throw authError;
         }
         // 2. Generate the link
-        const link = yield (0, auth_1.getAuth)().generatePasswordResetLink(email);
+        const actionCodeSettings = returnUrl ? { url: returnUrl } : undefined;
+        const link = yield (0, auth_1.getAuth)().generatePasswordResetLink(email, actionCodeSettings);
         // 3. Send the email
         const i18n = yield (0, i18n_1.getEmailI18n)(lang, (0, firestore_1.getFirestore)());
         const html = (0, i18n_1.render)(i18n['passwordReset.body'], { link });
