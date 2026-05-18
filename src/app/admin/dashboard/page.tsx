@@ -586,7 +586,7 @@ const DashboardContent: React.FC = () => {
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
 
             {/* Acceso Directo al Nuevo Panel Empresarial Aislado */}
-            <Link href="/admin/dashboard-empresarial" className="group lg:col-span-2 xl:col-span-1">
+            <Link href="/admin/business-settings" className="group lg:col-span-2 xl:col-span-1">
               <Card className="h-full bg-slate-900 border-slate-800 transition-all hover:shadow-xl hover:border-primary cursor-pointer relative overflow-hidden text-white">
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-transparent pointer-events-none" />
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">

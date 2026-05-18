@@ -10,8 +10,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { Settings, Shield, Award, Briefcase, Star, LayoutTemplate, PlusCircle, PenTool } from 'lucide-react';
+import { Settings, Shield, Award, Briefcase, Star, LayoutTemplate, PlusCircle, PenTool, DownloadCloud } from 'lucide-react';
 import Link from 'next/link';
+import { migrateAllLegacyClients } from '@/app/actions/admin-migration';
 
 // Tipos de Fichas Configurales (Features de Dicilo)
 export interface FichaConfig {
@@ -173,6 +174,19 @@ export default function PanelEmpresarialPage() {
 
     const [modules, setModules] = useState<SystemModuleConfig[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [isMigrating, setIsMigrating] = useState(false);
+
+    const handleMigration = async () => {
+        if (!confirm("¿Estás seguro de querer ejecutar la migración masiva de clientes antiguos al nuevo panel B2B?")) return;
+        setIsMigrating(true);
+        const res = await migrateAllLegacyClients();
+        setIsMigrating(false);
+        if (res.success) {
+            toast({ title: 'Migración Exitosa', description: res.message, variant: 'default' });
+        } else {
+            toast({ title: 'Error', description: res.error, variant: 'destructive' });
+        }
+    };
 
     useEffect(() => {
         const fetchModules = async () => {
@@ -256,6 +270,14 @@ export default function PanelEmpresarialPage() {
                                 Centro Maestro de Gobernanza. Modifica las fichas y límites de tus 5 Módulos. Los cambios aquí aplicarán en cascada e instantáneamente a toda la base de clientes.
                             </p>
                         </div>
+                        <Button 
+                            onClick={handleMigration} 
+                            disabled={isMigrating}
+                            variant="secondary" 
+                            className="bg-emerald-600 hover:bg-emerald-500 text-white border-none shadow-lg mt-4 md:mt-0"
+                        >
+                            {isMigrating ? <span className="animate-pulse">Migrando...</span> : <><DownloadCloud className="w-4 h-4 mr-2" /> Sincronizar Clientes Legacy</>}
+                        </Button>
                     </div>
                 </div>
 
@@ -315,7 +337,7 @@ export default function PanelEmpresarialPage() {
                                         size="lg"
                                         asChild
                                     >
-                                        <Link href={`/admin/dashboard-empresarial/edit/${mod.id}`}>
+                                        <Link href={`/admin/business-settings/edit/${mod.id}`}>
                                             <PenTool className="w-4 h-4 mr-2" />
                                             Gobernar Módulo
                                         </Link>
