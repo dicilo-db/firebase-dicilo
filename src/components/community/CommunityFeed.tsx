@@ -19,9 +19,12 @@ interface CommunityFeedProps {
 }
 
 import { useTranslation } from 'react-i18next';
+import { useAdminUser } from '@/hooks/useAuthGuard';
 
 export function CommunityFeed({ neighborhood, userId, mode = 'public', friendIds = [], readOnly = false }: CommunityFeedProps) {
     const { t } = useTranslation('common');
+    const { user: adminUser } = useAdminUser();
+    const isSuperAdmin = adminUser?.role === 'superadmin';
     const [viewMode, setViewMode] = useState<'global' | 'local'>(neighborhood ? 'local' : 'global');
     const [posts, setPosts] = useState<CommunityPost[]>([]);
     const [loading, setLoading] = useState(true);
@@ -174,6 +177,7 @@ export function CommunityFeed({ neighborhood, userId, mode = 'public', friendIds
                             post={post}
                             currentUserId={userId}
                             readOnly={readOnly}
+                            isSuperAdmin={isSuperAdmin}
                         />
                     ))
                 )}

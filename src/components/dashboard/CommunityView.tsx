@@ -526,7 +526,16 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
         }
     };
 
-    const [activeTab, setActiveTab] = useState("social");
+    const urlTab = searchParams?.get('tab');
+    const [activeTab, setActiveTab] = useState(urlTab || "social");
+
+    const handleTabChange = (value: string) => {
+        setActiveTab(value);
+        const params = new URLSearchParams(searchParams?.toString() || "");
+        params.set('tab', value);
+        router.push(`?${params.toString()}`, { scroll: false });
+    };
+
     // Hide sidebar for both Social Panel (Chats) and Wall (Feed) to provide full width space
     const isFullWidthTab = activeTab === 'social' || activeTab === 'wall' || activeTab === 'trustboard';
 
@@ -733,7 +742,7 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
 
                 {/* Right Column: Feed (Tabs) */}
                 <div className={isFullWidthTab ? "lg:col-span-12" : "lg:col-span-8"}>
-                    <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+                    <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
                         <div className="flex items-center justify-between">
                             <TabsList className="grid w-full grid-cols-4 lg:w-[600px] h-auto p-1">
                                 <TabsTrigger value="social" className="py-2 text-xs sm:text-sm whitespace-normal h-full">

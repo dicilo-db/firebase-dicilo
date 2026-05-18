@@ -56,6 +56,7 @@ import Footer from '@/components/footer';
 
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { getFirestore, collection, query, where, getCountFromServer } from 'firebase/firestore';
+import { SentinelInterface } from '@/components/admin/SentinelInterface';
 
 // --- CONFIGURACIÓN ---
 const functions = getFunctions(app, 'europe-west1');
@@ -391,7 +392,8 @@ const DashboardContent: React.FC = () => {
               <DatabaseZap className="h-5 w-5 text-primary" />
               Admin Tools & System
             </h2>
-            <div className="grid gap-4 md:grid-cols-3">
+            <SentinelInterface />
+            <div className="grid gap-4 md:grid-cols-3 mt-6">
               {/* Dicipoints Central Control - Economy */}
               <Link href="/admin/dicipoints" className="group">
                 <Card className="h-full bg-red-50/50 dark:bg-red-900/10 border-red-200 transition-all hover:shadow-md hover:border-red-500 cursor-pointer relative">

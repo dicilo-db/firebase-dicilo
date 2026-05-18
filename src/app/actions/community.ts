@@ -342,7 +342,12 @@ export async function deletePostAction(postId: string, userId: string) {
         }
 
         const postData = postSnap.data();
-        if (postData?.userId !== userId) {
+        
+        // Check if user is superadmin
+        const userProfileSnap = await db.collection('private_profiles').doc(userId).get();
+        const isSuperAdmin = userProfileSnap.exists && userProfileSnap.data()?.role === 'superadmin';
+
+        if (postData?.userId !== userId && !isSuperAdmin) {
             return { success: false, error: 'No tienes permiso para eliminar esta publicación' };
         }
 

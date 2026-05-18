@@ -30,11 +30,13 @@ import { CommentSection } from './CommentSection';
 import { useFriends } from '@/hooks/useFriends';
 import { UserPlus, Check } from 'lucide-react';
 import { MediaLightbox } from './MediaLightbox';
+import { useAdminUser } from '@/hooks/useAuthGuard';
 
 interface PostCardProps {
     post: CommunityPost;
     currentUserId: string;
     readOnly?: boolean;
+    isSuperAdmin?: boolean;
 }
 
 const LANGUAGES = [
@@ -51,7 +53,7 @@ const LANGUAGES = [
     { code: 'ja', name: 'Japanese', label: 'Japanese' }
 ];
 
-export function PostCard({ post, currentUserId, readOnly = false }: PostCardProps) {
+export function PostCard({ post, currentUserId, readOnly = false, isSuperAdmin = false }: PostCardProps) {
     const { t, i18n } = useTranslation(['common', 'admin']);
     const { toast } = useToast();
     const router = useRouter();
@@ -69,7 +71,7 @@ export function PostCard({ post, currentUserId, readOnly = false }: PostCardProp
     const { friends, sendFriendRequest, sentRequests } = useFriends();
     const [requestSent, setRequestSent] = useState(false);
     const [liveCommentCount, setLiveCommentCount] = useState(post.commentCount || 0);
-    
+
     // Live listener for likes and commentCount
     useEffect(() => {
         const db = getFirestore(app);
@@ -319,8 +321,8 @@ export function PostCard({ post, currentUserId, readOnly = false }: PostCardProp
                     </span>
                 </div>
                 
-                {/* Options Menu for Post Owner */}
-                {isMe && !readOnly && (
+                {/* Options Menu for Post Owner or Superadmin */}
+                {(isMe || isSuperAdmin) && !readOnly && (
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button variant="ghost" size="icon" className="h-8 w-8 ml-auto text-slate-500 hover:text-slate-900 dark:hover:text-white">
@@ -328,20 +330,22 @@ export function PostCard({ post, currentUserId, readOnly = false }: PostCardProp
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                            <DropdownMenuItem 
-                                onClick={() => setIsEditing(true)} 
-                                disabled={!isWithin12Hours}
-                                className="cursor-pointer gap-2"
-                            >
-                                <Edit className="h-4 w-4" />
-                                <span>{isWithin12Hours ? "Editar" : "Edición expirada (+12h)"}</span>
-                            </DropdownMenuItem>
+                            {isMe && (
+                                <DropdownMenuItem 
+                                    onClick={() => setIsEditing(true)} 
+                                    disabled={!isWithin12Hours}
+                                    className="cursor-pointer gap-2"
+                                >
+                                    <Edit className="h-4 w-4" />
+                                    <span>{isWithin12Hours ? "Editar" : "Edición expirada (+12h)"}</span>
+                                </DropdownMenuItem>
+                            )}
                             <DropdownMenuItem 
                                 onClick={handleDelete} 
                                 className="cursor-pointer text-red-600 focus:text-red-700 gap-2"
                             >
                                 <Trash2 className="h-4 w-4" />
-                                <span>Eliminar</span>
+                                <span>{isSuperAdmin && !isMe ? "Eliminar (Superadmin)" : "Eliminar"}</span>
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
