@@ -73,6 +73,10 @@
       "mtime": 1777133699000
     },
     {
+      "path": "/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/src/app/actions/admin-migration.ts",
+      "mtime": 1779125044115
+    },
+    {
       "path": "/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/src/app/actions/admin-reminders.ts",
       "mtime": 1778425808672.7485
     },
@@ -95,6 +99,14 @@
     {
       "path": "/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/src/app/actions/business-invites.ts",
       "mtime": 1776474259277.7073
+    },
+    {
+      "path": "/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/src/app/actions/business-products.ts",
+      "mtime": 1779125244573.7466
+    },
+    {
+      "path": "/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/src/app/actions/business-profile.ts",
+      "mtime": 1779112436951.0015
     },
     {
       "path": "/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/src/app/actions/business-utils.ts",
@@ -365,6 +377,14 @@
       "mtime": 1777162288000
     },
     {
+      "path": "/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/src/app/admin/business-settings/edit/[id]/page.tsx",
+      "mtime": 1779125172070.1904
+    },
+    {
+      "path": "/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/src/app/admin/business-settings/page.tsx",
+      "mtime": 1779127175710.045
+    },
+    {
       "path": "/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/src/app/admin/businesses/[id]/edit/page.tsx",
       "mtime": 1764258627000
     },
@@ -438,15 +458,7 @@
     },
     {
       "path": "/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/src/app/admin/dashboard/page.tsx",
-      "mtime": 1779103890726.3508
-    },
-    {
-      "path": "/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/src/app/admin/dashboard-empresarial/edit/[id]/page.tsx",
-      "mtime": 1774890067058.5247
-    },
-    {
-      "path": "/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/src/app/admin/dashboard-empresarial/page.tsx",
-      "mtime": 1774895343975.3105
+      "mtime": 1779125200038.683
     },
     {
       "path": "/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/src/app/admin/dicicoin-purchasers/page.tsx",
@@ -767,6 +779,26 @@
     {
       "path": "/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/src/app/basic/[id]/page.tsx",
       "mtime": 1777325371000
+    },
+    {
+      "path": "/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/src/app/business/coupons/page.tsx",
+      "mtime": 1779125023669.0933
+    },
+    {
+      "path": "/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/src/app/business/dashboard/page.tsx",
+      "mtime": 1779111099059.286
+    },
+    {
+      "path": "/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/src/app/business/layout.tsx",
+      "mtime": 1779111050318.597
+    },
+    {
+      "path": "/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/src/app/business/products/page.tsx",
+      "mtime": 1779113448405.8948
+    },
+    {
+      "path": "/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/src/app/business/profile/page.tsx",
+      "mtime": 1779112415793.932
     },
     {
       "path": "/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/src/app/client/[clientSlug]/page.tsx",
@@ -1237,6 +1269,26 @@
       "mtime": 1774255767000
     },
     {
+      "path": "/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/src/components/business/BusinessRegistrationForm.tsx",
+      "mtime": 1779111141040.4915
+    },
+    {
+      "path": "/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/src/components/business/BusinessSidebar.tsx",
+      "mtime": 1779111079543.251
+    },
+    {
+      "path": "/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/src/components/business/CouponManager.tsx",
+      "mtime": 1779124944479.2485
+    },
+    {
+      "path": "/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/src/components/business/ProductManager.tsx",
+      "mtime": 1779113399210.4915
+    },
+    {
+      "path": "/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/src/components/business/ProfileCompletionWidget.tsx",
+      "mtime": 1779111116459.0466
+    },
+    {
       "path": "/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/src/components/cards/BasicCard.tsx",
       "mtime": 1777325263000
     },
@@ -1250,7 +1302,7 @@
     },
     {
       "path": "/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/src/components/community/CommunityFeed.tsx",
-      "mtime": 1779105813546.8357
+      "mtime": 1779109710406.1829
     },
     {
       "path": "/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/src/components/community/CreatePost.tsx",
@@ -1797,6 +1849,10 @@
       "mtime": 1779103600799.3958
     },
     {
+      "path": "/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/src/core/sentinel/sentinel_state.json",
+      "mtime": 1779106025805.4866
+    },
+    {
       "path": "/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/src/core/sentinel/synthesis-engine.ts",
       "mtime": 1779103623360.3867
     },
@@ -2257,6 +2313,10 @@
       "mtime": 1768559194195.6062
     },
     {
+      "path": "/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/src/types/business.ts",
+      "mtime": 1779113360677.2202
+    },
+    {
       "path": "/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/src/types/category.ts",
       "mtime": 1767104728000
     },
@@ -2297,5 +2357,5 @@
       "mtime": 1772960352000
     }
   ],
-  "lastDeployment": "2026-05-18T12:07:05.802Z"
+  "lastDeployment": "2026-05-18T18:07:34.599Z"
 }
