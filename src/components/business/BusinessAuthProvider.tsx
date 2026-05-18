@@ -7,6 +7,7 @@ import { app } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import { BusinessProfile } from '@/types/business';
+import { checkAdminRole } from '@/lib/auth';
 
 interface BusinessAuthContextType {
     companyId: string | null;
@@ -50,8 +51,8 @@ export function BusinessAuthProvider({ children }: { children: React.ReactNode }
                 
                 if (impersonateId) {
                     // Check if they are actually an admin
-                    const token = await user.getIdTokenResult();
-                    if (token.claims.role === 'superadmin' || token.claims.role === 'admin' || token.claims.admin) {
+                    const adminData = await checkAdminRole(user);
+                    if (adminData && (adminData.role === 'superadmin' || adminData.role === 'admin' || adminData.role === 'team_office')) {
                         // Load the impersonated profile
                         const docRef = doc(db, 'business_profiles', impersonateId);
                         const snap = await docRef.get();
