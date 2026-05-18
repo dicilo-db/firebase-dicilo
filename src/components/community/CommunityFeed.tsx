@@ -20,12 +20,24 @@ interface CommunityFeedProps {
 
 import { useTranslation } from 'react-i18next';
 import { useAdminUser } from '@/hooks/useAuthGuard';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 export function CommunityFeed({ neighborhood, userId, mode = 'public', friendIds = [], readOnly = false }: CommunityFeedProps) {
     const { t } = useTranslation('common');
     const { user: adminUser } = useAdminUser();
     const isSuperAdmin = adminUser?.role === 'superadmin';
-    const [viewMode, setViewMode] = useState<'global' | 'local'>(neighborhood ? 'local' : 'global');
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const urlScope = searchParams?.get('scope') as 'global' | 'local' | null;
+    const initialMode = urlScope || (neighborhood ? 'local' : 'global');
+    const [viewMode, setViewMode] = useState<'global' | 'local'>(initialMode);
+
+    const handleViewModeChange = (mode: 'global' | 'local') => {
+        setViewMode(mode);
+        const params = new URLSearchParams(searchParams?.toString() || "");
+        params.set('scope', mode);
+        router.push(`?${params.toString()}`, { scroll: false });
+    };
     const [posts, setPosts] = useState<CommunityPost[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -140,7 +152,7 @@ export function CommunityFeed({ neighborhood, userId, mode = 'public', friendIds
             {mode === 'public' && (
                 <div className="flex border-b border-slate-200 dark:border-slate-700 mb-4">
                     <button
-                        onClick={() => setViewMode('local')}
+                        onClick={() => handleViewModeChange('local')}
                         className={`flex-1 pb-3 text-sm font-medium transition-colors relative ${viewMode === 'local' ? 'text-purple-600' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'}`}
                     >
                         {displayNeighborhood}
@@ -149,7 +161,7 @@ export function CommunityFeed({ neighborhood, userId, mode = 'public', friendIds
                         )}
                     </button>
                     <button
-                        onClick={() => setViewMode('global')}
+                        onClick={() => handleViewModeChange('global')}
                         className={`flex-1 pb-3 text-sm font-medium transition-colors relative ${viewMode === 'global' ? 'text-purple-600' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'}`}
                     >
                         {t('community.global_wall', 'Muro Global')}
