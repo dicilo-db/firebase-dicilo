@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { BusinessSidebar } from '@/components/business/BusinessSidebar';
 import { BusinessAuthProvider, useBusinessAuth } from '@/components/business/BusinessAuthProvider';
