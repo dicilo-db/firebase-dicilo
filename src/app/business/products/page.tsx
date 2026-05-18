@@ -2,10 +2,26 @@
 
 import React from 'react';
 import { ProductManager } from '@/components/business/ProductManager';
+import { useBusinessAuth } from '@/components/business/BusinessAuthProvider';
+import { AlertCircle } from 'lucide-react';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 
 export default function BusinessProductsPage() {
-    // Mock company ID for now. In a real scenario, this comes from auth context.
-    const MOCK_COMPANY_ID = 'test-company-123';
+    const { companyId, isLoading } = useBusinessAuth();
+
+    if (isLoading) return null;
+
+    if (!companyId) {
+        return (
+            <div className="flex flex-col items-center justify-center h-[60vh] space-y-4 text-center animate-in fade-in">
+                <AlertCircle className="w-16 h-16 text-amber-500" />
+                <h2 className="text-2xl font-bold">Perfil Requerido</h2>
+                <p className="text-muted-foreground max-w-md">Debes crear tu perfil de empresa antes de gestionar productos.</p>
+                <Button asChild className="mt-4"><Link href="/business/profile">Crear Empresa</Link></Button>
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-6 animate-in fade-in">
@@ -17,7 +33,7 @@ export default function BusinessProductsPage() {
             </div>
             
             <div className="max-w-4xl">
-                <ProductManager companyId={MOCK_COMPANY_ID} />
+                <ProductManager companyId={companyId} />
             </div>
         </div>
     );

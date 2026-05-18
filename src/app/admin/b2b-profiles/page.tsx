@@ -12,6 +12,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import Link from 'next/link';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { Input } from '@/components/ui/input';
+import { useRouter } from 'next/navigation';
 
 const db = getFirestore(app);
 
@@ -32,6 +33,7 @@ export default function B2BProfilesPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const { toast } = useToast();
+    const router = useRouter();
 
     useEffect(() => {
         const fetchProfiles = async () => {
@@ -62,6 +64,12 @@ export default function B2BProfilesPage() {
         } catch (error) {
             toast({ title: 'Error', description: 'No se pudo eliminar el perfil.', variant: 'destructive' });
         }
+    };
+
+    const handleImpersonate = (companyId: string) => {
+        localStorage.setItem('impersonateCompanyId', companyId);
+        toast({ title: 'Modo Dios Activo', description: 'Redirigiendo al dashboard de la empresa...' });
+        router.push('/business/dashboard');
     };
 
     const filteredProfiles = profiles.filter(p => 
@@ -167,9 +175,14 @@ export default function B2BProfilesPage() {
                                         )}
                                     </TableCell>
                                     <TableCell className="text-right">
-                                        <Button variant="ghost" size="icon" className="text-red-500 hover:text-red-700 hover:bg-red-50" onClick={() => handleDelete(p.id)}>
-                                            <Trash2 className="w-4 h-4" />
-                                        </Button>
+                                        <div className="flex justify-end items-center gap-1">
+                                            <Button variant="outline" size="sm" onClick={() => handleImpersonate(p.id)} className="bg-slate-900 text-white hover:bg-slate-800">
+                                                Modo Dios
+                                            </Button>
+                                            <Button variant="ghost" size="icon" className="text-red-500 hover:text-red-700 hover:bg-red-50" onClick={() => handleDelete(p.id)}>
+                                                <Trash2 className="w-4 h-4" />
+                                            </Button>
+                                        </div>
                                     </TableCell>
                                 </TableRow>
                             ))

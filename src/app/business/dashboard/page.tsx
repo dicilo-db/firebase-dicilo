@@ -5,12 +5,27 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { ProfileCompletionWidget } from '@/components/business/ProfileCompletionWidget';
 import Link from 'next/link';
-import { Settings, Package, LayoutTemplate, MessageSquare } from 'lucide-react';
+import { Settings, Package, LayoutTemplate, MessageSquare, AlertCircle } from 'lucide-react';
+import { useBusinessAuth } from '@/components/business/BusinessAuthProvider';
 
 export default function BusinessDashboardPage() {
-    // Temporary mock data. Will be replaced by Firebase fetching.
-    const mockProfileScore = 65; 
-    const mockPlan = 'Starter';
+    const { companyProfile, isLoading } = useBusinessAuth();
+
+    if (isLoading) return null; // Handled by layout/provider
+
+    if (!companyProfile) {
+        return (
+            <div className="flex flex-col items-center justify-center h-[60vh] space-y-4 text-center">
+                <AlertCircle className="w-16 h-16 text-amber-500" />
+                <h2 className="text-2xl font-bold">Perfil de Empresa no Encontrado</h2>
+                <p className="text-muted-foreground max-w-md">No tienes ninguna empresa registrada a tu nombre. Por favor, crea tu perfil comercial para empezar.</p>
+                <Button asChild className="mt-4"><Link href="/business/profile">Crear Empresa</Link></Button>
+            </div>
+        );
+    }
+
+    const profileScore = companyProfile.profileCompletionScore || 0;
+    const plan = companyProfile.plan || 'basic';
     
     return (
         <div className="space-y-8 animate-in fade-in">
@@ -26,10 +41,10 @@ export default function BusinessDashboardPage() {
                         <CardTitle className="text-lg">Estado del Perfil</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <ProfileCompletionWidget score={mockProfileScore} />
+                        <ProfileCompletionWidget score={profileScore} />
                         <div className="mt-4 flex justify-between items-center text-sm">
                             <span className="text-slate-500">Plan actual:</span>
-                            <Badge variant="outline" className="font-semibold">{mockPlan}</Badge>
+                            <Badge variant="outline" className="font-semibold uppercase">{plan}</Badge>
                         </div>
                     </CardContent>
                 </Card>
@@ -53,11 +68,11 @@ export default function BusinessDashboardPage() {
                                 <span>Completar Perfil</span>
                             </Link>
                         </Button>
-                        <Button variant="outline" className="h-auto py-4 flex flex-col items-center gap-2" disabled={mockProfileScore < 85}>
+                        <Button variant="outline" className="h-auto py-4 flex flex-col items-center gap-2" disabled={profileScore < 85}>
                             <LayoutTemplate className="h-6 w-6 text-slate-400" />
                             <div className="flex flex-col items-center">
                                 <span>Configurar Landing Page</span>
-                                {mockProfileScore < 85 && <span className="text-[10px] text-orange-500">(Requiere 85%)</span>}
+                                {profileScore < 85 && <span className="text-[10px] text-orange-500">(Requiere 85%)</span>}
                             </div>
                         </Button>
                         <Button variant="outline" className="h-auto py-4 flex flex-col items-center gap-2" asChild>
