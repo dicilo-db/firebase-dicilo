@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { User, FriendRequest } from '@/types/social';
 import { useAuth } from '@/context/AuthContext';
-import { getFirestore, collection, query, where, getDocs, limit } from 'firebase/firestore';
+import { getFirestore, collection, query, where, getDocs, limit, documentId } from 'firebase/firestore';
 import { app } from '@/lib/firebase';
 
 export function useFriends() {
@@ -53,12 +53,12 @@ export function useFriends() {
                     const ids = Array.from(fromUserIds).slice(0, 30);
                     const qProfiles = query(
                         collection(db, 'private_profiles'),
-                        where('uid', 'in', ids)
+                        where(documentId(), 'in', ids)
                     );
                     const profilesSnap = await getDocs(qProfiles);
                     const profileMap = new Map<string, any>();
                     profilesSnap.forEach(doc => {
-                        profileMap.set(doc.data().uid, doc.data());
+                        profileMap.set(doc.id, doc.data());
                     });
 
                     reqs.forEach(req => {
@@ -113,7 +113,7 @@ export function useFriends() {
                     if (ids.length > 0) {
                         const qProfiles = query(
                             collection(db, 'private_profiles'),
-                            where('uid', 'in', ids)
+                            where(documentId(), 'in', ids)
                         );
                         const profilesSnap = await getDocs(qProfiles);
                         const friendsList: User[] = [];

@@ -94,6 +94,7 @@ export function AlliesMap({ userInterests, userId, onNavigateToSettings }: Allie
                             coords = [51.505, -0.09];
                         }
                     }
+                    const categoriesArray = Array.isArray(data.categories) ? data.categories : [];
                     return {
                         id: doc.id,
                         ...data,
@@ -101,6 +102,7 @@ export function AlliesMap({ userInterests, userId, onNavigateToSettings }: Allie
                         position: coords,
                         coords: coords,
                         categoryNormalized: String(data.category || '').toLowerCase().trim(),
+                        categoriesNormalized: categoriesArray.map((c: any) => String(c).toLowerCase().trim()),
                         activeCoupons: couponsByCompany[doc.id] || []
                     };
                 });
@@ -201,25 +203,31 @@ export function AlliesMap({ userInterests, userId, onNavigateToSettings }: Allie
         const interestsNormalized = userInterests.map(i => i.toLowerCase().trim());
 
         return allBusinesses.filter(b => {
-            // 0. Filtro de Cupones (Prioridad Alta)
+            const isFavorite = favoriteIds.includes(b.id);
+
+            // 0. Filtro de Cupones
             if (showCouponsOnly) {
                 if (!couponBusinessIds.includes(b.id)) return false;
             }
 
-            // Regla de Oro: Mostrar si está en intereses O si es favorito
-            // ESTO APLICA SIEMPRE, incluso mostrando cupones. Cada cliente ve solo SUS intereses.
-            const isMatchInterest = interestsNormalized.length > 0 && interestsNormalized.includes(b.categoryNormalized);
-            const isFavorite = favoriteIds.includes(b.id);
-            if (!isMatchInterest && !isFavorite) return false;
-
-            // Filtros adicionales de UI
-            if (selectedCategory !== 'all' && b.categoryNormalized !== selectedCategory.toLowerCase()) return false;
+            // 1. Buscador global
+            // Si el usuario escribe algo, buscamos en TODAS las empresas para que pueda descubrirlas y agregarlas.
             if (searchTerm) {
-                return b.name.toLowerCase().includes(searchTerm.toLowerCase());
+                if (!b.name.toLowerCase().includes(searchTerm.toLowerCase())) return false;
+            } else {
+                // Si NO hay término de búsqueda, la regla estricta es: SOLO mostrar FAVORITOS (Corazón marcado)
+                if (!isFavorite) return false;
             }
+
+            // 2. Filtro del menú desplegable por categoría (Aplica sobre los favoritos o la búsqueda actual)
+            if (selectedCategory !== 'all' && 
+                b.categoryNormalized !== selectedCategory.toLowerCase() &&
+                !(b.categoriesNormalized && b.categoriesNormalized.includes(selectedCategory.toLowerCase()))
+            ) return false;
+
             return true;
         });
-    }, [allBusinesses, userInterests, favoriteIds, selectedCategory, searchTerm, showCouponsOnly, couponBusinessIds]);
+    }, [allBusinesses, favoriteIds, selectedCategory, searchTerm, showCouponsOnly, couponBusinessIds]);
 
     if (isLoading) return <div className="h-screen w-full flex items-center justify-center">Cargando ecosistema Dicilo...</div>;
 

@@ -134,7 +134,7 @@
         "title": "Usuarios Privados",
         "description": "Gestionar perfiles privados"
       },
-      "interestsTitle": "Mis Intereses"
+      "interestsTitle": "Mis Preferencias"
     }
   },
   "dicipoints": {
@@ -350,7 +350,7 @@
       "country": "País",
       "city": "Ciudad",
       "role": "Rol",
-      "interests": "Intereses",
+      "interests": "Preferencias",
       "invitedBy": "Invitado por",
       "joined": "Fecha Registro",
       "actions": "Acciones",

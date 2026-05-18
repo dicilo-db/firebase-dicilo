@@ -883,6 +883,16 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                         </TabsContent>
                     </Tabs>
                 );
+            case 'map':
+                return (
+                    <div className="h-[75vh] min-h-[600px] border rounded-lg overflow-hidden bg-white animate-in fade-in duration-500">
+                        <AlliesMap
+                            userInterests={formData.interests || []}
+                            userId={user.uid}
+                            onNavigateToSettings={() => handleViewChange('settings')}
+                        />
+                    </div>
+                );
             default:
                 return <div>View Not Found</div>;
         }

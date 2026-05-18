@@ -111,7 +111,7 @@ i18n
     },
     detection: {
       order: ['queryString', 'cookie', 'localStorage', 'navigator', 'htmlTag'],
-      caches: ['cookie'],
+      caches: ['localStorage', 'cookie'],
     },
     defaultNS: 'common',
     react: {
