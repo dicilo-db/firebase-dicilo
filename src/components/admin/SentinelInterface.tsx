@@ -3,6 +3,8 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { getAuth } from 'firebase/auth';
+import { app } from '@/lib/firebase';
 
 export function SentinelInterface() {
     const [synthesis, setSynthesis] = useState<string | null>(null);
@@ -14,7 +16,20 @@ export function SentinelInterface() {
         setLoading(true);
         setError(null);
         try {
-            const res = await fetch('/api/sentinel');
+            const auth = getAuth(app);
+            const user = auth.currentUser;
+            if (!user) {
+                throw new Error('No estás autenticado.');
+            }
+            
+            const token = await user.getIdToken();
+            
+            const res = await fetch('/api/sentinel', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            
             if (!res.ok) {
                 const data = await res.json();
                 throw new Error(data.error || 'Failed to fetch Sentinel data');

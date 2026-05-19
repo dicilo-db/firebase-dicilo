@@ -1,18 +1,30 @@
 import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
+
 import { FileWatcherDaemon } from '@/core/sentinel/daemon-file-watcher';
 import { LogParserDaemon } from '@/core/sentinel/daemon-log-parser';
 import { DbIntegrityDaemon } from '@/core/sentinel/daemon-db-integrity';
 import { SynthesisEngine } from '@/core/sentinel/synthesis-engine';
 
-export async function GET(req: Request) {
-    // Verificar seguridad (Zero-External Calls policy)
-    // Interfaz instanciada solo si hay cookie adm_token
-    const cookieStore = await cookies();
-    const admToken = cookieStore.get('adm_token');
+import { getAdminAuth } from '@/lib/firebase-admin';
 
-    if (!admToken) {
-        return NextResponse.json({ error: 'Acceso Denegado. Se requiere autenticación de Administrador.' }, { status: 403 });
+export async function GET(req: Request) {
+    const authHeader = req.headers.get('authorization');
+    
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return NextResponse.json({ error: 'Acceso Denegado. Se requiere autenticación.' }, { status: 403 });
+    }
+
+    const token = authHeader.split('Bearer ')[1];
+
+    try {
+        const decodedToken = await getAdminAuth().verifyIdToken(token);
+        const role = decodedToken.role;
+
+        if (role !== 'admin' && role !== 'superadmin') {
+            return NextResponse.json({ error: 'Acceso Denegado. Se requieren permisos de administrador.' }, { status: 403 });
+        }
+    } catch (e) {
+        return NextResponse.json({ error: 'Token inválido o expirado.' }, { status: 403 });
     }
 
     try {
