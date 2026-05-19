@@ -1,6 +1,6 @@
 'use server';
 
-import { getAdminDb } from '@/lib/firebase-admin';
+import { getAdminDb, getAdminAuth } from '@/lib/firebase-admin';
 
 const db = getAdminDb();
 
@@ -81,5 +81,42 @@ export async function migrateAllLegacyClients() {
     } catch (error: any) {
         console.error("Error in mass migration:", error);
         return { success: false, error: error.message };
+    }
+}
+
+/**
+ * Assigns an owner to a B2B profile based on their email.
+ */
+export async function assignB2BOwnerByEmail(companyId: string, email: string) {
+    try {
+        const auth = getAdminAuth();
+        
+        let targetUid = '';
+        try {
+            const userRecord = await auth.getUserByEmail(email);
+            targetUid = userRecord.uid;
+        } catch (e: any) {
+            if (e.code === 'auth/user-not-found') {
+                return { success: false, error: 'No se encontró ningún usuario con ese correo electrónico.' };
+            }
+            throw e;
+        }
+
+        const profileRef = db.collection('business_profiles').doc(companyId);
+        const snap = await profileRef.get();
+        if (!snap.exists) {
+            return { success: false, error: 'No se encontró la empresa especificada.' };
+        }
+
+        await profileRef.update({ ownerUid: targetUid });
+
+        return { 
+            success: true, 
+            message: `Propietario asignado con éxito a ${email}.`
+        };
+
+    } catch (error: any) {
+        console.error("Error assigning owner:", error);
+        return { success: false, error: error.message || 'Error interno al asignar propietario.' };
     }
 }

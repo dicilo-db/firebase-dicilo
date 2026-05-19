@@ -13,6 +13,9 @@ import Link from 'next/link';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { Input } from '@/components/ui/input';
 import { useRouter } from 'next/navigation';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
+import { assignB2BOwnerByEmail } from '@/app/actions/admin-migration';
+import { UserPlus, Loader2 } from 'lucide-react';
 
 const db = getFirestore(app);
 
@@ -32,6 +35,10 @@ export default function B2BProfilesPage() {
     const [profiles, setProfiles] = useState<B2BProfile[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
+    const [assignModalOpen, setAssignModalOpen] = useState(false);
+    const [selectedCompanyId, setSelectedCompanyId] = useState<string | null>(null);
+    const [ownerEmail, setOwnerEmail] = useState('');
+    const [isAssigning, setIsAssigning] = useState(false);
     const { toast } = useToast();
     const router = useRouter();
 
@@ -70,6 +77,30 @@ export default function B2BProfilesPage() {
         localStorage.setItem('impersonateCompanyId', companyId);
         toast({ title: 'Modo Dios Activo', description: 'Redirigiendo al dashboard de la empresa...' });
         router.push('/business/dashboard');
+    };
+
+    const openAssignModal = (companyId: string) => {
+        setSelectedCompanyId(companyId);
+        setOwnerEmail('');
+        setAssignModalOpen(true);
+    };
+
+    const handleAssignOwner = async () => {
+        if (!selectedCompanyId || !ownerEmail.trim()) return;
+        setIsAssigning(true);
+        try {
+            const res = await assignB2BOwnerByEmail(selectedCompanyId, ownerEmail.trim());
+            if (res.success) {
+                toast({ title: 'Propietario asignado', description: res.message });
+                setAssignModalOpen(false);
+            } else {
+                toast({ title: 'Error', description: res.error, variant: 'destructive' });
+            }
+        } catch (error: any) {
+            toast({ title: 'Error', description: 'Hubo un problema al asignar el propietario.', variant: 'destructive' });
+        } finally {
+            setIsAssigning(false);
+        }
     };
 
     const filteredProfiles = profiles.filter(p => 
@@ -176,6 +207,10 @@ export default function B2BProfilesPage() {
                                     </TableCell>
                                     <TableCell className="text-right">
                                         <div className="flex justify-end items-center gap-1">
+                                            <Button variant="outline" size="sm" onClick={() => openAssignModal(p.id)} className="text-blue-600 border-blue-200 hover:bg-blue-50" title="Asignar Propietario">
+                                                <UserPlus className="w-4 h-4 mr-1" />
+                                                Dueño
+                                            </Button>
                                             <Button variant="outline" size="sm" onClick={() => handleImpersonate(p.id)} className="bg-slate-900 text-white hover:bg-slate-800">
                                                 Modo Dios
                                             </Button>
@@ -190,6 +225,33 @@ export default function B2BProfilesPage() {
                     </TableBody>
                 </Table>
             </div>
+
+            <Dialog open={assignModalOpen} onOpenChange={setAssignModalOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Asignar Propietario</DialogTitle>
+                        <DialogDescription>
+                            Ingresa el correo electrónico del usuario que será el dueño de esta empresa. El usuario debe estar registrado previamente en Dicilo.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="py-4">
+                        <Input 
+                            type="email" 
+                            placeholder="correo@ejemplo.com" 
+                            value={ownerEmail}
+                            onChange={(e) => setOwnerEmail(e.target.value)}
+                            onKeyDown={(e) => e.key === 'Enter' && handleAssignOwner()}
+                        />
+                    </div>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setAssignModalOpen(false)} disabled={isAssigning}>Cancelar</Button>
+                        <Button onClick={handleAssignOwner} disabled={isAssigning || !ownerEmail.trim()}>
+                            {isAssigning && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                            Guardar Propietario
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }
