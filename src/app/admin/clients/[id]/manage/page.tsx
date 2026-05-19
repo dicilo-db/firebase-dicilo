@@ -12,8 +12,6 @@ import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, ArrowLeft, Settings, Lock, CheckCircle, Store, Tags, BarChart, Ticket, Globe, MessageSquare, Bot, Wallet, LayoutTemplate, ScanLine } from 'lucide-react';
-import { Header } from '@/components/header';
-import Footer from '@/components/footer';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { AdStatistics } from '@/components/dashboard/AdStatistics';
 import { ClientCouponManager } from '@/components/dashboard/ClientCouponManager';
@@ -137,21 +135,16 @@ export default function ClientModulesDashboard() {
 
     if (isLoading) {
         return (
-            <div className="flex flex-col min-h-screen bg-slate-50">
-                <Header />
-                <main className="container p-8 mx-auto mt-8 flex-grow">
+            <main className="container p-8 mx-auto mt-8 flex-grow">
                     <Skeleton className="h-10 w-1/3 mb-8" />
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {[1, 2, 3, 4, 5, 6].map(i => <Skeleton key={i} className="h-48 rounded-xl" />)}
                     </div>
                 </main>
-            </div>
         );
     }
 
     return (
-        <div className="flex flex-col min-h-screen bg-slate-50">
-            <Header />
             <main className="container p-4 md:p-8 mx-auto flex-grow max-w-7xl animate-in fade-in zoom-in duration-500">
                 <div className="flex items-center justify-between mb-2">
                     <Button variant="ghost" onClick={() => router.push('/admin/dashboard')} className="mb-2">
@@ -265,7 +258,5 @@ export default function ClientModulesDashboard() {
                     </DialogContent>
                 </Dialog>
             </main>
-            <Footer />
-        </div>
     );
 }
