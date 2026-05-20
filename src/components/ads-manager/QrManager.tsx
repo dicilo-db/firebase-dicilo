@@ -38,9 +38,10 @@ const QRCodeCanvas = dynamic(
 
 interface QrManagerProps {
     onBack: () => void;
+    clientId?: string;
 }
 
-export function QrManager({ onBack }: QrManagerProps) {
+export function QrManager({ onBack, clientId }: QrManagerProps) {
     const { toast } = useToast();
     const { t } = useTranslation('common');
     const [campaigns, setCampaigns] = useState<QrCampaign[]>([]);
@@ -61,8 +62,8 @@ export function QrManager({ onBack }: QrManagerProps) {
     const loadCampaigns = async () => {
         setIsLoading(true);
         try {
-            console.log("Fetching campaigns...");
-            const res = await getQrCampaigns();
+            console.log("Fetching campaigns for clientId:", clientId);
+            const res = await getQrCampaigns(clientId);
             console.log("Campaigns result:", res);
 
             if (res.success && res.campaigns) {
@@ -88,13 +89,13 @@ export function QrManager({ onBack }: QrManagerProps) {
 
     useEffect(() => {
         loadCampaigns();
-    }, []);
+    }, [clientId]);
 
     // REPORT DOWNLOAD HANDLER
     const handleDownloadReport = async () => {
         setIsDownloading(true);
         try {
-            const res = await generateQrReportConfig();
+            const res = await generateQrReportConfig(clientId);
             if (res.success && res.csv) {
                 // Trigger download
                 const blob = new Blob([res.csv], { type: 'text/csv;charset=utf-8;' });
@@ -124,7 +125,7 @@ export function QrManager({ onBack }: QrManagerProps) {
 
         setIsCreating(true);
         try {
-            const res = await createQrCampaign(formData);
+            const res = await createQrCampaign({ ...formData, clientId });
             if (res.success) {
                 toast({ title: t('adsManager.qrManager.toasts.created'), description: t('adsManager.qrManager.toasts.createdDesc') });
                 setFormData({ name: '', targetUrl: '', description: '' });

@@ -13,20 +13,31 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Loader2, ArrowLeft, Plus, Upload, Image as ImageIcon, X, Trash2 } from 'lucide-react';
-import { createCampaign, getClientsForSelect, getCampaigns, updateCampaign, deleteCampaign, ClientOption } from '@/app/actions/campaigns';
+import { getCampaigns, updateCampaign, deleteCampaign, ClientOption, getClientsForSelect, createCampaign } from '@/app/actions/campaigns';
+import { getAdCampaigns } from '@/app/actions/ads-manager';
 import { CampaignAsset } from '@/types/freelancer';
 import { CampaignAssetEditor } from './CampaignAssetEditor';
 import { uploadImage } from '@/app/actions/upload';
 import { translateText } from '@/app/actions/translate';
 import { correctText } from '@/app/actions/grammar';
 import Image from 'next/image';
-import { Sparkles, Languages, ChevronDown } from 'lucide-react';
+import { Sparkles, Languages, ChevronDown, Rocket } from 'lucide-react';
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
+import { collection, addDoc } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 
 const AVAILABLE_LANGUAGES = [
     { code: 'es', label: 'Español' },
@@ -46,11 +57,16 @@ interface ContentBlock {
     suggestedText: string;
 }
 
-export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
+export function NetworkCampaignsManager({ onBack, clientId }: { onBack?: () => void, clientId?: string }) {
     const { t } = useTranslation('common');
     const { user } = useAuth();
     const { toast } = useToast();
     const [view, setView] = useState<'list' | 'create'>('list');
+
+    // B2B Campaign Request states
+    const [isRequestOpen, setIsRequestOpen] = useState(false);
+    const [requestData, setRequestData] = useState({ goal: '', budget: '', audience: '' });
+    const [sendingRequest, setSendingRequest] = useState(false);
 
     // Form State - v2.0 Refactor
     const [clients, setClients] = useState<ClientOption[]>([]);
@@ -126,14 +142,55 @@ export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
     const loadCampaigns = async () => {
         if (!user) return;
         setLoadingCampaigns(true);
-        const token = await user.getIdToken();
-        const res = await getCampaigns(token);
-        if (res.success && res.campaigns) {
-            setCampaigns(res.campaigns);
-        } else {
-            toast({ title: 'Error', description: 'Failed to load campaigns', variant: 'destructive' });
+        try {
+            if (clientId) {
+                const res = await getAdCampaigns(clientId, 'social_product');
+                if (res.success && res.campaigns) {
+                    setCampaigns(res.campaigns);
+                } else {
+                    toast({ title: 'Error', description: 'Failed to load client campaigns', variant: 'destructive' });
+                }
+            } else {
+                const token = await user.getIdToken();
+                const res = await getCampaigns(token);
+                if (res.success && res.campaigns) {
+                    setCampaigns(res.campaigns);
+                } else {
+                    toast({ title: 'Error', description: 'Failed to load campaigns', variant: 'destructive' });
+                }
+            }
+        } catch (e: any) {
+            console.error(e);
+            toast({ title: 'Error', description: e.message || 'Error', variant: 'destructive' });
+        } finally {
+            setLoadingCampaigns(false);
         }
-        setLoadingCampaigns(false);
+    };
+
+    const handleSendRequest = async () => {
+        if (!requestData.goal || !requestData.budget) {
+            toast({ title: 'Error', description: 'Por favor, llena los campos obligatorios.', variant: 'destructive' });
+            return;
+        }
+        setSendingRequest(true);
+        try {
+            await addDoc(collection(db, 'campaign_requests'), {
+                clientId: clientId,
+                goal: requestData.goal,
+                budget: Number(requestData.budget),
+                audience: requestData.audience,
+                status: 'pending',
+                createdAt: new Date()
+            });
+            toast({ title: '¡Solicitud enviada!', description: 'Un asesor de DiciloMarketing te contactará pronto.' });
+            setIsRequestOpen(false);
+            setRequestData({ goal: '', budget: '', audience: '' });
+        } catch (error: any) {
+            console.error(error);
+            toast({ title: 'Error', description: 'No se pudo enviar la solicitud.', variant: 'destructive' });
+        } finally {
+            setSendingRequest(false);
+        }
     };
 
     const handleEdit = (campaign: any) => {
@@ -425,39 +482,41 @@ export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
                     <Label>{label} ({lang.toUpperCase()})</Label>
 
                     {/* AI Toolbar */}
-                    <div className="flex gap-2">
-                        {/* Translate TO ... */}
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="sm" className="h-6 px-2 text-xs text-blue-600 hover:text-blue-800 bg-blue-50/50" disabled={isLoading}>
-                                    {isLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : <Languages className="h-3 w-3 mr-1" />}
-                                    {t('networkCampaigns.form.ai.translateTo')} <ChevronDown className="h-3 w-3 ml-1 opacity-50" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                                {targetLangs.map(targetLang => (
-                                    <DropdownMenuItem key={targetLang} onClick={() => handleAITranslate(targetLang, field, lang)}>
-                                        {targetLang.toUpperCase()} {targetLang === lang ? '(Current)' : ''}
-                                    </DropdownMenuItem>
-                                ))}
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+                    {!clientId && (
+                        <div className="flex gap-2">
+                            {/* Translate TO ... */}
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost" size="sm" className="h-6 px-2 text-xs text-blue-600 hover:text-blue-800 bg-blue-50/50" disabled={isLoading}>
+                                        {isLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : <Languages className="h-3 w-3 mr-1" />}
+                                        {t('networkCampaigns.form.ai.translateTo')} <ChevronDown className="h-3 w-3 ml-1 opacity-50" />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                    {targetLangs.map(targetLang => (
+                                        <DropdownMenuItem key={targetLang} onClick={() => handleAITranslate(targetLang, field, lang)}>
+                                            {targetLang.toUpperCase()} {targetLang === lang ? '(Current)' : ''}
+                                        </DropdownMenuItem>
+                                    ))}
+                                </DropdownMenuContent>
+                            </DropdownMenu>
 
-                        {/* Grammar Correction (visible if text exists) */}
-                        {hasText && (
-                            <Button
-                                type="button"
-                                variant="ghost"
-                                size="sm"
-                                className="h-6 px-2 text-xs text-purple-600 hover:text-purple-800 bg-purple-50/50"
-                                onClick={() => handleAICorrect(lang, field)}
-                                disabled={isLoading}
-                            >
-                                {isLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : <Sparkles className="h-3 w-3 mr-1" />}
-                                {t('networkCampaigns.form.ai.improve')}
-                            </Button>
-                        )}
-                    </div>
+                            {/* Grammar Correction (visible if text exists) */}
+                            {hasText && (
+                                <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-6 px-2 text-xs text-purple-600 hover:text-purple-800 bg-purple-50/50"
+                                    onClick={() => handleAICorrect(lang, field)}
+                                    disabled={isLoading}
+                                >
+                                    {isLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : <Sparkles className="h-3 w-3 mr-1" />}
+                                    {t('networkCampaigns.form.ai.improve')}
+                                </Button>
+                            )}
+                        </div>
+                    )}
                 </div>
 
                 {isTextarea ? (
@@ -466,14 +525,14 @@ export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
                         onChange={e => handleContentChange(lang, field, e.target.value)}
                         placeholder={placeholder}
                         className={field === 'suggestedText' ? "hidden" : ""} // Hide suggestedText as it is replaced by Assets
-                        disabled={isLoading}
+                        disabled={isLoading || !!clientId}
                     />
                 ) : (
                     <Input
                         value={textValue}
                         onChange={e => handleContentChange(lang, field, e.target.value)}
                         placeholder={placeholder}
-                        disabled={isLoading}
+                        disabled={isLoading || !!clientId}
                     />
                 )}
             </div>
@@ -490,9 +549,49 @@ export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
                     </div>
                     <div className="flex gap-2">
                         {onBack && <Button variant="outline" onClick={onBack}>{t('networkCampaigns.back')}</Button>}
-                        <Button onClick={() => setView('create')}>
-                            <Plus className="mr-2 h-4 w-4" /> {t('networkCampaigns.list.create')}
-                        </Button>
+                        {clientId ? (
+                            <Dialog open={isRequestOpen} onOpenChange={setIsRequestOpen}>
+                                <DialogTrigger asChild>
+                                    <Button className="bg-orange-600 hover:bg-orange-700 text-white gap-2 font-bold">
+                                        <Plus className="w-4 h-4"/> Solicitar Nueva Campaña
+                                    </Button>
+                                </DialogTrigger>
+                                <DialogContent className="sm:max-w-[425px]">
+                                    <DialogHeader>
+                                        <DialogTitle>Solicitar Campaña Publicitaria</DialogTitle>
+                                        <DialogDescription>
+                                            Nuestro equipo de marketing diseñará la segmentación perfecta y el copy de éxito para ti.
+                                        </DialogDescription>
+                                    </DialogHeader>
+                                    <div className="gap-4 py-4 space-y-4">
+                                        <div className="space-y-2">
+                                            <Label htmlFor="goal" className="text-sm font-medium font-sans">Objetivo principal <span className="text-red-500">*</span></Label>
+                                            <Input id="goal" placeholder="Ej: Vender stock antiguo, más tráfico web..." value={requestData.goal} onChange={e => setRequestData({...requestData, goal: e.target.value})} />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label htmlFor="budget" className="text-sm font-medium font-sans">Presupuesto Sugerido (€) *</Label>
+                                            <Input id="budget" type="number" placeholder="Ej: 500" value={requestData.budget} onChange={e => setRequestData({...requestData, budget: e.target.value})} />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label htmlFor="audience" className="text-sm font-medium font-sans">Vecindario o Demografía (Opcional)</Label>
+                                            <Textarea id="audience" placeholder="Ej: Mujeres de 25-45 años cerca de mi local" rows={3} value={requestData.audience} onChange={e => setRequestData({...requestData, audience: e.target.value})} />
+                                        </div>
+                                    </div>
+                                    <Button 
+                                        className="w-full bg-orange-600 hover:bg-orange-700 text-white" 
+                                        onClick={handleSendRequest}
+                                        disabled={sendingRequest}
+                                    >
+                                        {sendingRequest ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Rocket className="w-4 h-4 mr-2" />}
+                                        Enviar Solicitud al Experto
+                                    </Button>
+                                </DialogContent>
+                            </Dialog>
+                        ) : (
+                            <Button onClick={() => setView('create')}>
+                                <Plus className="mr-2 h-4 w-4" /> {t('networkCampaigns.list.create')}
+                            </Button>
+                        )}
                     </div>
                 </div>
 
@@ -531,12 +630,20 @@ export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
                                             <span>Reward: {campaign.reward_per_action}€</span>
                                         </div>
                                     </div>
-                                    <Button variant="outline" size="sm" onClick={() => handleEdit(campaign)}>
-                                        Edit
-                                    </Button>
-                                    <Button variant="ghost" size="icon" className="text-red-500 hover:text-red-700 hover:bg-red-50" onClick={() => handleDelete(campaign.id)}>
-                                        <Trash2 className="h-4 w-4" />
-                                    </Button>
+                                    {clientId ? (
+                                        <Button variant="outline" size="sm" onClick={() => handleEdit(campaign)}>
+                                            Ver Detalles
+                                        </Button>
+                                    ) : (
+                                        <>
+                                            <Button variant="outline" size="sm" onClick={() => handleEdit(campaign)}>
+                                                Edit
+                                            </Button>
+                                            <Button variant="ghost" size="icon" className="text-red-500 hover:text-red-700 hover:bg-red-50" onClick={() => handleDelete(campaign.id)}>
+                                                <Trash2 className="h-4 w-4" />
+                                            </Button>
+                                        </>
+                                    )}
                                 </Card>
                             ))}
                         </div>
@@ -560,7 +667,6 @@ export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
                     </CardHeader>
                     <CardContent className="space-y-8">
 
-                        {/* 1. Global Settings */}
                         {/* 1. Global Settings & Dates */}
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div className="space-y-2">
@@ -568,7 +674,7 @@ export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
                                 <Select
                                     value={formData.clientId}
                                     onValueChange={(val) => setFormData(p => ({ ...p, clientId: val }))}
-                                    disabled={loadingClients}
+                                    disabled={loadingClients || !!clientId}
                                 >
                                     <SelectTrigger>
                                         <SelectValue placeholder={loadingClients ? t('networkCampaigns.form.loading') : t('networkCampaigns.form.selectClient')} />
@@ -588,6 +694,7 @@ export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
                                     value={formData.startDate}
                                     onChange={e => setFormData(p => ({ ...p, startDate: e.target.value }))}
                                     required
+                                    disabled={!!clientId}
                                 />
                             </div>
 
@@ -598,6 +705,7 @@ export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
                                     value={formData.endDate}
                                     onChange={e => setFormData(p => ({ ...p, endDate: e.target.value }))}
                                     required
+                                    disabled={!!clientId}
                                 />
                             </div>
                         </div>
@@ -606,15 +714,15 @@ export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div className="space-y-2">
                                 <Label>{t('networkCampaigns.form.totalBudget')}</Label>
-                                <Input type="number" value={formData.budgetTotal} onChange={e => setFormData(p => ({ ...p, budgetTotal: parseFloat(e.target.value) }))} step="0.01" min="0" />
+                                <Input type="number" value={formData.budgetTotal} onChange={e => setFormData(p => ({ ...p, budgetTotal: parseFloat(e.target.value) }))} step="0.01" min="0" disabled={!!clientId} />
                             </div>
                             <div className="space-y-2">
                                 <Label>{t('networkCampaigns.form.freelancerReward')}</Label>
-                                <Input type="number" value={formData.rewardPerAction} onChange={e => setFormData(p => ({ ...p, rewardPerAction: parseFloat(e.target.value) }))} step="0.01" min="0" />
+                                <Input type="number" value={formData.rewardPerAction} onChange={e => setFormData(p => ({ ...p, rewardPerAction: parseFloat(e.target.value) }))} step="0.01" min="0" disabled={!!clientId} />
                             </div>
                             <div className="space-y-2">
                                 <Label>{t('networkCampaigns.form.dailyLimit')}</Label>
-                                <Input type="number" value={formData.dailyLimit} onChange={e => setFormData(p => ({ ...p, dailyLimit: parseInt(e.target.value) }))} min={1} />
+                                <Input type="number" value={formData.dailyLimit} onChange={e => setFormData(p => ({ ...p, dailyLimit: parseInt(e.target.value) }))} min={1} disabled={!!clientId} />
                             </div>
                         </div>
 
@@ -628,6 +736,7 @@ export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
                                             id={`lang-${lang.code}`}
                                             checked={formData.allowedLanguages.includes(lang.code)}
                                             onCheckedChange={() => handleLanguageToggle(lang.code)}
+                                            disabled={!!clientId}
                                         />
                                         <label htmlFor={`lang-${lang.code}`} className="text-sm font-medium leading-none cursor-pointer select-none">{lang.label}</label>
                                     </div>
@@ -660,117 +769,103 @@ export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
                                                 <div className="flex-1 text-sm truncate text-blue-600 underline" title={url}>
                                                     {url}
                                                 </div>
-                                                <Button
-                                                    type="button"
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
-                                                    onClick={() => {
-                                                        setFormData(prev => {
-                                                            const newUrls = { ...prev.targetUrls };
-                                                            newUrls[lang] = newUrls[lang].filter((_, i) => i !== idx);
-                                                            if (newUrls[lang].length === 0) delete newUrls[lang];
-                                                            return { ...prev, targetUrls: newUrls };
-                                                        });
-                                                    }}
-                                                >
-                                                    <X className="h-4 w-4" />
-                                                </Button>
+                                                {!clientId && (
+                                                    <Button
+                                                        type="button"
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
+                                                        onClick={() => {
+                                                            setFormData(prev => {
+                                                                const newUrls = { ...prev.targetUrls };
+                                                                newUrls[lang] = newUrls[lang].filter((_, i) => i !== idx);
+                                                                if (newUrls[lang].length === 0) delete newUrls[lang];
+                                                                return { ...prev, targetUrls: newUrls };
+                                                            });
+                                                        }}
+                                                    >
+                                                        <Trash2 className="h-4 w-4" />
+                                                    </Button>
+                                                )}
                                             </div>
                                         );
                                     })
                                 )}
-                                {Object.keys(formData.targetUrls).length === 0 && (
-                                    <div className="text-sm text-muted-foreground italic px-2">
-                                        {t('networkCampaigns.form.noTargetUrls', 'Keine spezifischen Ziele definiert. Standard-Unternehmens-URL wird verwendet.')}
-                                    </div>
-                                )}
                             </div>
 
                             {/* Add New URL Input */}
-                            <div className="flex flex-col md:flex-row gap-3 items-end bg-white/50 p-3 rounded-md border border-dashed border-orange-200">
-                                <div className="space-y-2 min-w-[140px]">
-                                    <Label className="text-xs text-muted-foreground">Sprache</Label>
-                                    <Select
-                                        value={tempTargetLang}
-                                        onValueChange={setTempTargetLang}
-                                    >
-                                        <SelectTrigger className="h-9">
-                                            <SelectValue placeholder="Auswählen" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {formData.allowedLanguages.map(langCode => {
-                                                const l = AVAILABLE_LANGUAGES.find(al => al.code === langCode);
-                                                const currentCount = formData.targetUrls[langCode]?.length || 0;
-                                                return (
-                                                    <SelectItem key={langCode} value={langCode} disabled={currentCount >= 10}>
-                                                        <div className="flex items-center gap-2 justify-between w-full">
-                                                            <div className="flex items-center gap-2">
-                                                                <span className={`fi fi-${langCode === 'en' ? 'gb' : langCode} rounded-sm`} />
-                                                                {l?.label}
-                                                            </div>
-                                                            <span className="text-xs text-muted-foreground">({currentCount}/10)</span>
-                                                        </div>
+                            {!clientId && (
+                                <div className="flex gap-2 items-end">
+                                    <div className="space-y-1 shrink-0 w-28">
+                                        <Label className="text-xs">{t('networkCampaigns.form.language', 'Language')}</Label>
+                                        <Select value={tempTargetLang} onValueChange={setTempTargetLang}>
+                                            <SelectTrigger className="h-9">
+                                                <SelectValue />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {formData.allowedLanguages.map(lang => (
+                                                    <SelectItem key={lang} value={lang}>
+                                                        {AVAILABLE_LANGUAGES.find(l => l.code === lang)?.label || lang.toUpperCase()}
                                                     </SelectItem>
-                                                );
-                                            })}
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                                <div className="space-y-2 flex-1 w-full">
-                                    <Label className="text-xs text-muted-foreground">Ziel-URL (https://...)</Label>
-                                    <Input
-                                        placeholder="https://beispiel.de/landing-page"
-                                        className="h-9"
-                                        value={tempTargetUrl}
-                                        onChange={e => setTempTargetUrl(e.target.value)}
-                                        onKeyDown={e => {
-                                            if (e.key === 'Enter') {
-                                                e.preventDefault();
-                                                if (tempTargetLang && tempTargetUrl) {
-                                                    setFormData(prev => {
-                                                        const currentUrls = prev.targetUrls[tempTargetLang] || [];
-                                                        if (currentUrls.length >= 10) {
-                                                            toast({ title: "Limit erreicht", description: "Max 10 URLs pro Sprache.", variant: "destructive" });
-                                                            return prev;
-                                                        }
-                                                        return {
-                                                            ...prev,
-                                                            targetUrls: { ...prev.targetUrls, [tempTargetLang]: [...currentUrls, tempTargetUrl] }
-                                                        };
-                                                    });
-                                                    setTempTargetUrl('');
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                    <div className="space-y-1 flex-1">
+                                        <Label className="text-xs">Ziel-URL (Landing Page)</Label>
+                                        <Input
+                                            placeholder="https://beispiel.de/landing-page"
+                                            className="h-9"
+                                            value={tempTargetUrl}
+                                            onChange={e => setTempTargetUrl(e.target.value)}
+                                            onKeyDown={e => {
+                                                if (e.key === 'Enter') {
+                                                    e.preventDefault();
+                                                    if (tempTargetLang && tempTargetUrl) {
+                                                        setFormData(prev => {
+                                                            const currentUrls = prev.targetUrls[tempTargetLang] || [];
+                                                            if (currentUrls.length >= 10) {
+                                                                toast({ title: "Limit erreicht", description: "Max 10 URLs pro Sprache.", variant: "destructive" });
+                                                                return prev;
+                                                            }
+                                                            return {
+                                                                ...prev,
+                                                                targetUrls: { ...prev.targetUrls, [tempTargetLang]: [...currentUrls, tempTargetUrl] }
+                                                            };
+                                                        });
+                                                        setTempTargetUrl('');
+                                                    }
                                                 }
+                                            }}
+                                        />
+                                    </div>
+                                    <Button
+                                        type="button"
+                                        size="icon"
+                                        className="h-9 w-9 shrink-0 bg-green-600 hover:bg-green-700 text-white"
+                                        disabled={!tempTargetLang || !tempTargetUrl}
+                                        onClick={() => {
+                                            if (tempTargetLang && tempTargetUrl) {
+                                                setFormData(prev => {
+                                                    const currentUrls = prev.targetUrls[tempTargetLang] || [];
+                                                    if (currentUrls.length >= 10) {
+                                                        toast({ title: "Limit erreicht", description: "Max 10 URLs pro Sprache.", variant: "destructive" });
+                                                        return prev;
+                                                    }
+                                                    return {
+                                                        ...prev,
+                                                        targetUrls: { ...prev.targetUrls, [tempTargetLang]: [...currentUrls, tempTargetUrl] }
+                                                    };
+                                                });
+                                                setTempTargetUrl('');
                                             }
                                         }}
-                                    />
+                                    >
+                                        <Plus className="h-5 w-5" />
+                                    </Button>
                                 </div>
-                                <Button
-                                    type="button"
-                                    size="icon"
-                                    className="h-9 w-9 shrink-0 bg-green-600 hover:bg-green-700 text-white"
-                                    disabled={!tempTargetLang || !tempTargetUrl}
-                                    onClick={() => {
-                                        if (tempTargetLang && tempTargetUrl) {
-                                            setFormData(prev => {
-                                                const currentUrls = prev.targetUrls[tempTargetLang] || [];
-                                                if (currentUrls.length >= 10) {
-                                                    toast({ title: "Limit erreicht", description: "Max 10 URLs pro Sprache.", variant: "destructive" });
-                                                    return prev;
-                                                }
-                                                return {
-                                                    ...prev,
-                                                    targetUrls: { ...prev.targetUrls, [tempTargetLang]: [...currentUrls, tempTargetUrl] }
-                                                };
-                                            });
-                                            setTempTargetUrl('');
-                                        }
-                                    }}
-                                >
-                                    <Plus className="h-5 w-5" />
-                                </Button>
-                            </div>
-                            {formData.allowedLanguages.length === 0 && (
+                            )}
+                            {!clientId && formData.allowedLanguages.length === 0 && (
                                 <p className="text-xs text-red-500 mt-1">
                                     Bitte wählen Sie zuerst oben Sprachen aus.
                                 </p>
@@ -784,6 +879,7 @@ export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
                                 assets={formData.assets}
                                 onAssetsChange={newAssets => setFormData(p => ({ ...p, assets: newAssets }))}
                                 allowedLanguages={formData.allowedLanguages}
+                                readOnly={!!clientId}
                             />
                         </div>
 
@@ -819,12 +915,14 @@ export function NetworkCampaignsManager({ onBack }: { onBack?: () => void }) {
                     </CardContent>
                     <CardFooter className="flex justify-end gap-2 sticky bottom-0 bg-white p-4 border-t shadow-inner z-10">
                         <Button type="button" variant="outline" onClick={() => setView('list')}>
-                            {t('common:cancel', 'Cancel')}
+                            {clientId ? 'Volver' : t('common:cancel', 'Cancel')}
                         </Button>
-                        <Button type="submit" disabled={submitting}>
-                            {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                            {editingId ? t('common:update', 'Update Campaign') : t('common:create', 'Create Campaign')}
-                        </Button>
+                        {!clientId && (
+                            <Button type="submit" disabled={submitting}>
+                                {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                                {editingId ? t('common:update', 'Update Campaign') : t('common:create', 'Create Campaign')}
+                            </Button>
+                        )}
                     </CardFooter>
                 </Card>
             </form>

@@ -9,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from '@/components/ui/dialog';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { Loader2, Plus, X, Trash2, Edit2, Sparkles, Languages as LangIcon } from 'lucide-react';
+import { Loader2, Plus, X, Trash2, Edit2, Sparkles, Languages as LangIcon, Eye } from 'lucide-react';
 import Image from 'next/image';
 import { uploadImage } from '@/app/actions/upload';
 import { translateText } from '@/app/actions/translate';
@@ -21,6 +21,7 @@ interface CampaignAssetEditorProps {
     onAssetsChange: (assets: CampaignAsset[]) => void;
     allowedLanguages: string[];
     defaultText?: string;
+    readOnly?: boolean;
 }
 
 const LANG_LABELS: Record<string, string> = {
@@ -35,7 +36,7 @@ const LANG_MAP_AI: Record<string, string> = {
     'de': 'German'
 };
 
-export function CampaignAssetEditor({ assets, onAssetsChange, allowedLanguages, defaultText = '' }: CampaignAssetEditorProps) {
+export function CampaignAssetEditor({ assets, onAssetsChange, allowedLanguages, defaultText = '', readOnly = false }: CampaignAssetEditorProps) {
     const { t } = useTranslation('common');
     const { toast } = useToast();
     const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -227,20 +228,22 @@ export function CampaignAssetEditor({ assets, onAssetsChange, allowedLanguages, 
                     <div className="text-sm font-medium mr-2">{assets.length} / 60</div>
 
                     {/* Bulk Upload Button */}
-                    <div className="relative">
-                        <input
-                            type="file"
-                            multiple
-                            accept="image/*"
-                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
-                            onChange={handleBulkUpload}
-                            disabled={bulkUploading || assets.length >= 60}
-                        />
-                        <Button variant="outline" size="sm" disabled={bulkUploading || assets.length >= 60}>
-                            {bulkUploading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Plus className="h-4 w-4 mr-2" />}
-                            Bulk Upload
-                        </Button>
-                    </div>
+                    {!readOnly && (
+                        <div className="relative">
+                            <input
+                                type="file"
+                                multiple
+                                accept="image/*"
+                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
+                                onChange={handleBulkUpload}
+                                disabled={bulkUploading || assets.length >= 60}
+                            />
+                            <Button variant="outline" size="sm" disabled={bulkUploading || assets.length >= 60}>
+                                {bulkUploading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Plus className="h-4 w-4 mr-2" />}
+                                Bulk Upload
+                            </Button>
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -258,18 +261,26 @@ export function CampaignAssetEditor({ assets, onAssetsChange, allowedLanguages, 
                                 {asset.translations[asset.sourceLanguage] || asset.translations[allowedLanguages[0]] || 'No text'}
                             </p>
                             <div className="flex justify-between gap-1">
-                                <Button size="icon" variant="ghost" className="h-6 w-6" onClick={() => handleEdit(asset)}>
-                                    <Edit2 className="h-3 w-3" />
-                                </Button>
-                                <Button size="icon" variant="ghost" className="h-6 w-6 text-red-500 hover:bg-red-50" onClick={() => handleDelete(asset.id)}>
-                                    <Trash2 className="h-3 w-3" />
-                                </Button>
+                                {readOnly ? (
+                                    <Button size="sm" variant="ghost" className="w-full text-xs gap-1" onClick={() => handleEdit(asset)}>
+                                        <Eye className="h-3 w-3" /> Ver
+                                    </Button>
+                                ) : (
+                                    <>
+                                        <Button size="icon" variant="ghost" className="h-6 w-6" onClick={() => handleEdit(asset)}>
+                                            <Edit2 className="h-3 w-3" />
+                                        </Button>
+                                        <Button size="icon" variant="ghost" className="h-6 w-6 text-red-500 hover:bg-red-50" onClick={() => handleDelete(asset.id)}>
+                                            <Trash2 className="h-3 w-3" />
+                                        </Button>
+                                    </>
+                                )}
                             </div>
                         </div>
                     </div>
                 ))}
 
-                {assets.length < 60 && (
+                {!readOnly && assets.length < 60 && (
                     <div
                         onClick={handleOpenCreate}
                         className="aspect-square flex flex-col items-center justify-center border-2 border-dashed border-gray-200 rounded-lg hover:border-gray-400 hover:bg-gray-50 transition-colors cursor-pointer"
@@ -284,7 +295,7 @@ export function CampaignAssetEditor({ assets, onAssetsChange, allowedLanguages, 
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
                     <DialogHeader>
-                        <DialogTitle>{editingAssetId ? 'Edit Asset' : 'Create New Asset'}</DialogTitle>
+                        <DialogTitle>{readOnly ? 'Ver Asset' : editingAssetId ? 'Edit Asset' : 'Create New Asset'}</DialogTitle>
                     </DialogHeader>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-4">
@@ -304,36 +315,40 @@ export function CampaignAssetEditor({ assets, onAssetsChange, allowedLanguages, 
                                     </div>
                                 )}
                             </div>
-                            <div className="flex justify-center w-full">
-                                <Label htmlFor="single-asset-upload" className="w-full cursor-pointer bg-secondary hover:bg-secondary/80 text-secondary-foreground px-4 py-3 rounded-md text-sm font-medium transition-colors text-center flex items-center justify-center gap-2">
-                                    <Plus className="h-4 w-4" />
-                                    {currentImage ? 'Change Image' : 'Select Image'}
-                                </Label>
-                                <Input
-                                    id="single-asset-upload"
-                                    type="file"
-                                    accept="image/*"
-                                    className="hidden"
-                                    onChange={handleImageUpload}
-                                    disabled={uploading}
-                                />
-                            </div>
+                            {!readOnly && (
+                                <div className="flex justify-center w-full">
+                                    <Label htmlFor="single-asset-upload" className="w-full cursor-pointer bg-secondary hover:bg-secondary/80 text-secondary-foreground px-4 py-3 rounded-md text-sm font-medium transition-colors text-center flex items-center justify-center gap-2">
+                                        <Plus className="h-4 w-4" />
+                                        {currentImage ? 'Change Image' : 'Select Image'}
+                                    </Label>
+                                    <Input
+                                        id="single-asset-upload"
+                                        type="file"
+                                        accept="image/*"
+                                        className="hidden"
+                                        onChange={handleImageUpload}
+                                        disabled={uploading}
+                                    />
+                                </div>
+                            )}
                         </div>
 
                         {/* Right: Text & Translations */}
                         <div className="space-y-4 flex flex-col h-full">
                             <div className="flex items-center justify-between">
                                 <Label className="font-semibold text-lg">Post Text</Label>
-                                <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={handleAutoTranslate}
-                                    disabled={aiTranslating || !translations[activeLangTab]}
-                                    className="text-xs h-7 gap-2 bg-blue-50 text-blue-700 hover:bg-blue-100 border-blue-200"
-                                >
-                                    {aiTranslating ? <Loader2 className="h-3 w-3 animate-spin" /> : <Sparkles className="h-3 w-3" />}
-                                    Auto-Translate
-                                </Button>
+                                {!readOnly && (
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={handleAutoTranslate}
+                                        disabled={aiTranslating || !translations[activeLangTab]}
+                                        className="text-xs h-7 gap-2 bg-blue-50 text-blue-700 hover:bg-blue-100 border-blue-200"
+                                    >
+                                        {aiTranslating ? <Loader2 className="h-3 w-3 animate-spin" /> : <Sparkles className="h-3 w-3" />}
+                                        Auto-Translate
+                                    </Button>
+                                )}
                             </div>
 
                             <Tabs value={activeLangTab} onValueChange={setActiveLangTab} className="flex-1 flex flex-col">
@@ -348,10 +363,11 @@ export function CampaignAssetEditor({ assets, onAssetsChange, allowedLanguages, 
                                     {allowedLanguages.map(lang => (
                                         <TabsContent key={lang} value={lang} className="mt-0 h-full min-h-[250px]">
                                             <Textarea
-                                                placeholder={`Enter text for ${LANG_LABELS[lang]}...`}
+                                                placeholder={readOnly ? "No text" : `Enter text for ${LANG_LABELS[lang]}...`}
                                                 className="h-full resize-none border-0 bg-transparent focus-visible:ring-0 text-base"
                                                 value={translations[lang] || ''}
                                                 onChange={e => setTranslations(prev => ({ ...prev, [lang]: e.target.value }))}
+                                                disabled={readOnly}
                                             />
                                         </TabsContent>
                                     ))}
@@ -361,10 +377,16 @@ export function CampaignAssetEditor({ assets, onAssetsChange, allowedLanguages, 
                     </div>
 
                     <DialogFooter className="gap-2 sm:gap-0">
-                        <Button variant="outline" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
-                        <Button onClick={handleSave} disabled={!currentImage}>
-                            {editingAssetId ? 'Update Asset' : 'Add Asset'}
-                        </Button>
+                        {readOnly ? (
+                            <Button onClick={() => setIsDialogOpen(false)}>Cerrar</Button>
+                        ) : (
+                            <>
+                                <Button variant="outline" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
+                                <Button onClick={handleSave} disabled={!currentImage}>
+                                    {editingAssetId ? 'Update Asset' : 'Add Asset'}
+                                </Button>
+                            </>
+                        )}
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
