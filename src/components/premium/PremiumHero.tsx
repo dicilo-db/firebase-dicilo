@@ -10,9 +10,11 @@ import { LanguageSelector } from '../LanguageSelector';
 
 interface PremiumHeroProps {
     clientData: ClientData;
+    title?: string;
+    subtitle?: string;
 }
 
-export const PremiumHero: React.FC<PremiumHeroProps> = ({ clientData }) => {
+export const PremiumHero: React.FC<PremiumHeroProps> = ({ clientData, title, subtitle }) => {
     const { headerData } = clientData;
     const bgImage =
         headerData?.headerBackgroundImageUrl ||
@@ -20,6 +22,9 @@ export const PremiumHero: React.FC<PremiumHeroProps> = ({ clientData }) => {
         'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80'; // Fallback
 
     const logo = clientData.clientLogoUrl;
+
+    const displayTitle = title || clientData.clientName;
+    const displaySubtitle = subtitle || headerData?.welcomeText;
 
     return (
         <div className="relative h-[75vh] md:h-[82vh] w-full overflow-hidden rounded-[2.5rem] shadow-[0_12px_50px_rgba(0,0,0,0.15)] group border border-white/10">
@@ -86,12 +91,12 @@ export const PremiumHero: React.FC<PremiumHeroProps> = ({ clientData }) => {
                         </div>
 
                         <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-white tracking-tight drop-shadow-md leading-none" style={{ fontFamily: 'var(--font-sans), sans-serif' }}>
-                            {clientData.clientName}
+                            {displayTitle}
                         </h1>
                         
-                        {headerData?.welcomeText && (
+                        {displaySubtitle && (
                             <p className="text-lg md:text-xl text-slate-200 font-light max-w-3xl drop-shadow-sm leading-relaxed tracking-wide">
-                                {headerData.welcomeText}
+                                {displaySubtitle}
                             </p>
                         )}
                     </div>

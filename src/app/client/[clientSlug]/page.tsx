@@ -15,21 +15,7 @@ import { I18nProvider } from '@/context/i18n-provider';
 import { Metadata } from 'next';
 
 const db = getFirestore(app);
-export const revalidate = 60;
-
-export async function generateStaticParams() {
-  try {
-    const clientsCol = collection(db, 'clients');
-    const clientSnapshot = await getDocs(clientsCol);
-    const slugs = clientSnapshot.docs
-      .map((doc) => doc.data().slug)
-      .filter(Boolean);
-    return slugs.map((slug) => ({ clientSlug: slug }));
-  } catch (error) {
-    console.error('Error generating static params for clients:', error);
-    return [];
-  }
-}
+export const dynamic = 'force-dynamic';
 
 async function getClientData(slug: string): Promise<ClientData | null> {
   try {
