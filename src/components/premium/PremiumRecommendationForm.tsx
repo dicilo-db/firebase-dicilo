@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Facebook, Instagram, Mail, Globe, Send, MessageCircle, UserPlus, ShieldCheck } from 'lucide-react';
+import { Facebook, Instagram, Mail, Globe, Send, MessageCircle, User, Star, Share2, ShieldCheck, ArrowLeft, ArrowRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { getFirestore, collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { app } from '@/lib/firebase';
@@ -52,7 +52,19 @@ const TRANSLATIONS: Record<string, any> = {
             submitBtn: "Enviar / Recomendar",
             repDicilo: "Soy Representante Dicilo",
             referralCat: "Recomendación",
-            connectTitle: "Si lo desea Conéctenos y Comparta nuestros enlaces a través de cualquiera de estas posibilidades"
+            connectTitle: "Si lo desea Conéctenos y Comparta nuestros enlaces a través de cualquiera de estas posibilidades",
+            step: "Paso",
+            of: "de"
+        },
+        steps: {
+            step1: "Tus Datos",
+            step2: "Su Opinión",
+            step3: "Recomendar Amigos",
+            step4: "Enviar"
+        },
+        buttons: {
+            back: "Atrás",
+            next: "Siguiente"
         }
     },
     en: {
@@ -88,7 +100,19 @@ const TRANSLATIONS: Record<string, any> = {
             submitBtn: "Submit / Recommend",
             repDicilo: "I am a Dicilo Representative",
             referralCat: "Recommendation",
-            connectTitle: "If you wish, connect with us and share our links via any of these possibilities"
+            connectTitle: "If you wish, connect with us and share our links via any of these possibilities",
+            step: "Step",
+            of: "of"
+        },
+        steps: {
+            step1: "Your Info",
+            step2: "Your Review",
+            step3: "Invite Friends",
+            step4: "Submit"
+        },
+        buttons: {
+            back: "Back",
+            next: "Next"
         }
     },
     de: {
@@ -124,7 +148,19 @@ const TRANSLATIONS: Record<string, any> = {
             submitBtn: "Senden / Empfehlen",
             repDicilo: "Bin Dicilo Repräsentant",
             referralCat: "Empfehlung",
-            connectTitle: "Wenn Sie möchten, verbinden Sie sich mit uns und teilen Sie unsere Links über eine dieser Möglichkeiten"
+            connectTitle: "Wenn Sie möchten, verbinden Sie sich mit uns und teilen Sie unsere Links über eine dieser Möglichkeiten",
+            step: "Schritt",
+            of: "von"
+        },
+        steps: {
+            step1: "Ihre Daten",
+            step2: "Ihre Meinung",
+            step3: "Freunde Einladen",
+            step4: "Absenden"
+        },
+        buttons: {
+            back: "Zurück",
+            next: "Weiter"
         }
     }
 };
@@ -135,7 +171,10 @@ export const PremiumRecommendationForm: React.FC<PremiumRecommendationFormProps>
     const l = TRANSLATIONS[lang] || TRANSLATIONS.de;
     const { toast } = useToast();
 
-    // Estado principal del Formulario "Growth Engine"
+    // Step state
+    const [currentStep, setCurrentStep] = useState(1);
+
+    // Form Data State
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -152,21 +191,20 @@ export const PremiumRecommendationForm: React.FC<PremiumRecommendationFormProps>
         captcha: '',
     });
 
-    // Referidos Dinámicos (hasta 5)
+    // Dynamic referrals (up to 5)
     const [referrals, setReferrals] = useState<{ id: number; name: string; contact: string }[]>([
         { id: 1, name: '', contact: '' }
     ]);
 
     const [isSubmitting, setIsSubmitting] = useState(false);
     
-    // CAPTCHA Dinámico y Aleatorio
+    // Dynamic CAPTCHA config
     const [captchaConfig, setCaptchaConfig] = useState<{ a: number, b: number, expected: number } | null>(null);
 
     React.useEffect(() => {
-        // Generar un captcha aleatorio al cargar el componente
         const generateCaptcha = () => {
-            const a = Math.floor(Math.random() * 20) + 1; // 1 to 20
-            const b = Math.floor(Math.random() * 20) + 1; // 1 to 20
+            const a = Math.floor(Math.random() * 20) + 1;
+            const b = Math.floor(Math.random() * 20) + 1;
             setCaptchaConfig({ a, b, expected: a + b });
         };
         generateCaptcha();
@@ -182,22 +220,57 @@ export const PremiumRecommendationForm: React.FC<PremiumRecommendationFormProps>
         setReferrals(referrals.map(r => r.id === id ? { ...r, [field]: value } : r));
     };
 
+    // Step Validation
+    const validateStep = (step: number): boolean => {
+        if (step === 1) {
+            if (!formData.name.trim()) {
+                toast({ title: t('form.errorName', 'Please provide your name.'), variant: 'destructive' });
+                return false;
+            }
+            if (!formData.email.trim() || !formData.email.includes('@')) {
+                toast({ title: t('form.errorEmail', 'Please provide a valid email address.'), variant: 'destructive' });
+                return false;
+            }
+        }
+        if (step === 3) {
+            if (formData.weiterempfehlen === 'ja') {
+                if (!formData.bestatigung_versand) {
+                    toast({ title: t('form.errorLegalConfirm', 'You must confirm the legal terms for sending invitations.'), variant: 'destructive' });
+                    return false;
+                }
+                const filledReferrals = referrals.filter(r => r.name.trim() && r.contact.trim());
+                if (filledReferrals.length === 0) {
+                    toast({ title: t('form.errorReferralDetails', 'Please fill in at least one friend\'s details or select no.'), variant: 'destructive' });
+                    return false;
+                }
+            }
+        }
+        return true;
+    };
+
+    const handleNext = () => {
+        if (validateStep(currentStep)) {
+            setCurrentStep((prev) => Math.min(prev + 1, 4));
+        }
+    };
+
+    const handleBack = () => {
+        setCurrentStep((prev) => Math.max(prev - 1, 1));
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        // Validaciones Manuales Básicas
-        if (!formData.name || !formData.email || !formData.datenschutz) {
-            toast({ title: t('form.errorRequiredFields', 'Please fill in all required fields and accept privacy policy.'), variant: 'destructive' });
+        // Final validations
+        if (!validateStep(1) || !validateStep(3)) return;
+
+        if (!formData.datenschutz) {
+            toast({ title: t('form.errorRequiredFields', 'Please accept the privacy policy to submit.'), variant: 'destructive' });
             return;
         }
 
         if (!captchaConfig || parseInt(formData.captcha.trim()) !== captchaConfig.expected) {
             toast({ title: t('form.errorCaptcha', 'Incorrect CAPTCHA answer.'), variant: 'destructive' });
-            return;
-        }
-
-        if (formData.weiterempfehlen === 'ja' && !formData.bestatigung_versand) {
-            toast({ title: t('form.errorLegalConfirm', 'You must confirm the legal terms for sending invitations.'), variant: 'destructive' });
             return;
         }
 
@@ -219,7 +292,6 @@ export const PremiumRecommendationForm: React.FC<PremiumRecommendationFormProps>
 
             await addDoc(collection(db, 'clients', clientData.id, 'recommendations'), submitData);
             
-            // Send emails to the referrals if applicable
             if (validReferrals.length > 0) {
                 await fetch('/api/send-referral-emails', {
                     method: 'POST',
@@ -237,15 +309,16 @@ export const PremiumRecommendationForm: React.FC<PremiumRecommendationFormProps>
             
             toast({ title: t('form.success', 'Information successfully submitted! Thank you.') });
             
-            // Reset
+            // Reset form
             setFormData({
                 name: '', email: '', gutschein: '', newsletter: 'ja', producto_recomendado: '', comment: '',
                 fuente: '', weiterempfehlen: 'nein', helfen_community: false, datenschutz: false,
                 bestatigung_versand: false, mitglied_status: 'mitglied', captcha: ''
             });
             setReferrals([{ id: 1, name: '', contact: '' }]);
+            setCurrentStep(1);
             
-            // Regenerate captcha for next time
+            // Regenerate captcha
             const a = Math.floor(Math.random() * 20) + 1;
             const b = Math.floor(Math.random() * 20) + 1;
             setCaptchaConfig({ a, b, expected: a + b });
@@ -274,256 +347,360 @@ export const PremiumRecommendationForm: React.FC<PremiumRecommendationFormProps>
     if (igUrl) socialLinks.push({ type: 'instagram', url: igUrl, icon: <Instagram className="h-5 w-5" />, label: 'Instagram' });
     if (whatsUrl) socialLinks.push({ type: 'whatsapp', url: whatsUrl, icon: <MessageCircle className="h-5 w-5" />, label: 'WhatsApp' });
 
+    // Step configuration helper for UI indicators
+    const stepsList = [
+        { id: 1, label: l.steps.step1, icon: <User className="w-4 h-4" /> },
+        { id: 2, label: l.steps.step2, icon: <Star className="w-4 h-4" /> },
+        { id: 3, label: l.steps.step3, icon: <Share2 className="w-4 h-4" /> },
+        { id: 4, label: l.steps.step4, icon: <ShieldCheck className="w-4 h-4" /> }
+    ];
+
     return (
         <div className="flex flex-col gap-6">
             {/* Main Viral Form */}
-            <div className="rounded-[2rem] border border-gray-100 bg-white/70 backdrop-blur-xl p-8 shadow-[0_8px_30px_rgb(0,0,0,0.06)] relative overflow-hidden">
-                {/* Decorative Elements */}
-                <div className="absolute top-0 right-0 w-64 h-64 bg-blue-50 focus:outline outline-blue-100 rounded-full blur-3xl -z-10 opacity-60 pointer-events-none" />
-                <div className="absolute bottom-0 left-0 w-64 h-64 bg-purple-50 focus:outline outline-purple-100 rounded-full blur-3xl -z-10 opacity-60 pointer-events-none" />
+            <div className="rounded-[2.5rem] border border-white/30 bg-white/40 backdrop-blur-xl p-8 shadow-[0_15px_45px_rgba(0,0,0,0.03)] relative overflow-hidden transition-all duration-300 hover:shadow-[0_20px_50px_rgba(0,0,0,0.06)] hover:scale-[1.005]">
+                {/* Decorative background glow circles */}
+                <div className="absolute top-0 right-0 w-64 h-64 bg-blue-100 focus:outline outline-blue-200 rounded-full blur-3xl -z-10 opacity-30 pointer-events-none" />
+                <div className="absolute bottom-0 left-0 w-64 h-64 bg-purple-100 focus:outline outline-purple-200 rounded-full blur-3xl -z-10 opacity-30 pointer-events-none" />
 
-                <div className="flex items-center gap-3 mb-8">
-                    <div className="bg-gradient-to-br from-blue-500 to-indigo-600 p-3 rounded-2xl shadow-lg shadow-blue-500/20">
-                        <UserPlus className="h-6 w-6 text-white" />
+                {/* Form Stepper Header Indicator */}
+                <div className="mb-8">
+                    <div className="flex items-center justify-between mb-4">
+                        <span className="text-xs font-black uppercase tracking-widest text-slate-400">
+                            {l.ui.step} {currentStep} {l.ui.of} 4
+                        </span>
+                        <span className="text-sm font-extrabold text-blue-600 bg-blue-50/80 px-3 py-1 rounded-full border border-blue-100/30 shadow-sm">
+                            {stepsList[currentStep - 1].label}
+                        </span>
                     </div>
-                    <h3 className="text-2xl font-extrabold text-gray-900 tracking-tight">
-                        {t('leadForm.title', 'Empfehlungs-Programm & Kontakt')}
-                    </h3>
+
+                    {/* Stepper Dots & Line */}
+                    <div className="relative flex items-center justify-between w-full">
+                        <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-0.5 bg-slate-200/60 -z-10" />
+                        <div 
+                            className="absolute left-0 top-1/2 -translate-y-1/2 h-0.5 bg-gradient-to-r from-blue-500 to-indigo-600 -z-10 transition-all duration-500"
+                            style={{ width: `${((currentStep - 1) / 3) * 100}%` }}
+                        />
+                        {stepsList.map((step) => {
+                            const isCompleted = currentStep > step.id;
+                            const isActive = currentStep === step.id;
+                            return (
+                                <button
+                                    key={step.id}
+                                    type="button"
+                                    onClick={() => {
+                                        // Allow jumping to completed steps or current step
+                                        if (step.id <= currentStep) {
+                                            setCurrentStep(step.id);
+                                        } else {
+                                            // Validate intermediate steps before jumping forward
+                                            let valid = true;
+                                            for (let s = 1; s < step.id; s++) {
+                                                if (s >= currentStep && !validateStep(s)) {
+                                                    valid = false;
+                                                    break;
+                                                }
+                                            }
+                                            if (valid) {
+                                                setCurrentStep(step.id);
+                                            }
+                                        }
+                                    }}
+                                    className={`relative flex items-center justify-center w-9 h-9 rounded-full border transition-all duration-500 shadow-sm focus:outline-none ${
+                                        isCompleted
+                                            ? 'bg-gradient-to-r from-blue-500 to-indigo-600 border-transparent text-white scale-105'
+                                            : isActive
+                                            ? 'bg-white border-blue-500 text-blue-600 scale-110 ring-4 ring-blue-100/50 font-bold'
+                                            : 'bg-slate-100 border-slate-200 text-slate-400 hover:bg-slate-50'
+                                    }`}
+                                >
+                                    {step.icon}
+                                </button>
+                            );
+                        })}
+                    </div>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
-                    {/* Phase 1: Identificación y Segmentación Temprana */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        <div className="space-y-2">
-                            <Label className="text-gray-700 font-semibold">{t('leadForm.name', 'Ihr Vorname & Nachname')} *</Label>
-                            <Input
-                                className="bg-white/50 backdrop-blur-sm border-gray-200 focus:border-blue-500 rounded-xl h-12"
-                                placeholder={l.placeholders.name}
-                                value={formData.name}
-                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                required
-                            />
-                        </div>
-                        <div className="space-y-2">
-                            <Label className="text-gray-700 font-semibold">{t('leadForm.email', 'Ihre E-Mail-Adresse')} *</Label>
-                            <Input
-                                type="email"
-                                className="bg-white/50 backdrop-blur-sm border-gray-200 focus:border-blue-500 rounded-xl h-12"
-                                placeholder={l.placeholders.email}
-                                value={formData.email}
-                                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                required
-                            />
-                        </div>
-                    </div>
+                    {/* STEP 1: Your Information */}
+                    {currentStep === 1 && (
+                        <div className="space-y-6 animate-in fade-in duration-300">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                <div className="space-y-2">
+                                    <Label className="text-slate-700 font-bold">{t('leadForm.name', 'Ihr Vorname & Nachname')} *</Label>
+                                    <Input
+                                        className="bg-white/90 backdrop-blur-sm border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100/30 rounded-xl h-12 transition-all font-semibold"
+                                        placeholder={l.placeholders.name}
+                                        value={formData.name}
+                                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                        required
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label className="text-slate-700 font-bold">{t('leadForm.email', 'Ihre E-Mail-Adresse')} *</Label>
+                                    <Input
+                                        type="email"
+                                        className="bg-white/90 backdrop-blur-sm border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100/30 rounded-xl h-12 transition-all font-semibold"
+                                        placeholder={l.placeholders.email}
+                                        value={formData.email}
+                                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                        required
+                                    />
+                                </div>
+                            </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        <div className="space-y-2">
-                            <Label className="text-gray-700 font-semibold">{t('leadForm.coupon', 'Ihr Gutschein (Optional)')}</Label>
-                            <Input
-                                className="bg-white/50 backdrop-blur-sm border-gray-200 focus:border-blue-500 rounded-xl h-12"
-                                placeholder={l.placeholders.code}
-                                value={formData.gutschein}
-                                onChange={(e) => setFormData({ ...formData, gutschein: e.target.value })}
-                            />
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                <div className="space-y-2">
+                                    <Label className="text-slate-700 font-bold">{t('leadForm.coupon', 'Ihr Gutschein (Optional)')}</Label>
+                                    <Input
+                                        className="bg-white/90 backdrop-blur-sm border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100/30 rounded-xl h-12 transition-all font-semibold"
+                                        placeholder={l.placeholders.code}
+                                        value={formData.gutschein}
+                                        onChange={(e) => setFormData({ ...formData, gutschein: e.target.value })}
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label className="text-slate-700 font-bold">{t('leadForm.source', 'Wie haben Sie von uns erfahren?')}</Label>
+                                    <Select value={formData.fuente} onValueChange={(v) => setFormData({ ...formData, fuente: v })}>
+                                        <SelectTrigger className="bg-white/90 backdrop-blur-sm border-slate-200 rounded-xl h-12 focus:border-blue-500 focus:ring-4 focus:ring-blue-100/30 transition-all text-slate-700 font-semibold">
+                                            <SelectValue placeholder={l.placeholders.select} />
+                                        </SelectTrigger>
+                                        <SelectContent className="rounded-xl border-slate-200">
+                                            <SelectItem value="Facebook">Facebook</SelectItem>
+                                            <SelectItem value="Instagram">Instagram</SelectItem>
+                                            <SelectItem value="Telegram">Telegram</SelectItem>
+                                            <SelectItem value="Twitter">Twitter</SelectItem>
+                                            <SelectItem value="YouTube">YouTube</SelectItem>
+                                            <SelectItem value="Pinterest">Pinterest</SelectItem>
+                                            <SelectItem value="Linkedin">Linkedin</SelectItem>
+                                            <SelectItem value="Tik Tok">Tik Tok</SelectItem>
+                                            <SelectItem value="Empfehlung">{l.ui.referralCat}</SelectItem>
+                                            <SelectItem value="Dicilo Repräsentant">{l.ui.repDicilo}</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                            </div>
                         </div>
-                        <div className="space-y-2">
-                            <Label className="text-gray-700 font-semibold">{t('leadForm.source', 'Wie haben Sie von uns erfahren?')}</Label>
-                            <Select value={formData.fuente} onValueChange={(v) => setFormData({ ...formData, fuente: v })}>
-                                <SelectTrigger className="bg-white/50 backdrop-blur-sm border-gray-200 rounded-xl h-12">
-                                    <SelectValue placeholder={l.placeholders.select} />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="Facebook">Facebook</SelectItem>
-                                    <SelectItem value="Instagram">Instagram</SelectItem>
-                                    <SelectItem value="Telegram">Telegram</SelectItem>
-                                    <SelectItem value="Twitter">Twitter</SelectItem>
-                                    <SelectItem value="YouTube">YouTube</SelectItem>
-                                    <SelectItem value="Pinterest">Pinterest</SelectItem>
-                                    <SelectItem value="Linkedin">Linkedin</SelectItem>
-                                    <SelectItem value="Tik Tok">Tik Tok</SelectItem>
-                                    <SelectItem value="Empfehlung">{l.ui.referralCat}</SelectItem>
-                                    <SelectItem value="Dicilo Repräsentant">{l.ui.repDicilo}</SelectItem>
-                                </SelectContent>
-                            </Select>
+                    )}
+
+                    {/* STEP 2: Recommendation Details */}
+                    {currentStep === 2 && (
+                        <div className="space-y-6 animate-in fade-in duration-300">
+                            <div className="space-y-2">
+                                <Label className="text-slate-700 font-bold">{t('leadForm.productRec', 'Welches Produkt möchten Sie empfehlen? Bitte tragen Sie es hier ein.')}</Label>
+                                <Input
+                                    className="bg-white/90 backdrop-blur-sm border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100/30 rounded-xl h-12 transition-all font-semibold"
+                                    placeholder={l.placeholders.product}
+                                    value={formData.producto_recomendado}
+                                    onChange={(e) => setFormData({ ...formData, producto_recomendado: e.target.value })}
+                                />
+                            </div>
+
+                            <div className="space-y-3">
+                                <Label className="text-slate-700 font-bold">{t('leadForm.comment', 'Ihre persönliche Nachricht an Ihre Freunde (Optional)')}</Label>
+                                <textarea
+                                    className="w-full bg-white/90 backdrop-blur-sm border border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100/30 rounded-xl p-4 min-h-[120px] transition-all font-medium text-slate-700 shadow-inner resize-y"
+                                    placeholder={l.placeholders.msg}
+                                    value={formData.comment}
+                                    onChange={(e) => setFormData({ ...formData, comment: e.target.value })}
+                                />
+                                <p className="text-xs text-slate-400 font-medium leading-relaxed">{l.ui.msgDisclaimer}</p>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                <div className="space-y-2">
+                                    <Label className="text-slate-700 font-bold">{t('leadForm.newsletter', 'Möchten Sie unsere Newsletter erhalten?')}</Label>
+                                    <Select value={formData.newsletter} onValueChange={(v) => setFormData({ ...formData, newsletter: v })}>
+                                        <SelectTrigger className="bg-white/90 backdrop-blur-sm border-slate-200 rounded-xl h-12 focus:border-blue-500 focus:ring-4 focus:ring-blue-100/30 text-slate-700 font-semibold">
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent className="rounded-xl">
+                                            <SelectItem value="ja">{l.ui.yesNews}</SelectItem>
+                                            <SelectItem value="nein">{l.ui.noNews}</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                                <div className="space-y-2">
+                                    <Label className="text-slate-700 font-bold">{t('leadForm.member', 'Sind Sie Mitglied bei DICILO?')}</Label>
+                                    <Select value={formData.mitglied_status} onValueChange={(v) => setFormData({ ...formData, mitglied_status: v })}>
+                                        <SelectTrigger className="bg-white/90 backdrop-blur-sm border-slate-200 rounded-xl h-12 focus:border-blue-500 focus:ring-4 focus:ring-blue-100/30 text-slate-700 font-semibold">
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent className="rounded-xl">
+                                            <SelectItem value="mitglied">{l.ui.isMember}</SelectItem>
+                                            <SelectItem value="kein_mitglied">{l.ui.notMember}</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                            </div>
                         </div>
-                    </div>
+                    )}
 
-                    <div className="space-y-3">
-                        <Label className="text-gray-700 font-semibold">{t('leadForm.productRec', 'Welches Produkt möchten Sie empfehlen? Bitte tragen Sie es hier ein.')}</Label>
-                        <Input
-                            className="bg-white/50 backdrop-blur-sm border-gray-200 focus:border-blue-500 rounded-xl h-12"
-                            placeholder={l.placeholders.product}
-                            value={formData.producto_recomendado}
-                            onChange={(e) => setFormData({ ...formData, producto_recomendado: e.target.value })}
-                        />
-                    </div>
-
-                    <div className="space-y-3">
-                        <Label className="text-gray-700 font-semibold">{t('leadForm.comment', 'Ihre persönliche Nachricht an Ihre Freunde (Optional)')}</Label>
-                        <textarea
-                            className="w-full bg-white/50 backdrop-blur-sm border border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl p-4 min-h-[100px] shadow-sm resize-y"
-                            placeholder={l.placeholders.msg}
-                            value={formData.comment}
-                            onChange={(e) => setFormData({ ...formData, comment: e.target.value })}
-                        />
-                        <p className="text-xs text-gray-400">{l.ui.msgDisclaimer}</p>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        <div className="space-y-2">
-                            <Label className="text-gray-700 font-semibold">{t('leadForm.newsletter', 'Möchten Sie unsere Newsletter erhalten?')}</Label>
-                            <Select value={formData.newsletter} onValueChange={(v) => setFormData({ ...formData, newsletter: v })}>
-                                <SelectTrigger className="bg-white/50 backdrop-blur-sm border-gray-200 rounded-xl h-12">
-                                    <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="ja">{l.ui.yesNews}</SelectItem>
-                                    <SelectItem value="nein">{l.ui.noNews}</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
-                        <div className="space-y-2">
-                            <Label className="text-gray-700 font-semibold">{t('leadForm.member', 'Sind Sie Mitglied bei DICILO?')}</Label>
-                            <Select value={formData.mitglied_status} onValueChange={(v) => setFormData({ ...formData, mitglied_status: v })}>
-                                <SelectTrigger className="bg-white/50 backdrop-blur-sm border-gray-200 rounded-xl h-12">
-                                    <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="mitglied">{l.ui.isMember}</SelectItem>
-                                    <SelectItem value="kein_mitglied">{l.ui.notMember}</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
-                    </div>
-
-                    {/* Phase 2: Growth Engine / Viralität */}
-                    <div className="bg-blue-50/50 rounded-2xl p-6 border border-blue-100/50 mt-8">
-                        <div className="space-y-4">
-                            <Label className="text-gray-800 font-bold text-lg">{t('leadForm.refer', 'Möchten Sie uns weiterempfehlen?')}</Label>
-                            <Select value={formData.weiterempfehlen} onValueChange={(v) => setFormData({ ...formData, weiterempfehlen: v })}>
-                                <SelectTrigger className="bg-white border-blue-200 focus:border-blue-500 rounded-xl h-12">
-                                    <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="nein">{l.ui.noReferral}</SelectItem>
-                                    <SelectItem value="ja">{l.ui.yesReferral}</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
-
-                        {/* Referral Slots Condicionales */}
-                        {formData.weiterempfehlen === 'ja' && (
-                            <div className="mt-6 space-y-4 animate-in fade-in slide-in-from-top-4 duration-500">
-                                <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-xl mb-4 text-sm text-yellow-800 flex gap-3 items-start">
-                                    <ShieldCheck className="w-5 h-5 flex-shrink-0 text-yellow-600 mt-0.5" />
-                                    <div>
-                                        <strong>{l.legal2Title} *</strong><br/>
-                                        <label className="flex items-start gap-2 mt-2 cursor-pointer">
-                                            <Checkbox 
-                                                checked={formData.bestatigung_versand}
-                                                onCheckedChange={(checked) => setFormData({ ...formData, bestatigung_versand: checked as boolean })}
-                                                className="mt-1"
-                                                required
-                                            />
-                                            <span className="text-xs leading-tight">
-                                                {l.legal2Text}
-                                            </span>
-                                        </label>
-                                    </div>
+                    {/* STEP 3: Share with Friends (Growth Engine) */}
+                    {currentStep === 3 && (
+                        <div className="space-y-6 animate-in fade-in duration-300">
+                            <div className="bg-gradient-to-br from-blue-50/50 to-indigo-50/30 rounded-2xl p-6 border border-blue-100/30">
+                                <div className="space-y-4">
+                                    <Label className="text-slate-800 font-extrabold text-lg flex items-center gap-2">
+                                        <Share2 className="text-blue-600 w-5 h-5 animate-bounce" style={{ animationDuration: '3s' }} />
+                                        {t('leadForm.refer', 'Möchten Sie uns weiterempfehlen?')}
+                                    </Label>
+                                    <Select value={formData.weiterempfehlen} onValueChange={(v) => setFormData({ ...formData, weiterempfehlen: v })}>
+                                        <SelectTrigger className="bg-white border-blue-200/60 focus:border-blue-500 rounded-xl h-12 text-slate-850 font-bold">
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent className="rounded-xl">
+                                            <SelectItem value="nein">{l.ui.noReferral}</SelectItem>
+                                            <SelectItem value="ja">{l.ui.yesReferral}</SelectItem>
+                                        </SelectContent>
+                                    </Select>
                                 </div>
 
-                                {referrals.map((ref, index) => (
-                                    <Card key={ref.id} className="border-blue-100 shadow-sm rounded-xl bg-white/80 overflow-hidden">
-                                        <CardContent className="p-4 py-5 shadow-inner">
-                                            <h4 className="text-sm font-bold text-blue-800 mb-3 uppercase tracking-wider">{l.ui.friendTitle}{index + 1}</h4>
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                <div className="space-y-1">
-                                                    <Label className="text-xs text-gray-500">{l.ui.friendNameLabel}</Label>
-                                                    <Input
-                                                        className="h-10 rounded-lg text-sm bg-gray-50 border-gray-200 focus:bg-white"
-                                                        placeholder={l.placeholders.friendName}
-                                                        value={ref.name}
-                                                        onChange={(e) => handleReferralChange(ref.id, 'name', e.target.value)}
+                                {/* Referral Slots */}
+                                {formData.weiterempfehlen === 'ja' && (
+                                    <div className="mt-6 space-y-4 animate-in fade-in slide-in-from-top-4 duration-500">
+                                        <div className="p-4 bg-amber-50/80 border border-amber-100 rounded-2xl mb-4 text-xs font-medium text-amber-800 flex gap-3 items-start shadow-sm">
+                                            <ShieldCheck className="w-5.5 h-5.5 flex-shrink-0 text-amber-600 mt-0.5" />
+                                            <div>
+                                                <strong className="text-sm font-extrabold">{l.legal2Title} *</strong><br/>
+                                                <label className="flex items-start gap-2.5 mt-2.5 cursor-pointer">
+                                                    <Checkbox 
+                                                        checked={formData.bestatigung_versand}
+                                                        onCheckedChange={(checked) => setFormData({ ...formData, bestatigung_versand: checked as boolean })}
+                                                        className="mt-0.5 border-amber-400"
+                                                        required
                                                     />
-                                                </div>
-                                                <div className="space-y-1">
-                                                    <Label className="text-xs text-gray-500">{l.ui.friendContactLabel}</Label>
-                                                    <Input
-                                                        className="h-10 rounded-lg text-sm bg-gray-50 border-gray-200 focus:bg-white"
-                                                        placeholder={l.placeholders.friendContact}
-                                                        value={ref.contact}
-                                                        onChange={(e) => handleReferralChange(ref.id, 'contact', e.target.value)}
-                                                    />
-                                                </div>
+                                                    <span className="leading-relaxed">
+                                                        {l.legal2Text}
+                                                    </span>
+                                                </label>
                                             </div>
-                                        </CardContent>
-                                    </Card>
-                                ))}
-                                {referrals.length < 5 && (
-                                    <Button 
-                                        type="button" 
-                                        variant="outline" 
-                                        onClick={handleAddReferral}
-                                        className="w-full border-dashed border-2 border-blue-300 text-blue-600 bg-blue-50/50 hover:bg-blue-100/50 rounded-xl h-12"
-                                    >
-                                        {l.ui.addFriendBtn}
-                                    </Button>
+                                        </div>
+
+                                        {referrals.map((ref, index) => (
+                                            <Card key={ref.id} className="border-blue-100/60 shadow-sm rounded-2xl bg-white/90 overflow-hidden transition-all duration-300 hover:border-blue-200">
+                                                <CardContent className="p-5 shadow-inner">
+                                                    <h4 className="text-xs font-black text-blue-600 mb-4 uppercase tracking-widest">{l.ui.friendTitle} {index + 1}</h4>
+                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                        <div className="space-y-1.5">
+                                                            <Label className="text-[11px] font-bold uppercase tracking-wider text-slate-400">{l.ui.friendNameLabel}</Label>
+                                                            <Input
+                                                                className="h-11 rounded-xl text-sm bg-slate-50 border-slate-100 focus:bg-white focus:border-blue-500 transition-all font-semibold"
+                                                                placeholder={l.placeholders.friendName}
+                                                                value={ref.name}
+                                                                onChange={(e) => handleReferralChange(ref.id, 'name', e.target.value)}
+                                                            />
+                                                        </div>
+                                                        <div className="space-y-1.5">
+                                                            <Label className="text-[11px] font-bold uppercase tracking-wider text-slate-400">{l.ui.friendContactLabel}</Label>
+                                                            <Input
+                                                                className="h-11 rounded-xl text-sm bg-slate-50 border-slate-100 focus:bg-white focus:border-blue-500 transition-all font-semibold"
+                                                                placeholder={l.placeholders.friendContact}
+                                                                value={ref.contact}
+                                                                onChange={(e) => handleReferralChange(ref.id, 'contact', e.target.value)}
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                </CardContent>
+                                            </Card>
+                                        ))}
+                                        {referrals.length < 5 && (
+                                            <Button 
+                                                type="button" 
+                                                variant="outline" 
+                                                onClick={handleAddReferral}
+                                                className="w-full border-dashed border-2 border-blue-300 text-blue-600 bg-blue-50/50 hover:bg-blue-100/50 rounded-2xl h-13 font-bold transition-all"
+                                            >
+                                                {l.ui.addFriendBtn}
+                                            </Button>
+                                        )}
+                                    </div>
                                 )}
                             </div>
+                        </div>
+                    )}
+
+                    {/* STEP 4: Verification & Agreement */}
+                    {currentStep === 4 && (
+                        <div className="space-y-6 animate-in fade-in duration-300">
+                            {/* Privacy Policy & Terms Checkbox */}
+                            <div className="p-4 bg-white/70 border border-slate-200/50 rounded-2xl shadow-inner flex items-start gap-3">
+                                <Checkbox 
+                                    id="datenschutz" 
+                                    checked={formData.datenschutz}
+                                    onCheckedChange={(checked) => setFormData({ ...formData, datenschutz: checked as boolean })}
+                                    className="mt-1"
+                                    required
+                                />
+                                <Label htmlFor="datenschutz" className="text-xs text-slate-500 leading-relaxed cursor-pointer font-medium">
+                                    <strong className="text-sm text-slate-700 font-extrabold">{l.legal1Title} *</strong><br/>
+                                    <span className="block mt-1">{l.legal1Text}</span>
+                                    <a href="https://dicilo.net/datenschutz" target="_blank" rel="noreferrer" className="text-blue-600 hover:text-blue-800 underline font-bold inline-block mt-2">
+                                        ({l.privacyLink})
+                                    </a>
+                                </Label>
+                            </div>
+
+                            {/* Captcha Section */}
+                            <div className="flex items-center gap-4 bg-slate-50/90 p-5 rounded-2xl border border-slate-100 shadow-sm">
+                                <Label className="whitespace-nowrap font-black text-2xl text-slate-800 tracking-wider">
+                                    {captchaConfig ? `${captchaConfig.a} + ${captchaConfig.b} =` : '... + ... ='}
+                                </Label>
+                                <Input
+                                    type="number"
+                                    required
+                                    value={formData.captcha}
+                                    onChange={(e) => setFormData({ ...formData, captcha: e.target.value })}
+                                    className="w-28 text-center text-xl font-black border-slate-200 h-13 rounded-xl bg-white shadow-inner focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+                                    placeholder="?"
+                                />
+                                <span className="text-xs font-bold text-slate-400 tracking-wide uppercase leading-tight">{l.ui.solveCaptcha}</span>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Navigation Buttons Row */}
+                    <div className="flex justify-between items-center gap-4 pt-4 border-t border-slate-100/50">
+                        {currentStep > 1 ? (
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={handleBack}
+                                className="bg-white/80 hover:bg-white text-slate-700 border border-slate-200/50 rounded-2xl h-13 font-bold px-6 shadow-sm gap-2 transition-all hover:scale-[1.02]"
+                            >
+                                <ArrowLeft className="w-4 h-4" />
+                                {l.buttons.back}
+                            </Button>
+                        ) : (
+                            <div /> // Spacer
+                        )}
+
+                        {currentStep < 4 ? (
+                            <Button
+                                type="button"
+                                onClick={handleNext}
+                                className="bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 hover:from-blue-700 hover:via-indigo-700 hover:to-violet-700 text-white rounded-2xl h-13 font-extrabold px-8 shadow-[0_8px_30px_rgba(99,102,241,0.2)] transition-all hover:scale-[1.02] active:scale-[0.98] gap-2 border border-indigo-500/20 ml-auto"
+                            >
+                                {l.buttons.next}
+                                <ArrowRight className="w-4 h-4 animate-pulse" />
+                            </Button>
+                        ) : (
+                            <Button
+                                type="submit"
+                                disabled={isSubmitting}
+                                className="bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 hover:from-blue-700 hover:via-indigo-700 hover:to-violet-700 text-white rounded-2xl h-13 font-extrabold px-8 shadow-[0_8px_30px_rgba(99,102,241,0.2)] transition-all hover:scale-[1.02] active:scale-[0.98] gap-2 border border-indigo-500/20 ml-auto"
+                            >
+                                {isSubmitting ? l.ui.sending : l.ui.submitBtn}
+                                <Send className="w-4 h-4 animate-pulse" />
+                            </Button>
                         )}
                     </div>
-
-                    {/* Phase 3: Legal & Security */}
-                    <div className="pt-4 border-t border-gray-100 space-y-5">
-                        <div className="flex items-start gap-3">
-                            <Checkbox 
-                                id="datenschutz" 
-                                checked={formData.datenschutz}
-                                onCheckedChange={(checked) => setFormData({ ...formData, datenschutz: checked as boolean })}
-                                className="mt-1"
-                                required
-                            />
-                            <Label htmlFor="datenschutz" className="text-sm text-gray-600 leading-relaxed cursor-pointer font-normal">
-                                <strong>{l.legal1Title} *</strong><br/>
-                                {l.legal1Text}{' '}
-                                <a href="https://dicilo.net/datenschutz" target="_blank" rel="noreferrer" className="text-blue-600 hover:text-blue-800 underline">
-                                    ({l.privacyLink})
-                                </a>
-                            </Label>
-                        </div>
-
-                        <div className="flex items-center gap-4 bg-gray-50 p-4 rounded-xl border border-gray-100">
-                            <Label className="whitespace-nowrap font-bold text-xl text-gray-700 tracking-wider">
-                                {captchaConfig ? `${captchaConfig.a} + ${captchaConfig.b} =` : '... + ... ='}
-                            </Label>
-                            <Input
-                                type="number"
-                                required
-                                value={formData.captcha}
-                                onChange={(e) => setFormData({ ...formData, captcha: e.target.value })}
-                                className="w-24 text-center text-lg font-bold border-gray-300 h-12 rounded-xl"
-                                placeholder="?"
-                            />
-                            <span className="text-xs text-gray-400">{l.ui.solveCaptcha}</span>
-                        </div>
-                    </div>
-
-                    {/* Submit Button */}
-                    <Button 
-                        type="submit" 
-                        disabled={isSubmitting}
-                        className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl h-14 font-bold text-lg shadow-xl shadow-blue-500/20 transition-all hover:scale-[1.01] active:scale-[0.99] gap-2 mt-4"
-                    >
-                        {isSubmitting ? l.ui.sending : l.ui.submitBtn} 
-                        <Send className="ml-2 h-5 w-5" />
-                    </Button>
                 </form>
             </div>
 
             {/* Module: Social Contacts */}
-            <div className="rounded-[2rem] border border-gray-100 bg-white/70 backdrop-blur-xl p-6 shadow-sm flex flex-col items-center">
-                <h3 className="mb-5 text-sm font-bold text-gray-500 uppercase tracking-widest text-center px-4">
+            <div className="rounded-[2rem] border border-white/30 bg-white/40 backdrop-blur-xl p-6 shadow-[0_15px_45px_rgba(0,0,0,0.02)] flex flex-col items-center">
+                <h3 className="mb-5 text-[11px] font-black text-slate-400 uppercase tracking-widest text-center px-4 leading-normal">
                   {l.ui.connectTitle}
                 </h3>
                 <div className="flex gap-5 flex-wrap justify-center">
@@ -533,14 +710,14 @@ export const PremiumRecommendationForm: React.FC<PremiumRecommendationFormProps>
                             href={link.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gray-50 border border-gray-100 text-gray-500 transition-all hover:bg-gradient-to-br hover:from-blue-500 hover:to-purple-600 hover:text-white hover:border-transparent hover:shadow-lg hover:-translate-y-1"
+                            className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/70 border border-white shadow-sm text-slate-400 transition-all hover:bg-gradient-to-br hover:from-blue-500 hover:to-purple-650 hover:text-white hover:border-transparent hover:shadow-lg hover:-translate-y-1 hover:scale-105"
                             title={link.label}
                         >
                             {link.icon}
                         </a>
                     ))}
                     {socialLinks.filter(l => l.url).length === 0 && (
-                        <p className="text-sm text-center text-gray-400 italic">{t('recommendationForm.noLinks', 'No contact links available.')}</p>
+                        <p className="text-sm text-center text-slate-400 italic font-semibold">{t('recommendationForm.noLinks', 'No contact links available.')}</p>
                     )}
                 </div>
             </div>

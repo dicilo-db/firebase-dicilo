@@ -40,7 +40,7 @@ export const PremiumSidebarMap: React.FC<PremiumSidebarMapProps> = ({ clientData
     };
 
     return (
-        <div className="rounded-3xl border border-gray-100 bg-white/70 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden transition-all duration-300 hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)]">
+        <div className="rounded-[2.5rem] border border-white/30 bg-white/40 backdrop-blur-xl shadow-[0_15px_45px_rgba(0,0,0,0.03)] overflow-hidden transition-all duration-300 hover:shadow-[0_20px_50px_rgba(0,0,0,0.06)] hover:scale-[1.01]">
             {/* Map Section */}
             <div className="h-64 w-full relative z-0">
                 <DiciloMap
@@ -59,51 +59,51 @@ export const PremiumSidebarMap: React.FC<PremiumSidebarMapProps> = ({ clientData
                 />
                 
                 {/* Floating Map Gradient Overlay */}
-                <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-white/90 to-transparent pointer-events-none z-[400]" />
+                <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-white/95 to-transparent pointer-events-none z-[400]" />
             </div>
             
-            <div className="p-8 space-y-6 relative bg-white/90 z-10 -mt-4 rounded-t-3xl backdrop-blur-sm shadow-[0_-4px_16px_rgb(0,0,0,0.02)]">
+            <div className="p-8 space-y-6 relative bg-white/85 z-10 -mt-4 rounded-t-[2rem] backdrop-blur-md shadow-[0_-8px_32px_rgba(0,0,0,0.01)] border-t border-white/50">
                 
                 {/* Address Row */}
-                <div className="group bg-gray-50/80 p-4 rounded-2xl hover:bg-gray-100 transition-colors">
+                <div className="group bg-white/95 p-4.5 rounded-2xl hover:bg-white border border-white/80 hover:border-blue-100 hover:shadow-md transition-all duration-300">
                     <div className="flex gap-4">
-                        <div className="bg-white p-2 rounded-xl shadow-sm border border-gray-100 flex-shrink-0 group-hover:scale-105 transition-transform">
-                            <MapPin className="h-5 w-5 text-blue-600" />
+                        <div className="bg-blue-50/80 p-2.5 rounded-xl shadow-sm border border-blue-100/30 flex-shrink-0 group-hover:scale-105 group-hover:bg-blue-100/50 transition-all duration-300">
+                            <MapPin className="h-5 w-5 text-blue-600 animate-bounce" style={{ animationDuration: '3s' }} />
                         </div>
                         <div>
-                            <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">{t('sidebar.address', 'Company Location')}</h3>
-                            <p className="text-gray-800 text-sm font-medium leading-relaxed">{clientData.address || 'No address provided'}</p>
+                            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">{t('sidebar.address', 'Company Location')}</h3>
+                            <p className="text-slate-700 text-sm font-semibold leading-relaxed">{clientData.address || 'No address provided'}</p>
                         </div>
                     </div>
                 </div>
-
+ 
                 {/* Info Grid */}
                 <div className="grid grid-cols-1 gap-3">
                     {clientData.phone && (
-                        <a href={`tel:${clientData.phone}`} className="flex items-center gap-3 p-3 rounded-xl hover:bg-blue-50 group transition-colors border border-transparent hover:border-blue-100">
-                            <div className="bg-gray-100 group-hover:bg-blue-100 p-2 rounded-lg transition-colors">
-                                <Phone className="h-4 w-4 text-gray-600 group-hover:text-blue-600" />
+                        <a href={`tel:${clientData.phone}`} className="flex items-center gap-3 p-3.5 rounded-xl bg-white/60 hover:bg-white group transition-all duration-300 border border-white/80 hover:border-blue-100 hover:shadow-sm">
+                            <div className="bg-slate-100/80 group-hover:bg-blue-50 p-2 rounded-lg transition-colors border border-transparent group-hover:border-blue-100/30">
+                                <Phone className="h-4 w-4 text-slate-500 group-hover:text-blue-600" />
                             </div>
-                            <span className="text-sm font-medium text-gray-700 group-hover:text-blue-700">{clientData.phone}</span>
+                            <span className="text-sm font-bold text-slate-600 group-hover:text-blue-700 transition-colors">{clientData.phone}</span>
                         </a>
                     )}
-
+ 
                     {clientData.website && (
-                        <a href={clientData.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-3 rounded-xl hover:bg-purple-50 group transition-colors border border-transparent hover:border-purple-100">
-                            <div className="bg-gray-100 group-hover:bg-purple-100 p-2 rounded-lg transition-colors">
-                                <Globe className="h-4 w-4 text-gray-600 group-hover:text-purple-600" />
+                        <a href={clientData.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-3.5 rounded-xl bg-white/60 hover:bg-white group transition-all duration-300 border border-white/80 hover:border-purple-100 hover:shadow-sm">
+                            <div className="bg-slate-100/80 group-hover:bg-purple-50 p-2 rounded-lg transition-colors border border-transparent group-hover:border-purple-100/30">
+                                <Globe className="h-4 w-4 text-slate-500 group-hover:text-purple-600" />
                             </div>
-                            <span className="text-sm font-medium text-gray-700 group-hover:text-purple-700 truncate">{clientData.website.replace(/^https?:\/\//, '')}</span>
+                            <span className="text-sm font-bold text-slate-600 group-hover:text-purple-700 transition-colors truncate">{clientData.website.replace(/^https?:\/\//, '')}</span>
                         </a>
                     )}
                 </div>
-
+ 
                 <div className="pt-2">
                     <Button 
                         onClick={handleDirections}
-                        className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl h-14 font-semibold text-[15px] shadow-lg shadow-blue-500/30 transition-all hover:scale-[1.02] active:scale-[0.98] gap-2"
+                        className="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 hover:from-blue-700 hover:via-indigo-700 hover:to-violet-700 text-white rounded-2xl h-14 font-extrabold text-[15px] shadow-[0_8px_30px_rgba(99,102,241,0.2)] transition-all hover:scale-[1.02] active:scale-[0.98] gap-2 border border-indigo-500/20"
                     >
-                        <Navigation className="h-5 w-5" /> 
+                        <Navigation className="h-5 w-5 animate-pulse" /> 
                         {t('actions.getDirections', 'Get Directions')}
                     </Button>
                 </div>

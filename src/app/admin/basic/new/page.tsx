@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { doc, getDoc, updateDoc, deleteDoc, getFirestore, collection, query, where, getDocs, orderBy, runTransaction } from 'firebase/firestore';
+import { doc, getDoc, updateDoc, deleteDoc, getFirestore, collection, query, where, getDocs, orderBy, runTransaction, addDoc } from 'firebase/firestore';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { app } from '@/lib/firebase';
 import { isValidUrl } from '@/lib/utils';
@@ -147,17 +147,13 @@ export default function NewBusinessPage() {
   const { user } = useAuthGuard(['admin', 'superadmin', 'team_office', 'freelancer']);
   const isFreelancer = user?.role === 'freelancer' && !user?.permissions?.includes('admin');
   const db = getFirestore(app);
-  const functions = getFunctions(app, 'europe-west1');
-  const promoteToClientFn = httpsCallable(functions, 'promoteToClient');
   const router = useRouter();
-  const params = useParams();
   const { toast } = useToast();
   const { t, i18n } = useTranslation('admin');
   const locale = i18n.language;
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isGeocoding, setIsGeocoding] = useState(false);
-  const [isPromoting, setIsPromoting] = useState(false);
 
   // Category State
   const [categories, setCategories] = useState<Category[]>([]);
@@ -327,72 +323,7 @@ export default function NewBusinessPage() {
     handleGeocode(addressToGeocode);
   }, [getValues, handleGeocode, toast, t]);
 
-  const handlePromote = async (clientType: 'starter' | 'retailer' | 'premium') => {
-    setIsPromoting(true);
-    try {
-      const businessName = getValues('name');
-      const slug = slugify(businessName);
 
-      // [CHECK] Check if client already exists to avoid duplicates
-      const clientsRef = collection(db, 'clients');
-      const q = query(clientsRef, where('slug', '==', slug));
-      const querySnapshot = await getDocs(q);
-
-      if (!querySnapshot.empty) {
-        // Client exists - Update instead of creating new
-        const existingClient = querySnapshot.docs[0];
-        const clientRef = doc(db, 'clients', existingClient.id);
-
-        await updateDoc(clientRef, {
-          clientType: clientType
-        });
-
-        toast({
-          title: 'Client Updated',
-          description: `Existing client updated to ${clientType}. Redirecting...`,
-        });
-
-        try {
-          await deleteDoc(doc(db, 'businesses', id));
-        } catch (e) {
-          console.warn('Could not delete business doc (maybe already gone):', e);
-        }
-
-        router.push(`/admin/clients/${existingClient.id}/edit`);
-        return;
-      }
-
-      // If not exists, proceed with promotion (Create new Client)
-      const result: any = await promoteToClientFn({
-        businessId: id,
-        clientType,
-      });
-      if (result.data.success) {
-        try {
-          await deleteDoc(doc(db, 'businesses', id));
-        } catch (delError) {
-          console.error('Failed to delete basic business after promotion:', delError);
-        }
-
-        toast({
-          title: 'Promotion Successful',
-          description: result.data.message,
-        });
-        router.push(`/admin/clients/${result.data.clientId}/edit`);
-      } else {
-        throw new Error(result.data.message || 'Promotion failed');
-      }
-    } catch (error: any) {
-      console.error('Promotion error:', error);
-      toast({
-        title: 'Promotion Failed',
-        description: error.message,
-        variant: 'destructive',
-      });
-    } finally {
-      setIsPromoting(false);
-    }
-  };
 
   const [isTranslating, setIsTranslating] = useState(false);
 
@@ -441,58 +372,6 @@ export default function NewBusinessPage() {
     }
   };
 
-
-  const generateInternalId = async () => {
-    if (getValues('businessCode')) return;
-
-    try {
-      const newCode = await runTransaction(db, async (transaction) => {
-        const busRef = doc(db, 'businesses', id);
-        const busDoc = await transaction.get(busRef);
-        if (!busDoc.exists()) throw new Error("Business not found");
-
-        // Double check inside transaction
-        if (busDoc.data().businessCode) return busDoc.data().businessCode;
-
-        // Logic for year: Default to 26 (2026) for now as requested for the example.
-        // "todos las que ya estan creadas... comenzado con el año 25".
-        // If we want to detect old ones, we could check createdAt.
-        // For now, let's use 26 to match the "EMPDC-26..." request for the active example.
-        // If the user wants 25 for everything old, we might need a migration script or stronger logic.
-        // But for "Edit Business", using the current year (26) is the safest bet for "Active/New" interactions.
-        const yearPrefix = 26;
-
-        const counterRef = doc(db, 'counters', `businesses-EMPDC-${yearPrefix}`);
-        const counterDoc = await transaction.get(counterRef);
-
-        let nextVal = 1;
-        if (counterDoc.exists()) {
-          nextVal = counterDoc.data().val + 1;
-          transaction.update(counterRef, { val: nextVal });
-        } else {
-          transaction.set(counterRef, { val: 1 });
-        }
-
-        // EMPDC-260000001 (7 digits for the counter part)
-        const code = `EMPDC-${yearPrefix}${String(nextVal).padStart(7, '0')}`;
-        transaction.update(busRef, { businessCode: code });
-        return code;
-      });
-
-      setValue('businessCode', newCode);
-      toast({
-        title: "ID Generated",
-        description: `Internal ID assigned: ${newCode}`,
-      });
-    } catch (e: any) {
-      console.error('ID Gen Error:', e);
-      toast({
-        title: "Error generating ID",
-        description: e.message,
-        variant: "destructive"
-      });
-    }
-  };
 
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const [isUploadingLogo, setIsUploadingLogo] = useState(false);
@@ -582,12 +461,30 @@ export default function NewBusinessPage() {
         }
       }
 
-
       Object.keys(finalData).forEach((key) => {
         if (finalData[key] === undefined || finalData[key] === '') {
           delete finalData[key];
         }
       });
+
+      // Automatically generate a unique business code using a transaction
+      const yearPrefix = 26;
+      const finalCode = await runTransaction(db, async (transaction) => {
+        const counterRef = doc(db, 'counters', `businesses-EMPDC-${yearPrefix}`);
+        const counterDoc = await transaction.get(counterRef);
+
+        let nextVal = 1;
+        if (counterDoc.exists()) {
+          nextVal = counterDoc.data().val + 1;
+          transaction.update(counterRef, { val: nextVal });
+        } else {
+          transaction.set(counterRef, { val: 1 });
+        }
+
+        return `EMPDC-${yearPrefix}${String(nextVal).padStart(7, '0')}`;
+      });
+
+      finalData.businessCode = finalCode;
 
       await addDoc(collection(db, 'businesses'), finalData);
 
@@ -1131,39 +1028,7 @@ export default function NewBusinessPage() {
                   </p>
                 </div>
               </div>
-              <div className="flex items-center justify-between pt-4">
-                <div className="flex items-center">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="secondary" disabled={isPromoting}>
-                        {isPromoting ? (
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        ) : (
-                          <Star className="mr-2 h-4 w-4" />
-                        )}
-                        {t('businesses.edit.updateToClient')}
-                        <ChevronDown className="ml-2 h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                      <DropdownMenuItem
-                        onClick={() => handlePromote('starter')}
-                      >
-                        {t('businesses.edit.asStarter')}
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => handlePromote('retailer')}
-                      >
-                        {t('businesses.edit.asRetailer')}
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => handlePromote('premium')}
-                      >
-                        {t('businesses.edit.asPremium')}
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
+              <div className="flex justify-end pt-4">
                 <Button type="submit" disabled={isSubmitting}>
                   {isSubmitting && (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -1183,7 +1048,7 @@ export default function NewBusinessPage() {
               zoom={15}
               businesses={[
                 {
-                  id: id,
+                  id: 'new-business',
                   name: getValues('name'),
                   coords: coords as [number, number],
                   category: getValues('category'),
@@ -1199,7 +1064,7 @@ export default function NewBusinessPage() {
                   mapUrl: getValues('mapUrl'),
                 },
               ]}
-              selectedBusinessId={id}
+              selectedBusinessId='new-business'
               onMarkerDragEnd={handleMapDragEnd}
 
             />

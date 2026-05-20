@@ -54,47 +54,56 @@ export const PremiumProductList: React.FC<PremiumProductListProps> = ({ clientDa
     }, [clientData.id]);
 
     if (loading) {
-        return <div className="h-40 w-full animate-pulse bg-gray-100 rounded-xl" />;
+        return <div className="h-[400px] w-full animate-pulse bg-slate-100/40 backdrop-blur-md border border-white/30 rounded-[2.5rem]" />;
     }
 
     if (products.length === 0) {
         // Empty state
         return (
-            <div className="rounded-2xl border bg-white p-8 shadow-sm text-center">
-                <ShoppingBag className="h-12 w-12 mx-auto text-gray-300 mb-2" />
-                <p className="text-gray-500">{t('products.noProducts', 'No products or services listed yet.')}</p>
+            <div className="rounded-[2.5rem] border border-white/30 bg-white/40 backdrop-blur-xl p-10 shadow-sm text-center">
+                <ShoppingBag className="h-12 w-12 mx-auto text-slate-300 mb-3 animate-bounce" style={{ animationDuration: '3s' }} />
+                <p className="text-slate-500 font-semibold">{t('products.noProducts', 'No products or services listed yet.')}</p>
             </div>
         );
     }
 
     return (
-        <div className="rounded-2xl border bg-white shadow-sm overflow-hidden flex flex-col h-[600px]">
-            <div className="p-4 border-b bg-gray-50">
-                <h3 className="text-lg font-bold">{t('tabs.products', 'Products & Services')} ({products.length})</h3>
+        <div className="rounded-[2.5rem] border border-white/30 bg-white/40 backdrop-blur-xl shadow-[0_15px_45px_rgba(0,0,0,0.03)] overflow-hidden flex flex-col h-[600px] transition-all duration-300 hover:shadow-[0_20px_50px_rgba(0,0,0,0.06)] hover:scale-[1.01]">
+            <div className="p-6 border-b border-slate-100 bg-white/60 flex items-center justify-between">
+                <h3 className="text-xl font-extrabold text-slate-800 flex items-center gap-2.5">
+                    <ShoppingBag className="h-5.5 w-5.5 text-blue-600 animate-pulse" />
+                    {t('tabs.products', 'Products & Services')}
+                </h3>
+                <span className="text-xs font-extrabold bg-blue-100/50 text-blue-700 px-3 py-1.5 rounded-full border border-blue-200/35">
+                    {products.length} {products.length === 1 ? 'Item' : 'Items'}
+                </span>
             </div>
-            <div className="overflow-y-auto flex-1 p-4 space-y-4 scrollbar-thin scrollbar-thumb-gray-300">
+            
+            <div className="overflow-y-auto flex-1 p-6 space-y-4 scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent">
                 {products.map((product) => (
-                    <div key={product.id} className="flex gap-4 p-3 rounded-lg hover:bg-gray-50 transition-colors border border-transparent hover:border-gray-100">
-                        <div className="relative h-20 w-20 flex-shrink-0 rounded-md overflow-hidden bg-gray-100 border">
+                    <div key={product.id} className="flex gap-4 p-4.5 rounded-2xl bg-white/70 hover:bg-white transition-all duration-300 border border-white hover:border-blue-100 hover:shadow-md group cursor-pointer">
+                        <div className="relative h-20 w-20 flex-shrink-0 rounded-xl overflow-hidden bg-slate-50 border border-slate-100 shadow-inner">
                             {product.imageUrl ? (
-                                <Image src={product.imageUrl} alt={product.name} fill className="object-cover" />
+                                <Image src={product.imageUrl} alt={product.name} fill className="object-cover transition-transform duration-500 group-hover:scale-105" />
                             ) : (
-                                <div className="flex h-full w-full items-center justify-center text-gray-400">
+                                <div className="flex h-full w-full items-center justify-center text-slate-300">
                                     <ShoppingBag className="h-8 w-8" />
                                 </div>
                             )}
                         </div>
-                        <div className="flex-1 min-w-0">
-                            <div className="flex justify-between items-start gap-2">
-                                <h4 className="font-semibold text-gray-900 truncate">{product.name}</h4>
-                                <span className="font-bold text-primary whitespace-nowrap">
+                        <div className="flex-1 min-w-0 flex flex-col justify-between">
+                            <div className="flex justify-between items-start gap-3">
+                                <h4 className="font-bold text-slate-800 group-hover:text-blue-700 transition-colors truncate text-[16px]">{product.name}</h4>
+                                <span className="font-extrabold text-xs text-blue-800 bg-blue-50 border border-blue-100 px-2.5 py-1 rounded-lg whitespace-nowrap">
                                     {typeof product.price === 'number'
                                         ? simpleFormatCurrency(product.price, product.currency)
                                         : product.price}
                                 </span>
                             </div>
                             {product.description && (
-                                <p className="text-sm text-gray-500 mt-1 line-clamp-2">{product.description}</p>
+                                <p className="text-sm font-medium text-slate-400 mt-2 line-clamp-2 group-hover:text-slate-500 transition-colors">
+                                    {product.description}
+                                </p>
                             )}
                         </div>
                     </div>

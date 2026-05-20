@@ -97,69 +97,116 @@ export const PremiumReviews: React.FC<PremiumReviewsProps> = ({ clientData }) =>
         );
     }
 
+    // Calculate rating breakdown distribution
+    const totalReviews = reviews.length;
+    const distribution = [0, 0, 0, 0, 0]; // 1, 2, 3, 4, 5 stars
+    reviews.forEach(r => {
+        const rating = Math.min(5, Math.max(1, r.rating || 5));
+        distribution[rating - 1]++;
+    });
+
     return (
-        <div className="rounded-2xl border bg-white shadow-sm overflow-hidden flex flex-col max-h-[400px]">
-            <div className="p-4 border-b bg-gray-50 flex justify-between items-center">
-                <h3 className="text-xl font-bold">{t('reviews.evaluationsTitle', 'Evaluations')}</h3>
-                <div className="flex items-center gap-1 text-sm font-medium bg-white px-2 py-1 rounded-full border">
-                    <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" />
-                    <span>{clientData.rating_promedio || '0.0'}</span>
-                    <span className="text-gray-400">({clientData.total_resenas || reviews.length})</span>
+        <div className="rounded-[2.5rem] border border-white/30 bg-white/40 backdrop-blur-xl shadow-[0_15px_45px_rgba(0,0,0,0.03)] overflow-hidden flex flex-col max-h-[550px] transition-all duration-300 hover:shadow-[0_20px_50px_rgba(0,0,0,0.06)] hover:scale-[1.01]">
+            <div className="p-6 border-b border-slate-100 bg-white/60 flex justify-between items-center">
+                <h3 className="text-xl font-extrabold text-slate-800 flex items-center gap-2">
+                    <MessageSquare className="h-5.5 w-5.5 text-blue-600 animate-pulse" />
+                    {t('reviews.evaluationsTitle', 'Evaluations')}
+                </h3>
+                <div className="flex items-center gap-1.5 text-sm font-extrabold bg-white/95 px-3 py-1.5 rounded-full border border-gray-200/40 shadow-sm">
+                    <Star className="h-4 w-4 text-amber-500 fill-amber-500" />
+                    <span className="text-slate-800">{clientData.rating_promedio || '0.0'}</span>
+                    <span className="text-slate-400 font-semibold">({clientData.total_resenas || reviews.length})</span>
                 </div>
             </div>
 
-            <div className="overflow-y-auto flex-1 p-4 space-y-4">
+            {/* Ratings Breakdown Summary Header */}
+            {totalReviews > 0 && (
+                <div className="p-6 bg-slate-50/50 border-b border-slate-100/50 flex items-center gap-6">
+                    <div className="text-center">
+                        <div className="text-4xl font-black text-slate-800">{clientData.rating_promedio || '0.0'}</div>
+                        <div className="flex gap-0.5 mt-1 justify-center">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                                <Star
+                                    key={star}
+                                    className={`h-3 w-3 ${star <= Math.round(Number(clientData.rating_promedio || 5)) ? 'text-amber-500 fill-amber-500' : 'text-slate-200'}`}
+                                />
+                            ))}
+                        </div>
+                        <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-2">Schnitt</div>
+                    </div>
+                    <div className="flex-1 space-y-1">
+                        {[5, 4, 3, 2, 1].map((stars) => {
+                            const count = distribution[stars - 1];
+                            const pct = totalReviews > 0 ? (count / totalReviews) * 100 : 0;
+                            return (
+                                <div key={stars} className="flex items-center gap-2 text-xs">
+                                    <span className="w-3 text-right font-bold text-slate-500">{stars}</span>
+                                    <Star className="h-3 w-3 text-amber-500 fill-amber-500 flex-shrink-0" />
+                                    <div className="flex-1 h-2 bg-slate-200/50 rounded-full overflow-hidden border border-slate-100">
+                                        <div className="h-full bg-amber-500 rounded-full transition-all duration-500" style={{ width: `${pct}%` }} />
+                                    </div>
+                                    <span className="w-6 text-slate-400 font-bold text-left">{count}</span>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+            )}
+
+            <div className="overflow-y-auto flex-1 p-6 space-y-4 scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent">
                 {reviews.map((review) => {
                     const displayName = getDisplayName(review);
                     return (
-                        <div key={review.id} className="border-b last:border-0 pb-4">
-                            <div className="flex justify-between items-start mb-1">
-                                <div className="flex items-center gap-2">
-                                    <Avatar className="h-8 w-8">
+                        <div key={review.id} className="p-4 bg-white/70 rounded-2xl border border-white hover:border-blue-100 transition-all duration-300 hover:shadow-sm">
+                            <div className="flex justify-between items-start mb-3">
+                                <div className="flex items-center gap-3">
+                                    <Avatar className="h-9 w-9 border border-white shadow-sm">
                                         <AvatarImage src={`https://api.dicebear.com/7.x/initials/svg?seed=${displayName}`} />
-                                        <AvatarFallback>{displayName[0]}</AvatarFallback>
+                                        <AvatarFallback className="font-bold text-sm bg-blue-100/55 text-blue-700">{displayName[0]}</AvatarFallback>
                                     </Avatar>
                                     <div>
-                                        <p className="text-sm font-bold text-gray-900">{displayName}</p>
-                                        {review.country && <p className="text-xs text-gray-400">{review.country}</p>}
+                                        <p className="text-sm font-bold text-slate-800 leading-tight">{displayName}</p>
+                                        {review.country && <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">{review.country}</p>}
                                     </div>
                                 </div>
                                 <div className="flex gap-0.5">
                                     {[1, 2, 3, 4, 5].map((star) => (
                                         <Star
                                             key={star}
-                                            className={`h-3 w-3 ${star <= (review.rating || 5) ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`}
+                                            className={`h-3 w-3 ${star <= (review.rating || 5) ? 'text-amber-500 fill-amber-500' : 'text-slate-200'}`}
                                         />
                                     ))}
                                 </div>
                             </div>
 
-                            <p className="text-sm text-gray-600 line-clamp-2">{review.comment}</p>
+                            <p className="text-sm font-medium text-slate-600 leading-relaxed italic">
+                                "{review.comment}"
+                            </p>
 
                             {review.comment.length > 100 && (
                                 <Dialog>
                                     <DialogTrigger asChild>
-                                        <Button variant="link" className="p-0 h-auto text-xs text-primary mt-1">
+                                        <Button variant="link" className="p-0 h-auto text-xs font-bold text-blue-600 hover:text-blue-800 transition-colors mt-2">
                                             {t('reviews.readMore', 'Read more')}
                                         </Button>
                                     </DialogTrigger>
-                                    <DialogContent>
+                                    <DialogContent className="rounded-3xl border border-white/30 bg-white/95 backdrop-blur-xl max-w-lg">
                                         <DialogHeader>
-                                            <DialogTitle>{t('reviews.reviewBy', { name: displayName })}</DialogTitle>
-                                            <DialogDescription className="text-sm text-gray-500">
+                                            <DialogTitle className="text-xl font-extrabold text-slate-800">{t('reviews.reviewBy', { name: displayName })}</DialogTitle>
+                                            <DialogDescription className="text-xs font-bold text-slate-400 uppercase tracking-widest">
                                                 {review.createdAt && formatDistanceToNow(review.createdAt.toDate(), { addSuffix: true })}
                                             </DialogDescription>
                                         </DialogHeader>
-                                        <div className="mt-4">
-                                            <div className="flex items-center gap-1 mb-4">
+                                        <div className="mt-4 space-y-4">
+                                            <div className="flex items-center gap-0.5">
                                                 {[1, 2, 3, 4, 5].map((star) => (
                                                     <Star
                                                         key={star}
-                                                        className={`h-4 w-4 ${star <= (review.rating || 5) ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`}
+                                                        className={`h-4.5 w-4.5 ${star <= (review.rating || 5) ? 'text-amber-500 fill-amber-500' : 'text-slate-200'}`}
                                                     />
                                                 ))}
                                             </div>
-                                            <p className="text-gray-700 leading-relaxed">{review.comment}</p>
+                                            <p className="text-slate-600 leading-relaxed font-medium italic text-lg whitespace-pre-wrap">"{review.comment}"</p>
                                         </div>
                                     </DialogContent>
                                 </Dialog>

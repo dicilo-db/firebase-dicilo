@@ -89,14 +89,14 @@ export const PremiumActionCards: React.FC<PremiumActionCardsProps> = ({ clientDa
     const activeTab = tabs.find((t) => t.id === activeTabId) || tabs[0];
 
     return (
-        <div className="rounded-[2rem] border border-gray-100 bg-white/60 backdrop-blur-3xl shadow-[0_8px_40px_rgb(0,0,0,0.04)] overflow-hidden flex flex-col min-h-[550px] md:h-[550px] relative">
-            {/* Background Glows */}
-            <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-400/10 rounded-full blur-[80px] pointer-events-none" />
-            <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-400/10 rounded-full blur-[80px] pointer-events-none" />
+        <div className="rounded-[2.5rem] border border-white/30 bg-white/40 backdrop-blur-xl shadow-[0_15px_45px_rgba(0,0,0,0.03)] overflow-hidden flex flex-col min-h-[580px] md:h-[580px] relative transition-all duration-300 hover:shadow-[0_20px_50px_rgba(0,0,0,0.06)]">
+            {/* Ambient lighting glows inside cards */}
+            <div className="absolute -top-40 -right-40 w-96 h-96 bg-blue-300/10 rounded-full blur-[90px] pointer-events-none" />
+            <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-purple-300/10 rounded-full blur-[90px] pointer-events-none" />
 
-            {/* Segmented Control Header */}
-            <div className="relative z-10 px-4 md:px-6 pt-4 md:pt-6 pb-2">
-                <div className="flex overflow-x-auto bg-gray-100/80 backdrop-blur-md p-1.5 rounded-2xl scrollbar-none shadow-inner border border-white/50 snap-x snap-mandatory hide-scrollbar">
+            {/* Segmented Control Header with glassy effect */}
+            <div className="relative z-10 px-6 pt-6 pb-3">
+                <div className="flex overflow-x-auto bg-slate-900/5 backdrop-blur-md p-1.5 rounded-2xl scrollbar-none shadow-inner border border-white/60 snap-x snap-mandatory hide-scrollbar">
                     {tabs.map((tab) => {
                         const isActive = activeTabId === tab.id;
                         return (
@@ -104,13 +104,13 @@ export const PremiumActionCards: React.FC<PremiumActionCardsProps> = ({ clientDa
                                 key={tab.id}
                                 onClick={() => setActiveTabId(tab.id)}
                                 className={cn(
-                                    'flex items-center gap-2 px-4 md:px-5 py-2 md:py-2.5 text-[14px] md:text-[15px] font-semibold rounded-xl transition-all duration-300 min-w-max md:min-w-[140px] justify-center whitespace-nowrap relative flex-shrink-0 snap-start',
+                                    'flex items-center gap-2 px-5 py-2.5 text-[14px] md:text-[15px] font-bold rounded-xl transition-all duration-300 min-w-max md:min-w-[150px] justify-center whitespace-nowrap relative flex-shrink-0 snap-start',
                                     isActive
-                                        ? 'text-blue-700 shadow-sm bg-white border border-gray-200/50'
-                                        : 'text-gray-500 hover:text-gray-800 hover:bg-gray-200/50'
+                                        ? 'text-blue-700 shadow-md bg-white border border-gray-200/40 hover:scale-[1.01]'
+                                        : 'text-slate-500 hover:text-slate-800 hover:bg-white/40'
                                 )}
                             >
-                                {tab.icon}
+                                <span className={cn('transition-transform duration-300', isActive && 'scale-110')}>{tab.icon}</span>
                                 <span>{tab.label}</span>
                             </button>
                         );
@@ -118,14 +118,14 @@ export const PremiumActionCards: React.FC<PremiumActionCardsProps> = ({ clientDa
                 </div>
             </div>
 
-            {/* Content Area */}
-            <div className="flex-1 p-6 relative z-10 overflow-hidden">
-                <div className="bg-white/80 backdrop-blur-sm rounded-[1.5rem] border border-white h-full shadow-[0_4px_24px_rgb(0,0,0,0.02)] p-2 relative overflow-hidden">
+            {/* Content Area with sophisticated cards */}
+            <div className="flex-1 px-6 pb-6 relative z-10 overflow-hidden">
+                <div className="bg-white/80 backdrop-blur-sm rounded-[2rem] border border-white/60 h-full shadow-[0_8px_32px_rgba(0,0,0,0.01)] p-2.5 relative overflow-hidden">
                     {activeTab && (
                         <div key={activeTab.id} className="w-full h-full animate-in fade-in zoom-in-95 duration-500">
                             
                             {activeTab.type === 'video' && (
-                                <div className="w-full h-full rounded-[1.25rem] overflow-hidden bg-black/5 shadow-inner">
+                                <div className="w-full h-full rounded-[1.5rem] overflow-hidden bg-black shadow-lg relative border border-white/10">
                                     <iframe
                                         src={activeTab.content.replace('watch?v=', 'embed/')}
                                         className="w-full h-full"
@@ -136,40 +136,47 @@ export const PremiumActionCards: React.FC<PremiumActionCardsProps> = ({ clientDa
                             )}
 
                             {activeTab.type === 'image' && (
-                                <div className="w-full h-full relative rounded-[1.25rem] overflow-hidden group">
+                                <div className="w-full h-full relative rounded-[1.5rem] overflow-hidden group shadow-md border border-white/10">
                                     <Image 
                                         src={activeTab.content} 
                                         alt={activeTab.label} 
                                         fill 
-                                        className="object-cover transition-transform duration-1000 group-hover:scale-[1.03]" 
+                                        className="object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-[1.04]" 
                                     />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
                                 </div>
                             )}
 
                             {activeTab.type === 'text' && (
-                                <div className="prose max-w-none h-full overflow-y-auto p-6 scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent">
-                                    <div className="flex items-center gap-3 mb-6">
-                                        <div className="bg-blue-50 p-3 rounded-2xl">
-                                            <FileText className="w-6 h-6 text-blue-600" />
+                                <div className="prose max-w-none h-full overflow-y-auto p-6 md:p-8 scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent">
+                                    <div className="flex items-center gap-4 mb-6 border-b border-slate-100 pb-4">
+                                        <div className="bg-blue-50/80 p-3.5 rounded-2xl border border-blue-100/50 shadow-sm">
+                                            <FileText className="w-6 h-6 text-blue-600 animate-pulse" />
                                         </div>
-                                        <h3 className="text-3xl font-extrabold text-gray-900 m-0">{clientData.clientName}</h3>
+                                        <div>
+                                            <h3 className="text-2xl font-extrabold text-slate-800 m-0">{clientData.clientName}</h3>
+                                            <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mt-1">Über uns</p>
+                                        </div>
                                     </div>
-                                    <div className="text-gray-600 text-lg leading-relaxed whitespace-pre-wrap font-medium">
+                                    <div className="text-slate-600 text-lg leading-relaxed whitespace-pre-wrap font-medium font-sans">
                                         {activeTab.content}
                                     </div>
                                 </div>
                             )}
 
                             {activeTab.type === 'html' && (
-                                <div className="prose max-w-none h-full overflow-y-auto p-6 scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent">
-                                    <div className="flex items-center gap-3 mb-6">
-                                        <div className="bg-purple-50 p-3 rounded-2xl">
+                                <div className="prose max-w-none h-full overflow-y-auto p-6 md:p-8 scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent">
+                                    <div className="flex items-center gap-4 mb-6 border-b border-slate-100 pb-4">
+                                        <div className="bg-purple-50/80 p-3.5 rounded-2xl border border-purple-100/50 shadow-sm">
                                             <Info className="w-6 h-6 text-purple-600" />
                                         </div>
-                                        <h3 className="text-3xl font-extrabold text-gray-900 m-0">{activeTab.label}</h3>
+                                        <div>
+                                            <h3 className="text-2xl font-extrabold text-slate-800 m-0">{activeTab.label}</h3>
+                                            <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mt-1">Info</p>
+                                        </div>
                                     </div>
                                     <div
-                                        className="text-gray-600 text-lg leading-relaxed font-medium prose-p:mb-4 prose-headings:text-gray-800"
+                                        className="text-slate-600 text-lg leading-relaxed font-medium prose-p:mb-4 prose-headings:text-slate-800 prose-headings:font-extrabold prose-strong:text-slate-800 prose-ul:list-disc prose-li:mb-2 prose-a:text-blue-600 hover:prose-a:text-blue-800"
                                         dangerouslySetInnerHTML={{ __html: activeTab.content }}
                                     />
                                 </div>
