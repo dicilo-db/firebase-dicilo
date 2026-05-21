@@ -135,7 +135,7 @@ export default function AdsDashboard({ clientId }: AdsDashboardProps = {}) {
                     </CardHeader>
                     <CardFooter>
                         <Button className="w-full group bg-green-600 hover:bg-green-700 text-white" onClick={() => setCurrentView('network-campaigns')}>
-                            Manage Campaigns
+                            {t('adsManager.cards.programs.socialProduct.button') || 'Gestionar Campañas'}
                             <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                         </Button>
                     </CardFooter>

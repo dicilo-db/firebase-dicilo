@@ -769,7 +769,8 @@
         },
         "socialProduct": {
           "title": "Campañas de Red",
-          "description": "Promociona tus productos a través de nuestra red de freelancers en redes sociales para maximizar su visibilidad."
+          "description": "Promociona tus productos a través de nuestra red de freelancers en redes sociales para maximizar su visibilidad.",
+          "button": "Gestionar Campañas"
         },
         "bannerRedirect": {
           "title": "Banners de Redirección",

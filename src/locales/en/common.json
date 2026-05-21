@@ -639,7 +639,8 @@
         },
         "socialProduct": {
           "title": "Network Campaigns",
-          "description": "Promote your products through our freelancer network on social media to maximize visibility."
+          "description": "Promote your products through our freelancer network on social media to maximize visibility.",
+          "button": "Manage Campaigns"
         },
         "bannerRedirect": {
           "title": "Redirection Banners",

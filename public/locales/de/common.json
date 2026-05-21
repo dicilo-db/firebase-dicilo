@@ -743,7 +743,8 @@
         },
         "socialProduct": {
           "title": "Netzwerk-Kampagnen",
-          "description": "Bewerben Sie Ihre Produkte über unser Freelancer-Netzwerk in sozialen Medien für maximale Sichtbarkeit."
+          "description": "Bewerben Sie Ihre Produkte über unser Freelancer-Netzwerk in sozialen Medien für maximale Sichtbarkeit.",
+          "button": "Kampagnen verwalten"
         },
         "bannerRedirect": {
           "title": "Weiterleitungs-Banner",
