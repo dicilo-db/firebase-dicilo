@@ -5,6 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/context/AuthContext';
 import { getFreelancerStats, FreelancerStats } from '@/app/actions/freelancer-stats';
 import { getMarketingSends, MarketingSend } from '@/app/actions/marketing-sends';
+import { getGlobalStats } from '@/app/actions/global-stats';
+import { GlobalPresence } from '@/components/dashboard/GlobalPresence';
 import { checkAdminRole } from '@/lib/auth';
 import { getFirestore, doc, getDoc } from 'firebase/firestore';
 import { app } from '@/lib/firebase';
@@ -66,6 +68,7 @@ export function StatisticsView() {
     const [userRole, setUserRole] = useState<string>('user');
     const [isValidationOpen, setIsValidationOpen] = useState(false);
     const [validationProspect, setValidationProspect] = useState<any>(null);
+    const [globalStats, setGlobalStats] = useState<any | null>(null);
 
     // All users who can access their own statistics view can edit their own prospects
     const hasValidationAccess = true;
@@ -75,10 +78,11 @@ export function StatisticsView() {
         async function load() {
             setIsLoading(true);
             try {
-                const [statsRes, sendsRes, adminData] = await Promise.all([
+                const [statsRes, sendsRes, adminData, globalStatsData] = await Promise.all([
                     getFreelancerStats(user!.uid),
                     getMarketingSends(user!.uid),
-                    checkAdminRole(user!)
+                    checkAdminRole(user!),
+                    getGlobalStats()
                 ]);
 
                 if (adminData) {
@@ -90,6 +94,9 @@ export function StatisticsView() {
                 }
                 if (sendsRes.success && sendsRes.sends) {
                     setMarketingSends(sendsRes.sends);
+                }
+                if (globalStatsData) {
+                    setGlobalStats(globalStatsData);
                 }
             } catch (error) {
                 console.error('Error loading stats/sends:', error);
@@ -582,6 +589,8 @@ export function StatisticsView() {
                     })}
                 </Accordion>
             </div>
+
+            <GlobalPresence stats={globalStats} />
 
             {hasValidationAccess && validationProspect && (
                 <ProspectValidationDialog

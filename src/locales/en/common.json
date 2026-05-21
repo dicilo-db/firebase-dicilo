@@ -634,7 +634,8 @@
         },
         "displayAds": {
           "title": "Display Ads",
-          "description": "Manage banner ads within the Dicilo network and partner sites."
+          "description": "Manage banner ads within the Dicilo network and partner sites.",
+          "button": "Manage Display Ads"
         },
         "socialProduct": {
           "title": "Network Campaigns",
@@ -642,11 +643,13 @@
         },
         "bannerRedirect": {
           "title": "Redirection Banners",
-          "description": "Create strategic banners within Dicilo.net to drive qualified traffic directly to your offers."
+          "description": "Create strategic banners within Dicilo.net to drive qualified traffic directly to your offers.",
+          "button": "Manage Redirection"
         },
         "sampling": {
           "title": "\"Try It\" Sampling Campaigns",
-          "description": "Offer trial items or free samples to the community to gain authentic reviews and feedback."
+          "description": "Offer trial items or free samples to the community to gain authentic reviews and feedback.",
+          "button": "Manage Try It"
         },
         "recommendFriends": {
           "title": "Recommend Friends",
@@ -664,7 +667,8 @@
         },
         "hostess": {
           "title": "Hostesses",
-          "description": "Become a Hostess and earn cash at our in-person events in local markets offering products or dicilo.net"
+          "description": "Become a Hostess and earn cash at our in-person events in local markets offering products or dicilo.net",
+          "button": "Manage Hostesses"
         }
       }
     },

@@ -738,7 +738,8 @@
         },
         "displayAds": {
           "title": "Display-Anzeigen",
-          "description": "Verwalten Sie Banneranzeigen im Dicilo-Netzwerk und auf Partnerseiten."
+          "description": "Verwalten Sie Banneranzeigen im Dicilo-Netzwerk und auf Partnerseiten.",
+          "button": "Display Ads verwalten"
         },
         "socialProduct": {
           "title": "Netzwerk-Kampagnen",
@@ -746,11 +747,13 @@
         },
         "bannerRedirect": {
           "title": "Weiterleitungs-Banner",
-          "description": "Erstellen Sie strategische Banner auf Dicilo.net, um qualifizierten Traffic direkt zu Ihren Angeboten zu leiten."
+          "description": "Erstellen Sie strategische Banner auf Dicilo.net, um qualifizierten Traffic direkt zu Ihren Angeboten zu leiten.",
+          "button": "Weiterleitungen verwalten"
         },
         "sampling": {
           "title": "\"Probier's mal\"-Kampagnen",
-          "description": "Bieten Sie der Community Probeartikel an, um authentische Bewertungen und Feedback zu erhalten."
+          "description": "Bieten Sie der Community Probeartikel an, um authentische Bewertungen und Feedback zu erhalten.",
+          "button": "Probier's mal verwalten"
         },
         "recommendFriends": {
           "title": "Empfehlen Sie Freunde",
@@ -768,7 +771,8 @@
         },
         "hostess": {
           "title": "Hostessen",
-          "description": "Werden Sie Hostess und verdienen Sie Bargeld bei unseren persönlichen Veranstaltungen auf lokalen Märkten, indem Sie Produkte oder dicilo.net anbieten."
+          "description": "Werden Sie Hostess und verdienen Sie Bargeld bei unseren persönlichen Veranstaltungen auf lokalen Märkten, indem Sie Produkte oder dicilo.net anbieten.",
+          "button": "Hostessen verwalten"
         }
       }
     },

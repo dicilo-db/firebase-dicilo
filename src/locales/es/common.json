@@ -764,7 +764,8 @@
         },
         "displayAds": {
           "title": "Display Ads",
-          "description": "Gestiona banners publicitarios dentro de la red Dicilo y sitios asociados."
+          "description": "Gestiona banners publicitarios dentro de la red Dicilo y sitios asociados.",
+          "button": "Gestionar Display Ads"
         },
         "socialProduct": {
           "title": "Campañas de Red",
@@ -772,11 +773,13 @@
         },
         "bannerRedirect": {
           "title": "Banners de Redirección",
-          "description": "Crea banners estratégicos dentro de Dicilo.net que redirijan tráfico cualificado directamente a tus ofertas."
+          "description": "Crea banners estratégicos dentro de Dicilo.net que redirijan tráfico cualificado directamente a tus ofertas.",
+          "button": "Gestionar Redirecciones"
         },
         "sampling": {
           "title": "Campañas \"Pruébalo\"",
-          "description": "Ofrece artículos de prueba o muestras gratuitas a la comunidad para obtener reseñas y feedback genuino."
+          "description": "Ofrece artículos de prueba o muestras gratuitas a la comunidad para obtener reseñas y feedback genuino.",
+          "button": "Gestionar Pruébalo"
         },
         "recommendFriends": {
           "title": "Recomendienda",
@@ -794,7 +797,8 @@
         },
         "hostess": {
           "title": "Hostesen",
-          "description": "Conviertete en un Hostesen y gana en efectivo en nuestros eventos presenciales en mercados locales ofreciendo productos o dicilo.net"
+          "description": "Conviertete en un Hostesen y gana en efectivo en nuestros eventos presenciales en mercados locales ofreciendo productos o dicilo.net",
+          "button": "Gestionar Hostessen"
         }
       }
     },

@@ -16,7 +16,7 @@ export function GlobalPresence({ stats }: GlobalPresenceProps) {
 
     const activeCountriesList = Object.entries(stats.countries)
         .filter(([_, data]: any) => data.agencies > 0 || data.users > 0)
-        .sort((a, b: any) => (b[1].agencies + b[1].users) - (a[1].agencies + a[1].users));
+        .sort((a: any, b: any) => (b[1].agencies + b[1].users) - (a[1].agencies + a[1].users));
 
     // Heuristic: Countries with 0 but listed in DB as potential (if we had that data)
     // For now, we show active.
@@ -35,7 +35,7 @@ export function GlobalPresence({ stats }: GlobalPresenceProps) {
                             <Badge variant="outline" className="text-[10px] border-purple-500/30 text-purple-400 uppercase font-black tracking-tighter">Real-time</Badge>
                         </div>
                         <div className="text-3xl font-black text-white mb-1 tracking-tighter">
-                            {stats.agencies}
+                            {stats.agencies ?? stats.totalAgencies ?? 0}
                         </div>
                         <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest whitespace-nowrap">Agencias Registradas</div>
                     </CardContent>
@@ -51,7 +51,7 @@ export function GlobalPresence({ stats }: GlobalPresenceProps) {
                             <Badge variant="outline" className="text-[10px] border-blue-500/30 text-blue-400 uppercase font-black tracking-tighter">Global</Badge>
                         </div>
                         <div className="text-3xl font-black text-white mb-1 tracking-tighter">
-                            {stats.commercialPresence}
+                            {stats.commercialPresence ?? stats.totalCountriesCommercial ?? 0}
                         </div>
                         <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest whitespace-nowrap">Presencia Comercial</div>
                     </CardContent>
@@ -67,7 +67,7 @@ export function GlobalPresence({ stats }: GlobalPresenceProps) {
                             <Badge variant="outline" className="text-[10px] border-green-500/30 text-green-400 uppercase font-black tracking-tighter">Verified</Badge>
                         </div>
                         <div className="text-3xl font-black text-white mb-1 tracking-tighter">
-                            {stats.privateUsers}
+                            {stats.privateUsers ?? stats.totalUsers ?? 0}
                         </div>
                         <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest whitespace-nowrap">Usuarios Activos</div>
                     </CardContent>
@@ -83,7 +83,7 @@ export function GlobalPresence({ stats }: GlobalPresenceProps) {
                             <Badge variant="outline" className="text-[10px] border-amber-500/30 text-amber-400 uppercase font-black tracking-tighter">Growth</Badge>
                         </div>
                         <div className="text-3xl font-black text-white mb-1 tracking-tighter">
-                            {stats.potentialPresence}
+                            {stats.potentialPresence ?? stats.totalCountriesPotential ?? 0}
                         </div>
                         <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest whitespace-nowrap">Mercados Potenciales</div>
                     </CardContent>
