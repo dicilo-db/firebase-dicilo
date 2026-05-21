@@ -75,6 +75,13 @@ export async function GET(request: NextRequest) {
                         updatedAt: admin.firestore.FieldValue.serverTimestamp()
                     });
 
+                    // Deduct from Campaign Budget
+                    const campaignRef = db.collection('campaigns').doc(data.campaignId);
+                    t.update(campaignRef, {
+                        budget_remaining: admin.firestore.FieldValue.increment(-BONUS_AMOUNT),
+                        updatedAt: admin.firestore.FieldValue.serverTimestamp()
+                    });
+
                     // Log Transaction
                     const trxRef = db.collection('wallet_transactions').doc();
                     t.set(trxRef, {

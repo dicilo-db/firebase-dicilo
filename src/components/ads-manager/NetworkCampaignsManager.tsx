@@ -12,7 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { Loader2, ArrowLeft, Plus, Upload, Image as ImageIcon, X, Trash2 } from 'lucide-react';
+import { Loader2, ArrowLeft, Plus, Upload, Image as ImageIcon, X, Trash2, Users, MousePointerClick, Target, Euro, TrendingUp } from 'lucide-react';
 import { getCampaigns, updateCampaign, deleteCampaign, ClientOption, getClientsForSelect, createCampaign } from '@/app/actions/campaigns';
 import { getAdCampaigns } from '@/app/actions/ads-manager';
 import { CampaignAsset } from '@/types/freelancer';
@@ -22,6 +22,7 @@ import { translateText } from '@/app/actions/translate';
 import { correctText } from '@/app/actions/grammar';
 import Image from 'next/image';
 import { Sparkles, Languages, ChevronDown, Rocket } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -36,8 +37,18 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import { collection, addDoc } from 'firebase/firestore';
+import { collection, addDoc, query, where, onSnapshot, doc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+import {
+    AreaChart,
+    Area,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Tooltip as RechartsTooltip,
+    Legend,
+    ResponsiveContainer
+} from 'recharts';
 
 const AVAILABLE_LANGUAGES = [
     { code: 'es', label: 'Español' },
@@ -51,6 +62,90 @@ const LANG_MAP: Record<string, string> = {
     'de': 'German'
 };
 
+const PERFORMANCE_TRANSLATIONS: Record<string, any> = {
+    es: {
+        performanceTitle: "Rendimiento de la Campaña",
+        back: "Volver",
+        activeFreelancers: "Freelancers Activos",
+        totalClicks: "Clics Totales",
+        totalConversions: "Conversiones Totales",
+        consumedBudget: "Presupuesto Consumido",
+        remainingBudget: "Presupuesto Restante",
+        chartTitle: "Evolución Temporal de la Campaña",
+        chartClicks: "Clics",
+        chartConversions: "Conversiones",
+        chartFreelancers: "Freelancers (acumulado)",
+        promotersTableTitle: "Freelancers Promotores",
+        freelancerId: "ID Freelancer",
+        joiningDate: "Fecha Unión",
+        clicks: "Clics",
+        conversions: "Conversiones",
+        postStatus: "Estado del Post",
+        bonusStatus: "Bono Rendimiento",
+        bonusPaid: "Pagado (0.10€)",
+        bonusPending: "Pendiente",
+        active: "Activo",
+        inactive: "Inactivo",
+        noFreelancersYet: "Aún no hay freelancers promocionando esta campaña.",
+        noDataChart: "No hay suficientes datos temporales para mostrar el gráfico.",
+        loadingData: "Cargando datos de rendimiento..."
+    },
+    en: {
+        performanceTitle: "Campaign Performance",
+        back: "Back",
+        activeFreelancers: "Active Freelancers",
+        totalClicks: "Total Clicks",
+        totalConversions: "Total Conversions",
+        consumedBudget: "Consumed Budget",
+        remainingBudget: "Remaining Budget",
+        chartTitle: "Campaign Temporal Evolution",
+        chartClicks: "Clicks",
+        chartConversions: "Conversions",
+        chartFreelancers: "Freelancers (cumulative)",
+        promotersTableTitle: "Promoter Freelancers",
+        freelancerId: "Freelancer ID",
+        joiningDate: "Joining Date",
+        clicks: "Clicks",
+        conversions: "Conversions",
+        postStatus: "Post Status",
+        bonusStatus: "Performance Bonus",
+        bonusPaid: "Paid (0.10€)",
+        bonusPending: "Pending",
+        active: "Active",
+        inactive: "Inactive",
+        noFreelancersYet: "There are no freelancers promoting this campaign yet.",
+        noDataChart: "Not enough temporal data to display the chart.",
+        loadingData: "Loading performance data..."
+    },
+    de: {
+        performanceTitle: "Kampagnenleistung",
+        back: "Zurück",
+        activeFreelancers: "Aktive Freelancer",
+        totalClicks: "Gesamt-Klicks",
+        totalConversions: "Gesamt-Conversions",
+        consumedBudget: "Verbrauchtes Budget",
+        remainingBudget: "Verbleibendes Budget",
+        chartTitle: "Zeitlicher Verlauf der Kampagne",
+        chartClicks: "Klicks",
+        chartConversions: "Conversions",
+        chartFreelancers: "Freelancer (kumuliert)",
+        promotersTableTitle: "Werbende Freelancer",
+        freelancerId: "Freelancer-ID",
+        joiningDate: "Beitrittsdatum",
+        clicks: "Klicks",
+        conversions: "Conversions",
+        postStatus: "Post-Status",
+        bonusStatus: "Leistungsbonus",
+        bonusPaid: "Bezahlt (0.10€)",
+        bonusPending: "Ausstehend",
+        active: "Aktiv",
+        inactive: "Inaktiv",
+        noFreelancersYet: "Es gibt noch keine Freelancer, die für diese Kampagne werben.",
+        noDataChart: "Nicht genügend zeitliche Daten vorhanden, um das Diagramm anzuzeigen.",
+        loadingData: "Leistungsdaten werden geladen..."
+    }
+};
+
 interface ContentBlock {
     title: string;
     description: string;
@@ -58,10 +153,13 @@ interface ContentBlock {
 }
 
 export function NetworkCampaignsManager({ onBack, clientId }: { onBack?: () => void, clientId?: string }) {
-    const { t } = useTranslation('common');
+    const { t, i18n } = useTranslation('common');
     const { user } = useAuth();
     const { toast } = useToast();
-    const [view, setView] = useState<'list' | 'create'>('list');
+    const [view, setView] = useState<'list' | 'create' | 'performance'>('list');
+    const [selectedCampaign, setSelectedCampaign] = useState<any | null>(null);
+    const [links, setLinks] = useState<any[]>([]);
+    const [loadingLinks, setLoadingLinks] = useState(false);
 
     // B2B Campaign Request states
     const [isRequestOpen, setIsRequestOpen] = useState(false);
@@ -114,9 +212,108 @@ export function NetworkCampaignsManager({ onBack, clientId }: { onBack?: () => v
             loadCampaigns();
             // Reset editing state when entering list view
             setEditingId(null);
+            setSelectedCampaign(null);
+            setLinks([]);
             resetForm();
         }
     }, [view, user]);
+
+    useEffect(() => {
+        if (view === 'performance' && selectedCampaign?.id) {
+            setLoadingLinks(true);
+            
+            // Subscribe to freelancer_links
+            const q = query(
+                collection(db, 'freelancer_links'),
+                where('campaignId', '==', selectedCampaign.id)
+            );
+            const unsubscribeLinks = onSnapshot(q, (snapshot) => {
+                const fetchedLinks = snapshot.docs.map(docDoc => ({
+                    id: docDoc.id,
+                    ...docDoc.data()
+                }));
+                setLinks(fetchedLinks);
+                setLoadingLinks(false);
+            }, (error) => {
+                console.error("Error loading links:", error);
+                setLoadingLinks(false);
+            });
+
+            // Subscribe to campaign document for real-time budget synchronization
+            const campaignRef = doc(db, 'campaigns', selectedCampaign.id);
+            const unsubscribeCampaign = onSnapshot(campaignRef, (snapshot) => {
+                if (snapshot.exists()) {
+                    setSelectedCampaign({
+                        id: snapshot.id,
+                        ...snapshot.data()
+                    });
+                }
+            }, (error) => {
+                console.error("Error subscribing to campaign:", error);
+            });
+
+            return () => {
+                unsubscribeLinks();
+                unsubscribeCampaign();
+            };
+        }
+    }, [view, selectedCampaign?.id]);
+
+    const chartData = React.useMemo(() => {
+        if (!links || links.length === 0) return [];
+        
+        // Group active links by date
+        const dailyData: Record<string, { posts: number, clicks: number, conversions: number }> = {};
+        
+        links.forEach(link => {
+            if (link.status === 'draft') return;
+            
+            let dateStr = '';
+            if (link.createdAt) {
+                const date = typeof link.createdAt.toDate === 'function' 
+                    ? link.createdAt.toDate() 
+                    : new Date(link.createdAt);
+                if (!isNaN(date.getTime())) {
+                    dateStr = date.toISOString().split('T')[0]; // YYYY-MM-DD
+                }
+            }
+            
+            if (!dateStr) return;
+            
+            if (!dailyData[dateStr]) {
+                dailyData[dateStr] = { posts: 0, clicks: 0, conversions: 0 };
+            }
+            
+            dailyData[dateStr].posts += 1;
+            dailyData[dateStr].clicks += (link.clickCount || 0);
+            dailyData[dateStr].conversions += (link.conversionCount || 0);
+        });
+        
+        // Sort dates
+        const sortedDates = Object.keys(dailyData).sort();
+        
+        // Build cumulative list
+        let cumulativePosts = 0;
+        let cumulativeClicks = 0;
+        let cumulativeConversions = 0;
+        
+        return sortedDates.map(dateStr => {
+            cumulativePosts += dailyData[dateStr].posts;
+            cumulativeClicks += dailyData[dateStr].clicks;
+            cumulativeConversions += dailyData[dateStr].conversions;
+            
+            // Format date for display (DD/MM)
+            const parts = dateStr.split('-');
+            const formattedDate = parts.length === 3 ? `${parts[2]}/${parts[1]}` : dateStr;
+            
+            return {
+                date: formattedDate,
+                freelancers: cumulativePosts,
+                clicks: cumulativeClicks,
+                conversions: cumulativeConversions
+            };
+        });
+    }, [links]);
 
     const resetForm = () => {
         setFormData({
@@ -194,6 +391,12 @@ export function NetworkCampaignsManager({ onBack, clientId }: { onBack?: () => v
     };
 
     const handleEdit = (campaign: any) => {
+        setSelectedCampaign(campaign);
+        if (clientId) {
+            setView('performance');
+            return;
+        }
+
         setEditingId(campaign.id);
 
         // Map backend snake_case to frontend camelCase
@@ -649,6 +852,365 @@ export function NetworkCampaignsManager({ onBack, clientId }: { onBack?: () => v
                         </div>
                     )}
                 </div>
+            </div>
+        );
+    }
+
+    if (view === 'performance' && selectedCampaign) {
+        const currentLang = i18n.language?.split('-')[0] || 'es';
+        const trans = PERFORMANCE_TRANSLATIONS[currentLang] || PERFORMANCE_TRANSLATIONS.es;
+
+        // Perform KPI calculations
+        const activeLinks = links.filter(l => l.status !== 'draft');
+        const activeFreelancersCount = new Set(activeLinks.map(l => l.freelancerId)).size;
+        const totalClicks = activeLinks.reduce((acc, l) => acc + (l.clickCount || 0), 0);
+        const totalConversions = activeLinks.reduce((acc, l) => acc + (l.conversionCount || 0), 0);
+
+        // Budget calculations (V1 vs V2 support)
+        const consumedBudget = activeLinks.reduce((acc, l) => {
+            if (l.paymentModel === 'fixed_plus_bonus') {
+                return acc + 0.50 + (l.bonusPaidStatus ? 0.10 : 0);
+            } else {
+                const rate = selectedCampaign.reward_per_action || selectedCampaign.rate_per_click || 0.20;
+                return acc + (l.clickCount || 0) * rate;
+            }
+        }, 0);
+
+        const remainingBudget = selectedCampaign.budget_remaining !== undefined 
+            ? selectedCampaign.budget_remaining 
+            : (selectedCampaign.budget_total - consumedBudget);
+
+        return (
+            <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in slide-in-from-right-4 pb-12">
+                {/* Header Section */}
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-gradient-to-r from-slate-900 to-slate-800 p-6 rounded-2xl text-white shadow-xl">
+                    <div>
+                        <div className="flex items-center gap-2 mb-1">
+                            <Badge className="bg-emerald-500/20 text-emerald-300 border-none hover:bg-emerald-500/20">
+                                {selectedCampaign.payment_model === 'fixed_plus_bonus' ? 'V2 (CPA + Bonus)' : 'V1 (CPC)'}
+                            </Badge>
+                            <span className="text-xs text-slate-400">ID: {selectedCampaign.id}</span>
+                        </div>
+                        <h1 className="text-2xl font-bold">{selectedCampaign.content_map?.[currentLang]?.title || selectedCampaign.title || trans.performanceTitle}</h1>
+                        <p className="text-sm text-slate-300 mt-1 max-w-2xl line-clamp-2">
+                            {selectedCampaign.content_map?.[currentLang]?.description || selectedCampaign.description || ''}
+                        </p>
+                    </div>
+                    <Button 
+                        variant="outline" 
+                        onClick={() => setView('list')} 
+                        className="bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white self-start md:self-center"
+                    >
+                        <ArrowLeft className="mr-2 h-4 w-4" /> {trans.back}
+                    </Button>
+                </div>
+
+                {/* KPI Cards Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                    {/* Active Freelancers */}
+                    <Card className="bg-white dark:bg-slate-900 border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+                        <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+                            <CardTitle className="text-xs font-medium text-muted-foreground">{trans.activeFreelancers}</CardTitle>
+                            <Users className="h-4 w-4 text-indigo-500" />
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-2xl font-bold text-slate-900 dark:text-white">
+                                {loadingLinks ? <Loader2 className="h-5 w-5 animate-spin text-indigo-500" /> : activeFreelancersCount}
+                            </div>
+                            <p className="text-[10px] text-muted-foreground mt-1">Registrados en la campaña</p>
+                        </CardContent>
+                    </Card>
+
+                    {/* Total Clicks */}
+                    <Card className="bg-white dark:bg-slate-900 border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+                        <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+                            <CardTitle className="text-xs font-medium text-muted-foreground">{trans.totalClicks}</CardTitle>
+                            <MousePointerClick className="h-4 w-4 text-blue-500" />
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-2xl font-bold text-slate-900 dark:text-white">
+                                {loadingLinks ? <Loader2 className="h-5 w-5 animate-spin text-blue-500" /> : totalClicks}
+                            </div>
+                            <p className="text-[10px] text-muted-foreground mt-1">Clics únicos acumulados</p>
+                        </CardContent>
+                    </Card>
+
+                    {/* Total Conversions */}
+                    <Card className="bg-white dark:bg-slate-900 border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+                        <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+                            <CardTitle className="text-xs font-medium text-muted-foreground">{trans.totalConversions}</CardTitle>
+                            <Target className="h-4 w-4 text-emerald-500" />
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-2xl font-bold text-slate-900 dark:text-white">
+                                {loadingLinks ? <Loader2 className="h-5 w-5 animate-spin text-emerald-500" /> : totalConversions}
+                            </div>
+                            <p className="text-[10px] text-muted-foreground mt-1">Registros / Compras completados</p>
+                        </CardContent>
+                    </Card>
+
+                    {/* Consumed Budget */}
+                    <Card className="bg-white dark:bg-slate-900 border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+                        <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+                            <CardTitle className="text-xs font-medium text-muted-foreground">{trans.consumedBudget}</CardTitle>
+                            <TrendingUp className="h-4 w-4 text-amber-500" />
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-2xl font-bold text-slate-900 dark:text-white">
+                                {loadingLinks ? <Loader2 className="h-5 w-5 animate-spin text-amber-500" /> : `${consumedBudget.toFixed(2)}€`}
+                            </div>
+                            <p className="text-[10px] text-muted-foreground mt-1">
+                                {selectedCampaign.payment_model === 'fixed_plus_bonus' 
+                                    ? "Posts creados + bonos de 5 clics" 
+                                    : `Basado en clics (${selectedCampaign.reward_per_action || selectedCampaign.rate_per_click || 0.20}€ / click)`}
+                            </p>
+                        </CardContent>
+                    </Card>
+
+                    {/* Remaining Budget */}
+                    <Card className="bg-white dark:bg-slate-900 border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+                        <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+                            <CardTitle className="text-xs font-medium text-muted-foreground">{trans.remainingBudget}</CardTitle>
+                            <Euro className="h-4 w-4 text-teal-500" />
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-2xl font-bold text-slate-900 dark:text-white">
+                                {`${remainingBudget.toFixed(2)}€`}
+                            </div>
+                            <div className="flex items-center gap-1.5 mt-1">
+                                <div className="flex-1 bg-slate-100 dark:bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                                    <div 
+                                        className="bg-teal-500 h-full rounded-full transition-all duration-500" 
+                                        style={{ width: `${Math.max(0, Math.min(100, (remainingBudget / (selectedCampaign.budget_total || 1)) * 100))}%` }}
+                                    />
+                                </div>
+                                <span className="text-[10px] font-medium text-muted-foreground">
+                                    {Math.round((remainingBudget / (selectedCampaign.budget_total || 1)) * 100)}%
+                                </span>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+
+                {/* Main Graph & Sidebar */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    {/* Time Series Analytics Chart */}
+                    <Card className="lg:col-span-2 shadow-sm border-slate-100">
+                        <CardHeader>
+                            <CardTitle className="text-lg font-bold">{trans.chartTitle}</CardTitle>
+                            <CardDescription>Crecimiento acumulado en el tiempo</CardDescription>
+                        </CardHeader>
+                        <CardContent className="h-[350px]">
+                            {loadingLinks ? (
+                                <div className="flex flex-col items-center justify-center h-full gap-2">
+                                    <Loader2 className="h-8 w-8 animate-spin text-indigo-500" />
+                                    <p className="text-sm text-muted-foreground">{trans.loadingData}</p>
+                                </div>
+                            ) : chartData.length > 0 ? (
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <AreaChart
+                                        data={chartData}
+                                        margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+                                    >
+                                        <defs>
+                                            <linearGradient id="colorClicks" x1="0" y1="0" x2="0" y2="1">
+                                                <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.2}/>
+                                                <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                                            </linearGradient>
+                                            <linearGradient id="colorConversions" x1="0" y1="0" x2="0" y2="1">
+                                                <stop offset="5%" stopColor="#10b981" stopOpacity={0.2}/>
+                                                <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                                            </linearGradient>
+                                            <linearGradient id="colorFreelancers" x1="0" y1="0" x2="0" y2="1">
+                                                <stop offset="5%" stopColor="#6366f1" stopOpacity={0.2}/>
+                                                <stop offset="95%" stopColor="#6366f1" stopOpacity={0}/>
+                                            </linearGradient>
+                                        </defs>
+                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9"/>
+                                        <XAxis 
+                                            dataKey="date" 
+                                            stroke="#94a3b8" 
+                                            fontSize={11} 
+                                            tickLine={false}
+                                            axisLine={false}
+                                        />
+                                        <YAxis 
+                                            stroke="#94a3b8" 
+                                            fontSize={11} 
+                                            tickLine={false}
+                                            axisLine={false}
+                                        />
+                                        <RechartsTooltip 
+                                            contentStyle={{ 
+                                                backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                                                border: '1px solid #e2e8f0',
+                                                borderRadius: '8px',
+                                                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+                                            }}
+                                        />
+                                        <Legend verticalAlign="top" height={36} iconType="circle" />
+                                        <Area 
+                                            type="monotone" 
+                                            dataKey="clicks" 
+                                            name={trans.chartClicks} 
+                                            stroke="#3b82f6" 
+                                            strokeWidth={2}
+                                            fillOpacity={1} 
+                                            fill="url(#colorClicks)" 
+                                        />
+                                        <Area 
+                                            type="monotone" 
+                                            dataKey="conversions" 
+                                            name={trans.chartConversions} 
+                                            stroke="#10b981" 
+                                            strokeWidth={2}
+                                            fillOpacity={1} 
+                                            fill="url(#colorConversions)" 
+                                        />
+                                        <Area 
+                                            type="monotone" 
+                                            dataKey="freelancers" 
+                                            name={trans.chartFreelancers} 
+                                            stroke="#6366f1" 
+                                            strokeWidth={2}
+                                            fillOpacity={1} 
+                                            fill="url(#colorFreelancers)" 
+                                        />
+                                    </AreaChart>
+                                </ResponsiveContainer>
+                            ) : (
+                                <div className="flex items-center justify-center h-full text-sm text-muted-foreground border border-dashed rounded-lg bg-slate-50/50">
+                                    {trans.noDataChart}
+                                </div>
+                            )}
+                        </CardContent>
+                    </Card>
+
+                    {/* Campaign Details Info Sidebar */}
+                    <Card className="shadow-sm border-slate-100 bg-slate-50/30">
+                        <CardHeader>
+                            <CardTitle className="text-lg font-bold">Detalles de Campaña</CardTitle>
+                            <CardDescription>Parámetros configurados</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-4 text-sm">
+                            <div className="flex justify-between border-b pb-2 border-slate-100">
+                                <span className="text-muted-foreground">Fecha Inicio:</span>
+                                <span className="font-semibold text-slate-800 dark:text-slate-200">{selectedCampaign.start_date}</span>
+                            </div>
+                            <div className="flex justify-between border-b pb-2 border-slate-100">
+                                <span className="text-muted-foreground">Fecha Fin:</span>
+                                <span className="font-semibold text-slate-800 dark:text-slate-200">{selectedCampaign.end_date}</span>
+                            </div>
+                            <div className="flex justify-between border-b pb-2 border-slate-100">
+                                <span className="text-muted-foreground">Presupuesto Inicial:</span>
+                                <span className="font-semibold text-slate-800 dark:text-slate-200">{selectedCampaign.budget_total}€</span>
+                            </div>
+                            <div className="flex justify-between border-b pb-2 border-slate-100">
+                                <span className="text-muted-foreground">Pago por Post (Creación):</span>
+                                <span className="font-semibold text-slate-800 dark:text-slate-200">0.50€</span>
+                            </div>
+                            <div className="flex justify-between border-b pb-2 border-slate-100">
+                                <span className="text-muted-foreground">Bono de Rendimiento (5 clics):</span>
+                                <span className="font-semibold text-slate-800 dark:text-slate-200">0.10€</span>
+                            </div>
+                            <div className="flex justify-between border-b pb-2 border-slate-100">
+                                <span className="text-muted-foreground">Idiomas Permitidos:</span>
+                                <span className="font-semibold flex items-center gap-1">
+                                    {(selectedCampaign.allowed_languages || []).map((lang: string) => (
+                                        <span key={lang} className={`fi fi-${lang === 'en' ? 'gb' : lang} rounded-sm w-4 h-3`} title={lang.toUpperCase()} />
+                                    ))}
+                                </span>
+                            </div>
+                            <div className="pt-2">
+                                <span className="text-muted-foreground block mb-2">URLs de Destino por Idioma:</span>
+                                <div className="space-y-1.5">
+                                    {Object.entries(selectedCampaign.target_urls || {}).flatMap(([lang, urls]) => 
+                                        (Array.isArray(urls) ? urls : []).map((url, idx) => (
+                                            <div key={`${lang}-${idx}`} className="flex items-center gap-2 bg-white dark:bg-slate-900 border rounded p-1.5 text-xs">
+                                                <span className={`fi fi-${lang === 'en' ? 'gb' : lang} rounded-sm w-4 h-3 shrink-0`} />
+                                                <span className="truncate text-blue-600 underline flex-1 select-all" title={url}>{url}</span>
+                                            </div>
+                                        ))
+                                    )}
+                                    {(!selectedCampaign.target_urls || Object.keys(selectedCampaign.target_urls).length === 0) && (
+                                        <p className="text-xs text-muted-foreground italic">No se configuraron URLs específicas. Se usará el enlace del anunciante por defecto.</p>
+                                    )}
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+
+                {/* Freelancers List Table */}
+                <Card className="shadow-sm border-slate-100">
+                    <CardHeader className="border-b border-slate-50">
+                        <CardTitle className="text-lg font-bold">{trans.promotersTableTitle}</CardTitle>
+                        <CardDescription>Resumen de actividad de cada colaborador</CardDescription>
+                    </CardHeader>
+                    <CardContent className="p-0">
+                        {loadingLinks ? (
+                            <div className="flex items-center justify-center p-8">
+                                <Loader2 className="h-8 w-8 animate-spin text-indigo-500" />
+                            </div>
+                        ) : activeLinks.length > 0 ? (
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-sm text-left">
+                                    <thead className="text-xs text-muted-foreground uppercase bg-slate-50 dark:bg-slate-900/50">
+                                        <tr>
+                                            <th className="px-6 py-4 font-semibold">{trans.freelancerId}</th>
+                                            <th className="px-6 py-4 font-semibold">{trans.joiningDate}</th>
+                                            <th className="px-6 py-4 font-semibold text-center">{trans.clicks}</th>
+                                            <th className="px-6 py-4 font-semibold text-center">{trans.conversions}</th>
+                                            <th className="px-6 py-4 font-semibold text-center">{trans.postStatus}</th>
+                                            <th className="px-6 py-4 font-semibold text-center">{trans.bonusStatus}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                                        {activeLinks.map(l => {
+                                            const anonId = 'FL-' + (l.freelancerId ? l.freelancerId.substring(l.freelancerId.length - 6).toUpperCase() : 'UNKNOWN');
+                                            
+                                            let joinedDateStr = '-';
+                                            if (l.createdAt) {
+                                                const d = typeof l.createdAt.toDate === 'function' ? l.createdAt.toDate() : new Date(l.createdAt);
+                                                joinedDateStr = !isNaN(d.getTime()) ? d.toLocaleDateString() : '-';
+                                            }
+
+                                            return (
+                                                <tr key={l.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-900/30 transition-colors">
+                                                    <td className="px-6 py-4 font-mono font-semibold text-slate-900 dark:text-white">{anonId}</td>
+                                                    <td className="px-6 py-4 text-muted-foreground">{joinedDateStr}</td>
+                                                    <td className="px-6 py-4 text-center font-semibold text-slate-800 dark:text-slate-200">{l.clickCount || 0}</td>
+                                                    <td className="px-6 py-4 text-center font-semibold text-slate-800 dark:text-slate-200">{l.conversionCount || 0}</td>
+                                                    <td className="px-6 py-4 text-center">
+                                                        <Badge variant="secondary" className="bg-green-500/10 text-green-700 dark:text-green-400 border-none px-2.5 py-0.5 rounded-full text-xs font-medium">
+                                                            {trans.active}
+                                                        </Badge>
+                                                    </td>
+                                                    <td className="px-6 py-4 text-center">
+                                                        {l.bonusPaidStatus ? (
+                                                            <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-none px-2.5 py-0.5 rounded-full text-xs font-medium">
+                                                                {trans.bonusPaid}
+                                                            </Badge>
+                                                        ) : (
+                                                            <Badge variant="outline" className="text-slate-500 dark:text-slate-400 border-slate-200 px-2.5 py-0.5 rounded-full text-xs font-medium">
+                                                                {trans.bonusPending}
+                                                            </Badge>
+                                                        )}
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })}
+                                    </tbody>
+                                </table>
+                            </div>
+                        ) : (
+                            <div className="flex flex-col items-center justify-center p-12 text-center">
+                                <Users className="h-10 w-10 text-slate-300 mb-2" />
+                                <p className="text-slate-500 text-sm font-medium">{trans.noFreelancersYet}</p>
+                            </div>
+                        )}
+                    </CardContent>
+                </Card>
             </div>
         );
     }

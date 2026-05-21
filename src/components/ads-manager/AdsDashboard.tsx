@@ -15,10 +15,18 @@ import { ReferralCard } from '@/components/dashboard/ReferralCard';
 import { MarketingShareCard } from './MarketingShareCard';
 import { EmailMarketingComposer } from './EmailMarketingComposer';
 import { EmailTemplate } from '@/actions/email-templates';
+import { DisplayAdsManager } from './DisplayAdsManager';
+import { BannerRedirectManager } from './BannerRedirectManager';
+import { SamplingManager } from './SamplingManager';
+import { HostessManager } from './HostessManager';
 
-type View = 'overview' | 'qr-codes' | 'network-campaigns' | 'prospects' | 'email-marketing';
+type View = 'overview' | 'qr-codes' | 'network-campaigns' | 'prospects' | 'email-marketing' | 'display-ads' | 'banner-redirect' | 'sampling' | 'hostess';
 
-export default function AdsDashboard() {
+interface AdsDashboardProps {
+    clientId?: string;
+}
+
+export default function AdsDashboard({ clientId }: AdsDashboardProps = {}) {
     const { toast } = useToast();
     const { t } = useTranslation('common');
     const [isSeeding, setIsSeeding] = useState(false);
@@ -42,15 +50,31 @@ export default function AdsDashboard() {
     };
 
     if (currentView === 'qr-codes') {
-        return <QrManager onBack={() => setCurrentView('overview')} />;
+        return <QrManager onBack={() => setCurrentView('overview')} clientId={clientId} />;
     }
 
     if (currentView === 'network-campaigns') {
-        return <NetworkCampaignsManager onBack={() => setCurrentView('overview')} />;
+        return <NetworkCampaignsManager onBack={() => setCurrentView('overview')} clientId={clientId} />;
     }
 
     if (currentView === 'prospects') {
         return <ProspectsManager onBack={() => setCurrentView('overview')} />;
+    }
+
+    if (currentView === 'display-ads') {
+        return <DisplayAdsManager onBack={() => setCurrentView('overview')} clientId={clientId} />;
+    }
+
+    if (currentView === 'banner-redirect') {
+        return <BannerRedirectManager onBack={() => setCurrentView('overview')} clientId={clientId} />;
+    }
+
+    if (currentView === 'sampling') {
+        return <SamplingManager onBack={() => setCurrentView('overview')} clientId={clientId} />;
+    }
+
+    if (currentView === 'hostess') {
+        return <HostessManager onBack={() => setCurrentView('overview')} clientId={clientId} />;
     }
 
     if (currentView === 'email-marketing' && selectedTemplate) {
@@ -72,10 +96,12 @@ export default function AdsDashboard() {
                     <h1 className="text-3xl font-bold tracking-tight">{t('adsManager.dashboard.title')}</h1>
                     <p className="text-muted-foreground mt-2">{t('adsManager.dashboard.subtitle')}</p>
                 </div>
-                <Button variant="outline" size="sm" onClick={handleSeedData} disabled={isSeeding}>
-                    <Database className="mr-2 h-4 w-4" />
-                    {isSeeding ? t('adsManager.dashboard.loading') : t('adsManager.dashboard.seedData')}
-                </Button>
+                {!clientId && (
+                    <Button variant="outline" size="sm" onClick={handleSeedData} disabled={isSeeding}>
+                        <Database className="mr-2 h-4 w-4" />
+                        {isSeeding ? t('adsManager.dashboard.loading') : t('adsManager.dashboard.seedData')}
+                    </Button>
+                )}
             </div>
 
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -124,52 +150,55 @@ export default function AdsDashboard() {
                 />
 
                 {/* Module: Display Ads */}
-                <Card className="opacity-75 border-dashed">
+                <Card className="border-l-4 border-l-blue-600 shadow-md hover:shadow-lg transition-all">
                     <CardHeader>
                         <div className="flex items-start justify-between">
-                            <MonitorPlay className="h-8 w-8 text-muted-foreground mb-2" />
-                            <Badge variant="outline">{t('adsManager.cards.comingSoon')}</Badge>
+                            <MonitorPlay className="h-8 w-8 text-blue-600 mb-2" />
+                            <Badge>{t('adsManager.cards.active')}</Badge>
                         </div>
                         <CardTitle>{t('adsManager.cards.programs.displayAds.title')}</CardTitle>
                         <CardDescription>{t('adsManager.cards.programs.displayAds.description')}</CardDescription>
                     </CardHeader>
                     <CardFooter>
-                        <Button variant="secondary" disabled className="w-full">
-                            {t('adsManager.cards.inDevelopment')}
+                        <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white group" onClick={() => setCurrentView('display-ads')}>
+                            {t('adsManager.cards.programs.displayAds.button') || 'Gestionar Display Ads'}
+                            <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                         </Button>
                     </CardFooter>
                 </Card>
 
                 {/* Module: Banner Redirect Campaigns */}
-                <Card className="opacity-75 border-dashed">
+                <Card className="border-l-4 border-l-orange-500 shadow-md hover:shadow-lg transition-all">
                     <CardHeader>
                         <div className="flex items-start justify-between">
-                            <Layout className="h-8 w-8 text-muted-foreground mb-2" />
-                            <Badge variant="outline">{t('adsManager.cards.comingSoon')}</Badge>
+                            <Layout className="h-8 w-8 text-orange-500 mb-2" />
+                            <Badge>{t('adsManager.cards.active')}</Badge>
                         </div>
                         <CardTitle>{t('adsManager.cards.programs.bannerRedirect.title')}</CardTitle>
                         <CardDescription>{t('adsManager.cards.programs.bannerRedirect.description')}</CardDescription>
                     </CardHeader>
                     <CardFooter>
-                        <Button variant="secondary" disabled className="w-full">
-                            {t('adsManager.cards.inDevelopment')}
+                        <Button className="w-full bg-orange-600 hover:bg-orange-700 text-white group" onClick={() => setCurrentView('banner-redirect')}>
+                            {t('adsManager.cards.programs.bannerRedirect.button') || 'Gestionar Redirecciones'}
+                            <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                         </Button>
                     </CardFooter>
                 </Card>
 
                 {/* Module: Sampling "Try It" Campaigns */}
-                <Card className="opacity-75 border-dashed">
+                <Card className="border-l-4 border-l-purple-500 shadow-md hover:shadow-lg transition-all">
                     <CardHeader>
                         <div className="flex items-start justify-between">
-                            <Gift className="h-8 w-8 text-muted-foreground mb-2" />
-                            <Badge variant="outline">{t('adsManager.cards.comingSoon')}</Badge>
+                            <Gift className="h-8 w-8 text-purple-500 mb-2" />
+                            <Badge>{t('adsManager.cards.active')}</Badge>
                         </div>
                         <CardTitle>{t('adsManager.cards.programs.sampling.title')}</CardTitle>
                         <CardDescription>{t('adsManager.cards.programs.sampling.description')}</CardDescription>
                     </CardHeader>
                     <CardFooter>
-                        <Button variant="secondary" disabled className="w-full">
-                            {t('adsManager.cards.inDevelopment')}
+                        <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white group" onClick={() => setCurrentView('sampling')}>
+                            {t('adsManager.cards.programs.sampling.button') || 'Gestionar Pruébalo'}
+                            <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                         </Button>
                     </CardFooter>
                 </Card>
@@ -196,18 +225,19 @@ export default function AdsDashboard() {
                 </Card>
 
                 {/* Module: Hostesses */}
-                <Card className="opacity-75 border-dashed bg-blue-50/50 dark:bg-blue-900/10">
+                <Card className="border-l-4 border-l-pink-500 shadow-md hover:shadow-lg transition-all">
                     <CardHeader>
                         <div className="flex items-start justify-between">
-                            <Megaphone className="h-8 w-8 text-blue-400 mb-2" />
-                            <Badge variant="outline" className="bg-blue-100 text-blue-700 border-blue-200">{t('adsManager.cards.comingSoon')}</Badge>
+                            <Megaphone className="h-8 w-8 text-pink-500 mb-2" />
+                            <Badge>{t('adsManager.cards.active')}</Badge>
                         </div>
                         <CardTitle>{t('adsManager.cards.programs.hostess.title')}</CardTitle>
                         <CardDescription>{t('adsManager.cards.programs.hostess.description')}</CardDescription>
                     </CardHeader>
                     <CardFooter>
-                        <Button variant="secondary" disabled className="w-full bg-blue-100/50 text-blue-700">
-                            {t('adsManager.cards.inDevelopment')}
+                        <Button className="w-full bg-pink-600 hover:bg-pink-700 text-white group" onClick={() => setCurrentView('hostess')}>
+                            {t('adsManager.cards.programs.hostess.button') || 'Gestionar Hostessen'}
+                            <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                         </Button>
                     </CardFooter>
                 </Card>
