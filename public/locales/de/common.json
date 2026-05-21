@@ -121,7 +121,8 @@
       "myNeighborhood": "Mein Kiez",
       "communityLabel": "Community",
       "dicicoin": "DiciCoin",
-      "logout": "Abmelden"
+      "logout": "Abmelden",
+      "contact": "Kontakt"
     }
   },
   "dicipoints": {
@@ -737,7 +738,8 @@
         },
         "displayAds": {
           "title": "Display-Anzeigen",
-          "description": "Verwalten Sie Banneranzeigen im Dicilo-Netzwerk und auf Partnerseiten."
+          "description": "Verwalten Sie Banneranzeigen im Dicilo-Netzwerk und auf Partnerseiten.",
+          "button": "Display Ads verwalten"
         },
         "socialProduct": {
           "title": "Netzwerk-Kampagnen",
@@ -745,11 +747,13 @@
         },
         "bannerRedirect": {
           "title": "Weiterleitungs-Banner",
-          "description": "Erstellen Sie strategische Banner auf Dicilo.net, um qualifizierten Traffic direkt zu Ihren Angeboten zu leiten."
+          "description": "Erstellen Sie strategische Banner auf Dicilo.net, um qualifizierten Traffic direkt zu Ihren Angeboten zu leiten.",
+          "button": "Weiterleitungen verwalten"
         },
         "sampling": {
           "title": "\"Probier's mal\"-Kampagnen",
-          "description": "Bieten Sie der Community Probeartikel an, um authentische Bewertungen und Feedback zu erhalten."
+          "description": "Bieten Sie der Community Probeartikel an, um authentische Bewertungen und Feedback zu erhalten.",
+          "button": "Probier's mal verwalten"
         },
         "recommendFriends": {
           "title": "Empfehlen Sie Freunde",
@@ -767,7 +771,8 @@
         },
         "hostess": {
           "title": "Hostessen",
-          "description": "Werden Sie Hostess und verdienen Sie Bargeld bei unseren persönlichen Veranstaltungen auf lokalen Märkten, indem Sie Produkte oder dicilo.net anbieten."
+          "description": "Werden Sie Hostess und verdienen Sie Bargeld bei unseren persönlichen Veranstaltungen auf lokalen Märkten, indem Sie Produkte oder dicilo.net anbieten.",
+          "button": "Hostessen verwalten"
         }
       }
     },
@@ -990,6 +995,7 @@
     "my_postings": "Meine Postings",
     "statistics": "Meine Statistiken",
     "online_reviews": "Online-Bewertungen",
+    "academia": "Akademie",
     "connections": "Verbindungen",
     "faqs": "Häufige Fragen",
     "recommendation_section": "Unternehmen empfehlen",
@@ -1448,7 +1454,23 @@
       "greeting": "Willkommensnachricht",
       "prompt": "Zentrale Anweisungen (Prompt)",
       "filesBox": "Wissensdateien",
-      "uploadDoc": "PDF-Datei hochladen"
+      "uploadDoc": "PDF-Datei hochladen",
+      "planReq": "Das Modul KI-Assistent erfordert einen Premium-Plan oder ein spezifisches Add-on.",
+      "avatarUrl": "Avatar-URL (Optional)",
+      "alimenta": "Füttern Sie Ihre KI mit Menüs, Katalogen oder FAQs im PDF-Format.",
+      "iaOn": "KI Aktiviert",
+      "iaOff": "KI Pausiert",
+      "msgHint": "Diese Nachricht wird angezeigt, wenn der Kunde den Chat öffnet.",
+      "imgHint": "Sie können ein Bild platzieren, das als Gesicht Ihrer KI fungiert.",
+      "promptHint": "Weisen Sie die KI detailliert an, welchen Ton sie verwenden und welche Informationen sie priorisieren soll.",
+      "save": "Änderungen Speichern",
+      "dragDrop": "Ziehen oder klicken Sie hier (Maximal 10MB)",
+      "trainedDocs": "Trainierte Dokumente",
+      "noDocs": "Noch keine Dokumente hochgeladen.",
+      "phName": "Bsp. Johann von der Pizzeria Napoli",
+      "phGreeting": "Hallo! Ich bin Johann. Hast du Hunger?",
+      "phUrl": "https://deinlogo.com/robot.png",
+      "phPrompt": "Du bist ein freundlicher Verkäufer. Dein Ziel ist es, unsere Pizzen zu empfehlen und Öffnungszeiten zu nennen..."
     },
     "presentations": {
       "title": "Webinare und Demos",
@@ -1479,10 +1501,14 @@
       "updatePhotos": "Aktualisieren Sie Ihre Fotos"
     },
     "campaigns": {
-      "title": "Benutzerdefinierte Kampagnen",
-      "desc": "Messen Sie die Leistung Ihrer E-Mail-Marketing- und organischen Gewinnungsstrategien in Dicilo.",
-      "requestNew": "Neue Kampagne anfragen",
-      "emptyTitle": "Keine aktiven Kampagnen"
+      "title": "Individuelle Kampagnen",
+      "desc": "Fordern Sie eine unserer integrierten Kampagnen an.",
+      "requestNew": "Werbekampagne anfordern",
+      "emptyTitle": "Keine aktiven Kampagnen",
+      "planReq": "Das Kampagnenmodul erfordert einen Starter-Plan oder höher.",
+      "ph1": "Bsp.: Alten Bestand verkaufen, mehr Web-Traffic...",
+      "ph2": "Nachbarschaft oder Demografie (Optional)",
+      "ph3": "Bsp.: Frauen im Alter von 25-45 Jahren in meiner Nähe"
     },
     "graphicsVip": {
       "fileTooLargeTitle": "Datei zu groß",
@@ -1498,7 +1524,8 @@
       "soon": "Bald verfügbar",
       "aiDesc": "Als VIP-Kunde erhalten Sie einen monatlichen Bonus für die KI, die automatisch Hintergründe entfernt und das Produkt transparent und bereit für Werbung macht.",
       "workspace": "Visueller Arbeitsbereich",
-      "cancelEdit": "Bearbeitung abbrechen"
+      "cancelEdit": "Bearbeitung abbrechen",
+      "engine": "KI-Biografiemotor wird geladen..."
     },
     "whatsapp": {
       "title": "Omnichannel-Posteingang (WhatsApp & Telegram)",
@@ -1515,6 +1542,100 @@
       "reviewsDesc": "Richten Sie den Bot so ein, dass automatisierte Vorlagen gesendet werden, die den Kunden einladen, Ihnen 5 Sterne zu hinterlassen.",
       "reviewsButton": "Feedback-Kampagnen",
       "soonStatus": "Bald verfügbar"
+    },
+    "courses": {
+      "title": "KI-Akademie (Kurse)",
+      "desc": "Greifen Sie auf Ihre 4 jährlichen Kurse zu, um KI-Tools als Händler zu beherrschen.",
+      "copyTitle": "KI-Copywriting für Geschäfte (Demnächst)",
+      "copyDesc": "Lernen Sie, anziehende Produktbeschreibungen zu verfassen und den Umsatz zu steigern.",
+      "modulesLabel": "4 Module",
+      "imagesTitle": "Bilder mit GenAI (Gesperrt)",
+      "imagesDesc": "Entdecken Sie, wie Sie Katalogfotos automatisch retuschieren.",
+      "juneLabel": "Verfügbar im Juni",
+      "expertTitle": "Werden Sie ein Einzelhandelsexperte",
+      "expertDesc": "Zertifikate und Aufzeichnungen werden freigeschaltet, sobald wir das Lernsystem im Einzelhändler-Dashboard implementiert haben."
+    },
+    "graphics": {
+      "title": "Grafik-Tools",
+      "desc": "Entwerfen Sie Banner, bearbeiten Sie Produktfotos und erstellen Sie Anzeigen direkt in Dicilo mit unseren Cloud-Tools.",
+      "editorLabel": "Retusche-Editor",
+      "editorDesc": "Lichtkorrektur, Kontrast und Zuschnitt für Katalogbilder direkt ohne Photoshop.",
+      "templatesTitle": "Magische Vorlagen",
+      "templatesDesc": "\"Angebot\"- und \"Im Sale\"-Vorlagen, die automatisch auf Ihre Produktcover angewendet werden.",
+      "canvaTitle": "Canva Integration Unterwegs",
+      "canvaDesc": "Wir integrieren das visuelle SDK, damit Sie Designelemente per Drag-and-Drop verschieben können.",
+      "devLabel": "In Entwicklung"
+    },
+    "leads": {
+      "title": "Lead-Erfassung",
+      "desc": "Entwerfen und binden Sie ein allgemeines Registrierungsformular ein, um Daten potenzieller Kunden zu erfassen.",
+      "crmTitle": "Kontakt-CRM",
+      "crmDesc": "Verwalten Sie zentral alle Nutzer, die Anfragen stellen, Gutscheine herunterladen oder Ihr Formular ausfüllen.",
+      "exportTitle": "Datenexporteur",
+      "exportDesc": "Laden Sie Ihre Interessentenbasis in Excel/CSV herunter, um sie auf externen Automatisierungsplattformen zu verwenden.",
+      "builderTitle": "Formularersteller Inaktiv",
+      "builderDesc": "Das dynamische System zur Erfassung spezifischer Daten wird bald in Produktion gehen."
+    },
+    "supportPremium": {
+      "title": "Plan: Premium",
+      "desc": "Bevorzugter E-Mail-Support-Kanal exklusiv für Einzelhandelsunternehmen. Verfügbar von Montag bis Freitag.",
+      "vipTitle": "Sie haben VIP-Priorität",
+      "vipDesc": "Ihre Anfragen umgehen die allgemeine Dicilo-Warteschlange.",
+      "ticketsTitle": "Internes Ticketmodul",
+      "ticketsDesc": "Bald können Sie Support-Tickets direkt hier öffnen, ohne zu Ihrer persönlichen E-Mail gehen zu müssen."
+    },
+    "supportVip": {
+      "title": "Individueller Support (Keine KI)",
+      "desc": "Verabschieden Sie sich von Robotern. Unsere menschlichen Agenten beantworten alle Ihre Anliegen für das beste Premium-Erlebnis.",
+      "agentTitle": "Zugewiesener Agent",
+      "agentDesc": "Ihr Konto wird von einem dedizierten Account Executive verwaltet, der Ihr Geschäft im Detail kennt.",
+      "guaranteeTitle": "Lösungsgarantie",
+      "guaranteeDesc": "Jedes kritische technische Problem wird sofort an die Technik eskaliert."
+    },
+    "support": {
+      "title": "Support",
+      "b2b": "B2B Technik",
+      "desc": "Wenden Sie sich an das menschliche Technikteam für Unterstützung bei der Plattform, Zahlungen oder Abrechnung.",
+      "helpTitle": "Hilfezentrum",
+      "helpDesc": "Wir bündeln den gesamten Support über ein Smart Ticket Portal, in dem Sie Belege anhängen können.",
+      "newTicketBtn": "Neues Ticket erstellen",
+      "monitorTicketsBtn": "Offene Tickets anzeigen"
+    },
+    "statistics": {
+      "planReq": "Das Modul für erweiterte Statistiken erfordert einen Retailer- oder Premium-Plan. Upgraden Sie, um die Leistung Ihres Publikums im Detail zu analysieren.",
+      "title": "Statistiken",
+      "desc": "Messen Sie die Auswirkungen Ihres Unternehmens und überprüfen Sie Klickmetriken, Anzeigenaufrufe und lokale demografische Daten."
+    },
+    "messages": {
+      "planReq": "Das Modul für Anfragen erfordert einen Starter-Plan oder höher.",
+      "title": "Nachrichten & Anfragen",
+      "desc": "Zentralisieren Sie die lokale Kommunikation und erhalten Sie Leads aus Ihrem Dicilo-Profil.",
+      "emptyBox": "Leerer Posteingang"
+    },
+    "faq": {
+      "title": "Häufig Gestellte Fragen",
+      "desc": "Hier erscheinen alle Nutzerfragen an Ihre KI, die der Bot nicht beantworten konnte.",
+      "empty": "Keine Fragen registriert"
+    },
+    "socialMedia": {
+      "title": "Automatisierte Präsenz",
+      "desc": "Verbinden Sie Ihre sozialen Netzwerke.",
+      "editor": "Programmier-Editor in Entwicklung",
+      "desc1": "Generieren und planen Sie automatisch bis zu ",
+      "descBold": "12 monatliche Posts auf 3 Kanälen",
+      "desc2": " Entworfen, um die Sichtbarkeit Ihres Unternehmens mit KI zu maximieren.",
+      "connectFB": "Facebook Verbinden",
+      "connectIG": "Instagram Verbinden",
+      "connectLI": "LinkedIn Verbinden",
+      "soon": "Bald können Sie Ihren Medienplan in einem Kalender visualisieren und die KI anweisen, Neuigkeiten aus Ihrem Shop zu schreiben."
+    },
+    "editor": {
+      "title": "Mein Geschäftsprofil",
+      "desc": "Bearbeiten Sie die öffentlichen Informationen Ihres Unternehmens.",
+      "editorDev": "Editor in Entwicklung",
+      "noProfile": "Aktives Geschäftsprofil konnte nicht gefunden werden. Bitte kontaktieren Sie den Support, wenn das Problem weiterhin besteht.",
+      "pageTitle": "Inhaltsmanager & Erweiterte Werkzeuge",
+      "pageDesc": "Von hier aus können Sie Texte, Banner, integrierte Gutscheinsysteme und Einladungen an neue Kunden verwalten (Ihr Klassisches Panel)."
     }
   },
   "contact": {
@@ -1555,6 +1676,21 @@
     "success_msg1": "Ihr Meeting wurde erfolgreich geplant für",
     "success_msg2": "Neue Details und der Link zum Anruf erhalten Sie in Kürze per WhatsApp.",
     "close": "Fenster schließen"
+  },
+  "cookies": {
+    "title": "Cookie-Einstellungen",
+    "desc": "Wählen Sie aus, welche Cookies Sie zulassen möchten. Notwendige Cookies sind immer aktiv, da sie für den Betrieb der Website erforderlich sind.",
+    "necessary": "Notwendig",
+    "necessary_desc": "Erforderlich für Sicherheit, Navigation und Grundfunktionen.",
+    "analytics": "Analyse",
+    "analytics_desc": "Hilft uns zu verstehen, wie Besucher die Website nutzen.",
+    "preferences": "Präferenzen",
+    "preferences_desc": "Speichert Sprach- oder Oberflächeneinstellungen.",
+    "marketing": "Marketing",
+    "marketing_desc": "Für Kampagnen, Messung und Remarketing.",
+    "only_necessary": "Nur notwendige",
+    "save": "Einstellungen speichern",
+    "floating_btn": "Cookie-Einstellungen"
   },
   "academia": {
     "subtitle": "Umfassendes Studienzentrum: Videos, Ressourcen und interaktive Nachhilfe.",

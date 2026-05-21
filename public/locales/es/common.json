@@ -16,7 +16,8 @@
       "myNeighborhood": "Mi Barrio",
       "faq": "Preguntas Frecuentes",
       "dicicoin": "DiciCoin",
-      "logout": "Cerrar Sesión"
+      "logout": "Cerrar Sesión",
+      "contact": "Contacto"
     }
   },
   "navigation": {
@@ -763,7 +764,8 @@
         },
         "displayAds": {
           "title": "Display Ads",
-          "description": "Gestiona banners publicitarios dentro de la red Dicilo y sitios asociados."
+          "description": "Gestiona banners publicitarios dentro de la red Dicilo y sitios asociados.",
+          "button": "Gestionar Display Ads"
         },
         "socialProduct": {
           "title": "Campañas de Red",
@@ -771,11 +773,13 @@
         },
         "bannerRedirect": {
           "title": "Banners de Redirección",
-          "description": "Crea banners estratégicos dentro de Dicilo.net que redirijan tráfico cualificado directamente a tus ofertas."
+          "description": "Crea banners estratégicos dentro de Dicilo.net que redirijan tráfico cualificado directamente a tus ofertas.",
+          "button": "Gestionar Redirecciones"
         },
         "sampling": {
           "title": "Campañas \"Pruébalo\"",
-          "description": "Ofrece artículos de prueba o muestras gratuitas a la comunidad para obtener reseñas y feedback genuino."
+          "description": "Ofrece artículos de prueba o muestras gratuitas a la comunidad para obtener reseñas y feedback genuino.",
+          "button": "Gestionar Pruébalo"
         },
         "recommendFriends": {
           "title": "Recomendienda",
@@ -793,7 +797,8 @@
         },
         "hostess": {
           "title": "Hostesen",
-          "description": "Conviertete en un Hostesen y gana en efectivo en nuestros eventos presenciales en mercados locales ofreciendo productos o dicilo.net"
+          "description": "Conviertete en un Hostesen y gana en efectivo en nuestros eventos presenciales en mercados locales ofreciendo productos o dicilo.net",
+          "button": "Gestionar Hostessen"
         }
       }
     },
@@ -1061,6 +1066,7 @@
     "my_postings": "Mis Publicaciones",
     "statistics": "Mis Estadísticas",
     "online_reviews": "Reseña Online",
+    "academia": "Academia",
     "connections": "Conexiones",
     "faqs": "Preguntas Frecuentes",
     "recommendation_section": "Recomienda empresas",
@@ -1530,7 +1536,10 @@
       "greeting": "Mensaje de Bienvenida",
       "prompt": "Instrucciones Centrales (Prompt)",
       "filesBox": "Archivos de Conocimiento",
-      "uploadDoc": "Cargar Archivo PDF"
+      "uploadDoc": "Cargar Archivo PDF",
+      "planReq": "El módulo Asistente I.A. requiere plan Premium o un add-on específico.",
+      "avatarUrl": "URL del Avatar (Opcional)",
+      "alimenta": "Alimenta a tu I.A. con menús, catálogos o preguntas frecuentes en PDF."
     },
     "presentations": {
       "title": "Webinars y Demostraciones",
@@ -1561,10 +1570,14 @@
       "updatePhotos": "Actualiza tus fotos"
     },
     "campaigns": {
-      "title": "Campañas Personalizadas",
-      "desc": "Mide el rendimiento de tus estrategias de email marketing y captación orgánica administradas en Dicilo.",
-      "requestNew": "Solicitar Nueva Campaña",
-      "emptyTitle": "Sin Campañas Activas"
+      "title": "Campañas Individuales",
+      "desc": "Solicita una de nuestras campañas integradas.",
+      "requestNew": "Solicitar Campaña Publicitaria",
+      "emptyTitle": "Sin Campañas Activas",
+      "planReq": "El módulo de Campañas requiere plan Starter o superior.",
+      "ph1": "Ej: Vender stock antiguo, más tráfico web...",
+      "ph2": "Vecindario o Demografía (Opcional)",
+      "ph3": "Ej: Mujeres de 25-45 años cerca de mi local"
     },
     "graphicsVip": {
       "fileTooLargeTitle": "Archivo muy grande",
@@ -1580,7 +1593,8 @@
       "soon": "Próximamente",
       "aiDesc": "Como cliente VIP, recibirás un bono mensual para utilizar la I.A. que elimina fondos automáticamente, dejando el producto transparente y listo para publicidad.",
       "workspace": "Area de Trabajo Visual",
-      "cancelEdit": "Cancelar Edición"
+      "cancelEdit": "Cancelar Edición",
+      "engine": "Cargando el Motor Biográfico de I.A..."
     },
     "whatsapp": {
       "title": "Bandeja Omnicanal (WhatsApp & Telegram)",
@@ -1597,6 +1611,100 @@
       "reviewsDesc": "Configura el bot para enviar plantillas automatizadas invitando al cliente a dejarte 5 estrellas en tu Ficha cuando un chat se cierra.",
       "reviewsButton": "Campañas de Feedback",
       "soonStatus": "Próximamente"
+    },
+    "courses": {
+      "title": "Academia de I.A. (Cursos)",
+      "desc": "Accede a tus 4 cursos anuales para dominar las herramientas de Inteligencia Artificial como comerciante.",
+      "copyTitle": "Copywriting con IA para Tiendas (Próximamente)",
+      "copyDesc": "Aprende a redactar descripciones magnéticas de tus productos y aumentar ventas.",
+      "modulesLabel": "4 Módulos",
+      "imagesTitle": "Imágenes con GenAI (Bloqueado)",
+      "imagesDesc": "Descubre cómo retocar fotografías de catálogo automáticamente.",
+      "juneLabel": "Disponible en Junio",
+      "expertTitle": "Conviértete en un Minorista Experto",
+      "expertDesc": "Los certificados y las grabaciones se activarán una vez hayamos implementado el sistema de aprendizaje en el dashboard de Minorista."
+    },
+    "graphics": {
+      "title": "Herramientas Gráficas",
+      "desc": "Diseña banners, edita fotos de productos y crea anuncios directamente en Dicilo usando nuestras herramientas en la nube.",
+      "editorLabel": "Editor de Retoque",
+      "editorDesc": "Corrección de luz, contraste y recortes para imágenes de catálogo directamente sin Photoshop.",
+      "templatesTitle": "Templates Mágicos",
+      "templatesDesc": "Plantillas de \"Oferta\" y \"En Rebaja\" que se aplican automáticamente sobre tus portadas de producto.",
+      "canvaTitle": "Canva Integrado en Camino",
+      "canvaDesc": "Estamos integrando el SDK visual para que puedas arrastrar y soltar elementos de diseño.",
+      "devLabel": "En Desarrollo"
+    },
+    "leads": {
+      "title": "Captación de Leads",
+      "desc": "Diseña e incrusta un Formulario de Registro General para capturar los datos de clientes potenciales interesados en tus productos o servicios.",
+      "crmTitle": "CRM de Contactos",
+      "crmDesc": "Administra centralizadamente a todos los usuarios que dejen sus consultas, descarguén cupones o llenen tu formulario principal.",
+      "exportTitle": "Exportador Datos",
+      "exportDesc": "Descarga tu base de prospectos en Excel/CSV para utilizarla en plataformas externas de automatización.",
+      "builderTitle": "Constructor de Formularios Inactivo",
+      "builderDesc": "El sistema dinámico para captar datos específicos (como preferencias y presupuestos de tus prospectos) entrará pronto en producción."
+    },
+    "supportPremium": {
+      "title": "Soporte Técnico Premium",
+      "desc": "Canal de atención preferente por email exclusivo para negocios minoristas. Disponible de Lunes a Viernes.",
+      "vipTitle": "Tienes Prioridad VIP",
+      "vipDesc": "Tus consultas omiten la cola general de Dicilo.",
+      "ticketsTitle": "Módulo de Tickets Interno",
+      "ticketsDesc": "Pronto podrás abrir tickets de soporte directamente desde aquí sin tener que ir a tu correo personal."
+    },
+    "supportVip": {
+      "title": "Soporte Individual (No I.A.)",
+      "desc": "Despídete de los robots. Nuestros agentes humanos de nivel superior responderán todas tus inquietudes garantizando la mejor experiencia Premium.",
+      "agentTitle": "Agente Asignado",
+      "agentDesc": "Tu cuenta Dicilo será administrada por un Ejecutivo de Cuenta dedicado que conocerá tu negocio y trayectoria corporativa a detalle.",
+      "guaranteeTitle": "Garantía de Resolución",
+      "guaranteeDesc": "Cualquier problema técnico crítico es escalado a nivel de ingeniería de inmediato en lugar del soporte tradicional."
+    },
+    "support": {
+      "title": "Soporte",
+      "b2b": "Técnico B2B",
+      "desc": "Acude al equipo técnico humano para asistencia sobre la plataforma, pagos o facturación.",
+      "helpTitle": "Centro de Ayuda",
+      "helpDesc": "Para brindarte un mejor servicio, agrupamos toda la asistencia mediante un portal de Tickets Inteligentes donde puedes adjuntar comprobantes o capturas.",
+      "newTicketBtn": "Crear Ticket Nuevo",
+      "monitorTicketsBtn": "Ver Monitoreo de Tickets Abiertos"
+    },
+    "statistics": {
+      "planReq": "El módulo de Estadísticas Avanzadas requiere un plan Retailer o Premium. Sube de plan para analizar el rendimiento de tu audiencia en detalle.",
+      "title": "Estadísticas",
+      "desc": "Mide el impacto de tu negocio y revisa las métricas de clics, vistas de anuncios y demografía local."
+    },
+    "messages": {
+      "planReq": "El módulo de Consultas requiere plan Starter o superior.",
+      "title": "Mensajes & Consultas",
+      "desc": "Centraliza la comunicación local y recibe los leads o consultas enviados desde tu Ficha Dicilo.",
+      "emptyBox": "Bandeja Vacía"
+    },
+    "faq": {
+      "title": "Preguntas Frecuentes",
+      "desc": "Aquí aparecen todas las preguntas que los usuarios han hecho a tu I.A. que el robot no ha sabido responder.",
+      "empty": "No hay preguntas registradas"
+    },
+    "socialMedia": {
+      "title": "Presencia Automatizada",
+      "desc": "Conecta tus redes sociales y unifica tu presencia.",
+      "editor": "Editor de Programación en Desarrollo",
+      "desc1": "Genera y programa automáticamente hasta ",
+      "descBold": "12 posts mensuales en 3 canales",
+      "desc2": ". Diseñado para maximizar la visibilidad de tu negocio con Inteligencia Artificial.",
+      "connectFB": "Conectar Facebook",
+      "connectIG": "Conectar Instagram",
+      "connectLI": "Conectar LinkedIn",
+      "soon": "Pronto podrás visualizar todo tu plan de medios en un calendario e instruir a la IA a escribir las novedades de tu tienda."
+    },
+    "editor": {
+      "title": "Mi Ficha de Negocio",
+      "desc": "Edita la información pública de tu negocio.",
+      "editorDev": "Editor en Desarrollo",
+      "noProfile": "No se pudo localizar el perfil comercial activo. Por favor, contacta con soporte si el problema persiste.",
+      "pageTitle": "Gestor de Contenidos & Herramientas Avanzadas",
+      "pageDesc": "Desde aquí puedes administrar los textos, banners, sistema de cupones integrados y las invitaciones a nuevos clientes (Tu Panel Clásico)."
     }
   },
   "contact": {
@@ -1637,6 +1745,21 @@
     "success_msg1": "Tu reunión ha sido agendada con éxito para el",
     "success_msg2": "Nuevos detalles y el enlace a la llamada te llegarán muy pronto a tu WhatsApp.",
     "close": "Cerrar Ventana"
+  },
+  "cookies": {
+    "title": "Configuración de Cookies",
+    "desc": "Elija qué cookies desea permitir. Las cookies necesarias siempre están activas, ya que son esenciales para el funcionamiento del sitio web.",
+    "necessary": "Necesarias",
+    "necessary_desc": "Requeridas para seguridad, navegación y funciones básicas.",
+    "analytics": "Análisis",
+    "analytics_desc": "Nos ayuda a entender cómo interactúan los visitantes con el sitio web.",
+    "preferences": "Preferencias",
+    "preferences_desc": "Guarda sus preferencias de idioma o interfaz.",
+    "marketing": "Marketing",
+    "marketing_desc": "Utilizadas para campañas, medición y remarketing.",
+    "only_necessary": "Solo necesarias",
+    "save": "Guardar configuración",
+    "floating_btn": "Ajustes de Cookies"
   },
   "academia": {
     "subtitle": "Centro de estudios integral: videos, recursos y tutoría interactiva.",
