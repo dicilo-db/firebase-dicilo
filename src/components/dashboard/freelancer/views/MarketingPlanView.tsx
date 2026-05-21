@@ -10,7 +10,20 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, ChevronLeft, ChevronRight, GripVertical, CheckCircle2, Clock } from 'lucide-react';
+import { 
+    Loader2, 
+    ChevronLeft, 
+    ChevronRight, 
+    GripVertical, 
+    CheckCircle2, 
+    Clock,
+    Instagram,
+    Facebook,
+    MessageCircle,
+    Send,
+    Twitter,
+    Mail
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
     DndContext,
@@ -20,6 +33,9 @@ import {
     DragEndEvent,
     DragStartEvent
 } from '@dnd-kit/core';
+
+// Import our new prep modal
+import { CampaignPrepModal } from './CampaignPrepModal';
 
 // --- COMPONENTS FOR DND ---
 
@@ -55,13 +71,15 @@ function CalendarDay({
     dateStr,
     events,
     isCurrentMonth,
-    onDrop
+    onDrop,
+    onEventClick
 }: {
     day: number | null,
     dateStr?: string,
     events: CalendarEvent[],
     isCurrentMonth: boolean,
-    onDrop?: (campaignId: string, date: string) => void
+    onDrop?: (campaignId: string, date: string) => void,
+    onEventClick?: (event: CalendarEvent) => void
 }) {
     const { setNodeRef, isOver } = useDroppable({
         id: dateStr || `empty-${Math.random()}`,
@@ -73,6 +91,25 @@ function CalendarDay({
 
     const dayEvents = events.filter(e => e.date.startsWith(dateStr!));
     const totalEarnings = dayEvents.reduce((sum, e) => sum + (e.earnings || 0), 0);
+
+    const getPlatformIcon = (platform?: string) => {
+        switch (platform) {
+            case 'instagram':
+                return <Instagram className="h-2.5 w-2.5 text-pink-500 shrink-0" />;
+            case 'facebook':
+                return <Facebook className="h-2.5 w-2.5 text-blue-600 shrink-0" />;
+            case 'whatsapp':
+                return <MessageCircle className="h-2.5 w-2.5 text-green-500 shrink-0" />;
+            case 'telegram':
+                return <Send className="h-2.5 w-2.5 text-sky-500 shrink-0" />;
+            case 'twitter':
+                return <Twitter className="h-2.5 w-2.5 text-slate-800 dark:text-white shrink-0" />;
+            case 'email':
+                return <Mail className="h-2.5 w-2.5 text-red-500 shrink-0" />;
+            default:
+                return <Clock className="h-2.5 w-2.5 text-slate-400 shrink-0" />;
+        }
+    };
 
     return (
         <div
@@ -101,14 +138,22 @@ function CalendarDay({
                 {dayEvents.map(event => (
                     <div
                         key={event.id}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onEventClick?.(event);
+                        }}
                         className={cn(
-                            "text-[10px] px-1.5 py-1 rounded truncate flex items-center gap-1",
+                            "text-[10px] px-1.5 py-1 rounded truncate flex items-center gap-1 cursor-pointer hover:opacity-80 transition-opacity",
                             event.status === 'completed' ? "bg-green-100 text-green-800" : "bg-blue-100 text-blue-800"
                         )}
                         title={event.companyName}
                     >
-                        {event.status === 'completed' ? <CheckCircle2 className="h-2 w-2" /> : <Clock className="h-2 w-2" />}
-                        {event.companyName}
+                        {event.status === 'completed' ? (
+                            <CheckCircle2 className="h-2.5 w-2.5 text-green-600 shrink-0" />
+                        ) : (
+                            getPlatformIcon(event.platform)
+                        )}
+                        <span className="truncate">{event.companyName}</span>
                     </div>
                 ))}
             </div>
@@ -130,6 +175,18 @@ export function MarketingPlanView() {
     const [campaigns, setCampaigns] = useState<Campaign[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [draggedItem, setDraggedItem] = useState<Campaign | null>(null);
+
+    // Modal state
+    const [isPrepModalOpen, setIsPrepModalOpen] = useState(false);
+    const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
+
+    const refreshEvents = async () => {
+        if (!user) return;
+        const plan = await getMarketingPlanEvents(user.uid, currentDate.getMonth() + 1, currentDate.getFullYear());
+        if (plan.success && plan.data) {
+            setEvents(plan.data.events);
+        }
+    };
 
     // Initial Load
     useEffect(() => {
@@ -216,9 +273,6 @@ export function MarketingPlanView() {
 
         if (!campaign || !targetDate) return;
 
-        // Optimistic UI Update or Wait?
-        // Let's call server action first to validate.
-
         if (!user) return;
 
         const dateObj = new Date(targetDate);
@@ -233,9 +287,7 @@ export function MarketingPlanView() {
                 description: `${campaign.companyName} -> ${targetDate}`,
             });
             // Refresh events
-            // We could optimistically add it, but for simplicity reloading events
-            const plan = await getMarketingPlanEvents(user.uid, currentDate.getMonth() + 1, currentDate.getFullYear());
-            if (plan.success && plan.data) setEvents(plan.data.events);
+            await refreshEvents();
         } else {
             toast({
                 title: "Error",
@@ -256,6 +308,11 @@ export function MarketingPlanView() {
         const newDate = new Date(currentDate);
         newDate.setMonth(newDate.getMonth() + delta);
         setCurrentDate(newDate);
+    };
+
+    const handleEventClick = (event: CalendarEvent) => {
+        setSelectedEvent(event);
+        setIsPrepModalOpen(true);
     };
 
     return (
@@ -306,6 +363,7 @@ export function MarketingPlanView() {
                                                 dateStr={dayObj?.dateStr}
                                                 isCurrentMonth={!!dayObj}
                                                 events={events}
+                                                onEventClick={handleEventClick}
                                             />
                                         ))}
                                     </React.Fragment>
@@ -359,6 +417,14 @@ export function MarketingPlanView() {
                     ) : null}
                 </DragOverlay>
             </div>
+
+            {/* Campaign preparation/publishing modal */}
+            <CampaignPrepModal
+                isOpen={isPrepModalOpen}
+                onClose={() => setIsPrepModalOpen(false)}
+                event={selectedEvent}
+                onSuccess={refreshEvents}
+            />
         </DndContext>
     );
 }

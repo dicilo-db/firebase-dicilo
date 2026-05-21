@@ -12,6 +12,10 @@ export interface CalendarEvent {
     status: 'scheduled' | 'completed';
     earnings?: number;
     platform?: string;
+    text?: string;
+    assetId?: string;
+    selectedImageUrl?: string;
+    targetUrl?: string;
 }
 
 export interface MarketingPlanData {
@@ -33,15 +37,7 @@ export async function getMarketingPlanEvents(userId: string, month: number, year
         const endDate = new Date(year, month, 0, 23, 59, 59); // Last day of month
 
         // Fetch actions
-        // Assuming we query 'user_campaign_actions'
-        // We need an index on scheduledAt ideally. Or we just query created_at for completed.
-        // It's tricky because we have two dates: actual creation (completed) and scheduled date (future).
-        // Let's query based on a unified date range logic or check if "any action scheduled OR created in this range".
-        // Simpler: Fetch everything for this user? No, too big. 
-        // Best approach for NoSQL without complex OR queries: Execute two queries and merge.
-
         // 1. Completed Actions (isPublished = true, createdAt in range)
-        // Actually, completed actions usually use 'createdAt' as the event time.
         const completedSnap = await db.collection('user_campaign_actions')
             .where('userId', '==', userId)
             .where('created_at', '>=', admin.firestore.Timestamp.fromDate(startDate))
@@ -51,7 +47,6 @@ export async function getMarketingPlanEvents(userId: string, month: number, year
         // 2. Scheduled Actions (isPublished = false, scheduledAt in range)
         const scheduledSnap = await db.collection('user_campaign_actions')
             .where('userId', '==', userId)
-            // .where('isPublished', '==', false) // Optional if we assume scheduledAt implies future
             .where('scheduledAt', '>=', admin.firestore.Timestamp.fromDate(startDate))
             .where('scheduledAt', '<=', admin.firestore.Timestamp.fromDate(endDate))
             .get();
@@ -61,21 +56,26 @@ export async function getMarketingPlanEvents(userId: string, month: number, year
         // Process Completed
         completedSnap.forEach(doc => {
             const data = doc.data();
+            if (data.status === 'scheduled') return; // Skip scheduled here
             events.push({
                 id: doc.id,
                 campaignId: data.campaignId,
-                companyName: data.companyName || 'Campaign', // Should be stored or fetched
+                companyName: data.companyName || 'Campaign',
                 date: data.created_at.toDate().toISOString(),
                 status: 'completed',
                 earnings: data.rewardAmount || 0,
-                platform: data.platform
+                platform: data.platform || 'instagram',
+                text: data.text || '',
+                assetId: data.assetId || '',
+                selectedImageUrl: data.selectedImageUrl || '',
+                targetUrl: data.targetUrl || ''
             });
         });
 
         // Process Scheduled
         scheduledSnap.forEach(doc => {
             const data = doc.data();
-            // Avoid duplicates if a doc matches both (unlikely for scheduled)
+            // Avoid duplicates
             if (!events.find(e => e.id === doc.id)) {
                 events.push({
                     id: doc.id,
@@ -83,13 +83,17 @@ export async function getMarketingPlanEvents(userId: string, month: number, year
                     companyName: data.companyName || 'Campaign',
                     date: data.scheduledAt.toDate().toISOString(),
                     status: 'scheduled',
-                    earnings: data.estimatedReward || 0, // Future earnings
-                    platform: data.platform
+                    earnings: data.estimatedReward || 0.40, // Future earnings estimate
+                    platform: data.platform || 'instagram',
+                    text: data.text || '',
+                    assetId: data.assetId || '',
+                    selectedImageUrl: data.selectedImageUrl || '',
+                    targetUrl: data.targetUrl || ''
                 });
             }
         });
 
-        return { success: true, data: { events, warnings: [] } }; // calculate warnings on frontend or here
+        return { success: true, data: { events, warnings: [] } };
     } catch (error: any) {
         console.error('Error fetching marketing plan:', error);
         return { success: false, error: error.message };
@@ -99,14 +103,23 @@ export async function getMarketingPlanEvents(userId: string, month: number, year
 /**
  * Sketches a post for a future date.
  */
-export async function scheduleCampaignPost(userId: string, campaignId: string, companyName: string, date: Date): Promise<{ success: boolean; error?: string }> {
+export async function scheduleCampaignPost(
+    userId: string,
+    campaignId: string,
+    companyName: string,
+    date: Date,
+    initialData?: {
+        platform?: string;
+        text?: string;
+        assetId?: string;
+        selectedImageUrl?: string;
+        targetUrl?: string;
+    }
+): Promise<{ success: boolean; error?: string }> {
     try {
         if (!userId) throw new Error('Unauthorized');
 
         // 1. Validate Limit (10 per day per campaign)
-        // Query existing scheduled for that day + completed for that day?
-        // Usually you can't schedule for the past, so we just check scheduled for that target day.
-
         const startOfDay = new Date(date);
         startOfDay.setHours(0, 0, 0, 0);
         const endOfDay = new Date(date);
@@ -134,13 +147,84 @@ export async function scheduleCampaignPost(userId: string, campaignId: string, c
             isPublished: false,
             scheduledAt: admin.firestore.Timestamp.fromDate(date),
             created_at: admin.firestore.FieldValue.serverTimestamp(),
-            platform: 'instagram' // Default or passed
+            platform: initialData?.platform || 'instagram',
+            text: initialData?.text || '',
+            assetId: initialData?.assetId || '',
+            selectedImageUrl: initialData?.selectedImageUrl || '',
+            targetUrl: initialData?.targetUrl || ''
         });
 
         return { success: true };
 
     } catch (error: any) {
         console.error('Error scheduling post:', error);
+        return { success: false, error: error.message };
+    }
+}
+
+/**
+ * Updates a scheduled post's details.
+ */
+export async function updateScheduledPostAction(
+    userId: string,
+    eventId: string,
+    updates: {
+        platform?: string;
+        text?: string;
+        assetId?: string;
+        selectedImageUrl?: string;
+        targetUrl?: string;
+        date?: Date;
+    }
+): Promise<{ success: boolean; error?: string }> {
+    try {
+        if (!userId) throw new Error('Unauthorized');
+        const db = getAdminDb();
+        const docRef = db.collection('user_campaign_actions').doc(eventId);
+        const doc = await docRef.get();
+
+        if (!doc.exists || doc.data()?.userId !== userId) {
+            throw new Error('Event not found or unauthorized');
+        }
+
+        const dataToUpdate: any = {};
+        if (updates.platform !== undefined) dataToUpdate.platform = updates.platform;
+        if (updates.text !== undefined) dataToUpdate.text = updates.text;
+        if (updates.assetId !== undefined) dataToUpdate.assetId = updates.assetId;
+        if (updates.selectedImageUrl !== undefined) dataToUpdate.selectedImageUrl = updates.selectedImageUrl;
+        if (updates.targetUrl !== undefined) dataToUpdate.targetUrl = updates.targetUrl;
+        if (updates.date !== undefined) {
+            dataToUpdate.scheduledAt = admin.firestore.Timestamp.fromDate(updates.date);
+        }
+
+        dataToUpdate.updatedAt = admin.firestore.FieldValue.serverTimestamp();
+
+        await docRef.update(dataToUpdate);
+        return { success: true };
+    } catch (error: any) {
+        console.error('Error updating scheduled post:', error);
+        return { success: false, error: error.message };
+    }
+}
+
+/**
+ * Deletes a scheduled post.
+ */
+export async function deleteScheduledPostAction(userId: string, eventId: string): Promise<{ success: boolean; error?: string }> {
+    try {
+        if (!userId) throw new Error('Unauthorized');
+        const db = getAdminDb();
+        const docRef = db.collection('user_campaign_actions').doc(eventId);
+        const doc = await docRef.get();
+
+        if (!doc.exists || doc.data()?.userId !== userId) {
+            throw new Error('Event not found or unauthorized');
+        }
+
+        await docRef.delete();
+        return { success: true };
+    } catch (error: any) {
+        console.error('Error deleting scheduled post:', error);
         return { success: false, error: error.message };
     }
 }
