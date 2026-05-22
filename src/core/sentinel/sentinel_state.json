@@ -478,7 +478,7 @@
     },
     {
       "path": "/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/src/app/admin/email-templates/[id]/page.tsx",
-      "mtime": 1779453531249.4688
+      "mtime": 1779457880539.898
     },
     {
       "path": "/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/src/app/admin/email-templates/page.tsx",
@@ -1882,7 +1882,7 @@
     },
     {
       "path": "/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/src/core/sentinel/daemon-db-integrity.ts",
-      "mtime": 1779103610720.261
+      "mtime": 1779460121474.7605
     },
     {
       "path": "/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/src/core/sentinel/daemon-file-watcher.ts",
@@ -1894,7 +1894,7 @@
     },
     {
       "path": "/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/src/core/sentinel/sentinel_state.json",
-      "mtime": 1779391123888.6619
+      "mtime": 1779458931464.926
     },
     {
       "path": "/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/src/core/sentinel/synthesis-engine.ts",
@@ -2401,5 +2401,5 @@
       "mtime": 1772960352000
     }
   ],
-  "lastDeployment": "2026-05-22T12:44:14.298Z"
+  "lastDeployment": "2026-05-22T14:28:48.476Z"
 }

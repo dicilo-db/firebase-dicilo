@@ -1,4 +1,4 @@
-import { adminDb } from '@/lib/firebase-admin';
+import { getAdminDb } from '@/lib/firebase-admin';
 
 export interface DbIntegrityReport {
     status: 'ONLINE' | 'OFFLINE' | 'DEGRADED';
@@ -8,6 +8,7 @@ export interface DbIntegrityReport {
 
 export class DbIntegrityDaemon {
     public async checkIntegrity(): Promise<DbIntegrityReport> {
+        const adminDb = getAdminDb();
         const report: DbIntegrityReport = {
             status: 'ONLINE',
             checkedCollections: ['users', 'clients', 'categories', 'trading_offers'],
