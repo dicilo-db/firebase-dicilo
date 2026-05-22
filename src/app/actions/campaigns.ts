@@ -27,6 +27,7 @@ export interface CreateCampaignData {
     };
     targetUrls: { [lang: string]: string[] }; // Map langCode -> URL[]
     assets?: CampaignAsset[]; // New in v2
+    features?: { [key: string]: boolean }; // 14 commercial features/limits
 }
 
 export interface ClientOption {
@@ -143,6 +144,9 @@ export async function createCampaign(idToken: string, data: CreateCampaignData) 
 
             // Assets (v2)
             assets: data.assets || [],
+
+            // Features (SaaS limits)
+            features: data.features || {},
 
             // Meta
             createdBy: user.uid,
@@ -263,6 +267,9 @@ export async function updateCampaign(idToken: string, campaignId: string, data: 
 
             images: data.images,
             assets: data.assets || [], // Update assets
+
+            // Features (SaaS limits)
+            features: data.features || {},
 
             updatedAt: admin.firestore.FieldValue.serverTimestamp()
         };

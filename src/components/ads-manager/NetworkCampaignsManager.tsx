@@ -21,8 +21,9 @@ import { uploadImage } from '@/app/actions/upload';
 import { translateText } from '@/app/actions/translate';
 import { correctText } from '@/app/actions/grammar';
 import Image from 'next/image';
-import { Sparkles, Languages, ChevronDown, Rocket } from 'lucide-react';
+import { Sparkles, Languages, ChevronDown, Rocket, Layers, Check, Lock, ChevronUp } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { Switch } from '@/components/ui/switch';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -61,6 +62,79 @@ const LANG_MAP: Record<string, string> = {
     'en': 'English',
     'de': 'German'
 };
+
+const COMMERCIAL_FEATURES = [
+    {
+        key: 'max_campaigns_retailer',
+        labelDe: 'Verwaltung von bis zu 10 Kampagnen (Retailer)',
+        labelEs: 'Gestión de hasta 10 campañas (Retailer)'
+    },
+    {
+        key: 'max_campaigns_premium',
+        labelDe: 'Verwaltung von bis zu 40 Kampagnen (Premium)',
+        labelEs: 'Gestión de hasta 40 campañas (Premium)'
+    },
+    {
+        key: 'unlimited_content',
+        labelDe: 'Unbegrenzte Veröffentlichung von Inhalten',
+        labelEs: 'Publicación ilimitada de contenidos'
+    },
+    {
+        key: 'competitor_analysis_10',
+        labelDe: 'Analyse von bis zu 10 Wettbewerbern',
+        labelEs: 'Análisis de hasta 10 competidores'
+    },
+    {
+        key: 'competitor_analysis_50',
+        labelDe: 'Analyse von bis zu 50 Wettbewerbern',
+        labelEs: 'Análisis de hasta 50 competidores'
+    },
+    {
+        key: 'twitter_access',
+        labelDe: "Zugriff auf Twitter / 'X'",
+        labelEs: "Acceso a Twitter / 'X'"
+    },
+    {
+        key: 'linkedin_connection',
+        labelDe: 'Verbindung mit LinkedIn',
+        labelEs: 'Conexión con LinkedIn'
+    },
+    {
+        key: 'facebook_connection',
+        labelDe: 'Verbindung mit Facebook',
+        labelEs: 'Conexión con Facebook'
+    },
+    {
+        key: 'reporting_tools',
+        labelDe: 'Zugriff auf Reporting-Tools',
+        labelEs: 'Acceso a herramientas de informes'
+    },
+    {
+        key: 'pdf_reports',
+        labelDe: 'Berichte als PDF',
+        labelEs: 'Informes en PDF'
+    },
+    {
+        key: 'link_shortener',
+        labelDe: 'Link-Kürzung-Seiten',
+        labelEs: 'Acortador de enlaces'
+    },
+    {
+        key: 'unlimited_history',
+        labelDe: 'Zugriff auf Analysen mit unbegrenzter Historie per Länder',
+        labelEs: 'Acceso a análisis con historial ilimitado por países'
+    },
+    {
+        key: 'canva_integration',
+        labelDe: 'Integration mit Canva',
+        labelEs: 'Integración con Canva'
+    },
+    {
+        key: 'google_drive_integration',
+        labelDe: 'Integration mit Google Drive Individuell',
+        labelEs: 'Integración individual con Google Drive'
+    }
+];
 
 const PERFORMANCE_TRANSLATIONS: Record<string, any> = {
     es: {
@@ -186,6 +260,7 @@ export function NetworkCampaignsManager({ onBack, clientId }: { onBack?: () => v
         targetUrls: {} as Record<string, string[]>,
         images: [] as string[],
         assets: [] as CampaignAsset[],
+        features: {} as Record<string, boolean>,
     });
 
     const [content, setContent] = useState<Record<string, ContentBlock>>({
@@ -203,6 +278,9 @@ export function NetworkCampaignsManager({ onBack, clientId }: { onBack?: () => v
 
     // AI State
     const [aiLoading, setAiLoading] = useState<string | null>(null); // 'lang-field' identifier
+
+    // Collapsible features panel state
+    const [featuresPanelOpen, setFeaturesPanelOpen] = useState(false);
 
     // Initial Load
     useEffect(() => {
@@ -327,6 +405,7 @@ export function NetworkCampaignsManager({ onBack, clientId }: { onBack?: () => v
             targetUrls: {} as Record<string, string[]>,
             images: [] as string[],
             assets: [] as CampaignAsset[],
+            features: {} as Record<string, boolean>,
         });
         setContent({
             es: { title: '', description: '', suggestedText: '' },
@@ -448,7 +527,8 @@ export function NetworkCampaignsManager({ onBack, clientId }: { onBack?: () => v
                 return normalized;
             })(),
             images: campaign.images || [],
-            assets: initialAssets
+            assets: initialAssets,
+            features: campaign.features || {},
         });
 
         // Map content
@@ -1141,6 +1221,56 @@ export function NetworkCampaignsManager({ onBack, clientId }: { onBack?: () => v
                     </Card>
                 </div>
 
+                {/* B2B Commercial Features Checklist */}
+                <Card className="shadow-sm border-slate-100 overflow-hidden bg-white dark:bg-slate-900">
+                    <CardHeader className="bg-slate-50/50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-800">
+                        <CardTitle className="text-lg font-bold flex items-center gap-2 text-slate-900 dark:text-white">
+                            <Layers className="h-5 w-5 text-orange-600" />
+                            Inbegriffene Funktionen / Características Incluidas
+                        </CardTitle>
+                        <CardDescription className="text-sm">
+                            Gewerbliche Features und Limits für diese Kampagne / Características y límites comerciales incluidos para esta campaña
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent className="p-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {COMMERCIAL_FEATURES.map(feat => {
+                                const isEnabled = !!selectedCampaign.features?.[feat.key];
+                                return (
+                                    <div 
+                                        key={feat.key} 
+                                        className={`flex items-center gap-3.5 p-3.5 rounded-xl border transition-all ${
+                                            isEnabled 
+                                                ? 'bg-emerald-50/30 border-emerald-100 dark:bg-emerald-950/10 dark:border-emerald-900/30' 
+                                                : 'bg-slate-50/50 border-slate-100 dark:bg-slate-900/20 dark:border-slate-800'
+                                        }`}
+                                    >
+                                        <div className={`p-2 rounded-lg shrink-0 ${
+                                            isEnabled 
+                                                ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400' 
+                                                : 'bg-slate-200 text-slate-400 dark:bg-slate-800 dark:text-slate-500'
+                                        }`}>
+                                            {isEnabled ? (
+                                                <Check className="h-4 w-4 stroke-[3]" />
+                                            ) : (
+                                                <Lock className="h-4 w-4" />
+                                            )}
+                                        </div>
+                                        <div className="min-w-0">
+                                            <p className={`text-xs font-bold leading-tight ${isEnabled ? 'text-slate-800 dark:text-slate-200' : 'text-slate-500 dark:text-slate-400'}`}>
+                                                {feat.labelDe}
+                                            </p>
+                                            <p className="text-[10px] text-muted-foreground mt-0.5 leading-tight">
+                                                {feat.labelEs}
+                                            </p>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </CardContent>
+                </Card>
+
                 {/* Freelancers List Table */}
                 <Card className="shadow-sm border-slate-100">
                     <CardHeader className="border-b border-slate-50">
@@ -1433,6 +1563,56 @@ export function NetworkCampaignsManager({ onBack, clientId }: { onBack?: () => v
                                 </p>
                             )}
                         </div>
+
+                        {/* 2.8 Gewerbliche Features & Limits (Admin Only) */}
+                        {!clientId && (
+                            <div className="border border-slate-200 dark:border-slate-800 rounded-lg overflow-hidden bg-slate-50/20">
+                                <button
+                                    type="button"
+                                    onClick={() => setFeaturesPanelOpen(!featuresPanelOpen)}
+                                    className="w-full flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 font-semibold text-slate-800 dark:text-slate-200 hover:bg-slate-100/80 transition-colors"
+                                >
+                                    <span className="flex items-center gap-2">
+                                        <Layers className="h-5 w-5 text-orange-600 animate-pulse" />
+                                        Gewerbliche Features & Limits / Características y Límites B2B
+                                    </span>
+                                    {featuresPanelOpen ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+                                </button>
+                                
+                                {featuresPanelOpen && (
+                                    <div className="p-5 grid grid-cols-1 md:grid-cols-2 gap-5 bg-white dark:bg-slate-950 animate-in fade-in-50 duration-200">
+                                        {COMMERCIAL_FEATURES.map(feat => (
+                                            <div 
+                                                key={feat.key} 
+                                                className="flex items-center justify-between p-3.5 rounded-xl border border-slate-100 dark:border-slate-800 hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50/30 transition-all"
+                                            >
+                                                <div className="space-y-0.5 max-w-[80%]">
+                                                    <Label htmlFor={`switch-${feat.key}`} className="text-sm font-semibold block text-slate-800 dark:text-slate-200 leading-tight">
+                                                        {feat.labelDe}
+                                                    </Label>
+                                                    <span className="text-[11px] text-muted-foreground block leading-tight">
+                                                        {feat.labelEs}
+                                                    </span>
+                                                </div>
+                                                <Switch
+                                                    id={`switch-${feat.key}`}
+                                                    checked={!!formData.features[feat.key]}
+                                                    onCheckedChange={(checked) => {
+                                                        setFormData(prev => ({
+                                                            ...prev,
+                                                            features: {
+                                                                ...prev.features,
+                                                                [feat.key]: checked
+                                                            }
+                                                        }));
+                                                    }}
+                                                />
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        )}
 
                         {/* 3. Assets (V2) */}
                         <div className="space-y-4 pt-4 border-t">

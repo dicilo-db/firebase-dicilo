@@ -75,6 +75,9 @@ import { translateText, EmailTemplate, saveTemplate } from '@/actions/email-temp
 import { correctText } from '@/app/actions/grammar';
 import { awardMarketingSharePoints } from '@/app/actions/dicipoints';
 
+import { storage } from '@/lib/firebase';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+
 type Friend = {
     name: string;
     email: string;
@@ -88,6 +91,7 @@ interface EmailMarketingComposerProps {
     uniqueCode?: string;
     referrerName?: string;
     isAdmin?: boolean;
+    clientId?: string;
 }
 
 export function EmailMarketingComposer({ 
@@ -95,11 +99,16 @@ export function EmailMarketingComposer({
     onBack, 
     uniqueCode: propUniqueCode, 
     referrerName: propReferrerName,
-    isAdmin = false
+    isAdmin = false,
+    clientId
 }: EmailMarketingComposerProps) {
     const { t } = useTranslation(['common', 'admin']);
     const { toast } = useToast();
     const { user } = useAuth();
+
+    const canEdit = isAdmin || (!!clientId && template.clientId === clientId);
+    const [images, setImages] = useState<string[]>([]);
+    const [uploadingImage, setUploadingImage] = useState(false);
 
     const [isLoading, setIsLoading] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
@@ -197,9 +206,9 @@ export function EmailMarketingComposer({
     // Shortener / Link Logic
     const generatedLink = `https://dicilo.net/registrieren?ref=${propUniqueCode || user?.uid || 'promo'}&type=retailer`;
 
-    const allImages = template.images && template.images.length > 0 
-        ? template.images 
-        : (template.imageUrl ? [template.imageUrl] : ['https://placehold.co/600x400/png?text=No+Image']);
+    const allImages = images.length > 0 
+        ? images 
+        : ['https://placehold.co/600x400/png?text=No+Image'];
     
     const selectedImageUrl = allImages[selectedImageIndex] || allImages[0];
 
@@ -222,7 +231,8 @@ export function EmailMarketingComposer({
                         return acc;
                     }, {} as { [key: string]: { subject: string, body: string } })
                 },
-                images: allImages, // Save current images state if needed
+                images: images,
+                imageUrl: images.length > 0 ? images[0] : undefined,
                 rewardAmount: rewardAmount
             };
 
@@ -240,6 +250,50 @@ export function EmailMarketingComposer({
             });
         } finally {
             setIsSaving(false);
+        }
+    };
+
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!canEdit) return;
+        if (e.target.files && e.target.files.length > 0) {
+            setUploadingImage(true);
+            try {
+                const newImages = [...images];
+                for (let i = 0; i < e.target.files.length; i++) {
+                    const file = e.target.files[i];
+                    const storageRef = ref(storage, `email-templates/${clientId || 'global'}/${Date.now()}_${file.name}`);
+                    await uploadBytes(storageRef, file);
+                    const url = await getDownloadURL(storageRef);
+                    newImages.push(url);
+                }
+                setImages(newImages);
+                if (newImages.length === 1) {
+                    setSelectedImageIndex(0);
+                }
+                toast({
+                    title: "Imagen subida",
+                    description: "La imagen se ha subido y guardado correctamente.",
+                    className: "bg-green-600 text-white"
+                });
+            } catch (error) {
+                console.error("Upload error:", error);
+                toast({
+                    title: "Error de subida",
+                    description: "Fallo al subir la imagen a Firebase Storage.",
+                    variant: "destructive"
+                });
+            } finally {
+                setUploadingImage(false);
+            }
+        }
+    };
+
+    const removeImage = (index: number) => {
+        if (!canEdit) return;
+        const newImages = images.filter((_, i) => i !== index);
+        setImages(newImages);
+        if (selectedImageIndex >= newImages.length) {
+            setSelectedImageIndex(Math.max(0, newImages.length - 1));
         }
     };
 
@@ -343,6 +397,10 @@ export function EmailMarketingComposer({
                 }
             });
             setTexts(initialTexts);
+
+            setImages(template.images && template.images.length > 0 
+                ? template.images 
+                : (template.imageUrl ? [template.imageUrl] : []));
             
             // Set first available lang as active if 'es' not present
             if (!template.versions['es']) {
@@ -642,12 +700,37 @@ export function EmailMarketingComposer({
                                                 <Check className="h-2.5 w-2.5" />
                                             </div>
                                         )}
+                                        {canEdit && images.length > 0 && (
+                                            <Button
+                                                variant="destructive"
+                                                size="icon"
+                                                className="absolute top-1 right-1 h-5 w-5 rounded-full z-10 shadow"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    removeImage(i);
+                                                }}
+                                            >
+                                                <Trash2 className="h-2.5 w-2.5" />
+                                            </Button>
+                                        )}
                                     </div>
                                 ))}
-                                <div className="aspect-square flex flex-col items-center justify-center border-2 border-dashed border-slate-200 rounded-xl hover:border-purple-300 hover:bg-purple-50/50 transition-colors cursor-pointer group">
-                                    <Plus className="h-6 w-6 text-slate-300 group-hover:text-purple-400" />
-                                    <span className="text-[10px] font-bold text-slate-400 group-hover:text-purple-500 mt-1">AÑADIR</span>
-                                </div>
+                                {canEdit && (
+                                    <label className="aspect-square flex flex-col items-center justify-center border-2 border-dashed border-slate-200 rounded-xl hover:border-purple-300 hover:bg-purple-50/50 transition-colors cursor-pointer group">
+                                        {uploadingImage ? <Loader2 className="h-6 w-6 text-purple-500 animate-spin" /> : <Plus className="h-6 w-6 text-slate-300 group-hover:text-purple-400" />}
+                                        <span className="text-[10px] font-bold text-slate-400 group-hover:text-purple-500 mt-1">
+                                            {uploadingImage ? 'SUBIENDO...' : 'AÑADIR'}
+                                        </span>
+                                        <input
+                                            type="file"
+                                            multiple
+                                            accept="image/*"
+                                            onChange={handleImageUpload}
+                                            disabled={uploadingImage}
+                                            className="hidden"
+                                        />
+                                    </label>
+                                )}
                             </div>
                         </CardContent>
                     </Card>
@@ -721,7 +804,7 @@ export function EmailMarketingComposer({
                                                         onChange={(e) => setTexts(prev => ({ ...prev, [lang]: { ...prev[lang], subject: e.target.value } }))}
                                                         placeholder="Escribe un asunto atractivo..."
                                                         className="bg-white border-slate-200 focus-visible:ring-purple-500 h-11 text-base shadow-sm"
-                                                        readOnly={!isAdmin}
+                                                        readOnly={!canEdit}
                                                     />
                                                 </div>
                                                 <div className="space-y-2 relative">
@@ -732,7 +815,7 @@ export function EmailMarketingComposer({
                                                             onChange={(e) => setTexts(prev => ({ ...prev, [lang]: { ...prev[lang], body: e.target.value } }))}
                                                             className="min-h-[300px] resize-none focus-visible:ring-purple-500 bg-white border-slate-200 text-sm leading-relaxed p-5 shadow-sm rounded-xl transition-shadow hover:shadow-md"
                                                             placeholder="Describe tu oferta de forma persuasiva..."
-                                                            readOnly={!isAdmin}
+                                                            readOnly={!canEdit}
                                                         />
                                                         <div className="absolute top-4 right-4 flex flex-col gap-2 scale-90 md:group-hover:scale-100 transition-transform">
                                                             <Button
@@ -1093,7 +1176,7 @@ export function EmailMarketingComposer({
                                     </DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
-                            {isAdmin && (
+                            {canEdit && (
                                 <Button 
                                     onClick={handleSave} 
                                     disabled={isSaving}

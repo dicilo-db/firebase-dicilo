@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { getTemplate, saveTemplate, translateText, deleteTemplate, EmailTemplate } from '@/actions/email-templates';
+import { getTemplate, saveTemplate, translateText, deleteTemplate, EmailTemplate, getAllClients } from '@/actions/email-templates';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -34,8 +34,10 @@ export default function EditTemplatePage() {
     const searchParams = useSearchParams();
     const defaultCategory = searchParams.get('category') || 'email_marketing';
 
+    const [clients, setClients] = useState<{ id: string; name: string; }[]>([]);
     const [template, setTemplate] = useState<EmailTemplate>({
         name: '',
+        clientId: '',
         category: (defaultCategory as any),
         versions: {
             'es': { subject: '', body: '' },
@@ -91,6 +93,16 @@ export default function EditTemplatePage() {
     };
 
     useEffect(() => {
+        const fetchClients = async () => {
+            try {
+                const list = await getAllClients();
+                setClients(list);
+            } catch (err) {
+                console.error("Error loading clients:", err);
+            }
+        };
+        fetchClients();
+
         if (!isNew && typeof id === 'string') {
             const fetchTpl = async () => {
                 try {
@@ -99,6 +111,7 @@ export default function EditTemplatePage() {
                         // Migration & Initialization: Ensure images array exists and all expected langs have values
                         const migratedTemplate = {
                             ...data,
+                            clientId: data.clientId || '',
                             images: data.images || (data.imageUrl ? [data.imageUrl] : []),
                             versions: {
                                 // Default placeholders to avoid hydration/undefined issues
@@ -377,6 +390,26 @@ export default function EditTemplatePage() {
                                     Superadmin
                                 </Button>
                             </div>
+                        </div>
+
+                        {/* Assign to Client / Asignar a Cliente */}
+                        <div className="space-y-2 pt-4 border-t">
+                            <Label className="text-xs font-bold text-slate-500 uppercase">Asignar a Cliente (SaaS B2B)</Label>
+                            <select
+                                className="w-full p-2 bg-background border rounded-md text-sm focus:ring-2 focus:ring-purple-600 focus:outline-none"
+                                value={template.clientId || ''}
+                                onChange={(e) => handleChange('clientId', e.target.value || '')}
+                            >
+                                <option value="">Ninguno (Plantilla Global)</option>
+                                {clients.map(client => (
+                                    <option key={client.id} value={client.id}>
+                                        {client.name}
+                                    </option>
+                                ))}
+                            </select>
+                            <p className="text-[10px] text-muted-foreground italic">
+                                Si se selecciona un cliente, esta plantilla solo será visible y editable para ese cliente.
+                            </p>
                         </div>
                     </div>
                 </div>

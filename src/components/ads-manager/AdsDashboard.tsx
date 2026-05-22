@@ -16,6 +16,7 @@ import { MarketingShareCard } from './MarketingShareCard';
 import { EmailMarketingComposer } from './EmailMarketingComposer';
 import { EmailTemplate } from '@/actions/email-templates';
 import { DisplayAdsManager } from './DisplayAdsManager';
+import { EmailMarketingManager } from './EmailMarketingManager';
 import { BannerRedirectManager } from './BannerRedirectManager';
 import { SamplingManager } from './SamplingManager';
 import { HostessManager } from './HostessManager';
@@ -31,7 +32,6 @@ export default function AdsDashboard({ clientId }: AdsDashboardProps = {}) {
     const { t } = useTranslation('common');
     const [isSeeding, setIsSeeding] = useState(false);
     const [currentView, setCurrentView] = useState<View>('overview');
-    const [selectedTemplate, setSelectedTemplate] = useState<EmailTemplate | null>(null);
 
     const handleSeedData = async () => {
         setIsSeeding(true);
@@ -77,14 +77,11 @@ export default function AdsDashboard({ clientId }: AdsDashboardProps = {}) {
         return <HostessManager onBack={() => setCurrentView('overview')} clientId={clientId} />;
     }
 
-    if (currentView === 'email-marketing' && selectedTemplate) {
+    if (currentView === 'email-marketing') {
         return (
-            <EmailMarketingComposer 
-                template={selectedTemplate} 
-                onBack={() => {
-                    setCurrentView('overview');
-                    setSelectedTemplate(null);
-                }} 
+            <EmailMarketingManager 
+                clientId={clientId} 
+                onBack={() => setCurrentView('overview')} 
             />
         );
     }
@@ -143,8 +140,7 @@ export default function AdsDashboard({ clientId }: AdsDashboardProps = {}) {
 
                 {/* Module: Email Marketing (ACTIVE & INTERACTIVE) */}
                 <MarketingShareCard 
-                    onManage={(template) => {
-                        setSelectedTemplate(template);
+                    onManage={() => {
                         setCurrentView('email-marketing');
                     }} 
                 />

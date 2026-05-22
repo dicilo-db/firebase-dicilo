@@ -8,6 +8,7 @@ const db = getAdminDb();
 export type EmailTemplate = {
     id?: string;
     name: string;
+    clientId?: string | null;
     category: 'network_campaigns' | 'email_marketing' | 'referrals' | 'system' | 'marketing' | 'referral';
     versions: {
         [key: string]: {
@@ -26,7 +27,7 @@ export type EmailTemplate = {
     updatedAt?: string;
 };
 
-export async function getTemplates(forAdmin: boolean = false) {
+export async function getTemplates(forAdmin: boolean = false, clientId?: string) {
     try {
         const snapshot = await db.collection('email_templates').get();
         const templates: EmailTemplate[] = [];
@@ -37,7 +38,22 @@ export async function getTemplates(forAdmin: boolean = false) {
             if (!forAdmin && SYSTEM_TEMPLATES.includes(doc.id)) {
                 return;
             }
-            templates.push({ id: doc.id, ...doc.data() } as EmailTemplate);
+            const data = doc.data() as EmailTemplate;
+
+            // Multi-tenant filtering
+            if (clientId) {
+                // Show templates that belong to the client OR are global (no clientId or clientId is null)
+                if (data.clientId && data.clientId !== clientId) {
+                    return;
+                }
+            } else if (!forAdmin) {
+                // Freelancer isolation: Freelancers only see global templates (no clientId / null)
+                if (data.clientId) {
+                    return;
+                }
+            }
+
+            templates.push({ id: doc.id, ...data } as EmailTemplate);
         });
         return templates;
     } catch (error) {
@@ -61,24 +77,47 @@ export async function saveTemplate(template: EmailTemplate) {
     try {
         const { id, ...data } = template;
         const now = new Date().toISOString();
+        const cleanData = {
+            ...data,
+            clientId: data.clientId || null
+        };
 
         if (id) {
             await db.collection('email_templates').doc(id).update({
-                ...data,
+                ...cleanData,
                 updatedAt: now
             });
-            return { id, ...data, updatedAt: now };
+            return { id, ...cleanData, updatedAt: now };
         } else {
             const res = await db.collection('email_templates').add({
-                ...data,
+                ...cleanData,
                 createdAt: now,
                 updatedAt: now
             });
-            return { id: res.id, ...data, createdAt: now, updatedAt: now };
+            return { id: res.id, ...cleanData, createdAt: now, updatedAt: now };
         }
     } catch (error) {
         console.error('Error saving template:', error);
         throw new Error('Failed to save template');
+    }
+}
+
+export async function getAllClients() {
+    try {
+        const snapshot = await db.collection('clients').get();
+        const clients: { id: string; name: string; }[] = [];
+        snapshot.forEach((doc) => {
+            const data = doc.data();
+            clients.push({
+                id: doc.id,
+                name: data.clientName || data.name || 'Unnamed Client'
+            });
+        });
+        clients.sort((a, b) => a.name.localeCompare(b.name));
+        return clients;
+    } catch (error) {
+        console.error('Error fetching clients:', error);
+        throw new Error('Failed to fetch clients');
     }
 }
 
