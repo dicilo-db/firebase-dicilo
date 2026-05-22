@@ -392,25 +392,7 @@ export default function EditTemplatePage() {
                             </div>
                         </div>
 
-                        {/* Assign to Client / Asignar a Cliente */}
-                        <div className="space-y-2 pt-4 border-t">
-                            <Label className="text-xs font-bold text-slate-500 uppercase">Asignar a Cliente (SaaS B2B)</Label>
-                            <select
-                                className="w-full p-2 bg-background border rounded-md text-sm focus:ring-2 focus:ring-purple-600 focus:outline-none"
-                                value={template.clientId || ''}
-                                onChange={(e) => handleChange('clientId', e.target.value || '')}
-                            >
-                                <option value="">Ninguno (Plantilla Global)</option>
-                                {clients.map(client => (
-                                    <option key={client.id} value={client.id}>
-                                        {client.name}
-                                    </option>
-                                ))}
-                            </select>
-                            <p className="text-[10px] text-muted-foreground italic">
-                                Si se selecciona un cliente, esta plantilla solo será visible y editable para ese cliente.
-                            </p>
-                        </div>
+
                     </div>
                 </div>
 
@@ -442,6 +424,26 @@ export default function EditTemplatePage() {
                                         onChange={(e) => handleVersionChange(lang, 'body', e.target.value)}
                                     />
                                     <p className="text-xs text-muted-foreground">{t('emailTemplates.editor.htmlSupport')}</p>
+                                </div>
+
+                                {/* Assign to Client / Asignar a Cliente */}
+                                <div className="space-y-2 pt-4 border-t">
+                                    <Label className="text-xs font-bold text-slate-500 uppercase">Asignar a Cliente (SaaS B2B)</Label>
+                                    <select
+                                        className="w-full p-2 bg-background border rounded-md text-sm focus:ring-2 focus:ring-purple-600 focus:outline-none font-medium"
+                                        value={template.clientId || ''}
+                                        onChange={(e) => handleChange('clientId', e.target.value || '')}
+                                    >
+                                        <option value="">Ninguno (Plantilla Global)</option>
+                                        {clients.map(client => (
+                                            <option key={client.id} value={client.id}>
+                                                {client.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    <p className="text-[10px] text-muted-foreground italic">
+                                        Si se selecciona un cliente, esta plantilla solo será visible y editable para ese cliente.
+                                    </p>
                                 </div>
                             </TabsContent>
                         ))}
