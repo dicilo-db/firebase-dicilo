@@ -3,7 +3,7 @@ import { getAdminDb } from '@/lib/firebase-admin';
 /**
  * Normalizes a string for comparison (lowercase, trimmed, removed multiple spaces)
  */
-const normalize = (text: any) => {
+export const normalize = (text: any) => {
   if (!text || typeof text !== 'string') return '';
   return String(text).trim().toLowerCase().replace(/\s+/g, ' ');
 };

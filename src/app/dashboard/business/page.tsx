@@ -7,15 +7,54 @@ import NativeBookingDialog from '@/components/shared/NativeBookingDialog';
 import { 
     Zap, Eye, MousePointerClick, CalendarRange, 
     Share2, MapPin, Megaphone, Briefcase, BarChart, 
-    Smartphone, UserPlus, Wrench, Coins, Wallet, MessageSquare
+    Smartphone, UserPlus, Wrench, Coins, Wallet, MessageSquare, Loader2
 } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
+import { useState, useEffect } from 'react';
+import { getBusinessDashboardStats, BusinessDashboardStats } from '@/app/actions/business-dashboard';
 
 export default function BusinessDashboardPage() {
-    const { name, plan } = useBusinessAccess();
+    const { name, plan, clientId, businessId } = useBusinessAccess();
+    const { user } = useAuth();
     const { t } = useTranslation('common');
+    
+    const [stats, setStats] = useState<BusinessDashboardStats | null>(null);
+    const [loadingStats, setLoadingStats] = useState(true);
+
+    const activeId = businessId || clientId;
+
+    useEffect(() => {
+        let isMounted = true;
+        
+        async function fetchStats() {
+            if (!user?.uid) return;
+            try {
+                const res = await getBusinessDashboardStats(user.uid, activeId);
+                if (res.success && res.stats && isMounted) {
+                    setStats(res.stats);
+                }
+            } catch (e) {
+                console.error("Failed to load business dashboard stats", e);
+            } finally {
+                if (isMounted) setLoadingStats(false);
+            }
+        }
+
+        if (user?.uid) {
+            fetchStats();
+        } else {
+            setLoadingStats(false);
+        }
+
+        return () => {
+            isMounted = false;
+        };
+    }, [user?.uid, activeId]);
+
+    const showLoading = loadingStats && !stats;
 
     return (
-        <div className="p-8 max-w-6xl mx-auto space-y-8">
+        <div className="p-8 max-w-6xl mx-auto space-y-8 animate-in fade-in duration-500">
             <div className="pb-4 border-b border-slate-200">
                 <h1 className="text-3xl font-bold tracking-tight text-slate-900" dangerouslySetInnerHTML={{ __html: t('business.dashboard.title', 'Portal <span class="text-blue-600">B2B</span>').replace('span className', 'span class') }}></h1>
                 <p className="text-slate-500 mt-2 text-lg" dangerouslySetInnerHTML={{ __html: t('business.dashboard.welcome', { name: name || 'Empresa', defaultValue: `Hola, <strong>${name || 'Empresa'}</strong>. Qué bueno tenerte de vuelta.` }) }}></p>
@@ -42,7 +81,9 @@ export default function BusinessDashboardPage() {
                             <Eye className="w-4 h-4 text-emerald-500" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold text-slate-900">---</div>
+                            <div className="text-2xl font-bold text-slate-900">
+                                {showLoading ? <Loader2 className="h-5 w-5 animate-spin text-slate-400" /> : (stats?.visits ?? 0)}
+                            </div>
                             <p className="text-xs text-slate-500 mt-1">{t('business.dashboard.visitsDesc', 'Últimos 30 días')}</p>
                         </CardContent>
                     </Card>
@@ -53,18 +94,22 @@ export default function BusinessDashboardPage() {
                             <MousePointerClick className="w-4 h-4 text-purple-500" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold text-slate-900">---</div>
+                            <div className="text-2xl font-bold text-slate-900">
+                                {showLoading ? <Loader2 className="h-5 w-5 animate-spin text-slate-400" /> : (stats?.clicks ?? 0)}
+                            </div>
                             <p className="text-xs text-slate-500 mt-1">{t('business.dashboard.clicksDesc', 'Hacia tu web / teléfono')}</p>
                         </CardContent>
                     </Card>
 
                     <Card className="bg-white border-slate-200 shadow-sm">
                         <CardHeader className="flex flex-row items-center justify-between pb-2">
-                            <CardTitle className="text-sm font-medium text-slate-500 uppercase tracking-wider">{t('business.dashboard.couponsTitle', 'Cupones Usados')}</CardTitle>
+                            <CardTitle className="text-sm font-medium text-slate-500 uppercase tracking-wider">{t('business.dashboard.couponsTitle', 'Cupones Reclamados')}</CardTitle>
                             <CalendarRange className="w-4 h-4 text-rose-500" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold text-slate-900">---</div>
+                            <div className="text-2xl font-bold text-slate-900">
+                                {showLoading ? <Loader2 className="h-5 w-5 animate-spin text-slate-400" /> : (stats?.couponsUsed ?? 0)}
+                            </div>
                             <p className="text-xs text-slate-500 mt-1">{t('business.dashboard.couponsDesc', 'Canjes validados')}</p>
                         </CardContent>
                     </Card>
@@ -77,11 +122,13 @@ export default function BusinessDashboardPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <Card className="bg-gradient-to-br from-indigo-500 to-blue-600 border-none shadow-md text-white">
                         <CardHeader className="flex flex-row items-center justify-between pb-2">
-                            <CardTitle className="text-sm font-medium text-blue-100 uppercase tracking-wider">{t('business.dashboard.dicipointsTitle', 'DiciPoints (Rewards)')}</CardTitle>
+                            <CardTitle className="text-sm font-medium text-blue-100 uppercase tracking-wider">{t('business.dashboard.dicipointsTitle', 'Dicilo Puntos (DP)')}</CardTitle>
                             <Coins className="w-5 h-5 text-yellow-300" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-3xl font-bold">---</div>
+                            <div className="text-3xl font-bold">
+                                {showLoading ? <Loader2 className="h-6 w-6 animate-spin text-blue-200" /> : (stats?.diciPoints ?? 0)}
+                            </div>
                             <p className="text-xs text-blue-200 mt-1">{t('business.dashboard.dicipointsDesc', 'Puntos disponibles para anuncios')}</p>
                         </CardContent>
                     </Card>
@@ -92,7 +139,9 @@ export default function BusinessDashboardPage() {
                             <Wallet className="w-5 h-5 text-white" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-3xl font-bold">€ ---</div>
+                            <div className="text-3xl font-bold">
+                                {showLoading ? <Loader2 className="h-6 w-6 animate-spin text-teal-200" /> : `€ ${(stats?.prepaidEur ?? 0).toFixed(2)}`}
+                            </div>
                             <p className="text-xs text-teal-200 mt-1">{t('business.dashboard.prepaidDesc', 'Fondos añadidos a tu billetera')}</p>
                         </CardContent>
                     </Card>
@@ -131,7 +180,9 @@ export default function BusinessDashboardPage() {
                             <Megaphone className="w-4 h-4 text-orange-500" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-xl font-bold text-slate-900 mt-1">{t('business.dashboard.campaignsStatus', '0 Activas')}</div>
+                            <div className="text-xl font-bold text-slate-900 mt-1">
+                                {showLoading ? <Loader2 className="h-5 w-5 animate-spin text-slate-400" /> : `${stats?.totalCoupons ?? 0} Activas`}
+                            </div>
                             <p className="text-xs text-slate-500 mt-1">{t('business.dashboard.campaignsDesc', 'Usa tus DiciPoints')}</p>
                         </CardContent>
                     </Card>
@@ -142,8 +193,13 @@ export default function BusinessDashboardPage() {
                             <Briefcase className="w-4 h-4 text-indigo-500" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-xl font-bold text-slate-900 mt-1">---</div>
-                            <p className="text-xs text-slate-500 mt-1">{t('business.dashboard.inquiriesDesc', 'Nuevos leads (B2B)')}</p>
+                            <div className="text-xl font-bold text-slate-900 mt-1">
+                                {showLoading ? <Loader2 className="h-5 w-5 animate-spin text-slate-400" /> : (stats?.inquiriesCount ?? 0)}
+                                {stats && stats.unreadInquiriesCount > 0 && (
+                                    <span className="text-xs text-emerald-600 ml-2 font-medium">({stats.unreadInquiriesCount} {t('business.dashboard.unread', 'nuevas')})</span>
+                                )}
+                            </div>
+                            <p className="text-xs text-slate-500 mt-1">{t('business.dashboard.inquiriesDesc', 'Nuevos leads (B2C)')}</p>
                         </CardContent>
                     </Card>
 
