@@ -70,8 +70,18 @@ export const sendUserPasswordReset = onCall(async (request) => {
         await assertAdmin(request.auth.uid);
 
         // Generate the password reset link
-        const actionCodeSettings = returnUrl ? { url: returnUrl } : undefined;
-        const link = await getAuth().generatePasswordResetLink(email, actionCodeSettings);
+        let link: string;
+        try {
+            const actionCodeSettings = returnUrl ? { url: returnUrl } : undefined;
+            link = await getAuth().generatePasswordResetLink(email, actionCodeSettings);
+        } catch (linkError: any) {
+            if (linkError.code === 'auth/unauthorized-continue-uri') {
+                logger.warn(`returnUrl ${returnUrl} not allowlisted, falling back to default password reset link.`);
+                link = await getAuth().generatePasswordResetLink(email, undefined);
+            } else {
+                throw linkError;
+            }
+        }
 
         // Send the email using our custom SMTP service
         const i18n = await getEmailI18n('es', getFirestore()); // Defaulting to ES for admin trigger or detect from doc
@@ -119,8 +129,18 @@ export const requestPasswordReset = onCall(async (request) => {
         }
 
         // 2. Generate the link
-        const actionCodeSettings = returnUrl ? { url: returnUrl } : undefined;
-        const link = await getAuth().generatePasswordResetLink(email, actionCodeSettings);
+        let link: string;
+        try {
+            const actionCodeSettings = returnUrl ? { url: returnUrl } : undefined;
+            link = await getAuth().generatePasswordResetLink(email, actionCodeSettings);
+        } catch (linkError: any) {
+            if (linkError.code === 'auth/unauthorized-continue-uri') {
+                logger.warn(`returnUrl ${returnUrl} not allowlisted, falling back to default password reset link.`);
+                link = await getAuth().generatePasswordResetLink(email, undefined);
+            } else {
+                throw linkError;
+            }
+        }
 
         // 3. Send the email
         const i18n = await getEmailI18n(lang as Lang, getFirestore());

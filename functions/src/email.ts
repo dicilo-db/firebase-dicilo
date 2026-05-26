@@ -4,23 +4,36 @@ import * as admin from 'firebase-admin';
 
 export type MailInput = { to: string; subject: string; html: string };
 
+// Helper to clean environment variables (remove potential quotes)
+const cleanEnv = (val: string | undefined) => {
+  if (!val) return undefined;
+  const trimmed = val.trim();
+  // Only remove quotes if they wrap the entire string as a pair
+  if ((trimmed.startsWith("'") && trimmed.endsWith("'")) || 
+      (trimmed.startsWith('"') && trimmed.endsWith('"'))) {
+    return trimmed.slice(1, -1);
+  }
+  return trimmed;
+};
+
 export async function sendMail(input: MailInput) {
-  const mode = process.env.MAIL_MODE || 'gmail'; // "gmail" | "smtp" | "disabled"
+  const mode = cleanEnv(process.env.MAIL_MODE) || 'gmail'; // "gmail" | "smtp" | "disabled"
   if (mode === 'disabled') return { ok: true, id: 'disabled' };
 
   if (mode === 'gmail') {
+    const gmailSender = cleanEnv(process.env.GMAIL_SENDER);
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
         type: 'OAuth2',
-        user: process.env.GMAIL_SENDER,
-        clientId: process.env.GMAIL_CLIENT_ID,
-        clientSecret: process.env.GMAIL_CLIENT_SECRET,
-        refreshToken: process.env.GMAIL_REFRESH_TOKEN,
+        user: gmailSender,
+        clientId: cleanEnv(process.env.GMAIL_CLIENT_ID),
+        clientSecret: cleanEnv(process.env.GMAIL_CLIENT_SECRET),
+        refreshToken: cleanEnv(process.env.GMAIL_REFRESH_TOKEN),
       },
     });
     const info = await transporter.sendMail({
-      from: process.env.GMAIL_SENDER,
+      from: gmailSender,
       to: input.to,
       subject: input.subject,
       html: input.html,
@@ -28,8 +41,12 @@ export async function sendMail(input: MailInput) {
     return { ok: true, id: info.messageId };
   }
 
-  let pass = process.env.SMTP_PASS;
-  const encryptionKey = process.env.ENCRYPTION_KEY;
+  const host = cleanEnv(process.env.SMTP_HOST);
+  const port = Number(cleanEnv(process.env.SMTP_PORT) || 587);
+  const user = cleanEnv(process.env.SMTP_USER);
+  let pass = cleanEnv(process.env.SMTP_PASS);
+  const encryptionKey = cleanEnv(process.env.ENCRYPTION_KEY);
+  const fromAddress = cleanEnv(process.env.SMTP_FROM) || user;
 
   if (pass?.startsWith('enc:') && encryptionKey) {
     try {
@@ -40,10 +57,10 @@ export async function sendMail(input: MailInput) {
   }
 
   const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: Number(process.env.SMTP_PORT || 587),
-    secure: Number(process.env.SMTP_PORT) === 465, // true for 465, false for other ports
-    auth: { user: process.env.SMTP_USER, pass: pass },
+    host: host,
+    port: port,
+    secure: port === 465, // true for 465, false for other ports
+    auth: { user: user, pass: pass },
     tls: {
       rejectUnauthorized: false
     },
@@ -62,7 +79,7 @@ export async function sendMail(input: MailInput) {
     await logDocRef.set({
       to: input.to,
       subject: input.subject,
-      from: process.env.SMTP_FROM || process.env.SMTP_USER,
+      from: fromAddress,
       status: 'pending',
       createdAt: new Date(),
       source: 'cloud-function'
@@ -73,7 +90,7 @@ export async function sendMail(input: MailInput) {
 
   try {
     const info = await transporter.sendMail({
-      from: process.env.SMTP_FROM,
+      from: fromAddress,
       to: input.to,
       subject: input.subject,
       html: input.html,

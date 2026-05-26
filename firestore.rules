@@ -276,6 +276,36 @@ service cloud.firestore {
       allow write: if false; // Only updated securely via Server Actions or Cloud Functions
     }
 
+    // DiciCoins (Físicas y digitales en catálogo)
+    match /dici_coins/{coinId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin(); // Solo administradores pueden crear o modificar monedas
+    }
+
+    // Reservas de monedas
+    match /coin_reservations/{reservationId} {
+      allow read: if isAuthenticated(); // Permitido para usuarios autenticados
+      allow write: if false; // Solo se modifican a través de acciones de servidor seguras
+    }
+
+    // Historial de pagos de reservas
+    match /payment_history/{paymentId} {
+      allow read: if isAuthenticated(); // Permitido para usuarios autenticados
+      allow write: if false; // Solo el servidor registra los pagos
+    }
+
+    // Transferencias de participación en el marketplace
+    match /participation_transfers/{transferId} {
+      allow read: if isAuthenticated(); // Cualquiera puede ver lo que está en venta
+      allow write: if false; // Solo se gestionan desde el servidor
+    }
+
+    // Historial de transacciones de la wallet (DP y DC)
+    match /wallet_transactions/{transactionId} {
+      allow read: if isAuthenticated(); // Permitido para usuarios autenticados
+      allow write: if false; // Solo el servidor crea transacciones
+    }
+
     // Referrals Pioneers (Marketing Leads)
     match /referrals_pioneers/{leadId} {
       allow read: if isAuthenticated() && (resource.data.referrerId == request.auth.uid || hasDashboardAccess());

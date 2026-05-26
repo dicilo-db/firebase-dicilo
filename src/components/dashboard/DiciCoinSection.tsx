@@ -97,8 +97,10 @@ export function DiciCoinSection({ userData, onViewHistory }: DiciCoinSectionProp
                             {t('dashboard.dicicoin.purchaseDesc', 'Incrementar tu saldo te permite...')}
                         </p>
                         <div className="mt-auto">
-                            <Button className="w-full bg-amber-600 hover:bg-amber-700" disabled>
-                                {t('dashboard.dicicoin.commingSoon', 'Próximamente')}
+                            <Button className="w-full bg-amber-600 hover:bg-amber-700" asChild>
+                                <a href="https://dicicoin.dicilo.net" target="_blank" rel="noopener noreferrer">
+                                    {t('dashboard.dicicoin.commingSoon', 'Reserva tu DiciCoin')}
+                                </a>
                             </Button>
                         </div>
                     </CardContent>

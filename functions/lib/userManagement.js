@@ -101,8 +101,20 @@ exports.sendUserPasswordReset = (0, https_1.onCall)((request) => __awaiter(void 
         // Verify admin privileges
         yield assertAdmin(request.auth.uid);
         // Generate the password reset link
-        const actionCodeSettings = returnUrl ? { url: returnUrl } : undefined;
-        const link = yield (0, auth_1.getAuth)().generatePasswordResetLink(email, actionCodeSettings);
+        let link;
+        try {
+            const actionCodeSettings = returnUrl ? { url: returnUrl } : undefined;
+            link = yield (0, auth_1.getAuth)().generatePasswordResetLink(email, actionCodeSettings);
+        }
+        catch (linkError) {
+            if (linkError.code === 'auth/unauthorized-continue-uri') {
+                logger.warn(`returnUrl ${returnUrl} not allowlisted, falling back to default password reset link.`);
+                link = yield (0, auth_1.getAuth)().generatePasswordResetLink(email, undefined);
+            }
+            else {
+                throw linkError;
+            }
+        }
         // Send the email using our custom SMTP service
         const i18n = yield (0, i18n_1.getEmailI18n)('es', (0, firestore_1.getFirestore)()); // Defaulting to ES for admin trigger or detect from doc
         const html = (0, i18n_1.render)(i18n['passwordReset.body'], { link });
@@ -144,8 +156,20 @@ exports.requestPasswordReset = (0, https_1.onCall)((request) => __awaiter(void 0
             throw authError;
         }
         // 2. Generate the link
-        const actionCodeSettings = returnUrl ? { url: returnUrl } : undefined;
-        const link = yield (0, auth_1.getAuth)().generatePasswordResetLink(email, actionCodeSettings);
+        let link;
+        try {
+            const actionCodeSettings = returnUrl ? { url: returnUrl } : undefined;
+            link = yield (0, auth_1.getAuth)().generatePasswordResetLink(email, actionCodeSettings);
+        }
+        catch (linkError) {
+            if (linkError.code === 'auth/unauthorized-continue-uri') {
+                logger.warn(`returnUrl ${returnUrl} not allowlisted, falling back to default password reset link.`);
+                link = yield (0, auth_1.getAuth)().generatePasswordResetLink(email, undefined);
+            }
+            else {
+                throw linkError;
+            }
+        }
         // 3. Send the email
         const i18n = yield (0, i18n_1.getEmailI18n)(lang, (0, firestore_1.getFirestore)());
         const html = (0, i18n_1.render)(i18n['passwordReset.body'], { link });
