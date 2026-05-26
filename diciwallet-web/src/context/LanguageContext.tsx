@@ -699,7 +699,7 @@ const dictionary: Record<Language, Record<string, string>> = {
     'faq.q4': 'Was ist der Wert und das Erwerbslimit einer DICICOIN?',
     'faq.a4': 'Der aktuelle Referenzwert einer DICICOIN beträgt 30 Euro. Darüber hinaus behält jede Münze einen anerkannten Basiswert von 25 Euro pro Einheit bei, der als interne Referenz für zukünftige, vom Unternehmen freigegebene Prozesse gilt, stets im Rahmen der entsprechenden gesetzlichen Bestimmungen. Dieser Wert impliziert kein Versprechen auf Rentabilität oder automatische Aufwertung.<br /><br />Um eine ausgewogene, transparente und verantwortungsvolle Verteilung in der Gemeinschaft zu gewährleisten, kann jeder Benutzer maximal 2.000 DICICOIN erwerben.',
     'faq.q5': 'Welche Serien und Nummerierungsformate gibt es pro Kontinent?',
-    'faq.a5': 'Die physische Prägung ist streng auf maximal 2,000,000 Münzen pro Kontinent (10,000,000 insgesamt weltweit) begrenzt, unter Verwendung der folgenden offiziellen Präfixe und Nummerierungsbereiche:<br /><br />Europa (Präfix EU-DC): EU-DC0000001 bis EU-DC2000000<br />Amerika (Präfix LA-DC): LA-DC0000001 bis LA-DC2000000<br />Afrika (Präfix AF-DC): AF-DC0000001 bis AF-DC2000000<br />Asien (Präfix AS-DC): AS-DC0000001 bis AS-DC2000000<br />Ozeanien (Präfix OC-DC): OC-DC0000001 bis OC-DC2000000<br /><br />Jede offizielle Seriennummer ist einzigartig, unwiederholbar und mit einer versiegelten Lizenz und dem auf dicilo.net registrierten Inhaber verknüpft.',
+    'faq.a5': 'Die physische Prägung ist streng auf maximal 2,000,000 Münzen pro Kontinent (10,000,000 insgesamt weltweit) begrenzt, unter Verwendung der folgenden offiziellen Präfixe und Nummerierungsbereiche:<br /><br />Europa (Präfix EU-DC): EU-DC0000001 bis EU-DC2000000<br />America (Präfix LA-DC): LA-DC0000001 bis LA-DC2000000<br />Afrika (Präfix AF-DC): AF-DC0000001 bis AF-DC2000000<br />Asien (Präfix AS-DC): AS-DC0000001 bis AS-DC2000000<br />Ozeanien (Präfix OC-DC): OC-DC0000001 bis OC-DC2000000<br /><br />Jede offizielle Seriennummer ist einzigartig, unwiederholbar und mit einer versiegelten Lizenz und dem auf dicilo.net registrierten Inhaber verknüpft.',
     'faq.q6': 'Wie kann ich eine DICICOIN erwerben und warum muss ich mich registrieren?',
     'faq.a6': 'Um eine DICICOIN zu erwerben, ist es zwingend erforderlich, sich kostenlos auf der offiziellen Plattform dicilo.net zu registrieren, die Registrierung als verifizierter Benutzer abzuschließen und den Kauf ausschließlich über autorisierte Verkaufsstellen abzuwickeln. DICICOIN werden nicht anonym oder über inoffizielle Kanäle verkauft.<br /><br />Die Registrierung ist erforderlich, um die Identität des Inhabers zu überprüfen, das Eigentum an jeder physischen Münze zu registrieren, Rückverfolgbarkeit und Sicherheit zu gewährleisten, offizielle Zertifikate herunterzuladen und an zukünftigen Prozessen des Ökosystems teilzunehmen.',
 
@@ -800,7 +800,7 @@ const dictionary: Record<Language, Record<string, string>> = {
 
     // Continents
     'continent.EU': 'Europa',
-    'continent.LA': 'Amerika',
+    'continent.LA': 'America',
     'continent.AF': 'Afrika',
     'continent.AS': 'Asien',
     'continent.OC': 'Ozeanien',
