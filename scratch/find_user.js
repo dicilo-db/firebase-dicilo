@@ -2,64 +2,62 @@ const admin = require('firebase-admin');
 const fs = require('fs');
 const path = require('path');
 
-const envPath = path.resolve(__dirname, '../diciwallet-web/.env.local');
+// Leer .env.local de diciwallet-web
+const envPath = path.join(__dirname, '../diciwallet-web/.env.local');
+const envContent = fs.readFileSync(envPath, 'utf8');
 
-let serviceAccountStr = '';
-try {
-  const envContent = fs.readFileSync(envPath, 'utf8');
-  const match = envContent.match(/FIREBASE_SERVICE_ACCOUNT_KEY='({.*?})'/s);
-  if (match && match[1]) {
-    serviceAccountStr = match[1].replace(/\\\\n/g, '\\n');
+let serviceAccountKey = '';
+const lines = envContent.split('\n');
+for (const line of lines) {
+  if (line.startsWith('FIREBASE_SERVICE_ACCOUNT_KEY=')) {
+    let val = line.substring('FIREBASE_SERVICE_ACCOUNT_KEY='.length).trim();
+    if ((val.startsWith("'") && val.endsWith("'")) || (val.startsWith('"') && val.endsWith('"'))) {
+      val = val.slice(1, -1);
+    }
+    serviceAccountKey = val;
+    break;
   }
-} catch (e) {
-  console.error("Error reading environment variable file:", e);
 }
 
-if (!serviceAccountStr) {
-  console.error("Could not find FIREBASE_SERVICE_ACCOUNT_KEY");
+if (!serviceAccountKey) {
+  console.error("Missing FIREBASE_SERVICE_ACCOUNT_KEY in .env.local");
   process.exit(1);
 }
 
-const serviceAccount = JSON.parse(serviceAccountStr);
+let serviceAccount;
+try {
+  let cleanKey = serviceAccountKey.trim();
+  cleanKey = cleanKey.replace(/\\\\n/g, '\\n');
+  serviceAccount = JSON.parse(cleanKey);
+  if (serviceAccount.private_key) {
+    serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, '\n');
+  }
+} catch (e) {
+  console.error("Failed to parse service account JSON:", e);
+  process.exit(1);
+}
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  projectId: 'geosearch-fq4i9',
+  projectId: 'geosearch-fq4i9'
 });
 
 const db = admin.firestore();
 
-async function check() {
-  const emailToFind = 'superadmin@dicilo.net';
-  console.log(`Searching for email: ${emailToFind}`);
-  
-  const privateProfileSnap = await db.collection('private_profiles').where('email', '==', emailToFind).get();
-  if (!privateProfileSnap.empty) {
-    privateProfileSnap.forEach(doc => {
-      console.log(`Found in private_profiles: ID=${doc.id}, Data=`, doc.data());
+async function run() {
+  console.log("Searching for user with 6822 DP...");
+  const snapshot = await db.collection('wallets').where('balance', '==', 6822).get();
+  if (snapshot.empty) {
+    console.log("No user found with exactly 6822 DP. Searching for wallets near that amount...");
+    const allWallets = await db.collection('wallets').limit(10).get();
+    allWallets.forEach(doc => {
+      console.log(`Wallet Doc ID: ${doc.id}, Balance: ${doc.data().balance}, balanceDC: ${doc.data().balanceDC}`);
     });
   } else {
-    console.log("Not found in private_profiles.");
-  }
-  
-  const userSnap = await db.collection('users').where('email', '==', emailToFind).get();
-  if (!userSnap.empty) {
-    userSnap.forEach(doc => {
-      console.log(`Found in users: ID=${doc.id}, Data=`, doc.data());
+    snapshot.forEach(doc => {
+      console.log(`Found wallet! User ID (Doc ID): ${doc.id}, Balance: ${doc.data().balance}, balanceDC: ${doc.data().balanceDC}`);
     });
-  } else {
-    console.log("Not found in users.");
   }
-  
-  // Also check auth
-  try {
-    const userRecord = await admin.auth().getUserByEmail(emailToFind);
-    console.log(`Found in Firebase Auth: UID=${userRecord.uid}, Email=${userRecord.email}`);
-  } catch (err) {
-    console.log(`Not found in Firebase Auth:`, err.message);
-  }
-
-  process.exit(0);
 }
 
-check();
+run().catch(console.error);
