@@ -208,7 +208,7 @@ export default function ReservationsPage() {
       }
     } catch (err: any) {
       console.error(err);
-      setMessage({ text: t('res.error_reserve'), type: 'error' });
+      setMessage({ text: `${t('res.error_reserve')} (${err.message || 'Error de conexión'})`, type: 'error' });
     } finally {
       setReserveLoading(false);
     }
@@ -838,6 +838,19 @@ export default function ReservationsPage() {
                   {t('res.legal_declaration')}
                 </span>
               </label>
+
+              {message.text && (
+                <div style={{ 
+                  background: message.type === 'success' ? 'rgba(46, 204, 113, 0.1)' : 'rgba(235, 87, 87, 0.1)', 
+                  border: message.type === 'success' ? '1px solid rgba(46, 204, 113, 0.2)' : '1px solid rgba(235, 87, 87, 0.2)', 
+                  borderRadius: 'var(--radius-sm)', 
+                  padding: '12px 14px', 
+                  color: message.type === 'success' ? '#2ECC71' : '#EB5757', 
+                  fontSize: '13px' 
+                }}>
+                  {message.text}
+                </div>
+              )}
 
               {/* Actions */}
               <div style={{ display: 'flex', gap: '16px', marginTop: '8px' }}>
