@@ -3,13 +3,13 @@
 import { getAdminDb, getFieldValue, getTimestamp } from '@/lib/firebase-admin';
 
 // Reglas y Paridades
-const DP_TO_DC_RATE = 500; // 500 DP = 1 DC
+const DP_TO_DC_RATE = 10; // 10 DP = 1 DC
 const COIN_VALUE_EUR = 5000;
 const RESERVE_AMOUNT_EUR = 500; // 10%
 
 /**
  * Convierte Dicipoints (DP) a DiciCoins digitales (DC).
- * Regla: 500 DP = 1 DC (1 DC = 1 EUR de uso interno)
+ * Regla: 10 DP = 1 DC (1 DC = 1 EUR de uso interno)
  */
 export async function convertDpToDc(userId: string, amountDp: number) {
   if (amountDp <= 0 || amountDp % DP_TO_DC_RATE !== 0) {

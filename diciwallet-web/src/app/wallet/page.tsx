@@ -31,7 +31,7 @@ export default function WalletPage() {
   // Calcular la previsualización de DC
   useEffect(() => {
     const val = parseInt(dpAmount) || 0;
-    setDcPreview(val / 500);
+    setDcPreview(val / 10);
   }, [dpAmount]);
 
   // Cargar historial de transacciones del usuario
@@ -69,7 +69,7 @@ export default function WalletPage() {
     if (!user) return;
 
     const dpVal = parseInt(dpAmount);
-    if (isNaN(dpVal) || dpVal <= 0 || dpVal % 500 !== 0) {
+    if (isNaN(dpVal) || dpVal <= 0 || dpVal % 10 !== 0) {
       setMessage({ text: t('wallet.validation_multiple'), type: 'error' });
       return;
     }
@@ -168,8 +168,8 @@ export default function WalletPage() {
                     id="convert-dp-amount"
                     type="number"
                     required
-                    step="500"
-                    min="500"
+                    step="10"
+                    min="10"
                     className="premium-input"
                     style={{ paddingLeft: '48px' }}
                     placeholder={t('wallet.placeholder')}
