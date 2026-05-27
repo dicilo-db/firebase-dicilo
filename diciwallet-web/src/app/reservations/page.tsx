@@ -26,11 +26,12 @@ interface Reservation {
   id: string;
   coinId: string;
   serial?: string;
+  status: string;
   totalAmount: number;
   paidAmount: number;
   remainingAmount: number;
   progressPercentage: number;
-  status: string;
+  saleSignature?: string;
   shippingInfo?: {
     fullName: string;
     email: string;
@@ -999,9 +1000,17 @@ export default function ReservationsPage() {
 
                 {/* QR Code and Meta */}
                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '32px', margin: '16px 0', flexWrap: 'wrap' }}>
-                  <div style={{ background: '#FFFFFF', padding: '12px', borderRadius: '8px', display: 'inline-flex' }}>
-                    <QRCodeSVG value={`https://dicilo.net/verify/coin/${certCoinId}`} size={100} />
-                  </div>
+                  {(() => {
+                    const resDoc = reservations.find(r => r.coinId === certCoinId);
+                    const qrValue = resDoc?.saleSignature 
+                      ? `${window.location.origin}/verify?sig=${resDoc.saleSignature}`
+                      : `https://dicilo.net/verify/coin/${certCoinId}`;
+                    return (
+                      <div style={{ background: '#FFFFFF', padding: '12px', borderRadius: '8px', display: 'inline-flex' }}>
+                        <QRCodeSVG value={qrValue} size={100} />
+                      </div>
+                    );
+                  })()}
                   <div style={{ textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '13px' }}>
                     <span style={{ color: 'var(--text-muted)' }}>
                       {t('res.cert_status')}: <strong style={{ color: '#D4AF37' }}>{t('res.cert_status_value')}</strong>

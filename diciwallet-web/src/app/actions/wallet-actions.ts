@@ -1,6 +1,7 @@
 'use server';
 
 import { getAdminDb, getFieldValue, getTimestamp } from '@/lib/firebase-admin';
+import { generateSaleSignature, verifySaleSignature } from '@/lib/signature';
 
 // Reglas y Paridades
 const DP_TO_DC_RATE = 10; // 10 DP = 1 DC
@@ -137,6 +138,10 @@ export async function reserveCoin(
       // Serial digital único de reserva
       const digitalSerial = `DC-${block1}-${block2}-${block3}`;
 
+      // Generar Firma Digital de Venta
+      const secretKey = process.env.ENCRYPTION_KEY || 'HA7Ct8eXPu2E6+awZKoFZAd5jXO8UJJ9MIdxOq9IWvM=';
+      const saleSignature = generateSaleSignature(shippingInfo.country, continentCode, secretKey);
+
       // 1. Crear documento de reserva
       const reservationId = `res_${Math.random().toString(36).substring(2, 10)}`;
       const reservationRef = db.collection('coin_reservations').doc(reservationId);
@@ -152,6 +157,7 @@ export async function reserveCoin(
         remainingAmount: COIN_VALUE_EUR - RESERVE_AMOUNT_EUR,
         progressPercentage: 10,
         shippingInfo,
+        saleSignature,
         createdAt: getTimestamp().now(),
         updatedAt: getTimestamp().now(),
       });
@@ -178,6 +184,7 @@ export async function reserveCoin(
         serial: digitalSerial,
         paidAmount: RESERVE_AMOUNT_EUR,
         shippingInfo,
+        saleSignature,
         updatedAt: getTimestamp().now(),
       });
 
@@ -187,7 +194,7 @@ export async function reserveCoin(
         updatedAt: getTimestamp().now(),
       });
 
-      return { success: true, messageKey: 'api.success_reserve', reservationId, serial: digitalSerial };
+      return { success: true, messageKey: 'api.success_reserve', reservationId, serial: digitalSerial, saleSignature };
     });
 
     return result;
@@ -385,6 +392,74 @@ export async function buyParticipation(buyerId: string, transferId: string) {
     return result;
   } catch (error: any) {
     console.error('Error in buyParticipation:', error);
+    return { success: false, messageKey: 'api.server_error' };
+  }
+}
+
+/**
+ * Valida una Firma Digital de Venta y retorna los datos asociados a la reserva de la moneda.
+ */
+export async function validateSaleSignature(signature: string) {
+  if (!signature) {
+    return { success: false, messageKey: 'api.error_invalid_signature' };
+  }
+
+  const secretKey = process.env.ENCRYPTION_KEY || 'HA7Ct8eXPu2E6+awZKoFZAd5jXO8UJJ9MIdxOq9IWvM=';
+  
+  // 1. Validar la firma digital criptográficamente
+  const isValid = verifySaleSignature(signature, secretKey);
+  if (!isValid) {
+    return { success: false, messageKey: 'api.error_invalid_signature' };
+  }
+
+  const db = getAdminDb();
+
+  try {
+    // 2. Buscar en Firestore si existe alguna reserva con esta firma
+    const snapshot = await db.collection('coin_reservations')
+      .where('saleSignature', '==', signature.trim())
+      .limit(1)
+      .get();
+
+    if (snapshot.empty) {
+      return { success: false, messageKey: 'api.error_reservation_not_found' };
+    }
+
+    const resDoc = snapshot.docs[0];
+    const resData = resDoc.data();
+
+    // Obtener los datos públicos del propietario (iniciales)
+    let ownerInitials = 'U. D.';
+    try {
+      const profileDoc = await db.collection('private_profiles').doc(resData.userId).get();
+      if (profileDoc.exists) {
+        const pData = profileDoc.data();
+        const first = pData?.firstName?.trim().charAt(0).toUpperCase() || 'U';
+        const last = pData?.lastName?.trim().charAt(0).toUpperCase() || 'D';
+        ownerInitials = `${first}. ${last}.`;
+      }
+    } catch (e) {
+      console.error('Error fetching profile for verification:', e);
+    }
+
+    // Retornar los datos decodificados de la reserva
+    return {
+      success: true,
+      data: {
+        id: resDoc.id,
+        coinId: resData.coinId,
+        serial: resData.serial,
+        status: resData.status,
+        progressPercentage: resData.progressPercentage,
+        paidAmount: resData.paidAmount,
+        totalAmount: resData.totalAmount,
+        country: resData.shippingInfo?.country || 'Desconocido',
+        ownerInitials,
+        createdAt: resData.createdAt?.toDate ? resData.createdAt.toDate().toISOString() : new Date().toISOString()
+      }
+    };
+  } catch (error: any) {
+    console.error('Error in validateSaleSignature:', error);
     return { success: false, messageKey: 'api.server_error' };
   }
 }
