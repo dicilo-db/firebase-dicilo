@@ -1,6 +1,7 @@
 'use server';
 
 import { getAdminDb, getFieldValue, getTimestamp } from '@/lib/firebase-admin';
+import { generateSaleSignature } from '@/lib/signature';
 
 /**
  * Registra una nueva moneda física en el catálogo (dici_coins).
@@ -172,32 +173,49 @@ export async function rejectTransfer(transferId: string) {
  */
 export async function reservePhysicalCoinAsAdmin(
   coinId: string,
-  buyerEmail: string,
+  buyerEmailOrId: string,
   shippingInfo: {
     fullName: string;
     phone: string;
     country: string;
     city: string;
     address: string;
-  }
+  },
+  payWithDp: boolean = false
 ) {
   const db = getAdminDb();
 
   try {
-    // 1. Buscar al usuario comprador por email en private_profiles
-    const userSnapshot = await db
-      .collection('private_profiles')
-      .where('email', '==', buyerEmail.trim().toLowerCase())
-      .limit(1)
-      .get();
+    let userId = '';
+    let profileData: any = null;
+    let buyerEmailResolved = '';
 
-    if (userSnapshot.empty) {
-      return { success: false, messageKey: 'admin.error_user_not_found' };
+    const isEmail = buyerEmailOrId.includes('@');
+    if (isEmail) {
+      // 1. Buscar al usuario comprador por email en private_profiles
+      const userSnapshot = await db
+        .collection('private_profiles')
+        .where('email', '==', buyerEmailOrId.trim().toLowerCase())
+        .limit(1)
+        .get();
+
+      if (userSnapshot.empty) {
+        return { success: false, messageKey: 'admin.error_user_not_found' };
+      }
+      const userDoc = userSnapshot.docs[0];
+      userId = userDoc.id;
+      profileData = userDoc.data();
+      buyerEmailResolved = profileData?.email || buyerEmailOrId.trim().toLowerCase();
+    } else {
+      // 1. Buscar por ID directo
+      const userDoc = await db.collection('private_profiles').doc(buyerEmailOrId.trim()).get();
+      if (!userDoc.exists) {
+        return { success: false, messageKey: 'admin.error_user_not_found' };
+      }
+      userId = userDoc.id;
+      profileData = userDoc.data();
+      buyerEmailResolved = profileData?.email || '';
     }
-
-    const userDoc = userSnapshot.docs[0];
-    const userId = userDoc.id;
-    const profileData = userDoc.data();
 
     const result = await db.runTransaction(async (transaction) => {
       const coinRef = db.collection('dici_coins').doc(coinId);
@@ -215,6 +233,17 @@ export async function reservePhysicalCoinAsAdmin(
       const walletRef = db.collection('wallets').doc(userId);
       const walletDoc = await transaction.get(walletRef);
 
+      // Si pide pagar con DP, validar balance
+      if (payWithDp) {
+        if (!walletDoc.exists) {
+          return { success: false, messageKey: 'api.validation_insufficient' };
+        }
+        const currentDpBalance = walletDoc.data()?.balance || 0;
+        if (currentDpBalance < 5000) {
+          return { success: false, messageKey: 'api.validation_insufficient' };
+        }
+      }
+
       // Generar serial digital
       const firstName = profileData?.firstName || 'U';
       const lastName = profileData?.lastName || 'D';
@@ -228,6 +257,10 @@ export async function reservePhysicalCoinAsAdmin(
       const year = String(now.getFullYear()).substring(2);
       const block3 = `${month}${year}`;
       const digitalSerial = `DC-${block1}-${block2}-${block3}`;
+
+      // Generar Firma Digital de Venta
+      const secretKey = process.env.ENCRYPTION_KEY || 'HA7Ct8eXPu2E6+awZKoFZAd5jXO8UJJ9MIdxOq9IWvM=';
+      const saleSignature = generateSaleSignature(shippingInfo.country, continentCode, secretKey);
 
       const COIN_VALUE_EUR = 5000;
       const RESERVE_AMOUNT_EUR = 500;
@@ -248,8 +281,9 @@ export async function reservePhysicalCoinAsAdmin(
         progressPercentage: 10,
         shippingInfo: {
           ...shippingInfo,
-          email: buyerEmail.trim().toLowerCase(),
+          email: buyerEmailResolved,
         },
+        saleSignature,
         createdAt: getTimestamp().now(),
         updatedAt: getTimestamp().now(),
       });
@@ -264,7 +298,7 @@ export async function reservePhysicalCoinAsAdmin(
         coinId,
         reservationId,
         amount: RESERVE_AMOUNT_EUR,
-        paymentMethod: 'admin_cash_wire',
+        paymentMethod: payWithDp ? 'dicipoints_reserve' : 'admin_cash_wire',
         status: 'completed',
         createdAt: getTimestamp().now(),
       });
@@ -277,27 +311,36 @@ export async function reservePhysicalCoinAsAdmin(
         paidAmount: RESERVE_AMOUNT_EUR,
         shippingInfo: {
           ...shippingInfo,
-          email: buyerEmail.trim().toLowerCase(),
+          email: buyerEmailResolved,
         },
+        saleSignature,
         updatedAt: getTimestamp().now(),
       });
 
       // 4. Actualizar wallet
       if (walletDoc.exists) {
-        transaction.update(walletRef, {
+        const walletUpdates: any = {
           totalPaidEur: getFieldValue().increment(RESERVE_AMOUNT_EUR),
           updatedAt: getTimestamp().now(),
-        });
+        };
+        if (payWithDp) {
+          walletUpdates.balance = getFieldValue().increment(-5000);
+        }
+        transaction.update(walletRef, walletUpdates);
       } else {
-        transaction.set(walletRef, {
+        const initialWallet: any = {
           id: userId,
           totalPaidEur: RESERVE_AMOUNT_EUR,
           createdAt: getTimestamp().now(),
           updatedAt: getTimestamp().now(),
-        });
+        };
+        if (payWithDp) {
+          initialWallet.balance = -5000;
+        }
+        transaction.set(walletRef, initialWallet);
       }
 
-      // 5. Registrar transacción
+      // 5. Registrar transacciones en historial
       const walletTrx = db.collection('wallet_transactions').doc();
       transaction.set(walletTrx, {
         userId,
@@ -307,6 +350,18 @@ export async function reservePhysicalCoinAsAdmin(
         description: `Reserva manual registrada por administrador para la moneda ${coinId}.`,
         timestamp: getTimestamp().now(),
       });
+
+      if (payWithDp) {
+        const walletTrxDp = db.collection('wallet_transactions').doc();
+        transaction.set(walletTrxDp, {
+          userId,
+          amount: -5000,
+          currency: 'DP',
+          type: 'RESERVATION_DP_DEDUCTION',
+          description: `Deducción de 5000 DP para reserva de moneda ${coinId}.`,
+          timestamp: getTimestamp().now(),
+        });
+      }
 
       return { success: true, messageKey: 'admin.success_reserve' };
     });

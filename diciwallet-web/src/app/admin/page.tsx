@@ -48,6 +48,7 @@ export default function AdminPage() {
   const [buyerCountry, setBuyerCountry] = useState('España');
   const [buyerCity, setBuyerCity] = useState('');
   const [buyerAddress, setBuyerAddress] = useState('');
+  const [payWithDp, setPayWithDp] = useState(false);
 
   // Lists state
   const [allCoins, setAllCoins] = useState<DiciCoin[]>([]);
@@ -154,7 +155,7 @@ export default function AdminPage() {
           country: buyerCountry,
           city: buyerCity,
           address: buyerAddress
-        });
+        }, payWithDp);
 
         if (res.success) {
           setMessage({ text: t(res.messageKey || 'admin.success_reserve'), type: 'success' });
@@ -164,6 +165,7 @@ export default function AdminPage() {
           setBuyerPhone('');
           setBuyerCity('');
           setBuyerAddress('');
+          setPayWithDp(false);
         } else {
           setMessage({ text: t(res.messageKey || 'admin.error_register_coin'), type: 'error' });
         }
@@ -407,16 +409,29 @@ export default function AdminPage() {
                   </h4>
                   
                   <div>
-                    <label className="premium-label" htmlFor="admin-buyer-email">{t('admin.buyer_email')}</label>
+                    <label className="premium-label" htmlFor="admin-buyer-email">Email o User ID del Comprador</label>
                     <input
                       id="admin-buyer-email"
-                      type="email"
+                      type="text"
                       required
                       className="premium-input"
-                      placeholder="cliente@email.com"
+                      placeholder="cliente@email.com o UID del usuario (ej: 6OWAhw...)"
                       value={buyerEmail}
                       onChange={(e) => setBuyerEmail(e.target.value)}
                     />
+                  </div>
+
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
+                    <input
+                      id="admin-pay-with-dp"
+                      type="checkbox"
+                      checked={payWithDp}
+                      onChange={(e) => setPayWithDp(e.target.checked)}
+                      style={{ cursor: 'pointer' }}
+                    />
+                    <label htmlFor="admin-pay-with-dp" style={{ fontSize: '13px', color: 'var(--text-secondary)', cursor: 'pointer', userSelect: 'none' }}>
+                      Descontar automáticamente 5,000 DP (DiciPoints) de la wallet del usuario
+                    </label>
                   </div>
 
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
