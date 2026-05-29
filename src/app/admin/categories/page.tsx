@@ -109,7 +109,7 @@ export default function CategoriesPage() {
     };
 
     useEffect(() => {
-        const q = query(collection(db, 'categories'), orderBy('order', 'asc'));
+        const q = query(collection(db, 'categories'));
         const unsubscribe = onSnapshot(q, (snapshot) => {
             const cats: Category[] = [];
             snapshot.forEach((doc) => {
@@ -128,6 +128,14 @@ export default function CategoriesPage() {
 
                 cats.push(data as Category);
             });
+
+            // Sort categories alphabetically by German name
+            cats.sort((a: Category, b: Category) => {
+                const nameA = a.name?.de || '';
+                const nameB = b.name?.de || '';
+                return nameA.localeCompare(nameB);
+            });
+
             setCategories(cats);
             setLoading(false);
         });
