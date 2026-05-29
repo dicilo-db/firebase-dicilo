@@ -125,11 +125,14 @@ const dictionary: Record<Language, Record<string, string>> = {
     'res.error_price_invalid': 'El precio debe ser mayor a 0 € y no exceder tu aportación total.',
     'res.error_publish_sale': 'Error al publicar la venta.',
     'res.error_invalid_shipping': 'Por favor, rellene todos los campos de envío obligatorios.',
+    'res.btn_edit_data': 'Editar Datos',
+    'res.edit_modal_title': 'Editar Información de Contacto y Envío',
+    'res.edit_history_title': 'Historial de Cambios',
 
     // Certificate
     'res.cert_title': 'Certificado Digital de Reserva',
     'res.cert_collectible': 'DICICOIN COLLECTIBLE',
-    'res.cert_desc': 'Por el presente se hace constar que el titular de la cuenta DiciWallet posee los derechos exclusivos de reserva y preasignación sobre la pieza física:',
+    'res.cert_desc': 'Por el presente se hace constar que el titular de la cuenta DiciCoin posee los derechos exclusivos de reserva y preasignación sobre la pieza física:',
     'res.cert_verification_text': 'Con serial de acuñación único global verificado en el libro de actas digital de Dicilo.net.',
     'res.cert_status': 'ESTADO',
     'res.cert_continent': 'CONTINENTE',
@@ -212,7 +215,7 @@ const dictionary: Record<Language, Record<string, string>> = {
     'admin.success_reserve': 'Reserva y compra registrada con éxito para el usuario.',
     'admin.error_fill_all': 'Por favor, rellene todos los datos del comprador.',
     'admin.access_denied': 'Acceso Denegado',
-    'admin.access_denied_desc': 'Esta sección es de uso exclusivo para los administradores del sistema DiciWallet.',
+    'admin.access_denied_desc': 'Esta sección es de uso exclusivo para los administradores del sistema DiciCoin.',
     'admin.error_invalid_number': 'Por favor, introduce un número secuencial válido (entre 1 y 2,000,000).',
     'admin.confirm_approve': '¿Estás seguro de que deseas aprobar esta transferencia de participación? Se transferirá el control de la reserva y se reajustarán los saldos.',
     'admin.confirm_reject': '¿Deseas rechazar esta transferencia? El comprador será eliminado y la moneda volverá a estar listada en venta.',
@@ -221,7 +224,7 @@ const dictionary: Record<Language, Record<string, string>> = {
     'admin.error_reject_transfer': 'Error al rechazar la transferencia.',
 
     // Login
-    'login.title': 'DICIWALLET',
+    'login.title': 'DICICOIN',
     'login.subtitle': 'Ecosistema de Economía Circular Cerrada',
     'login.email': 'Correo Electrónico',
     'login.password': 'Contraseña',
@@ -234,7 +237,7 @@ const dictionary: Record<Language, Record<string, string>> = {
     'login.error_general': 'Ocurrió un error al intentar iniciar sesión. Reinténtalo.',
 
     // Register
-    'register.title': 'DICIWALLET',
+    'register.title': 'DICICOIN',
     'register.subtitle': 'Registro de Nuevo Usuario',
     'register.first_name': 'Nombre',
     'register.last_name': 'Apellidos',
@@ -289,7 +292,12 @@ const dictionary: Record<Language, Record<string, string>> = {
     'api.admin.error_not_pending': 'La transferencia no está pendiente de aprobación.',
     'api.admin.error_no_buyer': 'No hay ningún comprador asignado a esta transferencia.',
     'api.admin.success_approve': 'Transferencia de participación aprobada y ejecutada correctamente.',
-    'api.admin.success_reject': 'La solicitud de transferencia ha sido rechazada y la moneda vuelve a estar listada en el Marketplace.'
+    'api.admin.success_reject': 'La solicitud de transferencia ha sido rechazada y la moneda vuelve a estar listada en el Marketplace.',
+    'api.error_name_immutable': 'El nombre del titular solo puede ser modificado por un administrador.',
+    'api.error_limit_24h': 'Límite diario alcanzado. No puedes realizar más de 3 cambios en 24 horas y se ha iniciado el bloqueo de 6 meses.',
+    'api.error_cooldown_active': 'Bloqueo activo. Debes esperar 6 meses entre actualizaciones de datos.',
+    'api.error_yearly_limit': 'Límite anual alcanzado. Solo puedes actualizar tus datos 2 veces al año. Contacta a un administrador.',
+    'api.error_reservation_not_found': 'La reserva no existe.'
   },
   EN: {
     // Navigation
@@ -399,11 +407,14 @@ const dictionary: Record<Language, Record<string, string>> = {
     'res.error_price_invalid': 'The price must be greater than 0 € and not exceed your total contribution.',
     'res.error_publish_sale': 'Error publishing the sale.',
     'res.error_invalid_shipping': 'Please fill in all required shipping fields.',
+    'res.btn_edit_data': 'Edit Details',
+    'res.edit_modal_title': 'Edit Contact & Shipping Information',
+    'res.edit_history_title': 'Change History',
 
     // Certificate
     'res.cert_title': 'Digital Reservation Certificate',
     'res.cert_collectible': 'DICICOIN COLLECTIBLE',
-    'res.cert_desc': 'This is to certify that the holder of the DiciWallet account owns the exclusive reservation and pre-assignment rights for the physical piece:',
+    'res.cert_desc': 'This is to certify that the holder of the DiciCoin account owns the exclusive reservation and pre-assignment rights for the physical piece:',
     'res.cert_verification_text': 'With a unique global minting serial verified in the digital records of Dicilo.net.',
     'res.cert_status': 'STATUS',
     'res.cert_continent': 'CONTINENT',
@@ -486,7 +497,7 @@ const dictionary: Record<Language, Record<string, string>> = {
     'admin.success_reserve': 'Reservation and purchase registered successfully for the user.',
     'admin.error_fill_all': 'Please fill in all buyer details.',
     'admin.access_denied': 'Access Denied',
-    'admin.access_denied_desc': 'This section is for the exclusive use of DiciWallet system administrators.',
+    'admin.access_denied_desc': 'This section is for the exclusive use of DiciCoin system administrators.',
     'admin.error_invalid_number': 'Please enter a valid sequential number (between 1 and 2,000,000).',
     'admin.confirm_approve': 'Are you sure you want to approve this participation transfer? Control of the reservation will be transferred and balances will be adjusted.',
     'admin.confirm_reject': 'Do you want to reject this transfer? The buyer will be removed and the coin will be listed for sale again.',
@@ -495,7 +506,7 @@ const dictionary: Record<Language, Record<string, string>> = {
     'admin.error_reject_transfer': 'Error rejecting the transfer.',
 
     // Login
-    'login.title': 'DICIWALLET',
+    'login.title': 'DICICOIN',
     'login.subtitle': 'Closed Circular Economy Ecosystem',
     'login.email': 'Email Address',
     'login.password': 'Password',
@@ -508,7 +519,7 @@ const dictionary: Record<Language, Record<string, string>> = {
     'login.error_general': 'An error occurred while logging in. Please try again.',
 
     // Register
-    'register.title': 'DICIWALLET',
+    'register.title': 'DICICOIN',
     'register.subtitle': 'New User Registration',
     'register.first_name': 'First Name',
     'register.last_name': 'Last Name',
@@ -563,7 +574,12 @@ const dictionary: Record<Language, Record<string, string>> = {
     'api.admin.error_not_pending': 'The transfer is not pending approval.',
     'api.admin.error_no_buyer': 'There is no buyer assigned to this transfer.',
     'api.admin.success_approve': 'Participation transfer approved and executed successfully.',
-    'api.admin.success_reject': 'The transfer request has been rejected and the coin is listed on the Marketplace again.'
+    'api.admin.success_reject': 'The transfer request has been rejected and the coin is listed on the Marketplace again.',
+    'api.error_name_immutable': 'The holder name can only be modified by an administrator.',
+    'api.error_limit_24h': 'Daily limit reached. You cannot make more than 3 changes in 24 hours and the 6-month cooldown has been initiated.',
+    'api.error_cooldown_active': 'Cooldown active. You must wait 6 months between data updates.',
+    'api.error_yearly_limit': 'Yearly limit reached. You can only update your data 2 times per year. Contact an administrator.',
+    'api.error_reservation_not_found': 'The reservation does not exist.'
   },
   DE: {
     // Navigation
@@ -673,11 +689,14 @@ const dictionary: Record<Language, Record<string, string>> = {
     'res.error_price_invalid': 'Der Preis muss größer als 0 € sein und darf Ihren Gesamtbeitrag nicht überschreiten.',
     'res.error_publish_sale': 'Fehler beim Veröffentlichen des Verkaufs.',
     'res.error_invalid_shipping': 'Bitte füllen Sie alle erforderlichen Versandfelder aus.',
+    'res.btn_edit_data': 'Daten bearbeiten',
+    'res.edit_modal_title': 'Kontakt- & Versandinformationen bearbeiten',
+    'res.edit_history_title': 'Änderungshistorie',
 
     // Certificate
     'res.cert_title': 'Digitales Reservierungszertifikat',
     'res.cert_collectible': 'DICICOIN COLLECTIBLE',
-    'res.cert_desc': 'Hiermit wird bescheinigt, dass der Inhaber des DiciWallet-Kontos die exklusiven Reservierungs- und Vorzuweisungsrechte für das physische Stück besitzt:',
+    'res.cert_desc': 'Hiermit wird bescheinigt, dass der Inhaber des DiciCoin-Kontos die exklusiven Reservierungs- und Vorzuweisungsrechte für das physische Stück besitzt:',
     'res.cert_verification_text': 'Mit einer weltweit eindeutigen Prägungsseriennummer, die in den digitalen Protokollen von Dicilo.net verifiziert ist.',
     'res.cert_status': 'STATUS',
     'res.cert_continent': 'KONTINENT',
@@ -760,7 +779,7 @@ const dictionary: Record<Language, Record<string, string>> = {
     'admin.success_reserve': 'Reservierung und Kauf erfolgreich für den Benutzer registriert.',
     'admin.error_fill_all': 'Bitte füllen Sie alle Angaben zum Käufer aus.',
     'admin.access_denied': 'Zugriff verweigert',
-    'admin.access_denied_desc': 'Dieser Bereich ist der exklusiven Nutzung durch DiciWallet-Systemadministratoren vorbehalten.',
+    'admin.access_denied_desc': 'Dieser Bereich ist der exklusiven Nutzung durch DiciCoin-Systemadministratoren vorbehalten.',
     'admin.error_invalid_number': 'Bitte geben Sie eine gültige Sequenznummer ein (zwischen 1 und 2.000.000).',
     'admin.confirm_approve': 'Sind Sie sicher, dass Sie diese Beteiligungsübertragung genehmigen möchten? Die Transaktion unterliegt aus Sicherheitsgründen der manuellen Genehmigung durch einen Administrator.',
     'admin.confirm_reject': 'Möchten Sie diese Übertragung ablehnen? Der Käufer wird entfernt und die Münze wird wieder zum Verkauf angeboten.',
@@ -769,7 +788,7 @@ const dictionary: Record<Language, Record<string, string>> = {
     'admin.error_reject_transfer': 'Fehler beim Ablehnen der Übertragung.',
 
     // Login
-    'login.title': 'DICIWALLET',
+    'login.title': 'DICICOIN',
     'login.subtitle': 'Geschlossenes Kreislaufwirtschafts-Ökosystem',
     'login.email': 'E-Mail-Adresse',
     'login.password': 'Passwort',
@@ -782,7 +801,7 @@ const dictionary: Record<Language, Record<string, string>> = {
     'login.error_general': 'Ein Fehler ist bei der Anmeldung aufgetreten. Bitte versuchen Sie es erneut.',
 
     // Register
-    'register.title': 'DICIWALLET',
+    'register.title': 'DICICOIN',
     'register.subtitle': 'Registrierung neuer Benutzer',
     'register.first_name': 'Vorname',
     'register.last_name': 'Nachname',
@@ -837,7 +856,12 @@ const dictionary: Record<Language, Record<string, string>> = {
     'api.admin.error_not_pending': 'Die Übertragung wartet nicht auf Genehmigung.',
     'api.admin.error_no_buyer': 'Dieser Übertragung ist kein Käufer zugeordnet.',
     'api.admin.success_approve': 'Beteiligungsübertragung erfolgreich genehmigt und ausgeführt.',
-    'api.admin.success_reject': 'Der Übertragungsantrag wurde abgelehnt und die Münze ist wieder auf dem Marktplatz gelistet.'
+    'api.admin.success_reject': 'Der Übertragungsantrag wurde abgelehnt und die Münze ist wieder auf dem Marktplatz gelistet.',
+    'api.error_name_immutable': 'Der Inhabername kann nur von einem Administrator geändert werden.',
+    'api.error_limit_24h': 'Tageslimit erreicht. Sie können nicht mehr als 3 Änderungen in 24 Stunden vornehmen und die 6-monatige Sperrfrist wurde eingeleitet.',
+    'api.error_cooldown_active': 'Sperrfrist aktiv. Sie müssen 6 Monate zwischen Datenaktualisierungen warten.',
+    'api.error_yearly_limit': 'Jahreslimit erreicht. Sie können Ihre Daten nur 2 Mal pro Jahr aktualisieren. Kontaktieren Sie einen Administrator.',
+    'api.error_reservation_not_found': 'Die Reservierung existiert nicht.'
   }
 };
 

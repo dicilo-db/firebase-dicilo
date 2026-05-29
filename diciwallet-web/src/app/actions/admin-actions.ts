@@ -11,9 +11,8 @@ export async function createPhysicalCoin(
   continent: string,
   number: number
 ) {
-  const db = getAdminDb();
-
   try {
+    const db = getAdminDb();
     const coinRef = db.collection('dici_coins').doc(coinId);
     const coinDoc = await coinRef.get();
 
@@ -38,7 +37,7 @@ export async function createPhysicalCoin(
     return { success: true, messageKey: 'api.admin.success_register_coin' };
   } catch (error: any) {
     console.error('Error in createPhysicalCoin:', error);
-    return { success: false, messageKey: 'api.server_error' };
+    return { success: false, messageKey: 'api.server_error', errorDetails: error.message || String(error) };
   }
 }
 
@@ -46,9 +45,8 @@ export async function createPhysicalCoin(
  * Aprueba una transferencia de participación del marketplace de forma atómica.
  */
 export async function approveTransfer(transferId: string, adminUserId: string) {
-  const db = getAdminDb();
-
   try {
+    const db = getAdminDb();
     const result = await db.runTransaction(async (transaction) => {
       const transferRef = db.collection('participation_transfers').doc(transferId);
       const transferDoc = await transaction.get(transferRef);
@@ -131,7 +129,7 @@ export async function approveTransfer(transferId: string, adminUserId: string) {
     return result;
   } catch (error: any) {
     console.error('Error in approveTransfer:', error);
-    return { success: false, messageKey: 'api.server_error' };
+    return { success: false, messageKey: 'api.server_error', errorDetails: error.message || String(error) };
   }
 }
 
@@ -139,9 +137,8 @@ export async function approveTransfer(transferId: string, adminUserId: string) {
  * Rechaza una solicitud de transferencia y la vuelve a listar en el marketplace.
  */
 export async function rejectTransfer(transferId: string) {
-  const db = getAdminDb();
-
   try {
+    const db = getAdminDb();
     const transferRef = db.collection('participation_transfers').doc(transferId);
     const transferDoc = await transferRef.get();
 
@@ -164,7 +161,7 @@ export async function rejectTransfer(transferId: string) {
     return { success: true, messageKey: 'api.admin.success_reject' };
   } catch (error: any) {
     console.error('Error in rejectTransfer:', error);
-    return { success: false, messageKey: 'api.server_error' };
+    return { success: false, messageKey: 'api.server_error', errorDetails: error.message || String(error) };
   }
 }
 
@@ -183,9 +180,8 @@ export async function reservePhysicalCoinAsAdmin(
   },
   payWithDp: boolean = false
 ) {
-  const db = getAdminDb();
-
   try {
+    const db = getAdminDb();
     let userId = '';
     let profileData: any = null;
     let buyerEmailResolved = '';
@@ -369,7 +365,7 @@ export async function reservePhysicalCoinAsAdmin(
     return result;
   } catch (error: any) {
     console.error('Error in reservePhysicalCoinAsAdmin:', error);
-    return { success: false, messageKey: 'api.server_error' };
+    return { success: false, messageKey: 'api.server_error', errorDetails: error.message || String(error) };
   }
 }
 

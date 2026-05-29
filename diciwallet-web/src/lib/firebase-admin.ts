@@ -1,11 +1,19 @@
-import * as admin from 'firebase-admin';
+import { initializeApp, getApps, getApp, cert, applicationDefault } from 'firebase-admin/app';
+import { getFirestore, FieldValue, Timestamp } from 'firebase-admin/firestore';
+import { getAuth } from 'firebase-admin/auth';
+import { getStorage } from 'firebase-admin/storage';
 
 const PROJECT_ID = 'geosearch-fq4i9';
 
 function initFirebaseAdmin() {
-    const defaultApp = admin.apps.find(a => a?.name === '[DEFAULT]');
-    if (defaultApp) {
-        return defaultApp;
+    try {
+        const apps = getApps();
+        const defaultApp = apps.find(a => a?.name === '[DEFAULT]');
+        if (defaultApp) {
+            return defaultApp;
+        }
+    } catch (e) {
+        console.warn("Error checking existing Firebase Admin apps:", e);
     }
 
     try {
@@ -27,14 +35,14 @@ function initFirebaseAdmin() {
                 throw new Error("Invalid FIREBASE_SERVICE_ACCOUNT_KEY JSON");
             }
             try {
-                return admin.initializeApp({
-                    credential: admin.credential.cert(serviceAccount),
+                return initializeApp({
+                    credential: cert(serviceAccount),
                     projectId: PROJECT_ID,
                     storageBucket: 'geosearch-fq4i9.firebasestorage.app',
                 });
             } catch (error: any) {
                 if (error.code === 'app/duplicate-app') {
-                    return admin.app();
+                    return getApp();
                 }
                 throw error;
             }
@@ -42,20 +50,20 @@ function initFirebaseAdmin() {
             try {
                 // En Cloud Functions / Cloud Run de Firebase, initializeApp() vacío
                 // es la forma recomendada que usa la configuración nativa de Firebase.
-                return admin.initializeApp();
+                return initializeApp();
             } catch (initError: any) {
                 if (initError.code === 'app/duplicate-app') {
-                    return admin.app();
+                    return getApp();
                 }
                 try {
-                    return admin.initializeApp({
+                    return initializeApp({
                         projectId: PROJECT_ID,
                         storageBucket: 'geosearch-fq4i9.firebasestorage.app',
-                        credential: admin.credential.applicationDefault(),
+                        credential: applicationDefault(),
                     });
                 } catch (error: any) {
                     if (error.code === 'app/duplicate-app') {
-                        return admin.app();
+                        return getApp();
                     }
                     throw error;
                 }
@@ -63,14 +71,23 @@ function initFirebaseAdmin() {
         }
     } catch (error) {
         console.error("Firebase Admin initialization failed:", error);
-        if (admin.apps.length > 0) return admin.app();
+        try {
+            if (getApps().length > 0) return getApp();
+        } catch (e) {}
         throw error;
     }
 }
 
-export const getAdminAuth = () => admin.auth(initFirebaseAdmin());
-export const getAdminDb = () => admin.firestore(initFirebaseAdmin());
-export const getAdminStorage = () => admin.storage(initFirebaseAdmin());
-export const getFieldValue = () => admin.firestore.FieldValue;
-export const getTimestamp = () => admin.firestore.Timestamp;
-export const getAdminFirestore = () => admin.firestore;
+export const getAdminAuth = () => getAuth(initFirebaseAdmin());
+export const getAdminDb = () => getFirestore(initFirebaseAdmin());
+export const getAdminStorage = () => getStorage(initFirebaseAdmin());
+export const getFieldValue = () => FieldValue;
+export const getTimestamp = () => Timestamp;
+export const getAdminFirestore = () => {
+    // Para conservar compatibilidad en caso de que alguien llame getAdminFirestore()
+    return {
+        FieldValue,
+        Timestamp
+    } as any;
+};
+

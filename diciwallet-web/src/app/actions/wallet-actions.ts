@@ -1,5 +1,6 @@
 'use server';
 
+import { getApps } from 'firebase-admin/app';
 import { getAdminDb, getFieldValue, getTimestamp } from '@/lib/firebase-admin';
 import { generateSaleSignature, verifySaleSignature } from '@/lib/signature';
 
@@ -17,10 +18,9 @@ export async function convertDpToDc(userId: string, amountDp: number) {
     return { success: false, messageKey: 'api.validation_multiple' };
   }
 
-  const db = getAdminDb();
-  const amountDc = amountDp / DP_TO_DC_RATE;
-
   try {
+    const db = getAdminDb();
+    const amountDc = amountDp / DP_TO_DC_RATE;
     const result = await db.runTransaction(async (transaction) => {
       const walletRef = db.collection('wallets').doc(userId);
       const walletDoc = await transaction.get(walletRef);
@@ -68,7 +68,7 @@ export async function convertDpToDc(userId: string, amountDp: number) {
     return result;
   } catch (error: any) {
     console.error('Error in convertDpToDc:', error);
-    return { success: false, messageKey: 'api.server_error' };
+    return { success: false, messageKey: 'api.server_error', errorDetails: error.message || String(error) };
   }
 }
 
@@ -87,9 +87,8 @@ export async function reserveCoin(
     address: string;
   }
 ) {
-  const db = getAdminDb();
-
   try {
+    const db = getAdminDb();
     const result = await db.runTransaction(async (transaction) => {
       const coinRef = db.collection('dici_coins').doc(coinId);
       const coinDoc = await transaction.get(coinRef);
@@ -200,7 +199,7 @@ export async function reserveCoin(
     return result;
   } catch (error: any) {
     console.error('Error in reserveCoin:', error);
-    return { success: false, messageKey: 'api.server_error' };
+    return { success: false, messageKey: 'api.server_error', errorDetails: error.message || String(error) };
   }
 }
 
@@ -212,9 +211,8 @@ export async function payInstallment(userId: string, reservationId: string, amou
     return { success: false, messageKey: 'api.server_error' };
   }
 
-  const db = getAdminDb();
-
   try {
+    const db = getAdminDb();
     const result = await db.runTransaction(async (transaction) => {
       const reservationRef = db.collection('coin_reservations').doc(reservationId);
       const reservationDoc = await transaction.get(reservationRef);
@@ -291,7 +289,7 @@ export async function payInstallment(userId: string, reservationId: string, amou
     return result;
   } catch (error: any) {
     console.error('Error in payInstallment:', error);
-    return { success: false, messageKey: 'api.server_error' };
+    return { success: false, messageKey: 'api.server_error', errorDetails: error.message || String(error) };
   }
 }
 
@@ -299,9 +297,8 @@ export async function payInstallment(userId: string, reservationId: string, amou
  * Publica una reserva en el marketplace interno para transferir la participación.
  */
 export async function listParticipationInMarketplace(userId: string, reservationId: string, askingPrice: number) {
-  const db = getAdminDb();
-
   try {
+    const db = getAdminDb();
     const result = await db.runTransaction(async (transaction) => {
       const reservationRef = db.collection('coin_reservations').doc(reservationId);
       const reservationDoc = await transaction.get(reservationRef);
@@ -346,7 +343,7 @@ export async function listParticipationInMarketplace(userId: string, reservation
     return result;
   } catch (error: any) {
     console.error('Error in listParticipation:', error);
-    return { success: false, messageKey: 'api.server_error' };
+    return { success: false, messageKey: 'api.server_error', errorDetails: error.message || String(error) };
   }
 }
 
@@ -356,9 +353,8 @@ export async function listParticipationInMarketplace(userId: string, reservation
  * Requiere aprobación del administrador para transferirse formalmente.
  */
 export async function buyParticipation(buyerId: string, transferId: string) {
-  const db = getAdminDb();
-
   try {
+    const db = getAdminDb();
     const result = await db.runTransaction(async (transaction) => {
       const transferRef = db.collection('participation_transfers').doc(transferId);
       const transferDoc = await transaction.get(transferRef);
@@ -392,7 +388,7 @@ export async function buyParticipation(buyerId: string, transferId: string) {
     return result;
   } catch (error: any) {
     console.error('Error in buyParticipation:', error);
-    return { success: false, messageKey: 'api.server_error' };
+    return { success: false, messageKey: 'api.server_error', errorDetails: error.message || String(error) };
   }
 }
 
@@ -412,9 +408,8 @@ export async function validateSaleSignature(signature: string) {
     return { success: false, messageKey: 'api.error_invalid_signature' };
   }
 
-  const db = getAdminDb();
-
   try {
+    const db = getAdminDb();
     // 2. Buscar en Firestore si existe alguna reserva con esta firma
     const snapshot = await db.collection('coin_reservations')
       .where('saleSignature', '==', signature.trim())
@@ -460,7 +455,256 @@ export async function validateSaleSignature(signature: string) {
     };
   } catch (error: any) {
     console.error('Error in validateSaleSignature:', error);
-    return { success: false, messageKey: 'api.server_error' };
+    return { success: false, messageKey: 'api.server_error', errorDetails: error.message || String(error) };
+  }
+}
+
+/**
+ * Diagnostic action to troubleshoot serverless environments on GCP Cloud Run
+ */
+export async function runDiagnostics() {
+  try {
+    const env = {
+      PROJECT_ID: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || '',
+      API_KEY: process.env.NEXT_PUBLIC_FIREBASE_API_KEY ? '***' : '',
+      ENCRYPTION_KEY: process.env.ENCRYPTION_KEY ? '***' : '',
+      FIREBASE_SERVICE_ACCOUNT_KEY: process.env.FIREBASE_SERVICE_ACCOUNT_KEY ? '***' : '',
+      FIREBASE_CONFIG: process.env.FIREBASE_CONFIG ? '***' : '',
+      GCLOUD_PROJECT: process.env.GCLOUD_PROJECT || '',
+    };
+
+    const results: any = {
+      env,
+      apps: getApps().map((a: any) => a?.name),
+    };
+
+    try {
+      const db = getAdminDb();
+      results.initSuccess = true;
+      
+      const snapshot = await db.collection('dici_coins').limit(1).get();
+      results.firestoreSuccess = true;
+      results.firestoreCoinsCount = snapshot.size;
+    } catch (err: any) {
+      results.initSuccess = false;
+      results.error = err.message || String(err);
+      results.errorStack = err.stack;
+    }
+
+    try {
+      const res = await fetch('http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/email', {
+        headers: { 'Metadata-Flavor': 'Google' },
+        signal: AbortSignal.timeout(2000)
+      });
+      if (res.ok) {
+        results.serviceAccount = await res.text();
+      } else {
+        results.serviceAccount = `Metadata status: ${res.status}`;
+      }
+    } catch (e: any) {
+      results.serviceAccountError = e.message || String(e);
+    }
+
+    return results;
+  } catch (globalError: any) {
+    return {
+      success: false,
+      error: `Global diagnostics error: ${globalError.message || String(globalError)}`,
+      errorStack: globalError.stack,
+    };
+  }
+}
+
+/**
+ * Actualiza los detalles de contacto/envío de una reserva y su moneda asociada.
+ * Aplica límites y cooldowns si la llamada es hecha por el cliente.
+ */
+export async function updateReservationDetails(
+  callerId: string,
+  reservationId: string,
+  updatedFields: {
+    fullName: string;
+    email: string;
+    phone: string;
+    country: string;
+    city: string;
+    address: string;
+  }
+) {
+  try {
+    const db = getAdminDb();
+    
+    // 1. Obtener perfil de quien llama para validar si es admin
+    const callerRef = db.collection('private_profiles').doc(callerId);
+    const callerDoc = await callerRef.get();
+    
+    if (!callerDoc.exists) {
+      return { success: false, messageKey: 'api.error_user_not_found' };
+    }
+    
+    const callerData = callerDoc.data();
+    const isAdmin = callerData?.role === 'admin' || callerData?.role === 'superadmin';
+    
+    // 2. Obtener la reserva actual
+    const reservationRef = db.collection('coin_reservations').doc(reservationId);
+    const reservationDoc = await reservationRef.get();
+    
+    if (!reservationDoc.exists) {
+      return { success: false, messageKey: 'api.error_reservation_not_found' };
+    }
+    
+    const reservationData = reservationDoc.data();
+    const currentShipping = reservationData?.shippingInfo || {};
+    
+    // 3. Validar permisos del comprador
+    if (!isAdmin) {
+      if (reservationData?.userId !== callerId) {
+        return { success: false, messageKey: 'api.error_seller_mismatch' };
+      }
+      
+      // El nombre del titular (fullName) NO es editable por el cliente.
+      if (updatedFields.fullName !== currentShipping.fullName) {
+        return { success: false, messageKey: 'api.error_name_immutable' };
+      }
+      
+      // Validar límites y cooldowns en base al historial
+      const history: any[] = reservationData?.changeHistory || [];
+      const clientEdits = history.filter(h => !h.changedBy.startsWith('admin:'));
+      
+      const nowMs = Date.now();
+      const oneDayMs = 24 * 60 * 60 * 1000;
+      const rollingYearMs = 365 * 24 * 60 * 60 * 1000;
+      
+      // A. Límite de 3 cambios en las últimas 24 horas.
+      const editsInLast24h = clientEdits.filter(h => {
+        const timestamp = h.timestamp?.toDate ? h.timestamp.toDate().getTime() : new Date(h.timestamp).getTime();
+        return (nowMs - timestamp) < oneDayMs;
+      });
+      
+      if (editsInLast24h.length >= 3) {
+        return { success: false, messageKey: 'api.error_limit_24h' };
+      }
+      
+      // B. Bloqueo (Cooldown) de 6 meses (180 días) desde el último cambio.
+      if (clientEdits.length > 0) {
+        const lastEdit = clientEdits[clientEdits.length - 1];
+        const lastEditTimestamp = lastEdit.timestamp?.toDate ? lastEdit.timestamp.toDate().getTime() : new Date(lastEdit.timestamp).getTime();
+        const elapsedDays = (nowMs - lastEditTimestamp) / (24 * 60 * 60 * 1000);
+        
+        // Determinar el primer cambio de la sesión de edición de 24 horas en curso
+        let sessionStartIndex = clientEdits.length - 1;
+        while (sessionStartIndex > 0) {
+          const prevTime = clientEdits[sessionStartIndex - 1].timestamp?.toDate ? clientEdits[sessionStartIndex - 1].timestamp.toDate().getTime() : new Date(clientEdits[sessionStartIndex - 1].timestamp).getTime();
+          const currTime = clientEdits[sessionStartIndex].timestamp?.toDate ? clientEdits[sessionStartIndex].timestamp.toDate().getTime() : new Date(clientEdits[sessionStartIndex].timestamp).getTime();
+          if ((currTime - prevTime) > oneDayMs) {
+            break;
+          }
+          sessionStartIndex--;
+        }
+        
+        const firstEditOfSession = clientEdits[sessionStartIndex];
+        const firstEditTimestamp = firstEditOfSession.timestamp?.toDate ? firstEditOfSession.timestamp.toDate().getTime() : new Date(firstEditOfSession.timestamp).getTime();
+        
+        if ((nowMs - firstEditTimestamp) >= oneDayMs && elapsedDays < 180) {
+          return { success: false, messageKey: 'api.error_cooldown_active' };
+        }
+      }
+      
+      // C. Límite de 2 veces al año
+      let sessionsCount = 0;
+      let lastSessionTime = 0;
+      for (const edit of clientEdits) {
+        const editTime = edit.timestamp?.toDate ? edit.timestamp.toDate().getTime() : new Date(edit.timestamp).getTime();
+        if (nowMs - editTime < rollingYearMs) {
+          if (editTime - lastSessionTime > oneDayMs) {
+            sessionsCount++;
+            lastSessionTime = editTime;
+          }
+        }
+      }
+      
+      if (sessionsCount >= 2) {
+        const lastEdit = clientEdits[clientEdits.length - 1];
+        const lastEditTimestamp = lastEdit.timestamp?.toDate ? lastEdit.timestamp.toDate().getTime() : new Date(lastEdit.timestamp).getTime();
+        if ((nowMs - lastEditTimestamp) >= oneDayMs) {
+          return { success: false, messageKey: 'api.error_yearly_limit' };
+        }
+      }
+    }
+    
+    // 4. Ejecutar la actualización en una transacción
+    const coinId = reservationData?.coinId;
+    const result = await db.runTransaction(async (transaction) => {
+      const resRef = db.collection('coin_reservations').doc(reservationId);
+      const coinRef = db.collection('dici_coins').doc(coinId);
+      
+      const resSnap = await transaction.get(resRef);
+      const coinSnap = await transaction.get(coinRef);
+      
+      if (!resSnap.exists || !coinSnap.exists) {
+        throw new Error('La reserva o la moneda no existe.');
+      }
+      
+      const prevShipping = resSnap.data()?.shippingInfo || {};
+      const newFullName = isAdmin ? updatedFields.fullName : prevShipping.fullName;
+      
+      const newShipping = {
+        fullName: newFullName,
+        email: updatedFields.email,
+        phone: updatedFields.phone,
+        country: updatedFields.country,
+        city: updatedFields.city,
+        address: updatedFields.address,
+      };
+      
+      let finalSignature = resSnap.data()?.saleSignature || '';
+      if (prevShipping.country !== updatedFields.country) {
+        const continentCode = coinId.substring(0, 2).toUpperCase();
+        const secretKey = process.env.ENCRYPTION_KEY || 'HA7Ct8eXPu2E6+awZKoFZAd5jXO8UJJ9MIdxOq9IWvM=';
+        finalSignature = generateSaleSignature(updatedFields.country, continentCode, secretKey);
+      }
+      
+      const newLog = {
+        timestamp: getTimestamp().now(),
+        changedBy: isAdmin ? `admin:${callerId}` : 'client',
+        previousValues: {
+          fullName: prevShipping.fullName || '',
+          email: prevShipping.email || '',
+          phone: prevShipping.phone || '',
+          country: prevShipping.country || '',
+          city: prevShipping.city || '',
+          address: prevShipping.address || '',
+        },
+        newValues: {
+          fullName: newFullName,
+          email: updatedFields.email,
+          phone: updatedFields.phone,
+          country: updatedFields.country,
+          city: updatedFields.city,
+          address: updatedFields.address,
+        }
+      };
+      
+      transaction.update(resRef, {
+        shippingInfo: newShipping,
+        saleSignature: finalSignature,
+        changeHistory: getFieldValue().arrayUnion(newLog),
+        updatedAt: getTimestamp().now()
+      });
+      
+      transaction.update(coinRef, {
+        shippingInfo: newShipping,
+        saleSignature: finalSignature,
+        updatedAt: getTimestamp().now()
+      });
+      
+      return { success: true };
+    });
+    
+    return result;
+  } catch (error: any) {
+    console.error('Error in updateReservationDetails:', error);
+    return { success: false, messageKey: 'api.server_error', errorDetails: error.message || String(error) };
   }
 }
 

@@ -63,7 +63,7 @@ export default function Navigation({ children }: { children: React.ReactNode }) 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '40px', height: '100%' }}>
           {/* Logo */}
           <Link href="/dashboard" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <span className="text-gold" style={{ fontSize: '22px', fontWeight: 800, letterSpacing: '0.05em' }}>DICIWALLET</span>
+            <span className="text-gold" style={{ fontSize: '22px', fontWeight: 800, letterSpacing: '0.05em' }}>DICICOIN</span>
           </Link>
 
           {/* User Info Card */}
@@ -152,7 +152,7 @@ export default function Navigation({ children }: { children: React.ReactNode }) 
       {/* Mobile Navbar Header */}
       <div className="glass navbar-mobile">
         <Link href="/dashboard" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span className="text-gold" style={{ fontSize: '18px', fontWeight: 800, letterSpacing: '0.05em' }}>DICIWALLET</span>
+          <span className="text-gold" style={{ fontSize: '18px', fontWeight: 800, letterSpacing: '0.05em' }}>DICICOIN</span>
         </Link>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           {/* Mobile Language Selector */}

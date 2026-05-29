@@ -123,7 +123,7 @@ export default function DiciCoinUserPage() {
                             </p>
                             <div className="mt-auto">
                                 <Button className="w-full bg-amber-600 hover:bg-amber-700" asChild>
-                                    <a href="https://dicicoin.dicilo.net" target="_blank" rel="noopener noreferrer">
+                                    <a href="https://dicicoin-dicilo.web.app" target="_blank" rel="noopener noreferrer">
                                         {t('dashboard.dicicoin.commingSoon', 'Reserva tu DiciCoin')}
                                     </a>
                                 </Button>

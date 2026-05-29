@@ -6,9 +6,11 @@ import { useAuth } from '@/context/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { db } from '@/lib/firebase';
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
-import { reserveCoin, payInstallment, listParticipationInMarketplace } from '@/app/actions/wallet-actions';
+import { reserveCoin, payInstallment, listParticipationInMarketplace, runDiagnostics, updateReservationDetails } from '@/app/actions/wallet-actions';
 import { Coins, Award, Award as RarityIcon, AlertTriangle, ShieldCheck, HelpCircle, X, Check, Eye, MapPin, Phone, Mail, User } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
+import html2canvas from 'html2canvas';
+import { jsPDF } from 'jspdf';
 
 interface DiciCoin {
   id: string;
@@ -83,6 +85,21 @@ export default function ReservationsPage() {
   const [activeTab, setActiveTab] = useState<'my_plans' | 'catalog' | 'faq'>('my_plans');
   const [paymentAmount, setPaymentAmount] = useState<{[key: string]: string}>({});
   const [paymentLoading, setPaymentLoading] = useState<{[key: string]: boolean}>({});
+  const [diagResults, setDiagResults] = useState<any>(null);
+  const [diagLoading, setDiagLoading] = useState(false);
+
+  const runServerDiagnostics = async () => {
+    setDiagLoading(true);
+    setDiagResults(null);
+    try {
+      const res = await runDiagnostics();
+      setDiagResults(res);
+    } catch (e: any) {
+      setDiagResults({ error: e.message || String(e) });
+    } finally {
+      setDiagLoading(false);
+    }
+  };
   
   const [sellCoin, setSellCoin] = useState<Reservation | null>(null);
   const [sellPrice, setSellPrice] = useState('');
@@ -90,6 +107,205 @@ export default function ReservationsPage() {
 
   const [certCoinId, setCertCoinId] = useState<string | null>(null);
   const [message, setMessage] = useState({ text: '', type: '' });
+  const [isMobile, setIsMobile] = useState(false);
+  const [pdfDownloading, setPdfDownloading] = useState(false);
+
+  // States for updating shipping/contact details
+  const [editingRes, setEditingRes] = useState<Reservation | null>(null);
+  const [editForm, setEditForm] = useState({
+    fullName: '',
+    email: '',
+    phone: '',
+    country: '',
+    city: '',
+    address: ''
+  });
+  const [editLoading, setEditLoading] = useState(false);
+  const [editError, setEditError] = useState('');
+  const [editSuccess, setEditSuccess] = useState(false);
+
+  const checkClientLimits = (res: Reservation) => {
+    const isAdmin = profile?.role === 'admin' || profile?.role === 'superadmin';
+    if (isAdmin) return { allowed: true };
+
+    const history: any[] = (res as any).changeHistory || [];
+    const clientEdits = history.filter(h => !h.changedBy.startsWith('admin:'));
+    
+    const nowMs = Date.now();
+    const oneDayMs = 24 * 60 * 60 * 1000;
+    const rollingYearMs = 365 * 24 * 60 * 60 * 1000;
+    
+    // 1. Límite de 3 cambios en las últimas 24 horas.
+    const editsInLast24h = clientEdits.filter(h => {
+      const timestamp = h.timestamp?.toDate ? h.timestamp.toDate().getTime() : new Date(h.timestamp).getTime();
+      return (nowMs - timestamp) < oneDayMs;
+    });
+    
+    if (editsInLast24h.length >= 3) {
+      return { 
+        allowed: false, 
+        messageKey: 'api.error_limit_24h', 
+        reason: t('api.error_limit_24h') || 'Límite diario alcanzado (máximo 3 cambios en 24 horas). Bloqueo de 6 meses activo.' 
+      };
+    }
+    
+    // 2. Bloqueo (Cooldown) de 6 meses (180 días) desde el último cambio si se superó la sesión inicial.
+    if (clientEdits.length > 0) {
+      const lastEdit = clientEdits[clientEdits.length - 1];
+      const lastEditTimestamp = lastEdit.timestamp?.toDate ? lastEdit.timestamp.toDate().getTime() : new Date(lastEdit.timestamp).getTime();
+      const elapsedDays = (nowMs - lastEditTimestamp) / (24 * 60 * 60 * 1000);
+      
+      // Encontrar el inicio de la sesión actual de 24 horas
+      let sessionStartIndex = clientEdits.length - 1;
+      while (sessionStartIndex > 0) {
+        const prevTime = clientEdits[sessionStartIndex - 1].timestamp?.toDate ? clientEdits[sessionStartIndex - 1].timestamp.toDate().getTime() : new Date(clientEdits[sessionStartIndex - 1].timestamp).getTime();
+        const currTime = clientEdits[sessionStartIndex].timestamp?.toDate ? clientEdits[sessionStartIndex].timestamp.toDate().getTime() : new Date(clientEdits[sessionStartIndex].timestamp).getTime();
+        if ((currTime - prevTime) > oneDayMs) {
+          break;
+        }
+        sessionStartIndex--;
+      }
+      
+      const firstEditOfSession = clientEdits[sessionStartIndex];
+      const firstEditTimestamp = firstEditOfSession.timestamp?.toDate ? firstEditOfSession.timestamp.toDate().getTime() : new Date(firstEditOfSession.timestamp).getTime();
+      
+      if ((nowMs - firstEditTimestamp) >= oneDayMs && elapsedDays < 180) {
+        return { 
+          allowed: false, 
+          messageKey: 'api.error_cooldown_active', 
+          reason: t('api.error_cooldown_active') || 'Bloqueo activo de 6 meses. Debes esperar 180 días desde tu última edición.' 
+        };
+      }
+    }
+    
+    // 3. Límite de 2 veces al año (sesiones independientes)
+    let sessionsCount = 0;
+    let lastSessionTime = 0;
+    for (const edit of clientEdits) {
+      const editTime = edit.timestamp?.toDate ? edit.timestamp.toDate().getTime() : new Date(edit.timestamp).getTime();
+      if (nowMs - editTime < rollingYearMs) {
+        if (editTime - lastSessionTime > oneDayMs) {
+          sessionsCount++;
+          lastSessionTime = editTime;
+        }
+      }
+    }
+    
+    if (sessionsCount >= 2) {
+      const lastEdit = clientEdits[clientEdits.length - 1];
+      const lastEditTimestamp = lastEdit.timestamp?.toDate ? lastEdit.timestamp.toDate().getTime() : new Date(lastEdit.timestamp).getTime();
+      if ((nowMs - lastEditTimestamp) >= oneDayMs) {
+        return { 
+          allowed: false, 
+          messageKey: 'api.error_yearly_limit', 
+          reason: t('api.error_yearly_limit') || 'Límite anual de 2 actualizaciones alcanzado.' 
+        };
+      }
+    }
+    
+    return { allowed: true };
+  };
+
+  const handleEditShippingClick = (res: Reservation) => {
+    setEditingRes(res);
+    setEditForm({
+      fullName: res.shippingInfo?.fullName || '',
+      email: res.shippingInfo?.email || '',
+      phone: res.shippingInfo?.phone || '',
+      country: res.shippingInfo?.country || '',
+      city: res.shippingInfo?.city || '',
+      address: res.shippingInfo?.address || ''
+    });
+    setEditError('');
+    setEditSuccess(false);
+  };
+
+  const handleSaveEdit = async () => {
+    if (!user || !editingRes) return;
+    
+    // Validar campos requeridos
+    if (
+      !editForm.email.trim() ||
+      !editForm.phone.trim() ||
+      !editForm.country.trim() ||
+      !editForm.city.trim() ||
+      !editForm.address.trim()
+    ) {
+      setEditError(t('res.error_invalid_shipping'));
+      return;
+    }
+    
+    setEditLoading(true);
+    setEditError('');
+    setEditSuccess(false);
+    
+    try {
+      const res = await updateReservationDetails(user.uid, editingRes.id, editForm);
+      if (res.success) {
+        setEditSuccess(true);
+        setTimeout(() => {
+          setEditingRes(null);
+        }, 1500);
+      } else {
+        setEditError(t((res as any).messageKey || 'api.server_error'));
+      }
+    } catch (err: any) {
+      console.error(err);
+      setEditError(err.message || 'Error al guardar los cambios');
+    } finally {
+      setEditLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const checkMobile = () => {
+        setIsMobile(window.innerWidth < 768 || /Mobi|Android/i.test(navigator.userAgent));
+      };
+      checkMobile();
+      window.addEventListener('resize', checkMobile);
+      return () => window.removeEventListener('resize', checkMobile);
+    }
+  }, []);
+
+  const downloadCertificatePdf = async () => {
+    const element = document.getElementById('printable-certificate');
+    if (!element) return;
+    
+    setPdfDownloading(true);
+    try {
+      const closeBtn = document.getElementById('close-cert-modal-btn');
+      const actionBtns = document.getElementById('print-actions-area');
+      
+      if (closeBtn) closeBtn.style.display = 'none';
+      if (actionBtns) actionBtns.style.display = 'none';
+      
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#0C0B0A',
+        logging: false
+      } as any);
+      
+      if (closeBtn) closeBtn.style.display = 'block';
+      if (actionBtns) actionBtns.style.display = 'block';
+      
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF({
+        orientation: canvas.width > canvas.height ? 'landscape' : 'portrait',
+        unit: 'px',
+        format: [canvas.width, canvas.height]
+      });
+      
+      pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+      pdf.save(`certificado-${certCoinId}.pdf`);
+    } catch (err) {
+      console.error('Error generating PDF:', err);
+      alert('Error al generar el PDF. Por favor, inténtelo de nuevo.');
+    } finally {
+      setPdfDownloading(false);
+    }
+  };
 
   // Autocompletar datos de perfil cuando estén disponibles
   useEffect(() => {
@@ -205,7 +421,8 @@ export default function ReservationsPage() {
         setSelectedCoin(null);
         setActiveTab('my_plans');
       } else {
-        setMessage({ text: t(res.messageKey || 'api.server_error'), type: 'error' });
+        const detail = (res as any).errorDetails ? ` (${(res as any).errorDetails})` : '';
+        setMessage({ text: `${t(res.messageKey || 'api.server_error')}${detail}`, type: 'error' });
       }
     } catch (err: any) {
       console.error(err);
@@ -425,10 +642,13 @@ export default function ReservationsPage() {
                           </div>
                           <p style={{ color: 'var(--text-muted)', fontSize: '13px', marginTop: '4px' }}>ID Reserva: {res.id}</p>
                         </div>
-                        <div style={{ display: 'flex', gap: '12px' }}>
+                        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
                           <button id={`btn-cert-${res.coinId}`} onClick={() => setCertCoinId(res.coinId)} className="btn-outline" style={{ padding: '10px 16px', fontSize: '13px' }}>
                             <Eye size={14} />
                             <span>{t('res.cert_title')}</span>
+                          </button>
+                          <button id={`btn-edit-shipping-${res.id}`} onClick={() => handleEditShippingClick(res)} className="btn-outline" style={{ padding: '10px 16px', fontSize: '13px' }}>
+                            <span>{t('res.btn_edit_data') || 'Editar Datos'}</span>
                           </button>
                           {!isCompleted && (
                             <button id={`btn-sell-${res.id}`} onClick={() => handleSellClick(res)} className="btn-outline-gold" style={{ padding: '10px 16px', fontSize: '13px' }}>
@@ -952,12 +1172,12 @@ export default function ReservationsPage() {
 
         {/* Modal: Interactive Certificate Viewer */}
         {certCoinId && (
-          <div style={{
+          <div id="printable-certificate-overlay" style={{
             position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
             background: 'rgba(0,0,0,0.9)', display: 'flex', justifyContent: 'center', alignItems: 'center',
             zIndex: 50, padding: '24px'
           }}>
-            <div className="glass-gold" style={{
+            <div id="printable-certificate" className="glass-gold" style={{
               width: '100%', maxWidth: '640px', borderRadius: 'var(--radius-md)',
               padding: '40px', display: 'flex', flexDirection: 'column', gap: '32px',
               position: 'relative', background: 'radial-gradient(circle at center, #1C1A17 0%, #0C0B0A 100%)',
@@ -1071,13 +1291,283 @@ export default function ReservationsPage() {
 
               </div>
 
-              <div>
-                <button id="print-cert-btn" onClick={() => window.print()} className="btn-gold" style={{ padding: '12px 32px' }}>
-                  {t('res.cert_print')}
-                </button>
+              <div id="print-actions-area">
+                {isMobile ? (
+                  <button 
+                    id="download-cert-btn" 
+                    onClick={downloadCertificatePdf} 
+                    className="btn-gold" 
+                    style={{ padding: '12px 32px' }}
+                    disabled={pdfDownloading}
+                  >
+                    {pdfDownloading ? 'Descargando...' : 'Descargar PDF'}
+                  </button>
+                ) : (
+                  <button id="print-cert-btn" onClick={() => window.print()} className="btn-gold" style={{ padding: '12px 32px' }}>
+                    {t('res.cert_print')}
+                  </button>
+                )}
               </div>
 
             </div>
+          </div>
+        )}
+
+        {/* Modal: Edit Contact / Shipping Data */}
+        {editingRes && (
+          <div style={{
+            position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+            background: 'rgba(0,0,0,0.85)', display: 'flex', justifyContent: 'center', alignItems: 'center',
+            zIndex: 50, padding: '24px'
+          }}>
+            <div className="glass-gold" style={{
+              width: '100%', maxWidth: '600px', borderRadius: 'var(--radius-md)',
+              padding: '32px', display: 'flex', flexDirection: 'column', gap: '24px',
+              position: 'relative', maxHeight: '90vh', overflowY: 'auto'
+            }}>
+              <button 
+                id="close-edit-modal-btn"
+                onClick={() => setEditingRes(null)} 
+                style={{ position: 'absolute', top: '20px', right: '20px', background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer' }}
+              >
+                <X size={20} />
+              </button>
+
+              <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                <User size={24} style={{ color: '#D4AF37' }} />
+                <h3 style={{ fontSize: '18px', fontWeight: 700 }}>
+                  {t('res.edit_modal_title') || 'Editar Información de Contacto'} ({editingRes.coinId})
+                </h3>
+              </div>
+
+              {(() => {
+                const limitCheck = checkClientLimits(editingRes);
+                const isFormDisabled = !limitCheck.allowed || editLoading;
+
+                return (
+                  <>
+                    {!limitCheck.allowed && (
+                      <div style={{ 
+                        background: 'rgba(235, 87, 87, 0.1)', 
+                        border: '1px solid rgba(235, 87, 87, 0.2)', 
+                        borderRadius: 'var(--radius-sm)', 
+                        padding: '14px 16px', 
+                        color: '#EB5757', 
+                        fontSize: '13px',
+                        lineHeight: '1.5'
+                      }}>
+                        <strong>Límites de Edición Activos:</strong><br />
+                        {limitCheck.reason}
+                      </div>
+                    )}
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                      <div>
+                        <label className="premium-label" style={{ fontSize: '11px' }}>{t('res.form_name')}</label>
+                        <input 
+                          type="text" 
+                          className="premium-input" 
+                          style={{ fontSize: '13px', background: 'rgba(255,255,255,0.02)', color: 'var(--text-muted)' }}
+                          value={editForm.fullName}
+                          disabled={true}
+                          title={t('api.error_name_immutable')}
+                        />
+                        <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px', display: 'block' }}>
+                          * El nombre del titular es inmutable por seguridad. Contacte con administración para cambios de titularidad.
+                        </span>
+                      </div>
+
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                        <div>
+                          <label className="premium-label" style={{ fontSize: '11px' }}>{t('res.form_email')}</label>
+                          <input 
+                            type="email" 
+                            className="premium-input" 
+                            style={{ fontSize: '13px' }}
+                            value={editForm.email}
+                            onChange={(e) => setEditForm(prev => ({ ...prev, email: e.target.value }))}
+                            disabled={isFormDisabled}
+                          />
+                        </div>
+                        <div>
+                          <label className="premium-label" style={{ fontSize: '11px' }}>{t('res.form_phone')}</label>
+                          <input 
+                            type="text" 
+                            className="premium-input" 
+                            style={{ fontSize: '13px' }}
+                            value={editForm.phone}
+                            onChange={(e) => setEditForm(prev => ({ ...prev, phone: e.target.value }))}
+                            disabled={isFormDisabled}
+                          />
+                        </div>
+                      </div>
+
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                        <div>
+                          <label className="premium-label" style={{ fontSize: '11px' }}>{t('res.form_country')}</label>
+                          <input 
+                            type="text" 
+                            className="premium-input" 
+                            style={{ fontSize: '13px' }}
+                            value={editForm.country}
+                            onChange={(e) => setEditForm(prev => ({ ...prev, country: e.target.value }))}
+                            disabled={isFormDisabled}
+                          />
+                        </div>
+                        <div>
+                          <label className="premium-label" style={{ fontSize: '11px' }}>{t('res.form_city')}</label>
+                          <input 
+                            type="text" 
+                            className="premium-input" 
+                            style={{ fontSize: '13px' }}
+                            value={editForm.city}
+                            onChange={(e) => setEditForm(prev => ({ ...prev, city: e.target.value }))}
+                            disabled={isFormDisabled}
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="premium-label" style={{ fontSize: '11px' }}>{t('res.form_address')}</label>
+                        <input 
+                          type="text" 
+                          className="premium-input" 
+                          style={{ fontSize: '13px' }}
+                          value={editForm.address}
+                          onChange={(e) => setEditForm(prev => ({ ...prev, address: e.target.value }))}
+                          disabled={isFormDisabled}
+                        />
+                      </div>
+                    </div>
+
+                    {editError && (
+                      <div style={{ 
+                        background: 'rgba(235, 87, 87, 0.1)', 
+                        border: '1px solid rgba(235, 87, 87, 0.2)', 
+                        borderRadius: 'var(--radius-sm)', 
+                        padding: '12px 14px', 
+                        color: '#EB5757', 
+                        fontSize: '13px' 
+                      }}>
+                        {editError}
+                      </div>
+                    )}
+
+                    {editSuccess && (
+                      <div style={{ 
+                        background: 'rgba(46, 204, 113, 0.1)', 
+                        border: '1px solid rgba(46, 204, 113, 0.2)', 
+                        borderRadius: 'var(--radius-sm)', 
+                        padding: '12px 14px', 
+                        color: '#2ECC71', 
+                        fontSize: '13px' 
+                      }}>
+                        ¡Datos actualizados correctamente!
+                      </div>
+                    )}
+
+                    {/* Change History for Buyers */}
+                    {(() => {
+                      const history: any[] = (editingRes as any).changeHistory || [];
+                      if (history.length === 0) return null;
+                      return (
+                        <div style={{ borderTop: '1px solid var(--border-light)', paddingTop: '16px' }}>
+                          <span style={{ fontWeight: 700, fontSize: '14px', color: '#D4AF37', display: 'block', marginBottom: '12px' }}>
+                            {t('res.edit_history_title') || 'Historial de Cambios'}
+                          </span>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', maxHeight: '150px', overflowY: 'auto' }}>
+                            {history.map((log, idx) => (
+                              <div key={idx} style={{ padding: '10px', background: 'rgba(255,255,255,0.01)', border: '1px solid var(--border-light)', borderRadius: '4px', fontSize: '12px' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-muted)', marginBottom: '4px' }}>
+                                  <span>{formatTrxDate(log.timestamp)}</span>
+                                  <span>Modificado por: {log.changedBy === 'client' ? 'Cliente' : 'Admin'}</span>
+                                </div>
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', color: 'var(--text-secondary)' }}>
+                                  <div>
+                                    <span style={{ color: '#EB5757' }}>Anterior:</span><br />
+                                    {log.previousValues?.fullName && <span>Nombre: {log.previousValues.fullName}<br /></span>}
+                                    {log.previousValues?.email && <span>Email: {log.previousValues.email}<br /></span>}
+                                    {log.previousValues?.phone && <span>Tel: {log.previousValues.phone}<br /></span>}
+                                    {log.previousValues?.address && <span>Dir: {log.previousValues.address}, {log.previousValues.city}, {log.previousValues.country}</span>}
+                                  </div>
+                                  <div>
+                                    <span style={{ color: '#2ECC71' }}>Nuevo:</span><br />
+                                    {log.newValues?.fullName && <span>Nombre: {log.newValues.fullName}<br /></span>}
+                                    {log.newValues?.email && <span>Email: {log.newValues.email}<br /></span>}
+                                    {log.newValues?.phone && <span>Tel: {log.newValues.phone}<br /></span>}
+                                    {log.newValues?.address && <span>Dir: {log.newValues.address}, {log.newValues.city}, {log.newValues.country}</span>}
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })()}
+
+                    {/* Actions */}
+                    <div style={{ display: 'flex', gap: '16px', marginTop: '8px' }}>
+                      <button 
+                        id="cancel-edit-btn"
+                        onClick={() => setEditingRes(null)} 
+                        className="btn-outline" 
+                        style={{ flexGrow: 1, padding: '12px' }}
+                      >
+                        Cancelar
+                      </button>
+                      <button 
+                        id="save-edit-btn"
+                        onClick={handleSaveEdit} 
+                        className="btn-gold" 
+                        style={{ flexGrow: 1, padding: '12px' }}
+                        disabled={isFormDisabled}
+                      >
+                        {editLoading ? 'Guardando...' : 'Guardar Cambios'}
+                      </button>
+                    </div>
+                  </>
+                );
+              })()}
+
+            </div>
+          </div>
+        )}
+
+        {/* Superadmin Diagnostics Panel */}
+        {user?.email === 'superadmin@dicilo.net' && (
+          <div className="glass" style={{ padding: '24px', borderRadius: 'var(--radius-md)', marginTop: '24px', border: '1px solid rgba(235, 87, 87, 0.3)' }}>
+            <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#EB5757', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <AlertTriangle size={20} />
+              Panel de Diagnóstico del Servidor (Superadmin)
+            </h3>
+            <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '16px' }}>
+              Utiliza esta herramienta para verificar el estado de conexión de Firebase Admin SDK en el contenedor Cloud Run.
+            </p>
+            <button 
+              onClick={runServerDiagnostics} 
+              disabled={diagLoading}
+              className="btn-gold" 
+              style={{ fontSize: '13px', padding: '10px 20px', background: '#EB5757', borderColor: '#EB5757' }}
+            >
+              {diagLoading ? 'Ejecutando Diagnóstico...' : 'Ejecutar Diagnóstico de Conexión'}
+            </button>
+
+            {diagResults && (
+              <pre style={{ 
+                marginTop: '16px', 
+                padding: '16px', 
+                background: 'rgba(0,0,0,0.5)', 
+                borderRadius: 'var(--radius-sm)', 
+                fontSize: '12px', 
+                overflowX: 'auto',
+                color: '#2ECC71',
+                border: '1px solid var(--border-light)',
+                whiteSpace: 'pre-wrap',
+                wordBreak: 'break-all'
+              }}>
+                {JSON.stringify(diagResults, null, 2)}
+              </pre>
+            )}
           </div>
         )}
 
@@ -1092,6 +1582,61 @@ export default function ReservationsPage() {
         @media (min-width: 768px) {
           .res-details-grid {
             grid-template-columns: 1.2fr 1fr !important;
+          }
+        }
+        @media print {
+          body {
+            background: #FFFFFF !important;
+            color: #000000 !important;
+          }
+          /* Ocultar toda la web excepto el overlay del certificado */
+          body > *:not(#printable-certificate-overlay) {
+            display: none !important;
+            height: 0 !important;
+            overflow: hidden !important;
+          }
+          #printable-certificate-overlay {
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            background: #FFFFFF !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+            visibility: visible !important;
+          }
+          #printable-certificate {
+            border: 2px solid #D4AF37 !important;
+            box-shadow: none !important;
+            background: #FFFFFF !important;
+            color: #000000 !important;
+            max-width: 100% !important;
+            width: 600px !important;
+            padding: 24px !important;
+            margin: 0 !important;
+            visibility: visible !important;
+            box-sizing: border-box !important;
+            page-break-inside: avoid !important;
+          }
+          #printable-certificate * {
+            color: #000000 !important;
+            visibility: visible !important;
+          }
+          #printable-certificate .text-gold, 
+          #printable-certificate strong,
+          #printable-certificate h3 {
+            color: #C5A028 !important;
+          }
+          #close-cert-modal-btn, 
+          #print-actions-area,
+          #print-cert-btn,
+          #download-cert-btn {
+            display: none !important;
+            visibility: hidden !important;
           }
         }
       `}</style>

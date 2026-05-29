@@ -38,7 +38,7 @@ const i18n = {
     status_completed: 'Pagado 100%',
     desc_security: 'Este certificado digital cuenta con firma criptográfica HMAC-SHA256 sellada en tiempo real. La autenticidad física de la moneda de colección está vinculada inseparablemente a esta firma.',
     desc_fraud: 'ATENCIÓN: El checksum de seguridad ha fallado o el código no existe en el libro de actas oficial. Esta pieza no puede ser validada en el ecosistema Dicilo.',
-    btn_back: 'Volver a DiciWallet',
+    btn_back: 'Volver a DiciCoin',
     footer: 'Dicilo Ecosistema de Economía Circular Cerrada. Todos los derechos reservados.'
   },
   EN: {
@@ -58,7 +58,7 @@ const i18n = {
     status_completed: 'Fully Paid 100%',
     desc_security: 'This digital certificate has a cryptographic HMAC-SHA256 signature sealed in real time. The physical authenticity of the collectible coin is inseparably linked to this signature.',
     desc_fraud: 'WARNING: The security checksum failed or the code does not exist in the official ledger. This piece cannot be validated within the Dicilo ecosystem.',
-    btn_back: 'Back to DiciWallet',
+    btn_back: 'Back to DiciCoin',
     footer: 'Dicilo Closed Circular Economy Ecosystem. All rights reserved.'
   },
   DE: {
@@ -78,7 +78,7 @@ const i18n = {
     status_completed: '100% Bezahlt',
     desc_security: 'Dieses digitale Zertifikat verfügt über eine in Echtzeit versiegelte kryptografische HMAC-SHA256-Signatur. Die physische Echtheit der Sammlermünze ist untrennbar mit dieser Signatur verbunden.',
     desc_fraud: 'WARNUNG: Die Sicherheitsprüfsumme ist fehlgeschlagen oder der Code existiert nicht im offiziellen Hauptbuch. Dieses Stück kann im Dicilo-Ökosystem nicht validiert werden.',
-    btn_back: 'Zurück zu DiciWallet',
+    btn_back: 'Zurück zu DiciCoin',
     footer: 'Dicilo Geschlossenes Kreislaufwirtschafts-Ökosystem. Alle Rechte vorbehalten.'
   }
 };
@@ -175,7 +175,7 @@ function VerifyContent() {
         <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
           <Award size={40} style={{ color: '#D4AF37' }} />
           <h1 style={{ fontSize: '20px', fontWeight: 900, letterSpacing: '0.15em', color: '#D4AF37', margin: 0 }}>
-            DICIWALLET
+            DICICOIN
           </h1>
           <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
             Official Cryptographic Validator
