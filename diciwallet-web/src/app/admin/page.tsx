@@ -975,12 +975,12 @@ export default function AdminPage() {
                 return res && res.status !== 'pending_payment';
               });
 
-              if (pendingPreReservations.length === 0 && pendingInstallmentPayments.length === 0) return null;
+              const hasPending = pendingPreReservations.length > 0 || pendingInstallmentPayments.length > 0;
 
               return (
                 <div className="glass-gold" style={{ padding: '32px', borderRadius: 'var(--radius-md)', border: '1px solid #D4AF37', display: 'flex', flexDirection: 'column', gap: '24px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px', color: '#D4AF37' }}>
-                    <Clock size={22} className="animate-pulse" />
+                    <Clock size={22} className={hasPending ? "animate-pulse" : ""} />
                     <h3 style={{ fontSize: '18px', fontWeight: 800 }}>
                       {t('admin.pending_payments_title')} ({(pendingPreReservations.length + pendingInstallmentPayments.length)})
                     </h3>
@@ -990,125 +990,133 @@ export default function AdminPage() {
                     {t('admin.pending_payments_desc')}
                   </p>
 
-                  {/* Subsección: Pre-reservas iniciales */}
-                  {pendingPreReservations.length > 0 && (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                      <h4 style={{ fontSize: '14px', fontWeight: 700, color: '#D4AF37', borderBottom: '1px solid rgba(212,175,55,0.1)', paddingBottom: '6px' }}>
-                        {t('admin.pre_reservations_subtitle')}
-                      </h4>
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '16px' }} className="admin-grid">
-                        {pendingPreReservations.map(res => {
-                          const relatedPayment = pendingPayments.find(p => p.reservationId === res.id);
-                          const pMethod = relatedPayment?.paymentMethod || 'revolut_transfer';
-                          const isCard = pMethod === 'card_outside_eu';
-                          return (
-                            <div key={res.id} style={{ padding: '16px', background: 'rgba(255,255,255,0.01)', border: '1px solid var(--border-light)', borderRadius: 'var(--radius-sm)', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                <span style={{ fontWeight: 800, color: '#FFFFFF', fontSize: '15px' }}>{res.coinId}</span>
-                                <div style={{ display: 'flex', gap: '8px' }}>
-                                  <span style={{
-                                    fontSize: '11px',
-                                    background: isCard ? 'rgba(0, 229, 255, 0.15)' : 'rgba(212, 175, 55, 0.15)',
-                                    color: isCard ? '#00E5FF' : '#D4AF37',
-                                    padding: '2px 8px',
-                                    borderRadius: '12px',
-                                    fontWeight: 700
-                                  }}>
-                                    {isCard ? t('admin.payment_method_card') : t('admin.payment_method_revolut')}
-                                  </span>
-                                  <span style={{ fontSize: '11px', background: 'rgba(255,255,255,0.05)', color: 'var(--text-secondary)', padding: '2px 8px', borderRadius: '12px', fontWeight: 700 }}>
-                                    500.00 € {t('admin.amount_pending')}
-                                  </span>
-                                </div>
-                              </div>
-                              <div style={{ fontSize: '13px', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '3px' }}>
-                                <div>{t('admin.col_owner')}: <strong style={{ color: '#FFFFFF' }}>{res.shippingInfo?.fullName}</strong></div>
-                                <div>{t('login.email')}: <strong>{res.shippingInfo?.email}</strong></div>
-                                <div>{t('admin.buyer_phone')}: <strong>{res.shippingInfo?.phone}</strong></div>
-                                <div>{isCard ? t('admin.reference_card') : t('admin.reference_revolut')}: <strong style={{ color: '#00E5FF', fontFamily: 'monospace' }}>DICI-RES-{res.coinId}</strong></div>
-                              </div>
-                              <div style={{ display: 'flex', gap: '12px', marginTop: '6px' }}>
-                                <button
-                                  onClick={() => handleApproveRevolutPayment(res.id)}
-                                  className="btn-gold"
-                                  style={{ flexGrow: 1, padding: '8px 16px', fontSize: '13px' }}
-                                  disabled={actionLoading[res.id]}
-                                >
-                                  {t('admin.btn_approve_reservation')}
-                                </button>
-                                <button
-                                  onClick={() => handleCancelPreReservation(res.id)}
-                                  className="btn-outline"
-                                  style={{ flexGrow: 1, padding: '8px 16px', fontSize: '13px', color: '#EB5757', borderColor: 'rgba(235,87,87,0.2)' }}
-                                  disabled={actionLoading[res.id]}
-                                >
-                                  {t('admin.btn_cancel_pre_reservation')}
-                                </button>
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
+                  {!hasPending ? (
+                    <div style={{ textAlign: 'center', padding: '24px 0', color: 'var(--text-muted)', fontSize: '14px', background: 'rgba(255,255,255,0.01)', border: '1px dashed rgba(212,175,55,0.15)', borderRadius: 'var(--radius-sm)' }}>
+                      {t('admin.no_pending_payments')}
                     </div>
-                  )}
+                  ) : (
+                    <>
+                      {/* Subsección: Pre-reservas iniciales */}
+                      {pendingPreReservations.length > 0 && (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                          <h4 style={{ fontSize: '14px', fontWeight: 700, color: '#D4AF37', borderBottom: '1px solid rgba(212,175,55,0.1)', paddingBottom: '6px' }}>
+                            {t('admin.pre_reservations_subtitle')}
+                          </h4>
+                          <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '16px' }} className="admin-grid">
+                            {pendingPreReservations.map(res => {
+                              const relatedPayment = pendingPayments.find(p => p.reservationId === res.id);
+                              const pMethod = relatedPayment?.paymentMethod || 'revolut_transfer';
+                              const isCard = pMethod === 'card_outside_eu';
+                              return (
+                                <div key={res.id} style={{ padding: '16px', background: 'rgba(255,255,255,0.01)', border: '1px solid var(--border-light)', borderRadius: 'var(--radius-sm)', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <span style={{ fontWeight: 800, color: '#FFFFFF', fontSize: '15px' }}>{res.coinId}</span>
+                                    <div style={{ display: 'flex', gap: '8px' }}>
+                                      <span style={{
+                                        fontSize: '11px',
+                                        background: isCard ? 'rgba(0, 229, 255, 0.15)' : 'rgba(212, 175, 55, 0.15)',
+                                        color: isCard ? '#00E5FF' : '#D4AF37',
+                                        padding: '2px 8px',
+                                        borderRadius: '12px',
+                                        fontWeight: 700
+                                      }}>
+                                        {isCard ? t('admin.payment_method_card') : t('admin.payment_method_revolut')}
+                                      </span>
+                                      <span style={{ fontSize: '11px', background: 'rgba(255,255,255,0.05)', color: 'var(--text-secondary)', padding: '2px 8px', borderRadius: '12px', fontWeight: 700 }}>
+                                        500.00 € {t('admin.amount_pending')}
+                                      </span>
+                                    </div>
+                                  </div>
+                                  <div style={{ fontSize: '13px', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '3px' }}>
+                                    <div>{t('admin.col_owner')}: <strong style={{ color: '#FFFFFF' }}>{res.shippingInfo?.fullName}</strong></div>
+                                    <div>{t('login.email')}: <strong>{res.shippingInfo?.email}</strong></div>
+                                    <div>{t('admin.buyer_phone')}: <strong>{res.shippingInfo?.phone}</strong></div>
+                                    <div>{isCard ? t('admin.reference_card') : t('admin.reference_revolut')}: <strong style={{ color: '#00E5FF', fontFamily: 'monospace' }}>DICI-RES-{res.coinId}</strong></div>
+                                  </div>
+                                  <div style={{ display: 'flex', gap: '12px', marginTop: '6px' }}>
+                                    <button
+                                      onClick={() => handleApproveRevolutPayment(res.id)}
+                                      className="btn-gold"
+                                      style={{ flexGrow: 1, padding: '8px 16px', fontSize: '13px' }}
+                                      disabled={actionLoading[res.id]}
+                                    >
+                                      {t('admin.btn_approve_reservation')}
+                                    </button>
+                                    <button
+                                      onClick={() => handleCancelPreReservation(res.id)}
+                                      className="btn-outline"
+                                      style={{ flexGrow: 1, padding: '8px 16px', fontSize: '13px', color: '#EB5757', borderColor: 'rgba(235,87,87,0.2)' }}
+                                      disabled={actionLoading[res.id]}
+                                    >
+                                      {t('admin.btn_cancel_pre_reservation')}
+                                    </button>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
 
-                  {/* Subsección: Cuotas e Installments */}
-                  {pendingInstallmentPayments.length > 0 && (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '8px' }}>
-                      <h4 style={{ fontSize: '14px', fontWeight: 700, color: '#D4AF37', borderBottom: '1px solid rgba(212,175,55,0.1)', paddingBottom: '6px' }}>
-                        {t('admin.installments_subtitle')}
-                      </h4>
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '16px' }} className="admin-grid">
-                        {pendingInstallmentPayments.map(pay => {
-                          const isCard = pay.paymentMethod === 'card_outside_eu';
-                          return (
-                            <div key={pay.id} style={{ padding: '16px', background: 'rgba(255,255,255,0.01)', border: '1px solid var(--border-light)', borderRadius: 'var(--radius-sm)', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                <span style={{ fontWeight: 800, color: '#FFFFFF', fontSize: '15px' }}>{pay.coinId}</span>
-                                <div style={{ display: 'flex', gap: '8px' }}>
-                                  <span style={{
-                                    fontSize: '11px',
-                                    background: isCard ? 'rgba(0, 229, 255, 0.15)' : 'rgba(212, 175, 55, 0.15)',
-                                    color: isCard ? '#00E5FF' : '#D4AF37',
-                                    padding: '2px 8px',
-                                    borderRadius: '12px',
-                                    fontWeight: 700
-                                  }}>
-                                    {isCard ? t('admin.payment_method_card') : t('admin.payment_method_revolut')}
-                                  </span>
-                                  <span style={{ fontSize: '11px', background: 'rgba(0, 229, 255, 0.1)', color: '#00E5FF', padding: '2px 8px', borderRadius: '12px', fontWeight: 700 }}>
-                                    {pay.amount.toFixed(2)} € {t('admin.amount_pending')}
-                                  </span>
+                      {/* Subsección: Cuotas e Installments */}
+                      {pendingInstallmentPayments.length > 0 && (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '8px' }}>
+                          <h4 style={{ fontSize: '14px', fontWeight: 700, color: '#D4AF37', borderBottom: '1px solid rgba(212,175,55,0.1)', paddingBottom: '6px' }}>
+                            {t('admin.installments_subtitle')}
+                          </h4>
+                          <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '16px' }} className="admin-grid">
+                            {pendingInstallmentPayments.map(pay => {
+                              const isCard = pay.paymentMethod === 'card_outside_eu';
+                              return (
+                                <div key={pay.id} style={{ padding: '16px', background: 'rgba(255,255,255,0.01)', border: '1px solid var(--border-light)', borderRadius: 'var(--radius-sm)', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <span style={{ fontWeight: 800, color: '#FFFFFF', fontSize: '15px' }}>{pay.coinId}</span>
+                                    <div style={{ display: 'flex', gap: '8px' }}>
+                                      <span style={{
+                                        fontSize: '11px',
+                                        background: isCard ? 'rgba(0, 229, 255, 0.15)' : 'rgba(212, 175, 55, 0.15)',
+                                        color: isCard ? '#00E5FF' : '#D4AF37',
+                                        padding: '2px 8px',
+                                        borderRadius: '12px',
+                                        fontWeight: 700
+                                      }}>
+                                        {isCard ? t('admin.payment_method_card') : t('admin.payment_method_revolut')}
+                                      </span>
+                                      <span style={{ fontSize: '11px', background: 'rgba(0, 229, 255, 0.1)', color: '#00E5FF', padding: '2px 8px', borderRadius: '12px', fontWeight: 700 }}>
+                                        {pay.amount.toFixed(2)} € {t('admin.amount_pending')}
+                                      </span>
+                                    </div>
+                                  </div>
+                                  <div style={{ fontSize: '13px', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '3px' }}>
+                                    <div>{t('admin.uid_user')}: <strong>{pay.userId}</strong></div>
+                                    <div>{t('admin.res_id')}: <strong>{pay.reservationId}</strong></div>
+                                    <div>{isCard ? t('admin.reference_card') : t('admin.reference_revolut')}: <strong style={{ color: '#00E5FF', fontFamily: 'monospace' }}>DICI-PAY-{pay.reservationId}</strong></div>
+                                  </div>
+                                  <div style={{ display: 'flex', gap: '12px', marginTop: '6px' }}>
+                                    <button
+                                      onClick={() => handleApproveInstallmentPayment(pay.id)}
+                                      className="btn-gold"
+                                      style={{ flexGrow: 1, padding: '8px 16px', fontSize: '13px' }}
+                                      disabled={actionLoading[pay.id]}
+                                    >
+                                      {t('admin.btn_approve_installment')}
+                                    </button>
+                                    <button
+                                      onClick={() => handleRejectInstallmentPayment(pay.id)}
+                                      className="btn-outline"
+                                      style={{ flexGrow: 1, padding: '8px 16px', fontSize: '13px', color: '#EB5757', borderColor: 'rgba(235,87,87,0.2)' }}
+                                      disabled={actionLoading[pay.id]}
+                                    >
+                                      {t('admin.btn_reject_installment')}
+                                    </button>
+                                  </div>
                                 </div>
-                              </div>
-                              <div style={{ fontSize: '13px', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '3px' }}>
-                                <div>{t('admin.uid_user')}: <strong>{pay.userId}</strong></div>
-                                <div>{t('admin.res_id')}: <strong>{pay.reservationId}</strong></div>
-                                <div>{isCard ? t('admin.reference_card') : t('admin.reference_revolut')}: <strong style={{ color: '#00E5FF', fontFamily: 'monospace' }}>DICI-PAY-{pay.reservationId}</strong></div>
-                              </div>
-                              <div style={{ display: 'flex', gap: '12px', marginTop: '6px' }}>
-                                <button
-                                  onClick={() => handleApproveInstallmentPayment(pay.id)}
-                                  className="btn-gold"
-                                  style={{ flexGrow: 1, padding: '8px 16px', fontSize: '13px' }}
-                                  disabled={actionLoading[pay.id]}
-                                >
-                                  {t('admin.btn_approve_installment')}
-                                </button>
-                                <button
-                                  onClick={() => handleRejectInstallmentPayment(pay.id)}
-                                  className="btn-outline"
-                                  style={{ flexGrow: 1, padding: '8px 16px', fontSize: '13px', color: '#EB5757', borderColor: 'rgba(235,87,87,0.2)' }}
-                                  disabled={actionLoading[pay.id]}
-                                >
-                                  {t('admin.btn_reject_installment')}
-                                </button>
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+                    </>
                   )}
                 </div>
               );
