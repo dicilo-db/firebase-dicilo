@@ -588,3 +588,125 @@ export async function getManualPaymentHistory() {
         return { success: false, error: error.message, data: [] };
     }
 }
+
+/**
+ * Safe server action to transfer DiciPoints (DP) between users.
+ * Remitente must have team_leader, team_office, admin, or superadmin role.
+ */
+export async function transferDpPoints(senderUid: string, targetDiciloId: string, amountDp: number) {
+    if (amountDp <= 0) {
+        return { success: false, messageKey: 'validation_invalid_amount' };
+    }
+
+    try {
+        const db = getAdminDb();
+        
+        // 1. Get Sender Profile & Role check
+        const senderProfileRef = db.collection('private_profiles').doc(senderUid);
+        const senderProfileDoc = await senderProfileRef.get();
+        if (!senderProfileDoc.exists) {
+            return { success: false, messageKey: 'error_sender_not_found' };
+        }
+        
+        const senderProfile = senderProfileDoc.data();
+        if (!senderProfile) {
+            return { success: false, messageKey: 'error_sender_not_found' };
+        }
+        
+        const senderRole = (senderProfile?.role || 'user').toLowerCase();
+        const allowedRoles = ['team_leader', 'team_office', 'admin', 'superadmin'];
+        if (!allowedRoles.includes(senderRole)) {
+            return { success: false, messageKey: 'error_not_authorized' };
+        }
+
+        if (senderProfile?.uniqueCode === targetDiciloId) {
+            return { success: false, messageKey: 'error_self_transfer' };
+        }
+
+        // 2. Find Recipient Profile by uniqueCode
+        const recipientQuery = await db.collection('private_profiles')
+            .where('uniqueCode', '==', targetDiciloId.trim())
+            .limit(1)
+            .get();
+
+        if (recipientQuery.empty) {
+            return { success: false, messageKey: 'error_recipient_not_found' };
+        }
+
+        const recipientDoc = recipientQuery.docs[0];
+        const recipientUid = recipientDoc.id;
+        const recipientData = recipientDoc.data();
+
+        // 3. Perform atomic transaction
+        const result = await db.runTransaction(async (transaction) => {
+            const senderWalletRef = db.collection('wallets').doc(senderUid);
+            const recipientWalletRef = db.collection('wallets').doc(recipientUid);
+
+            const senderWalletDoc = await transaction.get(senderWalletRef);
+            const recipientWalletDoc = await transaction.get(recipientWalletRef);
+
+            if (!senderWalletDoc.exists) {
+                return { success: false, messageKey: 'error_sender_wallet_not_found' };
+            }
+
+            const senderBalance = senderWalletDoc.data()?.balance || 0;
+            if (senderBalance < amountDp) {
+                return { success: false, messageKey: 'validation_insufficient' };
+            }
+
+            // Deduct from Sender
+            transaction.update(senderWalletRef, {
+                balance: admin.firestore.FieldValue.increment(-amountDp),
+                updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+            });
+
+            // Add to Recipient
+            if (recipientWalletDoc.exists) {
+                transaction.update(recipientWalletRef, {
+                    balance: admin.firestore.FieldValue.increment(amountDp),
+                    totalEarned: admin.firestore.FieldValue.increment(amountDp),
+                    updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+                });
+            } else {
+                transaction.set(recipientWalletRef, {
+                    balance: amountDp,
+                    balanceDC: 0,
+                    totalPaidEur: 0,
+                    totalEarned: amountDp,
+                    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+                    updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+                }, { merge: true });
+            }
+
+            // Register Transaction Logs
+            const trxSenderRef = db.collection('wallet_transactions').doc();
+            transaction.set(trxSenderRef, {
+                userId: senderUid,
+                amount: -amountDp,
+                currency: 'DP',
+                type: 'TRANSFER_SENT',
+                description: `Envío de ${amountDp} DP a ${recipientData.firstName || ''} ${recipientData.lastName || ''} (${targetDiciloId.trim()})`,
+                recipientId: recipientUid,
+                timestamp: admin.firestore.FieldValue.serverTimestamp(),
+            });
+
+            const trxRecipientRef = db.collection('wallet_transactions').doc();
+            transaction.set(trxRecipientRef, {
+                userId: recipientUid,
+                amount: amountDp,
+                currency: 'DP',
+                type: 'TRANSFER_RECEIVED',
+                description: `Recibido ${amountDp} DP de ${senderProfile.firstName || ''} ${senderProfile.lastName || ''} (${senderProfile.uniqueCode || ''})`,
+                senderId: senderUid,
+                timestamp: admin.firestore.FieldValue.serverTimestamp(),
+            });
+
+            return { success: true, messageKey: 'transfer_success' };
+        });
+
+        return result;
+    } catch (error: any) {
+        console.error('Error in transferDpPoints:', error);
+        return { success: false, messageKey: 'server_error' };
+    }
+}

@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { QrCode, TrendingUp, History, CreditCard, Loader2, Info } from 'lucide-react';
 import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { getWalletData, syncReferralRewards } from '@/app/actions/wallet';
+import { getWalletData, syncReferralRewards, transferDpPoints } from '@/app/actions/wallet';
 import { PointsChart } from './PointsChart';
 // import { QRCodeSVG } from 'qrcode.react'; // Not installed, using simple img API or placeholder
 import { Badge } from '@/components/ui/badge';
@@ -22,9 +22,161 @@ interface WalletSectionProps {
 }
 
 export function WalletSection({ uid, uniqueCode, userProfile, initialData }: WalletSectionProps) {
-    const { t } = useTranslation('common');
+    const { t, i18n } = useTranslation('common');
+    const locale = i18n?.language || 'es';
     const [loading, setLoading] = useState(!initialData);
     const [data, setData] = useState<any>(initialData || null);
+
+    // Puntos DP transfer variables
+    const [transferTargetId, setTransferTargetId] = useState('');
+    const [transferAmount, setTransferAmount] = useState('');
+    const [transferLoading, setTransferLoading] = useState(false);
+    const [transferMessage, setTransferMessage] = useState({ text: '', type: '' });
+
+    const localTranslations: Record<string, { es: string; en: string; de: string }> = {
+        transfer_card_title: {
+            es: "Transferir Puntos DP",
+            en: "Transfer DiciPoints",
+            de: "DiciPoints übertragen"
+        },
+        transfer_desc: {
+            es: "Envía puntos DP de tu balance a otro usuario usando su ID de Dicilo.",
+            en: "Send DP points from your balance to another user using their Dicilo ID.",
+            de: "Senden Sie DP-Punkte aus Ihrem Guthaben an einen anderen Benutzer mit dessen Dicilo-ID."
+        },
+        transfer_dicilo_id_label: {
+            es: "ID de Dicilo del Destinatario",
+            en: "Recipient's Dicilo ID",
+            de: "Dicilo-ID des Empfängers"
+        },
+        transfer_dicilo_id_placeholder: {
+            es: "Ej. EMP-12345",
+            en: "e.g. EMP-12345",
+            de: "z.B. EMP-12345"
+        },
+        transfer_amount_label: {
+            es: "Cantidad de DP a enviar",
+            en: "Amount of DP to send",
+            de: "Menge der zu sendenden DP"
+        },
+        transfer_amount_placeholder: {
+            es: "Ej. 100",
+            en: "e.g. 100",
+            de: "z.B. 100"
+        },
+        transfer_btn_submit: {
+            es: "Transferir Puntos",
+            en: "Transfer Points",
+            de: "Punkte übertragen"
+        },
+        transfer_btn_submit_loading: {
+            es: "Transfiriendo...",
+            en: "Transferring...",
+            de: "Übertragung..."
+        },
+        confirm_transfer: {
+            es: "¿Estás seguro de que deseas transferir {amount} DP al ID de Dicilo {target}? Esta acción no se puede deshacer.",
+            en: "Are you sure you want to transfer {amount} DP to Dicilo ID {target}? This action cannot be undone.",
+            de: "Sind Sie sicher, dass Sie {amount} DP auf die Dicilo-ID {target} übertragen möchten? Diese Aktion kann nicht rückgängig gemacht werden."
+        },
+        validation_invalid_amount: {
+            es: "Por favor, introduce un monto válido mayor a 0.",
+            en: "Please enter a valid amount greater than 0.",
+            de: "Bitte geben Sie einen gültigen Betrag größer als 0 ein."
+        },
+        validation_insufficient: {
+            es: "Balance insuficiente de puntos DP.",
+            en: "Insufficient balance of DP points.",
+            de: "Unzureichendes Guthaben an DP-Punkten."
+        },
+        transfer_success: {
+            es: "¡Puntos DP transferidos con éxito!",
+            en: "DP points transferred successfully!",
+            de: "DP-Punkte erfolgreich übertragen!"
+        },
+        error_sender_not_found: {
+            es: "Usuario remitente no encontrado.",
+            en: "Sender user not found.",
+            de: "Absender nicht gefunden."
+        },
+        error_not_authorized: {
+            es: "No tienes permisos para realizar transferencias.",
+            en: "You do not have permissions to perform transfers.",
+            de: "Sie haben keine Berechtigung für Übertragungen."
+        },
+        error_self_transfer: {
+            es: "No puedes transferir puntos a ti mismo.",
+            en: "You cannot transfer points to yourself.",
+            de: "Sie können keine Punkte an sich selbst übertragen."
+        },
+        error_recipient_not_found: {
+            es: "ID de Dicilo no encontrado. Por favor, verifícalo.",
+            en: "Dicilo ID not found. Please verify it.",
+            de: "Dicilo-ID nicht gefunden. Bitte überprüfen."
+        },
+        error_sender_wallet_not_found: {
+            es: "Monedero no encontrado.",
+            en: "Wallet not found.",
+            de: "Monedero nicht gefunden."
+        },
+        server_error: {
+            es: "Ocurrió un error en el servidor. Inténtalo de nuevo.",
+            en: "A server error occurred. Please try again.",
+            de: "Ein Serverfehler ist aufgetreten. Bitte versuchen Sie es erneut."
+        }
+    };
+
+    const getTranslation = (key: string) => {
+        const lang = locale.startsWith('de') ? 'de' : locale.startsWith('en') ? 'en' : 'es';
+        return localTranslations[key]?.[lang] || localTranslations[key]?.['es'] || '';
+    };
+
+    const handleTransfer = async (e: React.FormEvent) => {
+        e.preventDefault();
+        const amountVal = parseInt(transferAmount);
+        if (isNaN(amountVal) || amountVal <= 0) {
+            setTransferMessage({ text: getTranslation('validation_invalid_amount'), type: 'error' });
+            return;
+        }
+
+        const currentBalance = data?.balance || 0;
+        if (currentBalance < amountVal) {
+            setTransferMessage({ text: getTranslation('validation_insufficient'), type: 'error' });
+            return;
+        }
+
+        const confirmMsg = getTranslation('confirm_transfer')
+            .replace('{amount}', amountVal.toString())
+            .replace('{target}', transferTargetId.trim());
+
+        if (!window.confirm(confirmMsg)) return;
+
+        setTransferLoading(true);
+        setTransferMessage({ text: '', type: '' });
+
+        try {
+            const res = await transferDpPoints(uid, transferTargetId.trim(), amountVal);
+            if (res.success) {
+                setTransferMessage({ text: getTranslation(res.messageKey || 'transfer_success'), type: 'success' });
+                setTransferTargetId('');
+                setTransferAmount('');
+                // Refresh balance
+                const updatedWallet = await getWalletData(uid);
+                setData(updatedWallet);
+            } else {
+                setTransferMessage({ text: getTranslation(res.messageKey || 'server_error'), type: 'error' });
+            }
+        } catch (err) {
+            console.error(err);
+            setTransferMessage({ text: getTranslation('server_error'), type: 'error' });
+        } finally {
+            setTransferLoading(false);
+        }
+    };
+
+    const userRole = (userProfile?.role || '').toLowerCase();
+    const allowedRoles = ['team_leader', 'team_office', 'admin', 'superadmin'];
+    const showTransfer = allowedRoles.includes(userRole);
 
     useEffect(() => {
         async function load() {
@@ -170,6 +322,81 @@ export function WalletSection({ uid, uniqueCode, userProfile, initialData }: Wal
                     </CardContent>
                 </Card>
             </div>
+
+            {/* Transfer DP Card (visible for leadership roles) */}
+            {showTransfer && (
+                <Card className="border-slate-200 shadow-sm overflow-hidden bg-white">
+                    <CardHeader className="bg-slate-50 border-b">
+                        <CardTitle className="text-lg flex items-center gap-2">
+                            <TrendingUp className="h-5 w-5 text-emerald-600" />
+                            {getTranslation('transfer_card_title')}
+                        </CardTitle>
+                        <CardDescription>
+                            {getTranslation('transfer_desc')}
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent className="pt-6">
+                        {transferMessage.text && (
+                            <div className={`mb-6 p-4 rounded-lg text-sm font-medium ${
+                                transferMessage.type === 'success' 
+                                    ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' 
+                                    : 'bg-red-50 text-red-800 border border-red-200'
+                            }`}>
+                                {transferMessage.text}
+                            </div>
+                        )}
+                        <form onSubmit={handleTransfer} className="space-y-4">
+                            <div className="grid gap-6 md:grid-cols-2">
+                                <div className="space-y-2">
+                                    <label htmlFor="transfer-dicilo-id" className="text-sm font-semibold text-slate-800">
+                                        {getTranslation('transfer_dicilo_id_label')}
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="transfer-dicilo-id"
+                                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                        placeholder={getTranslation('transfer_dicilo_id_placeholder')}
+                                        value={transferTargetId}
+                                        onChange={(e) => setTransferTargetId(e.target.value.replace(/\s+/g, ''))}
+                                        disabled={transferLoading}
+                                        required
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label htmlFor="transfer-amount" className="text-sm font-semibold text-slate-800">
+                                        {getTranslation('transfer_amount_label')}
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="transfer-amount"
+                                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                        placeholder={getTranslation('transfer_amount_placeholder')}
+                                        value={transferAmount}
+                                        onChange={(e) => setTransferAmount(e.target.value)}
+                                        disabled={transferLoading}
+                                        required
+                                        min="1"
+                                    />
+                                </div>
+                            </div>
+                            <Button 
+                                type="submit" 
+                                className="w-full bg-slate-950 hover:bg-slate-800 text-white font-semibold h-11"
+                                disabled={transferLoading || !transferTargetId || !transferAmount}
+                            >
+                                {transferLoading ? (
+                                    <>
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                        {getTranslation('transfer_btn_submit_loading')}
+                                    </>
+                                ) : (
+                                    getTranslation('transfer_btn_submit')
+                                )}
+                            </Button>
+                        </form>
+                    </CardContent>
+                </Card>
+            )}
 
             {/* Transactions History */}
             <Card>
