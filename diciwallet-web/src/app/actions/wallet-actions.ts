@@ -770,3 +770,125 @@ export async function updateReservationDetails(
   }
 }
 
+/**
+ * Permite a usuarios con rol 'team_leader', 'team_office', 'admin' o 'superadmin' 
+ * transferir puntos DP de su cuenta a otro usuario a través de su ID de Dicilo (uniqueCode).
+ */
+export async function transferDpPoints(senderUid: string, targetDiciloId: string, amountDp: number) {
+  if (amountDp <= 0) {
+    return { success: false, messageKey: 'api.validation_invalid_amount' };
+  }
+
+  try {
+    const db = getAdminDb();
+    
+    // 1. Obtener perfil de quien envía
+    const senderProfileRef = db.collection('private_profiles').doc(senderUid);
+    const senderProfileDoc = await senderProfileRef.get();
+    if (!senderProfileDoc.exists) {
+      return { success: false, messageKey: 'api.error_sender_not_found' };
+    }
+    
+    const senderProfile = senderProfileDoc.data();
+    if (!senderProfile) {
+      return { success: false, messageKey: 'api.error_sender_not_found' };
+    }
+    const senderRole = (senderProfile?.role || 'user').toLowerCase();
+    
+    const allowedRoles = ['team_leader', 'team_office', 'admin', 'superadmin'];
+    if (!allowedRoles.includes(senderRole)) {
+      return { success: false, messageKey: 'api.error_not_authorized' };
+    }
+
+    if (senderProfile?.uniqueCode === targetDiciloId) {
+      return { success: false, messageKey: 'api.error_self_transfer' };
+    }
+
+    // 2. Buscar al destinatario por su ID de Dicilo (uniqueCode)
+    const recipientQuery = await db.collection('private_profiles')
+      .where('uniqueCode', '==', targetDiciloId.trim())
+      .limit(1)
+      .get();
+
+    if (recipientQuery.empty) {
+      return { success: false, messageKey: 'api.error_recipient_not_found' };
+    }
+
+    const recipientDoc = recipientQuery.docs[0];
+    const recipientUid = recipientDoc.id;
+    const recipientData = recipientDoc.data();
+
+    // 3. Ejecutar la transferencia en una transacción de Firestore
+    const result = await db.runTransaction(async (transaction) => {
+      const senderWalletRef = db.collection('wallets').doc(senderUid);
+      const recipientWalletRef = db.collection('wallets').doc(recipientUid);
+
+      const senderWalletDoc = await transaction.get(senderWalletRef);
+      const recipientWalletDoc = await transaction.get(recipientWalletRef);
+
+      if (!senderWalletDoc.exists) {
+        return { success: false, messageKey: 'api.error_sender_wallet_not_found' };
+      }
+
+      const senderBalance = senderWalletDoc.data()?.balance || 0;
+      if (senderBalance < amountDp) {
+        return { success: false, messageKey: 'api.validation_insufficient' };
+      }
+
+      // Restar DP de la wallet del remitente
+      transaction.update(senderWalletRef, {
+        balance: getFieldValue().increment(-amountDp),
+        updatedAt: getTimestamp().now(),
+      });
+
+      // Sumar DP a la wallet del destinatario (upsert en caso de que no exista wallet aún)
+      if (recipientWalletDoc.exists) {
+        transaction.update(recipientWalletRef, {
+          balance: getFieldValue().increment(amountDp),
+          totalEarned: getFieldValue().increment(amountDp),
+          updatedAt: getTimestamp().now(),
+        });
+      } else {
+        transaction.set(recipientWalletRef, {
+          balance: amountDp,
+          balanceDC: 0,
+          totalPaidEur: 0,
+          totalEarned: amountDp,
+          createdAt: getTimestamp().now(),
+          updatedAt: getTimestamp().now(),
+        });
+      }
+
+      // Registrar transacciones en el historial
+      const trxSenderRef = db.collection('wallet_transactions').doc();
+      transaction.set(trxSenderRef, {
+        userId: senderUid,
+        amount: -amountDp,
+        currency: 'DP',
+        type: 'TRANSFER_SENT',
+        description: `Envío de ${amountDp} DP a ${recipientData.firstName || ''} ${recipientData.lastName || ''} (${targetDiciloId.trim()})`,
+        recipientId: recipientUid,
+        timestamp: getTimestamp().now(),
+      });
+
+      const trxRecipientRef = db.collection('wallet_transactions').doc();
+      transaction.set(trxRecipientRef, {
+        userId: recipientUid,
+        amount: amountDp,
+        currency: 'DP',
+        type: 'TRANSFER_RECEIVED',
+        description: `Recibido ${amountDp} DP de ${senderProfile.firstName || ''} ${senderProfile.lastName || ''} (${senderProfile.uniqueCode || ''})`,
+        senderId: senderUid,
+        timestamp: getTimestamp().now(),
+      });
+
+      return { success: true, messageKey: 'api.transfer_success' };
+    });
+
+    return result;
+  } catch (error: any) {
+    console.error('Error in transferDpPoints:', error);
+    return { success: false, messageKey: 'api.server_error', errorDetails: error.message || String(error) };
+  }
+}
+

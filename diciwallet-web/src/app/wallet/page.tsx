@@ -6,8 +6,8 @@ import { useAuth } from '@/context/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { db } from '@/lib/firebase';
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
-import { convertDpToDc } from '@/app/actions/wallet-actions';
-import { Award, Gem, ArrowRightLeft, Clock, Info } from 'lucide-react';
+import { convertDpToDc, transferDpPoints } from '@/app/actions/wallet-actions';
+import { Award, Gem, ArrowRightLeft, Clock, Info, Send } from 'lucide-react';
 
 interface Transaction {
   id: string;
@@ -19,7 +19,7 @@ interface Transaction {
 }
 
 export default function WalletPage() {
-  const { user, wallet } = useAuth();
+  const { user, profile, wallet } = useAuth();
   const { t } = useLanguage();
   const [dpAmount, setDpAmount] = useState('');
   const [dcPreview, setDcPreview] = useState(0);
@@ -27,6 +27,57 @@ export default function WalletPage() {
   const [loadingTrx, setLoadingTrx] = useState(true);
   const [btnLoading, setBtnLoading] = useState(false);
   const [message, setMessage] = useState({ text: '', type: '' });
+
+  // Puntos DP transfer variables
+  const [transferTargetId, setTransferTargetId] = useState('');
+  const [transferAmount, setTransferAmount] = useState('');
+  const [transferLoading, setTransferLoading] = useState(false);
+  const [transferMessage, setTransferMessage] = useState({ text: '', type: '' });
+
+  const userRole = (profile?.role || 'user').toLowerCase();
+  const allowedRoles = ['team_leader', 'team_office', 'admin', 'superadmin'];
+  const showTransfer = allowedRoles.includes(userRole);
+
+  const handleTransfer = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user) return;
+
+    const amountVal = parseInt(transferAmount);
+    if (isNaN(amountVal) || amountVal <= 0) {
+      setTransferMessage({ text: t('api.validation_invalid_amount'), type: 'error' });
+      return;
+    }
+
+    if (amountVal > (wallet?.balance || 0)) {
+      setTransferMessage({ text: t('wallet.validation_insufficient'), type: 'error' });
+      return;
+    }
+
+    const confirmMsg = t('wallet.confirm_transfer')
+      .replace('{amount}', String(amountVal))
+      .replace('{target}', transferTargetId.trim());
+      
+    if (!window.confirm(confirmMsg)) return;
+
+    setTransferLoading(true);
+    setTransferMessage({ text: '', type: '' });
+
+    try {
+      const res = await transferDpPoints(user.uid, transferTargetId.trim(), amountVal);
+      if (res.success) {
+        setTransferMessage({ text: t(res.messageKey || 'api.transfer_success'), type: 'success' });
+        setTransferTargetId('');
+        setTransferAmount('');
+      } else {
+        setTransferMessage({ text: t(res.messageKey || 'api.server_error'), type: 'error' });
+      }
+    } catch (err: any) {
+      console.error(err);
+      setTransferMessage({ text: t('api.server_error'), type: 'error' });
+    } finally {
+      setTransferLoading(false);
+    }
+  };
 
   // Calcular la previsualización de DC
   useEffect(() => {
@@ -127,75 +178,151 @@ export default function WalletPage() {
           gap: '24px'
         }} className="wallet-grid">
           
-          {/* Conversion Card */}
-          <div className="glass" style={{ padding: '32px', borderRadius: 'var(--radius-md)', display: 'flex', flexDirection: 'column', gap: '24px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <div style={{ width: '40px', height: '40px', borderRadius: 'var(--radius-sm)', background: 'rgba(0, 229, 255, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#00E5FF' }}>
-                <ArrowRightLeft size={20} />
+          {/* Actions Column (Conversion + optional Transfer) */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            
+            {/* Conversion Card */}
+            <div className="glass" style={{ padding: '32px', borderRadius: 'var(--radius-md)', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div style={{ width: '40px', height: '40px', borderRadius: 'var(--radius-sm)', background: 'rgba(0, 229, 255, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#00E5FF' }}>
+                  <ArrowRightLeft size={20} />
+                </div>
+                <h3 style={{ fontSize: '18px', fontWeight: 700 }}>{t('wallet.convert_card_title')}</h3>
               </div>
-              <h3 style={{ fontSize: '18px', fontWeight: 700 }}>{t('wallet.convert_card_title')}</h3>
+
+              <div style={{ background: 'rgba(255,255,255,0.01)', border: '1px solid var(--border-light)', borderRadius: 'var(--radius-sm)', padding: '16px', display: 'flex', gap: '12px' }}>
+                <Info size={16} style={{ color: '#00E5FF', flexShrink: 0, marginTop: '2px' }} />
+                <div style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: '1.4' }}>
+                  {t('wallet.rule_desc')}
+                </div>
+              </div>
+
+              {message.text && (
+                <div style={{ 
+                  background: message.type === 'success' ? 'rgba(46, 204, 113, 0.1)' : 'rgba(235, 87, 87, 0.1)', 
+                  border: message.type === 'success' ? '1px solid rgba(46, 204, 113, 0.2)' : '1px solid rgba(235, 87, 87, 0.2)', 
+                  borderRadius: 'var(--radius-sm)', 
+                  padding: '14px 16px', 
+                  color: message.type === 'success' ? '#2ECC71' : '#EB5757', 
+                  fontSize: '14px' 
+                }}>
+                  {message.text}
+                </div>
+              )}
+
+              <form onSubmit={handleConvert} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                    <label className="premium-label" style={{ margin: 0 }} htmlFor="convert-dp-amount">{t('wallet.input_label')}</label>
+                    <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>{t('wallet.available')}: <strong>{wallet?.balance || 0} DP</strong></span>
+                  </div>
+                  <div style={{ position: 'relative' }}>
+                    <Award size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#00E5FF' }} />
+                    <input
+                      id="convert-dp-amount"
+                      type="number"
+                      required
+                      step="10"
+                      min="10"
+                      className="premium-input"
+                      style={{ paddingLeft: '48px' }}
+                      placeholder={t('wallet.placeholder')}
+                      value={dpAmount}
+                      onChange={(e) => setDpAmount(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                {/* Conversion Graphic */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px', background: 'rgba(255,255,255,0.02)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-light)' }}>
+                  <div style={{ textAlign: 'center' }}>
+                    <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{t('wallet.give')}</span>
+                    <p style={{ fontSize: '16px', fontWeight: 700, color: '#00E5FF', marginTop: '4px' }}>{parseInt(dpAmount) || 0} DP</p>
+                  </div>
+                  <ArrowRightLeft size={16} style={{ color: 'var(--text-muted)' }} />
+                  <div style={{ textAlign: 'center' }}>
+                    <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{t('wallet.receive')}</span>
+                    <p style={{ fontSize: '16px', fontWeight: 700, color: '#D4AF37', marginTop: '4px' }}>{dcPreview} DC</p>
+                  </div>
+                </div>
+
+                <button id="convert-submit-btn" type="submit" className="btn-gold" style={{ width: '100%', marginTop: '8px' }} disabled={btnLoading || !dpAmount}>
+                  {btnLoading ? t('wallet.btn_submit_loading') : t('wallet.btn_submit')}
+                </button>
+              </form>
             </div>
 
-            <div style={{ background: 'rgba(255,255,255,0.01)', border: '1px solid var(--border-light)', borderRadius: 'var(--radius-sm)', padding: '16px', display: 'flex', gap: '12px' }}>
-              <Info size={16} style={{ color: '#00E5FF', flexShrink: 0, marginTop: '2px' }} />
-              <div style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: '1.4' }}>
-                {t('wallet.rule_desc')}
-              </div>
-            </div>
+            {/* Transfer DP Card (visible for leadership roles) */}
+            {showTransfer && (
+              <div className="glass" style={{ padding: '32px', borderRadius: 'var(--radius-md)', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{ width: '40px', height: '40px', borderRadius: 'var(--radius-sm)', background: 'rgba(212, 175, 55, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#D4AF37' }}>
+                    <Send size={20} />
+                  </div>
+                  <h3 style={{ fontSize: '18px', fontWeight: 700 }}>{t('wallet.transfer_card_title')}</h3>
+                </div>
 
-            {message.text && (
-              <div style={{ 
-                background: message.type === 'success' ? 'rgba(46, 204, 113, 0.1)' : 'rgba(235, 87, 87, 0.1)', 
-                border: message.type === 'success' ? '1px solid rgba(46, 204, 113, 0.2)' : '1px solid rgba(235, 87, 87, 0.2)', 
-                borderRadius: 'var(--radius-sm)', 
-                padding: '14px 16px', 
-                color: message.type === 'success' ? '#2ECC71' : '#EB5757', 
-                fontSize: '14px' 
-              }}>
-                {message.text}
+                <div style={{ background: 'rgba(255,255,255,0.01)', border: '1px solid var(--border-light)', borderRadius: 'var(--radius-sm)', padding: '16px', display: 'flex', gap: '12px' }}>
+                  <Info size={16} style={{ color: '#D4AF37', flexShrink: 0, marginTop: '2px' }} />
+                  <div style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: '1.4' }}>
+                    {t('wallet.transfer_desc')}
+                  </div>
+                </div>
+
+                {transferMessage.text && (
+                  <div style={{ 
+                    background: transferMessage.type === 'success' ? 'rgba(46, 204, 113, 0.1)' : 'rgba(235, 87, 87, 0.1)', 
+                    border: transferMessage.type === 'success' ? '1px solid rgba(46, 204, 113, 0.2)' : '1px solid rgba(235, 87, 87, 0.2)', 
+                    borderRadius: 'var(--radius-sm)', 
+                    padding: '14px 16px', 
+                    color: transferMessage.type === 'success' ? '#2ECC71' : '#EB5757', 
+                    fontSize: '14px' 
+                  }}>
+                    {transferMessage.text}
+                  </div>
+                )}
+
+                <form onSubmit={handleTransfer} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                  <div>
+                    <label className="premium-label" htmlFor="transfer-dicilo-id">{t('wallet.transfer_dicilo_id_label')}</label>
+                    <input
+                      id="transfer-dicilo-id"
+                      type="text"
+                      required
+                      className="premium-input"
+                      placeholder={t('wallet.transfer_dicilo_id_placeholder')}
+                      value={transferTargetId}
+                      onChange={(e) => setTransferTargetId(e.target.value.replace(/\s+/g, ''))}
+                    />
+                  </div>
+
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                      <label className="premium-label" style={{ margin: 0 }} htmlFor="transfer-amount">{t('wallet.transfer_amount_label')}</label>
+                      <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>{t('wallet.available')}: <strong>{wallet?.balance || 0} DP</strong></span>
+                    </div>
+                    <div style={{ position: 'relative' }}>
+                      <Award size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#D4AF37' }} />
+                      <input
+                        id="transfer-amount"
+                        type="number"
+                        required
+                        min="1"
+                        className="premium-input"
+                        style={{ paddingLeft: '48px' }}
+                        placeholder={t('wallet.transfer_amount_placeholder')}
+                        value={transferAmount}
+                        onChange={(e) => setTransferAmount(e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  <button id="transfer-submit-btn" type="submit" className="btn-gold" style={{ width: '100%', marginTop: '8px' }} disabled={transferLoading || !transferTargetId || !transferAmount}>
+                    {transferLoading ? t('wallet.transfer_btn_submit_loading') : t('wallet.transfer_btn_submit')}
+                  </button>
+                </form>
               </div>
             )}
-
-            <form onSubmit={handleConvert} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-              <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                  <label className="premium-label" style={{ margin: 0 }} htmlFor="convert-dp-amount">{t('wallet.input_label')}</label>
-                  <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>{t('wallet.available')}: <strong>{wallet?.balance || 0} DP</strong></span>
-                </div>
-                <div style={{ position: 'relative' }}>
-                  <Award size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#00E5FF' }} />
-                  <input
-                    id="convert-dp-amount"
-                    type="number"
-                    required
-                    step="10"
-                    min="10"
-                    className="premium-input"
-                    style={{ paddingLeft: '48px' }}
-                    placeholder={t('wallet.placeholder')}
-                    value={dpAmount}
-                    onChange={(e) => setDpAmount(e.target.value)}
-                  />
-                </div>
-              </div>
-
-              {/* Conversion Graphic */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px', background: 'rgba(255,255,255,0.02)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-light)' }}>
-                <div style={{ textAlign: 'center' }}>
-                  <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{t('wallet.give')}</span>
-                  <p style={{ fontSize: '16px', fontWeight: 700, color: '#00E5FF', marginTop: '4px' }}>{parseInt(dpAmount) || 0} DP</p>
-                </div>
-                <ArrowRightLeft size={16} style={{ color: 'var(--text-muted)' }} />
-                <div style={{ textAlign: 'center' }}>
-                  <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{t('wallet.receive')}</span>
-                  <p style={{ fontSize: '16px', fontWeight: 700, color: '#D4AF37', marginTop: '4px' }}>{dcPreview} DC</p>
-                </div>
-              </div>
-
-              <button id="convert-submit-btn" type="submit" className="btn-gold" style={{ width: '100%', marginTop: '8px' }} disabled={btnLoading || !dpAmount}>
-                {btnLoading ? t('wallet.btn_submit_loading') : t('wallet.btn_submit')}
-              </button>
-            </form>
           </div>
 
           {/* Transactions List */}

@@ -74,7 +74,7 @@ export default function AdminPage() {
   const [actionLoading, setActionLoading] = useState<{[key: string]: boolean}>({});
 
   // Tab control
-  const [activeTab, setActiveTab] = useState<'inventory' | 'users_reservations'>('inventory');
+  const [activeTab, setActiveTab] = useState<'inventory' | 'pending_payments' | 'users_reservations'>('inventory');
 
   // Reservations state
   const [allReservations, setAllReservations] = useState<any[]>([]);
@@ -151,6 +151,14 @@ export default function AdminPage() {
   };
 
   const isAdmin = profile?.role === 'admin' || profile?.role === 'superadmin';
+
+  // Calcular de forma reactiva las pre-reservas y cuotas pendientes de verificación
+  const pendingPreReservations = allReservations.filter(r => r.status === 'pending_payment');
+  const pendingInstallmentPayments = pendingPayments.filter(p => {
+    const res = allReservations.find(r => r.id === p.reservationId);
+    return res && res.status !== 'pending_payment';
+  });
+  const pendingCount = pendingPreReservations.length + pendingInstallmentPayments.length;
 
   // Filtrar monedas según el continente seleccionado en el formulario
   const filteredCoins = allCoins.filter((coin) => {
@@ -551,7 +559,7 @@ export default function AdminPage() {
         )}
 
         {/* Tab Navigation */}
-        <div style={{ display: 'flex', borderBottom: '1px solid var(--border-light)', gap: '24px' }}>
+        <div style={{ display: 'flex', borderBottom: '1px solid var(--border-light)', gap: '24px', flexWrap: 'wrap' }}>
           <button 
             id="tab-inventory"
             onClick={() => setActiveTab('inventory')} 
@@ -566,7 +574,23 @@ export default function AdminPage() {
               cursor: 'pointer'
             }}
           >
-            Inventario y Aprobaciones
+            {t('admin.tab_inventory')}
+          </button>
+          <button 
+            id="tab-pending-payments"
+            onClick={() => setActiveTab('pending_payments')} 
+            style={{
+              padding: '12px 8px',
+              background: 'none',
+              border: 'none',
+              color: activeTab === 'pending_payments' ? '#D4AF37' : 'var(--text-secondary)',
+              borderBottom: activeTab === 'pending_payments' ? '2px solid #D4AF37' : 'none',
+              fontSize: '16px',
+              fontWeight: 600,
+              cursor: 'pointer'
+            }}
+          >
+            {t('admin.tab_pending_payments_count').replace('{count}', String(pendingCount))}
           </button>
           <button 
             id="tab-users-reservations"
@@ -582,11 +606,11 @@ export default function AdminPage() {
               cursor: 'pointer'
             }}
           >
-            Usuarios y Reservas ({allReservations.length})
+            {t('admin.tab_users_reservations_count').replace('{count}', String(allReservations.length))}
           </button>
         </div>
 
-        {activeTab === 'inventory' ? (
+        {activeTab === 'inventory' && (
           <>
 
         {/* Double Column layout */}
@@ -963,20 +987,13 @@ export default function AdminPage() {
           )}
         </div>
           </>
-        ) : (
-          /* Pestaña: Usuarios y Reservas */
+        )}
+
+        {activeTab === 'pending_payments' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
-            
             {/* PAGOS PENDIENTES REVOLUT */}
             {(() => {
-              const pendingPreReservations = allReservations.filter(r => r.status === 'pending_payment');
-              const pendingInstallmentPayments = pendingPayments.filter(p => {
-                const res = allReservations.find(r => r.id === p.reservationId);
-                return res && res.status !== 'pending_payment';
-              });
-
               const hasPending = pendingPreReservations.length > 0 || pendingInstallmentPayments.length > 0;
-
               return (
                 <div className="glass-gold" style={{ padding: '32px', borderRadius: 'var(--radius-md)', border: '1px solid #D4AF37', display: 'flex', flexDirection: 'column', gap: '24px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px', color: '#D4AF37' }}>
@@ -1060,7 +1077,7 @@ export default function AdminPage() {
 
                       {/* Subsección: Cuotas e Installments */}
                       {pendingInstallmentPayments.length > 0 && (
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '8px' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '16px' }}>
                           <h4 style={{ fontSize: '14px', fontWeight: 700, color: '#D4AF37', borderBottom: '1px solid rgba(212,175,55,0.1)', paddingBottom: '6px' }}>
                             {t('admin.installments_subtitle')}
                           </h4>
@@ -1121,7 +1138,11 @@ export default function AdminPage() {
                 </div>
               );
             })()}
+          </div>
+        )}
 
+        {activeTab === 'users_reservations' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
             {/* LISTADO GLOBAL DE RESERVAS */}
             <div className="glass" style={{ padding: '32px', borderRadius: 'var(--radius-md)', display: 'flex', flexDirection: 'column', gap: '24px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
