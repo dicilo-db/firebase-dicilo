@@ -7,10 +7,14 @@ import { useLanguage } from '@/context/LanguageContext';
 import { db } from '@/lib/firebase';
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import { reserveCoin, payInstallment, listParticipationInMarketplace, runDiagnostics, updateReservationDetails } from '@/app/actions/wallet-actions';
-import { Coins, Award, Award as RarityIcon, AlertTriangle, ShieldCheck, HelpCircle, X, Check, Eye, MapPin, Phone, Mail, User } from 'lucide-react';
+import { Coins, Award, Award as RarityIcon, AlertTriangle, ShieldCheck, HelpCircle, X, Check, Eye, MapPin, Phone, Mail, User, Clock } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
+
+// Enlace de pago para tarjeta de crédito/débito o fuera de la Comunidad Europea (Stripe / Revolut Pro, etc.)
+// Reemplazar con el enlace de pago del cliente (500 € para la reserva de la moneda DICICOIN)
+const PAYMENT_LINK_OUTSIDE_EU = "https://revolut.me/dicicoincopy";
 
 interface DiciCoin {
   id: string;
@@ -70,9 +74,11 @@ export default function ReservationsPage() {
   const [selectedCoin, setSelectedCoin] = useState<DiciCoin | null>(null);
   const [showLegalModal, setShowLegalModal] = useState(false);
   const [legalChecked, setLegalChecked] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<'simulated_card' | 'revolut_transfer' | 'card_outside_eu'>('simulated_card');
   const [reserveLoading, setReserveLoading] = useState(false);
   
   // Shipping info form state
+  const [instPaymentMethod, setInstPaymentMethod] = useState<{[key: string]: 'simulated_installment' | 'revolut_transfer' | 'card_outside_eu'}>({});
   const [shippingInfo, setShippingInfo] = useState({
     fullName: '',
     email: '',
@@ -387,6 +393,7 @@ export default function ReservationsPage() {
       // Abrir modal de reserva
       setSelectedCoin(coin);
       setLegalChecked(false);
+      setPaymentMethod('simulated_card');
       setShowLegalModal(true);
     } else if (coin.currentOwnerId === user?.uid) {
       // Si ya la tiene reservada/pagada, abrir el certificado directo
@@ -414,9 +421,9 @@ export default function ReservationsPage() {
     setMessage({ text: '', type: '' });
 
     try {
-      const res = await reserveCoin(user.uid, selectedCoin.id, shippingInfo);
+      const res = await reserveCoin(user.uid, selectedCoin.id, shippingInfo, paymentMethod);
       if (res.success) {
-        setMessage({ text: t('api.success_reserve'), type: 'success' });
+        setMessage({ text: t(res.messageKey || 'api.success_reserve'), type: 'success' });
         setShowLegalModal(false);
         setSelectedCoin(null);
         setActiveTab('my_plans');
@@ -445,11 +452,14 @@ export default function ReservationsPage() {
     setPaymentLoading(prev => ({ ...prev, [resId]: true }));
     setMessage({ text: '', type: '' });
 
+    const pMethod = instPaymentMethod[resId] || 'simulated_installment';
+
     try {
-      const res = await payInstallment(user.uid, resId, amount);
+      const res = await payInstallment(user.uid, resId, amount, pMethod);
       if (res.success) {
         setMessage({ text: t(res.messageKey || 'api.success_installment'), type: 'success' });
         setPaymentAmount(prev => ({ ...prev, [resId]: '' }));
+        setInstPaymentMethod(prev => ({ ...prev, [resId]: 'simulated_installment' }));
       } else {
         setMessage({ text: t(res.messageKey || 'api.server_error'), type: 'error' });
       }
@@ -621,6 +631,7 @@ export default function ReservationsPage() {
               <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
                 {reservations.map((res) => {
                   const isCompleted = res.status === 'completed';
+                  const isPending = res.status === 'pending_payment';
                   return (
                     <div key={res.id} className="glass" style={{ padding: '32px', borderRadius: 'var(--radius-md)', display: 'flex', flexDirection: 'column', gap: '24px' }}>
                       {/* Title Header */}
@@ -633,24 +644,26 @@ export default function ReservationsPage() {
                               fontWeight: 700, 
                               padding: '2px 8px', 
                               borderRadius: '12px',
-                              background: isCompleted ? 'rgba(46, 204, 113, 0.1)' : 'rgba(0, 229, 255, 0.1)',
-                              color: isCompleted ? '#2ECC71' : '#00E5FF',
+                              background: isPending ? 'rgba(212, 175, 55, 0.1)' : (isCompleted ? 'rgba(46, 204, 113, 0.1)' : 'rgba(0, 229, 255, 0.1)'),
+                              color: isPending ? '#D4AF37' : (isCompleted ? '#2ECC71' : '#00E5FF'),
                               textTransform: 'uppercase'
                             }}>
-                              {isCompleted ? t('res.status_fully_paid') : t('res.status_payment_plan')}
+                              {isPending ? 'Pendiente de Pago' : (isCompleted ? t('res.status_fully_paid') : t('res.status_payment_plan'))}
                             </span>
                           </div>
                           <p style={{ color: 'var(--text-muted)', fontSize: '13px', marginTop: '4px' }}>ID Reserva: {res.id}</p>
                         </div>
                         <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-                          <button id={`btn-cert-${res.coinId}`} onClick={() => setCertCoinId(res.coinId)} className="btn-outline" style={{ padding: '10px 16px', fontSize: '13px' }}>
-                            <Eye size={14} />
-                            <span>{t('res.cert_title')}</span>
-                          </button>
+                          {!isPending && (
+                            <button id={`btn-cert-${res.coinId}`} onClick={() => setCertCoinId(res.coinId)} className="btn-outline" style={{ padding: '10px 16px', fontSize: '13px' }}>
+                              <Eye size={14} />
+                              <span>{t('res.cert_title')}</span>
+                            </button>
+                          )}
                           <button id={`btn-edit-shipping-${res.id}`} onClick={() => handleEditShippingClick(res)} className="btn-outline" style={{ padding: '10px 16px', fontSize: '13px' }}>
                             <span>{t('res.btn_edit_data') || 'Editar Datos'}</span>
                           </button>
-                          {!isCompleted && (
+                          {!isCompleted && !isPending && (
                             <button id={`btn-sell-${res.id}`} onClick={() => handleSellClick(res)} className="btn-outline-gold" style={{ padding: '10px 16px', fontSize: '13px' }}>
                               <span>{t('market.btn_buy')}</span>
                             </button>
@@ -677,37 +690,206 @@ export default function ReservationsPage() {
                         marginTop: '8px'
                       }} className="res-details-grid">
                         
-                        {/* Installment Payment Form */}
-                        {!isCompleted ? (
-                          <div style={{ padding: '24px', background: 'rgba(255,255,255,0.01)', border: '1px solid var(--border-light)', borderRadius: 'var(--radius-sm)', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                            <span style={{ fontWeight: 700, fontSize: '15px' }}>{t('res.form_pay_installment')}</span>
-                            <div style={{ display: 'flex', gap: '12px' }}>
-                              <div style={{ position: 'relative', flexGrow: 1 }}>
-                                <span style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', fontWeight: 600 }}>€</span>
-                                <input
-                                  id={`input-pay-${res.id}`}
-                                  type="number"
-                                  className="premium-input"
-                                  style={{ paddingLeft: '32px' }}
-                                  placeholder="Importe (e.g. 500)"
-                                  value={paymentAmount[res.id] || ''}
-                                  onChange={(e) => {
-                                    const val = e.target.value;
-                                    setPaymentAmount(prev => ({ ...prev, [res.id]: val }));
-                                  }}
-                                />
-                              </div>
-                              <button 
-                                id={`submit-pay-${res.id}`}
-                                onClick={() => handleInstallmentSubmit(res.id, res.coinId)} 
-                                className="btn-blue" 
-                                style={{ flexShrink: 0, padding: '12px 24px', fontSize: '14px' }}
-                                disabled={paymentLoading[res.id]}
-                              >
-                                {paymentLoading[res.id] ? t('res.btn_pay_loading') : t('res.btn_pay')}
-                              </button>
+                        {/* Installment Payment Form / Instructions */}
+                        {isPending ? (
+                          <div style={{ padding: '24px', background: 'rgba(212, 175, 55, 0.02)', border: '1px solid rgba(212, 175, 55, 0.15)', borderRadius: 'var(--radius-sm)', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#D4AF37' }}>
+                              <Clock size={16} className="animate-pulse" />
+                              <span style={{ fontWeight: 700, fontSize: '15px' }}>Instrucciones de Activación de Reserva (Revolut)</span>
                             </div>
-                            <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                            <div style={{ fontSize: '13px', lineHeight: '1.6', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                              <p>
+                                La reserva queda en estado <strong style={{ color: '#FFFFFF' }}>"Pendiente de Pago"</strong>. El cliente no puede ver su certificado digital todavía.
+                              </p>
+                              <p>
+                                Una vez que verificas la transferencia bancaria en tu banco Revolut, vas a la pestaña <strong style={{ color: '#FFFFFF' }}>"Usuarios y Reservas"</strong> de la administración y haces clic en <strong style={{ color: '#FFFFFF' }}>"Aprobar Pago"</strong> (o "Cancelar Pre-Reserva" si no pagan). Al aprobarse, la reserva se activa, se cargan los 500 € (10%) y se genera automáticamente su certificado digital.
+                              </p>
+                              <p>
+                                Realiza una transferencia bancaria de <strong>500 €</strong> (10%) para activar el certificado y tu plan de pago progresivo:
+                              </p>
+                            </div>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', background: 'rgba(0,0,0,0.2)', padding: '12px', borderRadius: '4px', fontFamily: 'monospace', fontSize: '12px', color: '#FFFFFF' }}>
+                              <div>Beneficiario: DiciCoin</div>
+                              <div>IBAN: LT60 3250 0696 7631 8667</div>
+                              <div>BIC: REVOLT21</div>
+                              <div>BIC Intermediario (fuera de EWR): CHASDEFX</div>
+                              <div>Concepto / Referencia: <strong style={{ color: '#00E5FF' }}>DICI-RES-{res.coinId}</strong></div>
+                              <div>Importe a Transferir: <strong style={{ color: '#D4AF37' }}>500.00 €</strong></div>
+                            </div>
+                            <p style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                              * Una vez realizada la transferencia, nuestro equipo de soporte verificará el ingreso en la cuenta Revolut para activar tu reserva.
+                            </p>
+                          </div>
+                        ) : !isCompleted ? (
+                          <div style={{ padding: '24px', background: 'rgba(255,255,255,0.01)', border: '1px solid var(--border-light)', borderRadius: 'var(--radius-sm)', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                              <span style={{ fontWeight: 700, fontSize: '15px' }}>{t('res.form_pay_installment')}</span>
+                              
+                              {/* Payment Method Selector inside active plans */}
+                              <div style={{ display: 'flex', gap: '8px' }}>
+                                <button
+                                  type="button"
+                                  onClick={() => setInstPaymentMethod(prev => ({ ...prev, [res.id]: 'simulated_installment' }))}
+                                  style={{
+                                    background: 'none', border: 'none',
+                                    color: (instPaymentMethod[res.id] || 'simulated_installment') === 'simulated_installment' ? '#00E5FF' : 'var(--text-muted)',
+                                    fontSize: '12px', fontWeight: 600, cursor: 'pointer',
+                                    padding: '4px 8px', borderBottom: (instPaymentMethod[res.id] || 'simulated_installment') === 'simulated_installment' ? '2px solid #00E5FF' : 'none'
+                                  }}
+                                >
+                                  {t('res.payment_method_card')}
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => setInstPaymentMethod(prev => ({ ...prev, [res.id]: 'revolut_transfer' }))}
+                                  style={{
+                                    background: 'none', border: 'none',
+                                    color: instPaymentMethod[res.id] === 'revolut_transfer' ? '#D4AF37' : 'var(--text-muted)',
+                                    fontSize: '12px', fontWeight: 600, cursor: 'pointer',
+                                    padding: '4px 8px', borderBottom: instPaymentMethod[res.id] === 'revolut_transfer' ? '2px solid #D4AF37' : 'none'
+                                  }}
+                                >
+                                  {t('res.payment_method_revolut')}
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => setInstPaymentMethod(prev => ({ ...prev, [res.id]: 'card_outside_eu' }))}
+                                  style={{
+                                    background: 'none', border: 'none',
+                                    color: instPaymentMethod[res.id] === 'card_outside_eu' ? '#00E5FF' : 'var(--text-muted)',
+                                    fontSize: '12px', fontWeight: 600, cursor: 'pointer',
+                                    padding: '4px 8px', borderBottom: instPaymentMethod[res.id] === 'card_outside_eu' ? '2px solid #00E5FF' : 'none'
+                                  }}
+                                >
+                                  {t('res.payment_method_card_outside')}
+                                </button>
+                              </div>
+                            </div>
+
+                            {instPaymentMethod[res.id] === 'revolut_transfer' ? (
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                                <p style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
+                                  {t('res.revolut_installment_desc')}
+                                </p>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', background: 'rgba(0,0,0,0.2)', padding: '10px', borderRadius: '4px', fontFamily: 'monospace', fontSize: '12px', color: '#FFFFFF' }}>
+                                  <div>{t('res.revolut_beneficiary')}</div>
+                                  <div>IBAN: LT60 3250 0696 7631 8667</div>
+                                  <div>BIC: REVOLT21</div>
+                                  <div>{t('res.revolut_concept')} <strong style={{ color: '#00E5FF' }}>DICI-PAY-{res.id}</strong></div>
+                                </div>
+                                <div style={{ display: 'flex', gap: '12px', marginTop: '6px' }}>
+                                  <div style={{ position: 'relative', flexGrow: 1 }}>
+                                    <span style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', fontWeight: 600 }}>€</span>
+                                    <input
+                                      id={`input-pay-${res.id}`}
+                                      type="number"
+                                      className="premium-input"
+                                      style={{ paddingLeft: '32px' }}
+                                      placeholder={t('res.transfer_amount_placeholder')}
+                                      value={paymentAmount[res.id] || ''}
+                                      onChange={(e) => {
+                                        const val = e.target.value;
+                                        setPaymentAmount(prev => ({ ...prev, [res.id]: val }));
+                                      }}
+                                    />
+                                  </div>
+                                  <button
+                                    onClick={() => handleInstallmentSubmit(res.id, res.coinId)}
+                                    className="btn-gold"
+                                    style={{ flexShrink: 0, padding: '12px 24px', fontSize: '14px' }}
+                                    disabled={paymentLoading[res.id]}
+                                  >
+                                    {paymentLoading[res.id] ? t('res.btn_pay_loading') : t('res.register_transfer')}
+                                  </button>
+                                </div>
+                              </div>
+                            ) : instPaymentMethod[res.id] === 'card_outside_eu' ? (
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                                <p style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
+                                  {t('res.card_outside_desc2')}
+                                </p>
+                                <div style={{ display: 'flex', justifyContent: 'center', margin: '6px 0' }}>
+                                  <a
+                                    href={PAYMENT_LINK_OUTSIDE_EU}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="btn-blue"
+                                    style={{
+                                      display: 'inline-flex',
+                                      alignItems: 'center',
+                                      gap: '8px',
+                                      padding: '10px 20px',
+                                      textDecoration: 'none',
+                                      fontWeight: 700,
+                                      fontSize: '13px',
+                                      borderRadius: 'var(--radius-sm)',
+                                      background: 'linear-gradient(135deg, #00E5FF 0%, #0083B0 100%)',
+                                      color: '#FFFFFF',
+                                      boxShadow: '0 0 10px rgba(0, 229, 255, 0.3)'
+                                    }}
+                                  >
+                                    {t('res.card_outside_btn')}
+                                  </a>
+                                </div>
+                                <p style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>
+                                  {t('res.card_outside_footer')}
+                                </p>
+                                <div style={{ display: 'flex', gap: '12px', marginTop: '6px' }}>
+                                  <div style={{ position: 'relative', flexGrow: 1 }}>
+                                    <span style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', fontWeight: 600 }}>€</span>
+                                    <input
+                                      id={`input-pay-${res.id}`}
+                                      type="number"
+                                      className="premium-input"
+                                      style={{ paddingLeft: '32px' }}
+                                      placeholder={t('res.payment_amount_placeholder')}
+                                      value={paymentAmount[res.id] || ''}
+                                      onChange={(e) => {
+                                        const val = e.target.value;
+                                        setPaymentAmount(prev => ({ ...prev, [res.id]: val }));
+                                      }}
+                                    />
+                                  </div>
+                                  <button
+                                    onClick={() => handleInstallmentSubmit(res.id, res.coinId)}
+                                    className="btn-gold"
+                                    style={{ flexShrink: 0, padding: '12px 24px', fontSize: '14px' }}
+                                    disabled={paymentLoading[res.id]}
+                                  >
+                                    {paymentLoading[res.id] ? t('res.btn_pay_loading') : t('res.register_payment')}
+                                  </button>
+                                </div>
+                              </div>
+                            ) : (
+                              <div style={{ display: 'flex', gap: '12px' }}>
+                                <div style={{ position: 'relative', flexGrow: 1 }}>
+                                  <span style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', fontWeight: 600 }}>€</span>
+                                  <input
+                                    id={`input-pay-${res.id}`}
+                                    type="number"
+                                    className="premium-input"
+                                    style={{ paddingLeft: '32px' }}
+                                    placeholder={t('res.payment_amount_placeholder')}
+                                    value={paymentAmount[res.id] || ''}
+                                    onChange={(e) => {
+                                      const val = e.target.value;
+                                      setPaymentAmount(prev => ({ ...prev, [res.id]: val }));
+                                    }}
+                                  />
+                                </div>
+                                <button 
+                                  id={`submit-pay-${res.id}`}
+                                  onClick={() => handleInstallmentSubmit(res.id, res.coinId)} 
+                                  className="btn-blue" 
+                                  style={{ flexShrink: 0, padding: '12px 24px', fontSize: '14px' }}
+                                  disabled={paymentLoading[res.id]}
+                                >
+                                  {paymentLoading[res.id] ? t('res.btn_pay_loading') : t('res.btn_pay')}
+                                </button>
+                              </div>
+                            )}
+
+                            <span style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}>
                               {t('res.installment_remaining')} <strong>{res.remainingAmount} €</strong>
                             </span>
                           </div>
@@ -732,7 +914,9 @@ export default function ReservationsPage() {
                                 <span style={{ color: 'var(--text-secondary)' }}>
                                   {formatTrxDate(p.createdAt)}
                                 </span>
-                                <span style={{ fontWeight: 700 }}>+{p.amount} €</span>
+                                <span style={{ fontWeight: 700, color: p.status === 'pending_verification' ? '#D4AF37' : (p.status === 'rejected' ? '#EB5757' : '#FFFFFF') }}>
+                                  +{p.amount} € {p.status === 'pending_verification' ? ' (Pendiente)' : (p.status === 'rejected' ? ' (Rechazado)' : '')}
+                                </span>
                               </div>
                             ))}
                           </div>
@@ -952,6 +1136,153 @@ export default function ReservationsPage() {
               <p style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
                 {t('res.modal_desc')}
               </p>
+
+              {/* Payment Method Selector */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <span className="premium-label" style={{ fontSize: '11px', fontWeight: 600 }}>{t('res.payment_method_title')}</span>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
+                  <button
+                    type="button"
+                    onClick={() => setPaymentMethod('simulated_card')}
+                    style={{
+                      padding: '12px 6px',
+                      borderRadius: 'var(--radius-sm)',
+                      background: paymentMethod === 'simulated_card' ? 'rgba(0, 229, 255, 0.1)' : 'rgba(255,255,255,0.01)',
+                      border: paymentMethod === 'simulated_card' ? '1px solid #00E5FF' : '1px solid var(--border-light)',
+                      color: paymentMethod === 'simulated_card' ? '#00E5FF' : 'var(--text-secondary)',
+                      fontSize: '12px',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      textAlign: 'center',
+                      transition: 'all 0.2s ease'
+                    }}
+                  >
+                    {t('res.payment_method_card')}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPaymentMethod('revolut_transfer')}
+                    style={{
+                      padding: '12px 6px',
+                      borderRadius: 'var(--radius-sm)',
+                      background: paymentMethod === 'revolut_transfer' ? 'rgba(212, 175, 55, 0.1)' : 'rgba(255,255,255,0.01)',
+                      border: paymentMethod === 'revolut_transfer' ? '1px solid #D4AF37' : '1px solid var(--border-light)',
+                      color: paymentMethod === 'revolut_transfer' ? '#D4AF37' : 'var(--text-secondary)',
+                      fontSize: '12px',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      textAlign: 'center',
+                      transition: 'all 0.2s ease'
+                    }}
+                  >
+                    {t('res.payment_method_revolut')}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPaymentMethod('card_outside_eu')}
+                    style={{
+                      padding: '12px 6px',
+                      borderRadius: 'var(--radius-sm)',
+                      background: paymentMethod === 'card_outside_eu' ? 'rgba(0, 229, 255, 0.15)' : 'rgba(255,255,255,0.01)',
+                      border: paymentMethod === 'card_outside_eu' ? '1px solid #00E5FF' : '1px solid var(--border-light)',
+                      color: paymentMethod === 'card_outside_eu' ? '#00E5FF' : 'var(--text-secondary)',
+                      fontSize: '12px',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      textAlign: 'center',
+                      transition: 'all 0.2s ease'
+                    }}
+                  >
+                    {t('res.payment_method_card_outside')}
+                  </button>
+                </div>
+
+                {paymentMethod === 'revolut_transfer' && (
+                  <div style={{
+                    marginTop: '8px',
+                    padding: '16px',
+                    background: 'rgba(212, 175, 55, 0.03)',
+                    border: '1px solid rgba(212, 175, 55, 0.2)',
+                    borderRadius: 'var(--radius-sm)',
+                    fontSize: '13px',
+                    lineHeight: '1.5',
+                    color: 'var(--text-secondary)'
+                  }}>
+                    <p style={{ color: '#D4AF37', fontWeight: 700, marginBottom: '8px' }}>
+                      {t('res.revolut_title')}
+                    </p>
+                    <div style={{ marginBottom: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      <p>
+                        {t('res.revolut_desc1')}
+                      </p>
+                      <p>
+                        {t('res.revolut_desc2')}
+                      </p>
+                      <p>
+                        {t('res.revolut_desc3')}
+                      </p>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', background: 'rgba(0,0,0,0.2)', padding: '10px', borderRadius: '4px', fontFamily: 'monospace', fontSize: '12px', color: '#FFFFFF', marginBottom: '12px' }}>
+                      <div>{t('res.revolut_beneficiary')}</div>
+                      <div>IBAN: LT60 3250 0696 7631 8667</div>
+                      <div>BIC: REVOLT21</div>
+                      <div>{t('res.revolut_intermediary')} CHASDEFX</div>
+                      <div>{t('res.revolut_concept')} <strong style={{ color: '#00E5FF' }}>DICI-RES-{selectedCoin.id}</strong></div>
+                    </div>
+                  </div>
+                )}
+
+                {paymentMethod === 'card_outside_eu' && (
+                  <div style={{
+                    marginTop: '8px',
+                    padding: '16px',
+                    background: 'rgba(0, 229, 255, 0.03)',
+                    border: '1px solid rgba(0, 229, 255, 0.2)',
+                    borderRadius: 'var(--radius-sm)',
+                    fontSize: '13px',
+                    lineHeight: '1.5',
+                    color: 'var(--text-secondary)'
+                  }}>
+                    <p style={{ color: '#00E5FF', fontWeight: 700, marginBottom: '8px' }}>
+                      {t('res.card_outside_title')}
+                    </p>
+                    <div style={{ marginBottom: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      <p>
+                        {t('res.card_outside_desc1')}
+                      </p>
+                      <p>
+                        {t('res.card_outside_desc2')}
+                      </p>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '12px' }}>
+                      <a
+                        href={PAYMENT_LINK_OUTSIDE_EU}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn-blue"
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                          padding: '10px 20px',
+                          textDecoration: 'none',
+                          fontWeight: 700,
+                          fontSize: '13px',
+                          borderRadius: 'var(--radius-sm)',
+                          background: 'linear-gradient(135deg, #00E5FF 0%, #0083B0 100%)',
+                          color: '#FFFFFF',
+                          boxShadow: '0 0 10px rgba(0, 229, 255, 0.3)'
+                        }}
+                      >
+                        {t('res.card_outside_btn')}
+                      </a>
+                    </div>
+                    <p style={{ fontSize: '11.5px', color: 'var(--text-muted)', lineHeight: '1.4' }}>
+                      {t('res.card_outside_footer')}
+                    </p>
+                  </div>
+                )}
+              </div>
 
               {/* Shipping Information Form */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', padding: '18px', background: 'rgba(255,255,255,0.01)', border: '1px solid var(--border-light)', borderRadius: 'var(--radius-sm)' }}>

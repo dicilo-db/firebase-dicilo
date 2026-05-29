@@ -6,9 +6,18 @@ import { useAuth } from '@/context/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { db } from '@/lib/firebase';
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
-import { createPhysicalCoin, approveTransfer, rejectTransfer, reservePhysicalCoinAsAdmin } from '@/app/actions/admin-actions';
+import { 
+  createPhysicalCoin, 
+  approveTransfer, 
+  rejectTransfer, 
+  reservePhysicalCoinAsAdmin,
+  approveRevolutPayment,
+  cancelPreReservation,
+  approveInstallmentPayment,
+  rejectInstallmentPayment
+} from '@/app/actions/admin-actions';
 import { updateReservationDetails } from '@/app/actions/wallet-actions';
-import { Plus, Check, X, ShieldAlert, Award, FileText, Activity, Eye, User } from 'lucide-react';
+import { Plus, Check, X, ShieldAlert, Award, FileText, Activity, Eye, User, Clock, AlertCircle } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
@@ -53,6 +62,7 @@ export default function AdminPage() {
   const [buyerCity, setBuyerCity] = useState('');
   const [buyerAddress, setBuyerAddress] = useState('');
   const [payWithDp, setPayWithDp] = useState(false);
+  const [openCredit, setOpenCredit] = useState(false);
 
   // Lists state
   const [allCoins, setAllCoins] = useState<DiciCoin[]>([]);
@@ -69,6 +79,7 @@ export default function AdminPage() {
   // Reservations state
   const [allReservations, setAllReservations] = useState<any[]>([]);
   const [loadingReservations, setLoadingReservations] = useState(true);
+  const [pendingPayments, setPendingPayments] = useState<any[]>([]);
 
   // Administrative editing and modals state
   const [editingRes, setEditingRes] = useState<any | null>(null);
@@ -214,6 +225,114 @@ export default function AdminPage() {
     return () => unsubscribe();
   }, [isAdmin]);
 
+  // Escuchar pagos por transferencia Revolut o Tarjeta pendientes de verificación
+  useEffect(() => {
+    if (!isAdmin) return;
+    const q = query(
+      collection(db, 'payment_history'),
+      where('paymentMethod', 'in', ['revolut_transfer', 'card_outside_eu']),
+      where('status', '==', 'pending_verification')
+    );
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const list: any[] = [];
+      snapshot.forEach((doc) => {
+        list.push({ id: doc.id, ...doc.data() });
+      });
+      setPendingPayments(list);
+    }, (err) => {
+      console.error("Error loading pending payments:", err);
+    });
+    return () => unsubscribe();
+  }, [isAdmin]);
+
+  const handleApproveRevolutPayment = async (reservationId: string) => {
+    if (!isAdmin || !user) return;
+    if (!window.confirm(t('admin.confirm_approve_payment_reservation'))) return;
+
+    setActionLoading(prev => ({ ...prev, [reservationId]: true }));
+    setMessage({ text: '', type: '' });
+
+    try {
+      const res = await approveRevolutPayment(user.uid, reservationId);
+      if (res.success) {
+        setMessage({ text: t('admin.success_activate_pre_reservation'), type: 'success' });
+      } else {
+        setMessage({ text: t('admin.error_activate_pre_reservation'), type: 'error' });
+      }
+    } catch (err: any) {
+      console.error(err);
+      setMessage({ text: t('admin.error_server_activate_pre_reservation'), type: 'error' });
+    } finally {
+      setActionLoading(prev => ({ ...prev, [reservationId]: false }));
+    }
+  };
+
+  const handleCancelPreReservation = async (reservationId: string) => {
+    if (!isAdmin || !user) return;
+    if (!window.confirm(t('admin.confirm_cancel_pre_reservation'))) return;
+
+    setActionLoading(prev => ({ ...prev, [reservationId]: true }));
+    setMessage({ text: '', type: '' });
+
+    try {
+      const res = await cancelPreReservation(user.uid, reservationId);
+      if (res.success) {
+        setMessage({ text: t('admin.success_cancel_pre_reservation'), type: 'success' });
+      } else {
+        setMessage({ text: t('admin.error_cancel_pre_reservation'), type: 'error' });
+      }
+    } catch (err: any) {
+      console.error(err);
+      setMessage({ text: t('admin.error_server_cancel_pre_reservation'), type: 'error' });
+    } finally {
+      setActionLoading(prev => ({ ...prev, [reservationId]: false }));
+    }
+  };
+
+  const handleApproveInstallmentPayment = async (paymentId: string) => {
+    if (!isAdmin || !user) return;
+    if (!window.confirm(t('admin.confirm_approve_payment_installment'))) return;
+
+    setActionLoading(prev => ({ ...prev, [paymentId]: true }));
+    setMessage({ text: '', type: '' });
+
+    try {
+      const res = await approveInstallmentPayment(user.uid, paymentId);
+      if (res.success) {
+        setMessage({ text: t('admin.success_approve_installment'), type: 'success' });
+      } else {
+        setMessage({ text: t('admin.error_approve_installment'), type: 'error' });
+      }
+    } catch (err: any) {
+      console.error(err);
+      setMessage({ text: t('admin.error_server_approve_installment'), type: 'error' });
+    } finally {
+      setActionLoading(prev => ({ ...prev, [paymentId]: false }));
+    }
+  };
+
+  const handleRejectInstallmentPayment = async (paymentId: string) => {
+    if (!isAdmin || !user) return;
+    if (!window.confirm(t('admin.confirm_reject_payment_installment'))) return;
+
+    setActionLoading(prev => ({ ...prev, [paymentId]: true }));
+    setMessage({ text: '', type: '' });
+
+    try {
+      const res = await rejectInstallmentPayment(user.uid, paymentId);
+      if (res.success) {
+        setMessage({ text: t('admin.success_reject_installment'), type: 'success' });
+      } else {
+        setMessage({ text: t('admin.error_reject_installment'), type: 'error' });
+      }
+    } catch (err: any) {
+      console.error(err);
+      setMessage({ text: t('admin.error_server_reject_installment'), type: 'error' });
+    } finally {
+      setActionLoading(prev => ({ ...prev, [paymentId]: false }));
+    }
+  };
+
   const handleEditAdminClick = (res: any) => {
     setEditingRes(res);
     setEditForm({
@@ -306,7 +425,7 @@ export default function AdminPage() {
           country: buyerCountry,
           city: buyerCity,
           address: buyerAddress
-        }, payWithDp);
+        }, payWithDp, openCredit);
 
         if (res.success) {
           setMessage({ text: t(res.messageKey || 'admin.success_reserve'), type: 'success' });
@@ -317,6 +436,7 @@ export default function AdminPage() {
           setBuyerCity('');
           setBuyerAddress('');
           setPayWithDp(false);
+          setOpenCredit(false);
         } else {
           setMessage({ text: t(res.messageKey || 'admin.error_register_coin'), type: 'error' });
         }
@@ -611,18 +731,47 @@ export default function AdminPage() {
                     />
                   </div>
 
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
-                    <input
-                      id="admin-pay-with-dp"
-                      type="checkbox"
-                      checked={payWithDp}
-                      onChange={(e) => setPayWithDp(e.target.checked)}
-                      style={{ cursor: 'pointer' }}
-                    />
-                    <label htmlFor="admin-pay-with-dp" style={{ fontSize: '13px', color: 'var(--text-secondary)', cursor: 'pointer', userSelect: 'none' }}>
-                      Descontar automáticamente 5,000 DP (DiciPoints) de la wallet del usuario
-                    </label>
-                  </div>
+                  {user?.email === 'superadmin@dicilo.net' && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
+                      <input
+                        id="admin-open-credit"
+                        type="checkbox"
+                        checked={openCredit}
+                        onChange={(e) => {
+                          const checked = e.target.checked;
+                          setOpenCredit(checked);
+                          if (checked) {
+                            setPayWithDp(false);
+                            setBuyerEmail('superadmin@dicilo.net');
+                            setBuyerFullName(profile?.firstName && profile?.lastName ? `${profile.firstName} ${profile.lastName}` : 'Super Admin');
+                            setBuyerPhone('+34 600 000 000');
+                            setBuyerCountry('España');
+                            setBuyerCity('Madrid');
+                            setBuyerAddress('Oficina Central DiciCoin');
+                          }
+                        }}
+                        style={{ cursor: 'pointer' }}
+                      />
+                      <label htmlFor="admin-open-credit" style={{ fontSize: '13px', color: '#D4AF37', cursor: 'pointer', userSelect: 'none', fontWeight: 600 }}>
+                        Reservar para mí con Crédito Abierto (0 € inicial / deuda de 5,000 €)
+                      </label>
+                    </div>
+                  )}
+
+                  {!openCredit && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
+                      <input
+                        id="admin-pay-with-dp"
+                        type="checkbox"
+                        checked={payWithDp}
+                        onChange={(e) => setPayWithDp(e.target.checked)}
+                        style={{ cursor: 'pointer' }}
+                      />
+                      <label htmlFor="admin-pay-with-dp" style={{ fontSize: '13px', color: 'var(--text-secondary)', cursor: 'pointer', userSelect: 'none' }}>
+                        Descontar automáticamente 5,000 DP (DiciPoints) de la wallet del usuario
+                      </label>
+                    </div>
+                  )}
 
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                     <div>
@@ -813,116 +962,274 @@ export default function AdminPage() {
             </div>
           )}
         </div>
-        </>
+          </>
         ) : (
           /* Pestaña: Usuarios y Reservas */
-          <div className="glass" style={{ padding: '32px', borderRadius: 'var(--radius-md)', display: 'flex', flexDirection: 'column', gap: '24px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <FileText size={20} style={{ color: '#D4AF37' }} />
-              <h3 style={{ fontSize: '18px', fontWeight: 700 }}>Listado de Reservas y Titulares</h3>
-            </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+            
+            {/* PAGOS PENDIENTES REVOLUT */}
+            {(() => {
+              const pendingPreReservations = allReservations.filter(r => r.status === 'pending_payment');
+              const pendingInstallmentPayments = pendingPayments.filter(p => {
+                const res = allReservations.find(r => r.id === p.reservationId);
+                return res && res.status !== 'pending_payment';
+              });
 
-            {loadingReservations ? (
-              <div style={{ display: 'flex', justifyContent: 'center', padding: '40px 0' }}>
-                <div className="animate-spin-slow" style={{ width: '24px', height: '24px', border: '2px solid rgba(212, 175, 55, 0.1)', borderTopColor: '#D4AF37', borderRadius: '50%' }} />
-              </div>
-            ) : allReservations.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '40px 24px', color: 'var(--text-muted)', fontSize: '14px' }}>
-                No hay ninguna reserva registrada en el sistema.
-              </div>
-            ) : (
-              <div style={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px', textAlign: 'left' }}>
-                  <thead>
-                    <tr style={{ borderBottom: '1px solid var(--border-light)', color: 'var(--text-secondary)' }}>
-                      <th style={{ padding: '12px 16px' }}>Moneda / Reserva ID</th>
-                      <th style={{ padding: '12px 16px' }}>Titular</th>
-                      <th style={{ padding: '12px 16px' }}>Contacto</th>
-                      <th style={{ padding: '12px 16px' }}>Dirección de Envío</th>
-                      <th style={{ padding: '12px 16px' }}>Estado / Progreso</th>
-                      <th style={{ padding: '12px 16px' }}>Acciones</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {allReservations.map((res) => {
-                      const isCompleted = res.status === 'completed';
-                      const ship = res.shippingInfo || {};
-                      return (
-                        <tr key={res.id} style={{ borderBottom: '1px solid var(--border-light)' }}>
-                          <td style={{ padding: '16px' }}>
-                            <strong style={{ color: '#D4AF37', display: 'block' }}>{res.coinId}</strong>
-                            <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>ID: {res.id}</span>
-                          </td>
-                          <td style={{ padding: '16px', fontWeight: 600, color: '#FFFFFF' }}>
-                            {ship.fullName || 'No definido'}
-                          </td>
-                          <td style={{ padding: '16px' }}>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                              <span>{ship.email || 'N/D'}</span>
-                              <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{ship.phone || 'N/D'}</span>
+              if (pendingPreReservations.length === 0 && pendingInstallmentPayments.length === 0) return null;
+
+              return (
+                <div className="glass-gold" style={{ padding: '32px', borderRadius: 'var(--radius-md)', border: '1px solid #D4AF37', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', color: '#D4AF37' }}>
+                    <Clock size={22} className="animate-pulse" />
+                    <h3 style={{ fontSize: '18px', fontWeight: 800 }}>
+                      {t('admin.pending_payments_title')} ({(pendingPreReservations.length + pendingInstallmentPayments.length)})
+                    </h3>
+                  </div>
+                  
+                  <p style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
+                    {t('admin.pending_payments_desc')}
+                  </p>
+
+                  {/* Subsección: Pre-reservas iniciales */}
+                  {pendingPreReservations.length > 0 && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                      <h4 style={{ fontSize: '14px', fontWeight: 700, color: '#D4AF37', borderBottom: '1px solid rgba(212,175,55,0.1)', paddingBottom: '6px' }}>
+                        {t('admin.pre_reservations_subtitle')}
+                      </h4>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '16px' }} className="admin-grid">
+                        {pendingPreReservations.map(res => {
+                          const relatedPayment = pendingPayments.find(p => p.reservationId === res.id);
+                          const pMethod = relatedPayment?.paymentMethod || 'revolut_transfer';
+                          const isCard = pMethod === 'card_outside_eu';
+                          return (
+                            <div key={res.id} style={{ padding: '16px', background: 'rgba(255,255,255,0.01)', border: '1px solid var(--border-light)', borderRadius: 'var(--radius-sm)', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <span style={{ fontWeight: 800, color: '#FFFFFF', fontSize: '15px' }}>{res.coinId}</span>
+                                <div style={{ display: 'flex', gap: '8px' }}>
+                                  <span style={{
+                                    fontSize: '11px',
+                                    background: isCard ? 'rgba(0, 229, 255, 0.15)' : 'rgba(212, 175, 55, 0.15)',
+                                    color: isCard ? '#00E5FF' : '#D4AF37',
+                                    padding: '2px 8px',
+                                    borderRadius: '12px',
+                                    fontWeight: 700
+                                  }}>
+                                    {isCard ? t('admin.payment_method_card') : t('admin.payment_method_revolut')}
+                                  </span>
+                                  <span style={{ fontSize: '11px', background: 'rgba(255,255,255,0.05)', color: 'var(--text-secondary)', padding: '2px 8px', borderRadius: '12px', fontWeight: 700 }}>
+                                    500.00 € {t('admin.amount_pending')}
+                                  </span>
+                                </div>
+                              </div>
+                              <div style={{ fontSize: '13px', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '3px' }}>
+                                <div>{t('admin.col_owner')}: <strong style={{ color: '#FFFFFF' }}>{res.shippingInfo?.fullName}</strong></div>
+                                <div>{t('login.email')}: <strong>{res.shippingInfo?.email}</strong></div>
+                                <div>{t('admin.buyer_phone')}: <strong>{res.shippingInfo?.phone}</strong></div>
+                                <div>{isCard ? t('admin.reference_card') : t('admin.reference_revolut')}: <strong style={{ color: '#00E5FF', fontFamily: 'monospace' }}>DICI-RES-{res.coinId}</strong></div>
+                              </div>
+                              <div style={{ display: 'flex', gap: '12px', marginTop: '6px' }}>
+                                <button
+                                  onClick={() => handleApproveRevolutPayment(res.id)}
+                                  className="btn-gold"
+                                  style={{ flexGrow: 1, padding: '8px 16px', fontSize: '13px' }}
+                                  disabled={actionLoading[res.id]}
+                                >
+                                  {t('admin.btn_approve_reservation')}
+                                </button>
+                                <button
+                                  onClick={() => handleCancelPreReservation(res.id)}
+                                  className="btn-outline"
+                                  style={{ flexGrow: 1, padding: '8px 16px', fontSize: '13px', color: '#EB5757', borderColor: 'rgba(235,87,87,0.2)' }}
+                                  disabled={actionLoading[res.id]}
+                                >
+                                  {t('admin.btn_cancel_pre_reservation')}
+                                </button>
+                              </div>
                             </div>
-                          </td>
-                          <td style={{ padding: '16px', color: 'var(--text-secondary)' }}>
-                            {ship.address ? (
-                              <span>{ship.address}, {ship.city}, {ship.country}</span>
-                            ) : (
-                              <span>Sin dirección</span>
-                            )}
-                          </td>
-                          <td style={{ padding: '16px' }}>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                              <span style={{
-                                fontSize: '10px',
-                                fontWeight: 700,
-                                padding: '2px 6px',
-                                borderRadius: '10px',
-                                background: isCompleted ? 'rgba(46,204,113,0.1)' : 'rgba(0,229,255,0.1)',
-                                color: isCompleted ? '#2ECC71' : '#00E5FF',
-                                display: 'inline-block',
-                                width: 'fit-content'
-                              }}>
-                                {res.status?.toUpperCase()}
-                              </span>
-                              <span style={{ fontSize: '11px', fontWeight: 600 }}>
-                                {res.paidAmount} € / {res.totalAmount} € ({res.progressPercentage?.toFixed(0)}%)
-                              </span>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Subsección: Cuotas e Installments */}
+                  {pendingInstallmentPayments.length > 0 && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '8px' }}>
+                      <h4 style={{ fontSize: '14px', fontWeight: 700, color: '#D4AF37', borderBottom: '1px solid rgba(212,175,55,0.1)', paddingBottom: '6px' }}>
+                        {t('admin.installments_subtitle')}
+                      </h4>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '16px' }} className="admin-grid">
+                        {pendingInstallmentPayments.map(pay => {
+                          const isCard = pay.paymentMethod === 'card_outside_eu';
+                          return (
+                            <div key={pay.id} style={{ padding: '16px', background: 'rgba(255,255,255,0.01)', border: '1px solid var(--border-light)', borderRadius: 'var(--radius-sm)', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <span style={{ fontWeight: 800, color: '#FFFFFF', fontSize: '15px' }}>{pay.coinId}</span>
+                                <div style={{ display: 'flex', gap: '8px' }}>
+                                  <span style={{
+                                    fontSize: '11px',
+                                    background: isCard ? 'rgba(0, 229, 255, 0.15)' : 'rgba(212, 175, 55, 0.15)',
+                                    color: isCard ? '#00E5FF' : '#D4AF37',
+                                    padding: '2px 8px',
+                                    borderRadius: '12px',
+                                    fontWeight: 700
+                                  }}>
+                                    {isCard ? t('admin.payment_method_card') : t('admin.payment_method_revolut')}
+                                  </span>
+                                  <span style={{ fontSize: '11px', background: 'rgba(0, 229, 255, 0.1)', color: '#00E5FF', padding: '2px 8px', borderRadius: '12px', fontWeight: 700 }}>
+                                    {pay.amount.toFixed(2)} € {t('admin.amount_pending')}
+                                  </span>
+                                </div>
+                              </div>
+                              <div style={{ fontSize: '13px', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '3px' }}>
+                                <div>{t('admin.uid_user')}: <strong>{pay.userId}</strong></div>
+                                <div>{t('admin.res_id')}: <strong>{pay.reservationId}</strong></div>
+                                <div>{isCard ? t('admin.reference_card') : t('admin.reference_revolut')}: <strong style={{ color: '#00E5FF', fontFamily: 'monospace' }}>DICI-PAY-{pay.reservationId}</strong></div>
+                              </div>
+                              <div style={{ display: 'flex', gap: '12px', marginTop: '6px' }}>
+                                <button
+                                  onClick={() => handleApproveInstallmentPayment(pay.id)}
+                                  className="btn-gold"
+                                  style={{ flexGrow: 1, padding: '8px 16px', fontSize: '13px' }}
+                                  disabled={actionLoading[pay.id]}
+                                >
+                                  {t('admin.btn_approve_installment')}
+                                </button>
+                                <button
+                                  onClick={() => handleRejectInstallmentPayment(pay.id)}
+                                  className="btn-outline"
+                                  style={{ flexGrow: 1, padding: '8px 16px', fontSize: '13px', color: '#EB5757', borderColor: 'rgba(235,87,87,0.2)' }}
+                                  disabled={actionLoading[pay.id]}
+                                >
+                                  {t('admin.btn_reject_installment')}
+                                </button>
+                              </div>
                             </div>
-                          </td>
-                          <td style={{ padding: '16px' }}>
-                            <div style={{ display: 'flex', gap: '8px' }}>
-                              <button 
-                                onClick={() => handleEditAdminClick(res)}
-                                className="btn-outline" 
-                                style={{ padding: '6px 12px', fontSize: '12px' }}
-                                title="Editar Datos"
-                              >
-                                Editar
-                              </button>
-                              <button 
-                                onClick={() => setHistoryRes(res)}
-                                className="btn-outline" 
-                                style={{ padding: '6px 12px', fontSize: '12px' }}
-                                title="Ver Historial"
-                              >
-                                Historial
-                              </button>
-                              <button 
-                                onClick={() => setCertCoinId(res.coinId)}
-                                className="btn-outline" 
-                                style={{ padding: '6px 12px', fontSize: '12px' }}
-                                title="Ver Certificado"
-                              >
-                                Certificado
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
+
+            {/* LISTADO GLOBAL DE RESERVAS */}
+            <div className="glass" style={{ padding: '32px', borderRadius: 'var(--radius-md)', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <FileText size={20} style={{ color: '#D4AF37' }} />
+                <h3 style={{ fontSize: '18px', fontWeight: 700 }}>{t('admin.reservations_list_title')}</h3>
               </div>
-            )}
+
+              {loadingReservations ? (
+                <div style={{ display: 'flex', justifyContent: 'center', padding: '40px 0' }}>
+                  <div className="animate-spin-slow" style={{ width: '24px', height: '24px', border: '2px solid rgba(212, 175, 55, 0.1)', borderTopColor: '#D4AF37', borderRadius: '50%' }} />
+                </div>
+              ) : allReservations.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '40px 24px', color: 'var(--text-muted)', fontSize: '14px' }}>
+                  {t('admin.no_reservations')}
+                </div>
+              ) : (
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px', textAlign: 'left' }}>
+                    <thead>
+                      <tr style={{ borderBottom: '1px solid var(--border-light)', color: 'var(--text-secondary)' }}>
+                        <th style={{ padding: '12px 16px' }}>{t('admin.col_coin_res_id')}</th>
+                        <th style={{ padding: '12px 16px' }}>{t('admin.col_owner')}</th>
+                        <th style={{ padding: '12px 16px' }}>{t('admin.col_contact')}</th>
+                        <th style={{ padding: '12px 16px' }}>{t('admin.col_shipping_address')}</th>
+                        <th style={{ padding: '12px 16px' }}>{t('admin.col_status_progress')}</th>
+                        <th style={{ padding: '12px 16px' }}>{t('admin.col_actions')}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {allReservations.map((res) => {
+                        const isCompleted = res.status === 'completed';
+                        const isPending = res.status === 'pending_payment';
+                        const ship = res.shippingInfo || {};
+                        return (
+                          <tr key={res.id} style={{ borderBottom: '1px solid var(--border-light)' }}>
+                            <td style={{ padding: '16px' }}>
+                              <strong style={{ color: '#D4AF37', display: 'block' }}>{res.coinId}</strong>
+                              <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>ID: {res.id}</span>
+                            </td>
+                            <td style={{ padding: '16px', fontWeight: 600, color: '#FFFFFF' }}>
+                              {ship.fullName || t('admin.not_defined')}
+                            </td>
+                            <td style={{ padding: '16px' }}>
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                                <span>{ship.email || 'N/D'}</span>
+                                <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{ship.phone || 'N/D'}</span>
+                              </div>
+                            </td>
+                            <td style={{ padding: '16px', color: 'var(--text-secondary)' }}>
+                              {ship.address ? (
+                                <span>{ship.address}, {ship.city}, {ship.country}</span>
+                              ) : (
+                                <span>{t('admin.no_address')}</span>
+                              )}
+                            </td>
+                            <td style={{ padding: '16px' }}>
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                                <span style={{
+                                  fontSize: '10px',
+                                  fontWeight: 700,
+                                  padding: '2px 6px',
+                                  borderRadius: '10px',
+                                  background: isPending ? 'rgba(212,175,55,0.1)' : (isCompleted ? 'rgba(46,204,113,0.1)' : 'rgba(0,229,255,0.1)'),
+                                  color: isPending ? '#D4AF37' : (isCompleted ? '#2ECC71' : '#00E5FF'),
+                                  display: 'inline-block',
+                                  width: 'fit-content'
+                                }}>
+                                  {res.status?.toUpperCase()}
+                                </span>
+                                <span style={{ fontSize: '11px', fontWeight: 600 }}>
+                                  {res.paidAmount} € / {res.totalAmount} € ({res.progressPercentage?.toFixed(0)}%)
+                                </span>
+                              </div>
+                            </td>
+                            <td style={{ padding: '16px' }}>
+                              <div style={{ display: 'flex', gap: '8px' }}>
+                                <button 
+                                  onClick={() => handleEditAdminClick(res)}
+                                  className="btn-outline" 
+                                  style={{ padding: '6px 12px', fontSize: '12px' }}
+                                  title={t('admin.tooltip_edit')}
+                                >
+                                  {t('admin.btn_edit')}
+                                </button>
+                                <button 
+                                  onClick={() => setHistoryRes(res)}
+                                  className="btn-outline" 
+                                  style={{ padding: '6px 12px', fontSize: '12px' }}
+                                  title={t('admin.tooltip_history')}
+                                >
+                                  {t('admin.btn_history')}
+                                </button>
+                                <button 
+                                  onClick={() => setCertCoinId(res.coinId)}
+                                  className="btn-outline" 
+                                  title={t('admin.tooltip_cert')}
+                                  disabled={isPending}
+                                  style={{
+                                    padding: '6px 12px',
+                                    fontSize: '12px',
+                                    opacity: isPending ? 0.4 : 1,
+                                    cursor: isPending ? 'not-allowed' : 'pointer'
+                                  }}
+                                >
+                                  {t('admin.btn_certificate')}
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
           </div>
         )}
 
@@ -949,17 +1256,17 @@ export default function AdminPage() {
               <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
                 <ShieldAlert size={24} style={{ color: '#D4AF37' }} />
                 <h3 style={{ fontSize: '18px', fontWeight: 700 }}>
-                  Edición Administrativa ({editingRes.coinId})
+                  {t('admin.edit_title').replace('{coinId}', editingRes.coinId)}
                 </h3>
               </div>
 
               <p style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
-                Como administrador, puedes modificar todos los campos variables del certificado, incluido el nombre del titular. No se aplican límites de tiempo ni periodos de cooldown.
+                {t('admin.edit_desc')}
               </p>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                 <div>
-                  <label className="premium-label" style={{ fontSize: '11px' }}>Nombre Completo Titular</label>
+                  <label className="premium-label" style={{ fontSize: '11px' }}>{t('res.form_name')}</label>
                   <input 
                     type="text" 
                     className="premium-input" 
@@ -971,7 +1278,7 @@ export default function AdminPage() {
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                   <div>
-                    <label className="premium-label" style={{ fontSize: '11px' }}>Correo Electrónico</label>
+                    <label className="premium-label" style={{ fontSize: '11px' }}>{t('login.email')}</label>
                     <input 
                       type="email" 
                       className="premium-input" 
@@ -981,7 +1288,7 @@ export default function AdminPage() {
                     />
                   </div>
                   <div>
-                    <label className="premium-label" style={{ fontSize: '11px' }}>Teléfono</label>
+                    <label className="premium-label" style={{ fontSize: '11px' }}>{t('admin.buyer_phone')}</label>
                     <input 
                       type="text" 
                       className="premium-input" 
@@ -994,7 +1301,7 @@ export default function AdminPage() {
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                   <div>
-                    <label className="premium-label" style={{ fontSize: '11px' }}>País</label>
+                    <label className="premium-label" style={{ fontSize: '11px' }}>{t('admin.buyer_country')}</label>
                     <input 
                       type="text" 
                       className="premium-input" 
@@ -1004,7 +1311,7 @@ export default function AdminPage() {
                     />
                   </div>
                   <div>
-                    <label className="premium-label" style={{ fontSize: '11px' }}>Ciudad</label>
+                    <label className="premium-label" style={{ fontSize: '11px' }}>{t('admin.buyer_city')}</label>
                     <input 
                       type="text" 
                       className="premium-input" 
@@ -1016,7 +1323,7 @@ export default function AdminPage() {
                 </div>
 
                 <div>
-                  <label className="premium-label" style={{ fontSize: '11px' }}>Dirección de Envío</label>
+                  <label className="premium-label" style={{ fontSize: '11px' }}>{t('admin.col_shipping_address')}</label>
                   <input 
                     type="text" 
                     className="premium-input" 
@@ -1049,7 +1356,7 @@ export default function AdminPage() {
                   color: '#2ECC71', 
                   fontSize: '13px' 
                 }}>
-                  ¡Cambios guardados con éxito!
+                  {t('admin.success_saved')}
                 </div>
               )}
 
@@ -1060,7 +1367,7 @@ export default function AdminPage() {
                   className="btn-outline" 
                   style={{ flexGrow: 1, padding: '12px' }}
                 >
-                  Cancelar
+                  {t('admin.btn_cancel')}
                 </button>
                 <button 
                   onClick={handleSaveAdminEdit} 
@@ -1068,7 +1375,7 @@ export default function AdminPage() {
                   style={{ flexGrow: 1, padding: '12px' }}
                   disabled={editLoading}
                 >
-                  {editLoading ? 'Guardando...' : 'Guardar Cambios (Admin)'}
+                  {editLoading ? t('admin.btn_saving_changes') : t('admin.btn_save_changes')}
                 </button>
               </div>
 
@@ -1098,7 +1405,7 @@ export default function AdminPage() {
               <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
                 <Activity size={24} style={{ color: '#D4AF37' }} />
                 <h3 style={{ fontSize: '18px', fontWeight: 700 }}>
-                  Historial de Auditoría de Cambios ({historyRes.coinId})
+                  {t('admin.history_title').replace('{coinId}', historyRes.coinId)}
                 </h3>
               </div>
 
@@ -1107,7 +1414,7 @@ export default function AdminPage() {
                 if (history.length === 0) {
                   return (
                     <div style={{ textAlign: 'center', padding: '40px 24px', color: 'var(--text-muted)' }}>
-                      No se han registrado modificaciones anteriores para esta reserva.
+                      {t('admin.no_history_records')}
                     </div>
                   );
                 }
@@ -1123,32 +1430,32 @@ export default function AdminPage() {
                     {history.map((log, idx) => (
                       <div key={idx} style={{ padding: '16px', background: 'rgba(255,255,255,0.01)', border: '1px solid var(--border-light)', borderRadius: 'var(--radius-sm)', fontSize: '13px' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', color: '#D4AF37', fontWeight: 700, marginBottom: '8px', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '4px' }}>
-                          <span>Cambio #{idx + 1} - {formatHistoryDate(log.timestamp)}</span>
+                          <span>{t('admin.history_log_entry').replace('{number}', String(idx + 1)).replace('{date}', formatHistoryDate(log.timestamp))}</span>
                           <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-                            Modificado por: <strong style={{ color: '#FFFFFF' }}>{log.changedBy}</strong>
+                            {t('admin.modified_by')} <strong style={{ color: '#FFFFFF' }}>{log.changedBy}</strong>
                           </span>
                         </div>
 
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginTop: '8px' }}>
                           <div>
-                            <span style={{ color: '#EB5757', fontWeight: 700, fontSize: '11px', textTransform: 'uppercase' }}>Valores Anteriores:</span>
+                            <span style={{ color: '#EB5757', fontWeight: 700, fontSize: '11px', textTransform: 'uppercase' }}>{t('admin.previous_values')}</span>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', color: 'var(--text-secondary)', marginTop: '4px' }}>
-                              <span>Nombre: <strong>{log.previousValues?.fullName || 'N/D'}</strong></span>
-                              <span>Email: <strong>{log.previousValues?.email || 'N/D'}</strong></span>
-                              <span>Tel: <strong>{log.previousValues?.phone || 'N/D'}</strong></span>
-                              <span>Dirección: <strong>{log.previousValues?.address || 'N/D'}</strong></span>
-                              <span>Ciudad/País: <strong>{log.previousValues?.city || 'N/D'}, {log.previousValues?.country || 'N/D'}</strong></span>
+                              <span>{t('res.form_name')}: <strong>{log.previousValues?.fullName || 'N/D'}</strong></span>
+                              <span>{t('login.email')}: <strong>{log.previousValues?.email || 'N/D'}</strong></span>
+                              <span>{t('admin.buyer_phone')}: <strong>{log.previousValues?.phone || 'N/D'}</strong></span>
+                              <span>{t('admin.col_shipping_address')}: <strong>{log.previousValues?.address || 'N/D'}</strong></span>
+                              <span>{t('admin.buyer_city')}/{t('admin.buyer_country')}: <strong>{log.previousValues?.city || 'N/D'}, {log.previousValues?.country || 'N/D'}</strong></span>
                             </div>
                           </div>
 
                           <div>
-                            <span style={{ color: '#2ECC71', fontWeight: 700, fontSize: '11px', textTransform: 'uppercase' }}>Nuevos Valores:</span>
+                            <span style={{ color: '#2ECC71', fontWeight: 700, fontSize: '11px', textTransform: 'uppercase' }}>{t('admin.new_values')}</span>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', color: 'var(--text-secondary)', marginTop: '4px' }}>
-                              <span>Nombre: <strong>{log.newValues?.fullName || 'N/D'}</strong></span>
-                              <span>Email: <strong>{log.newValues?.email || 'N/D'}</strong></span>
-                              <span>Tel: <strong>{log.newValues?.phone || 'N/D'}</strong></span>
-                              <span>Dirección: <strong>{log.newValues?.address || 'N/D'}</strong></span>
-                              <span>Ciudad/País: <strong>{log.newValues?.city || 'N/D'}, {log.newValues?.country || 'N/D'}</strong></span>
+                              <span>{t('res.form_name')}: <strong>{log.newValues?.fullName || 'N/D'}</strong></span>
+                              <span>{t('login.email')}: <strong>{log.newValues?.email || 'N/D'}</strong></span>
+                              <span>{t('admin.buyer_phone')}: <strong>{log.newValues?.phone || 'N/D'}</strong></span>
+                              <span>{t('admin.col_shipping_address')}: <strong>{log.newValues?.address || 'N/D'}</strong></span>
+                              <span>{t('admin.buyer_city')}/{t('admin.buyer_country')}: <strong>{log.newValues?.city || 'N/D'}, {log.newValues?.country || 'N/D'}</strong></span>
                             </div>
                           </div>
                         </div>
@@ -1164,7 +1471,7 @@ export default function AdminPage() {
                   className="btn-gold" 
                   style={{ padding: '10px 24px' }}
                 >
-                  Cerrar Historial
+                  {t('admin.btn_close_history')}
                 </button>
               </div>
 

@@ -85,7 +85,8 @@ export async function reserveCoin(
     country: string;
     city: string;
     address: string;
-  }
+  },
+  paymentMethod: 'simulated_card' | 'revolut_transfer' | 'card_outside_eu' = 'simulated_card'
 ) {
   try {
     const db = getAdminDb();
@@ -109,37 +110,45 @@ export async function reserveCoin(
         return { success: false, messageKey: 'api.error_wallet_not_found' };
       }
 
-      // Obtener el perfil privado del usuario para las iniciales del serial digital
-      const profileRef = db.collection('private_profiles').doc(userId);
-      const profileDoc = await transaction.get(profileRef);
-      const profileData = profileDoc.exists ? profileDoc.data() : null;
-      const firstName = profileData?.firstName || 'U';
-      const lastName = profileData?.lastName || 'D';
+      const isPendingPayment = paymentMethod === 'revolut_transfer' || paymentMethod === 'card_outside_eu';
+      let digitalSerial = '';
+      let saleSignature = '';
 
-      const nameInit = firstName.trim().charAt(0).toUpperCase() || 'X';
-      const lastNameInit = lastName.trim().charAt(0).toUpperCase() || 'X';
+      if (!isPendingPayment) {
+        // Obtener el perfil privado del usuario para las iniciales del serial digital
+        const profileRef = db.collection('private_profiles').doc(userId);
+        const profileDoc = await transaction.get(profileRef);
+        const profileData = profileDoc.exists ? profileDoc.data() : null;
+        const firstName = profileData?.firstName || 'U';
+        const lastName = profileData?.lastName || 'D';
 
-      // Prefijo del continente (primeras dos letras del ID del coin, ej: EU de EU-DC0000001)
-      const continentCode = coinId.substring(0, 2).toUpperCase();
+        const nameInit = firstName.trim().charAt(0).toUpperCase() || 'X';
+        const lastNameInit = lastName.trim().charAt(0).toUpperCase() || 'X';
 
-      // Formato: [Continente][Initials] -> EUNE
-      const block1 = `${continentCode}${nameInit}${lastNameInit}`;
+        // Prefijo del continente (primeras dos letras del ID del coin, ej: EU de EU-DC0000001)
+        const continentCode = coinId.substring(0, 2).toUpperCase();
 
-      // Número aleatorio de 4 cifras
-      const block2 = Math.floor(1000 + Math.random() * 9000).toString();
+        // Formato: [Continente][Initials] -> EUNE
+        const block1 = `${continentCode}${nameInit}${lastNameInit}`;
 
-      // Fecha de compra: MMYY
-      const now = new Date();
-      const month = String(now.getMonth() + 1).padStart(2, '0');
-      const year = String(now.getFullYear()).substring(2);
-      const block3 = `${month}${year}`;
+        // Número aleatorio de 4 cifras
+        const block2 = Math.floor(1000 + Math.random() * 9000).toString();
 
-      // Serial digital único de reserva
-      const digitalSerial = `DC-${block1}-${block2}-${block3}`;
+        // Fecha de compra: MMYY
+        const now = new Date();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const year = String(now.getFullYear()).substring(2);
+        const block3 = `${month}${year}`;
 
-      // Generar Firma Digital de Venta
-      const secretKey = process.env.ENCRYPTION_KEY || 'HA7Ct8eXPu2E6+awZKoFZAd5jXO8UJJ9MIdxOq9IWvM=';
-      const saleSignature = generateSaleSignature(shippingInfo.country, continentCode, secretKey);
+        // Serial digital único de reserva
+        digitalSerial = `DC-${block1}-${block2}-${block3}`;
+
+        // Generar Firma Digital de Venta
+        const secretKey = process.env.ENCRYPTION_KEY || 'HA7Ct8eXPu2E6+awZKoFZAd5jXO8UJJ9MIdxOq9IWvM=';
+        saleSignature = generateSaleSignature(shippingInfo.country, continentCode, secretKey);
+      }
+
+      const PAID_AMOUNT = isPendingPayment ? 0 : RESERVE_AMOUNT_EUR;
 
       // 1. Crear documento de reserva
       const reservationId = `res_${Math.random().toString(36).substring(2, 10)}`;
@@ -150,11 +159,11 @@ export async function reserveCoin(
         userId,
         coinId,
         serial: digitalSerial,
-        status: 'active',
+        status: isPendingPayment ? 'pending_payment' : 'active',
         totalAmount: COIN_VALUE_EUR,
-        paidAmount: RESERVE_AMOUNT_EUR,
-        remainingAmount: COIN_VALUE_EUR - RESERVE_AMOUNT_EUR,
-        progressPercentage: 10,
+        paidAmount: PAID_AMOUNT,
+        remainingAmount: COIN_VALUE_EUR - PAID_AMOUNT,
+        progressPercentage: isPendingPayment ? 0 : 10,
         shippingInfo,
         saleSignature,
         createdAt: getTimestamp().now(),
@@ -171,29 +180,38 @@ export async function reserveCoin(
         coinId,
         reservationId,
         amount: RESERVE_AMOUNT_EUR,
-        paymentMethod: 'simulated_card',
-        status: 'completed',
+        paymentMethod: paymentMethod,
+        status: isPendingPayment ? 'pending_verification' : 'completed',
         createdAt: getTimestamp().now(),
       });
 
       // 3. Actualizar la moneda física
       transaction.update(coinRef, {
-        status: 'reserved',
+        status: isPendingPayment ? 'pre_reserved' : 'reserved',
         currentOwnerId: userId,
         serial: digitalSerial,
-        paidAmount: RESERVE_AMOUNT_EUR,
+        paidAmount: PAID_AMOUNT,
         shippingInfo,
         saleSignature,
         updatedAt: getTimestamp().now(),
       });
 
       // 4. Actualizar el saldo acumulado en la wallet del usuario
-      transaction.update(walletRef, {
-        totalPaidEur: getFieldValue().increment(RESERVE_AMOUNT_EUR),
-        updatedAt: getTimestamp().now(),
-      });
+      if (!isPendingPayment) {
+        transaction.update(walletRef, {
+          totalPaidEur: getFieldValue().increment(RESERVE_AMOUNT_EUR),
+          updatedAt: getTimestamp().now(),
+        });
+      }
 
-      return { success: true, messageKey: 'api.success_reserve', reservationId, serial: digitalSerial, saleSignature };
+      return { 
+        success: true, 
+        messageKey: isPendingPayment ? 'api.success_pre_reserve' : 'api.success_reserve', 
+        reservationId, 
+        serial: digitalSerial, 
+        saleSignature,
+        status: isPendingPayment ? 'pending_payment' : 'active'
+      };
     });
 
     return result;
@@ -206,13 +224,57 @@ export async function reserveCoin(
 /**
  * Realiza un pago parcial sobre una reserva activa.
  */
-export async function payInstallment(userId: string, reservationId: string, amountEur: number) {
+export async function payInstallment(
+  userId: string, 
+  reservationId: string, 
+  amountEur: number,
+  paymentMethod: 'simulated_installment' | 'revolut_transfer' | 'card_outside_eu' = 'simulated_installment'
+) {
   if (amountEur <= 0) {
     return { success: false, messageKey: 'api.server_error' };
   }
 
   try {
     const db = getAdminDb();
+    const isPendingPayment = paymentMethod === 'revolut_transfer' || paymentMethod === 'card_outside_eu';
+
+    if (isPendingPayment) {
+      // Si es pendiente, no alteramos la reserva directamente. Creamos un registro de pago pendiente.
+      const reservationRef = db.collection('coin_reservations').doc(reservationId);
+      const resDoc = await reservationRef.get();
+      if (!resDoc.exists) {
+        return { success: false, messageKey: 'api.server_error' };
+      }
+      const resData = resDoc.data();
+      if (resData?.userId !== userId) {
+        return { success: false, messageKey: 'api.server_error' };
+      }
+      if (resData?.status !== 'active' && resData?.status !== 'payment_plan') {
+        return { success: false, messageKey: 'api.error_status_not_active' };
+      }
+
+      const remaining = resData.remainingAmount || 0;
+      if (amountEur > remaining) {
+        return { success: false, messageKey: 'api.error_installment_exceeds' };
+      }
+
+      const paymentId = `pay_${Math.random().toString(36).substring(2, 10)}`;
+      const paymentRef = db.collection('payment_history').doc(paymentId);
+      
+      await paymentRef.set({
+        id: paymentId,
+        userId,
+        coinId: resData.coinId,
+        reservationId,
+        amount: amountEur,
+        paymentMethod: paymentMethod,
+        status: 'pending_verification',
+        createdAt: getTimestamp().now(),
+      });
+
+      return { success: true, messageKey: 'api.success_installment_pending' };
+    }
+
     const result = await db.runTransaction(async (transaction) => {
       const reservationRef = db.collection('coin_reservations').doc(reservationId);
       const reservationDoc = await transaction.get(reservationRef);
@@ -222,7 +284,7 @@ export async function payInstallment(userId: string, reservationId: string, amou
       }
 
       const resData = reservationDoc.data();
-      if (resData?.status !== 'active') {
+      if (resData?.status !== 'active' && resData?.status !== 'payment_plan') {
         return { success: false, messageKey: 'api.error_status_not_active' };
       }
 
