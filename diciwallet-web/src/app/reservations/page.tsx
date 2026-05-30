@@ -14,7 +14,7 @@ import { jsPDF } from 'jspdf';
 
 // Enlace de pago para tarjeta de crédito/débito o fuera de la Comunidad Europea (Stripe / Revolut Pro, etc.)
 // Reemplazar con el enlace de pago del cliente (500 € para la reserva de la moneda DICICOIN)
-const PAYMENT_LINK_OUTSIDE_EU = "https://revolut.me/dicicoincopy";
+const PAYMENT_LINK_OUTSIDE_EU = "https://checkout.revolut.com/pay/241ca4f1-b832-41a9-bad1-7dfe84bc3149";
 
 interface DiciCoin {
   id: string;
