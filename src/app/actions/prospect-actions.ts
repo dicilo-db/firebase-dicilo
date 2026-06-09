@@ -79,20 +79,26 @@ export async function sendProspectInvitation(prospectId: string, templateIdOverr
         // Convertir saltos de línea a <br/> en caso de ser texto plano
         const htmlBody = body.replace(/\n/g, '<br/>');
 
-        const emailResult = await sendSmtpEmail({
-            to: email,
-            subject,
-            html: htmlBody
-        });
-
-        if (!emailResult.success) {
-            return { success: false, error: emailResult.error };
+        let emailSuccess = false;
+        let emailError = '';
+        try {
+            const emailResult = await sendSmtpEmail({
+                to: email,
+                subject,
+                html: htmlBody
+            });
+            emailSuccess = emailResult.success;
+            emailError = emailResult.error || '';
+        } catch (e: any) {
+            console.error("SMTP delivery crash:", e);
+            emailError = e.message || String(e);
         }
 
         // Actualizar el estado del prospecto
         await prospectRef.update({
-            validationStatus: 'invitation_sent',
+            validationStatus: emailSuccess ? 'invitation_sent' : 'invitation_failed',
             validatedAt: new Date(),
+            ...(emailError ? { emailError } : {})
         });
 
         // Award 20 DP for sending the invitation (if not already awarded)
@@ -119,6 +125,10 @@ export async function sendProspectInvitation(prospectId: string, templateIdOverr
             await prospectRef.update({
                 invitationRewardPaid: true
             });
+        }
+
+        if (!emailSuccess) {
+            return { success: false, error: `Email failed to send: ${emailError}` };
         }
 
         return { success: true, securityKey };

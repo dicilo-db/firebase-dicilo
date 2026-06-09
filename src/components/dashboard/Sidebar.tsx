@@ -105,6 +105,7 @@ export function Sidebar({ userData, onViewChange, currentView }: SidebarProps) {
         'superadmin': 'SuperAdmin',
         'admin': 'Admin',
         'team_office': 'Team Office',
+        'team_leader': 'Team Leader',
         'freelancer': 'Freelancer',
         'user': 'Member'
     };
@@ -115,7 +116,7 @@ export function Sidebar({ userData, onViewChange, currentView }: SidebarProps) {
 
     const canSeeAdmin = ['team_office', 'admin', 'superadmin'].includes(role) || hasPermission('access_admin_panel');
     const canSeeAdsManager = ['admin', 'superadmin'].includes(role) || hasPermission('access_ads_manager');
-    const isFreelancerOrHigher = ['freelancer', 'team_office', 'admin', 'superadmin'].includes(role) || hasPermission('freelancer_tool');
+    const isFreelancerOrHigher = ['freelancer', 'team_leader', 'team_office', 'admin', 'superadmin'].includes(role) || hasPermission('freelancer_tool');
 
     // Explicitly type the array to avoid discriminated union inference issues
     const navItems: NavItem[] = [
@@ -136,7 +137,7 @@ export function Sidebar({ userData, onViewChange, currentView }: SidebarProps) {
     ];
 
     // Add Scanner Pro for Freelancers+
-    const canUseScanner = ['freelancer', 'team_office', 'admin', 'superadmin'].includes(role) || hasPermission('use_scanner');
+    const canUseScanner = ['freelancer', 'team_leader', 'team_office', 'admin', 'superadmin'].includes(role) || hasPermission('use_scanner');
     if (canUseScanner) {
         // Find index of 'invite' and insert after it
         const inviteIndex = navItems.findIndex(item => item.id === 'invite');

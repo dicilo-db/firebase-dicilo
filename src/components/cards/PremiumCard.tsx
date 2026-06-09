@@ -56,6 +56,16 @@ export function PremiumCard({ business, isSelected, onClick, locale }: PremiumCa
         );
     };
 
+    const descriptionText = (() => {
+        const translations = business.description_translations as any;
+        const desc = translations?.[locale] || business.description;
+        if (!desc) return '';
+        if (typeof desc === 'object') {
+            return desc.description || desc.text || '';
+        }
+        return desc;
+    })();
+
     return (
         <div
             onClick={() => onClick(business)}
@@ -94,7 +104,7 @@ export function PremiumCard({ business, isSelected, onClick, locale }: PremiumCa
 
             <div className="p-4 space-y-4">
                 <p className="text-sm text-foreground/90 leading-relaxed">
-                    {business.description_translations?.[locale as 'en' | 'es' | 'de'] || business.description}
+                    {descriptionText}
                 </p>
 
                 {/* Multimedia Grid */}

@@ -50,8 +50,8 @@ export default function FreelancerPage() {
     // So:
     // - If Role=Freelancer -> Access Granted via role check.
     // - If Role=User + Permission='freelancer_tool' -> Access Granted via Permission Check.
-    const allowedRoles = React.useMemo<('admin' | 'superadmin' | 'team_office' | 'freelancer')[]>(() => 
-        ['admin', 'superadmin', 'freelancer', 'team_office'], 
+    const allowedRoles = React.useMemo<('admin' | 'superadmin' | 'team_office' | 'team_leader' | 'freelancer')[]>(() => 
+        ['admin', 'superadmin', 'freelancer', 'team_leader', 'team_office'], 
     []);
 
     useAuthGuard(allowedRoles, 'freelancer_tool');

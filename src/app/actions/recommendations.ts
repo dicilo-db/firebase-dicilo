@@ -141,10 +141,12 @@ export async function submitRecommendation(formData: FormData) {
         const finalReferrerEmail = formData.get('referrerEmail') as string || '';
 
         let finalDiciloCode = diciloCode || '';
+        let cleanUserId = (userId && userId !== 'undefined' && userId !== 'null') ? userId : '';
+        let resolvedUserId = cleanUserId;
 
-        if (userId) {
+        if (resolvedUserId) {
             try {
-                const userDoc = await db.collection('private_profiles').doc(userId).get();
+                const userDoc = await db.collection('private_profiles').doc(resolvedUserId).get();
                 if (userDoc.exists) {
                     const ud = userDoc.data() || {};
                     finalReferrerName = ud.name || ud.firstName || ud.first_name || finalReferrerName;
@@ -152,6 +154,21 @@ export async function submitRecommendation(formData: FormData) {
                 }
             } catch (e) {
                 console.error("Error fetching referer details", e);
+            }
+        } else if (finalDiciloCode) {
+            try {
+                const querySnap = await db.collection('private_profiles')
+                    .where('uniqueCode', '==', finalDiciloCode.trim())
+                    .limit(1)
+                    .get();
+                if (!querySnap.empty) {
+                    const doc = querySnap.docs[0];
+                    resolvedUserId = doc.id;
+                    const ud = doc.data() || {};
+                    finalReferrerName = ud.name || ud.firstName || ud.first_name || finalReferrerName;
+                }
+            } catch (e) {
+                console.error("Error resolving userId from diciloCode", e);
             }
         }
         
@@ -179,7 +196,7 @@ export async function submitRecommendation(formData: FormData) {
             diciloCode: finalDiciloCode,
             source: source || 'search_page_recommendation',
             neighborhood,
-            userId,
+            userId: resolvedUserId,
             media,
             photoUrl: media.find(m => m.type === 'image')?.url || '',
             status: 'approved', // Auto-approved for this flow

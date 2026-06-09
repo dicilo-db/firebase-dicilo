@@ -94,7 +94,11 @@ export default function Navigation({ children }: { children: React.ReactNode }) 
                 {profile?.firstName} {profile?.lastName}
               </span>
               <span style={{ fontSize: '11px', color: isAdmin ? '#D4AF37' : 'var(--text-secondary)', textTransform: 'uppercase', fontWeight: 600, letterSpacing: '0.05em' }}>
-                {isAdmin ? t('nav.administrator') : t('nav.member')}
+                {profile?.role === 'superadmin' ? 'SuperAdmin' :
+                 profile?.role === 'admin' ? 'Admin' :
+                 profile?.role === 'team_office' ? 'Team Office' :
+                 profile?.role === 'team_leader' ? 'Team Leader' :
+                 profile?.role === 'freelancer' ? 'Freelancer' : t('nav.member')}
               </span>
             </div>
           </div>

@@ -139,9 +139,16 @@ async function getUserGeo(): Promise<UserGeo | null> {
   }
 
   if (city && lat && lon) {
+    let decodedCity = city;
+    try {
+      decodedCity = decodeURIComponent(city);
+    } catch (e) {
+      console.error("Failed to decode city header:", city, e);
+    }
+
     return {
       ip,
-      city: decodeURIComponent(city),
+      city: decodedCity,
       country: country || 'Unknown',
       lat,
       lon,

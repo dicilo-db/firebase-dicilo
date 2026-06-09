@@ -138,8 +138,19 @@ async function notifyRankUpgrade(email: string | undefined, name: string, newRol
 /**
  * Builds the MLM tree down to a specified depth.
  */
-export async function getNetworkTree(uid: string, maxDepth: number = 3, currentDepth: number = 1): Promise<MLMUserNode | null> {
+export async function getNetworkTree(
+    uid: string, 
+    maxDepth: number = 6, 
+    currentDepth: number = 1, 
+    visitedUids: string[] = []
+): Promise<MLMUserNode | null> {
     const db = getAdminDb();
+    
+    // Evitar ciclos de referencia circular en la red MLM
+    if (visitedUids.includes(uid)) {
+        console.warn(`[MLM Circular Loop] Ciclo de referencia detectado y evitado para UID: ${uid}`);
+        return null;
+    }
     
     const profileSnap = await db.collection('private_profiles').doc(uid).get();
     if (!profileSnap.exists) return null;
@@ -159,6 +170,8 @@ export async function getNetworkTree(uid: string, maxDepth: number = 3, currentD
         createdAt: data.createdAt?.toDate ? data.createdAt.toDate().toISOString() : new Date().toISOString()
     };
     
+    const nextVisited = [...visitedUids, uid];
+    
     if (currentDepth <= maxDepth) {
         const directsSnap = await db.collection('private_profiles')
             .where('referredBy', '==', uid)
@@ -166,17 +179,35 @@ export async function getNetworkTree(uid: string, maxDepth: number = 3, currentD
             
         node.directsCount = directsSnap.size;
         
-        for (const directDoc of directsSnap.docs) {
-            const childNode = await getNetworkTree(directDoc.id, maxDepth, currentDepth + 1);
+        // Evitar redundancias y bucles filtrando nodos hijos ya visitados
+        const validDocs = directsSnap.docs.filter(doc => !nextVisited.includes(doc.id));
+        
+        // Ejecución recursiva paralela para optimizar el tiempo de carga
+        const childPromises = validDocs.map(directDoc => 
+            getNetworkTree(directDoc.id, maxDepth, currentDepth + 1, nextVisited)
+        );
+        
+        const childNodes = await Promise.all(childPromises);
+        
+        for (const childNode of childNodes) {
             if (childNode) {
                 node.directs.push(childNode);
                 node.teamCount += 1 + childNode.teamCount;
             }
         }
+    } else {
+        // En niveles de profundidad más allá de maxDepth, obtenemos el número real
+        // de directos sin seguir recorriendo recursivamente.
+        const countSnap = await db.collection('private_profiles')
+            .where('referredBy', '==', uid)
+            .count()
+            .get();
+        node.directsCount = countSnap.data().count;
     }
     
     return node;
 }
+
 
 /**
  * Retrieves a list of users who have reached Freelancer or Team Leader status.

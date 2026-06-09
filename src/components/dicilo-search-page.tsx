@@ -874,6 +874,15 @@ export default function DiciloSearchPage({
                   )
                 }
                 const business = item.data;
+                const descriptionText = (() => {
+                  const desc = business.description_translations?.[locale as any] || business.description;
+                  if (!desc) return '';
+                  if (typeof desc === 'object') {
+                    return desc.description || desc.text || '';
+                  }
+                  return desc;
+                })();
+
                 // Uniform presentation for the list (User request)
                 return (
                   <div key={business.id} className="relative">
@@ -936,7 +945,7 @@ export default function DiciloSearchPage({
                         <div className="min-w-0 flex-1">
                           <h3 className="truncate font-bold">{business.name}</h3>
                           <p className="line-clamp-2 text-sm text-muted-foreground">
-                            {business.description_translations?.[locale as 'en' | 'es' | 'de'] || business.description}
+                            {descriptionText}
                           </p>
                         </div>
                       </div>

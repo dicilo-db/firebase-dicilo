@@ -15,6 +15,16 @@ interface BasicCardProps {
 export function BasicCard({ business, isSelected, onClick, locale }: BasicCardProps) {
     const { t } = useTranslation('common');
 
+    const descriptionText = (() => {
+        const translations = business.description_translations as any;
+        const desc = translations?.[locale] || business.description;
+        if (!desc) return '';
+        if (typeof desc === 'object') {
+            return desc.description || desc.text || '';
+        }
+        return desc;
+    })();
+
     return (
         <div
             onClick={() => onClick(business)}
@@ -39,7 +49,7 @@ export function BasicCard({ business, isSelected, onClick, locale }: BasicCardPr
                 <div className="min-w-0 flex-1">
                     <h3 className="font-bold text-lg leading-tight mb-1">{business.name}</h3>
                     <p className="line-clamp-2 text-sm text-muted-foreground mt-1">
-                        {business.description_translations?.[locale as 'en' | 'es' | 'de'] || business.description}
+                        {descriptionText}
                     </p>
 
                     <div className="mt-3 space-y-1 text-sm text-muted-foreground">

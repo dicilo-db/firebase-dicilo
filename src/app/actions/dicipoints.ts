@@ -424,7 +424,7 @@ export async function generateReferralAuditReport(startDateStr: string, endDateS
         // 1. Get all private profiles
         // We query all and filter in memory because Firestore limits complex multiple-field filtering
         const profilesSnap = await db.collection('private_profiles').get();
-        const allProfiles = profilesSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+        const allProfiles: any[] = profilesSnap.docs.map(d => ({ id: d.id, ...d.data() }));
 
         // 2. Filter profiles created in the date range that HAVE a referrer
         const newUsers = allProfiles.filter(p => {

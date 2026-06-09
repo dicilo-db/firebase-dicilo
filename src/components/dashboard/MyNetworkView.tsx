@@ -77,8 +77,8 @@ export function MyNetworkView({ uid }: MyNetworkViewProps) {
         const loadNetwork = async () => {
             setLoading(true);
             try {
-                // Fetch up to 3 or 4 levels deep for the user
-                const data = await getNetworkTree(uid, 3);
+                // Fetch up to 6 levels deep for the user
+                const data = await getNetworkTree(uid, 6);
                 setTreeNode(data);
             } catch (error) {
                 console.error(error);

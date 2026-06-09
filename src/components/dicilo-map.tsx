@@ -45,7 +45,7 @@ const fixLeafletDefaultIcons = () => {
 
 const createPopupContent = (
   business: Business,
-  t: (key: string) => string,
+  t: any,
   locale: string
 ): string => {
   const isPremium = business.tier_level === 'premium' || business.clientType === 'premium';
@@ -154,7 +154,8 @@ const createPopupContent = (
   }
 
   // Description (Truncated)
-  const description = business.description_translations?.[locale as 'en' | 'es' | 'de'] || business.description || '';
+  const rawDesc = (business.description_translations?.[locale as 'en' | 'es' | 'de'] || business.description || '') as any;
+  const description = typeof rawDesc === 'object' ? (rawDesc.description || rawDesc.text || '') : rawDesc;
   if (description) {
     content += `<p style="font-size: 13px; color: #555; line-height: 1.6; margin-bottom: 16px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; max-height: 4.8em;">${description}</p>`;
   }

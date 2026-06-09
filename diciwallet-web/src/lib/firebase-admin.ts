@@ -48,19 +48,18 @@ function initFirebaseAdmin() {
             }
         } else {
             try {
-                // En Cloud Functions / Cloud Run de Firebase, initializeApp() vacío
-                // es la forma recomendada que usa la configuración nativa de Firebase.
-                return initializeApp();
+                // Try initializing with project configuration and default credentials
+                return initializeApp({
+                    projectId: PROJECT_ID,
+                    storageBucket: 'geosearch-fq4i9.firebasestorage.app',
+                });
             } catch (initError: any) {
                 if (initError.code === 'app/duplicate-app') {
                     return getApp();
                 }
                 try {
-                    return initializeApp({
-                        projectId: PROJECT_ID,
-                        storageBucket: 'geosearch-fq4i9.firebasestorage.app',
-                        credential: applicationDefault(),
-                    });
+                    // Fallback to completely empty initialization
+                    return initializeApp();
                 } catch (error: any) {
                     if (error.code === 'app/duplicate-app') {
                         return getApp();

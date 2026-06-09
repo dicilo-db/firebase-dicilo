@@ -95,7 +95,7 @@ export default function AdminMLMPage() {
         setIsDialogOpen(true);
         setTreeLoading(true);
         try {
-            const data = await getNetworkTree(uid, 3);
+            const data = await getNetworkTree(uid, 6);
             setTreeNode(data);
         } catch (error) {
             console.error(error);
@@ -112,7 +112,7 @@ export default function AdminMLMPage() {
     const renderTree = (node: any, depth = 0) => {
         if (!node) return null;
         return (
-            <div key={node.uid} className={`ml-${depth * 6} mt-2 p-3 border-l-2 ${depth === 0 ? 'border-primary' : 'border-slate-300 dark:border-slate-700'} bg-slate-50 dark:bg-slate-900 rounded-r-md shadow-sm`}>
+            <div key={node.uid} className={`mt-2 p-3 border-l-2 ${depth === 0 ? 'border-primary' : 'border-slate-300 dark:border-slate-700'} bg-slate-50 dark:bg-slate-900 rounded-r-md shadow-sm`}>
                 <div className="flex items-center gap-3">
                     <RankIcon role={node.role} />
                     <div>
@@ -286,7 +286,7 @@ export default function AdminMLMPage() {
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
                     <DialogHeader>
-                        <DialogTitle>Árbol de Red (Profundidad Máxima: Nivel 3)</DialogTitle>
+                        <DialogTitle>Árbol de Red (Profundidad Máxima: Nivel 6)</DialogTitle>
                         <DialogDescription>Jerarquía directa de invitados</DialogDescription>
                     </DialogHeader>
                     {treeLoading ? (

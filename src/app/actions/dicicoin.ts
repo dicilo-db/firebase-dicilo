@@ -1,7 +1,6 @@
 'use server';
 
 import { getAdminDb } from '@/lib/firebase-admin';
-import { getSession } from '@/app/actions/auth'; // Assuming this exists or similar auth check
 import { headers } from 'next/headers';
 
 export interface DiciCoinPurchaser {
