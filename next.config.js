@@ -1,6 +1,7 @@
 // next.config.js
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'standalone',
   webpack: (config, { dev, isServer }) => {
     // Desactiva la recarga en caliente de webpack en desarrollo para evitar errores de ChunkLoadError
     // en ciertos entornos de red complejos como los de los workstations en la nube.
