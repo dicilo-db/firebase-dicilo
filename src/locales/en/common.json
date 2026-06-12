@@ -1008,6 +1008,7 @@
     },
     "post_btn": "Post",
     "search_neighborhoods": "Search neighborhoods...",
+    "highlight_business_in": "Recommend a Business in {{name}}",
     "register_neighborhood": "Register Neighborhood",
     "register_neighborhood_desc": "Can't find your neighborhood? Register it here to start connecting with your neighbors.",
     "register_neighborhood_btn": "Register Neighborhood",

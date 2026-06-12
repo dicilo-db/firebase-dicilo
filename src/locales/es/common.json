@@ -24,6 +24,7 @@
     "social_network": "Mi Círculo"
   },
   "community": {
+    "highlight_business_in": "Recomendar una Empresa en {{name}}",
     "register_neighborhood": "Registrar Barrio",
     "register_neighborhood_desc": "¿No encuentras tu barrio? Regístralo aquí para empezar a conectar con tus vecinos.",
     "register_neighborhood_btn": "Registrar Barrio",

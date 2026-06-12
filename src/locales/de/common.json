@@ -3,6 +3,7 @@
   "search_city": "Stadt suchen...",
   "searchPlaceholder": "Name oder E-Mail suchen...",
   "community": {
+    "highlight_business_in": "Ein Unternehmen in {{name}} empfehlen",
     "register_neighborhood": "Viertel registrieren",
     "register_neighborhood_desc": "Finden Sie Ihr Viertel nicht? Registrieren Sie es hier, um sich mit Ihren Nachbarn zu vernetzen.",
     "register_neighborhood_btn": "Viertel registrieren",
