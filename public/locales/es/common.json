@@ -112,7 +112,7 @@
       "subtitle": "Negocios más recomendados",
       "no_data": "No hay suficientes datos para el ranking aún."
     },
-    "explore_desc": "Explora lo que sucede en tu barrio y conecta con tus vecinos.",
+    "explore_desc": "Explora lo que sucede en tu barrio y conecta con tus vecinos. Puedes buscar, seleccionar o sugerir un nuevo barrio en la sección izquierda 'Explorar Comunidades'.",
     "new_recommendation": "Nueva Recomendación",
     "share_place": "Comparte un lugar, servicio o experiencia con tus vecinos.",
     "search_neighborhoods": "Buscar barrios...",
@@ -127,20 +127,20 @@
       "be_first": "¡Sé el primero en compartir algo!",
       "whats_happening": "¿Qué está pasando en {{name}}?",
       "wall": "Muro Social",
-      "recommendations": "Destacados",
+      "recommendations": "Recomendados",
       "empty_businesses": "Aún no hay empresas destacadas recientemente en {{city}}.",
-      "empty_businesses_prompt": "¡Utiliza la caja de arriba para ser el primero en destacar un negocio local!"
+      "empty_businesses_prompt": "¡Utiliza la caja de arriba para ser el primero en recomendar un negocio local!"
     },
     "search_global": "Explorar Comunidades",
     "search_neighborhoods_global": "Buscar ciudad, barrio...",
     "loading_businesses": "Cargando negocios del barrio...",
-    "no_businesses_in_neighborhood": "No encontramos empresas registradas en este barrio para destacar. Usa el botón verde arriba para crear una nueva.",
+    "no_businesses_in_neighborhood": "No encontramos empresas registradas en este barrio para recomendar. Usa el botón verde arriba para crear una nueva.",
     "write_short_review": "Escribe una reseña corta",
     "review_placeholder": "Ej. ¡Me solucionaron el problema enseguida! Super recomendados.",
     "upload_photo_optional": "Subir Foto (Opcional)",
     "photos_ready": "{{count}} foto(s) lista(s)",
     "great": "¡Genial!",
-    "what_business_to_highlight": "¿Qué empresa local quieres destacar hoy?"
+    "what_business_to_highlight": "¿Qué empresa local quieres recomendar hoy?"
   },
   "dicipoints": {
     "whatIs": {

@@ -84,7 +84,7 @@
       "subtitle": "Meist empfohlene Unternehmen",
       "no_data": "Noch nicht genug Daten für das Ranking."
     },
-    "explore_desc": "Erkunde, was in deinem Viertel passiert, und vernetze dich mit deinen Nachbarn.",
+    "explore_desc": "Erkunde, was in deinem Viertel passiert, und vernetze dich mit deinen Nachbarn. Du kannst im linken Bereich 'Gemeinschaften erkunden' nach einem Viertel suchen, es auswählen oder ein neues vorschlagen.",
     "new_recommendation": "Neue Empfehlung",
     "share_place": "Teile einen Ort, einen Dienst oder ein Erlebnis mit deinen Nachbarn.",
     "search_neighborhoods": "Viertel suchen...",
@@ -101,18 +101,18 @@
       "be_first": "Seien Sie der Erste, der etwas teilt!",
       "whats_happening": "Was passiert in {{name}}?",
       "wall": "Soziale Wand",
-      "recommendations": "Highlights",
+      "recommendations": "Empfehlungen",
       "empty_businesses": "Es gibt noch keine kürzlich bewerteten Unternehmen in {{city}}.",
-      "empty_businesses_prompt": "Nutzen Sie das obige Feld, um das erste lokale Unternehmen hervorzuheben!"
+      "empty_businesses_prompt": "Nutzen Sie das obige Feld, um das erste lokale Unternehmen zu empfehlen!"
     },
     "loading_businesses": "Barrio-Geschäfte werden geladen...",
-    "no_businesses_in_neighborhood": "Wir haben in diesem Viertel keine registrierten Unternehmen zum Hervorheben gefunden. Nutzen Sie den grünen Button oben, um ein neues zu erstellen.",
+    "no_businesses_in_neighborhood": "Wir haben in diesem Viertel keine registrierten Unternehmen zum Empfehlen gefunden. Nutzen Sie den grünen Button oben, um ein neues zu erstellen.",
     "write_short_review": "Schreiben Sie eine kurze Bewertung",
     "review_placeholder": "z.B. Sie haben mein Problem sofort gelöst! Sehr zu empfehlen.",
     "upload_photo_optional": "Foto hochladen (Optional)",
     "photos_ready": "{{count}} Foto(s) bereit",
     "great": "Großartig!",
-    "what_business_to_highlight": "Welches lokale Unternehmen möchten Sie heute hervorheben?"
+    "what_business_to_highlight": "Welches lokale Unternehmen möchten Sie heute empfehlen?"
   },
   "header": {
     "nav": {

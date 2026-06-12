@@ -752,7 +752,7 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
                                 </TabsTrigger>
                                 <TabsTrigger value="recommendations" className="py-2 text-xs sm:text-sm whitespace-normal h-full">
                                     <MapPin className="h-4 w-4 mr-1 sm:mr-2 flex-shrink-0" />
-                                    <span className="hidden sm:inline">{t('community.feed.recommendations', 'Destacados')}</span>
+                                    <span className="hidden sm:inline">{t('community.feed.recommendations', 'Recomendados')}</span>
                                     <span className="sm:hidden">Recoms</span>
                                 </TabsTrigger>
                                 <TabsTrigger value="wall" className="py-2 text-xs sm:text-sm whitespace-normal h-full">

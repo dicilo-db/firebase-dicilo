@@ -150,7 +150,7 @@ export function QuickHighlightForm({ neighborhood, onSuccess }: { neighborhood: 
                     <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center shrink-0">
                         <Star className="text-amber-500 fill-amber-500 w-5 h-5" />
                     </div>
-                    <span className="text-lg">{t('community.what_business_to_highlight', '¿Qué empresa local quieres destacar hoy?')}</span>
+                    <span className="text-lg">{t('community.what_business_to_highlight', '¿Qué empresa local quieres recomendar hoy?')}</span>
                 </div>
             </div>
         );
@@ -161,7 +161,7 @@ export function QuickHighlightForm({ neighborhood, onSuccess }: { neighborhood: 
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <h3 className="font-bold text-slate-800 text-lg flex items-center gap-2">
                     <Star className="text-amber-500 fill-amber-500 w-5 h-5" />
-                    {t('community.highlight_business_in', { defaultValue: 'Destacar una Empresa en {{name}}', name: neighborhood })}
+                    {t('community.highlight_business_in', { defaultValue: 'Recomendar una Empresa en {{name}}', name: neighborhood })}
                 </h3>
                 <Dialog open={openDialog} onOpenChange={setOpenDialog}>
                     <DialogTrigger asChild>
