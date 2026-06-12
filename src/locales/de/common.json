@@ -97,6 +97,24 @@
     "select_business_option": "Unternehmen auswählen",
     "search_global": "Gemeinschaften erkunden",
     "search_neighborhoods_global": "Stadt, Viertel suchen...",
+    "barometer": {
+      "title": "Barometer",
+      "level": {
+        "fire": "HEISS!",
+        "fire_desc": "Das Viertel ist aktiv!",
+        "high": "Hohe Aktivität",
+        "high_desc": "Viele aktuelle Beiträge",
+        "medium": "Stetiges Wachstum",
+        "medium_desc": "Es tut sich was",
+        "low": "Ruhig",
+        "low_desc": "Idealer Start für Beiträge"
+      },
+      "index": "Index",
+      "posts_week": "Beiträge diese Woche",
+      "active_neighbors": "Aktive Nachbarn",
+      "posts": "Beiträge",
+      "neighbors": "Nachbarn"
+    },
     "feed": {
       "empty_global": "Noch keine Aktivität in der {{name}}-Community.",
       "be_first": "Seien Sie der Erste, der etwas teilt!",

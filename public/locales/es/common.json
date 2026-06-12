@@ -123,6 +123,24 @@
     "emoji": "Emoji",
     "select_business_or_recommend": "Selecciona una empresa o recomienda una nueva, en tu zona",
     "select_business_option": "Elige una empresa",
+    "barometer": {
+      "title": "Barómetro",
+      "level": {
+        "fire": "¡ON FIRE!",
+        "fire_desc": "¡El barrio está que arde!",
+        "high": "Alta Actividad",
+        "high_desc": "Mucha participación reciente",
+        "medium": "Creciendo",
+        "medium_desc": "Las cosas se están moviendo",
+        "low": "Tranquilo",
+        "low_desc": "Inicio ideal para publicar"
+      },
+      "index": "Índice",
+      "posts_week": "Publicaciones esta semana",
+      "active_neighbors": "Vecinos activos",
+      "posts": "Posts",
+      "neighbors": "Vecinos"
+    },
     "feed": {
       "empty_global": "Aún no hay actividad en la comunidad de {{name}}.",
       "be_first": "¡Sé el primero en compartir algo!",
