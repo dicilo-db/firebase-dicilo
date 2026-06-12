@@ -58,6 +58,8 @@ function serializeBusiness(docId: string, data: any): Business {
     category: data.category || 'Allgemein',
     description: (data.description || data.bodyData?.description || data.headerData?.welcomeText || '').substring(0, 500),
     location: data.location || '',
+    city: data.city || '',
+    zip: data.zip || '',
     imageUrl: imageUrl,
     clientLogoUrl: sanitizeUrl(data.clientLogoUrl) || imageUrl,
     coverImageUrl: sanitizeUrl(data.headerData?.headerImageUrl) || sanitizeUrl(data.headerData?.headerBackgroundImageUrl) || sanitizeUrl(data.headerData?.backgroundImage) || sanitizeUrl(data.coverImage) || imageUrl,
@@ -111,7 +113,8 @@ async function getCachedData() {
       'clientLogoUrl', 'imageUrl', 'headerData', 'coverImage', 
       'address', 'phone', 'email', 'website', 'currentOfferUrl', 
       'slug', 'mapUrl', 'category_key', 'subcategory_key', 'rating',
-      'description', 'translations', 'description_translations'
+      'description', 'translations', 'description_translations',
+      'city', 'zip'
   ];
 
   const [businessSnap, clientSnap] = await Promise.all([
@@ -182,7 +185,7 @@ export async function GET(request: NextRequest) {
     // 2. Text Search Filtering (if provided)
     if (query.trim().length > 0) {
       filtered = filtered.filter((b) => {
-        const searchableText = [b.name, b.description, b.category, b.location, b.address]
+        const searchableText = [b.name, b.description, b.category, b.location, b.address, b.city, b.zip]
           .map(normalizeText)
           .join(' ');
         return searchableText.includes(query);

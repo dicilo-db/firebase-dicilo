@@ -104,7 +104,15 @@
       "recommendations": "Highlights",
       "empty_businesses": "Es gibt noch keine kürzlich bewerteten Unternehmen in {{city}}.",
       "empty_businesses_prompt": "Nutzen Sie das obige Feld, um das erste lokale Unternehmen hervorzuheben!"
-    }
+    },
+    "loading_businesses": "Barrio-Geschäfte werden geladen...",
+    "no_businesses_in_neighborhood": "Wir haben in diesem Viertel keine registrierten Unternehmen zum Hervorheben gefunden. Nutzen Sie den grünen Button oben, um ein neues zu erstellen.",
+    "write_short_review": "Schreiben Sie eine kurze Bewertung",
+    "review_placeholder": "z.B. Sie haben mein Problem sofort gelöst! Sehr zu empfehlen.",
+    "upload_photo_optional": "Foto hochladen (Optional)",
+    "photos_ready": "{{count}} Foto(s) bereit",
+    "great": "Großartig!",
+    "what_business_to_highlight": "Welches lokale Unternehmen möchten Sie heute hervorheben?"
   },
   "header": {
     "nav": {

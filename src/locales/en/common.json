@@ -1063,7 +1063,15 @@
     "media": "Media",
     "emoji": "Emoji",
     "search_global": "Explore Communities",
-    "search_neighborhoods_global": "Search city, neighborhood..."
+    "search_neighborhoods_global": "Search city, neighborhood...",
+    "loading_businesses": "Loading neighborhood businesses...",
+    "no_businesses_in_neighborhood": "We couldn't find any registered businesses in this neighborhood to highlight. Use the green button above to recommend a new one.",
+    "write_short_review": "Write a short review",
+    "review_placeholder": "e.g., They solved my problem right away! Highly recommended.",
+    "upload_photo_optional": "Upload Photo (Optional)",
+    "photos_ready": "{{count}} photo(s) ready",
+    "great": "Great!",
+    "what_business_to_highlight": "Which local business would you like to highlight today?"
   },
   "validationDialog": {
     "title": "Prospect Validation Center",

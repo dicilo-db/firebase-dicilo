@@ -63,6 +63,7 @@ export function LanguageSelector() {
 
   const handleLocaleChange = (newLocale: string) => {
     i18n.changeLanguage(newLocale);
+    localStorage.setItem('dicilo_lang', newLocale);
   };
 
   return (

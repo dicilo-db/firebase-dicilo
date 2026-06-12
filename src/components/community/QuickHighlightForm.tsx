@@ -13,6 +13,16 @@ import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { RecommendationFormContent } from '@/components/RecommendationForm';
 
+const normalizeText = (text: string) => {
+    if (!text) return '';
+    return text
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+};
+
 export function QuickHighlightForm({ neighborhood, onSuccess }: { neighborhood: string, onSuccess: () => void }) {
     const { t } = useTranslation('common');
     const { user: currentUser } = useAuth();
@@ -39,7 +49,7 @@ export function QuickHighlightForm({ neighborhood, onSuccess }: { neighborhood: 
                 // bajamos la colección y filtramos de forma robusta con Javascript (similar al buscador principal)
                 const colNames = ['businesses', 'clients'];
                 const map = new Map();
-                const searchStr = neighborhood.toLowerCase();
+                const searchStr = normalizeText(neighborhood);
 
                 for (const col of colNames) {
                     const snap = await getDocs(collection(db, col));
@@ -50,15 +60,15 @@ export function QuickHighlightForm({ neighborhood, onSuccess }: { neighborhood: 
                         // Solo aceptamos aprobados o activos
                         if (data.status !== 'approved' && data.status !== 'active' && data.active !== true) return;
 
-                        const cityField = (data.city || data.address?.city || '').toLowerCase();
-                        const neighField = (data.neighborhood || data.address?.neighborhood || '').toLowerCase();
-                        const locField = (data.location || data.address?.street || '').toLowerCase();
+                        const cityField = normalizeText(data.city || data.address?.city || '');
+                        const neighField = normalizeText(data.neighborhood || data.address?.neighborhood || '');
+                        const locField = normalizeText(data.location || data.address?.street || '');
 
                         // Verificamos si la zona (ej. "Hamburg") está en alguno de esos campos
                         const isMatch = cityField.includes(searchStr) || 
                                         neighField.includes(searchStr) || 
                                         locField.includes(searchStr) ||
-                                        (String(data.country || '').toLowerCase().includes(searchStr) && cityField === ''); // fall back
+                                        (normalizeText(data.country || '').includes(searchStr) && cityField === ''); // fall back
 
                         if (isMatch) {
                             map.set(d.id, { id: d.id, ...data });
@@ -124,7 +134,7 @@ export function QuickHighlightForm({ neighborhood, onSuccess }: { neighborhood: 
         return (
             <div className="bg-green-50 border border-green-200 text-green-800 rounded-lg p-6 text-center animate-in fade-in">
                 <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto mb-2" />
-                <h3 className="text-xl font-bold">¡Genial!</h3>
+                <h3 className="text-xl font-bold">{t('community.great', '¡Genial!')}</h3>
                 <p>{successMessage}</p>
             </div>
         );
@@ -140,7 +150,7 @@ export function QuickHighlightForm({ neighborhood, onSuccess }: { neighborhood: 
                     <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center shrink-0">
                         <Star className="text-amber-500 fill-amber-500 w-5 h-5" />
                     </div>
-                    <span className="text-lg">¿Qué empresa local quieres destacar hoy?</span>
+                    <span className="text-lg">{t('community.what_business_to_highlight', '¿Qué empresa local quieres destacar hoy?')}</span>
                 </div>
             </div>
         );
@@ -181,11 +191,11 @@ export function QuickHighlightForm({ neighborhood, onSuccess }: { neighborhood: 
                 <Label>{t('community.select_business_or_recommend', 'Selecciona una empresa o recomienda una nueva, en tu zona')}</Label>
                 {loading ? (
                     <div className="flex items-center gap-2 text-sm text-slate-500 p-2 bg-slate-50 rounded">
-                        <Loader2 className="animate-spin w-4 h-4" /> Cargando negocios del barrio...
+                        <Loader2 className="animate-spin w-4 h-4" /> {t('community.loading_businesses', 'Cargando negocios del barrio...')}
                     </div>
                 ) : businesses.length === 0 ? (
                     <div className="text-sm text-red-500 bg-red-50 p-2 rounded">
-                        No encontramos empresas registradas en este barrio para destacar. Usa el botón verde arriba para crear una nueva.
+                        {t('community.no_businesses_in_neighborhood', 'No encontramos empresas registradas en este barrio para destacar. Usa el botón verde arriba para crear una nueva.')}
                     </div>
                 ) : (
                     <select 
@@ -201,7 +211,7 @@ export function QuickHighlightForm({ neighborhood, onSuccess }: { neighborhood: 
                     </select>
                 )}
             </div>
-
+ 
             {selectedBusiness && (() => {
                 const b = businesses.find(b => b.id === selectedBusiness);
                 return (
@@ -230,11 +240,11 @@ export function QuickHighlightForm({ neighborhood, onSuccess }: { neighborhood: 
                             />
                         )}
                     </div>
-
+ 
                     <div className="space-y-2">
-                        <Label>Escribe una reseña corta</Label>
+                        <Label>{t('community.write_short_review', 'Escribe una reseña corta')}</Label>
                         <Textarea 
-                            placeholder="Ej. ¡Me solucionaron el problema enseguida! Super recomendados."
+                            placeholder={t('community.review_placeholder', 'Ej. ¡Me solucionaron el problema enseguida! Super recomendados.')}
                             value={comment}
                             onChange={(e) => setComment(e.target.value)}
                             required
@@ -242,7 +252,7 @@ export function QuickHighlightForm({ neighborhood, onSuccess }: { neighborhood: 
                             rows={3}
                         />
                     </div>
-
+ 
                     <div className="flex items-center gap-4 pt-2">
                         <Button
                             type="button"
@@ -250,7 +260,7 @@ export function QuickHighlightForm({ neighborhood, onSuccess }: { neighborhood: 
                             className="flex items-center gap-2 relative overflow-hidden"
                         >
                             <ImageIcon className="w-4 h-4" />
-                            {media.length > 0 ? `${media.length} foto(s) lista(s)` : 'Subir Foto (Opcional)'}
+                            {media.length > 0 ? t('community.photos_ready', { count: media.length, defaultValue: `${media.length} foto(s) lista(s)` }) : t('community.upload_photo_optional', 'Subir Foto (Opcional)')}
                             <input 
                                 type="file" 
                                 accept="image/*" 
@@ -263,15 +273,15 @@ export function QuickHighlightForm({ neighborhood, onSuccess }: { neighborhood: 
                         </Button>
                         <div className="flex-1"></div>
                         <Button type="button" variant="ghost" onClick={() => setIsExpanded(false)}>
-                            Cancelar
+                            {t('cancel', 'Cancelar')}
                         </Button>
                         <Button type="submit" disabled={submitting || !comment || businesses.length === 0}>
-                            {submitting ? <Loader2 className="animate-spin w-4 h-4 mr-2" /> : 'Publicar'}
+                            {submitting ? <Loader2 className="animate-spin w-4 h-4 mr-2" /> : t('community.post_btn', 'Publicar')}
                         </Button>
                     </div>
                 </>
                 );
-            })}
+            })()}
         </form>
     );
 }

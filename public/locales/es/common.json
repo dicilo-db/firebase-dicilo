@@ -132,7 +132,15 @@
       "empty_businesses_prompt": "¡Utiliza la caja de arriba para ser el primero en destacar un negocio local!"
     },
     "search_global": "Explorar Comunidades",
-    "search_neighborhoods_global": "Buscar ciudad, barrio..."
+    "search_neighborhoods_global": "Buscar ciudad, barrio...",
+    "loading_businesses": "Cargando negocios del barrio...",
+    "no_businesses_in_neighborhood": "No encontramos empresas registradas en este barrio para destacar. Usa el botón verde arriba para crear una nueva.",
+    "write_short_review": "Escribe una reseña corta",
+    "review_placeholder": "Ej. ¡Me solucionaron el problema enseguida! Super recomendados.",
+    "upload_photo_optional": "Subir Foto (Opcional)",
+    "photos_ready": "{{count}} foto(s) lista(s)",
+    "great": "¡Genial!",
+    "what_business_to_highlight": "¿Qué empresa local quieres destacar hoy?"
   },
   "dicipoints": {
     "whatIs": {

@@ -71,6 +71,8 @@ export interface Business {
   };
   activeCoupons?: any[];
   active?: boolean;
+  city?: string;
+  zip?: string;
 }
 
 export interface Ad {
@@ -245,16 +247,24 @@ export default function DiciloSearchPage({
       params.append('page', currentPage.toString());
       params.append('limit', '50');
       
-      if (debouncedQuery.trim()) {
+      if (debouncedQuery.trim() && searchType === 'business') {
         params.append('q', debouncedQuery);
       }
       
-      if (userLocation) {
-        params.append('lat', userLocation[0].toString());
-        params.append('lng', userLocation[1].toString());
-      } else if (serverGeo && serverGeo.lat && serverGeo.lon) {
-        params.append('lat', serverGeo.lat.toString());
-        params.append('lng', serverGeo.lon.toString());
+      let searchLat = userLocation?.[0];
+      let searchLng = userLocation?.[1];
+
+      if (searchType === 'location') {
+        searchLat = mapCenter[0];
+        searchLng = mapCenter[1];
+      } else if (!searchLat && serverGeo && serverGeo.lat && serverGeo.lon) {
+        searchLat = serverGeo.lat;
+        searchLng = serverGeo.lon;
+      }
+
+      if (searchLat !== undefined && searchLng !== undefined) {
+        params.append('lat', searchLat.toString());
+        params.append('lng', searchLng.toString());
       }
 
       const res = await fetch(`/api/search/nearest?${params.toString()}`);
@@ -278,12 +288,29 @@ export default function DiciloSearchPage({
     } finally {
       setIsLoading(false);
     }
-  }, [debouncedQuery, userLocation, serverGeo, page]);
+  }, [debouncedQuery, userLocation, serverGeo, page, searchType, mapCenter]);
 
+  // Trigger business searches (immediate on query change)
+  useEffect(() => {
+    if (searchType === 'business') {
+      setPage(0);
+      fetchBusinesses(true);
+    }
+  }, [debouncedQuery, searchType]);
+
+  // Trigger location searches (only when geocoding updates the mapCenter)
+  useEffect(() => {
+    if (searchType === 'location') {
+      setPage(0);
+      fetchBusinesses(true);
+    }
+  }, [mapCenter, searchType]);
+
+  // Re-fetch on user physical location updates
   useEffect(() => {
     setPage(0);
     fetchBusinesses(true);
-  }, [debouncedQuery, userLocation]);
+  }, [userLocation]);
 
   useEffect(() => {
     if (page > 0) {
