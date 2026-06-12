@@ -965,7 +965,7 @@
     "download_error": "Failed to download",
     "your_community": "Your Community",
     "neighborhoods_of": "Neighborhoods of",
-    "explore_desc": "Explore what's happening in your neighborhood and connect with your neighbors.",
+    "explore_desc": "Explore what's happening in your neighborhood and connect with your neighbors. You can search, select, or suggest a new neighborhood in the left section 'Explore Communities'.",
     "new_recommendation": "New Recommendation",
     "share_place": "Share a place, service, or experience with your neighbors.",
     "ranking": {
@@ -993,7 +993,7 @@
     },
     "feed": {
       "wall": "Social Wall",
-      "recommendations": "Featured",
+      "recommendations": "Recommended",
       "whats_happening": "What's happening in {{name}}?",
       "loading": "Loading activity...",
       "empty": "No recent activity in {{name}}.",
@@ -1065,13 +1065,13 @@
     "search_global": "Explore Communities",
     "search_neighborhoods_global": "Search city, neighborhood...",
     "loading_businesses": "Loading neighborhood businesses...",
-    "no_businesses_in_neighborhood": "We couldn't find any registered businesses in this neighborhood to highlight. Use the green button above to recommend a new one.",
+    "no_businesses_in_neighborhood": "We couldn't find any registered businesses in this neighborhood to recommend. Use the green button above to recommend a new one.",
     "write_short_review": "Write a short review",
     "review_placeholder": "e.g., They solved my problem right away! Highly recommended.",
     "upload_photo_optional": "Upload Photo (Optional)",
     "photos_ready": "{{count}} photo(s) ready",
     "great": "Great!",
-    "what_business_to_highlight": "Which local business would you like to highlight today?"
+    "what_business_to_highlight": "Which local business would you like to recommend today?"
   },
   "validationDialog": {
     "title": "Prospect Validation Center",
