@@ -58,16 +58,24 @@ export function QuickHighlightForm({ neighborhood, onSuccess }: { neighborhood: 
                         const data = d.data();
                         
                         // Solo aceptamos aprobados o activos
-                        if (data.status !== 'approved' && data.status !== 'active' && data.active !== true) return;
+                        // Para clientes, son válidos por defecto a menos que estén explícitamente desactivados
+                        if (col === 'clients') {
+                            if (data.active === false || data.status === 'inactive') return;
+                        } else {
+                            // Para negocios normales, deben estar explícitamente aprobados/activos
+                            if (data.status !== 'approved' && data.status !== 'active' && data.active !== true) return;
+                        }
 
                         const cityField = normalizeText(data.city || data.address?.city || '');
                         const neighField = normalizeText(data.neighborhood || data.address?.neighborhood || '');
                         const locField = normalizeText(data.location || data.address?.street || '');
+                        const addressStr = typeof data.address === 'string' ? normalizeText(data.address) : normalizeText(JSON.stringify(data.address || {}));
 
                         // Verificamos si la zona (ej. "Hamburg") está en alguno de esos campos
                         const isMatch = cityField.includes(searchStr) || 
                                         neighField.includes(searchStr) || 
                                         locField.includes(searchStr) ||
+                                        addressStr.includes(searchStr) ||
                                         (normalizeText(data.country || '').includes(searchStr) && cityField === ''); // fall back
 
                         if (isMatch) {
