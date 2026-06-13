@@ -136,6 +136,7 @@ export default function PrivateUsersPage() {
     const [filterCountry, setFilterCountry] = useState('');
     const [filterCity, setFilterCity] = useState('');
     const [filterReferrer, setFilterReferrer] = useState('');
+    const [filterRole, setFilterRole] = useState('');
 
     const filteredUsers = users.filter(user => {
         const matchesSearch =
@@ -149,6 +150,9 @@ export default function PrivateUsersPage() {
         const matchesReferrer = !filterReferrer || 
             (user.referrerCode?.toLowerCase() || '').includes(filterReferrer.toLowerCase()) ||
             (user.referrerName?.toLowerCase() || '').includes(filterReferrer.toLowerCase());
+
+        const userRole = user.role || (user.isFreelancer ? 'freelancer' : 'user');
+        const matchesRole = !filterRole || userRole === filterRole;
 
         let matchesDate = true;
         if (filterDateStart || filterDateEnd) {
@@ -176,7 +180,7 @@ export default function PrivateUsersPage() {
             }
         }
 
-        return matchesSearch && matchesCountry && matchesCity && matchesReferrer && matchesDate;
+        return matchesSearch && matchesCountry && matchesCity && matchesReferrer && matchesDate && matchesRole;
     }).sort((a, b) => {
         const dateA = a.createdAt?.seconds ? a.createdAt.seconds : 0;
         const dateB = b.createdAt?.seconds ? b.createdAt.seconds : 0;
@@ -266,19 +270,38 @@ export default function PrivateUsersPage() {
                 <Card>
                     <CardHeader>
                         <CardTitle>{t('common:privateUsersList')}</CardTitle>
-                        <div className="grid grid-cols-1 gap-4 md:grid-cols-7 pt-4">
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-8 pt-4">
                             {/* Filter: Search */}
                             <div className="flex flex-col gap-2">
                                 <Label className="text-xs font-semibold">{t('privateUsers.filters.search')}</Label>
                                 <div className="relative">
                                     <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                                     <Input
-                                        placeholder={t('privateUsers.filters.searchPlaceholder') || "Buscar..."}
+                                        placeholder={t('privateUsers.searchPlaceholder') || "Buscar..."}
                                         value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)}
                                         className="pl-9"
                                     />
                                 </div>
+                            </div>
+
+                            {/* Filter: Role / User Type */}
+                            <div className="flex flex-col gap-2">
+                                <Label className="text-xs font-semibold">{t('privateUsers.filters.role') || "Tipo de Usuario"}</Label>
+                                <Select value={filterRole} onValueChange={(val: any) => setFilterRole(val === 'all' ? '' : val)}>
+                                    <SelectTrigger className="w-full">
+                                        <SelectValue placeholder={t('privateUsers.filters.rolePlaceholder') || "Filtrar por tipo..."} />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">{t('privateUsers.filters.all') || "Todos"}</SelectItem>
+                                        <SelectItem value="user">Usuario</SelectItem>
+                                        <SelectItem value="freelancer">Freelancer</SelectItem>
+                                        <SelectItem value="team_leader">Team Leader</SelectItem>
+                                        <SelectItem value="team_office">Team Office</SelectItem>
+                                        <SelectItem value="admin">Admin</SelectItem>
+                                        <SelectItem value="superadmin">Superadmin</SelectItem>
+                                    </SelectContent>
+                                </Select>
                             </div>
 
                             {/* Filter: Country */}
@@ -357,7 +380,7 @@ export default function PrivateUsersPage() {
                             </div>
                         </div>
                         {/* Clear Filters Button */}
-                        {(searchTerm || filterCountry || filterCity || filterDateStart || filterDateEnd || filterReferrer) && (
+                        {(searchTerm || filterCountry || filterCity || filterDateStart || filterDateEnd || filterReferrer || filterRole) && (
                             <div className="flex justify-end pt-2">
                                 <Button
                                     variant="ghost"
@@ -369,6 +392,7 @@ export default function PrivateUsersPage() {
                                         setFilterReferrer('');
                                         setFilterDateStart(undefined);
                                         setFilterDateEnd(undefined);
+                                        setFilterRole('');
                                     }}
                                     className="text-muted-foreground hover:text-foreground h-8"
                                 >

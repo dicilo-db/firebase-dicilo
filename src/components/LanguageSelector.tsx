@@ -64,6 +64,12 @@ export function LanguageSelector() {
   const handleLocaleChange = (newLocale: string) => {
     i18n.changeLanguage(newLocale);
     localStorage.setItem('dicilo_lang', newLocale);
+    localStorage.setItem('i18nextLng', newLocale);
+    
+    // Set cookies to persist language client-side and server-side
+    const cookieString = "; path=/; max-age=31536000; SameSite=Lax";
+    document.cookie = `dicilo_lang=${newLocale}${cookieString}`;
+    document.cookie = `i18next=${newLocale}${cookieString}`;
   };
 
   return (

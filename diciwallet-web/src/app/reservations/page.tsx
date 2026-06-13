@@ -1095,7 +1095,7 @@ export default function ReservationsPage() {
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              {[1, 2, 3, 4, 5, 6].map((i) => (
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((i) => (
                 <div key={i} className="glass" style={{ padding: '24px', borderRadius: 'var(--radius-sm)' }}>
                   <h4 style={{ fontSize: '16px', fontWeight: 700, color: '#D4AF37', marginBottom: '8px' }}>{t(`faq.q${i}`)}</h4>
                   <p 

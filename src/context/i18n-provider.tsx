@@ -21,8 +21,16 @@ export function I18nProvider({ children }: { children: ReactNode }) {
       const configurarIdiomaUsuario = async () => {
         const idiomasSoportados = ['es', 'de', 'en', 'fr']; // Ampliable
 
-        // 1. ¿Tiene preferencia guardada?
-        let idioma = localStorage.getItem('dicilo_lang');
+        // Helper to read cookie
+        const getCookie = (name: string) => {
+          const value = `; ${document.cookie}`;
+          const parts = value.split(`; ${name}=`);
+          if (parts.length === 2) return parts.pop()?.split(';').shift();
+          return null;
+        };
+
+        // 1. ¿Tiene preferencia guardada (localStorage o cookies)?
+        let idioma = localStorage.getItem('dicilo_lang') || getCookie('dicilo_lang') || getCookie('i18next');
 
         // 2. Si no, ¿qué dice su navegador?
         if (!idioma) {
@@ -30,8 +38,14 @@ export function I18nProvider({ children }: { children: ReactNode }) {
           idioma = idiomasSoportados.includes(navLang) ? navLang : 'es';
         }
 
-        // 3. Guardar y Aplicar
+        // 3. Guardar y Aplicar en todas partes para consistencia
         localStorage.setItem('dicilo_lang', idioma);
+        localStorage.setItem('i18nextLng', idioma);
+        
+        const cookieString = "; path=/; max-age=31536000; SameSite=Lax";
+        document.cookie = `dicilo_lang=${idioma}${cookieString}`;
+        document.cookie = `i18next=${idioma}${cookieString}`;
+        
         document.documentElement.lang = idioma;
 
         console.log("Idioma configurado: " + idioma);
