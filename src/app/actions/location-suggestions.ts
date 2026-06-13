@@ -23,6 +23,7 @@ export async function suggestLocation(data: {
     type: 'city' | 'district';
     countryId: string;
     countryName: string;
+    countryCode?: string; // added countryCode
     cityName: string;
     districtName?: string;
     userId: string;
@@ -40,16 +41,48 @@ export async function suggestLocation(data: {
     try {
         const db = getAdminDb();
         
+        let targetCountryId = data.countryId;
+        let targetCountryName = data.countryName;
+
+        // If it's a new country, create it first in system_locations
+        if (targetCountryId === 'NEW' || !targetCountryId) {
+            const countryCode = data.countryCode?.toUpperCase();
+            if (!countryCode) {
+                return { success: false, error: 'Código de país requerido para sugerir un nuevo país.' };
+            }
+            
+            // Query by countryCode to check if it already exists
+            const existingCountrySnap = await db.collection('system_locations')
+                .where('countryCode', '==', countryCode)
+                .limit(1)
+                .get();
+
+            if (!existingCountrySnap.empty) {
+                targetCountryId = existingCountrySnap.docs[0].id;
+                targetCountryName = existingCountrySnap.docs[0].data().countryName;
+            } else {
+                // Create country document
+                const newDocRef = await db.collection('system_locations').add({
+                    countryName: data.countryName,
+                    countryCode: countryCode,
+                    cities: [],
+                    isActive: true,
+                    createdAt: admin.firestore.FieldValue.serverTimestamp()
+                });
+                targetCountryId = newDocRef.id;
+            }
+        }
+        
         // If Verified by OSM, we Auto-Approve it and inject straight into system locations
         if (data.isVerified) {
             const { addCity, addDistrict } = await import('./admin-locations');
             let result;
             if (data.type === 'city') {
-                result = await addCity(data.countryId, data.cityName);
+                result = await addCity(targetCountryId, data.cityName);
             } else if (data.type === 'district' && data.districtName) {
                 // Ensure city exists first (addCity ignores if it already exists, but we need to be safe)
-                await addCity(data.countryId, data.cityName);
-                result = await addDistrict(data.countryId, data.cityName, data.districtName);
+                await addCity(targetCountryId, data.cityName);
+                result = await addDistrict(targetCountryId, data.cityName, data.districtName);
             }
             
             if (result && !result.success) {
@@ -62,8 +95,8 @@ export async function suggestLocation(data: {
 
         // Prevent duplicate manual suggestions
         const existingQuery = data.type === 'city' 
-            ? db.collection(COLLECTION_NAME).where('type', '==', 'city').where('countryId', '==', data.countryId).where('cityName', '==', data.cityName)
-            : db.collection(COLLECTION_NAME).where('type', '==', 'district').where('countryId', '==', data.countryId).where('cityName', '==', data.cityName).where('districtName', '==', data.districtName);
+            ? db.collection(COLLECTION_NAME).where('type', '==', 'city').where('countryId', '==', targetCountryId).where('cityName', '==', data.cityName)
+            : db.collection(COLLECTION_NAME).where('type', '==', 'district').where('countryId', '==', targetCountryId).where('cityName', '==', data.cityName).where('districtName', '==', data.districtName);
         
         const existing = await existingQuery.get();
         if (!existing.empty) {
@@ -72,8 +105,8 @@ export async function suggestLocation(data: {
 
         await db.collection(COLLECTION_NAME).add({
             type: data.type,
-            countryId: data.countryId,
-            countryName: data.countryName,
+            countryId: targetCountryId,
+            countryName: targetCountryName,
             cityName: data.cityName,
             districtName: data.districtName || null,
             suggestedBy: data.userId,

@@ -285,6 +285,9 @@ export default function DiciloSearchPage({
       }
     } catch (error) {
       console.error('Error fetching businesses:', error);
+      if (resetPage) {
+        setBusinesses([]);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -787,8 +790,8 @@ export default function DiciloSearchPage({
                     className="pl-10 text-base w-full"
                     disabled={isGeocoding}
                   />
-                  {isGeocoding && (
-                    <Loader2 className="absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 animate-spin" />
+                  {(isGeocoding || isLoading || (searchType === 'business' && searchQuery !== debouncedQuery)) && (
+                    <Loader2 className="absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 animate-spin text-muted-foreground" />
                   )}
                 </div>
                 <div className="flex items-center gap-2 ml-auto sm:ml-0">

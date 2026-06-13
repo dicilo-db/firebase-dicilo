@@ -122,13 +122,28 @@ async function getCachedData() {
     db.collection('clients').select(...selectedFields).get()
   ]);
 
-  const businesses = businessSnap.docs
-    .map((doc) => serializeBusiness(doc.id, doc.data()));
-
   const clients = clientSnap.docs
     .map((doc) => serializeBusiness(doc.id, doc.data()));
 
-  const allBusinesses = [...businesses, ...clients];
+  const businesses = businessSnap.docs
+    .map((doc) => serializeBusiness(doc.id, doc.data()));
+
+  const seenIds = new Set<string>();
+  const allBusinesses: Business[] = [];
+
+  for (const client of clients) {
+    if (client.id) {
+      seenIds.add(client.id);
+      allBusinesses.push(client);
+    }
+  }
+
+  for (const biz of businesses) {
+    if (biz.id && !seenIds.has(biz.id)) {
+      seenIds.add(biz.id);
+      allBusinesses.push(biz);
+    }
+  }
 
   globalCache = {
     businesses: allBusinesses,

@@ -15,6 +15,7 @@ import { getLocations, LocationData, City } from '@/app/actions/admin-locations'
 import { useToast } from '@/hooks/use-toast';
 
 import { User } from 'firebase/auth';
+import { COUNTRIES_ISO } from '@/lib/constants/countries';
 
 export function SuggestLocationDialog({ currentUser }: { currentUser?: User | null }) {
     const { t } = useTranslation('common');
@@ -33,6 +34,8 @@ export function SuggestLocationDialog({ currentUser }: { currentUser?: User | nu
     const [selectedCityName, setSelectedCityName] = useState('');
     const [newCityName, setNewCityName] = useState('');
     const [newDistrictName, setNewDistrictName] = useState('');
+    const [newCountryName, setNewCountryName] = useState('');
+    const [newCountryCode, setNewCountryCode] = useState('');
 
     useEffect(() => {
         if (open && locations.length === 0) {
@@ -58,17 +61,33 @@ export function SuggestLocationDialog({ currentUser }: { currentUser?: User | nu
         if (!currentUser) return;
         setIsSubmitting(true);
 
-        const targetCountry = locations.find(l => l.id === selectedCountryId);
-        if (!targetCountry) {
+        const isNewCountry = selectedCountryId === 'NEW_COUNTRY';
+        const targetCountry = isNewCountry ? null : locations.find(l => l.id === selectedCountryId);
+        
+        if (!targetCountry && !isNewCountry) {
             setIsSubmitting(false);
             return;
         }
+
+        if (isNewCountry && (!newCountryName || !newCountryCode)) {
+            toast({
+                title: "Error",
+                description: "Por favor, selecciona un país de la lista mundial.",
+                variant: 'destructive'
+            });
+            setIsSubmitting(false);
+            return;
+        }
+
+        const countryName = isNewCountry ? newCountryName : targetCountry!.countryName;
+        const countryId = isNewCountry ? 'NEW' : targetCountry!.id;
+        const countryCode = isNewCountry ? newCountryCode : targetCountry!.countryCode;
 
         let targetCity = activeTab === 'city' ? newCityName : selectedCityName;
         let targetDistrict = activeTab === 'district' ? newDistrictName : undefined;
 
         // 1. Validar contra OpenStreetMap / LocationIQ
-        const osmRes = await validateLocationOSM(targetCountry.countryName, targetCity, targetDistrict);
+        const osmRes = await validateLocationOSM(countryName, targetCity, targetDistrict);
         
         let isVerified = false;
         let submitLat = undefined;
@@ -111,8 +130,9 @@ export function SuggestLocationDialog({ currentUser }: { currentUser?: User | nu
             res = await suggestLocation({
                 type: 'city',
                 userId: currentUser.uid,
-                countryId: targetCountry.id,
-                countryName: targetCountry.countryName,
+                countryId: countryId,
+                countryName: countryName,
+                countryCode: countryCode,
                 cityName: finalCityName,
                 isVerified,
                 lat: submitLat,
@@ -122,8 +142,9 @@ export function SuggestLocationDialog({ currentUser }: { currentUser?: User | nu
             res = await suggestLocation({
                 type: 'district',
                 userId: currentUser.uid,
-                countryId: targetCountry.id,
-                countryName: targetCountry.countryName,
+                countryId: countryId,
+                countryName: countryName,
+                countryCode: countryCode,
                 cityName: selectedCityName, // the parent city name is fixed from dropdown
                 districtName: finalDistrictName,
                 isVerified,
@@ -144,6 +165,9 @@ export function SuggestLocationDialog({ currentUser }: { currentUser?: User | nu
             setNewCityName('');
             setNewDistrictName('');
             setSelectedCityName('');
+            setNewCountryName('');
+            setNewCountryCode('');
+            setSelectedCountryId('');
         } else {
             toast({
                 title: "Atención",
@@ -189,14 +213,42 @@ export function SuggestLocationDialog({ currentUser }: { currentUser?: User | nu
                                     onChange={e => {
                                         setSelectedCountryId(e.target.value);
                                         setSelectedCityName('');
+                                        if (e.target.value !== 'NEW_COUNTRY') {
+                                            setNewCountryName('');
+                                            setNewCountryCode('');
+                                        }
                                     }}
                                 >
                                     <option value="" disabled>Selecciona un país</option>
                                     {locations.map(loc => (
                                         <option key={loc.id} value={loc.id}>{loc.countryName}</option>
                                     ))}
+                                    <option value="NEW_COUNTRY">— Otro país... —</option>
                                 </select>
                             </div>
+
+                            {selectedCountryId === 'NEW_COUNTRY' && (
+                                <div className="space-y-2">
+                                    <Label>Seleccionar País del Mundo</Label>
+                                    <select 
+                                        className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm"
+                                        value={newCountryCode}
+                                        onChange={e => {
+                                            const code = e.target.value;
+                                            const c = COUNTRIES_ISO.find(x => x.code === code);
+                                            if (c) {
+                                                setNewCountryName(c.name);
+                                                setNewCountryCode(code);
+                                            }
+                                        }}
+                                    >
+                                        <option value="" disabled>Selecciona un país de la lista mundial</option>
+                                        {COUNTRIES_ISO.slice().sort((a, b) => a.name.localeCompare(b.name)).map(c => (
+                                            <option key={c.code} value={c.code}>{c.name} ({c.code})</option>
+                                        ))}
+                                    </select>
+                                </div>
+                            )}
 
                             <TabsContent value="city" className="space-y-2 mt-0">
                                 <Label>Nombre de la Ciudad</Label>
