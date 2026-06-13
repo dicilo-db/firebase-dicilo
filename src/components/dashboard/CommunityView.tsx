@@ -95,6 +95,97 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
 
     const isCity = neighborhoodConfig ? neighborhoodConfig.name === neighborhoodConfig.city : false;
 
+    const currentCity = useMemo(() => {
+        return isCity ? neighborhoodName : (neighborhoodConfig?.city || 'Hamburg');
+    }, [isCity, neighborhoodName, neighborhoodConfig]);
+
+    const [selectedCityFilter, setSelectedCityFilter] = useState(currentCity);
+
+    // Sync selectedCityFilter when currentCity changes
+    useEffect(() => {
+        setSelectedCityFilter(currentCity);
+    }, [currentCity]);
+
+    // Unique active cities in the system
+    const activeCities = useMemo(() => {
+        const cities = new Set<string>();
+        ALL_NEIGHBORHOODS.forEach(n => {
+            if (n.city) cities.add(n.city);
+        });
+        dbNeighborhoods.forEach(n => {
+            const cityVal = n.city || (n.type === 'ciudad' ? n.name : null);
+            if (cityVal) cities.add(cityVal);
+        });
+        return Array.from(cities).sort((a, b) => a.localeCompare(b));
+    }, [dbNeighborhoods]);
+
+    // Country list for registration modal
+    const [countries, setCountries] = useState<any[]>([]);
+
+    useEffect(() => {
+        const loadCountries = async () => {
+            const { getLocations } = await import('@/app/actions/admin-locations');
+            const res = await getLocations();
+            if (res.success && res.data) {
+                setCountries(res.data);
+                if (res.data.length > 0) {
+                    const defaultCountry = res.data.find(d => d.countryCode === 'DE' || d.countryName === 'Alemania') || res.data[0];
+                    setNewCountryName(defaultCountry.countryName);
+                }
+            }
+        };
+        if (registerOpen && countries.length === 0) {
+            loadCountries();
+        }
+    }, [registerOpen, countries.length]);
+
+    // Autocomplete search results
+    const searchResults = useMemo(() => {
+        if (!searchTerm.trim()) return [];
+        const term = searchTerm.trim().toLowerCase();
+        
+        // 1. Match cities
+        const cityMatches = activeCities
+            .filter(c => c.toLowerCase().includes(term))
+            .map(c => ({ id: `city-${c}`, name: c, type: 'ciudad' }));
+            
+        // 2. Match neighborhoods
+        const neighborhoodMatches: any[] = [];
+        const seenNames = new Set<string>();
+        
+        ALL_NEIGHBORHOODS.forEach(n => {
+            if (n.name.toLowerCase().includes(term)) {
+                const key = `${n.name.toLowerCase()}-${n.city.toLowerCase()}`;
+                if (!seenNames.has(key)) {
+                    seenNames.add(key);
+                    neighborhoodMatches.push({
+                        id: `nb-${n.id}`,
+                        name: n.name,
+                        city: n.city,
+                        type: 'barrio'
+                    });
+                }
+            }
+        });
+        
+        dbNeighborhoods.forEach(n => {
+            if (n.name.toLowerCase().includes(term) && n.type !== 'pais' && n.type !== 'ciudad') {
+                const key = `${n.name.toLowerCase()}-${(n.city || '').toLowerCase()}`;
+                if (!seenNames.has(key)) {
+                    seenNames.add(key);
+                    neighborhoodMatches.push({
+                        id: `nb-${n.id}`,
+                        name: n.name,
+                        city: n.city,
+                        type: 'barrio'
+                    });
+                }
+            }
+        });
+        
+        return [...cityMatches, ...neighborhoodMatches];
+    }, [searchTerm, activeCities, dbNeighborhoods]);
+
 
 
     // Simplified useEffect for fetching neighborhoods
@@ -278,28 +369,16 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
 
     // Combined Neighborhoods
     const subNeighborhoods = useMemo(() => {
-        // Determine City Scope
-        const currentCity = isCity ? neighborhoodName : (neighborhoodConfig?.city || 'Hamburg');
+        const cityToFilter = selectedCityFilter;
 
-        // Base list from static config (filtered by current city)
-        const base = ALL_NEIGHBORHOODS.filter(n => n.city === currentCity && n.name !== currentCity);
+        // Base list from static config (filtered by selected city)
+        const base = ALL_NEIGHBORHOODS.filter(n => n.city === cityToFilter && n.name !== cityToFilter);
 
-        // Merge with DB (deduplicating by name)
-        // If searching, we want to broaden the scope potentially? 
-        // For now, we still mostly respect the header "Barrios de [City]" but we should include matches if searchTerm is present
         const merged = [...base];
 
         dbNeighborhoods.forEach(dbN => {
-            // Logic: 
-            // 1. If we are NOT searching, strict filter by city to keep list clean.
-            // 2. If we ARE searching, include anything matching the name, even from other cities? 
-            // User requested: "si no esta hay registrado, lo busque en el modulo de la Gestion de paises"
-
-            const searchNorm = searchTerm.trim().toLowerCase();
-            const isSameCity = dbN.city === currentCity;
-            const matchesSearch = searchNorm && dbN.name.toLowerCase().includes(searchNorm);
-
-            if (isSameCity || matchesSearch) {
+            const isSameCity = dbN.city === cityToFilter;
+            if (isSameCity) {
                 const existingIndex = merged.findIndex(m => m.name.toLowerCase() === dbN.name.toLowerCase());
                 if (existingIndex === -1) {
                     merged.push(dbN);
@@ -311,13 +390,9 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
         if (userLocation) {
             return merged
                 .map(n => {
-                    // DB neighborhoods usually have location: { lat, lng } object from Firestore
-                    // But might be GeoPoint { latitude, longitude } or Google { lat, lng }
-                    // Static ones have lat, lng top level properties
                     let nLat = n.lat;
                     let nLng = n.lng;
 
-                    // Check nested location object
                     if (n.location) {
                         nLat = n.location.lat || n.location.latitude || nLat;
                         nLng = n.location.lng || n.location.longitude || nLng;
@@ -326,15 +401,14 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
                     if (nLat && nLng) {
                         return { ...n, distance: getDistance(userLocation.lat, userLocation.lng, nLat, nLng) };
                     }
-                    return { ...n, distance: 999999 }; // Push to end if no coords
+                    return { ...n, distance: 999999 };
                 })
                 .sort((a, b) => a.distance - b.distance);
         }
 
-        // Default sort (Validation: maybe alphabetical?)
         return merged.sort((a, b) => a.name.localeCompare(b.name));
 
-    }, [neighborhoodConfig, isCity, dbNeighborhoods, neighborhoodName, userLocation, searchTerm]);
+    }, [selectedCityFilter, dbNeighborhoods, userLocation]);
 
     // Helper for formatting
     const displayNeighborhood = React.useMemo(() => {
@@ -478,7 +552,7 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
     }, [neighborhoodName]);
 
     const handleRegisterNeighborhood = async () => {
-        if (!newNeighborhoodName.trim()) return;
+        if (!newNeighborhoodName.trim() || !currentUser) return;
         setIsRegistering(true);
         try {
             const { registerNeighborhood } = await import('@/app/actions/neighborhoods');
@@ -585,111 +659,205 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
                                     {t('community.search_global', 'Explorar Comunidades')}
                                 </CardTitle>
                             </CardHeader>
-                            <CardContent>
-                                {/* Neighborhood Search & List */}
-                                {(subNeighborhoods.length > 0 || isCity || (neighborhoodConfig && neighborhoodConfig.city)) && (
-                                    <div className="space-y-4 mb-4">
-                                        {/* Search Input - Show always if there are subneighborhoods */}
-                                        {subNeighborhoods.length > 0 && (
-                                            <div className="relative">
-                                                <Input
-                                                    placeholder={t('community.search_neighborhoods_global', 'Buscar ciudad, barrio...')}
-                                                    className="pl-9"
-                                                    value={searchTerm}
-                                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                                />
-                                                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                                            </div>
-                                        )}
-
-                                        {/* Quick Jump to Favorite Neighborhood */}
-                                        {favoriteNeighborhood && favoriteNeighborhood !== neighborhoodName && (
+                            <CardContent className="space-y-4">
+                                
+                                {/* City Tabs Pills Selector */}
+                                {activeCities.length > 0 && (
+                                    <div className="flex items-center gap-1.5 overflow-x-auto pb-2 scrollbar-none border-b border-slate-100 dark:border-slate-800">
+                                        {activeCities.map(city => (
                                             <Button
-                                                variant="outline"
-                                                className="w-full text-pink-600 hover:text-pink-800 hover:bg-pink-50 mb-4 border-pink-200"
-                                                onClick={() => updateNeighborhood(favoriteNeighborhood)}
+                                                key={city}
+                                                variant={selectedCityFilter === city ? "default" : "outline"}
+                                                size="sm"
+                                                className="rounded-full px-4 py-1 text-xs font-semibold whitespace-nowrap h-7"
+                                                onClick={() => {
+                                                    setSelectedCityFilter(city);
+                                                    updateNeighborhood(city);
+                                                }}
                                             >
-                                                <Heart className="h-4 w-4 mr-2 fill-current" />
-                                                {t('community.jump_favorite', 'Ir a mi favorito:')} {favoriteNeighborhood}
+                                                <Building2 className="h-3 w-3 mr-1" />
+                                                {city}
                                             </Button>
-                                        )}
-
-                                        {/* Link back to City if in a neighborhood */}
-                                        {!isCity && (
-                                            <Button
-                                                variant="outline"
-                                                className="w-full text-blue-600 hover:text-blue-800 hover:bg-blue-50 mb-2"
-                                                onClick={() => updateNeighborhood(neighborhoodConfig?.city || 'Hamburg')}
-                                            >
-                                                <ChevronRight className="h-4 w-4 rotate-180 mr-2" />
-                                                {t('back', 'Volver a')} {neighborhoodConfig?.city || 'Hamburg'}
-                                            </Button>
-                                        )}
-
-                                        {/* List Display Grouped by City */}
-                                        {subNeighborhoods.length > 0 ? (
-                                            <div className="space-y-4">
-                                                {/* Group by City (even if mostly one city, covers future expansion) */}
-                                                {(() => {
-                                                    const grouped = subNeighborhoods
-                                                        .filter(nb => nb.name.toLowerCase().includes(searchTerm.trim().toLowerCase()))
-                                                        .reduce((acc, nb) => {
-                                                            const city = nb.city || (isCity ? neighborhoodName : 'Hamburg');
-                                                            if (!acc[city]) acc[city] = [];
-                                                            acc[city].push(nb);
-                                                            return acc;
-                                                        }, {} as Record<string, typeof subNeighborhoods>);
-
-                                                    return Object.entries(grouped).map(([city, places]) => (
-                                                        <div key={city} className="space-y-2">
-                                                            {/* City Header */}
-                                                            <div className="flex items-center gap-2 text-sm font-semibold text-muted-foreground uppercase tracking-wider px-2">
-                                                                <Building2 className="h-3 w-3" />
-                                                                {city}
-                                                            </div>
-
-                                                            {/* Neighborhoods List */}
-                                                            <div className="grid grid-cols-1 gap-1">
-                                                                {places.slice(0, 50).map(nb => (
-                                                                    <Button
-                                                                        key={nb.id}
-                                                                        variant={nb.name === neighborhoodName ? "secondary" : "ghost"}
-                                                                        className={`
-                                                                            justify-start h-auto py-2 px-3 text-sm font-normal
-                                                                            ${nb.name === neighborhoodName
-                                                                                ? "bg-slate-100 text-slate-900 border-l-4 border-slate-900 font-medium"
-                                                                                : "hover:bg-slate-50 text-slate-600 hover:text-slate-900"}
-                                                                        `}
-                                                                        onClick={() => updateNeighborhood(nb.name)}
-                                                                    >
-                                                                        <div className="flex flex-col items-start gap-0.5 w-full">
-                                                                            <div className="flex w-full justify-between items-center">
-                                                                                <span>{nb.name}</span>
-                                                                                {nb.distance && nb.distance < 100 && (
-                                                                                    <span className="text-[10px] text-muted-foreground">
-                                                                                        {nb.distance < 1 ? `${Math.round(nb.distance * 1000)}m` : `${nb.distance.toFixed(1)}km`}
-                                                                                    </span>
-                                                                                )}
-                                                                            </div>
-                                                                        </div>
-                                                                    </Button>
-                                                                ))}
-                                                            </div>
-                                                        </div>
-                                                    ));
-                                                })()}
-
-                                {/* Empty State */}
-                                                {searchTerm && subNeighborhoods.filter(nb => nb.name.toLowerCase().includes(searchTerm.trim().toLowerCase())).length === 0 && (
-                                                    <p className="text-sm text-muted-foreground text-center py-2">No se encontraron barrios.</p>
-                                                )}
-                                            </div>
-                                        ) : null}
+                                        ))}
                                     </div>
                                 )}
 
+                                {/* Search Bar & Autocomplete Popover */}
+                                <div className="relative">
+                                    <Input
+                                        placeholder={t('community.search_neighborhoods_global', 'Buscar ciudad, barrio...')}
+                                        className="pl-9 h-10 shadow-sm border-slate-200 dark:border-slate-800 focus-visible:ring-primary focus-visible:border-primary"
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                    />
+                                    <Search className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                                    
+                                    {searchTerm.trim().length > 0 && (
+                                        <div className="absolute z-50 left-0 right-0 mt-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg shadow-xl max-h-[320px] overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800">
+                                            
+                                            {/* Cities Results */}
+                                            {searchResults.filter(r => r.type === 'ciudad').length > 0 && (
+                                                <div className="p-2 space-y-1">
+                                                    <div className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider px-2 py-1">Ciudades</div>
+                                                    {searchResults.filter(r => r.type === 'ciudad').map(city => (
+                                                        <Button
+                                                            key={city.id}
+                                                            variant="ghost"
+                                                            className="w-full justify-start text-left text-sm font-normal py-1.5 px-2.5 h-auto text-slate-700 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800"
+                                                            onClick={() => {
+                                                                updateNeighborhood(city.name);
+                                                                setSelectedCityFilter(city.name);
+                                                                setSearchTerm('');
+                                                            }}
+                                                        >
+                                                            <Building2 className="h-4 w-4 mr-2 text-slate-400" />
+                                                            <span>{city.name}</span>
+                                                        </Button>
+                                                    ))}
+                                                </div>
+                                            )}
+                                            
+                                            {/* Neighborhoods Results */}
+                                            {searchResults.filter(r => r.type === 'barrio').length > 0 && (
+                                                <div className="p-2 space-y-1">
+                                                    <div className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider px-2 py-1">Barrios</div>
+                                                    {searchResults.filter(r => r.type === 'barrio').map(nb => (
+                                                        <Button
+                                                            key={nb.id}
+                                                            variant="ghost"
+                                                            className="w-full justify-start text-left text-sm font-normal py-1.5 px-2.5 h-auto text-slate-700 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800"
+                                                            onClick={() => {
+                                                                updateNeighborhood(nb.name);
+                                                                setSelectedCityFilter(nb.city);
+                                                                setSearchTerm('');
+                                                            }}
+                                                        >
+                                                            <MapPin className="h-4 w-4 mr-2 text-slate-400" />
+                                                            <div className="flex flex-col text-left">
+                                                                <span>{nb.name}</span>
+                                                                <span className="text-[10px] text-slate-400">{nb.city}</span>
+                                                            </div>
+                                                        </Button>
+                                                    ))}
+                                                </div>
+                                            )}
+                                            
+                                            {/* Founder Register Call-to-action */}
+                                            {!isReadOnly && currentUser && (
+                                                <div className="p-2">
+                                                    <Button
+                                                        variant="ghost"
+                                                        className="w-full justify-start text-left text-sm font-medium py-2 px-2.5 h-auto text-blue-600 hover:text-blue-800 hover:bg-blue-50/50 dark:text-blue-400 dark:hover:bg-blue-900/30"
+                                                        onClick={() => {
+                                                            setNewNeighborhoodName(searchTerm);
+                                                            setRegisterOpen(true);
+                                                            setSearchTerm('');
+                                                        }}
+                                                    >
+                                                        <PlusCircle className="h-4 w-4 mr-2 text-blue-500" />
+                                                        <span>{t('community.search_dropdown.register_btn', { name: searchTerm })}</span>
+                                                    </Button>
+                                                </div>
+                                            )}
+
+                                            {/* Empty Search State */}
+                                            {searchResults.length === 0 && (
+                                                <div className="p-4 text-center text-sm text-slate-500">
+                                                    {t('community.search_dropdown.no_results', { term: searchTerm })}
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Quick Jump to Favorite Neighborhood */}
+                                {favoriteNeighborhood && favoriteNeighborhood.toLowerCase() !== neighborhoodName.toLowerCase() && (
+                                    <Button
+                                        variant="outline"
+                                        className="w-full text-pink-600 hover:text-pink-800 hover:bg-pink-50 dark:hover:bg-pink-950/20 mb-1 border-pink-200 dark:border-pink-900 text-xs py-1.5 h-auto"
+                                        onClick={() => updateNeighborhood(favoriteNeighborhood)}
+                                    >
+                                        <Heart className="h-3.5 w-3.5 mr-2 fill-current flex-shrink-0" />
+                                        {t('community.jump_favorite', 'Ir a mi favorito:')} {favoriteNeighborhood}
+                                    </Button>
+                                )}
+
+                                {/* Link back to City if in a neighborhood */}
+                                {!isCity && (
+                                    <Button
+                                        variant="outline"
+                                        className="w-full text-blue-600 hover:text-blue-800 hover:bg-blue-50 dark:hover:bg-blue-950/20 mb-1 text-xs py-1.5 h-auto"
+                                        onClick={() => updateNeighborhood(neighborhoodConfig?.city || 'Hamburg')}
+                                    >
+                                        <ChevronRight className="h-3.5 w-3.5 rotate-180 mr-2 flex-shrink-0" />
+                                        {t('back', 'Volver a')} {neighborhoodConfig?.city || 'Hamburg'}
+                                    </Button>
+                                )}
+
+                                {/* Compact Neighborhood List filtered by Active City */}
+                                {subNeighborhoods.length > 0 && (
+                                    <div className="space-y-2">
+                                        <div className="flex items-center justify-between text-[11px] font-bold text-slate-400 uppercase tracking-wider px-1">
+                                            <span className="flex items-center gap-1.5">
+                                                <Building2 className="h-3.5 w-3.5 text-slate-400" />
+                                                {selectedCityFilter}
+                                            </span>
+                                            <span className="font-normal lowercase">
+                                                ({subNeighborhoods.length} barrios)
+                                            </span>
+                                        </div>
+                                        
+                                        <div className="grid grid-cols-1 gap-1 max-h-[260px] overflow-y-auto pr-1 border border-slate-100 dark:border-slate-800 rounded-lg p-1.5 bg-slate-50/50 dark:bg-slate-900/30">
+                                            {subNeighborhoods.map(nb => {
+                                                const isActive = nb.name.toLowerCase() === neighborhoodName.toLowerCase();
+                                                const isFav = favoriteNeighborhood && favoriteNeighborhood.toLowerCase() === nb.name.toLowerCase();
+                                                
+                                                return (
+                                                    <Button
+                                                        key={nb.id}
+                                                        variant={isActive ? "secondary" : "ghost"}
+                                                        className={`
+                                                            justify-start h-auto py-1.5 px-2.5 text-xs font-normal
+                                                            ${isActive
+                                                                ? "bg-white dark:bg-slate-800 text-slate-900 dark:text-white border-l-4 border-slate-900 dark:border-slate-100 font-semibold shadow-sm"
+                                                                : "hover:bg-white dark:hover:bg-slate-800 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:shadow-sm"}
+                                                        `}
+                                                        onClick={() => updateNeighborhood(nb.name)}
+                                                    >
+                                                        <div className="flex w-full justify-between items-center">
+                                                            <span className="flex items-center gap-1.5 truncate">
+                                                                {nb.name}
+                                                                {isFav && <Heart className="h-3 w-3 text-pink-500 fill-current flex-shrink-0" />}
+                                                            </span>
+                                                            {nb.distance && nb.distance < 100 && (
+                                                                <span className="text-[10px] text-muted-foreground ml-2 flex-shrink-0">
+                                                                    {nb.distance < 1 ? `${Math.round(nb.distance * 1000)}m` : `${nb.distance.toFixed(1)}km`}
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                    </Button>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Actions Trigger Footer */}
                                 {!isReadOnly && currentUser && (
-                                    <SuggestLocationDialog currentUser={currentUser} />
+                                    <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+                                        <Button 
+                                            variant="outline" 
+                                            className="w-full text-xs text-slate-600 dark:text-slate-400 hover:text-primary hover:bg-slate-50 dark:hover:bg-slate-800 border-slate-200 dark:border-slate-800 h-9"
+                                            onClick={() => {
+                                                setNewNeighborhoodName('');
+                                                setRegisterOpen(true);
+                                            }}
+                                        >
+                                            <PlusCircle className="mr-2 h-4 w-4 text-blue-500" />
+                                            {t('community.register_neighborhood_btn', 'Registrar Barrio')}
+                                        </Button>
+                                        <SuggestLocationDialog currentUser={currentUser} />
+                                    </div>
                                 )}
                             </CardContent>
                         </Card>
@@ -813,6 +981,58 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
                     </Tabs>
                 </div>
             </div>
+            
+            {/* Modal de Registro de Barrio */}
+            {!isReadOnly && currentUser && (
+                <Dialog open={registerOpen} onOpenChange={setRegisterOpen}>
+                    <DialogContent className="sm:max-w-[450px]">
+                        <DialogHeader>
+                            <DialogTitle>{t('community.register_dialog.title', 'Registrar Nuevo Barrio')}</DialogTitle>
+                            <DialogDescription>
+                                {t('community.register_dialog.desc', 'Registra un barrio nuevo a través de Google Maps. Como creador, serás nombrado Fundador y recibirás una medalla especial.')}
+                            </DialogDescription>
+                        </DialogHeader>
+
+                        <div className="space-y-4 py-2">
+                            <div className="space-y-2">
+                                <Label htmlFor="register-neighborhood-name">{t('community.register_dialog.name_label', 'Nombre del Barrio / Distrito')}</Label>
+                                <Input 
+                                    id="register-neighborhood-name"
+                                    placeholder="Ej. Sternschanze" 
+                                    value={newNeighborhoodName} 
+                                    onChange={e => setNewNeighborhoodName(e.target.value)} 
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="register-country">{t('community.register_dialog.country_label', 'País')}</Label>
+                                <select 
+                                    id="register-country"
+                                    className="flex h-10 w-full items-center justify-between rounded-md border border-slate-200 dark:border-slate-800 bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900"
+                                    value={newCountryName}
+                                    onChange={e => setNewCountryName(e.target.value)}
+                                >
+                                    <option value="" disabled>Selecciona un país</option>
+                                    {countries.map(loc => (
+                                        <option key={loc.id} value={loc.countryName}>{loc.countryName}</option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
+
+                        <DialogFooter className="mt-4 border-t pt-4 gap-2 sm:gap-0">
+                            <Button variant="outline" onClick={() => setRegisterOpen(false)}>{t('cancel', 'Cancelar')}</Button>
+                            <Button 
+                                onClick={handleRegisterNeighborhood} 
+                                disabled={isRegistering || !newNeighborhoodName.trim() || !newCountryName}
+                            >
+                                {isRegistering ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <MapPin className="w-4 h-4 mr-2" />}
+                                {t('community.register_dialog.submit_btn', 'Verificar y Crear con Google Maps')}
+                            </Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
+            )}
         </div>
     );
 }

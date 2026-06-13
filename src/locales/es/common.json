@@ -159,7 +159,19 @@
     "upload_photo_optional": "Subir Foto (Opcional)",
     "photos_ready": "{{count}} foto(s) lista(s)",
     "great": "¡Genial!",
-    "what_business_to_highlight": "¿Qué empresa local quieres recomendar hoy?"
+    "what_business_to_highlight": "¿Qué empresa local quieres recomendar hoy?",
+    "search_dropdown": {
+      "no_results": "No se encontraron resultados para \"{{term}}\".",
+      "register_btn": "¿No encuentras tu barrio? + Registrar \"{{name}}\" como fundador"
+    },
+    "register_dialog": {
+      "title": "Registrar Nuevo Barrio",
+      "desc": "Registra un barrio nuevo a través de Google Maps. Como creador, serás nombrado Fundador y recibirás una medalla especial.",
+      "name_label": "Nombre del Barrio / Distrito",
+      "country_label": "País",
+      "submit_btn": "Verificar y Crear con Google Maps",
+      "suggest_fallback": "¿Google Maps no lo encuentra? Sugiere una ubicación manualmente para revisión del equipo."
+    }
   },
   "dicipoints": {
     "whatIs": {

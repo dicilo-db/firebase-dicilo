@@ -131,7 +131,19 @@
     "upload_photo_optional": "Foto hochladen (Optional)",
     "photos_ready": "{{count}} Foto(s) bereit",
     "great": "Großartig!",
-    "what_business_to_highlight": "Welches lokale Unternehmen möchten Sie heute empfehlen?"
+    "what_business_to_highlight": "Welches lokale Unternehmen möchten Sie heute empfehlen?",
+    "search_dropdown": {
+      "no_results": "Keine Ergebnisse für \"{{term}}\" gefunden.",
+      "register_btn": "Finden Sie Ihr Viertel nicht? + Registrieren Sie \"{{name}}\" als Gründer"
+    },
+    "register_dialog": {
+      "title": "Neues Viertel registrieren",
+      "desc": "Registrieren Sie ein neues Stadtviertel über Google Maps. Als Kiez-Ersteller werden Sie als Gründer eingetragen und erhalten eine spezielle Medaille.",
+      "name_label": "Name des Stadtviertels / Bezirks",
+      "country_label": "Land",
+      "submit_btn": "Mit Google Maps verifizieren & erstellen",
+      "suggest_fallback": "Kann Google Maps es nicht finden? Schlagen Sie einen Ort manuell zur Überprüfung durch unser Team vor."
+    }
   },
   "header": {
     "nav": {

@@ -1072,7 +1072,19 @@
     "upload_photo_optional": "Upload Photo (Optional)",
     "photos_ready": "{{count}} photo(s) ready",
     "great": "Great!",
-    "what_business_to_highlight": "Which local business would you like to recommend today?"
+    "what_business_to_highlight": "Which local business would you like to recommend today?",
+    "search_dropdown": {
+      "no_results": "No results found for \"{{term}}\".",
+      "register_btn": "Can't find your neighborhood? + Register \"{{name}}\" as founder"
+    },
+    "register_dialog": {
+      "title": "Register New Neighborhood",
+      "desc": "Register a new neighborhood via Google Maps. As the creator, you will be named Founder and receive a special badge.",
+      "name_label": "Neighborhood / District Name",
+      "country_label": "Country",
+      "submit_btn": "Verify & Create with Google Maps",
+      "suggest_fallback": "Can't find it on Google Maps? Suggest a location manually for review by our team."
+    }
   },
   "validationDialog": {
     "title": "Prospect Validation Center",
