@@ -77,6 +77,7 @@ export async function getWalletData(uid: string) {
         pointValue,
         valueInEur,
         valueInUsd,
+        balanceDC: walletData?.balanceDC || 0,
         currency: 'EUR',
         history,
         totalEarned: walletData?.totalEarned || 0

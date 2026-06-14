@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Coins, TrendingUp, HelpCircle, ShieldCheck } from 'lucide-react';
@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { DiciCoinInfo } from '@/components/dashboard/DiciCoinInfo';
 import { DiciCoinSecurityInfo } from '@/components/dashboard/DiciCoinSecurityInfo';
+import { useAuth } from '@/context/AuthContext';
 
 interface DiciCoinSectionProps {
     userData?: any;
@@ -21,9 +22,20 @@ interface DiciCoinSectionProps {
 
 export function DiciCoinSection({ userData, onViewHistory }: DiciCoinSectionProps) {
     const { t } = useTranslation('common');
+    const { user } = useAuth();
+    const [balance, setBalance] = useState(0);
 
-    // MOCK DATA
-    const balance = 0;
+    useEffect(() => {
+        if (user?.uid) {
+            import('@/app/actions/wallet').then(({ getWalletData }) => {
+                getWalletData(user.uid).then((data) => {
+                    if (data && typeof data.balanceDC === 'number') {
+                        setBalance(data.balanceDC);
+                    }
+                });
+            });
+        }
+    }, [user?.uid]);
 
     return (
         <div className="flex flex-col space-y-6 animate-in fade-in duration-500">
@@ -31,7 +43,7 @@ export function DiciCoinSection({ userData, onViewHistory }: DiciCoinSectionProp
             <div>
                 <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2 text-slate-900">
                     <Coins className="h-8 w-8 text-amber-500" />
-                    DiciCoin Center
+                    {t('dashboard.dicicoin.title', 'DiciCoin Center')}
                 </h1>
                 <p className="text-muted-foreground">{t('dashboard.dicicoin.walletDescription', 'Tu billetera y centro de recompensas.')}</p>
             </div>
@@ -55,7 +67,7 @@ export function DiciCoinSection({ userData, onViewHistory }: DiciCoinSectionProp
                                 <p className="text-sm font-medium text-amber-200 mb-1">{t('dashboard.dicicoin.yourBalance', 'Tu Balance')}</p>
                                 <div className="flex items-baseline gap-2">
                                     <span className="text-5xl font-bold text-white">{balance}</span>
-                                    <span className="text-xl font-medium text-amber-400">DiciCoins</span>
+                                    <span className="text-xl font-medium text-amber-400">{t('dashboard.dicicoin.currency', 'DiciCoins')}</span>
                                 </div>
                             </div>
                             <div className="hidden md:block h-16 w-px bg-white/20"></div>
@@ -116,8 +128,8 @@ export function DiciCoinSection({ userData, onViewHistory }: DiciCoinSectionProp
                         <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
                             {t('dashboard.dicicoin.historyDesc', 'Sus transacciones...')}
                         </p>
-                        <Button variant="outline" className="w-full" disabled onClick={onViewHistory}>
-                            {t('tickets.myTickets', 'Ver Historial')}
+                        <Button variant="outline" className="w-full" onClick={onViewHistory}>
+                            {t('dashboard.dicicoin.viewHistory', 'Ver Historial')}
                         </Button>
                     </CardContent>
                 </Card>

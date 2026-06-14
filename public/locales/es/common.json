@@ -440,13 +440,17 @@
       "prepaidLegend": "Prepaid: Tarjeta Prepago con bonos en efectivo"
     },
     "dicicoin": {
+      "title": "Centro DiciCoin",
+      "currency": "DiciCoins",
+      "loading": "Cargando...",
       "securityTitle": "Seguridad, Autenticidad y Titularidad",
-      "securityDesc": "Las DICICOIN solo pueden ser adquiridas a través de Agentes Autorizados...",
-      "purchaseHeader": "Adquiere más DICICOIN a través de los canales oficiales...",
+      "securityDesc": "Las DICICOIN solo pueden ser adquiridas a través de Agentes Autorizados de Dicilo. Cada transacción está respaldada por firmas digitales exclusivas para garantizar tu titularidad.",
+      "purchaseHeader": "Adquiere más DICICOIN a través de los canales oficiales de Dicilo.",
       "purchaseTitle": "Adquiere DICICOIN",
-      "purchaseDesc": "Incrementar tu saldo te permite acceder a mayores beneficios estratégicos...",
+      "purchaseDesc": "Incrementar tu saldo te permite acceder a mayores beneficios estratégicos, recompensas especiales y una participación exclusiva en el ecosistema.",
       "historyTitle": "Historial y Certificados",
-      "historyDesc": "Consulta en todo momento el historial completo de tus transacciones...",
+      "historyDesc": "Consulta en todo momento el historial completo de tus transacciones de DiciCoin y accede a tus certificados digitales de propiedad.",
+      "viewHistory": "Ver Historial",
       "howTo": "¿Cómo funciona?",
       "learnMore": "Aprende sobre DiciCoin",
       "readGuide": "Leer Guía",
@@ -454,7 +458,62 @@
       "readMore": "Leer más",
       "yourBalance": "Tu Balance",
       "limit": "El límite máximo permitido es de 2.000 DICICOIN por usuario. Para montos mayores, se requiere una verificación de identidad adicional (KYC) conforme a las regulaciones vigentes.",
-      "walletDescription": "Tu billetera y centro de recompensas."
+      "walletDescription": "Tu billetera y centro de recompensas.",
+      "security": {
+        "p1": "Las DICICOIN solo pueden adquirirse exclusivamente a través de puntos de venta debidamente acreditados y autorizados por Dicilo.",
+        "p2": "Para proteger a la comunidad, mantener la transparencia y asegurar la autenticidad de cada moneda, no se reconocerán las adquisiciones realizadas a través de proveedores no autorizados o engañosos.",
+        "p3": "Cada DICICOIN se emite con una licencia sellada, un número de serie único y un registro personal vinculado. Este registro constituye una prueba de asignación digital interna dentro del ecosistema Dicilo y no representa un título financiero o de propiedad transferible en el sentido legal.",
+        "p4": "Las DICICOIN pueden transferirse entre usuarios. Sin embargo, para participar en posibles procesos futuros de conversión, desbloqueo o acceso, únicamente tendrá derecho la persona que figure en ese momento como titular oficialmente registrado dentro del sistema Dicilo.",
+        "p5": "La participación en dichos procesos futuros se realizará exclusivamente teniendo en cuenta el marco legal, corporativo y estructural aplicable en cada momento."
+      },
+      "info": {
+        "title": "Valor, Escasez y Visión de Futuro",
+        "intro1": "DICICOIN ha sido concebida como una moneda física conmemorativa, limitada y coleccionable que representa la participación temprana dentro del ecosistema internacional Dicilo.",
+        "intro2": "Cada DICICOIN simboliza visión, compromiso y pertenencia a una comunidad global que trabaja para conectar personas, empresas y oportunidades a través de la tecnología, la confianza y la colaboración.",
+        "mintingTitle": "Una Emisión Mundial Limitada",
+        "mintingLimit": "La emisión total de DICICOIN está limitada de forma permanente a:",
+        "mintingWorldwide": "10.000.000 de monedas en todo el mundo.",
+        "mintingNoMore": "No se emitirán DICICOIN adicionales una vez alcanzada esta cantidad.",
+        "mintingDistribution": "Para garantizar una distribución equilibrada entre regiones, la emisión ha sido dividida de manera equitativa entre los cinco continentes participantes:",
+        "continents": {
+          "america": "América: 2.000.000 DICICOIN",
+          "europe": "Europa: 2.000.000 DICICOIN",
+          "asia": "Asia: 2.000.000 DICICOIN",
+          "africa": "África: 2.000.000 DICICOIN",
+          "oceania": "Oceanía: 2.000.000 DICICOIN"
+        },
+        "mintingNoAdvantage": "Esta estructura garantiza que ningún continente tenga ventajas sobre otro en términos de disponibilidad inicial.",
+        "mintingReduces": "Cada moneda emitida reduce la cantidad disponible dentro de su continente correspondiente, fortaleciendo progresivamente la exclusividad de las emisiones restantes.",
+        "securityTitle": "Autenticidad y Protección",
+        "securityIntro": "Cada DICICOIN incorpora múltiples mecanismos de autenticación y seguridad:",
+        "securityFeatures": {
+          "serial": "Número de serie único e irrepetible.",
+          "certificate": "Certificado de titularidad.",
+          "registry": "Registro oficial del propietario.",
+          "signature": "Firma digital de autenticación.",
+          "verification": "Sistemas de verificación física y digital.",
+          "elements": "Elementos exclusivos de identificación vinculados a cada emisión."
+        },
+        "securityOutro": "No existen dos DICICOIN idénticas. Cada moneda posee una identidad propia dentro del ecosistema Dicilo.",
+        "valueTitle": "Valor de Referencia",
+        "valueCurrent": "El valor actual de emisión de una DICICOIN es de 5.000 €.",
+        "valueFuture": "A medida que la disponibilidad disminuya y el ecosistema Dicilo continúe creciendo, futuras emisiones disponibles podrán ofrecerse a valores superiores determinados por la compañía, de acuerdo con la evolución del proyecto, la demanda existente y la disponibilidad restante dentro de cada continente.",
+        "valueExclusivity": "La adquisición de una DICICOIN representa el acceso a una edición limitada que no podrá ampliarse una vez agotadas las existencias asignadas.",
+        "participationTitle": "Participación Temprana",
+        "participationIntro": "Las DICICOIN han sido creadas para reconocer a quienes deciden formar parte del proyecto desde sus etapas iniciales.",
+        "participationFuture": "En el futuro, y siempre bajo el cumplimiento de los requisitos corporativos, legales y regulatorios aplicables, la compañía podrá habilitar procesos específicos de participación, conversión o intercambio para los titulares registrados de DICICOIN.",
+        "participationOutro": "Cualquier mecanismo futuro será comunicado oficialmente y estará sujeto a las condiciones vigentes en el momento de su implementación.",
+        "moreTitle": "Más que una Moneda",
+        "moreIntro": "DICICOIN no representa únicamente una pieza física de colección.",
+        "moreHighlights": {
+          "p1": "Representa la decisión de participar desde el principio.",
+          "p2": "Representa la confianza en una visión global.",
+          "p3": "Representa la oportunidad de formar parte de una comunidad internacional limitada.",
+          "p4": "Representa una pieza de la historia fundacional de Dicilo."
+        },
+        "moreLimit": "Solo existirán 10.000.000. Ni una más. Ni una menos.",
+        "moreOutro": "Y cada una tendrá una historia, un propietario y un lugar dentro del crecimiento del ecosistema Dicilo."
+      }
     },
     "chatGroup": {
       "connect": "Conecta con nuestra comunidad global.",
