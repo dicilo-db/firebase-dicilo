@@ -438,6 +438,9 @@
     }
   },
   "dashboard": {
+    "sidebar": {
+      "calendar": "Kalender"
+    },
     "welcomeUser": "Willkommen, {{name}}!",
     "goToWallet": "Zur Wallet",
     "promo": {

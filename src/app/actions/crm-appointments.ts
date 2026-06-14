@@ -2,11 +2,29 @@
 
 import { getAdminDb } from '@/lib/firebase-admin';
 
-export async function updateAppointmentTimeAction(id: string, startTime: string, endTime?: string) {
+export async function updateAppointmentTimeAction(id: string, startTime: string, endTime?: string, userId?: string) {
     try {
+        if (!userId) {
+            return { success: false, error: 'Unauthorized: No user ID provided' };
+        }
         const db = getAdminDb();
+        const apptDoc = await db.collection('crm_appointments').doc(id).get();
+        if (!apptDoc.exists) {
+            return { success: false, error: 'Appointment not found' };
+        }
+        const apptData = apptDoc.data();
+
+        // Check ownership or admin privileges
+        const profileSnap = await db.collection('private_profiles').doc(userId).get();
+        const profile = profileSnap.exists ? profileSnap.data() : null;
+        const isPrivileged = profile?.role && ['admin', 'superadmin', 'team_office'].includes(profile.role);
+
+        if (apptData?.userId !== userId && !isPrivileged) {
+            return { success: false, error: 'Unauthorized: You do not own this appointment' };
+        }
+
         const updates: any = { startTime };
-        if (endTime) {
+        if (endTime !== undefined) {
             updates.endTime = endTime;
         }
         await db.collection('crm_appointments').doc(id).update(updates);
@@ -17,9 +35,27 @@ export async function updateAppointmentTimeAction(id: string, startTime: string,
     }
 }
 
-export async function updateAppointmentReasonAction(id: string, reason: string) {
+export async function updateAppointmentReasonAction(id: string, reason: string, userId?: string) {
     try {
+        if (!userId) {
+            return { success: false, error: 'Unauthorized: No user ID provided' };
+        }
         const db = getAdminDb();
+        const apptDoc = await db.collection('crm_appointments').doc(id).get();
+        if (!apptDoc.exists) {
+            return { success: false, error: 'Appointment not found' };
+        }
+        const apptData = apptDoc.data();
+
+        // Check ownership or admin privileges
+        const profileSnap = await db.collection('private_profiles').doc(userId).get();
+        const profile = profileSnap.exists ? profileSnap.data() : null;
+        const isPrivileged = profile?.role && ['admin', 'superadmin', 'team_office'].includes(profile.role);
+
+        if (apptData?.userId !== userId && !isPrivileged) {
+            return { success: false, error: 'Unauthorized: You do not own this appointment' };
+        }
+
         await db.collection('crm_appointments').doc(id).update({ reason });
         return { success: true };
     } catch (error: any) {
@@ -28,9 +64,27 @@ export async function updateAppointmentReasonAction(id: string, reason: string) 
     }
 }
 
-export async function deleteAppointmentAction(id: string) {
+export async function deleteAppointmentAction(id: string, userId?: string) {
     try {
+        if (!userId) {
+            return { success: false, error: 'Unauthorized: No user ID provided' };
+        }
         const db = getAdminDb();
+        const apptDoc = await db.collection('crm_appointments').doc(id).get();
+        if (!apptDoc.exists) {
+            return { success: false, error: 'Appointment not found' };
+        }
+        const apptData = apptDoc.data();
+
+        // Check ownership or admin privileges
+        const profileSnap = await db.collection('private_profiles').doc(userId).get();
+        const profile = profileSnap.exists ? profileSnap.data() : null;
+        const isPrivileged = profile?.role && ['admin', 'superadmin', 'team_office'].includes(profile.role);
+
+        if (apptData?.userId !== userId && !isPrivileged) {
+            return { success: false, error: 'Unauthorized: You do not own this appointment' };
+        }
+
         await db.collection('crm_appointments').doc(id).delete();
         return { success: true };
     } catch (error: any) {
@@ -39,8 +93,17 @@ export async function deleteAppointmentAction(id: string) {
     }
 }
 
-export async function createBlockAction(startTimeIso: string, isFullDay: boolean, endTimeIso?: string | null, reason?: string | null) {
+export async function createBlockAction(
+    startTimeIso: string, 
+    isFullDay: boolean, 
+    endTimeIso?: string | null, 
+    reason?: string | null,
+    userId?: string
+) {
     try {
+        if (!userId) {
+            return { success: false, error: 'Unauthorized: No user ID provided' };
+        }
         const db = getAdminDb();
         const blockData = {
             startTime: startTimeIso,
@@ -51,7 +114,8 @@ export async function createBlockAction(startTimeIso: string, isFullDay: boolean
             clientPhone: '',
             clientEmail: '',
             reason: reason && reason.trim() !== '' ? reason : 'Bloqueo manual',
-            createdAt: new Date().toISOString()
+            createdAt: new Date().toISOString(),
+            userId: userId
         };
         const ref = await db.collection('crm_appointments').add(blockData);
         return { success: true, id: ref.id };

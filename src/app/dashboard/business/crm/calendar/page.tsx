@@ -5,11 +5,9 @@ import { useTranslation } from 'react-i18next';
 import { Calendar as CalendarIcon, Clock, ChevronLeft, ChevronRight, User, Phone, Video, CalendarCheck2, ExternalLink, Trash2, Lock } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { useBusinessAccess } from '@/hooks/useBusinessAccess';
-import { useAdminUser } from '@/hooks/useAuthGuard';
 import { format, addMonths, subMonths, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, parseISO, setHours, setMinutes } from 'date-fns';
 import { es, de, enUS } from 'date-fns/locale';
-import { collection, query, onSnapshot, orderBy } from 'firebase/firestore';
+import { collection, query, onSnapshot, where } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { updateAppointmentTimeAction, deleteAppointmentAction, createBlockAction, updateAppointmentReasonAction } from '@/app/actions/crm-appointments';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -18,11 +16,11 @@ import { useToast } from '@/hooks/use-toast';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
+import { useAuth } from '@/context/AuthContext';
 
 export default function MasterCalendarPage() {
     const { t, i18n } = useTranslation('common');
-    const { plan, isLoading } = useBusinessAccess();
-    const { user: adminUser } = useAdminUser();
+    const { user, loading: authLoading } = useAuth();
     const { toast } = useToast();
     
     const [currentDate, setCurrentDate] = useState(new Date());
@@ -61,17 +59,25 @@ export default function MasterCalendarPage() {
         }
     }, [selectedAppt]);
 
-    // Escuchar el Webhook en tiempo real desde Firestore
+    // Escuchar el Webhook en tiempo real desde Firestore, filtrado por el usuario logueado
     useEffect(() => {
+        if (!user?.uid) return;
+
         const q = query(
             collection(db, 'crm_appointments'),
-            orderBy('startTime', 'asc')
+            where('userId', '==', user.uid)
         );
 
         const unsubscribe = onSnapshot(q, (snapshot) => {
             const appts: any[] = [];
             snapshot.forEach((doc) => {
                 appts.push({ id: doc.id, ...doc.data() });
+            });
+            // Ordenamos en el cliente para no requerir índice compuesto en producción
+            appts.sort((a, b) => {
+                const timeA = a.startTime ? new Date(a.startTime).getTime() : 0;
+                const timeB = b.startTime ? new Date(b.startTime).getTime() : 0;
+                return timeA - timeB;
             });
             setAppointments(appts);
             setLoadingData(false);
@@ -81,7 +87,7 @@ export default function MasterCalendarPage() {
         });
 
         return () => unsubscribe();
-    }, []);
+    }, [user?.uid]);
 
     const handleDrop = async (e: React.DragEvent, targetDate: Date) => {
         e.preventDefault();
@@ -104,7 +110,7 @@ export default function MasterCalendarPage() {
                 newEndDateIso = newEndDate.toISOString();
             }
 
-            const res = await updateAppointmentTimeAction(apptId, newStartDate.toISOString(), newEndDateIso);
+            const res = await updateAppointmentTimeAction(apptId, newStartDate.toISOString(), newEndDateIso, user?.uid);
             if (!res.success) throw new Error(res.error);
 
             toast({
@@ -121,16 +127,7 @@ export default function MasterCalendarPage() {
         }
     };
 
-    if (isLoading) return <div className="p-8"><Skeleton className="w-full h-96" /></div>;
-
-    // Solo Admin y Team Office
-    if (!['admin', 'superadmin', 'team_office'].includes(adminUser?.role || '') && plan !== 'premium') {
-        return (
-            <div className="p-8 text-center text-rose-600 font-bold">
-                Acceso Restringido. Esta vista es exclusiva para Gestión Operativa y Team Office.
-            </div>
-        );
-    }
+    if (authLoading) return <div className="p-8"><Skeleton className="w-full h-96" /></div>;
 
     const handleSaveTime = async () => {
         if (!selectedAppt || !editTime) return;
@@ -148,7 +145,7 @@ export default function MasterCalendarPage() {
                 newEndIso = newEndDate.toISOString();
             }
 
-            const res = await updateAppointmentTimeAction(selectedAppt.id, newDate.toISOString(), newEndIso);
+            const res = await updateAppointmentTimeAction(selectedAppt.id, newDate.toISOString(), newEndIso, user?.uid);
             if (!res.success) throw new Error(res.error);
             toast({ title: 'Horario actualizado', description: 'La cita ha sido reprogramada.' });
             setSelectedAppt({ ...selectedAppt, startTime: newDate.toISOString(), endTime: newEndIso || null });
@@ -163,7 +160,7 @@ export default function MasterCalendarPage() {
         if (!selectedAppt) return;
         setSavingReason(true);
         try {
-            const res = await updateAppointmentReasonAction(selectedAppt.id, editReasonText);
+            const res = await updateAppointmentReasonAction(selectedAppt.id, editReasonText, user?.uid);
             if (!res.success) throw new Error(res.error);
             toast({ title: 'Texto actualizado', description: 'Los detalles del evento han sido guardados.' });
             setIsEditingReason(false);
@@ -181,7 +178,7 @@ export default function MasterCalendarPage() {
         if (!confirmed) return;
 
         try {
-            const res = await deleteAppointmentAction(selectedAppt.id);
+            const res = await deleteAppointmentAction(selectedAppt.id, user?.uid);
             if (!res.success) throw new Error(res.error);
             toast({ title: 'Reunión cancelada', description: 'La cita fue eliminada y la hora ha sido liberada.' });
             setSelectedAppt(null);
@@ -214,7 +211,8 @@ export default function MasterCalendarPage() {
                 blockDate.toISOString(), 
                 isFullDayBlock, 
                 endBlockIso, 
-                blockReason || null
+                blockReason || null,
+                user?.uid
             );
             if (!res.success) throw new Error(res.error);
             
@@ -255,10 +253,10 @@ export default function MasterCalendarPage() {
                 <div className="relative z-10">
                     <h1 className="text-3xl font-extrabold flex items-center gap-3">
                         <CalendarCheck2 className="w-8 h-8 text-emerald-300" />
-                        Calendario Central de Operaciones
+                        Calendario Personal
                     </h1>
                     <p className="mt-2 text-emerald-100 text-lg">
-                        Sincronización en tiempo real con Google Workspace y Calendly.
+                        Tu organizador privado y planificador del día a día.
                     </p>
                 </div>
                 <div className="relative z-10 flex gap-2">
@@ -305,12 +303,12 @@ export default function MasterCalendarPage() {
                                 return (
                                     <div 
                                         key={day.toString()} 
-                                        className={`bg-white min-h-[120px] p-2 transition-colors hover:bg-slate-50 ${adminUser?.role === 'superadmin' ? 'cursor-pointer' : ''} ${isToday ? 'ring-2 ring-inset ring-emerald-500 bg-emerald-50/10' : ''}`}
+                                        className={`bg-white min-h-[120px] p-2 transition-colors hover:bg-slate-50 cursor-pointer ${isToday ? 'ring-2 ring-inset ring-emerald-500 bg-emerald-50/10' : ''}`}
                                         onDragOver={(e) => e.preventDefault()}
                                         onDrop={(e) => handleDrop(e, day)}
                                         onClick={(e) => {
-                                            // Only open block dialog if clicking empty space, not an appointment, and user is superadmin
-                                            if (e.target === e.currentTarget && adminUser?.role === 'superadmin') {
+                                            // Only open block dialog if clicking empty space, not an appointment
+                                            if (e.target === e.currentTarget && user) {
                                                 setBlockDialogDay(day);
                                                 setBlockReason('');
                                             }
@@ -475,7 +473,7 @@ export default function MasterCalendarPage() {
 
                             <div className="pt-4 border-t flex flex-col sm:flex-row justify-end gap-2">
                                 {selectedAppt.type?.includes('block') ? (
-                                    adminUser?.role === 'superadmin' && (
+                                    user && (
                                         <Button variant="destructive" onClick={handleDelete} className="w-full sm:w-auto">
                                             <Trash2 className="w-4 h-4 mr-2" />
                                             Eliminar Bloqueo

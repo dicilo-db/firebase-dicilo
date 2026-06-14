@@ -311,6 +311,9 @@
     }
   },
   "dashboard": {
+    "sidebar": {
+      "calendar": "Calendar"
+    },
     "welcomeUser": "Welcome, {{name}}!",
     "goToWallet": "Go to Wallet",
     "promo": {

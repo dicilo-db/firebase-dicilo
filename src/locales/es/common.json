@@ -295,6 +295,9 @@
     }
   },
   "dashboard": {
+    "sidebar": {
+      "calendar": "Calendario"
+    },
     "welcomeUser": "¡Bienvenido, {{name}}!",
     "totalBalance": "Balance Total",
     "communityLabel": "Comunidad",
