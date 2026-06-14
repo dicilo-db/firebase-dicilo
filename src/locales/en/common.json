@@ -460,19 +460,78 @@
       "prepaidLegend": "Prepaid: Prepaid card with cash bonuses"
     },
     "dicicoin": {
+      "title": "DiciCoin Center",
+      "currency": "DiciCoins",
+      "loading": "Loading...",
       "securityTitle": "Security, Authenticity, and Ownership",
-      "securityDesc": "DICICOINs can only be acquired through Authorized Sales Agents...",
-      "purchaseHeader": "Acquire more DICICOIN through official channels...",
+      "securityDesc": "DICICOINs can only be acquired through Authorized Sales Agents of Dicilo. Each transaction is backed by unique digital signatures to guarantee your ownership.",
+      "purchaseHeader": "Acquire more DICICOIN through official channels of Dicilo.",
       "purchaseTitle": "Acquire DICICOIN",
-      "purchaseDesc": "Increasing your balance allows you to access greater strategic benefits...",
+      "purchaseDesc": "Increasing your balance allows you to access greater strategic benefits, special rewards, and exclusive participation in the ecosystem.",
       "historyTitle": "History and Certificates",
-      "historyDesc": "View your full transaction history and digital ownership certificates...",
+      "historyDesc": "View your full DiciCoin transaction history at any time and access your digital ownership certificates.",
+      "viewHistory": "View History",
       "howTo": "How does it work?",
       "learnMore": "Learn about DiciCoin",
       "readGuide": "Read Guide",
       "commingSoon": "Reserve your DiciCoin",
       "readMore": "Read more",
-      "walletDescription": "Your wallet and rewards center."
+      "walletDescription": "Your wallet and rewards center.",
+      "security": {
+        "p1": "DICICOINs can be acquired exclusively through sales points duly accredited and authorized by Dicilo.",
+        "p2": "To protect the community, maintain transparency, and ensure the authenticity of every single coin, purchases via unauthorized or misleading providers will not be recognized.",
+        "p3": "Each DICICOIN is issued with a sealed license, a unique serial number, and a personal registration. This registration establishes a digital, system-internal proof of assignment within the Dicilo ecosystem and does not constitute a transferable financial or property title in the legal sense.",
+        "p4": "DICICOINs can be transferred between users. However, eligibility to participate in potential future conversion, unlocking, or access processes is reserved exclusively for the person who is listed at that time as the officially registered holder within the Dicilo system.",
+        "p5": "Participation in such future processes takes place exclusively under consideration of the respective applicable legal, corporate, and structural frameworks."
+      },
+      "info": {
+        "title": "Value, Scarcity, and Future Vision",
+        "intro1": "DICICOIN has been conceived as a physical commemorative, limited, and collectible coin that represents early participation within the international Dicilo ecosystem.",
+        "intro2": "Each DICICOIN symbolizes vision, commitment, and belonging to a global community working to connect people, businesses, and opportunities through technology, trust, and collaboration.",
+        "mintingTitle": "A Limited Worldwide Minting",
+        "mintingLimit": "The total minting of DICICOIN is permanently limited to:",
+        "mintingWorldwide": "10,000,000 coins worldwide.",
+        "mintingNoMore": "No additional DICICOINs will be minted once this quantity is reached.",
+        "mintingDistribution": "To ensure a balanced distribution among regions, the minting has been divided equally among the five participating continents:",
+        "continents": {
+          "america": "America: 2,000,000 DICICOIN",
+          "europe": "Europe: 2,000,000 DICICOIN",
+          "asia": "Asia: 2,000,000 DICICOIN",
+          "africa": "Africa: 2,000,000 DICICOIN",
+          "oceania": "Oceania: 2,000,000 DICICOIN"
+        },
+        "mintingNoAdvantage": "This structure ensures that no continent has an advantage over another in terms of initial availability.",
+        "mintingReduces": "Each coin issued reduces the amount available within its corresponding continent, progressively strengthening the exclusivity of the remaining issues.",
+        "securityTitle": "Authenticity and Protection",
+        "securityIntro": "Each DICICOIN incorporates multiple authentication and security mechanisms:",
+        "securityFeatures": {
+          "serial": "Unique and unrepeatable serial number.",
+          "certificate": "Certificate of ownership.",
+          "registry": "Official owner registry.",
+          "signature": "Digital authentication signature.",
+          "verification": "Physical and digital verification systems.",
+          "elements": "Exclusive identification elements linked to each issue."
+        },
+        "securityOutro": "No two DICICOINs are identical. Each coin possesses its own identity within the Dicilo ecosystem.",
+        "valueTitle": "Reference Value",
+        "valueCurrent": "The current emission value of a DICICOIN is 5,000 €.",
+        "valueFuture": "As availability decreases and the Dicilo ecosystem continues to grow, future available issues may be offered at higher values determined by the company, in accordance with the project's evolution, existing demand, and the remaining availability within each continent.",
+        "valueExclusivity": "The acquisition of a DICICOIN represents access to a limited edition that cannot be expanded once the allocated stock is exhausted.",
+        "participationTitle": "Early Participation",
+        "participationIntro": "DICICOINs have been created to recognize those who decide to be part of the project from its early stages.",
+        "participationFuture": "In the future, and always subject to compliance with applicable corporate, legal, and regulatory requirements, the company may enable specific processes for participation, conversion, or exchange for registered DICICOIN holders.",
+        "participationOutro": "Any future mechanism will be officially communicated and will be subject to the conditions in force at the time of its implementation.",
+        "moreTitle": "More than a Coin",
+        "moreIntro": "DICICOIN does not only represent a physical collector's piece.",
+        "moreHighlights": {
+          "p1": "It represents the decision to participate from the beginning.",
+          "p2": "It represents trust in a global vision.",
+          "p3": "It represents the opportunity to be part of a limited international community.",
+          "p4": "It represents a piece of Dicilo's founding history."
+        },
+        "moreLimit": "Only 10,000,000 will ever exist. Not one more. Not one less.",
+        "moreOutro": "And each one will have a story, an owner, and a place within the growth of the Dicilo ecosystem."
+      }
     },
     "chatGroup": {
       "connect": "Connect with our global community.",
