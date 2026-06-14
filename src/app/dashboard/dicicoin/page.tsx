@@ -48,7 +48,7 @@ export default function DiciCoinUserPage() {
                 userData={userData}
                 walletData={walletData}
                 onViewHistory={() => {
-                    router.push('/dashboard?view=tickets');
+                    router.push('/dashboard?view=wallet');
                 }}
             />
         </DashboardLayout>

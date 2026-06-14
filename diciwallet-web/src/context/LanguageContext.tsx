@@ -57,6 +57,15 @@ const dictionary: Record<Language, Record<string, string>> = {
     'dashboard.action_market': 'Mercado de Participaciones',
     'dashboard.legal_title': 'INFORMACIÓN LEGAL Y DE RIESGO',
     'dashboard.legal_text': 'DiciCoin es un activo físico coleccionable, crédito digital interno, acceso premium y participación exclusiva dentro del ecosistema digital cerrado Dicilo. No constituye en ningún caso una inversión financiera regulada ni garantizada. No se promete ningún tipo de rentabilidad económica futura, dividendos ni recompra obligatoria. Su valor radica en la exclusividad física y la utilidad de canje digital interna en Dicilo.net.',
+    'dashboard.mediaTitle': 'Materiales de Presentación',
+    'dashboard.mediaDesc': 'Escucha y mira el material explicativo oficial que preparamos para DiciCoin.',
+    'dashboard.audioTitle': 'DiciCoin: La llave al ecosistema Dicilo',
+    'dashboard.audioDesc': 'Audio de presentación detallado.',
+    'dashboard.audioBtn': 'Escuchar Audio',
+    'dashboard.videoTitle': 'DiciCoin + Dicilo',
+    'dashboard.videoDesc': 'Video promocional sobre el ecosistema.',
+    'dashboard.videoBtn': 'Ver Video',
+    'dashboard.limit': 'El límite máximo permitido es de 2.000 DICICOIN por usuario. Para montos mayores, se requiere una verificación de identidad adicional (KYC) conforme a las regulaciones vigentes.',
 
     // Wallet
     'wallet.title': 'Mi Wallet Digital',
@@ -453,6 +462,15 @@ const dictionary: Record<Language, Record<string, string>> = {
     'dashboard.action_market': 'Marketplace',
     'dashboard.legal_title': 'LEGAL AND RISK INFORMATION',
     'dashboard.legal_text': 'DiciCoin is a physical collectible asset, internal digital credit, premium access, and exclusive participation within the closed digital ecosystem Dicilo. Under no circumstances does it constitute a regulated or guaranteed financial investment. No future economic profitability, dividends, or mandatory buybacks are promised. Its value lies in the physical exclusivity and internal digital exchange utility on Dicilo.net.',
+    'dashboard.mediaTitle': 'Presentation Materials',
+    'dashboard.mediaDesc': 'Listen to and watch the official explanatory materials prepared for DiciCoin.',
+    'dashboard.audioTitle': 'DiciCoin: The Key to the Dicilo Ecosystem',
+    'dashboard.audioDesc': 'Detailed presentation audio in MP3 format.',
+    'dashboard.audioBtn': 'Listen to Audio',
+    'dashboard.videoTitle': 'DiciCoin + Dicilo',
+    'dashboard.videoDesc': 'Promotional video about the ecosystem.',
+    'dashboard.videoBtn': 'Watch Video',
+    'dashboard.limit': 'The maximum limit allowed is 2,000 DICICOIN per user. For higher amounts, additional identity verification (KYC) is required in accordance with current regulations.',
 
     // Wallet
     'wallet.title': 'My Digital Wallet',
@@ -849,6 +867,15 @@ const dictionary: Record<Language, Record<string, string>> = {
     'dashboard.action_market': 'Marktplatz',
     'dashboard.legal_title': 'RECHTLICHE HINWEISE UND RISIKOINFORMATIONEN',
     'dashboard.legal_text': 'DiciCoin is ein physisches Sammlerstück, ein internes digitales Guthaben, ein Premium-Zugang und eine exklusive Beteiligung innerhalb des geschlossenen digitalen Ökosystems Dicilo. Es stellt unter keinen Umständen eine regulierte oder garantierte Finanzinvestition dar. Es wird keine zukünftige wirtschaftliche Rentabilität, Dividenden oder eine obligatorische Rückkaufverpflichtung versprochen. Sein Wert liegt in der physischen Exklusivität und dem internen digitalen Nutzen auf Dicilo.net.',
+    'dashboard.mediaTitle': 'Präsentationsmaterial',
+    'dashboard.mediaDesc': 'Hören und sehen Sie sich das offizielle Erklärungsmaterial an, das wir für DiciCoin vorbereitet haben.',
+    'dashboard.audioTitle': 'DiciCoin als VIP-Mitgliedskarte',
+    'dashboard.audioDesc': 'Detailliertes Audio im MP3-Format.',
+    'dashboard.audioBtn': 'Audio anhören',
+    'dashboard.videoTitle': 'DiciCoin & Dicilo als Oekosystem',
+    'dashboard.videoDesc': 'Werbevideo über das Ökosystem.',
+    'dashboard.videoBtn': 'Video ansehen',
+    'dashboard.limit': 'Das maximale Limit beträgt 2.000 DICICOIN pro Benutzer. Für höhere Beträge ist eine zusätzliche Identitätsprüfung (KYC) gemäß den geltenden Vorschriften erforderlich.',
 
     // Wallet
     'wallet.title': 'Meine digitale Wallet',

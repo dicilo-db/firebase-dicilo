@@ -15,7 +15,10 @@ import {
   AlertCircle,
   Clock,
   TrendingUp,
-  Percent
+  Percent,
+  Volume2,
+  Video,
+  X
 } from 'lucide-react';
 
 interface Reservation {
@@ -30,9 +33,19 @@ interface Reservation {
 
 export default function DashboardPage() {
   const { user, wallet, profile } = useAuth();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [loadingRes, setLoadingRes] = useState(true);
+  const [activeMediaModal, setActiveMediaModal] = useState<'audio' | 'video' | null>(null);
+
+  // Seleccion dinamica de URLs de media basada en el idioma activo
+  const audioUrl = language === 'DE'
+    ? 'https://wp.dicilo.net/wp-content/uploads/2026/06/DiciCoin_als_VIP-Mitgliedskarte.mp3'
+    : 'https://wp.dicilo.net/wp-content/uploads/2026/06/DiciCoin-la-llave-al-ecosistema-Dicilo.mp3';
+
+  const videoUrl = language === 'DE'
+    ? 'https://wp.dicilo.net/wp-content/uploads/2026/06/DiciCoin-Dicilo-als-Oekosystem_web.mp4'
+    : 'https://wp.dicilo.net/wp-content/uploads/2026/06/DiciCoin-Dicilo-web.mp4';
 
   useEffect(() => {
     if (!user) return;
@@ -240,6 +253,155 @@ export default function DashboardPage() {
             </div>
           </div>
         </div>
+
+        {/* Mediateca de Presentación */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '16px' }}>
+          <div>
+            <h3 style={{ fontSize: '20px', fontWeight: 800 }}>{t('dashboard.mediaTitle')}</h3>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '14px', marginTop: '4px' }}>{t('dashboard.mediaDesc')}</p>
+          </div>
+
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gap: '24px'
+          }}>
+            {/* Audio Presentation Card */}
+            <div className="glass" style={{
+              padding: '24px',
+              borderRadius: 'var(--radius-md)',
+              borderLeft: '4px solid var(--gold-primary)',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              gap: '20px'
+            }}>
+              <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+                <div style={{
+                  width: '44px',
+                  height: '44px',
+                  borderRadius: '12px',
+                  background: 'rgba(212, 175, 55, 0.1)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'var(--gold-primary)'
+                }}>
+                  <Volume2 size={22} />
+                </div>
+                <div>
+                  <h4 style={{ fontSize: '16px', fontWeight: 700 }}>{t('dashboard.audioTitle')}</h4>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '13px', marginTop: '2px' }}>{t('dashboard.audioDesc')}</p>
+                </div>
+              </div>
+              <button 
+                onClick={() => setActiveMediaModal('audio')}
+                className="btn-gold" 
+                style={{ width: '100%', padding: '12px 20px', fontSize: '14px' }}
+              >
+                {t('dashboard.audioBtn')}
+              </button>
+            </div>
+
+            {/* Video Presentation Card */}
+            <div className="glass" style={{
+              padding: '24px',
+              borderRadius: 'var(--radius-md)',
+              borderLeft: '4px solid #EB5757',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              gap: '20px'
+            }}>
+              <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+                <div style={{
+                  width: '44px',
+                  height: '44px',
+                  borderRadius: '12px',
+                  background: 'rgba(235, 87, 87, 0.1)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#EB5757'
+                }}>
+                  <Video size={22} />
+                </div>
+                <div>
+                  <h4 style={{ fontSize: '16px', fontWeight: 700 }}>{t('dashboard.videoTitle')}</h4>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '13px', marginTop: '2px' }}>{t('dashboard.videoDesc')}</p>
+                </div>
+              </div>
+              <button 
+                onClick={() => setActiveMediaModal('video')}
+                className="btn-blue" 
+                style={{ width: '100%', padding: '12px 20px', fontSize: '14px', background: 'linear-gradient(135deg, #EB5757 0%, #C0392B 100%)', boxShadow: '0 4px 15px rgba(235, 87, 87, 0.3)' }}
+              >
+                {t('dashboard.videoBtn')}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Modal: Audio Playback */}
+        {activeMediaModal === 'audio' && (
+          <div style={{
+            position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+            background: 'rgba(0,0,0,0.85)', display: 'flex', justifyContent: 'center', alignItems: 'center',
+            zIndex: 50, padding: '24px'
+          }}>
+            <div className="glass-gold" style={{
+              width: '100%', maxWidth: '500px', borderRadius: 'var(--radius-md)',
+              padding: '32px', display: 'flex', flexDirection: 'column', gap: '24px',
+              position: 'relative'
+            }}>
+              <button 
+                onClick={() => setActiveMediaModal(null)} 
+                style={{ position: 'absolute', top: '20px', right: '20px', background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer' }}
+              >
+                <X size={20} />
+              </button>
+              <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                <Volume2 size={24} style={{ color: 'var(--gold-primary)' }} />
+                <h3 style={{ fontSize: '18px', fontWeight: 700 }}>{t('dashboard.audioTitle')}</h3>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px', padding: '10px 0' }}>
+                <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: 'rgba(212, 175, 55, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Coins size={36} style={{ color: 'var(--gold-primary)' }} />
+                </div>
+                <audio controls src={audioUrl} style={{ width: '100%' }} autoPlay />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Modal: Video Playback */}
+        {activeMediaModal === 'video' && (
+          <div style={{
+            position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+            background: 'rgba(0,0,0,0.85)', display: 'flex', justifyContent: 'center', alignItems: 'center',
+            zIndex: 50, padding: '24px'
+          }}>
+            <div className="glass-gold" style={{
+              width: '100%', maxWidth: '720px', borderRadius: 'var(--radius-md)',
+              padding: '32px', display: 'flex', flexDirection: 'column', gap: '24px',
+              position: 'relative'
+            }}>
+              <button 
+                onClick={() => setActiveMediaModal(null)} 
+                style={{ position: 'absolute', top: '20px', right: '20px', background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer' }}
+              >
+                <X size={20} />
+              </button>
+              <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                <Video size={24} style={{ color: '#EB5757' }} />
+                <h3 style={{ fontSize: '18px', fontWeight: 700 }}>{t('dashboard.videoTitle')}</h3>
+              </div>
+              <div style={{ padding: '10px 0' }}>
+                <video controls src={videoUrl} style={{ width: '100%', borderRadius: 'var(--radius-sm)' }} autoPlay />
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Legal Disclaimer Box (Extremely Important) */}
         <div className="glass" style={{
