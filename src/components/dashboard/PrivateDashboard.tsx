@@ -461,7 +461,7 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
             case 'invite':
                 return <InviteFriendSection uniqueCode={formData.uniqueCode} referrals={formData.referrals} />;
             case 'dicicoin':
-                return <DiciCoinSection userData={formData} onViewHistory={() => handleViewChange('tickets')} />;
+                return <DiciCoinSection userData={formData} walletData={walletData} onViewHistory={() => handleViewChange('tickets')} />;
             case 'tickets':
                 return <TicketsManager />;
             case 'ads-manager':

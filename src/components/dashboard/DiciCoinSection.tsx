@@ -17,25 +17,28 @@ import { useAuth } from '@/context/AuthContext';
 
 interface DiciCoinSectionProps {
     userData?: any;
+    walletData?: any;
     onViewHistory?: () => void; // Optional: Callback if history requires view switching
 }
 
-export function DiciCoinSection({ userData, onViewHistory }: DiciCoinSectionProps) {
+export function DiciCoinSection({ userData, walletData, onViewHistory }: DiciCoinSectionProps) {
     const { t } = useTranslation('common');
     const { user } = useAuth();
     const [balance, setBalance] = useState(0);
 
     useEffect(() => {
-        if (user?.uid) {
+        if (walletData && typeof walletData.balanceDC === 'number') {
+            setBalance(walletData.balanceDC / 5000);
+        } else if (user?.uid) {
             import('@/app/actions/wallet').then(({ getWalletData }) => {
                 getWalletData(user.uid).then((data) => {
                     if (data && typeof data.balanceDC === 'number') {
-                        setBalance(data.balanceDC);
+                        setBalance(data.balanceDC / 5000);
                     }
                 });
             });
         }
-    }, [user?.uid]);
+    }, [walletData, user?.uid]);
 
     return (
         <div className="flex flex-col space-y-6 animate-in fade-in duration-500">
@@ -66,7 +69,7 @@ export function DiciCoinSection({ userData, onViewHistory }: DiciCoinSectionProp
                             <div className="bg-white/10 p-4 rounded-xl backdrop-blur-sm border border-white/10 min-w-[200px]">
                                 <p className="text-sm font-medium text-amber-200 mb-1">{t('dashboard.dicicoin.yourBalance', 'Tu Balance')}</p>
                                 <div className="flex items-baseline gap-2">
-                                    <span className="text-5xl font-bold text-white">{balance}</span>
+                                    <span className="text-5xl font-bold text-white">{balance.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 4 })}</span>
                                     <span className="text-xl font-medium text-amber-400">{t('dashboard.dicicoin.currency', 'DiciCoins')}</span>
                                 </div>
                             </div>
