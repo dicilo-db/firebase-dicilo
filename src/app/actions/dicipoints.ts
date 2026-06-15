@@ -479,13 +479,13 @@ export async function generateReferralAuditReport(startDateStr: string, endDateS
             
             if (refRole === 'team_leader' || refRole === 'admin' || refRole === 'superadmin' || refRole === 'team_office') {
                 rateEUR = 0.50;
-                rateDP = 5.0;
+                rateDP = 50.0;
             } else if (refRole === 'freelancer') {
                 rateEUR = 0.25;
-                rateDP = 2.5;
+                rateDP = 25.0;
             } else {
-                rateEUR = 0.25; // As default, let's also give users 0.25 if they invited someone, since it was 0.25. (Or we can use 0, but user said 'si YA eran freelancer 0.25', usually everyone gets the base 2.5 DP. Let's use 0.25 to be fair, or 0.00 if strictly only FL. User said "si ya eran freelancer 0.25", meaning standard might be different or same. I'll use 0.25 for all).
-                rateDP = 2.5;
+                rateEUR = 0.25;
+                rateDP = 25.0;
             }
 
             const totalInvited = invitedUsers.length;

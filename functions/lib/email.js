@@ -135,6 +135,7 @@ function sendMail(input) {
                 to: input.to,
                 subject: input.subject,
                 html: input.html,
+                attachments: input.attachments,
             });
             if (logDocRef) {
                 yield logDocRef.update({

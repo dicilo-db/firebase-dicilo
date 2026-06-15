@@ -2,7 +2,7 @@ import nodemailer from 'nodemailer';
 import { decrypt } from './encryption';
 import * as admin from 'firebase-admin';
 
-export type MailInput = { to: string; subject: string; html: string };
+export type MailInput = { to: string; subject: string; html: string; attachments?: any[] };
 
 // Helper to clean environment variables (remove potential quotes)
 const cleanEnv = (val: string | undefined) => {
@@ -94,6 +94,7 @@ export async function sendMail(input: MailInput) {
       to: input.to,
       subject: input.subject,
       html: input.html,
+      attachments: input.attachments,
     });
 
     if (logDocRef) {
