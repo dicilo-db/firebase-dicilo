@@ -40,8 +40,14 @@ export default function AuditoriaPage() {
         return false;
     }, [currentUser]);
 
-    const handleResetBalance = async (targetUid: string, targetName: string, currentBalance: number) => {
-        if (!confirm(`¿Confirmas que has realizado el pago de €${currentBalance.toFixed(2)} a ${targetName} y deseas restablecer su balance de Tarjeta Verde a 0?\nSe enviará una notificación por email a Nilo.`)) {
+    const handleResetBalance = async (targetUid: string, targetName: string, currentBalance: number, country: string = '') => {
+        const isEurope = ['DE', 'ES', 'AT', 'CH', 'FR', 'IT', 'PT', 'BE', 'NL', 'LU'].some(c => country.toUpperCase().includes(c)) ||
+            country.toLowerCase().includes('alemania') ||
+            country.toLowerCase().includes('españa') ||
+            country.toLowerCase().includes('hamburg');
+        const currencySymbol = isEurope ? '€' : '$';
+
+        if (!confirm(`¿Confirmas que has realizado el pago de ${currencySymbol}${currentBalance.toFixed(2)} a ${targetName} y deseas restablecer su balance de Tarjeta Verde a 0?\nSe enviará una notificación por email a Nilo.`)) {
             return;
         }
         
@@ -98,17 +104,25 @@ export default function AuditoriaPage() {
     const handleExportCSV = async () => {
         try {
             const Papa = await import('papaparse');
-            const csvData = filteredData.map(ref => ({
-                'Referidor ID': ref.referrerId,
-                'Referidor Nombre': ref.referrerName,
-                'Rol': ref.referrerRole,
-                'País': ref.referrerCountry || '',
-                'Ciudad': ref.referrerCity || '',
-                'Total Traídos': ref.totalBrought,
-                'Activos': ref.activeCount,
-                'Tarjeta Negra (DP)': ref.blackCardBalance,
-                'Tarjeta Verde (€)': ref.greenCardBalance.toFixed(2),
-            }));
+            const csvData = filteredData.map(ref => {
+                const country = ref.referrerCountry || '';
+                const isEurope = ['DE', 'ES', 'AT', 'CH', 'FR', 'IT', 'PT', 'BE', 'NL', 'LU'].some(c => country.toUpperCase().includes(c)) ||
+                    country.toLowerCase().includes('alemania') ||
+                    country.toLowerCase().includes('españa') ||
+                    country.toLowerCase().includes('hamburg');
+                const currencySymbol = isEurope ? '€' : '$';
+                return {
+                    'Referidor ID': ref.referrerId,
+                    'Referidor Nombre': ref.referrerName,
+                    'Rol': ref.referrerRole,
+                    'País': ref.referrerCountry || '',
+                    'Ciudad': ref.referrerCity || '',
+                    'Total Traídos': ref.totalBrought,
+                    'Activos': ref.activeCount,
+                    'Tarjeta Negra (DP)': ref.blackCardBalance,
+                    'Tarjeta Verde': `${currencySymbol}${ref.greenCardBalance.toFixed(2)}`,
+                };
+            });
             
             const csv = Papa.default.unparse(csvData);
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -140,14 +154,22 @@ export default function AuditoriaPage() {
             doc.text(`Total Registros: ${totalRegistros} | Activas: ${cuentasActivas} | Inactivas: ${cuentasInactivas}`, 14, 28);
             
             const tableColumn = ["Referidor", "Rol/Ubicación", "Traídos", "Activos", "Tarjeta Negra", "Tarjeta Verde"];
-            const tableRows = filteredData.map(ref => [
-                `${ref.referrerName}\n(${ref.referrerId})`,
-                `${ref.referrerRole.toUpperCase()}\n${ref.referrerCountry || ''} ${ref.referrerCity || ''}`,
-                ref.totalBrought.toString(),
-                ref.activeCount.toString(),
-                `${ref.blackCardBalance} DP`,
-                `€${ref.greenCardBalance.toFixed(2)}`
-            ]);
+            const tableRows = filteredData.map(ref => {
+                const country = ref.referrerCountry || '';
+                const isEurope = ['DE', 'ES', 'AT', 'CH', 'FR', 'IT', 'PT', 'BE', 'NL', 'LU'].some(c => country.toUpperCase().includes(c)) ||
+                    country.toLowerCase().includes('alemania') ||
+                    country.toLowerCase().includes('españa') ||
+                    country.toLowerCase().includes('hamburg');
+                const currencySymbol = isEurope ? '€' : '$';
+                return [
+                    `${ref.referrerName}\n(${ref.referrerId})`,
+                    `${ref.referrerRole.toUpperCase()}\n${ref.referrerCountry || ''} ${ref.referrerCity || ''}`,
+                    ref.totalBrought.toString(),
+                    ref.activeCount.toString(),
+                    `${ref.blackCardBalance} DP`,
+                    `${currencySymbol}${ref.greenCardBalance.toFixed(2)}`
+                ];
+            });
 
             autoTable(doc, {
                 head: [tableColumn],
@@ -210,7 +232,26 @@ export default function AuditoriaPage() {
     const totalRegistros = filteredData.reduce((acc, curr) => acc + curr.totalBrought, 0);
     const cuentasActivas = filteredData.reduce((acc, curr) => acc + curr.activeCount, 0);
     const cuentasInactivas = filteredData.reduce((acc, curr) => acc + curr.inactiveCount, 0);
-    const dineroPorPagar = filteredData.reduce((acc, curr) => acc + curr.greenCardBalance, 0);
+    
+    const eurosPorPagar = filteredData
+        .filter(ref => {
+            const country = ref.referrerCountry || '';
+            return ['DE', 'ES', 'AT', 'CH', 'FR', 'IT', 'PT', 'BE', 'NL', 'LU'].some(c => country.toUpperCase().includes(c)) ||
+                country.toLowerCase().includes('alemania') ||
+                country.toLowerCase().includes('españa') ||
+                country.toLowerCase().includes('hamburg');
+        })
+        .reduce((acc, curr) => acc + curr.greenCardBalance, 0);
+
+    const dolaresPorPagar = filteredData
+        .filter(ref => {
+            const country = ref.referrerCountry || '';
+            return !(['DE', 'ES', 'AT', 'CH', 'FR', 'IT', 'PT', 'BE', 'NL', 'LU'].some(c => country.toUpperCase().includes(c)) ||
+                country.toLowerCase().includes('alemania') ||
+                country.toLowerCase().includes('españa') ||
+                country.toLowerCase().includes('hamburg'));
+        })
+        .reduce((acc, curr) => acc + curr.greenCardBalance, 0);
 
     if (loading || authLoading) {
         return (
@@ -289,7 +330,7 @@ export default function AuditoriaPage() {
                         <DollarSign className="h-4 w-4 text-blue-500" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold text-green-600">€{dineroPorPagar.toFixed(2)}</div>
+                        <div className="text-2xl font-bold text-green-600">€{eurosPorPagar.toFixed(2)} / ${dolaresPorPagar.toFixed(2)}</div>
                     </CardContent>
                 </Card>
             </div>
@@ -372,7 +413,7 @@ export default function AuditoriaPage() {
                                 <TableHead className="text-center">Total Traídos</TableHead>
                                 <TableHead className="text-center">Activos</TableHead>
                                 <TableHead className="text-right">Tarjeta Negra (DP)</TableHead>
-                                <TableHead className="text-right text-green-600 font-bold">Tarjeta Verde (€)</TableHead>
+                                <TableHead className="text-right text-green-600 font-bold">Tarjeta Verde</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -407,13 +448,23 @@ export default function AuditoriaPage() {
                                         </TableCell>
                                         <TableCell className="text-right">
                                             <div className="flex items-center justify-end gap-2 font-bold text-green-600">
-                                                <span>€{ref.greenCardBalance.toFixed(2)}</span>
+                                                <span>
+                                                    {(() => {
+                                                        const country = ref.referrerCountry || '';
+                                                        const isEurope = ['DE', 'ES', 'AT', 'CH', 'FR', 'IT', 'PT', 'BE', 'NL', 'LU'].some(c => country.toUpperCase().includes(c)) ||
+                                                            country.toLowerCase().includes('alemania') ||
+                                                            country.toLowerCase().includes('españa') ||
+                                                            country.toLowerCase().includes('hamburg');
+                                                        return isEurope ? '€' : '$';
+                                                    })()}
+                                                    {ref.greenCardBalance.toFixed(2)}
+                                                </span>
                                                 {ref.greenCardBalance > 0 && canProcessReset && (
                                                     <Button
                                                         size="sm"
                                                         variant="outline"
                                                         className="h-7 px-2 border-green-600 text-green-600 hover:bg-green-50 hover:text-green-700 flex items-center gap-1 font-medium transition-colors"
-                                                        onClick={() => handleResetBalance(ref.referrerId, ref.referrerName, ref.greenCardBalance)}
+                                                        onClick={() => handleResetBalance(ref.referrerId, ref.referrerName, ref.greenCardBalance, ref.referrerCountry)}
                                                         disabled={isResetting === ref.referrerId}
                                                         title="Marcar como pagado y colocar en 0"
                                                     >

@@ -574,22 +574,20 @@ export const checkFreelancerGreenCard = onDocumentUpdated(
 
     // Check if balance is >= 20 (in EUR or USD) and we haven't notified them yet
     if ((eurBalanceAfter >= 20 || usdBalanceAfter >= 20) && !notified20Euro) {
-      // Fetch user profile to verify they are a freelancer
+      // Fetch user profile to verify it exists
       const profileSnap = await db.collection('private_profiles').doc(uid).get();
       if (!profileSnap.exists) return;
 
       const profileData = profileSnap.data();
-      if (profileData?.role !== 'freelancer') return;
-
       const email = profileData?.email;
-      const name = profileData?.name || profileData?.firstName || 'Freelancer';
+      const name = profileData?.name || profileData?.firstName || 'Colaborador';
 
       if (!email) {
         logger.warn(`User ${uid} has >= 20 but no email found. Skipping notification.`);
         return;
       }
 
-      logger.info(`Freelancer ${uid} reached 20 $ o €! Sending notifications...`);
+      logger.info(`Collaborator ${uid} reached 20 $ o €! Sending notifications...`);
 
       // 1. Update the wallet FIRST to prevent duplicate triggers if the email fails or takes long
       await event.data?.after.ref.update({ notified20Euro: true });
@@ -611,14 +609,14 @@ export const checkFreelancerGreenCard = onDocumentUpdated(
 
       const emailHtmlAdmin = `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2>Notificación de Balance de Freelancer</h2>
-            <p>El freelancer <strong>${name}</strong> (Email: ${email}, UID: ${uid}) ha alcanzado un balance en su Tarjeta Verde de <strong>${balanceAmount.toFixed(2)} ${currencySymbol}</strong>.</p>
+            <h2>Notificación de Balance de Colaborador</h2>
+            <p>El colaborador/referidor <strong>${name}</strong> (Email: ${email}, UID: ${uid}, Rol: ${profileData?.role || 'user'}) ha alcanzado un balance en su Tarjeta Verde de <strong>${balanceAmount.toFixed(2)} ${currencySymbol}</strong>.</p>
             <p>Por favor, revisa su cuenta en el panel de administración, ya que está habilitado para realizar una transacción.</p>
         </div>
       `;
 
       try {
-        // Send email to Freelancer
+        // Send email to Collaborator
         await sendMail({
           to: email,
           subject: `¡Felicidades! Has alcanzado 20 ${currencySymbol} en tu Tarjeta Verde`,
@@ -628,13 +626,13 @@ export const checkFreelancerGreenCard = onDocumentUpdated(
         // Send email to Administration
         await sendMail({
           to: 'support@dicilo.net',
-          subject: `Aviso: El freelancer ${name} ha alcanzado 20 ${currencySymbol}`,
+          subject: `Aviso: El colaborador ${name} ha alcanzado 20 ${currencySymbol}`,
           html: emailHtmlAdmin,
         });
         
-        logger.info(`Successfully sent 20 Euro notification emails for freelancer ${uid}`);
+        logger.info(`Successfully sent 20 Euro/USD notification emails for collaborator ${uid}`);
       } catch (error) {
-        logger.error(`Error sending 20 Euro emails for ${uid}:`, error);
+        logger.error(`Error sending 20 Euro/USD emails for ${uid}:`, error);
         // If email fails, revert the flag so it triggers again on next update
         await event.data?.after.ref.update({ notified20Euro: admin.firestore.FieldValue.delete() });
       }

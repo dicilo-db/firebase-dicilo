@@ -147,9 +147,19 @@ export async function POST(request: Request) {
                                     if (level1.role === 'freelancer') l1Money = 0.25;
                                     else if (isPro) l1Money = 0.50;
 
+                                    const l1Country = level1.country || '';
+                                    const isL1Europe = ['DE', 'ES', 'AT', 'CH', 'FR', 'IT', 'PT', 'BE', 'NL', 'LU'].some(c => 
+                                        l1Country.toUpperCase().includes(c)
+                                    ) || l1Country.toLowerCase().includes('alemania') || l1Country.toLowerCase().includes('españa') || l1Country.toLowerCase().includes('hamburg');
+
                                     if (l1Money > 0) {
-                                        updateData.eurBalance = admin.firestore.FieldValue.increment(l1Money);
-                                        updateData.totalEurEarned = admin.firestore.FieldValue.increment(l1Money);
+                                        if (isL1Europe) {
+                                            updateData.eurBalance = admin.firestore.FieldValue.increment(l1Money);
+                                            updateData.totalEurEarned = admin.firestore.FieldValue.increment(l1Money);
+                                        } else {
+                                            updateData.usdBalance = admin.firestore.FieldValue.increment(l1Money);
+                                            updateData.totalUsdEarned = admin.firestore.FieldValue.increment(l1Money);
+                                        }
                                     }
                                     
                                     t.set(walletRef, updateData, { merge: true });
@@ -171,7 +181,7 @@ export async function POST(request: Request) {
                                         t.set(moneyTrxRef, {
                                             userId: level1.uid,
                                             amount: l1Money,
-                                            currency: 'EUR',
+                                            currency: isL1Europe ? 'EUR' : 'USD',
                                             type: 'REFERRAL_CASH_BONUS',
                                             description: `Bono en efectivo (Directo) por activación de ${registrationData.businessName || registrationData.firstName || 'Usuario'}`,
                                             relatedUserId: ownerUid,
@@ -188,17 +198,31 @@ export async function POST(request: Request) {
                                             const payout = deepMultipliers[i - 1]; // i=1 -> 0.01
                                             if (payout) {
                                                 const aWalletRef = db.collection('wallets').doc(ancestor.uid);
-                                                t.set(aWalletRef, {
-                                                    eurBalance: admin.firestore.FieldValue.increment(payout),
-                                                    totalEurEarned: admin.firestore.FieldValue.increment(payout),
+                                                
+                                                const aCountry = ancestor.country || '';
+                                                const isAncestorEurope = ['DE', 'ES', 'AT', 'CH', 'FR', 'IT', 'PT', 'BE', 'NL', 'LU'].some(c => 
+                                                    aCountry.toUpperCase().includes(c)
+                                                ) || aCountry.toLowerCase().includes('alemania') || aCountry.toLowerCase().includes('españa') || aCountry.toLowerCase().includes('hamburg');
+
+                                                const ancestorUpdate: any = {
                                                     updatedAt: admin.firestore.FieldValue.serverTimestamp()
-                                                }, { merge: true });
+                                                };
+
+                                                if (isAncestorEurope) {
+                                                    ancestorUpdate.eurBalance = admin.firestore.FieldValue.increment(payout);
+                                                    ancestorUpdate.totalEurEarned = admin.firestore.FieldValue.increment(payout);
+                                                } else {
+                                                    ancestorUpdate.usdBalance = admin.firestore.FieldValue.increment(payout);
+                                                    ancestorUpdate.totalUsdEarned = admin.firestore.FieldValue.increment(payout);
+                                                }
+
+                                                t.set(aWalletRef, ancestorUpdate, { merge: true });
 
                                                 const aTrxRef = db.collection('wallet_transactions').doc();
                                                 t.set(aTrxRef, {
                                                     userId: ancestor.uid,
                                                     amount: payout,
-                                                    currency: 'EUR',
+                                                    currency: isAncestorEurope ? 'EUR' : 'USD',
                                                     type: 'REFERRAL_MLM_DEEP_BONUS',
                                                     description: `Bono MLM (Nivel ${i + 1}) por activación de ${registrationData.businessName || registrationData.firstName || 'Usuario'}`,
                                                     relatedUserId: ownerUid,

@@ -470,25 +470,52 @@ export async function adminProcessManualPayment(
 
     // 5. Handle Cash (EUR / Prepaid Card)
     if (cashAmount !== 0) {
-        batch.set(walletRef, {
-            eurBalance: admin.firestore.FieldValue.increment(cashAmount)
-        }, { merge: true });
+        const country = userData?.country || '';
+        const isEurope = ['DE', 'ES', 'AT', 'CH', 'FR', 'IT', 'PT', 'BE', 'NL', 'LU'].some(c => 
+            country.toUpperCase().includes(c)
+        ) || country.toLowerCase().includes('alemania') || country.toLowerCase().includes('españa') || country.toLowerCase().includes('hamburg');
 
-        const cashTrxRef = db.collection('wallet_transactions').doc();
-        batch.set(cashTrxRef, {
-            userId: finalUid,
-            amount: cashAmount,
-            currency: 'EUR', // Mark as EUR transaction
-            type: 'MANUAL_CASH',
-            description: `${cashReason} - ${referenceNote}`,
-            adminId: 'SUPERADMIN',
-            timestamp: firestoreTimestamp,
-            meta: {
-                reasonCategory: cashReason,
-                manualNote: referenceNote,
-                source: 'CASH_REGISTER'
-            }
-        });
+        if (isEurope) {
+            batch.set(walletRef, {
+                eurBalance: admin.firestore.FieldValue.increment(cashAmount)
+            }, { merge: true });
+
+            const cashTrxRef = db.collection('wallet_transactions').doc();
+            batch.set(cashTrxRef, {
+                userId: finalUid,
+                amount: cashAmount,
+                currency: 'EUR', // Mark as EUR transaction
+                type: 'MANUAL_CASH',
+                description: `${cashReason} - ${referenceNote}`,
+                adminId: 'SUPERADMIN',
+                timestamp: firestoreTimestamp,
+                meta: {
+                    reasonCategory: cashReason,
+                    manualNote: referenceNote,
+                    source: 'CASH_REGISTER'
+                }
+            });
+        } else {
+            batch.set(walletRef, {
+                usdBalance: admin.firestore.FieldValue.increment(cashAmount)
+            }, { merge: true });
+
+            const cashTrxRef = db.collection('wallet_transactions').doc();
+            batch.set(cashTrxRef, {
+                userId: finalUid,
+                amount: cashAmount,
+                currency: 'USD', // Mark as USD transaction
+                type: 'MANUAL_CASH',
+                description: `${cashReason} - ${referenceNote}`,
+                adminId: 'SUPERADMIN',
+                timestamp: firestoreTimestamp,
+                meta: {
+                    reasonCategory: cashReason,
+                    manualNote: referenceNote,
+                    source: 'CASH_REGISTER'
+                }
+            });
+        }
     }
 
     // 6. Handle USD Cash
@@ -725,19 +752,19 @@ async function sendPayoutNotificationEmail(params: {
     auditorEmail: string;
 }) {
     const { targetName, targetEmail, targetCode, amount, auditorName, auditorEmail } = params;
-    const subject = `Notificación de Pago: Tarjeta Verde de ${targetName} (€${amount.toFixed(2)})`;
+    const currencySymbol = subject.includes('$') ? '$' : '€';
     const html = `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; background-color: #ffffff;">
-            <div style="text-align: center; margin-bottom: 24px;">
-                <h2 style="color: #2b6cb0; margin: 0;">Dicilo Red</h2>
-                <p style="color: #4a5568; font-size: 14px; margin-top: 4px;">Confirmación de Pago y Reseteo de Balance</p>
-            </div>
-            
-            <div style="background-color: #f7fafc; padding: 16px; border-radius: 6px; margin-bottom: 20px; border-left: 4px solid #48bb78;">
-                <p style="margin: 0; font-size: 15px; color: #2d3748;">
-                    Se ha procesado un pago de <strong>€${amount.toFixed(2)}</strong> y restablecido el balance de la Tarjeta Verde a <strong>€0.00</strong>.
-                </p>
-            </div>
+             <div style="text-align: center; margin-bottom: 24px;">
+                 <h2 style="color: #2b6cb0; margin: 0;">Dicilo Red</h2>
+                 <p style="color: #4a5568; font-size: 14px; margin-top: 4px;">Confirmación de Pago y Reseteo de Balance</p>
+             </div>
+             
+             <div style="background-color: #f7fafc; padding: 16px; border-radius: 6px; margin-bottom: 20px; border-left: 4px solid #48bb78;">
+                 <p style="margin: 0; font-size: 15px; color: #2d3748;">
+                     Se ha procesado un pago de <strong>${currencySymbol}${amount.toFixed(2)}</strong> y restablecido el balance de la Tarjeta Verde a <strong>${currencySymbol}0.00</strong>.
+                 </p>
+             </div>
             
             <table style="width: 100%; border-collapse: collapse; margin-bottom: 24px; font-size: 14px;">
                 <tr>
@@ -821,39 +848,6 @@ export async function resetGreenCardBalance(idToken: string, targetUid: string) 
             return { success: false, error: 'User has no wallet' };
         }
         
-        const walletData = walletDoc.data()!;
-        const eurBalance = walletData.eurBalance || 0;
-        if (eurBalance <= 0) {
-            return { success: false, error: 'El balance de la tarjeta verde ya es 0 o menor.' };
-        }
-        
-        // Reset balance to 0 in a transaction to log it
-        const batch = db.batch();
-        
-        batch.update(walletRef, {
-            eurBalance: 0,
-            updatedAt: admin.firestore.FieldValue.serverTimestamp()
-        });
-        
-        // Create a transaction log
-        const trxRef = db.collection('wallet_transactions').doc();
-        batch.set(trxRef, {
-            userId: targetUid,
-            amount: -eurBalance,
-            currency: 'EUR',
-            type: 'PAYOUT_RESET',
-            description: `Pago y reseteo de Tarjeta Verde por ${callerData.firstName} ${callerData.lastName || ''}`,
-            adminId: callerUid,
-            timestamp: admin.firestore.FieldValue.serverTimestamp(),
-            meta: {
-                previousBalance: eurBalance,
-                action: 'PAYOUT_RESET',
-                auditorName: `${callerData.firstName} ${callerData.lastName || ''}`.trim()
-            }
-        });
-        
-        await batch.commit();
-        
         // Send notification email to support@dicilo.net
         // Let's fetch target profile for details
         const targetDoc = await db.collection('private_profiles').doc(targetUid).get();
@@ -861,24 +855,74 @@ export async function resetGreenCardBalance(idToken: string, targetUid: string) 
         const targetName = targetData ? `${targetData.firstName} ${targetData.lastName || ''}`.trim() : 'Desconocido';
         const targetEmail = targetData?.email || 'N/A';
         const targetCode = targetData?.uniqueCode || 'N/A';
+        const country = targetData?.country || '';
+        
+        const isEurope = ['DE', 'ES', 'AT', 'CH', 'FR', 'IT', 'PT', 'BE', 'NL', 'LU'].some(c => 
+            country.toUpperCase().includes(c)
+        ) || country.toLowerCase().includes('alemania') || country.toLowerCase().includes('españa') || country.toLowerCase().includes('hamburg');
+        
+        const currency = isEurope ? 'EUR' : 'USD';
+        const walletData = walletDoc.data()!;
+        const eurBalance = walletData.eurBalance || 0;
+        const usdBalance = walletData.usdBalance || 0;
+        const amount = isEurope ? eurBalance : usdBalance;
+        
+        if (amount <= 0) {
+            return { success: false, error: `El balance de la tarjeta verde (${currency}) ya es 0 o menor.` };
+        }
+        
+        // Reset balance to 0 in a transaction to log it
+        const batch = db.batch();
+        
+        const updateFields: any = {
+            updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+            notified20Euro: admin.firestore.FieldValue.delete()
+        };
+        if (isEurope) {
+            updateFields.eurBalance = 0;
+        } else {
+            updateFields.usdBalance = 0;
+        }
+        
+        batch.update(walletRef, updateFields);
+        
+        // Create a transaction log
+        const trxRef = db.collection('wallet_transactions').doc();
+        batch.set(trxRef, {
+            userId: targetUid,
+            amount: -amount,
+            currency: currency,
+            type: 'PAYOUT_RESET',
+            description: `Pago y reseteo de Tarjeta Verde por ${callerData.firstName} ${callerData.lastName || ''}`,
+            adminId: callerUid,
+            timestamp: admin.firestore.FieldValue.serverTimestamp(),
+            meta: {
+                previousBalance: amount,
+                action: 'PAYOUT_RESET',
+                auditorName: `${callerData.firstName} ${callerData.lastName || ''}`.trim()
+            }
+        });
+        
+        await batch.commit();
         
         try {
+            const currencySymbol = isEurope ? '€' : '$';
             await sendPayoutNotificationEmail({
                 targetName,
                 targetEmail,
                 targetCode,
-                amount: eurBalance,
+                amount: amount,
                 auditorName: `${callerData.firstName} ${callerData.lastName || ''}`.trim(),
-                auditorEmail: callerData.email || 'N/A'
+                auditorEmail: callerData.email || 'N/A',
+                subject: `Notificación de Pago: Tarjeta Verde de ${targetName} (${currencySymbol}${amount.toFixed(2)})`
             });
         } catch (emailErr) {
             console.error('Failed to send payout notification email:', emailErr);
-            // Don't fail the whole action if email notification fails, but report it
         }
         
         return { 
             success: true, 
-            message: `Tarjeta Verde restablecida a 0 exitosamente. Se ha pagado €${eurBalance.toFixed(2)}.` 
+            message: `Tarjeta Verde restablecida a 0 exitosamente. Se ha pagado ${isEurope ? '€' : '$'}${amount.toFixed(2)}.` 
         };
         
     } catch (error: any) {
