@@ -1,0 +1,22 @@
+{
+  "name": "Dicilo.net",
+  "short_name": "Dicilo",
+  "description": "We connect your world",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "382x375",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon.png",
+      "sizes": "327x652",
+      "type": "image/png"
+    }
+  ]
+}

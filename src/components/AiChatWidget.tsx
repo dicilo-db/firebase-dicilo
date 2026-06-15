@@ -80,6 +80,15 @@ export function AiChatWidget() {
         return () => unsubscribe();
     }, []);
 
+    // Listen to custom window event to open chatbot on mobile PWA footer tab tap
+    useEffect(() => {
+        const handleOpen = () => {
+            setIsOpen(true);
+        };
+        window.addEventListener('open-dicibot', handleOpen);
+        return () => window.removeEventListener('open-dicibot', handleOpen);
+    }, []);
+
     // Speech Recognition Logic
     const startListening = () => {
         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
@@ -365,7 +374,7 @@ export function AiChatWidget() {
             <Button
                 onClick={() => setIsOpen(!isOpen)}
                 size="lg"
-                className="rounded-full h-12 w-12 shadow-lg hover:scale-105 transition-transform p-0 overflow-hidden"
+                className="rounded-full h-12 w-12 shadow-lg hover:scale-105 transition-transform p-0 overflow-hidden hidden md:inline-flex"
             >
                 {isOpen ? (
                     <X className="w-6 h-6" />

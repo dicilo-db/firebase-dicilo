@@ -35,6 +35,14 @@ export function CookieConsent() {
                 setIsOpen(true);
             }
         }
+
+        // Global event listener to open cookie settings
+        const handleOpen = () => {
+            setIsOpen(true);
+            setShowDetails(true);
+        };
+        window.addEventListener('open-cookie-settings', handleOpen);
+        return () => window.removeEventListener('open-cookie-settings', handleOpen);
     }, []);
 
     const aplicarCookies = (consent: any) => {
@@ -92,11 +100,11 @@ export function CookieConsent() {
 
     return (
         <>
-            {/* Pill flotante para reabrir ajustes */}
+            {/* Pill flotante para reabrir ajustes - Oculto en moviles */}
             {!isOpen && (
                 <button 
                     onClick={() => { setIsOpen(true); setShowDetails(true); }}
-                    className="fixed bottom-2 left-2 z-[9990] bg-white/90 backdrop-blur-sm hover:bg-slate-50 transition-all text-[#5a5a5a] text-[10px] sm:text-xs font-medium px-3 py-1.5 rounded-full shadow-md border border-[#8cc63f] hover:scale-105 opacity-80 hover:opacity-100 max-w-[140px] truncate"
+                    className="fixed bottom-2 left-2 z-[9990] bg-white/90 backdrop-blur-sm hover:bg-slate-50 transition-all text-[#5a5a5a] text-[10px] sm:text-xs font-medium px-3 py-1.5 rounded-full shadow-md border border-[#8cc63f] hover:scale-105 opacity-80 hover:opacity-100 max-w-[140px] truncate hidden md:block"
                 >
                     {t('cookies.floating_btn', 'Cookie-Einstellungen')}
                 </button>

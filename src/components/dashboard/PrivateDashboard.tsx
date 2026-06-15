@@ -17,9 +17,10 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Copy, Share2, Gift, Users, Heart, Settings, Star, CreditCard, Info, Download, QrCode, Coins, Lock } from 'lucide-react';
+import { Loader2, Copy, Share2, Gift, Users, Heart, Settings, Star, CreditCard, Info, Download, QrCode, Coins, Lock, Briefcase, ChevronRight, Bot, MessageCircle, Target, Megaphone, BarChart3, Shield, HelpCircle, Network, Map, Calendar, MoreVertical, TrendingUp, LifeBuoy } from 'lucide-react';
 import { CategorySelector, CATEGORIES } from './CategorySelector';
 import { useTranslation } from 'react-i18next';
 import { DashboardLayout } from './DashboardLayout';
@@ -29,7 +30,7 @@ import { DiciCoinSection } from './DiciCoinSection';
 import { WhatsAppGroupSection } from './WhatsAppGroupSection';
 import { TicketsManager } from './tickets/TicketsManager';
 import { FreelancerLanding } from './freelancer/FreelancerLanding';
-import FreelancerPromoComposerPage from '@/app/dashboard/freelancer/page';
+import { FreelancerPanel } from './freelancer/FreelancerPanel';
 import { CommunityView } from './CommunityView';
 import { FaqsView } from './FaqsView';
 import { GeneralInfoSection } from './GeneralInfoSection';
@@ -70,6 +71,10 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
 
     const [walletData, setWalletData] = useState<{ balance: number, valueInEur: number, valueInUsd?: number, pointValue: number } | null>(initialWalletData || null);
     const [registerUrl, setRegisterUrl] = useState('');
+
+    const role = formData?.role || (formData?.isFreelancer ? 'freelancer' : 'user');
+    const permissions = formData?.permissions || [];
+    const isFreelancerOrHigher = ['freelancer', 'team_leader', 'team_office', 'admin', 'superadmin'].includes(role) || permissions.includes('freelancer_tool');
 
     // Fetch wallet data if not provided (fallback)
     useEffect(() => {
@@ -250,73 +255,439 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
         switch (activeView) {
             case 'overview':
                 return (
-                    <div className="space-y-6 animate-in fade-in duration-500">
+                    <div className="space-y-6 animate-in fade-in duration-500 pb-10">
                         {/* Header */}
                         <div className="flex items-center justify-between">
                             <div>
-                                <h1 className="text-3xl font-bold tracking-tight flex items-center gap-3">
-                                    {t('dashboard.welcome', 'Welcome')}, {formData.firstName}!
+                                <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 flex items-center gap-3">
+                                    ¡Hola, {formData.firstName}! 👋
                                 </h1>
-                                <p className="text-muted-foreground mt-1">
-                                    {t('dashboard.welcomeDesc', 'Manage your personal profile and preferences.')}
+                                <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1">
+                                    Bienvenido a tu panel de control
                                 </p>
                             </div>
                             <NotificationBell />
                         </div>
 
-                        {/* Top Stats Row */}
-                        <div className="grid gap-4 md:grid-cols-3">
-                            {/* Profile Status */}
-                            <Card>
-                                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                    <CardTitle className="text-sm font-medium">
-                                        {t('dashboard.profileStatus', 'Profile Status')}
-                                    </CardTitle>
-                                    <Users className="h-4 w-4 text-muted-foreground" />
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="text-2xl font-bold">{t('dashboard.active', 'Active')}</div>
-                                    <p className="text-xs text-muted-foreground">
-                                        {t('dashboard.memberSince', 'Member since')} {memberSinceDate}
-                                    </p>
-                                </CardContent>
-                            </Card>
-
-                            {/* Interests */}
-                            <Card className="cursor-pointer hover:bg-accent/50 transition-colors" onClick={() => handleViewChange('settings')}>
-                                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                    <CardTitle className="text-sm font-medium">
-                                        {t('dashboard.interests', 'Interests')}
-                                    </CardTitle>
-                                    <Heart className="h-4 w-4 text-muted-foreground" />
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="text-2xl font-bold">
-                                        {formData.interests
-                                            ? [...new Set(formData.interests)].length
-                                            : 0}
+                        {/* Top Stats Row - Premium design matches PWA native mockup */}
+                        <div className="flex md:grid md:grid-cols-4 overflow-x-auto md:overflow-x-visible gap-3 pb-3 md:pb-0 scrollbar-none snap-x snap-mandatory">
+                            {/* Card 1: Conversaciones */}
+                            <Card className="min-w-[140px] md:min-w-0 flex-1 snap-start p-4 bg-white border border-slate-100/80 shadow-sm rounded-2xl flex flex-col justify-between hover:shadow-md transition-all duration-300">
+                                <div>
+                                    <div className="w-9 h-9 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                                        <MessageCircle className="h-4.5 w-4.5" />
                                     </div>
-                                    <p className="text-xs text-muted-foreground">
-                                        {t('dashboard.yourInterestsDesc', 'Select categories that interest you.')}
-                                    </p>
-                                </CardContent>
+                                    <div className="text-2xl font-bold text-slate-800 mt-3 tracking-tight">128</div>
+                                    <div className="text-xs font-semibold text-slate-500 mt-0.5 truncate">Conversaciones</div>
+                                </div>
+                                <div className="flex items-center gap-1 text-[10px] text-emerald-600 font-bold mt-2">
+                                    <TrendingUp className="h-3 w-3" />
+                                    <span>12% vs ayer</span>
+                                </div>
                             </Card>
 
-                            {/* Referrals */}
-                            <Card className="cursor-pointer hover:bg-accent/50 transition-colors" onClick={() => handleViewChange('invite')}>
-                                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                    <CardTitle className="text-sm font-medium">
-                                        {t('dashboard.referrals', 'Referrals')}
-                                    </CardTitle>
-                                    <Gift className="h-4 w-4 text-muted-foreground" />
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="text-2xl font-bold">{formData.referrals?.length || 0}</div>
-                                    <p className="text-xs text-muted-foreground">
-                                        {t('dashboard.friendsInvited', 'Friends invited')}
-                                    </p>
-                                </CardContent>
+                            {/* Card 2: Contactos nuevos */}
+                            <Card className="min-w-[140px] md:min-w-0 flex-1 snap-start p-4 bg-white border border-slate-100/80 shadow-sm rounded-2xl flex flex-col justify-between hover:shadow-md transition-all duration-300">
+                                <div>
+                                    <div className="w-9 h-9 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                                        <Users className="h-4.5 w-4.5" />
+                                    </div>
+                                    <div className="text-2xl font-bold text-slate-800 mt-3 tracking-tight">248</div>
+                                    <div className="text-xs font-semibold text-slate-500 mt-0.5 truncate">Contactos nuevos</div>
+                                </div>
+                                <div className="flex items-center gap-1 text-[10px] text-emerald-600 font-bold mt-2">
+                                    <TrendingUp className="h-3 w-3" />
+                                    <span>18% vs ayer</span>
+                                </div>
                             </Card>
+
+                            {/* Card 3: Campañas activas */}
+                            <Card className="min-w-[140px] md:min-w-0 flex-1 snap-start p-4 bg-white border border-slate-100/80 shadow-sm rounded-2xl flex flex-col justify-between hover:shadow-md transition-all duration-300">
+                                <div>
+                                    <div className="w-9 h-9 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
+                                        <Target className="h-4.5 w-4.5" />
+                                    </div>
+                                    <div className="text-2xl font-bold text-slate-800 mt-3 tracking-tight">15</div>
+                                    <div className="text-xs font-semibold text-slate-500 mt-0.5 truncate">Campañas activas</div>
+                                </div>
+                                <div className="flex items-center gap-1 text-[10px] text-emerald-600 font-bold mt-2">
+                                    <TrendingUp className="h-3 w-3" />
+                                    <span>5% vs ayer</span>
+                                </div>
+                            </Card>
+
+                            {/* Card 4: Tasa de conversión */}
+                            <Card className="min-w-[140px] md:min-w-0 flex-1 snap-start p-4 bg-white border border-slate-100/80 shadow-sm rounded-2xl flex flex-col justify-between hover:shadow-md transition-all duration-300">
+                                <div>
+                                    <div className="w-9 h-9 rounded-full bg-orange-50 text-orange-600 flex items-center justify-center shrink-0">
+                                        <BarChart3 className="h-4.5 w-4.5" />
+                                    </div>
+                                    <div className="text-2xl font-bold text-slate-800 mt-3 tracking-tight">32.5%</div>
+                                    <div className="text-xs font-semibold text-slate-500 mt-0.5 truncate">Tasa de conversión</div>
+                                </div>
+                                <div className="flex items-center gap-1 text-[10px] text-emerald-600 font-bold mt-2">
+                                    <TrendingUp className="h-3 w-3" />
+                                    <span>8% vs ayer</span>
+                                </div>
+                            </Card>
+                        </div>
+
+                        {/* Section 1: Acciones Rápidas (Native Mockup Grid) */}
+                        <div className="space-y-3">
+                            <div className="flex justify-between items-center">
+                                <h3 className="text-sm sm:text-base font-extrabold text-slate-900">Acciones rápidas</h3>
+                                <span className="text-xs text-slate-400 cursor-pointer hover:text-slate-600 transition-colors">Ver todo</span>
+                            </div>
+                            <div className="flex overflow-x-auto gap-4 pb-2 scrollbar-none snap-x">
+                                {/* Action 1: Crear Chatbot */}
+                                <div 
+                                    className="flex flex-col items-center shrink-0 cursor-pointer group snap-start"
+                                    onClick={() => window.dispatchEvent(new Event('open-dicibot'))}
+                                >
+                                    <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white border border-slate-100 shadow-sm flex items-center justify-center transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-md">
+                                        <Bot className="h-6 w-6 text-blue-600" />
+                                    </div>
+                                    <span className="text-[10px] sm:text-xs font-bold text-slate-700 text-center mt-2 w-14 sm:w-16 line-clamp-2">
+                                        Crear Chatbot
+                                    </span>
+                                </div>
+
+                                {/* Action 2: Nueva Campaña */}
+                                <div 
+                                    className="flex flex-col items-center shrink-0 cursor-pointer group snap-start"
+                                    onClick={() => handleViewChange('freelancer')}
+                                >
+                                    <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white border border-slate-100 shadow-sm flex items-center justify-center transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-md">
+                                        <Target className="h-6 w-6 text-emerald-600" />
+                                    </div>
+                                    <span className="text-[10px] sm:text-xs font-bold text-slate-700 text-center mt-2 w-14 sm:w-16 line-clamp-2">
+                                        Nueva Campaña
+                                    </span>
+                                </div>
+
+                                {/* Action 3: Agregar Contacto */}
+                                <div 
+                                    className="flex flex-col items-center shrink-0 cursor-pointer group snap-start"
+                                    onClick={() => handleViewChange('invite')}
+                                >
+                                    <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white border border-slate-100 shadow-sm flex items-center justify-center transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-md">
+                                        <Users className="h-6 w-6 text-purple-600" />
+                                    </div>
+                                    <span className="text-[10px] sm:text-xs font-bold text-slate-700 text-center mt-2 w-14 sm:w-16 line-clamp-2">
+                                        Agregar Contacto
+                                    </span>
+                                </div>
+
+                                {/* Action 4: Nuevo Broadcast */}
+                                <div 
+                                    className="flex flex-col items-center shrink-0 cursor-pointer group snap-start"
+                                    onClick={() => handleViewChange('ads-manager')}
+                                >
+                                    <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white border border-slate-100 shadow-sm flex items-center justify-center transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-md">
+                                        <Megaphone className="h-6 w-6 text-orange-600" />
+                                    </div>
+                                    <span className="text-[10px] sm:text-xs font-bold text-slate-700 text-center mt-2 w-14 sm:w-16 line-clamp-2">
+                                        Nuevo Broadcast
+                                    </span>
+                                </div>
+
+                                {/* Action 5: Ver Reportes */}
+                                <div 
+                                    className="flex flex-col items-center shrink-0 cursor-pointer group snap-start"
+                                    onClick={() => handleViewChange('freelancer')}
+                                >
+                                    <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white border border-slate-100 shadow-sm flex items-center justify-center transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-md">
+                                        <BarChart3 className="h-6 w-6 text-blue-500" />
+                                    </div>
+                                    <span className="text-[10px] sm:text-xs font-bold text-slate-700 text-center mt-2 w-14 sm:w-16 line-clamp-2">
+                                        Ver Reportes
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Section 2: Launchpad de Módulos (All Menu Items Represented) */}
+                        <div className="space-y-3 pt-2">
+                            <h3 className="text-sm sm:text-base font-extrabold text-slate-900">Mis Módulos de Trabajo</h3>
+                            <div className="flex md:grid md:grid-cols-4 overflow-x-auto md:overflow-x-visible gap-3 pb-3 md:pb-0 scrollbar-none snap-x snap-mandatory">
+                                {/* Module 1: Mi Wallet */}
+                                <div 
+                                    className="bg-white border border-slate-100/80 rounded-xl p-3 flex items-center gap-3 transition-all cursor-pointer hover:shadow-md hover:-translate-y-0.5 group shrink-0 snap-start min-w-[150px] md:min-w-0 md:w-auto"
+                                    onClick={() => handleViewChange('wallet')}
+                                >
+                                    <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 transition-colors group-hover:bg-emerald-100">
+                                        <CreditCard className="h-4 w-4" />
+                                    </div>
+                                    <span className="text-xs font-bold text-slate-800">Mi Wallet</span>
+                                </div>
+
+                                {/* Module 2: Invitar Amigos */}
+                                <div 
+                                    className="bg-white border border-slate-100/80 rounded-xl p-3 flex items-center gap-3 transition-all cursor-pointer hover:shadow-md hover:-translate-y-0.5 group shrink-0 snap-start min-w-[150px] md:min-w-0 md:w-auto"
+                                    onClick={() => handleViewChange('invite')}
+                                >
+                                    <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 transition-colors group-hover:bg-blue-100">
+                                        <Share2 className="h-4 w-4" />
+                                    </div>
+                                    <span className="text-xs font-bold text-slate-800">Invitar Amigos</span>
+                                </div>
+
+                                {/* Module 3: Calendario */}
+                                <div 
+                                    className="bg-white border border-slate-100/80 rounded-xl p-3 flex items-center gap-3 transition-all cursor-pointer hover:shadow-md hover:-translate-y-0.5 group shrink-0 snap-start min-w-[150px] md:min-w-0 md:w-auto"
+                                    onClick={() => handleViewChange('calendar')}
+                                >
+                                    <div className="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center shrink-0 transition-colors group-hover:bg-rose-100">
+                                        <Calendar className="h-4 w-4" />
+                                    </div>
+                                    <span className="text-xs font-bold text-slate-800">Calendario</span>
+                                </div>
+
+                                {/* Module 4: Mapa de Aliados */}
+                                <div 
+                                    className="bg-white border border-slate-100/80 rounded-xl p-3 flex items-center gap-3 transition-all cursor-pointer hover:shadow-md hover:-translate-y-0.5 group shrink-0 snap-start min-w-[150px] md:min-w-0 md:w-auto"
+                                    onClick={() => handleViewChange('map')}
+                                >
+                                    <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0 transition-colors group-hover:bg-indigo-100">
+                                        <Map className="h-4 w-4" />
+                                    </div>
+                                    <span className="text-xs font-bold text-slate-800">Mapa de Aliados</span>
+                                </div>
+
+                                {/* Module 5: DiciCoin */}
+                                <div 
+                                    className="bg-white border border-slate-100/80 rounded-xl p-3 flex items-center gap-3 transition-all cursor-pointer hover:shadow-md hover:-translate-y-0.5 group shrink-0 snap-start min-w-[150px] md:min-w-0 md:w-auto"
+                                    onClick={() => handleViewChange('dicicoin')}
+                                >
+                                    <div className="w-8 h-8 rounded-lg bg-yellow-50 text-yellow-600 flex items-center justify-center shrink-0 transition-colors group-hover:bg-yellow-100">
+                                        <Coins className="h-4 w-4" />
+                                    </div>
+                                    <span className="text-xs font-bold text-slate-800">DiciCoin</span>
+                                </div>
+
+                                {/* Module 6: Tu Comunidad */}
+                                <div 
+                                    className="bg-white border border-slate-100/80 rounded-xl p-3 flex items-center gap-3 transition-all cursor-pointer hover:shadow-md hover:-translate-y-0.5 group shrink-0 snap-start min-w-[150px] md:min-w-0 md:w-auto"
+                                    onClick={() => handleViewChange('community')}
+                                >
+                                    <div className="w-8 h-8 rounded-lg bg-pink-50 text-pink-600 flex items-center justify-center shrink-0 transition-colors group-hover:bg-pink-100">
+                                        <Heart className="h-4 w-4" />
+                                    </div>
+                                    <span className="text-xs font-bold text-slate-800">Tu Comunidad</span>
+                                </div>
+
+                                {/* Module 7: Mi Red Dicilo */}
+                                <div 
+                                    className="bg-white border border-slate-100/80 rounded-xl p-3 flex items-center gap-3 transition-all cursor-pointer hover:shadow-md hover:-translate-y-0.5 group shrink-0 snap-start min-w-[150px] md:min-w-0 md:w-auto"
+                                    onClick={() => handleViewChange('my-network')}
+                                >
+                                    <div className="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center shrink-0 transition-colors group-hover:bg-purple-100">
+                                        <Network className="h-4 w-4" />
+                                    </div>
+                                    <span className="text-xs font-bold text-slate-800">Mi Red Dicilo</span>
+                                </div>
+
+                                {/* Module 8: Ajustes */}
+                                <div 
+                                    className="bg-white border border-slate-100/80 rounded-xl p-3 flex items-center gap-3 transition-all cursor-pointer hover:shadow-md hover:-translate-y-0.5 group shrink-0 snap-start min-w-[150px] md:min-w-0 md:w-auto"
+                                    onClick={() => handleViewChange('settings')}
+                                >
+                                    <div className="w-8 h-8 rounded-lg bg-gray-100 text-gray-600 flex items-center justify-center shrink-0 transition-colors group-hover:bg-gray-200">
+                                        <Settings className="h-4 w-4" />
+                                    </div>
+                                    <span className="text-xs font-bold text-slate-800">Ajustes</span>
+                                </div>
+
+                                {/* Module 9: Soporte (Tickets) */}
+                                <div 
+                                    className="bg-white border border-slate-100/80 rounded-xl p-3 flex items-center gap-3 transition-all cursor-pointer hover:shadow-md hover:-translate-y-0.5 group shrink-0 snap-start min-w-[150px] md:min-w-0 md:w-auto"
+                                    onClick={() => handleViewChange('tickets')}
+                                >
+                                    <div className="w-8 h-8 rounded-lg bg-sky-50 text-sky-600 flex items-center justify-center shrink-0 transition-colors group-hover:bg-sky-100">
+                                        <LifeBuoy className="h-4 w-4" />
+                                    </div>
+                                    <span className="text-xs font-bold text-slate-800">Soporte</span>
+                                </div>
+
+                                {/* Module 10: FAQs */}
+                                <div 
+                                    className="bg-white border border-slate-100/80 rounded-xl p-3 flex items-center gap-3 transition-all cursor-pointer hover:shadow-md hover:-translate-y-0.5 group shrink-0 snap-start min-w-[150px] md:min-w-0 md:w-auto"
+                                    onClick={() => handleViewChange('faqs')}
+                                >
+                                    <div className="w-8 h-8 rounded-lg bg-teal-50 text-teal-600 flex items-center justify-center shrink-0 transition-colors group-hover:bg-teal-100">
+                                        <HelpCircle className="h-4 w-4" />
+                                    </div>
+                                    <span className="text-xs font-bold text-slate-800">FAQs</span>
+                                </div>
+
+                                {/* Module 11: Panel Freelancer (Condicional) */}
+                                {isFreelancerOrHigher && (
+                                    <div 
+                                        className="bg-lime-50/50 border border-lime-200/50 rounded-xl p-3 flex items-center gap-3 transition-all cursor-pointer hover:shadow-md hover:-translate-y-0.5 group shrink-0 snap-start min-w-[150px] md:min-w-0 md:w-auto"
+                                        onClick={() => handleViewChange('freelancer')}
+                                    >
+                                        <div className="w-8 h-8 rounded-lg bg-[#8cc63f] text-white flex items-center justify-center shrink-0">
+                                            <Briefcase className="h-4 w-4" />
+                                        </div>
+                                        <span className="text-xs font-bold text-slate-800">Freelancer</span>
+                                    </div>
+                                )}
+
+                                {/* Module 12: Admin Panel (Condicional) */}
+                                {(formData?.role === 'admin' || formData?.role === 'superadmin' || user?.email?.includes('dicilo.net')) && (
+                                    <div 
+                                        className="bg-red-50/50 border border-red-200/50 rounded-xl p-3 flex items-center gap-3 transition-all cursor-pointer hover:shadow-md hover:-translate-y-0.5 group shrink-0 snap-start min-w-[150px] md:min-w-0 md:w-auto"
+                                        onClick={() => router.push('/admin')}
+                                    >
+                                        <div className="w-8 h-8 rounded-lg bg-red-600 text-white flex items-center justify-center shrink-0">
+                                            <Shield className="h-4 w-4" />
+                                        </div>
+                                        <span className="text-xs font-bold text-slate-800">Admin</span>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Section 3: Mis Chatbots (Premium design matching mockup) */}
+                        <div className="space-y-3">
+                            <div className="flex justify-between items-center">
+                                <h3 className="text-sm sm:text-base font-extrabold text-slate-900">Mis chatbots</h3>
+                                <span className="text-xs text-blue-600 font-semibold cursor-pointer hover:text-blue-800" onClick={() => handleViewChange('freelancer')}>
+                                    Ver todos
+                                </span>
+                            </div>
+                            <div className="space-y-3">
+                                {/* Chatbot 1: Ventas de Campañas */}
+                                <Card className="p-4 shadow-sm border border-slate-100/80 flex items-center justify-between bg-white rounded-2xl hover:shadow-md transition-all duration-300">
+                                    <div className="flex items-center gap-3">
+                                        <div className="h-11 w-11 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                                            <Bot className="h-5 w-5" />
+                                        </div>
+                                        <div>
+                                            <h4 className="font-extrabold text-slate-800 text-xs sm:text-sm">Ventas de Campañas</h4>
+                                            <p className="text-[10px] sm:text-xs text-slate-500 font-medium mt-0.5">Atiende consultas y genera ventas</p>
+                                            <div className="flex items-center gap-3 mt-1.5 text-[9px] sm:text-[10px] font-semibold text-slate-400">
+                                                <span className="flex items-center gap-1">💬 342</span>
+                                                <span className="flex items-center gap-1">👥 1.2K</span>
+                                                <span className="flex items-center gap-1">📊 28%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-3">
+                                        <Switch defaultChecked className="data-[state=checked]:bg-[#8cc63f]" />
+                                        <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400">
+                                            <MoreVertical className="h-4 w-4" />
+                                        </Button>
+                                    </div>
+                                </Card>
+
+                                {/* Chatbot 2: Soporte al Cliente */}
+                                <Card className="p-4 shadow-sm border border-slate-100/80 flex items-center justify-between bg-white rounded-2xl hover:shadow-md transition-all duration-300">
+                                    <div className="flex items-center gap-3">
+                                        <div className="h-11 w-11 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
+                                            <Bot className="h-5 w-5" />
+                                        </div>
+                                        <div>
+                                            <h4 className="font-extrabold text-slate-800 text-xs sm:text-sm">Soporte al Cliente</h4>
+                                            <p className="text-[10px] sm:text-xs text-slate-500 font-medium mt-0.5">Resuelve dudas y da soporte 24/7</p>
+                                            <div className="flex items-center gap-3 mt-1.5 text-[9px] sm:text-[10px] font-semibold text-slate-400">
+                                                <span className="flex items-center gap-1">💬 210</span>
+                                                <span className="flex items-center gap-1">👥 856</span>
+                                                <span className="flex items-center gap-1">📊 26%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-3">
+                                        <Switch defaultChecked className="data-[state=checked]:bg-[#8cc63f]" />
+                                        <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400">
+                                            <MoreVertical className="h-4 w-4" />
+                                        </Button>
+                                    </div>
+                                </Card>
+
+                                {/* Chatbot 3: Reservas */}
+                                <Card className="p-4 shadow-sm border border-slate-100/80 flex items-center justify-between bg-white rounded-2xl hover:shadow-md transition-all duration-300">
+                                    <div className="flex items-center gap-3">
+                                        <div className="h-11 w-11 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                                            <Bot className="h-5 w-5" />
+                                        </div>
+                                        <div>
+                                            <h4 className="font-extrabold text-slate-800 text-xs sm:text-sm">Reservas</h4>
+                                            <p className="text-[10px] sm:text-xs text-slate-500 font-medium mt-0.5">Gestiona reservas y agendamientos</p>
+                                            <div className="flex items-center gap-3 mt-1.5 text-[9px] sm:text-[10px] font-semibold text-slate-400">
+                                                <span className="flex items-center gap-1">💬 98</span>
+                                                <span className="flex items-center gap-1">👥 352</span>
+                                                <span className="flex items-center gap-1">📊 31%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-3">
+                                        <Switch defaultChecked className="data-[state=checked]:bg-[#8cc63f]" />
+                                        <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400">
+                                            <MoreVertical className="h-4 w-4" />
+                                        </Button>
+                                    </div>
+                                </Card>
+                            </div>
+                        </div>
+
+                        {/* Section 4: Campañas recientes (Mockup details) */}
+                        <div className="space-y-3">
+                            <div className="flex justify-between items-center">
+                                <h3 className="text-sm sm:text-base font-extrabold text-slate-900">Campañas recientes</h3>
+                                <span className="text-xs text-blue-600 font-semibold cursor-pointer hover:text-blue-800" onClick={() => handleViewChange('freelancer')}>
+                                    Ver todas
+                                </span>
+                            </div>
+                            <div className="space-y-3">
+                                {/* Campaign 1 */}
+                                <Card className="p-4 shadow-sm border border-slate-100/80 bg-white rounded-2xl hover:shadow-md transition-all duration-300 flex items-center justify-between">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                                            <Target className="w-5 h-5" />
+                                        </div>
+                                        <div>
+                                            <h4 className="font-extrabold text-slate-800 text-xs sm:text-sm">Promoción de Verano ☀️</h4>
+                                            <p className="text-[10px] sm:text-xs text-slate-400 font-medium mt-0.5">Enviada el 20 May, 2024 • WhatsApp</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-4">
+                                        <div className="text-right hidden sm:block">
+                                            <div className="text-xs font-bold text-slate-700">1.2K Enviados</div>
+                                            <div className="text-[10px] font-semibold text-slate-400">380 Leídos • 24% CTR</div>
+                                        </div>
+                                        <div className="text-right sm:hidden">
+                                            <div className="text-[10px] font-bold text-slate-700">1.2K env.</div>
+                                            <div className="text-[9px] font-semibold text-slate-400">24% CTR</div>
+                                        </div>
+                                        <ChevronRight className="h-5 w-5 text-slate-300" />
+                                    </div>
+                                </Card>
+
+                                {/* Campaign 2 */}
+                                <Card className="p-4 shadow-sm border border-slate-100/80 bg-white rounded-2xl hover:shadow-md transition-all duration-300 flex items-center justify-between">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                                            <Target className="w-5 h-5" />
+                                        </div>
+                                        <div>
+                                            <h4 className="font-extrabold text-slate-800 text-xs sm:text-sm">Nuevo Lanzamiento 🚀</h4>
+                                            <p className="text-[10px] sm:text-xs text-slate-400 font-medium mt-0.5">Enviada el 15 May, 2024 • WhatsApp</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-4">
+                                        <div className="text-right hidden sm:block">
+                                            <div className="text-xs font-bold text-slate-700">2.2K Enviados</div>
+                                            <div className="text-[10px] font-semibold text-slate-400">390 Leídos • 2% CTR</div>
+                                        </div>
+                                        <div className="text-right sm:hidden">
+                                            <div className="text-[10px] font-bold text-slate-700">2.2K env.</div>
+                                            <div className="text-[9px] font-semibold text-slate-400">2% CTR</div>
+                                        </div>
+                                        <ChevronRight className="h-5 w-5 text-slate-300" />
+                                    </div>
+                                </Card>
+                            </div>
                         </div>
 
                         {/* SuperAdmin Quick Stats */}
@@ -324,103 +695,81 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                             <SuperAdminStatsGrid />
                         )}
 
-                        {/* Bottom Section: Quick Actions + Wallets */}
-                        <div className="grid gap-6 lg:grid-cols-3">
-                            {/* Left Column: Quick Actions - Moved FIRST in DOM/Mobile */}
-                            <div className="lg:col-span-1 order-first lg:order-none">
-                                <Card>
-                                    <CardHeader>
-                                        <CardTitle>{t('dashboard.quickActions', 'Quick Actions')}</CardTitle>
-                                    </CardHeader>
-                                    <CardContent className="space-y-4">
-                                        <Button variant="outline" className="w-full justify-start h-12" onClick={() => handleViewChange('wallet')}>
-                                            <Users className="mr-2 h-4 w-4" />
-                                            {t('dashboard.goToWallet', 'Go to Wallet')}
-                                        </Button>
-                                        <Button variant="outline" className="w-full justify-start h-12" onClick={() => handleViewChange('invite')}>
-                                            <Share2 className="mr-2 h-4 w-4" />
-                                            {t('dashboard.inviteFriends', 'Invite Friends')}
-                                        </Button>
-                                    </CardContent>
-                                </Card>
+                        {/* Wallets & Cards Section */}
+                        <div className="grid gap-6 lg:grid-cols-2 pt-4 border-t border-slate-100">
+                            {/* DiciPoints Wallet (Dark Card) */}
+                            <div className="flex flex-col gap-1 h-full">
+                                <div className="bg-slate-950 text-white rounded-2xl p-6 flex flex-col justify-between shadow-lg min-h-[180px] flex-1">
+                                    <div>
+                                        <div className="flex justify-between items-start mb-4">
+                                            <div>
+                                                <h3 className="font-semibold text-sm text-slate-400 uppercase">{t('dashboard.wallet.dicipointsTitle', 'DICIPOINTS WALLET')}</h3>
+                                                <span className="text-xs bg-slate-800 px-2 py-0.5 rounded-full text-slate-300 mt-1 inline-block">Personal</span>
+                                            </div>
+                                            <CreditCard className="h-5 w-5 text-slate-400" />
+                                        </div>
+                                        <div>
+                                            <div className="text-3xl font-bold">
+                                                {walletData ? walletData.balance.toFixed(0) : <Skeleton className="h-9 w-24 inline-block bg-slate-800" />} DP <span className="text-xl align-top">*</span>
+                                            </div>
+                                            <div className="text-sm text-slate-400">
+                                                ≈ {walletData ? (walletData.balance * (walletData.pointValue || 0.10)).toFixed(2) : <Skeleton className="h-4 w-16 inline-block bg-slate-800" />} EUR / USD $
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <Button variant="secondary" className="w-full mt-4 bg-white text-slate-950 hover:bg-slate-200" onClick={handleDownloadQr}>
+                                        <QrCode className="mr-2 h-4 w-4" />
+                                        {t('dashboard.wallet.showQr', 'Show QR to Pay')}
+                                    </Button>
+                                </div>
+                                <div className="text-[11px] font-semibold text-slate-800 px-1 mt-0.5">
+                                    * {t('dashboard.wallet.dpLegend', 'DP = DiciPoint puntos de pago en dicilo')}
+                                </div>
                             </div>
 
-                            {/* Right Column: Wallets - Follows in Mobile */}
-                            <div className="lg:col-span-2 grid gap-4 md:grid-cols-2 order-last lg:order-none">
-                                {/* Dicilo Wallet (Dark Card) */}
-                                <div className="flex flex-col gap-1 h-full">
-                                    <div className="bg-slate-950 text-white rounded-xl p-6 flex flex-col justify-between shadow-lg min-h-[180px] flex-1">
-                                        <div>
-                                            <div className="flex justify-between items-start mb-4">
-                                                <div>
-                                                    <h3 className="font-semibold text-sm text-slate-400 uppercase">{t('dashboard.wallet.dicipointsTitle', 'DICIPOINTS WALLET')}</h3>
-                                                    <span className="text-xs bg-slate-800 px-2 py-0.5 rounded-full text-slate-300 mt-1 inline-block">Personal</span>
-                                                </div>
-                                                <CreditCard className="h-5 w-5 text-slate-400" />
-                                            </div>
-                                            <div>
-                                                <div className="text-3xl font-bold">
-                                                    {walletData ? walletData.balance.toFixed(0) : <Skeleton className="h-9 w-24 inline-block bg-slate-800" />} DP <span className="text-xl align-top">*</span>
-                                                </div>
-                                                <div className="text-sm text-slate-400">
-                                                    ≈ {walletData ? (walletData.balance * (walletData.pointValue || 0.10)).toFixed(2) : <Skeleton className="h-4 w-16 inline-block bg-slate-800" />} EUR / USD $
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <Button variant="secondary" className="w-full mt-4 bg-white text-slate-950 hover:bg-slate-200" onClick={handleDownloadQr}>
-                                            <QrCode className="mr-2 h-4 w-4" />
-                                            {t('dashboard.wallet.showQr', 'Show QR to Pay')}
-                                        </Button>
+                            {/* Prepaid Card (Image Background) */}
+                            <div className="flex flex-col gap-1 h-full">
+                                <div className="rounded-2xl overflow-hidden shadow-lg min-h-[180px] relative flex flex-col justify-between p-6 text-white group flex-1">
+                                    {/* Background Image */}
+                                    <div className="absolute inset-0 z-0">
+                                        <Image
+                                            src="/dicilo-prepaid-bg.png"
+                                            alt="Dicilo Prepaid Card"
+                                            fill
+                                            className="object-cover"
+                                            priority
+                                        />
                                     </div>
-                                    <div className="text-[11px] font-semibold text-slate-800 px-1 mt-0.5">
-                                        * {t('dashboard.wallet.dpLegend', 'DP = DiciPoint puntos de pago en dicilo')}
+
+                                    {/* Content Overlay */}
+                                    <div className="relative z-10 flex justify-end items-start w-full h-full">
+                                        <div className="text-right">
+                                            <div className="text-xs text-emerald-100 opacity-90 font-medium">GANANCIAS</div>
+                                            <div className="font-bold text-2xl drop-shadow-md">
+                                                € {walletData ? walletData.valueInEur.toFixed(2) : <Skeleton className="h-8 w-20 inline-block bg-emerald-400/30" />}
+                                            </div>
+                                            {walletData?.valueInUsd ? (
+                                                <div className="font-bold text-lg text-white drop-shadow-md mt-1">
+                                                    $ {walletData.valueInUsd.toFixed(2)}
+                                                </div>
+                                            ) : null}
+                                        </div>
+                                    </div>
+
+                                    <div className="relative z-10 mt-auto">
+                                        {/* Spacer to push content down if needed, chip is in bg image */}
+                                        <div className="h-8"></div>
+
+                                        <div className="font-mono text-lg tracking-widest drop-shadow-sm mb-1 text-shadow">
+                                            •••• •••• •••• 60WA
+                                        </div>
+                                        <div className="text-xs uppercase font-bold tracking-wider opacity-90 drop-shadow-sm">
+                                            {(formData.firstName + ' ' + formData.lastName).toUpperCase() || 'MEMBER'}
+                                        </div>
                                     </div>
                                 </div>
-
-                                {/* Prepaid Card (Image Background) */}
-                                <div className="flex flex-col gap-1 h-full">
-                                    <div className="rounded-xl overflow-hidden shadow-lg min-h-[180px] relative flex flex-col justify-between p-6 text-white group flex-1">
-                                        {/* Background Image */}
-                                        <div className="absolute inset-0 z-0">
-                                            <Image
-                                                src="/dicilo-prepaid-bg.png"
-                                                alt="Dicilo Prepaid Card"
-                                                fill
-                                                className="object-cover"
-                                                priority
-                                            />
-                                        </div>
-
-                                        {/* Content Overlay */}
-                                        <div className="relative z-10 flex justify-end items-start w-full h-full">
-                                            <div className="text-right">
-                                                <div className="text-xs text-emerald-100 opacity-90 font-medium">GANANCIAS</div>
-                                                <div className="font-bold text-2xl drop-shadow-md">
-                                                    € {walletData ? walletData.valueInEur.toFixed(2) : <Skeleton className="h-8 w-20 inline-block bg-emerald-400/30" />}
-                                                </div>
-                                                {walletData?.valueInUsd ? (
-                                                    <div className="font-bold text-lg text-white drop-shadow-md mt-1">
-                                                        $ {walletData.valueInUsd.toFixed(2)}
-                                                    </div>
-                                                ) : null}
-                                            </div>
-                                        </div>
-
-                                        <div className="relative z-10 mt-auto">
-                                            {/* Spacer to push content down if needed, chip is in bg image */}
-                                            <div className="h-8"></div>
-
-                                            <div className="font-mono text-lg tracking-widest drop-shadow-sm mb-1 text-shadow">
-                                                •••• •••• •••• 60WA
-                                            </div>
-                                            <div className="text-xs uppercase font-bold tracking-wider opacity-90 drop-shadow-sm">
-                                                {(formData.firstName + ' ' + formData.lastName).toUpperCase() || 'MEMBER'}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="text-[11px] font-semibold text-slate-800 px-1 mt-0.5">
-                                        * {t('dashboard.wallet.prepaidLegend', 'Prepaid: Tarjeta Prepago con bonos en efectivo')}
-                                    </div>
+                                <div className="text-[11px] font-semibold text-slate-800 px-1 mt-0.5">
+                                    * {t('dashboard.wallet.prepaidLegend', 'Prepaid: Tarjeta Prepago con bonos en efectivo')}
                                 </div>
                             </div>
                         </div>
@@ -469,11 +818,35 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
             case 'calendar':
                 return <MasterCalendarPage />;
             case 'freelancer':
-                return <FreelancerPromoComposerPage />;
+                return <FreelancerPanel />;
             case 'settings':
                 return (
                     <Tabs defaultValue="personal" className="space-y-4">
-                        <h2 className="text-2xl font-bold tracking-tight">{t('dashboard.settings')}</h2>
+                        <div className="flex justify-between items-center flex-wrap gap-2">
+                            <h2 className="text-2xl font-bold tracking-tight">{t('dashboard.settings')}</h2>
+                            <div className="flex items-center gap-2">
+                                <Button 
+                                    type="button"
+                                    variant="outline" 
+                                    size="sm" 
+                                    className="border-[#8cc63f] text-[#5a5a5a] hover:bg-[#8cc63f]/10 shrink-0"
+                                    onClick={() => window.dispatchEvent(new Event('open-cookie-settings'))}
+                                >
+                                    Ajustes de Cookies
+                                </Button>
+                                {isFreelancerOrHigher && (
+                                    <Button 
+                                        type="button"
+                                        variant="outline" 
+                                        size="sm" 
+                                        className="border-[#8cc63f] text-[#8cc63f] hover:bg-[#8cc63f]/10 shrink-0 font-bold"
+                                        onClick={() => handleViewChange('freelancer')}
+                                    >
+                                        Panel Freelancer
+                                    </Button>
+                                )}
+                            </div>
+                        </div>
                         <TabsList className="flex flex-wrap h-auto gap-1">
                             <TabsTrigger value="personal" className="flex-grow sm:flex-grow-0">{t('dashboard.personalData')}</TabsTrigger>
                             <TabsTrigger value="interests" className="flex-grow sm:flex-grow-0">{t('dashboard.interests')}</TabsTrigger>

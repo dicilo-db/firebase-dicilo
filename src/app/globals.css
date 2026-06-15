@@ -156,3 +156,16 @@
     transform: translate(-100%, 0);
   }
 }
+
+/* PWA & Mobile Native Experience overrides */
+@media (max-width: 767px) {
+  html, body {
+    overscroll-behavior-y: contain;
+    height: 100%;
+    overflow-x: hidden;
+  }
+  .mobile-nav-bar {
+    padding-bottom: env(safe-area-inset-bottom);
+    height: calc(4rem + env(safe-area-inset-bottom));
+  }
+}

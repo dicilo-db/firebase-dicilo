@@ -123,7 +123,7 @@ export function MyPostingsView() {
                                 </AccordionTrigger>
                                 <AccordionContent>
                                     <div className="pl-4 sm:pl-14 pt-2 pb-4">
-                                        <div className="rounded-md border bg-card">
+                                        <div className="rounded-md border bg-card overflow-x-auto">
                                             <Table>
                                                 <TableHeader>
                                                     <TableRow className="bg-muted/50">

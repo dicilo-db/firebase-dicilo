@@ -48,7 +48,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.cleanupDuplicates = exports.fixSuperAdmin = exports.seedCategories = exports.checkIncompleteProfiles = exports.seedDatabase = exports.demoteToBasic = exports.promoteToClient = exports.notifyAdminOnClientRecommendation = exports.consentDecline = exports.consentAccept = exports.taskWorker = exports.submitRecommendation = exports.syncExistingCustomersToErp = exports.notifyAdminOnTopUp = exports.notifyAdminOnRegistration = exports.sendRegistrationToErp = exports.onAdminWrite = void 0;
+exports.checkFreelancerGreenCard = exports.cleanupDuplicates = exports.fixSuperAdmin = exports.seedCategories = exports.checkIncompleteProfiles = exports.seedDatabase = exports.demoteToBasic = exports.promoteToClient = exports.notifyAdminOnClientRecommendation = exports.consentDecline = exports.consentAccept = exports.taskWorker = exports.submitRecommendation = exports.syncExistingCustomersToErp = exports.notifyAdminOnTopUp = exports.notifyAdminOnRegistration = exports.sendRegistrationToErp = exports.onAdminWrite = void 0;
 /**
  * @fileoverview Cloud Functions for Firebase (Gen 2).
  * Migrated to Gen 2 to support Node 20 and explicit CPU/Memory configuration.
@@ -922,3 +922,72 @@ __exportStar(require("./social"), exports);
 __exportStar(require("./mlm"), exports);
 // --- Reports & Audits ---
 __exportStar(require("./reports"), exports);
+exports.checkFreelancerGreenCard = (0, firestore_1.onDocumentUpdated)({ document: 'wallets/{uid}', region: 'europe-west1' }, (event) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b, _c, _d;
+    const uid = event.params.uid;
+    const beforeData = (_a = event.data) === null || _a === void 0 ? void 0 : _a.before.data();
+    const afterData = (_b = event.data) === null || _b === void 0 ? void 0 : _b.after.data();
+    if (!afterData)
+        return;
+    const eurBalanceBefore = (beforeData === null || beforeData === void 0 ? void 0 : beforeData.eurBalance) || 0;
+    const eurBalanceAfter = (afterData === null || afterData === void 0 ? void 0 : afterData.eurBalance) || 0;
+    const usdBalanceAfter = (afterData === null || afterData === void 0 ? void 0 : afterData.usdBalance) || 0;
+    const notified20Euro = (afterData === null || afterData === void 0 ? void 0 : afterData.notified20Euro) === true;
+    // Check if balance is >= 20 (in EUR or USD) and we haven't notified them yet
+    if ((eurBalanceAfter >= 20 || usdBalanceAfter >= 20) && !notified20Euro) {
+        // Fetch user profile to verify it exists
+        const profileSnap = yield db.collection('private_profiles').doc(uid).get();
+        if (!profileSnap.exists)
+            return;
+        const profileData = profileSnap.data();
+        const email = profileData === null || profileData === void 0 ? void 0 : profileData.email;
+        const name = (profileData === null || profileData === void 0 ? void 0 : profileData.name) || (profileData === null || profileData === void 0 ? void 0 : profileData.firstName) || 'Colaborador';
+        if (!email) {
+            logger.warn(`User ${uid} has >= 20 but no email found. Skipping notification.`);
+            return;
+        }
+        logger.info(`Collaborator ${uid} reached 20 $ o €! Sending notifications...`);
+        // 1. Update the wallet FIRST to prevent duplicate triggers if the email fails or takes long
+        yield ((_c = event.data) === null || _c === void 0 ? void 0 : _c.after.ref.update({ notified20Euro: true }));
+        const currencySymbol = eurBalanceAfter >= 20 ? '€' : '$';
+        const balanceAmount = eurBalanceAfter >= 20 ? eurBalanceAfter : usdBalanceAfter;
+        // 2. Prepare and send emails
+        const emailHtmlUser = `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2>¡Felicidades ${name}! 🎉</h2>
+            <p>Queríamos notificarte que has alcanzado o superado los <strong>20 ${currencySymbol}</strong> en tu Tarjeta Verde (Balance actual: ${balanceAmount.toFixed(2)} ${currencySymbol}).</p>
+            <p>Ya puedes solicitar la transacción o retiro de tus fondos desde tu panel de control de Dicilo.</p>
+            <p>¡Sigue con el excelente trabajo!</p>
+            <br/>
+            <p>El equipo de Dicilo.</p>
+        </div>
+      `;
+        const emailHtmlAdmin = `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2>Notificación de Balance de Colaborador</h2>
+            <p>El colaborador/referidor <strong>${name}</strong> (Email: ${email}, UID: ${uid}, Rol: ${(profileData === null || profileData === void 0 ? void 0 : profileData.role) || 'user'}) ha alcanzado un balance en su Tarjeta Verde de <strong>${balanceAmount.toFixed(2)} ${currencySymbol}</strong>.</p>
+            <p>Por favor, revisa su cuenta en el panel de administración, ya que está habilitado para realizar una transacción.</p>
+        </div>
+      `;
+        try {
+            // Send email to Collaborator
+            yield (0, email_1.sendMail)({
+                to: email,
+                subject: `¡Felicidades! Has alcanzado 20 ${currencySymbol} en tu Tarjeta Verde`,
+                html: emailHtmlUser,
+            });
+            // Send email to Administration
+            yield (0, email_1.sendMail)({
+                to: 'support@dicilo.net',
+                subject: `Aviso: El colaborador ${name} ha alcanzado 20 ${currencySymbol}`,
+                html: emailHtmlAdmin,
+            });
+            logger.info(`Successfully sent 20 Euro/USD notification emails for collaborator ${uid}`);
+        }
+        catch (error) {
+            logger.error(`Error sending 20 Euro/USD emails for ${uid}:`, error);
+            // If email fails, revert the flag so it triggers again on next update
+            yield ((_d = event.data) === null || _d === void 0 ? void 0 : _d.after.ref.update({ notified20Euro: admin.firestore.FieldValue.delete() }));
+        }
+    }
+}));

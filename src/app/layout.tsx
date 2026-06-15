@@ -27,6 +27,12 @@ export const metadata: Metadata = {
     shortcut: '/favicon.png',
     apple: '/favicon.png',
   },
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'Dicilo.net',
+  },
 };
 
 interface RootLayoutProps {

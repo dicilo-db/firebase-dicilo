@@ -110,7 +110,7 @@ export function DashboardHomeView() {
             </div>
 
             {/* TOP STATS CARDS */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-3 gap-2 md:gap-6">
                 <StatCard
                     title={t('freelancer_dashboard.total_earnings')}
                     value={`€${earnings.toFixed(2)}`}
@@ -266,22 +266,20 @@ export function DashboardHomeView() {
 
 function StatCard({ title, value, icon: Icon, trend, subValue, color }: any) {
     return (
-        <Card className="hover:shadow-md transition-shadow">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
+        <Card className="hover:shadow-md transition-shadow p-2 sm:p-4">
+            <div className="flex items-center justify-between pb-1 sm:pb-2">
+                <span className="text-[10px] sm:text-sm font-medium text-muted-foreground truncate">
                     {title}
-                </CardTitle>
-                <Icon className={`h-4 w-4 ${color}`} />
-            </CardHeader>
-            <CardContent>
-                <div className="text-2xl font-bold">{value}</div>
-                {(trend || subValue) && (
-                    <div className="text-xs text-muted-foreground flex items-center gap-2 mt-1">
-                        {trend && <span className="text-green-600 bg-green-50 px-1 rounded">{trend}</span>}
-                        {subValue && <span>{subValue}</span>}
-                    </div>
-                )}
-            </CardContent>
+                </span>
+                <Icon className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${color} shrink-0`} />
+            </div>
+            <div className="text-xs sm:text-2xl font-bold truncate">{value}</div>
+            {(trend || subValue) && (
+                <div className="text-[8px] sm:text-xs text-muted-foreground flex items-center gap-1 mt-0.5 sm:mt-1 truncate">
+                    {trend && <span className="text-green-600 bg-green-50 px-1 rounded shrink-0">{trend}</span>}
+                    {subValue && <span className="truncate">{subValue}</span>}
+                </div>
+            )}
         </Card>
     );
 }

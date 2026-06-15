@@ -8,7 +8,9 @@ export default function DashboardLayout({
 }) {
     return (
         <div className="flex min-h-screen flex-col bg-background">
-            <Header />
+            <div className="hidden md:block">
+                <Header />
+            </div>
             <div className="flex-1">
                 {children}
             </div>
