@@ -1,8 +1,9 @@
 'use server';
 
-import { getAdminDb } from '@/lib/firebase-admin';
+import { getAdminDb, getAdminAuth } from '@/lib/firebase-admin';
 import * as admin from 'firebase-admin';
 import { resolveRewards } from '@/lib/rewards';
+import { sendSmtpEmail } from '@/lib/mail-service';
 
 const MASTER_KEY = process.env.DICIPOINTS_MASTER_KEY; // Need to ensure this is set or handle fallback
 
@@ -709,5 +710,179 @@ export async function transferDpPoints(senderUid: string, targetDiciloId: string
     } catch (error: any) {
         console.error('Error in transferDpPoints:', error);
         return { success: false, messageKey: 'server_error' };
+    }
+}
+
+/**
+ * Envía una notificación por correo a support@dicilo.net detallando el pago.
+ */
+async function sendPayoutNotificationEmail(params: {
+    targetName: string;
+    targetEmail: string;
+    targetCode: string;
+    amount: number;
+    auditorName: string;
+    auditorEmail: string;
+}) {
+    const { targetName, targetEmail, targetCode, amount, auditorName, auditorEmail } = params;
+    const subject = `Notificación de Pago: Tarjeta Verde de ${targetName} (€${amount.toFixed(2)})`;
+    const html = `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; background-color: #ffffff;">
+            <div style="text-align: center; margin-bottom: 24px;">
+                <h2 style="color: #2b6cb0; margin: 0;">Dicilo Red</h2>
+                <p style="color: #4a5568; font-size: 14px; margin-top: 4px;">Confirmación de Pago y Reseteo de Balance</p>
+            </div>
+            
+            <div style="background-color: #f7fafc; padding: 16px; border-radius: 6px; margin-bottom: 20px; border-left: 4px solid #48bb78;">
+                <p style="margin: 0; font-size: 15px; color: #2d3748;">
+                    Se ha procesado un pago de <strong>€${amount.toFixed(2)}</strong> y restablecido el balance de la Tarjeta Verde a <strong>€0.00</strong>.
+                </p>
+            </div>
+            
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 24px; font-size: 14px;">
+                <tr>
+                    <td style="padding: 8px 0; border-bottom: 1px solid #edf2f7; font-weight: bold; color: #4a5568; width: 40%;">Usuario Pagado:</td>
+                    <td style="padding: 8px 0; border-bottom: 1px solid #edf2f7; color: #2d3748;">${targetName}</td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px 0; border-bottom: 1px solid #edf2f7; font-weight: bold; color: #4a5568;">Email del Usuario:</td>
+                    <td style="padding: 8px 0; border-bottom: 1px solid #edf2f7; color: #2d3748;">${targetEmail}</td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px 0; border-bottom: 1px solid #edf2f7; font-weight: bold; color: #4a5568;">Código Dicilo:</td>
+                    <td style="padding: 8px 0; border-bottom: 1px solid #edf2f7; color: #2d3748; font-family: monospace; font-weight: bold; color: #2b6cb0;">${targetCode}</td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px 0; border-bottom: 1px solid #edf2f7; font-weight: bold; color: #4a5568;">Importe Pagado:</td>
+                    <td style="padding: 8px 0; border-bottom: 1px solid #edf2f7; font-weight: bold; color: #48bb78; font-size: 16px;">€${amount.toFixed(2)}</td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px 0; border-bottom: 1px solid #edf2f7; font-weight: bold; color: #4a5568;">Procesado por:</td>
+                    <td style="padding: 8px 0; border-bottom: 1px solid #edf2f7; color: #2d3748;">${auditorName} (${auditorEmail})</td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px 0; border-bottom: 1px solid #edf2f7; font-weight: bold; color: #4a5568;">Fecha y Hora:</td>
+                    <td style="padding: 8px 0; border-bottom: 1px solid #edf2f7; color: #2d3748;">${new Date().toLocaleString('es-ES', { timeZone: 'Europe/Madrid' })} (Madrid)</td>
+                </tr>
+            </table>
+            
+            <hr style="border: 0; border-top: 1px solid #edf2f7; margin-bottom: 20px;" />
+            
+            <div style="font-size: 11px; color: #a0aec0; text-align: center;">
+                Este correo fue enviado automáticamente por el sistema de administración de Dicilo.
+            </div>
+        </div>
+    `;
+    
+    await sendSmtpEmail({
+        to: 'support@dicilo.net',
+        subject,
+        html
+    });
+}
+
+/**
+ * Resets the green card balance (eurBalance) to 0 for a target user.
+ * Enforces security: Caller must be superadmin, admin or team_office with the 'finanzas' permission.
+ * Automatically notifies support@dicilo.net about the payout.
+ */
+export async function resetGreenCardBalance(idToken: string, targetUid: string) {
+    if (!idToken) {
+        return { success: false, error: 'Unauthorized: No token provided' };
+    }
+    try {
+        const decodedToken = await getAdminAuth().verifyIdToken(idToken);
+        const callerUid = decodedToken.uid;
+        
+        // Fetch caller profile from firestore
+        const db = getAdminDb();
+        const callerDoc = await db.collection('private_profiles').doc(callerUid).get();
+        if (!callerDoc.exists) {
+            return { success: false, error: 'Unauthorized: Caller profile not found' };
+        }
+        
+        const callerData = callerDoc.data()!;
+        const role = callerData.role || 'user';
+        const permissions = callerData.permissions || [];
+        
+        // Check permissions: Superadmin is always allowed.
+        // Admin or Team Office must have the 'finanzas' permission.
+        const isSuperAdmin = role === 'superadmin';
+        const isFinanzasAuthorized = (role === 'admin' || role === 'team_office') && permissions.includes('finanzas');
+        
+        if (!isSuperAdmin && !isFinanzasAuthorized) {
+            return { success: false, error: 'Forbidden: Insufficient permissions (Finanzas required)' };
+        }
+        
+        // Fetch target wallet
+        const walletRef = db.collection('wallets').doc(targetUid);
+        const walletDoc = await walletRef.get();
+        if (!walletDoc.exists) {
+            return { success: false, error: 'User has no wallet' };
+        }
+        
+        const walletData = walletDoc.data()!;
+        const eurBalance = walletData.eurBalance || 0;
+        if (eurBalance <= 0) {
+            return { success: false, error: 'El balance de la tarjeta verde ya es 0 o menor.' };
+        }
+        
+        // Reset balance to 0 in a transaction to log it
+        const batch = db.batch();
+        
+        batch.update(walletRef, {
+            eurBalance: 0,
+            updatedAt: admin.firestore.FieldValue.serverTimestamp()
+        });
+        
+        // Create a transaction log
+        const trxRef = db.collection('wallet_transactions').doc();
+        batch.set(trxRef, {
+            userId: targetUid,
+            amount: -eurBalance,
+            currency: 'EUR',
+            type: 'PAYOUT_RESET',
+            description: `Pago y reseteo de Tarjeta Verde por ${callerData.firstName} ${callerData.lastName || ''}`,
+            adminId: callerUid,
+            timestamp: admin.firestore.FieldValue.serverTimestamp(),
+            meta: {
+                previousBalance: eurBalance,
+                action: 'PAYOUT_RESET',
+                auditorName: `${callerData.firstName} ${callerData.lastName || ''}`.trim()
+            }
+        });
+        
+        await batch.commit();
+        
+        // Send notification email to support@dicilo.net
+        // Let's fetch target profile for details
+        const targetDoc = await db.collection('private_profiles').doc(targetUid).get();
+        const targetData = targetDoc.exists ? targetDoc.data() : null;
+        const targetName = targetData ? `${targetData.firstName} ${targetData.lastName || ''}`.trim() : 'Desconocido';
+        const targetEmail = targetData?.email || 'N/A';
+        const targetCode = targetData?.uniqueCode || 'N/A';
+        
+        try {
+            await sendPayoutNotificationEmail({
+                targetName,
+                targetEmail,
+                targetCode,
+                amount: eurBalance,
+                auditorName: `${callerData.firstName} ${callerData.lastName || ''}`.trim(),
+                auditorEmail: callerData.email || 'N/A'
+            });
+        } catch (emailErr) {
+            console.error('Failed to send payout notification email:', emailErr);
+            // Don't fail the whole action if email notification fails, but report it
+        }
+        
+        return { 
+            success: true, 
+            message: `Tarjeta Verde restablecida a 0 exitosamente. Se ha pagado €${eurBalance.toFixed(2)}.` 
+        };
+        
+    } catch (error: any) {
+        console.error('Error in resetGreenCardBalance:', error);
+        return { success: false, error: error.message || 'Error del servidor' };
     }
 }

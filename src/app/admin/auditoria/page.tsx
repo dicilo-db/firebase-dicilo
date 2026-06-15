@@ -14,14 +14,62 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Download, Users, CheckCircle, XCircle, DollarSign, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Search, MapPin, Briefcase } from 'lucide-react';
+import { Download, Users, CheckCircle, XCircle, DollarSign, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Search, MapPin, Briefcase, Loader2 } from 'lucide-react';
+import { useAuthGuard } from '@/hooks/useAuthGuard';
+import { resetGreenCardBalance } from '@/app/actions/wallet';
+import { getAuth } from 'firebase/auth';
+import { app } from '@/lib/firebase';
+import { useToast } from '@/hooks/use-toast';
 
 const ITEMS_PER_PAGE = 50;
 
 export default function AuditoriaPage() {
+    const { user: currentUser, isLoading: authLoading } = useAuthGuard(['admin', 'superadmin', 'team_office']);
+    const { toast } = useToast();
     const [data, setData] = useState<AuditReferrerData[]>([]);
     const [loading, setLoading] = useState(true);
     const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
+    const [isResetting, setIsResetting] = useState<string | null>(null);
+
+    const canProcessReset = useMemo(() => {
+        if (!currentUser) return false;
+        if (currentUser.role === 'superadmin') return true;
+        if ((currentUser.role === 'admin' || currentUser.role === 'team_office') && currentUser.permissions?.includes('finanzas')) {
+            return true;
+        }
+        return false;
+    }, [currentUser]);
+
+    const handleResetBalance = async (targetUid: string, targetName: string, currentBalance: number) => {
+        if (!confirm(`¿Confirmas que has realizado el pago de €${currentBalance.toFixed(2)} a ${targetName} y deseas restablecer su balance de Tarjeta Verde a 0?\nSe enviará una notificación por email a Nilo.`)) {
+            return;
+        }
+        
+        setIsResetting(targetUid);
+        try {
+            const auth = getAuth(app);
+            const token = await auth.currentUser?.getIdToken(true);
+            if (!token) {
+                toast({ title: 'Error de autenticación', description: 'No se pudo obtener el token de seguridad.', variant: 'destructive' });
+                return;
+            }
+            
+            const result = await resetGreenCardBalance(token, targetUid);
+            if (result.success) {
+                toast({ title: 'Pago registrado', description: result.message });
+                // Reload data to reflect change
+                const updatedData = await getMLMAuditData();
+                setData(updatedData);
+            } else {
+                toast({ title: 'Error al procesar pago', description: result.error, variant: 'destructive' });
+            }
+        } catch (error: any) {
+            console.error('Error resetting balance:', error);
+            toast({ title: 'Error', description: error.message || 'Error del servidor al procesar el pago.', variant: 'destructive' });
+        } finally {
+            setIsResetting(null);
+        }
+    };
     
     // Filters
     const [searchTerm, setSearchTerm] = useState('');
@@ -164,8 +212,15 @@ export default function AuditoriaPage() {
     const cuentasInactivas = filteredData.reduce((acc, curr) => acc + curr.inactiveCount, 0);
     const dineroPorPagar = filteredData.reduce((acc, curr) => acc + curr.greenCardBalance, 0);
 
-    if (loading) {
-        return <div className="p-8 text-center">Cargando reporte de auditoría...</div>;
+    if (loading || authLoading) {
+        return (
+            <div className="flex justify-center items-center h-screen bg-background text-foreground">
+                <div className="flex flex-col items-center gap-2">
+                    <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+                    <span>Cargando reporte de auditoría y verificando credenciales...</span>
+                </div>
+            </div>
+        );
     }
 
     return (
@@ -350,8 +405,26 @@ export default function AuditoriaPage() {
                                         <TableCell className="text-right font-bold">
                                             {ref.blackCardBalance} DP
                                         </TableCell>
-                                        <TableCell className="text-right font-bold text-green-600">
-                                            €{ref.greenCardBalance.toFixed(2)}
+                                        <TableCell className="text-right">
+                                            <div className="flex items-center justify-end gap-2 font-bold text-green-600">
+                                                <span>€{ref.greenCardBalance.toFixed(2)}</span>
+                                                {ref.greenCardBalance > 0 && canProcessReset && (
+                                                    <Button
+                                                        size="sm"
+                                                        variant="outline"
+                                                        className="h-7 px-2 border-green-600 text-green-600 hover:bg-green-50 hover:text-green-700 flex items-center gap-1 font-medium transition-colors"
+                                                        onClick={() => handleResetBalance(ref.referrerId, ref.referrerName, ref.greenCardBalance)}
+                                                        disabled={isResetting === ref.referrerId}
+                                                        title="Marcar como pagado y colocar en 0"
+                                                    >
+                                                        {isResetting === ref.referrerId ? (
+                                                            <Loader2 className="h-3 w-3 animate-spin" />
+                                                        ) : (
+                                                            <span>Pagar</span>
+                                                        )}
+                                                    </Button>
+                                                )}
+                                            </div>
                                         </TableCell>
                                     </TableRow>
                                     

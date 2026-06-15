@@ -55,6 +55,7 @@ export default function PrivateUsersPage() {
         { id: 'access_admin_panel', label: 'Acceso Panel Admin' },
         { id: 'access_ads_manager', label: 'Acceso Ads Manager' },
         { id: 'freelancer_tool', label: 'Acceso Freelancer Tool' },
+        { id: 'finanzas', label: 'Finanzas (Pagos de Tarjetas)' },
     ];
 
     const handleOpenPermissions = (user: any) => {
