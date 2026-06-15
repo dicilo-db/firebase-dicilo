@@ -2,7 +2,7 @@
  * @fileoverview Cloud Functions for Firebase (Gen 2).
  * Migrated to Gen 2 to support Node 20 and explicit CPU/Memory configuration.
  */
-import { onDocumentWritten, onDocumentCreated } from 'firebase-functions/v2/firestore';
+import { onDocumentWritten, onDocumentCreated, onDocumentUpdated } from 'firebase-functions/v2/firestore';
 import { onCall, onRequest, HttpsError } from 'firebase-functions/v2/https';
 import { setGlobalOptions } from 'firebase-functions/v2';
 import * as functions from 'firebase-functions';
@@ -1055,4 +1055,86 @@ export * from './mlm';
 
 // --- Reports & Audits ---
 export * from './reports';
+
+export const checkFreelancerGreenCard = onDocumentUpdated(
+  { document: 'wallets/{uid}', region: 'europe-west1' },
+  async (event) => {
+    const uid = event.params.uid;
+    const beforeData = event.data?.before.data();
+    const afterData = event.data?.after.data();
+
+    if (!afterData) return;
+
+    const eurBalanceBefore = beforeData?.eurBalance || 0;
+    const eurBalanceAfter = afterData?.eurBalance || 0;
+    const usdBalanceAfter = afterData?.usdBalance || 0;
+    const notified20Euro = afterData?.notified20Euro === true;
+
+    // Check if balance is >= 20 (in EUR or USD) and we haven't notified them yet
+    if ((eurBalanceAfter >= 20 || usdBalanceAfter >= 20) && !notified20Euro) {
+      // Fetch user profile to verify it exists
+      const profileSnap = await db.collection('private_profiles').doc(uid).get();
+      if (!profileSnap.exists) return;
+
+      const profileData = profileSnap.data();
+      const email = profileData?.email;
+      const name = profileData?.name || profileData?.firstName || 'Colaborador';
+
+      if (!email) {
+        logger.warn(`User ${uid} has >= 20 but no email found. Skipping notification.`);
+        return;
+      }
+
+      logger.info(`Collaborator ${uid} reached 20 $ o €! Sending notifications...`);
+
+      // 1. Update the wallet FIRST to prevent duplicate triggers if the email fails or takes long
+      await event.data?.after.ref.update({ notified20Euro: true });
+
+      const currencySymbol = eurBalanceAfter >= 20 ? '€' : '$';
+      const balanceAmount = eurBalanceAfter >= 20 ? eurBalanceAfter : usdBalanceAfter;
+
+      // 2. Prepare and send emails
+      const emailHtmlUser = `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2>¡Felicidades ${name}! 🎉</h2>
+            <p>Queríamos notificarte que has alcanzado o superado los <strong>20 ${currencySymbol}</strong> en tu Tarjeta Verde (Balance actual: ${balanceAmount.toFixed(2)} ${currencySymbol}).</p>
+            <p>Ya puedes solicitar la transacción o retiro de tus fondos desde tu panel de control de Dicilo.</p>
+            <p>¡Sigue con el excelente trabajo!</p>
+            <br/>
+            <p>El equipo de Dicilo.</p>
+        </div>
+      `;
+
+      const emailHtmlAdmin = `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2>Notificación de Balance de Colaborador</h2>
+            <p>El colaborador/referidor <strong>${name}</strong> (Email: ${email}, UID: ${uid}, Rol: ${profileData?.role || 'user'}) ha alcanzado un balance en su Tarjeta Verde de <strong>${balanceAmount.toFixed(2)} ${currencySymbol}</strong>.</p>
+            <p>Por favor, revisa su cuenta en el panel de administración, ya que está habilitado para realizar una transacción.</p>
+        </div>
+      `;
+
+      try {
+        // Send email to Collaborator
+        await sendMail({
+          to: email,
+          subject: `¡Felicidades! Has alcanzado 20 ${currencySymbol} en tu Tarjeta Verde`,
+          html: emailHtmlUser,
+        });
+
+        // Send email to Administration
+        await sendMail({
+          to: 'support@dicilo.net',
+          subject: `Aviso: El colaborador ${name} ha alcanzado 20 ${currencySymbol}`,
+          html: emailHtmlAdmin,
+        });
+        
+        logger.info(`Successfully sent 20 Euro/USD notification emails for collaborator ${uid}`);
+      } catch (error) {
+        logger.error(`Error sending 20 Euro/USD emails for ${uid}:`, error);
+        // If email fails, revert the flag so it triggers again on next update
+        await event.data?.after.ref.update({ notified20Euro: admin.firestore.FieldValue.delete() });
+      }
+    }
+  }
+);
 
