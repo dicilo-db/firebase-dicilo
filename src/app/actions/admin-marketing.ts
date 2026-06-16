@@ -24,6 +24,7 @@ export interface MarketingLead {
     securityKey?: string;
     validationStatus?: string;
     lang?: string;
+    notes?: string;
 }
 
 export interface AdminMarketingSend {

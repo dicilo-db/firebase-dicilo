@@ -824,7 +824,7 @@ const DashboardContent: React.FC = () => {
               </Card>
             </Link>
             {/* Freelancer */}
-            <Link href="/dashboard/freelancer" className="group">
+            <Link href="/admin/freelancers" className="group">
               <Card className="h-full transition-all hover:shadow-md hover:border-blue-500/50 cursor-pointer relative">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Freelancer</CardTitle>

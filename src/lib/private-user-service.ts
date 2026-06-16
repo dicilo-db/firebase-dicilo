@@ -2,6 +2,7 @@ import { getAdminDb } from '@/lib/firebase-admin';
 import * as admin from 'firebase-admin';
 import { resolveRewards } from './rewards';
 import { checkAndUpgradeRank } from '@/app/actions/mlm-actions';
+import { formatPhoneWithCountryCode } from './utils';
 
 /**
  * Generates a unique code for a private user using Admin SDK.
@@ -62,7 +63,10 @@ export async function createPrivateUserProfile(
     const existing = await docRef.get();
     if (existing.exists) return { success: false, message: 'Profile already exists', profile: existing.data() };
 
-    const phoneForCode = whatsapp || phone || '000';
+    const formattedPhone = phone ? formatPhoneWithCountryCode(phone, country) : '';
+    const formattedWhatsapp = whatsapp ? formatPhoneWithCountryCode(whatsapp, country) : '';
+
+    const phoneForCode = formattedWhatsapp || formattedPhone || '000';
     const uniqueCode = await generateUniqueCodeAdmin(firstName, lastName, phoneForCode);
 
     // 1. Resolve Rewards & Referrer
@@ -110,8 +114,8 @@ export async function createPrivateUserProfile(
         emailVerificationCode: Math.floor(100000 + Math.random() * 900000).toString(),
         isEmailVerified: false,
         contactPreferences: {
-            whatsapp: contactType === 'whatsapp' ? (whatsapp || phone || '') : '',
-            telegram: contactType === 'telegram' ? (whatsapp || phone || '') : '',
+            whatsapp: contactType === 'whatsapp' ? (formattedWhatsapp || formattedPhone || '') : '',
+            telegram: contactType === 'telegram' ? (formattedWhatsapp || formattedPhone || '') : '',
             email: true,
             frequency: 'weekly',
         },

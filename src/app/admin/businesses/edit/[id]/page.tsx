@@ -11,7 +11,7 @@ import { z } from 'zod';
 import { doc, getDoc, updateDoc, getFirestore } from 'firebase/firestore';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { app } from '@/lib/firebase';
-import { isValidUrl } from '@/lib/utils';
+import { isValidUrl, formatPhoneWithCountryCode } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from 'react-i18next';
 import {
@@ -307,6 +307,11 @@ export default function EditBusinessPage() {
         finalData.subcategory_key = '';
       }
 
+      if (finalData.phone) {
+        const countryVal = getValues('address') || getValues('location') || 'Deutschland';
+        finalData.phone = formatPhoneWithCountryCode(finalData.phone, countryVal);
+      }
+
       Object.keys(finalData).forEach((key) => {
         if (finalData[key] === undefined || finalData[key] === '') {
           delete finalData[key];
@@ -457,7 +462,17 @@ export default function EditBusinessPage() {
                   <Label htmlFor="phone">
                     {t('admin.businesses.fields.phone')}
                   </Label>
-                  <Input id="phone" {...register('phone')} />
+                  <Input 
+                    id="phone" 
+                    {...register('phone', {
+                      onBlur: (e) => {
+                        const val = e.target.value;
+                        const countryVal = getValues('address') || getValues('location') || 'Deutschland';
+                        setValue('phone', formatPhoneWithCountryCode(val, countryVal));
+                      }
+                    })} 
+                  />
+                  <p className="text-xs text-muted-foreground">Ingrese el +49 o el de su país.</p>
                 </div>
                 {/* Website */}
                 <div className="space-y-2">
@@ -640,12 +655,16 @@ export default function EditBusinessPage() {
                   id: 'edit-marker',
                   coords: coords as [number, number],
                   name: getValues('name'),
+                  category: getValues('category'),
+                  description: getValues('description'),
+                  location: getValues('location') || '',
+                  imageUrl: getValues('imageUrl') || '',
+                  imageHint: getValues('imageHint') || '',
                 },
               ]}
               selectedBusinessId="edit-marker"
               onMarkerDragEnd={handleMapDragEnd}
               zoom={15}
-              t={t}
             />
           )}
         </div>

@@ -11,7 +11,7 @@ import { z } from 'zod';
 import { doc, getDoc, updateDoc, deleteDoc, getFirestore, collection, query, where, getDocs, orderBy, runTransaction } from 'firebase/firestore';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { app } from '@/lib/firebase';
-import { isValidUrl } from '@/lib/utils';
+import { isValidUrl, formatPhoneWithCountryCode } from '@/lib/utils';
 import { uploadImage } from '@/app/actions/upload';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from 'react-i18next';
@@ -705,6 +705,10 @@ export default function EditBusinessPage() {
         }
       }
 
+      if (finalData.phone) {
+        finalData.phone = formatPhoneWithCountryCode(finalData.phone, finalData.country);
+      }
+
       Object.keys(finalData).forEach((key) => {
         if (finalData[key] === undefined || finalData[key] === '') {
           delete finalData[key];
@@ -1061,7 +1065,17 @@ export default function EditBusinessPage() {
                   <Label htmlFor="phone">
                     {t('businesses.fields.phone')}
                   </Label>
-                  <Input id="phone" {...register('phone')} />
+                  <Input 
+                    id="phone" 
+                    {...register('phone', {
+                      onBlur: (e) => {
+                        const val = e.target.value;
+                        const countryVal = getValues('country') || 'Deutschland';
+                        setValue('phone', formatPhoneWithCountryCode(val, countryVal));
+                      }
+                    })} 
+                  />
+                  <p className="text-xs text-muted-foreground">Ingrese el +49 o el de su país.</p>
                 </div>
                 {/* Website */}
                 <div className="space-y-2">

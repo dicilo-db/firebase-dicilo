@@ -26,7 +26,7 @@ import { ArrowLeft, Loader2, LocateFixed } from 'lucide-react';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { Skeleton } from '@/components/ui/skeleton';
-import { isValidUrl } from '@/lib/utils';
+import { isValidUrl, formatPhoneWithCountryCode } from '@/lib/utils';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 
 const DiciloMap = dynamic(() => import('@/components/dicilo-map'), {
@@ -201,6 +201,11 @@ export default function NewBusinessPage() {
         finalData.subcategory_key = '';
       }
 
+      if (finalData.phone) {
+        const countryVal = getValues('address') || getValues('location') || 'Deutschland';
+        finalData.phone = formatPhoneWithCountryCode(finalData.phone, countryVal);
+      }
+
       Object.keys(finalData).forEach((key) => {
         if (finalData[key] === undefined || finalData[key] === '') {
           delete finalData[key];
@@ -343,7 +348,17 @@ export default function NewBusinessPage() {
                   <Label htmlFor="phone">
                     {t('businesses.fields.phone')}
                   </Label>
-                  <Input id="phone" {...register('phone')} />
+                  <Input 
+                    id="phone" 
+                    {...register('phone', {
+                      onBlur: (e) => {
+                        const val = e.target.value;
+                        const countryVal = getValues('address') || getValues('location') || 'Deutschland';
+                        setValue('phone', formatPhoneWithCountryCode(val, countryVal));
+                      }
+                    })} 
+                  />
+                  <p className="text-xs text-muted-foreground">Ingrese el +49 o el de su país.</p>
                 </div>
                 {/* Website */}
                 <div className="space-y-2">

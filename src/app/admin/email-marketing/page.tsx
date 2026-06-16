@@ -41,7 +41,7 @@ import {
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { cn } from '@/lib/utils';
+import { cn, formatPhoneWithCountryCode } from '@/lib/utils';
 
 export default function EmailMarketingPage() {
     useAuthGuard(['admin', 'superadmin'], 'manage_campaigns');
@@ -100,6 +100,9 @@ export default function EmailMarketingPage() {
         setIsSaving(true);
         try {
             const sanitizedLead = JSON.parse(JSON.stringify(editingLead));
+            if (sanitizedLead.phone) {
+                sanitizedLead.phone = formatPhoneWithCountryCode(sanitizedLead.phone, sanitizedLead.country);
+            }
             const res = await updateMarketingLead(editingLead.id, sanitizedLead);
             
             if (!res) {
@@ -136,6 +139,9 @@ export default function EmailMarketingPage() {
             // IMPORTANT: Save the lead data to Firestore first so the backend email action
             // can read the newly generated securityKey and updated fields.
             const sanitizedLead = JSON.parse(JSON.stringify(editingLead));
+            if (sanitizedLead.phone) {
+                sanitizedLead.phone = formatPhoneWithCountryCode(sanitizedLead.phone, sanitizedLead.country);
+            }
             await updateMarketingLead(editingLead.id, sanitizedLead);
 
             const res = await sendMarketingEmail(editingLead.id, selectedTemplate);
@@ -478,7 +484,13 @@ export default function EmailMarketingPage() {
                                     <Input 
                                         value={editingLead.phone || ''} 
                                         onChange={e => setEditingLead({...editingLead, phone: e.target.value})}
+                                        onBlur={(e) => {
+                                            const val = e.target.value;
+                                            const formatted = formatPhoneWithCountryCode(val, editingLead.country);
+                                            setEditingLead({...editingLead, phone: formatted});
+                                        }}
                                     />
+                                    <p className="text-xs text-muted-foreground">Ingrese el +49 o el de su país.</p>
                                 </div>
                                 <div className="space-y-2">
                                     <Label>Ciudad</Label>

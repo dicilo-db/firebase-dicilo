@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { getAdminAuth, getAdminDb } from '@/lib/firebase-admin';
 import { createPrivateUserProfile } from '@/lib/private-user-service';
 import { sendWelcomeEmail } from '@/lib/email';
+import { formatPhoneWithCountryCode } from '@/lib/utils';
 import * as admin from 'firebase-admin';
 import { resolveRewards } from '@/lib/rewards';
 import { checkAndUpgradeRank } from '@/app/actions/mlm-actions';
@@ -220,9 +221,12 @@ export async function POST(request: Request) {
     // B. Resolve Referrer
     const referrerData = await resolveReferrer(db, referralCode);
 
+    const formattedPhone = phone ? formatPhoneWithCountryCode(phone, country) : null;
+    const formattedWhatsapp = whatsapp ? formatPhoneWithCountryCode(whatsapp, country) : null;
+
     // 3. Save to Firestore (Registrations)
     const registrationData: any = {
-      firstName, lastName, email, country, city, whatsapp: whatsapp || null,
+      firstName, lastName, email, country, city, whatsapp: formattedWhatsapp || null,
       contactType: contactType || 'whatsapp',
       registrationType,
       ownerUid,
@@ -233,7 +237,7 @@ export async function POST(request: Request) {
       description: description || null,
       location: location || null,
       address: address || null,
-      phone: phone || null,
+      phone: formattedPhone || null,
       website: website || null,
       imageUrl: imageUrl || null,
       imageHint: imageHint || null,
@@ -286,7 +290,9 @@ export async function POST(request: Request) {
     // 5. Private Profile fallback (Legacy support if mixed types come here)
     if (registrationType === 'private' && ownerUid) {
       await createPrivateUserProfile(ownerUid, {
-        firstName, lastName, email, country, city, whatsapp, phone,
+        firstName, lastName, email, country, city, 
+        whatsapp: formattedWhatsapp || undefined, 
+        phone: formattedPhone || undefined,
         contactType: contactType as 'whatsapp' | 'telegram' | undefined,
         // If it was REFONL, we pass undefined so the service doesn't try to look up a user
         referralCode: referrerData.isRefonl ? undefined : referrerData.code

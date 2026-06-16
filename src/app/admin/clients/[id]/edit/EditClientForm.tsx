@@ -56,7 +56,7 @@ import {
 
 import { Badge } from '@/components/ui/badge';
 
-import { cn } from '@/lib/utils';
+import { cn, formatPhoneWithCountryCode } from '@/lib/utils';
 import { ensureHttps, formatSocialUrl } from '@/lib/url-utils';
 import {
   Select,
@@ -1348,7 +1348,7 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
       finalPayload.clientType = data.clientType;
 
       // Explicitly set essential fields to ensure they overwrite originalData regardless of merge behavior
-      finalPayload.phone = data.phone;
+      finalPayload.phone = formatPhoneWithCountryCode(data.phone, data.address);
       finalPayload.address = data.address;
       finalPayload.email = data.email;
       finalPayload.website = data.website;
@@ -1562,7 +1562,18 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
                     {/* 4. Phone (Right) - Moved from bottom */}
                     <div className="space-y-2">
                       <Label htmlFor="phone">{t('clients.fields.phone')}</Label>
-                      <Input id="phone" {...register('phone')} placeholder="+34 600 000 000" />
+                      <Input 
+                        id="phone" 
+                        {...register('phone', {
+                          onBlur: (e) => {
+                            const val = e.target.value;
+                            const addressVal = getValues('address') || '';
+                            setValue('phone', formatPhoneWithCountryCode(val, addressVal));
+                          }
+                        })} 
+                        placeholder="+34 600 000 000" 
+                      />
+                      <p className="text-xs text-muted-foreground">Ingrese el +49 o el de su país.</p>
                     </div>
 
                     {/* 5. Description (Left) */}
