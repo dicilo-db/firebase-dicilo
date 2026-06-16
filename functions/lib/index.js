@@ -550,6 +550,7 @@ exports.promoteToClient = (0, https_1.onCall)((request) => __awaiter(void 0, voi
     }
 }));
 exports.demoteToBasic = (0, https_1.onCall)((request) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     if (!request.auth ||
         (request.auth.token.role !== 'admin' &&
             request.auth.token.role !== 'superadmin')) {
@@ -580,10 +581,10 @@ exports.demoteToBasic = (0, https_1.onCall)((request) => __awaiter(void 0, void 
         // Create Business Document
         yield db.collection('businesses').doc(businessId).set({
             name: clientData.clientName || '',
-            description: clientData.description || '',
+            description: clientData.description || ((_a = clientData.bodyData) === null || _a === void 0 ? void 0 : _a.description) || '',
             // Fix: Transfer translations back
             description_translations: clientData.translations || {},
-            category: clientData.category || clientData.clientSubtitle || 'Uncategorized',
+            category: clientData.category || 'Uncategorized',
             subcategory: clientData.subcategory || '',
             location: clientData.location || '',
             address: clientData.address || '',

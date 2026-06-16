@@ -667,10 +667,10 @@ export const demoteToBasic = onCall(async (request) => {
     // Create Business Document
     await db.collection('businesses').doc(businessId).set({
       name: clientData.clientName || '',
-      description: clientData.description || '',
+      description: clientData.description || clientData.bodyData?.description || '',
       // Fix: Transfer translations back
       description_translations: clientData.translations || {},
-      category: clientData.category || clientData.clientSubtitle || 'Uncategorized',
+      category: clientData.category || 'Uncategorized',
       subcategory: clientData.subcategory || '',
       location: clientData.location || '',
       address: clientData.address || '',
