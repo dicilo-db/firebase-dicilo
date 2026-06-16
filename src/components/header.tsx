@@ -109,8 +109,9 @@ const Header = () => {
                 alt="Dicilo Logo"
                 width={140}
                 height={46}
-                className="h-10 w-auto"
+                className="h-10 w-auto object-contain"
                 priority
+                unoptimized
               />
             </div>
 
@@ -123,8 +124,9 @@ const Header = () => {
                   alt="Dicilo Isotype"
                   width={50}
                   height={50}
-                  className="h-12 w-auto"
+                  className="h-12 w-auto object-contain"
                   priority
+                  unoptimized
                 />
               ) : (
                 <Image
@@ -132,8 +134,9 @@ const Header = () => {
                   alt="Dicilo Logo"
                   width={150}
                   height={50}
-                  className="h-12 w-auto"
+                  className="h-12 w-auto object-contain"
                   priority
+                  unoptimized
                 />
               )}
             </div>

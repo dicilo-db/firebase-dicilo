@@ -143,6 +143,7 @@ export default async function RedirectPage({ params, searchParams }: Props) {
                             fill
                             className="object-contain"
                             priority
+                            unoptimized
                         />
                     </div>
                 </div>
