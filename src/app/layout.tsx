@@ -24,9 +24,9 @@ export const metadata: Metadata = {
   title: 'Dicilo.net',
   description: 'We connect your world',
   icons: {
-    icon: '/favicon.ico',
-    shortcut: '/favicon.png',
-    apple: '/favicon.png',
+    icon: '/favicon-v2.png',
+    shortcut: '/favicon-v2.png',
+    apple: '/favicon-v2.png',
   },
   manifest: '/manifest.json',
   appleWebApp: {
