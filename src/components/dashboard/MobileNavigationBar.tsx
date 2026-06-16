@@ -45,7 +45,7 @@ export function MobileNavigationBar({ userData, currentView, onViewChange }: Mob
     if (isFreelancerContext) {
         // Freelancer Context Tabs
         return (
-            <div className="mobile-nav-bar fixed bottom-0 left-0 right-0 z-30 flex items-center justify-around border-t bg-white shadow-lg md:hidden">
+            <div className="mobile-nav-bar fixed bottom-0 left-0 right-0 z-30 flex items-center justify-around border-t bg-white shadow-lg md:hidden h-[calc(4rem+env(safe-area-inset-bottom))] pb-[env(safe-area-inset-bottom)]">
                 {/* Inicio / Freelancer Dashboard Home */}
                 <button
                     onClick={() => handleFreelancerTab('dashboard')}
@@ -57,7 +57,7 @@ export function MobileNavigationBar({ userData, currentView, onViewChange }: Mob
                     <Home className="h-5 w-5 mb-0.5" />
                     <span>Inicio</span>
                 </button>
-
+                
                 {/* Campañas */}
                 <button
                     onClick={() => handleFreelancerTab('all_campaigns')}
@@ -114,7 +114,7 @@ export function MobileNavigationBar({ userData, currentView, onViewChange }: Mob
 
     // General B2B Client Dashboard Tabs
     return (
-        <div className="mobile-nav-bar fixed bottom-0 left-0 right-0 z-30 flex items-center justify-around border-t bg-white shadow-lg md:hidden pb-[safe-area-inset-bottom] h-16">
+        <div className="mobile-nav-bar fixed bottom-0 left-0 right-0 z-30 flex items-center justify-around border-t bg-white shadow-lg md:hidden h-[calc(4rem+env(safe-area-inset-bottom))] pb-[env(safe-area-inset-bottom)]">
             {/* Inicio B2B */}
             <button
                 onClick={() => onViewChange('overview')}

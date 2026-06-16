@@ -207,13 +207,13 @@ export default function PrivateUsersPage() {
                 <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <h1 className="text-3xl font-bold">{t('common:privateUsersList')}</h1>
                     <div className="flex flex-wrap gap-2">
-                        <Button variant="outline" asChild>
+                        <Button variant="outline" asChild className="h-11 lg:h-10">
                             <Link href="/admin/dashboard">
                                 <LayoutDashboard className="mr-2 h-4 w-4" />
                                 {t('businesses.backToDashboard')}
                             </Link>
                         </Button>
-                        <Button variant="outline" onClick={async () => {
+                        <Button variant="outline" className="h-11 lg:h-10" onClick={async () => {
                             try {
                                 setIsLoading(true);
                                 const res = await fetch('/api/admin/sync-private-users', { method: 'POST' });
@@ -236,7 +236,7 @@ export default function PrivateUsersPage() {
                         }}>
                             <RefreshCw className="mr-2 h-4 w-4" /> Import from Registrations
                         </Button>
-                        <Button variant="outline" onClick={() => {
+                        <Button variant="outline" className="h-11 lg:h-10" onClick={() => {
                             const headers = ['FirstName,LastName,Email,UniqueCode,Phone,Country,City,Interests,CreatedAt'];
                             const rows = filteredUsers.map(u => [
                                 u.firstName, u.lastName, u.email, u.uniqueCode,
@@ -409,7 +409,8 @@ export default function PrivateUsersPage() {
                                 <Loader2 className="h-8 w-8 animate-spin" />
                             </div>
                         ) : (
-                            <Table>
+                            <div className="overflow-x-auto w-full">
+                                <Table>
                                 <TableHeader>
                                     <TableRow>
                                         <TableHead>{t('privateUsers.table.code')}</TableHead>
@@ -513,10 +514,10 @@ export default function PrivateUsersPage() {
                                             </TableCell>
                                             <TableCell>
                                                 <div className="flex items-center gap-2">
-                                                    <Button variant="ghost" size="sm" onClick={() => setDetailDialogUser(user)} title="Ver Ficha Técnica">
+                                                    <Button variant="ghost" size="sm" className="h-11 w-11 lg:h-8 lg:w-8 p-0" onClick={() => setDetailDialogUser(user)} title="Ver Ficha Técnica">
                                                         <Info className="h-4 w-4 text-blue-600" />
                                                     </Button>
-                                                    <Button variant="ghost" size="sm" onClick={async () => {
+                                                    <Button variant="ghost" size="sm" className="h-11 w-11 lg:h-8 lg:w-8 p-0" onClick={async () => {
                                                         const newStatus = !user.disabled;
                                                         if (confirm(`Sind Sie sicher, dass Sie diesen Benutzer ${newStatus ? 'deaktivieren' : 'aktivieren'} möchten?`)) {
                                                             const res = await togglePrivateUserStatus(user.id, newStatus);
@@ -531,11 +532,11 @@ export default function PrivateUsersPage() {
                                                         {user.disabled ? <Play className="h-4 w-4 text-green-600" /> : <Pause className="h-4 w-4 text-amber-600" />}
                                                     </Button>
                                                     {(currentUser?.role === 'superadmin' || currentUser?.email?.includes('dicilo.net')) && (
-                                                        <Button variant="ghost" size="sm" onClick={() => handleOpenPermissions(user)} title="Gestión de Permisos">
+                                                        <Button variant="ghost" size="sm" className="h-11 w-11 lg:h-8 lg:w-8 p-0" onClick={() => handleOpenPermissions(user)} title="Gestión de Permisos">
                                                             <ShieldCheck className="h-4 w-4 text-purple-600" />
                                                         </Button>
                                                     )}
-                                                    <Button variant="ghost" size="sm" onClick={async () => {
+                                                    <Button variant="ghost" size="sm" className="h-11 w-11 lg:h-8 lg:w-8 p-0" onClick={async () => {
                                                         if (confirm('ACHTUNG: Möchten Sie diesen Benutzer wirklich LÖSCHEN? Diese Aktion kann nicht rückgängig gemacht werden.')) {
                                                             const res = await deletePrivateUser(user.id);
                                                             if (res.success) {
@@ -563,6 +564,7 @@ export default function PrivateUsersPage() {
                                     )}
                                 </TableBody>
                             </Table>
+                            </div>
                         )}
                     </CardContent>
                 </Card>

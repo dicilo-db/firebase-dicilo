@@ -24,7 +24,7 @@ export function MobileHeader({ userData, currentView, onViewChange }: MobileHead
                     <Button 
                         variant="ghost" 
                         size="sm" 
-                        className="flex items-center gap-1 text-slate-600 hover:text-slate-900 font-medium pl-1 pr-3 py-1"
+                        className="flex items-center gap-1 text-slate-600 hover:text-slate-900 font-medium pl-1 pr-3 py-2 min-h-[44px] min-w-[44px]"
                         onClick={() => onViewChange('overview')}
                     >
                         <ChevronLeft className="h-5 w-5" />

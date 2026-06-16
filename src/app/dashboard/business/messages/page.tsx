@@ -126,19 +126,19 @@ export default function MessagesPage() {
                             className={`border-l-4 transition-all ${!msg.read ? 'border-l-emerald-500 bg-white' : 'border-l-slate-200 bg-slate-50/50'}`}
                             onClick={() => markAsRead(msg.id, msg.read)}
                         >
-                            <CardHeader className="pb-2 flex flex-row items-start justify-between">
+                            <CardHeader className="pb-2 flex flex-col sm:flex-row sm:items-start justify-between gap-2">
                                 <div>
                                     <div className="flex items-center gap-2 mb-1">
                                         <CardTitle className="text-lg text-slate-800">{msg.subject || 'Consulta General'}</CardTitle>
                                         {!msg.read && <Badge className="bg-emerald-500">Nuevo</Badge>}
                                     </div>
-                                    <CardDescription className="flex items-center gap-3 text-sm">
+                                    <CardDescription className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 text-sm mt-1">
                                         <span className="flex items-center gap-1 font-medium text-slate-700"><User className="w-3 h-3"/> {msg.senderName}</span>
-                                        <span className="text-slate-500 flex items-center gap-1 bg-slate-100 px-2 py-0.5 rounded-full"><MessageSquare className="w-3 h-3"/> {msg.senderEmail}</span>
-                                        {msg.senderPhone && <span className="text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">{msg.senderPhone}</span>}
+                                        <span className="text-slate-500 flex items-center gap-1 bg-slate-100 px-2 py-0.5 rounded-full w-fit"><MessageSquare className="w-3 h-3"/> {msg.senderEmail}</span>
+                                        {msg.senderPhone && <span className="text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full w-fit">{msg.senderPhone}</span>}
                                     </CardDescription>
                                 </div>
-                                <div className="text-sm text-slate-400 flex items-center gap-1 shrink-0">
+                                <div className="text-xs sm:text-sm text-slate-400 flex items-center gap-1 sm:shrink-0">
                                     <Calendar className="w-3.5 h-3.5" />
                                     {msg.createdAt?.toDate ? format(msg.createdAt.toDate(), "d 'de' MMMM, HH:mm", { locale: es }) : 'Reciente'}
                                 </div>
@@ -149,11 +149,11 @@ export default function MessagesPage() {
                                 </p>
                                 <div className="mt-4 pt-4 border-t border-slate-100 flex gap-2 justify-end">
                                     <a href={`mailto:${msg.senderEmail}?subject=Re: ${msg.subject || 'Consulta Dicilo'}`}>
-                                        <Button variant="outline" size="sm" className="text-slate-600 hover:text-emerald-700 hover:bg-emerald-50 border-slate-200">
+                                        <Button variant="outline" size="sm" className="text-slate-600 hover:text-emerald-700 hover:bg-emerald-50 border-slate-200 h-11 lg:h-9 px-4 lg:px-3">
                                             <Reply className="w-4 h-4 mr-2" /> Responder
                                         </Button>
                                     </a>
-                                    <Button variant="ghost" size="sm" className="text-rose-500 hover:text-rose-700 hover:bg-rose-50" onClick={(e) => { e.stopPropagation(); deleteMessage(msg.id); }}>
+                                    <Button variant="ghost" size="sm" className="text-rose-500 hover:text-rose-700 hover:bg-rose-50 h-11 lg:h-9 px-4 lg:px-3" onClick={(e) => { e.stopPropagation(); deleteMessage(msg.id); }}>
                                         <Trash2 className="w-4 h-4 mr-2" /> Eliminar
                                     </Button>
                                 </div>

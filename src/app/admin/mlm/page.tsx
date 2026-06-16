@@ -142,7 +142,7 @@ export default function AdminMLMPage() {
     return (
         <div className="container mx-auto p-4 md:p-8 space-y-6">
             <div className="flex items-center gap-4">
-                <Button variant="ghost" size="icon" onClick={() => router.push('/admin/dashboard')}>
+                <Button variant="ghost" size="icon" className="h-11 w-11 lg:h-10 lg:w-10" onClick={() => router.push('/admin/dashboard')}>
                     <ArrowLeft className="h-5 w-5" />
                 </Button>
                 <div>
@@ -169,7 +169,7 @@ export default function AdminMLMPage() {
                             <CardDescription>Usuarios que han cumplido las metas de referidos.</CardDescription>
                         </CardHeader>
                 <CardContent>
-                    <div className="rounded-md border">
+                    <div className="rounded-md border overflow-x-auto w-full">
                         <Table>
                             <TableHeader>
                                 <TableRow>
@@ -208,7 +208,7 @@ export default function AdminMLMPage() {
                                             <TableCell>{leader.directsCount}</TableCell>
                                             <TableCell><code className="bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded">{leader.uniqueCode}</code></TableCell>
                                             <TableCell className="text-right">
-                                                <Button variant="outline" size="sm" onClick={() => handleViewTree(leader.uid)}>
+                                                <Button variant="outline" size="sm" className="h-11 lg:h-9" onClick={() => handleViewTree(leader.uid)}>
                                                     Ver Árbol
                                                 </Button>
                                             </TableCell>
@@ -272,7 +272,7 @@ export default function AdminMLMPage() {
                                     />
                                 </div>
 
-                                <Button onClick={handleSaveSettings} disabled={savingSettings} className="mt-4">
+                                <Button onClick={handleSaveSettings} disabled={savingSettings} className="mt-4 h-11 lg:h-10">
                                     {savingSettings ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
                                     Guardar Configuración
                                 </Button>

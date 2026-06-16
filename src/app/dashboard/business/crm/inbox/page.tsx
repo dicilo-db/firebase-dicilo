@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { MessageSquare, Send, Phone, User, Globe, MessageCircleHeart, CheckCircle2 } from 'lucide-react';
+import { MessageSquare, Send, Phone, User, Globe, MessageCircleHeart, CheckCircle2, ChevronLeft } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,6 +12,7 @@ import { collection, query, onSnapshot, orderBy, addDoc, updateDoc, doc } from '
 import { db } from '@/lib/firebase';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
 
 export default function OmnichannelInboxPage() {
     const { t } = useTranslation('common');
@@ -24,6 +25,7 @@ export default function OmnichannelInboxPage() {
     const [replyText, setReplyText] = useState('');
     const [sending, setSending] = useState(false);
     const [activeUser, setActiveUser] = useState<string | null>(null);
+    const [mobileShowChat, setMobileShowChat] = useState(false);
 
     // Escuchar el Webhook Omnicanal en tiempo real
     useEffect(() => {
@@ -66,7 +68,7 @@ export default function OmnichannelInboxPage() {
     // Agrupar mensajes por remitente
     const conversationGroups = messages.reduce((acc, msg) => {
         const id = msg.senderId || 'unknown';
-        if (!acc[id]) acc[id] = [];
+        if (!acc[id]) acc[acc.indexOf ? acc.indexOf(id) : id] = [];
         acc[id].push(msg);
         return acc;
     }, {} as Record<string, any[]>);
@@ -98,14 +100,6 @@ export default function OmnichannelInboxPage() {
                 read: true
             });
 
-            // 2. Aquí iría el POST a tu API real de WhatsApp o Bot
-            /*
-            await fetch('/api/webhooks/send_whatsapp', {
-                method: 'POST',
-                body: JSON.stringify({ to: activeUser, message: replyText })
-            });
-            */
-
             setReplyText('');
             toast({ title: 'Mensaje Enviado', description: `Enviado vía ${targetChannel}` });
 
@@ -118,20 +112,23 @@ export default function OmnichannelInboxPage() {
     };
 
     return (
-        <div className="p-8 max-w-6xl mx-auto animate-in fade-in zoom-in duration-500 h-[calc(100vh-80px)] flex flex-col">
+        <div className="p-4 md:p-8 max-w-6xl mx-auto animate-in fade-in zoom-in duration-500 h-[calc(100vh-80px)] flex flex-col">
             <div className="pb-4 border-b border-slate-200 text-left mb-6 shrink-0">
-                <h1 className="text-3xl font-extrabold flex items-center gap-3 text-slate-900">
+                <h1 className="text-2xl md:text-3xl font-extrabold flex items-center gap-3 text-slate-900">
                     <MessageSquare className="w-8 h-8 text-blue-600" />
                     Bandeja Omnicanal Central
                 </h1>
-                <p className="mt-2 text-slate-500 text-lg">
+                <p className="mt-2 text-slate-500 text-sm md:text-lg">
                     Comunícate con leads de WhatsApp, Telegram y la Web sin salir de Dicilo.
                 </p>
             </div>
 
             <div className="flex-1 overflow-hidden flex gap-6 pb-8">
                 {/* Lista de Chats */}
-                <Card className="w-1/3 border-slate-200 shadow-sm flex flex-col overflow-hidden">
+                <Card className={cn(
+                    "w-full lg:w-1/3 border-slate-200 shadow-sm flex flex-col overflow-hidden",
+                    mobileShowChat ? "hidden lg:flex" : "flex"
+                )}>
                     <div className="bg-slate-100 p-4 border-b border-slate-200 font-bold text-slate-700 flex items-center gap-2">
                         <User className="w-5 h-5"/> Contactos Activos
                     </div>
@@ -148,8 +145,14 @@ export default function OmnichannelInboxPage() {
                                 return (
                                     <button 
                                         key={id}
-                                        onClick={() => setActiveUser(id)}
-                                        className={`w-full text-left p-4 border-b border-slate-100 flex gap-3 hover:bg-slate-50 transition-colors ${activeUser === id ? 'bg-blue-50 border-l-4 border-l-blue-600' : ''}`}
+                                        onClick={() => {
+                                            setActiveUser(id);
+                                            setMobileShowChat(true);
+                                        }}
+                                        className={cn(
+                                            "w-full text-left p-4 border-b border-slate-100 flex gap-3 hover:bg-slate-50 transition-colors min-h-[44px]",
+                                            activeUser === id ? "bg-blue-50 border-l-4 border-l-blue-600" : ""
+                                        )}
                                     >
                                         <div className="mt-1">{sourceIcon(last.source_channel)}</div>
                                         <div className="flex-1 overflow-hidden">
@@ -165,11 +168,22 @@ export default function OmnichannelInboxPage() {
                 </Card>
 
                 {/* Panel de Conversación */}
-                <Card className="flex-1 border-slate-200 shadow-sm flex flex-col overflow-hidden bg-slate-50/50 relative">
+                <Card className={cn(
+                    "flex-1 border-slate-200 shadow-sm flex flex-col overflow-hidden bg-slate-50/50 relative",
+                    mobileShowChat ? "flex" : "hidden lg:flex"
+                )}>
                     {activeUser ? (
                         <>
                             <div className="bg-white p-4 border-b border-slate-200 flex justify-between items-center z-10 shadow-sm">
                                 <div className="flex items-center gap-3">
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="lg:hidden h-11 w-11"
+                                        onClick={() => setMobileShowChat(false)}
+                                    >
+                                        <ChevronLeft className="h-6 w-6" />
+                                    </Button>
                                     <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold">
                                         {(activeConversation[0]?.senderName || '?')[0].toUpperCase()}
                                     </div>
@@ -181,7 +195,7 @@ export default function OmnichannelInboxPage() {
                                         </div>
                                     </div>
                                 </div>
-                                <Button variant="outline" size="sm" className="gap-2 text-slate-600"><Phone className="w-4 h-4"/> Ver Ficha CRM</Button>
+                                <Button variant="outline" size="sm" className="gap-2 text-slate-600 h-11 lg:h-9"><Phone className="w-4 h-4"/> Ver Ficha CRM</Button>
                             </div>
                             
                             <div className="flex-1 overflow-y-auto p-6 space-y-4">
@@ -209,7 +223,7 @@ export default function OmnichannelInboxPage() {
                                     onChange={e => setReplyText(e.target.value)}
                                     onKeyDown={e => e.key === 'Enter' && handleSendReply()}
                                 />
-                                <Button className="bg-blue-600 hover:bg-blue-700 w-12 shrink-0 p-0" onClick={handleSendReply} disabled={sending}>
+                                <Button className="bg-blue-600 hover:bg-blue-700 w-12 h-11 lg:h-10 shrink-0 p-0" onClick={handleSendReply} disabled={sending}>
                                     <Send className="w-5 h-5 ml-1" />
                                 </Button>
                             </div>

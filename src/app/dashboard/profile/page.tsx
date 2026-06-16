@@ -506,7 +506,7 @@ export default function PrivateUserProfilePage() {
                                                     return (
                                                         <FormItem
                                                             key={category.categoria}
-                                                            className="flex flex-row items-start space-x-3 space-y-0"
+                                                            className="flex flex-row items-center space-x-3 space-y-0 min-h-[44px] lg:min-h-0"
                                                         >
                                                             <FormControl>
                                                                 <Checkbox
@@ -523,7 +523,7 @@ export default function PrivateUserProfilePage() {
                                                                     }}
                                                                 />
                                                             </FormControl>
-                                                            <FormLabel className="font-normal text-sm cursor-pointer">
+                                                            <FormLabel className="font-normal text-sm cursor-pointer flex-grow py-3 lg:py-1.5">
                                                                 {category.categoria}
                                                             </FormLabel>
                                                         </FormItem>
@@ -649,7 +649,7 @@ export default function PrivateUserProfilePage() {
                                     </div>
                                 </div>
 
-                                <Button type="submit" disabled={isSaving}>
+                                <Button type="submit" disabled={isSaving} className="h-11 lg:h-10">
                                     {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                                     Änderungen speichern
                                 </Button>

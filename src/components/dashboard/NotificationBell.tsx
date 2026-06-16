@@ -59,7 +59,7 @@ export function NotificationBell() {
             variant="ghost" 
             size="icon" 
             onClick={scrollToInfo} 
-            className="relative rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            className="relative rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors h-11 w-11 md:h-10 md:w-10 flex items-center justify-center"
             title="Ver últimos eventos"
         >
             <Bell className="h-6 w-6 text-slate-600 dark:text-slate-300" />

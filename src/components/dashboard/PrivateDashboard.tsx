@@ -574,12 +574,12 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                                     </div>
                                     <div className="flex items-center gap-3">
                                         <Switch defaultChecked className="data-[state=checked]:bg-[#8cc63f]" />
-                                        <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400">
+                                        <Button variant="ghost" size="icon" className="h-11 w-11 md:h-8 md:w-8 text-slate-400 flex items-center justify-center">
                                             <MoreVertical className="h-4 w-4" />
                                         </Button>
                                     </div>
                                 </Card>
-
+ 
                                 {/* Chatbot 2: Soporte al Cliente */}
                                 <Card className="p-4 shadow-sm border border-slate-100/80 flex items-center justify-between bg-white rounded-2xl hover:shadow-md transition-all duration-300">
                                     <div className="flex items-center gap-3">
@@ -598,12 +598,12 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                                     </div>
                                     <div className="flex items-center gap-3">
                                         <Switch defaultChecked className="data-[state=checked]:bg-[#8cc63f]" />
-                                        <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400">
+                                        <Button variant="ghost" size="icon" className="h-11 w-11 md:h-8 md:w-8 text-slate-400 flex items-center justify-center">
                                             <MoreVertical className="h-4 w-4" />
                                         </Button>
                                     </div>
                                 </Card>
-
+ 
                                 {/* Chatbot 3: Reservas */}
                                 <Card className="p-4 shadow-sm border border-slate-100/80 flex items-center justify-between bg-white rounded-2xl hover:shadow-md transition-all duration-300">
                                     <div className="flex items-center gap-3">
@@ -622,7 +622,7 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                                     </div>
                                     <div className="flex items-center gap-3">
                                         <Switch defaultChecked className="data-[state=checked]:bg-[#8cc63f]" />
-                                        <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400">
+                                        <Button variant="ghost" size="icon" className="h-11 w-11 md:h-8 md:w-8 text-slate-400 flex items-center justify-center">
                                             <MoreVertical className="h-4 w-4" />
                                         </Button>
                                     </div>
@@ -698,7 +698,7 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                         <div className="grid gap-6 lg:grid-cols-2 pt-4 border-t border-slate-100">
                             {/* DiciPoints Wallet (Dark Card) */}
                             <div className="flex flex-col gap-1 h-full">
-                                <div className="bg-slate-950 text-white rounded-2xl p-6 flex flex-col justify-between shadow-lg aspect-[1.58/1] w-full">
+                                <div className="bg-slate-950 text-white rounded-2xl p-6 flex flex-col justify-between shadow-lg aspect-auto min-h-[220px] md:aspect-[1.58/1] w-full">
                                     <div>
                                         <div className="flex justify-between items-start mb-4">
                                             <div>
@@ -716,7 +716,7 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                                             </div>
                                         </div>
                                     </div>
-                                    <Button variant="secondary" className="w-full mt-4 bg-white text-slate-950 hover:bg-slate-200" onClick={handleDownloadQr}>
+                                    <Button variant="secondary" className="w-full mt-4 bg-white text-slate-950 hover:bg-slate-200 h-11 md:h-10" onClick={handleDownloadQr}>
                                         <QrCode className="mr-2 h-4 w-4" />
                                         {t('dashboard.wallet.showQr', 'Show QR to Pay')}
                                     </Button>
@@ -728,7 +728,7 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
 
                             {/* Prepaid Card (Image Background) */}
                             <div className="flex flex-col gap-1 h-full">
-                                <div className="rounded-2xl overflow-hidden shadow-lg aspect-[1.58/1] w-full relative flex flex-col justify-between p-6 text-white group">
+                                <div className="rounded-2xl overflow-hidden shadow-lg aspect-auto min-h-[220px] md:aspect-[1.58/1] w-full relative flex flex-col justify-between p-6 text-white group">
                                     {/* Background Image */}
                                     <div className="absolute inset-0 z-0">
                                         <Image
@@ -828,7 +828,7 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                                     type="button"
                                     variant="outline" 
                                     size="sm" 
-                                    className="border-[#8cc63f] text-[#5a5a5a] hover:bg-[#8cc63f]/10 shrink-0"
+                                    className="border-[#8cc63f] text-[#5a5a5a] hover:bg-[#8cc63f]/10 shrink-0 h-11 lg:h-9"
                                     onClick={() => window.dispatchEvent(new Event('open-cookie-settings'))}
                                 >
                                     Ajustes de Cookies
@@ -838,7 +838,7 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                                         type="button"
                                         variant="outline" 
                                         size="sm" 
-                                        className="border-[#8cc63f] text-[#8cc63f] hover:bg-[#8cc63f]/10 shrink-0 font-bold"
+                                        className="border-[#8cc63f] text-[#8cc63f] hover:bg-[#8cc63f]/10 shrink-0 font-bold h-11 lg:h-9"
                                         onClick={() => handleViewChange('freelancer')}
                                     >
                                         Panel Freelancer
@@ -885,7 +885,7 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                                                 <Label className="text-xs text-muted-foreground uppercase tracking-wider">{t('dashboard.diciloId', 'ID de Dicilo')}</Label>
                                                 <div className="flex items-center gap-2 bg-slate-100 p-3 rounded-lg font-mono text-lg font-bold">
                                                     {formData.uniqueCode || '---'}
-                                                    <Button variant="ghost" size="icon" className="ml-auto h-8 w-8" onClick={() => copyToClipboard(formData.uniqueCode)}>
+                                                    <Button variant="ghost" size="icon" className="ml-auto h-11 w-11 lg:h-8 lg:w-8" onClick={() => copyToClipboard(formData.uniqueCode)}>
                                                         <Copy className="h-4 w-4" />
                                                     </Button>
                                                 </div>
@@ -904,11 +904,11 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                                             )}
 
                                             <div className="flex flex-col sm:flex-row gap-2 pt-2">
-                                                <Button className="flex-1 bg-emerald-600 hover:bg-emerald-700" onClick={handleDownloadQr}>
+                                                <Button className="flex-1 bg-emerald-600 hover:bg-emerald-700 h-11 lg:h-10" onClick={handleDownloadQr}>
                                                     <Download className="mr-2 h-4 w-4" />
                                                     {t('dashboard.downloadQr', 'Descargar QR')}
                                                 </Button>
-                                                <Button variant="outline" className="flex-1" onClick={handleShareQr}>
+                                                <Button variant="outline" className="flex-1 h-11 lg:h-10" onClick={handleShareQr}>
                                                     <Share2 className="mr-2 h-4 w-4" />
                                                     {t('dashboard.share', 'Compartir')}
                                                 </Button>
@@ -1115,11 +1115,11 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                                         </div>
                                         {(formData.profileData?.socialGroup === 'whatsapp' || formData.profileData?.socialGroup === 'telegram') && (
                                             <div className="pt-4 flex flex-col gap-2">
-                                                <Button className="w-full" onClick={() => window.open(formData.profileData?.socialGroup === 'whatsapp' ? 'https://chat.whatsapp.com/IPFpYXlHJTdH0rZosQGws4' : 'https://t.me/+XHaw-Wa4EsBmMjk6', '_blank')}>
+                                                <Button className="w-full h-11 lg:h-10" onClick={() => window.open(formData.profileData?.socialGroup === 'whatsapp' ? 'https://chat.whatsapp.com/IPFpYXlHJTdH0rZosQGws4' : 'https://t.me/+XHaw-Wa4EsBmMjk6', '_blank')}>
                                                     {formData.profileData?.socialGroup === 'whatsapp' ? t('dashboard.joinWhatsapp') : t('dashboard.joinTelegram')}
                                                 </Button>
                                                 {formData.profileData?.socialGroup === 'whatsapp' && (
-                                                    <Button variant="outline" className="w-full" onClick={() => {
+                                                    <Button variant="outline" className="w-full h-11 lg:h-10" onClick={() => {
                                                         const text = t('whatsappInvite');
                                                         window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
                                                     }}>

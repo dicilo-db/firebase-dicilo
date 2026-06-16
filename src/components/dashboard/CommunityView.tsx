@@ -627,7 +627,7 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
                             variant="ghost"
                             size="icon"
                             onClick={handleToggleFavorite}
-                            className={`rounded-full transition-all ${isFavorite ? 'text-pink-500 bg-pink-50 hover:bg-pink-100' : 'text-slate-400 hover:text-pink-400 hover:bg-slate-100'}`}
+                            className={`rounded-full transition-all h-11 w-11 lg:h-10 lg:w-10 ${isFavorite ? 'text-pink-500 bg-pink-50 hover:bg-pink-100' : 'text-slate-400 hover:text-pink-400 hover:bg-slate-100'}`}
                             title={isFavorite ? t('community.actions.is_favorite', 'Es mi Barrio') : t('community.actions.set_favorite', 'Marcar como mi Barrio')}
                         >
                             <Heart className={`h-6 w-6 ${isFavorite ? 'fill-current' : ''}`} />
@@ -669,7 +669,7 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
                                                 key={city}
                                                 variant={selectedCityFilter === city ? "default" : "outline"}
                                                 size="sm"
-                                                className="rounded-full px-4 py-1 text-xs font-semibold whitespace-nowrap h-7"
+                                                className="rounded-full px-4 py-1 text-xs font-semibold whitespace-nowrap h-11 lg:h-7"
                                                 onClick={() => {
                                                     setSelectedCityFilter(city);
                                                     updateNeighborhood(city);
@@ -703,7 +703,7 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
                                                         <Button
                                                             key={city.id}
                                                             variant="ghost"
-                                                            className="w-full justify-start text-left text-sm font-normal py-1.5 px-2.5 h-auto text-slate-700 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800"
+                                                            className="w-full justify-start text-left text-sm font-normal py-1.5 px-2.5 min-h-[44px] lg:min-h-0 h-auto text-slate-700 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800"
                                                             onClick={() => {
                                                                 updateNeighborhood(city.name);
                                                                 setSelectedCityFilter(city.name);
@@ -725,7 +725,7 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
                                                         <Button
                                                             key={nb.id}
                                                             variant="ghost"
-                                                            className="w-full justify-start text-left text-sm font-normal py-1.5 px-2.5 h-auto text-slate-700 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800"
+                                                            className="w-full justify-start text-left text-sm font-normal py-1.5 px-2.5 min-h-[44px] lg:min-h-0 h-auto text-slate-700 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800"
                                                             onClick={() => {
                                                                 updateNeighborhood(nb.name);
                                                                 setSelectedCityFilter(nb.city);
@@ -747,7 +747,7 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
                                                 <div className="p-2">
                                                     <Button
                                                         variant="ghost"
-                                                        className="w-full justify-start text-left text-sm font-medium py-2 px-2.5 h-auto text-blue-600 hover:text-blue-800 hover:bg-blue-50/50 dark:text-blue-400 dark:hover:bg-blue-900/30"
+                                                        className="w-full justify-start text-left text-sm font-medium py-2 px-2.5 min-h-[44px] lg:min-h-0 h-auto text-blue-600 hover:text-blue-800 hover:bg-blue-50/50 dark:text-blue-400 dark:hover:bg-blue-900/30"
                                                         onClick={() => {
                                                             setNewNeighborhoodName(searchTerm);
                                                             setRegisterOpen(true);
@@ -774,7 +774,7 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
                                 {favoriteNeighborhood && favoriteNeighborhood.toLowerCase() !== neighborhoodName.toLowerCase() && (
                                     <Button
                                         variant="outline"
-                                        className="w-full text-pink-600 hover:text-pink-800 hover:bg-pink-50 dark:hover:bg-pink-950/20 mb-1 border-pink-200 dark:border-pink-900 text-xs py-1.5 h-auto"
+                                        className="w-full text-pink-600 hover:text-pink-800 hover:bg-pink-50 dark:hover:bg-pink-950/20 mb-1 border-pink-200 dark:border-pink-900 text-xs h-11 lg:h-auto lg:py-1.5"
                                         onClick={() => updateNeighborhood(favoriteNeighborhood)}
                                     >
                                         <Heart className="h-3.5 w-3.5 mr-2 fill-current flex-shrink-0" />
@@ -786,7 +786,7 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
                                 {!isCity && (
                                     <Button
                                         variant="outline"
-                                        className="w-full text-blue-600 hover:text-blue-800 hover:bg-blue-50 dark:hover:bg-blue-950/20 mb-1 text-xs py-1.5 h-auto"
+                                        className="w-full text-blue-600 hover:text-blue-800 hover:bg-blue-50 dark:hover:bg-blue-950/20 mb-1 text-xs h-11 lg:h-auto lg:py-1.5"
                                         onClick={() => updateNeighborhood(neighborhoodConfig?.city || 'Hamburg')}
                                     >
                                         <ChevronRight className="h-3.5 w-3.5 rotate-180 mr-2 flex-shrink-0" />
@@ -817,7 +817,7 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
                                                         key={nb.id}
                                                         variant={isActive ? "secondary" : "ghost"}
                                                         className={`
-                                                            justify-start h-auto py-1.5 px-2.5 text-xs font-normal
+                                                            justify-start h-auto min-h-[44px] lg:min-h-0 py-1.5 px-2.5 text-xs font-normal
                                                             ${isActive
                                                                 ? "bg-white dark:bg-slate-800 text-slate-900 dark:text-white border-l-4 border-slate-900 dark:border-slate-100 font-semibold shadow-sm"
                                                                 : "hover:bg-white dark:hover:bg-slate-800 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:shadow-sm"}
@@ -847,7 +847,7 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
                                     <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800">
                                         <Button 
                                             variant="outline" 
-                                            className="w-full text-xs text-slate-600 dark:text-slate-400 hover:text-primary hover:bg-slate-50 dark:hover:bg-slate-800 border-slate-200 dark:border-slate-800 h-9"
+                                            className="w-full text-xs text-slate-600 dark:text-slate-400 hover:text-primary hover:bg-slate-50 dark:hover:bg-slate-800 border-slate-200 dark:border-slate-800 h-11 lg:h-9"
                                             onClick={() => {
                                                 setNewNeighborhoodName('');
                                                 setRegisterOpen(true);
@@ -892,7 +892,7 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
                                                 </div>
                                             </div>
                                             <Link href={`/client/${biz.slug || biz.id}`}>
-                                                <Button variant="ghost" size="icon" className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <Button variant="ghost" size="icon" className="h-11 w-11 lg:h-8 lg:w-8 opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity">
                                                     <ChevronRight className="h-4 w-4" />
                                                 </Button>
                                             </Link>
@@ -912,23 +912,23 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
                 <div className={isFullWidthTab ? "lg:col-span-12" : "lg:col-span-8"}>
                     <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
                         <div className="flex items-center justify-between">
-                            <TabsList className="grid w-full grid-cols-4 lg:w-[600px] h-auto p-1">
-                                <TabsTrigger value="social" className="py-2 text-xs sm:text-sm whitespace-normal h-full">
+                            <TabsList className="flex overflow-x-auto scrollbar-none w-full lg:w-[600px] h-12 lg:h-auto p-1 gap-1 items-stretch justify-start lg:grid lg:grid-cols-4">
+                                <TabsTrigger value="social" className="py-2 text-xs sm:text-sm whitespace-nowrap min-w-[90px] lg:min-w-0 h-full flex-shrink-0">
                                     <Users className="h-4 w-4 mr-1 sm:mr-2 flex-shrink-0" />
                                     <span className="hidden sm:inline">{t('navigation.social_network', 'Mi Círculo')}</span>
                                     <span className="sm:hidden">Círculo</span>
                                 </TabsTrigger>
-                                <TabsTrigger value="recommendations" className="py-2 text-xs sm:text-sm whitespace-normal h-full">
+                                <TabsTrigger value="recommendations" className="py-2 text-xs sm:text-sm whitespace-nowrap min-w-[90px] lg:min-w-0 h-full flex-shrink-0">
                                     <MapPin className="h-4 w-4 mr-1 sm:mr-2 flex-shrink-0" />
                                     <span className="hidden sm:inline">{t('community.feed.recommendations', 'Recomendados')}</span>
                                     <span className="sm:hidden">Recoms</span>
                                 </TabsTrigger>
-                                <TabsTrigger value="wall" className="py-2 text-xs sm:text-sm whitespace-normal h-full">
+                                <TabsTrigger value="wall" className="py-2 text-xs sm:text-sm whitespace-nowrap min-w-[90px] lg:min-w-0 h-full flex-shrink-0">
                                     <MessageSquare className="h-4 w-4 mr-1 sm:mr-2 flex-shrink-0" />
                                     <span className="hidden sm:inline">{t('community.feed.wall', 'Muro Social')}</span>
                                     <span className="sm:hidden">Muro</span>
                                 </TabsTrigger>
-                                <TabsTrigger value="trustboard" className="py-2 text-xs sm:text-sm whitespace-normal h-full text-blue-700 bg-blue-50/50">
+                                <TabsTrigger value="trustboard" className="py-2 text-xs sm:text-sm whitespace-nowrap min-w-[90px] lg:min-w-0 h-full flex-shrink-0 text-blue-700 bg-blue-50/50">
                                     <Search className="h-4 w-4 mr-1 sm:mr-2 text-blue-600 flex-shrink-0" />
                                     <span className="font-semibold">{t('navigation.trustboard', 'Pizarra')}</span>
                                 </TabsTrigger>
@@ -1021,10 +1021,11 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
                         </div>
 
                         <DialogFooter className="mt-4 border-t pt-4 gap-2 sm:gap-0">
-                            <Button variant="outline" onClick={() => setRegisterOpen(false)}>{t('cancel', 'Cancelar')}</Button>
+                            <Button variant="outline" className="h-11 lg:h-10" onClick={() => setRegisterOpen(false)}>{t('cancel', 'Cancelar')}</Button>
                             <Button 
                                 onClick={handleRegisterNeighborhood} 
                                 disabled={isRegistering || !newNeighborhoodName.trim() || !newCountryName}
+                                className="h-11 lg:h-10"
                             >
                                 {isRegistering ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <MapPin className="w-4 h-4 mr-2" />}
                                 {t('community.register_dialog.submit_btn', 'Verificar y Crear con Google Maps')}
