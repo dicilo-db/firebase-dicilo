@@ -44,9 +44,10 @@ export async function checkAdminRole(user: User): Promise<AdminUser | null> {
       permissions = Array.isArray(data.permissions) ? data.permissions : [];
     }
 
-    // Determine effective role
-    const finalRole = (dbRole === 'superadmin' || dbRole === 'admin' || dbRole === 'team_office' || dbRole === 'team_leader' || dbRole === 'freelancer')
-      ? dbRole
+    // Determine effective role (case-insensitive check)
+    const lowerRole = dbRole?.toLowerCase();
+    const finalRole = (lowerRole === 'superadmin' || lowerRole === 'admin' || lowerRole === 'team_office' || lowerRole === 'team_leader' || lowerRole === 'freelancer')
+      ? lowerRole
       : (isAdminClaim ? 'admin' : undefined);
 
     if (finalRole) {

@@ -97,7 +97,7 @@ export function Sidebar({ userData, onViewChange, currentView }: SidebarProps) {
     };
 
     // Determine role (fallback to isFreelancer legacy)
-    const role = userData?.role || (userData?.isFreelancer ? 'freelancer' : 'user');
+    const role = (userData?.role || (userData?.isFreelancer ? 'freelancer' : 'user')).toLowerCase();
     const permissions = userData?.permissions || [];
 
     // Map role to display string

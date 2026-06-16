@@ -72,7 +72,7 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
     const [walletData, setWalletData] = useState<{ balance: number, valueInEur: number, valueInUsd?: number, pointValue: number } | null>(initialWalletData || null);
     const [registerUrl, setRegisterUrl] = useState('');
 
-    const role = formData?.role || (formData?.isFreelancer ? 'freelancer' : 'user');
+    const role = (formData?.role || (formData?.isFreelancer ? 'freelancer' : 'user')).toLowerCase();
     const permissions = formData?.permissions || [];
     const isFreelancerOrHigher = ['freelancer', 'team_leader', 'team_office', 'admin', 'superadmin'].includes(role) || permissions.includes('freelancer_tool');
 
@@ -272,7 +272,7 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                         {/* Top Stats Row - Premium design matches PWA native mockup */}
                         <div className="flex md:grid md:grid-cols-4 overflow-x-auto md:overflow-x-visible gap-3 pb-3 md:pb-0 scrollbar-none snap-x snap-mandatory">
                             {/* Card 1: Conversaciones */}
-                            <Card className="min-w-[140px] md:min-w-0 flex-1 snap-start p-4 bg-white border border-slate-100/80 shadow-sm rounded-2xl flex flex-col justify-between hover:shadow-md transition-all duration-300">
+                            <Card className="w-[150px] shrink-0 snap-start md:w-auto md:flex-1 p-4 bg-white border border-slate-100/80 shadow-sm rounded-2xl flex flex-col justify-between hover:shadow-md transition-all duration-300">
                                 <div>
                                     <div className="w-9 h-9 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
                                         <MessageCircle className="h-4.5 w-4.5" />
@@ -287,7 +287,7 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                             </Card>
 
                             {/* Card 2: Contactos nuevos */}
-                            <Card className="min-w-[140px] md:min-w-0 flex-1 snap-start p-4 bg-white border border-slate-100/80 shadow-sm rounded-2xl flex flex-col justify-between hover:shadow-md transition-all duration-300">
+                            <Card className="w-[150px] shrink-0 snap-start md:w-auto md:flex-1 p-4 bg-white border border-slate-100/80 shadow-sm rounded-2xl flex flex-col justify-between hover:shadow-md transition-all duration-300">
                                 <div>
                                     <div className="w-9 h-9 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
                                         <Users className="h-4.5 w-4.5" />
@@ -302,7 +302,7 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                             </Card>
 
                             {/* Card 3: Campañas activas */}
-                            <Card className="min-w-[140px] md:min-w-0 flex-1 snap-start p-4 bg-white border border-slate-100/80 shadow-sm rounded-2xl flex flex-col justify-between hover:shadow-md transition-all duration-300">
+                            <Card className="w-[150px] shrink-0 snap-start md:w-auto md:flex-1 p-4 bg-white border border-slate-100/80 shadow-sm rounded-2xl flex flex-col justify-between hover:shadow-md transition-all duration-300">
                                 <div>
                                     <div className="w-9 h-9 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
                                         <Target className="h-4.5 w-4.5" />
@@ -317,7 +317,7 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                             </Card>
 
                             {/* Card 4: Tasa de conversión */}
-                            <Card className="min-w-[140px] md:min-w-0 flex-1 snap-start p-4 bg-white border border-slate-100/80 shadow-sm rounded-2xl flex flex-col justify-between hover:shadow-md transition-all duration-300">
+                            <Card className="w-[150px] shrink-0 snap-start md:w-auto md:flex-1 p-4 bg-white border border-slate-100/80 shadow-sm rounded-2xl flex flex-col justify-between hover:shadow-md transition-all duration-300">
                                 <div>
                                     <div className="w-9 h-9 rounded-full bg-orange-50 text-orange-600 flex items-center justify-center shrink-0">
                                         <BarChart3 className="h-4.5 w-4.5" />

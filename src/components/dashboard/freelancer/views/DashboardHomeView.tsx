@@ -110,7 +110,7 @@ export function DashboardHomeView() {
             </div>
 
             {/* TOP STATS CARDS */}
-            <div className="grid grid-cols-3 gap-2 md:gap-6">
+            <div className="flex md:grid md:grid-cols-3 overflow-x-auto md:overflow-x-visible gap-3 pb-3 md:pb-0 scrollbar-none snap-x snap-mandatory">
                 <StatCard
                     title={t('freelancer_dashboard.total_earnings')}
                     value={`€${earnings.toFixed(2)}`}
@@ -266,7 +266,7 @@ export function DashboardHomeView() {
 
 function StatCard({ title, value, icon: Icon, trend, subValue, color }: any) {
     return (
-        <Card className="hover:shadow-md transition-shadow p-2 sm:p-4">
+        <Card className="hover:shadow-md transition-shadow p-3 w-[140px] shrink-0 snap-start md:w-auto md:flex-1">
             <div className="flex items-center justify-between pb-1 sm:pb-2">
                 <span className="text-[10px] sm:text-sm font-medium text-muted-foreground truncate">
                     {title}

@@ -27,7 +27,7 @@ export function MobileNavigationBar({ userData, currentView, onViewChange }: Mob
     const router = useRouter();
     const searchParams = useSearchParams();
     
-    const role = userData?.role || (userData?.isFreelancer ? 'freelancer' : 'user');
+    const role = (userData?.role || (userData?.isFreelancer ? 'freelancer' : 'user')).toLowerCase();
     const permissions = userData?.permissions || [];
     const isFreelancerOrHigher = ['freelancer', 'team_leader', 'team_office', 'admin', 'superadmin'].includes(role) || permissions.includes('freelancer_tool');
 
