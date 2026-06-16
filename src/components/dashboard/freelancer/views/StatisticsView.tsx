@@ -69,6 +69,19 @@ export function StatisticsView() {
     const [isValidationOpen, setIsValidationOpen] = useState(false);
     const [validationProspect, setValidationProspect] = useState<any>(null);
     const [globalStats, setGlobalStats] = useState<any | null>(null);
+    
+    const [prospectsViewMode, setProspectsViewMode] = useState<'table' | 'cards' | 'compact'>('cards');
+    const [postsViewMode, setPostsViewMode] = useState<'table' | 'cards' | 'compact'>('cards');
+    const [marketingViewMode, setMarketingViewMode] = useState<'table' | 'cards' | 'compact'>('cards');
+
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const defaultMode = window.innerWidth < 768 ? 'cards' : 'table';
+            setProspectsViewMode(defaultMode);
+            setPostsViewMode(defaultMode);
+            setMarketingViewMode(defaultMode);
+        }
+    }, []);
 
     // All users who can access their own statistics view can edit their own prospects
     const hasValidationAccess = true;
@@ -211,7 +224,7 @@ export function StatisticsView() {
             </div>
 
             {/* KPI Cards */}
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
                 <KpiCard icon={ImageIcon} label={t('freelancer_views.statistics.published_posts')} value={totalPosts} onClick={() => handleCardClick(t('freelancer_views.statistics.published_posts'))} />
                 <KpiCard icon={Calendar} label={t('freelancer_views.statistics.planned')} value="-" onClick={() => handleCardClick(t('freelancer_views.statistics.planned'))} />
                 <KpiCard icon={Eye} label={t('freelancer_views.statistics.contacts')} value={totalViews} onClick={() => handleCardClick(t('freelancer_views.statistics.contacts'))} />
@@ -252,79 +265,217 @@ export function StatisticsView() {
                         </div>
                     </CardHeader>
                     {activeSection === 'prospects' && (
-                        <CardContent className="p-0 animate-in fade-in slide-in-from-top-2 duration-300">
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-[13px] leading-tight">
-                                <thead className="bg-slate-50 text-slate-500 font-medium">
-                                    <tr>
-                                        <th className="px-3 py-2 text-left">{t('recommendations.table.paymentStatus', 'Estado del Pago')}</th>
-                                        <th className="px-3 py-2 text-right">{t('recommendations.table.actions', 'Acciones')}</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y">
-                                    {stats.recentProspects.map((prospect) => (
-                                        <tr key={prospect.id} className="hover:bg-slate-50/50 transition-colors">
-                                            <td className="px-3 py-2 font-medium text-slate-900">{prospect.companyName}</td>
-                                            <td className="px-3 py-2">
-                                                <div className="flex flex-col">
-                                                    <span>{prospect.contactName}</span>
-                                                    <span className="text-[10px] text-muted-foreground">{prospect.phone}</span>
+                        <CardContent className="p-4 sm:p-6 animate-in fade-in slide-in-from-top-2 duration-300">
+                            {stats.recentProspects.length === 0 ? (
+                                <div className="text-center py-8 text-muted-foreground border border-dashed rounded-xl bg-slate-50/50">
+                                    No tienes prospectos registrados.
+                                </div>
+                            ) : (
+                                <>
+                                    <div className="flex justify-end mb-4">
+                                        <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 rounded-lg p-1 border">
+                                            <Button
+                                                type="button"
+                                                size="sm"
+                                                variant={prospectsViewMode === 'cards' ? 'secondary' : 'ghost'}
+                                                onClick={() => setProspectsViewMode('cards')}
+                                                className="text-xs h-7 px-2.5 font-bold"
+                                            >
+                                                Tarjetas
+                                            </Button>
+                                            <Button
+                                                type="button"
+                                                size="sm"
+                                                variant={prospectsViewMode === 'table' ? 'secondary' : 'ghost'}
+                                                onClick={() => setProspectsViewMode('table')}
+                                                className="text-xs h-7 px-2.5 font-bold"
+                                            >
+                                                Tabla
+                                            </Button>
+                                            <Button
+                                                type="button"
+                                                size="sm"
+                                                variant={prospectsViewMode === 'compact' ? 'secondary' : 'ghost'}
+                                                onClick={() => setProspectsViewMode('compact')}
+                                                className="text-xs h-7 px-2.5 font-bold"
+                                            >
+                                                Compacta
+                                            </Button>
+                                        </div>
+                                    </div>
+
+                                    {prospectsViewMode === 'table' ? (
+                                        <div className="overflow-x-auto">
+                                            <table className="w-full text-[13px] leading-tight">
+                                                <thead className="bg-slate-50 text-slate-500 font-medium border-b">
+                                                    <tr>
+                                                        <th className="px-3 py-2 text-left">{t('recommendations.table.company', 'Empresa')}</th>
+                                                        <th className="px-3 py-2 text-left">{t('recommendations.table.contact', 'Contacto')}</th>
+                                                        <th className="px-3 py-2 text-left">{t('recommendations.table.email', 'Email')}</th>
+                                                        <th className="px-3 py-2 text-left">{t('recommendations.table.category', 'Categoría')}</th>
+                                                        <th className="px-3 py-2 text-left">{t('recommendations.table.location', 'Ubicación')}</th>
+                                                        <th className="px-3 py-2 text-left">{t('recommendations.table.comments', 'Comentarios')}</th>
+                                                        <th className="px-3 py-2 text-left">{t('recommendations.table.status', 'Estado')}</th>
+                                                        <th className="px-3 py-2 text-left">{t('recommendations.table.payment', 'Pago')}</th>
+                                                        <th className="px-3 py-2 text-right">{t('recommendations.table.actions', 'Acciones')}</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody className="divide-y">
+                                                    {stats.recentProspects.map((prospect) => (
+                                                        <tr key={prospect.id} className="hover:bg-slate-50/50 transition-colors">
+                                                            <td className="px-3 py-2 font-medium text-slate-900">{prospect.companyName}</td>
+                                                            <td className="px-3 py-2">
+                                                                <div className="flex flex-col">
+                                                                    <span>{prospect.contactName}</span>
+                                                                    <span className="text-[10px] text-muted-foreground">{prospect.phone}</span>
+                                                                </div>
+                                                            </td>
+                                                            <td className="px-3 py-2 text-slate-600">{prospect.companyEmail || prospect.email}</td>
+                                                            <td className="px-3 py-2 text-slate-600 capitalize">{prospect.category}</td>
+                                                            <td className="px-3 py-2 text-slate-600">{prospect.city}, {prospect.country}</td>
+                                                            <td className="px-3 py-2 max-w-[120px]">
+                                                                <div className="flex flex-col gap-1">
+                                                                    <span className="truncate" title={prospect.comments}>{prospect.comments}</span>
+                                                                    {prospect.website && (
+                                                                        <a href={prospect.website} target="_blank" className="text-blue-500 text-[10px] flex items-center gap-1 hover:underline">
+                                                                            <ExternalLink className="h-2 w-2" /> Web
+                                                                        </a>
+                                                                    )}
+                                                                </div>
+                                                            </td>
+                                                            <td className="px-3 py-2">
+                                                                <Badge className={cn(
+                                                                    "capitalize text-[10px] gap-1",
+                                                                    prospect.converted ? "bg-green-100 text-green-700 hover:bg-green-100" : "bg-slate-100 text-slate-600 hover:bg-slate-100"
+                                                                )}>
+                                                                    {prospect.converted ? <CheckCircle2 className="h-3 w-3" /> : <Clock className="h-3 w-3" />}
+                                                                    {prospect.converted ? t('recommendations.status.converted', 'Convertido') : t('recommendations.status.pending', 'Pendiente')}
+                                                                </Badge>
+                                                            </td>
+                                                            <td className="px-3 py-2">
+                                                                <div className="flex flex-col gap-0.5">
+                                                                    <span className="font-semibold">{prospect.rewardAmount} DP</span>
+                                                                    <Badge variant="outline" className={cn(
+                                                                        "text-[8px] py-0 px-1 leading-none w-fit",
+                                                                        prospect.pointsPaid ? "border-green-200 text-green-600 bg-green-50" : "border-yellow-200 text-yellow-600 bg-yellow-50"
+                                                                    )}>
+                                                                        {prospect.pointsPaid ? t('recommendations.status.paid', 'Pagado') : t('recommendations.status.pending', 'Pendiente')}
+                                                                    </Badge>
+                                                                </div>
+                                                            </td>
+                                                            <td className="px-3 py-2 text-right whitespace-nowrap">
+                                                                {hasValidationAccess ? (
+                                                                    <Button variant="ghost" size="sm" className="h-8 text-xs font-semibold text-blue-600" onClick={() => handleVerifyClick(prospect.id)}>
+                                                                        {t('recommendations.actions.technicalSheet', 'Ficha Técnica')}
+                                                                    </Button>
+                                                                ) : (
+                                                                    <Button variant="ghost" size="sm" className="h-8 text-xs font-semibold text-slate-500" onClick={() => {
+                                                                        toast({
+                                                                            title: prospect.companyName,
+                                                                            description: `${t('common.date', 'Fecha')}: ${new Date(prospect.date).toLocaleDateString()}`,
+                                                                        });
+                                                                    }}>
+                                                                        {t('recommendations.actions.details', 'Detalles')}
+                                                                    </Button>
+                                                                )}
+                                                            </td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    ) : prospectsViewMode === 'cards' ? (
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                            {stats.recentProspects.map((prospect) => (
+                                                <div key={prospect.id} className="p-4 rounded-xl border border-slate-200 bg-white shadow-sm flex flex-col justify-between hover:shadow-md transition-all duration-300 text-xs">
+                                                    <div>
+                                                        <div className="flex justify-between items-start gap-2">
+                                                            <h4 className="font-extrabold text-slate-800 text-sm tracking-tight">{prospect.companyName}</h4>
+                                                            <Badge className={cn(
+                                                                "capitalize text-[10px] gap-1 shrink-0",
+                                                                prospect.converted ? "bg-green-100 text-green-700 hover:bg-green-100" : "bg-slate-100 text-slate-600 hover:bg-slate-100"
+                                                            )}>
+                                                                {prospect.converted ? <CheckCircle2 className="h-3 w-3" /> : <Clock className="h-3 w-3" />}
+                                                                {prospect.converted ? t('recommendations.status.converted', 'Convertido') : t('recommendations.status.pending', 'Pendiente')}
+                                                            </Badge>
+                                                        </div>
+                                                        <div className="mt-3 space-y-1.5 text-slate-600">
+                                                            <div className="flex justify-between"><span className="text-slate-400 font-semibold">Contacto:</span> <span className="font-medium text-slate-800">{prospect.contactName} ({prospect.phone})</span></div>
+                                                            <div className="flex justify-between"><span className="text-slate-400 font-semibold">Email:</span> <span className="font-medium text-slate-800 truncate max-w-[180px]">{prospect.companyEmail || prospect.email}</span></div>
+                                                            <div className="flex justify-between"><span className="text-slate-400 font-semibold">Categoría:</span> <span className="font-medium text-slate-800 capitalize">{prospect.category}</span></div>
+                                                            <div className="flex justify-between"><span className="text-slate-400 font-semibold">Ubicación:</span> <span className="font-medium text-slate-800">{prospect.city}, {prospect.country}</span></div>
+                                                            {prospect.comments && (
+                                                                <div className="mt-2 p-2 bg-slate-50 rounded-lg text-[11px] leading-snug border text-slate-500 italic max-h-16 overflow-y-auto">
+                                                                    "{prospect.comments}"
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                    <div className="mt-4 pt-3 border-t flex justify-between items-center gap-2">
+                                                        <div className="flex flex-col">
+                                                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">Recompensa</span>
+                                                            <div className="flex items-center gap-1.5 mt-1">
+                                                                <span className="font-bold text-green-600 text-sm">{prospect.rewardAmount} DP</span>
+                                                                <Badge variant="outline" className={cn(
+                                                                    "text-[8px] py-0 px-1 leading-none w-fit",
+                                                                    prospect.pointsPaid ? "border-green-200 text-green-600 bg-green-50" : "border-yellow-200 text-yellow-600 bg-yellow-50"
+                                                                )}>
+                                                                    {prospect.pointsPaid ? t('recommendations.status.paid', 'Pagado') : t('recommendations.status.pending', 'Pendiente')}
+                                                                </Badge>
+                                                            </div>
+                                                        </div>
+                                                        {hasValidationAccess ? (
+                                                            <Button variant="ghost" size="sm" className="h-9 text-xs font-semibold text-blue-600" onClick={() => handleVerifyClick(prospect.id)}>
+                                                                Ficha Técnica
+                                                            </Button>
+                                                        ) : (
+                                                            <Button variant="ghost" size="sm" className="h-9 text-xs font-semibold text-slate-500" onClick={() => {
+                                                                toast({
+                                                                    title: prospect.companyName,
+                                                                    description: `${t('common.date', 'Fecha')}: ${new Date(prospect.date).toLocaleDateString()}`,
+                                                                });
+                                                            }}>
+                                                                Detalles
+                                                            </Button>
+                                                        )}
+                                                    </div>
                                                 </div>
-                                            </td>
-                                            <td className="px-3 py-2 text-slate-600">{prospect.companyEmail || prospect.email}</td>
-                                            <td className="px-3 py-2 text-slate-600 capitalize">{prospect.category}</td>
-                                            <td className="px-3 py-2 text-slate-600">{prospect.city}, {prospect.country}</td>
-                                            <td className="px-3 py-2 max-w-[120px]">
-                                                <div className="flex flex-col gap-1">
-                                                    <span className="truncate" title={prospect.comments}>{prospect.comments}</span>
-                                                    {prospect.website && (
-                                                        <a href={prospect.website} target="_blank" className="text-blue-500 text-[10px] flex items-center gap-1 hover:underline">
-                                                            <ExternalLink className="h-2 w-2" /> Web
-                                                        </a>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <div className="divide-y divide-slate-100">
+                                            {stats.recentProspects.map((prospect) => (
+                                                <div key={prospect.id} className="py-2.5 flex items-center justify-between gap-3 text-xs sm:text-sm">
+                                                    <div className="min-w-0">
+                                                        <div className="font-semibold text-slate-800 truncate">{prospect.companyName}</div>
+                                                        <div className="flex items-center gap-1.5 mt-0.5 text-[10px] text-slate-400">
+                                                            <span>{prospect.contactName}</span>
+                                                            <span className="h-1 w-1 rounded-full bg-slate-300" />
+                                                            <span>{prospect.rewardAmount} DP</span>
+                                                            <span className="h-1 w-1 rounded-full bg-slate-300" />
+                                                            <span className="capitalize">{prospect.converted ? 'Convertido' : 'Pendiente'}</span>
+                                                        </div>
+                                                    </div>
+                                                    {hasValidationAccess ? (
+                                                        <Button variant="ghost" size="sm" className="h-8 text-xs text-blue-600 shrink-0" onClick={() => handleVerifyClick(prospect.id)}>
+                                                            Ficha
+                                                        </Button>
+                                                    ) : (
+                                                        <Button variant="ghost" size="sm" className="h-8 text-xs text-slate-500 shrink-0" onClick={() => {
+                                                            toast({
+                                                                title: prospect.companyName,
+                                                                description: `Creado el ${new Date(prospect.date).toLocaleDateString()}`,
+                                                            });
+                                                        }}>
+                                                            Detalles
+                                                        </Button>
                                                     )}
                                                 </div>
-                                            </td>
-                                            <td className="px-4 py-3">
-                                                <Badge className={cn(
-                                                    "capitalize text-[10px] gap-1",
-                                                    prospect.converted ? "bg-green-100 text-green-700 hover:bg-green-100" : "bg-slate-100 text-slate-600 hover:bg-slate-100"
-                                                )}>
-                                                    {prospect.converted ? <CheckCircle2 className="h-3 w-3" /> : <Clock className="h-3 w-3" />}
-                                                    {prospect.converted ? t('recommendations.status.converted', 'Convertido') : t('recommendations.status.pending', 'Pendiente')}
-                                                </Badge>
-                                            </td>
-                                            <td className="px-3 py-2">
-                                                <div className="flex flex-col gap-0.5">
-                                                    <span className="font-semibold">{prospect.rewardAmount} DP</span>
-                                                    <Badge variant="outline" className={cn(
-                                                        "text-[8px] py-0 px-1 leading-none",
-                                                        prospect.pointsPaid ? "border-green-200 text-green-600 bg-green-50" : "border-yellow-200 text-yellow-600 bg-yellow-50"
-                                                    )}>
-                                                        {prospect.pointsPaid ? t('recommendations.status.paid', 'Pagado') : t('recommendations.status.pending', 'Pendiente')}
-                                                    </Badge>
-                                                </div>
-                                            </td>
-                                            <td className="px-3 py-2 text-right whitespace-nowrap">
-                                                {hasValidationAccess ? (
-                                                    <Button variant="ghost" size="sm" className="h-8 text-xs font-semibold text-blue-600" onClick={() => handleVerifyClick(prospect.id)}>
-                                                        {t('recommendations.actions.technicalSheet', 'Ficha Técnica')}
-                                                    </Button>
-                                                ) : (
-                                                    <Button variant="ghost" size="sm" className="h-8 text-xs font-semibold text-slate-500" onClick={() => {
-                                                        toast({
-                                                            title: prospect.companyName,
-                                                            description: `${t('common.date', 'Fecha')}: ${new Date(prospect.date).toLocaleDateString()}`,
-                                                        });
-                                                    }}>
-                                                        {t('recommendations.actions.details', 'Detalles')}
-                                                    </Button>
-                                                )}
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </>
+                            )}
                         </CardContent>
                     )}
                 </Card>
@@ -351,36 +502,117 @@ export function StatisticsView() {
                         </div>
                     </CardHeader>
                     {activeSection === 'posts' && (
-                        <CardContent className="p-0 animate-in fade-in slide-in-from-top-2 duration-300">
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-[13px] leading-tight text-center">
-                                <thead className="bg-slate-50 text-slate-500 font-medium">
-                                    <tr>
-                                        <th className="px-3 py-2 text-left">{t('common.date', 'Fecha')}</th>
-                                        <th className="px-3 py-2">{t('common.time', 'Hora')}</th>
-                                        <th className="px-3 py-2 text-right">{t('recommendations.table.reward', 'Recompensa')}</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y">
+                        <CardContent className="p-4 sm:p-6 animate-in fade-in slide-in-from-top-2 duration-300">
+                            <div className="flex justify-end mb-4">
+                                <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 rounded-lg p-1 border">
+                                    <Button
+                                        type="button"
+                                        size="sm"
+                                        variant={postsViewMode === 'cards' ? 'secondary' : 'ghost'}
+                                        onClick={() => setPostsViewMode('cards')}
+                                        className="text-xs h-7 px-2.5 font-bold"
+                                    >
+                                        Tarjetas
+                                    </Button>
+                                    <Button
+                                        type="button"
+                                        size="sm"
+                                        variant={postsViewMode === 'table' ? 'secondary' : 'ghost'}
+                                        onClick={() => setPostsViewMode('table')}
+                                        className="text-xs h-7 px-2.5 font-bold"
+                                    >
+                                        Tabla
+                                    </Button>
+                                    <Button
+                                        type="button"
+                                        size="sm"
+                                        variant={postsViewMode === 'compact' ? 'secondary' : 'ghost'}
+                                        onClick={() => setPostsViewMode('compact')}
+                                        className="text-xs h-7 px-2.5 font-bold"
+                                    >
+                                        Compacta
+                                    </Button>
+                                </div>
+                            </div>
+
+                            {postsViewMode === 'table' ? (
+                                <div className="overflow-x-auto">
+                                    <table className="w-full text-[13px] leading-tight text-center">
+                                        <thead className="bg-slate-50 text-slate-500 font-medium border-b">
+                                            <tr>
+                                                <th className="px-3 py-2 text-left">{t('common.date', 'Fecha')}</th>
+                                                <th className="px-3 py-2">{t('common.time', 'Hora')}</th>
+                                                <th className="px-3 py-2 text-right">{t('recommendations.table.reward', 'Recompensa')}</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y">
+                                            {stats.communityPosts.map((post) => {
+                                                const dateObj = new Date(post.date);
+                                                return (
+                                                    <tr key={post.id} className="hover:bg-slate-50/50 transition-colors">
+                                                        <td className="px-3 py-2 text-left font-medium text-slate-900">
+                                                            {dateObj.toLocaleDateString()}
+                                                        </td>
+                                                        <td className="px-3 py-2 text-slate-600">
+                                                            {dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                        </td>
+                                                        <td className="px-3 py-2 text-right">
+                                                            <span className="font-bold text-green-600">+{post.amount} DP</span>
+                                                        </td>
+                                                    </tr>
+                                                );
+                                            })}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            ) : postsViewMode === 'cards' ? (
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     {stats.communityPosts.map((post) => {
                                         const dateObj = new Date(post.date);
                                         return (
-                                            <tr key={post.id} className="hover:bg-slate-50/50 transition-colors">
-                                                <td className="px-3 py-2 text-left font-medium text-slate-900">
-                                                    {dateObj.toLocaleDateString()}
-                                                </td>
-                                                <td className="px-3 py-2 text-slate-600">
-                                                    {dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                                </td>
-                                                <td className="px-3 py-2 text-right">
-                                                    <span className="font-bold text-green-600">+{post.amount} DP</span>
-                                                </td>
-                                            </tr>
+                                            <div key={post.id} className="p-4 rounded-xl border border-slate-200 bg-white shadow-sm flex justify-between items-center hover:shadow-md transition-all duration-300 text-xs">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="h-8 w-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-500 shrink-0">
+                                                        <MessageCircle className="h-4 w-4" />
+                                                    </div>
+                                                    <div className="flex flex-col">
+                                                        <span className="font-extrabold text-slate-800 text-sm">Post de la Comunidad</span>
+                                                        <span className="text-slate-500 text-[10px] flex items-center gap-1 mt-0.5">
+                                                            <Calendar className="h-3 w-3" />
+                                                            {dateObj.toLocaleDateString()} a las {dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div className="text-right">
+                                                    <span className="font-bold text-green-600 text-sm">+{post.amount} DP</span>
+                                                </div>
+                                            </div>
                                         );
                                     })}
-                                </tbody>
-                            </table>
-                        </div>
+                                </div>
+                            ) : (
+                                <div className="divide-y divide-slate-100">
+                                    {stats.communityPosts.map((post) => {
+                                        const dateObj = new Date(post.date);
+                                        return (
+                                            <div key={post.id} className="py-2.5 flex items-center justify-between gap-3 text-xs sm:text-sm">
+                                                <div className="min-w-0">
+                                                    <div className="font-semibold text-slate-800 flex items-center gap-1.5">
+                                                        <MessageCircle className="h-3.5 w-3.5 text-blue-400" />
+                                                        <span>Post de la Comunidad</span>
+                                                    </div>
+                                                    <div className="text-[10px] text-slate-400 mt-0.5">
+                                                        {dateObj.toLocaleDateString()} - {dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                    </div>
+                                                </div>
+                                                <div className="font-bold text-green-600">
+                                                    +{post.amount} DP
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            )}
                         </CardContent>
                     )}
                 </Card>
@@ -412,65 +644,165 @@ export function StatisticsView() {
                         </div>
                     </CardHeader>
                     {activeSection === 'marketing' && (
-                        <CardContent className="p-0 animate-in fade-in slide-in-from-top-2 duration-300">
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-[13px] leading-tight text-left">
-                                <thead className="bg-slate-50 text-slate-500 font-medium border-b">
-                                    <tr>
-                                        <th className="px-4 py-3">Fecha / Hora</th>
-                                        <th className="px-4 py-3">Destinatario</th>
-                                        <th className="px-4 py-3">Plantilla</th>
-                                        <th className="px-4 py-3">Estado</th>
-                                        <th className="px-4 py-3 text-right">Valor</th>
-                                        <th className="px-4 py-3 text-center">Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-slate-100">
+                        <CardContent className="p-4 sm:p-6 animate-in fade-in slide-in-from-top-2 duration-300">
+                            <div className="flex justify-end mb-4">
+                                <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 rounded-lg p-1 border">
+                                    <Button
+                                        type="button"
+                                        size="sm"
+                                        variant={marketingViewMode === 'cards' ? 'secondary' : 'ghost'}
+                                        onClick={() => setMarketingViewMode('cards')}
+                                        className="text-xs h-7 px-2.5 font-bold"
+                                    >
+                                        Tarjetas
+                                    </Button>
+                                    <Button
+                                        type="button"
+                                        size="sm"
+                                        variant={marketingViewMode === 'table' ? 'secondary' : 'ghost'}
+                                        onClick={() => setMarketingViewMode('table')}
+                                        className="text-xs h-7 px-2.5 font-bold"
+                                    >
+                                        Tabla
+                                    </Button>
+                                    <Button
+                                        type="button"
+                                        size="sm"
+                                        variant={marketingViewMode === 'compact' ? 'secondary' : 'ghost'}
+                                        onClick={() => setMarketingViewMode('compact')}
+                                        className="text-xs h-7 px-2.5 font-bold"
+                                    >
+                                        Compacta
+                                    </Button>
+                                </div>
+                            </div>
+
+                            {marketingViewMode === 'table' ? (
+                                <div className="overflow-x-auto">
+                                    <table className="w-full text-[13px] leading-tight text-left">
+                                        <thead className="bg-slate-50 text-slate-500 font-medium border-b">
+                                            <tr>
+                                                <th className="px-4 py-3">Fecha / Hora</th>
+                                                <th className="px-4 py-3">Destinatario</th>
+                                                <th className="px-4 py-3">Plantilla</th>
+                                                <th className="px-4 py-3">Estado</th>
+                                                <th className="px-4 py-3 text-right">Valor</th>
+                                                <th className="px-4 py-3 text-center">Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-slate-100">
+                                            {marketingSends.map((send) => {
+                                                const dateObj = new Date(send.createdAt);
+                                                const initial = send.friendName?.charAt(0).toUpperCase() || '?';
+                                                
+                                                return (
+                                                    <tr key={send.id} className="hover:bg-slate-50/50 transition-colors group">
+                                                        <td className="px-4 py-3 font-medium">
+                                                            <div className="text-slate-900 font-semibold">{dateObj.toLocaleDateString()}</div>
+                                                            <div className="text-[10px] text-muted-foreground">{dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+                                                        </td>
+                                                        <td className="px-4 py-3">
+                                                            <div className="flex items-center gap-3">
+                                                                <div className="h-8 w-8 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-[10px] font-bold text-slate-600 shrink-0">
+                                                                    {initial}
+                                                                </div>
+                                                                <div className="flex flex-col min-w-0">
+                                                                    <span className="font-bold text-slate-800 truncate">{send.friendName}</span>
+                                                                    <span className="text-[10px] text-muted-foreground truncate">{send.friendEmail}</span>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td className="px-4 py-3">
+                                                            <Badge variant="outline" className="bg-slate-50 text-[10px] font-medium capitalize truncate max-w-[120px]">
+                                                                {send.template.replace(/_/g, ' ')}
+                                                            </Badge>
+                                                        </td>
+                                                        <td className="px-4 py-3">
+                                                            {send.converted ? (
+                                                                <Badge className="bg-green-100 text-green-700 hover:bg-green-100 border-green-200 text-[10px] py-0 px-2">
+                                                                    Registrado
+                                                                </Badge>
+                                                            ) : (
+                                                                <Badge variant="outline" className="text-blue-600 bg-blue-50 border-blue-100 text-[10px] py-0 px-2 italic">
+                                                                    Enviado
+                                                                </Badge>
+                                                            )}
+                                                        </td>
+                                                        <td className="px-4 py-3 text-right text-base">
+                                                            <span className="font-black text-emerald-600">+{send.rewardAmount} <span className="text-[10px]">DP</span></span>
+                                                        </td>
+                                                        <td className="px-4 py-3 text-center">
+                                                            <Button 
+                                                                variant="ghost" 
+                                                                size="sm" 
+                                                                className="h-8 text-[11px] font-bold text-slate-500 hover:text-emerald-600 hover:bg-emerald-50 transition-all opacity-0 group-hover:opacity-100"
+                                                                onClick={() => {
+                                                                    toast({
+                                                                        title: "Detalles del Envío",
+                                                                        description: `Invitación enviada a ${send.friendName} usando la plantilla ${send.template}.`,
+                                                                    });
+                                                                }}
+                                                            >
+                                                                Ver
+                                                            </Button>
+                                                        </td>
+                                                    </tr>
+                                                );
+                                            })}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            ) : marketingViewMode === 'cards' ? (
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     {marketingSends.map((send) => {
                                         const dateObj = new Date(send.createdAt);
                                         const initial = send.friendName?.charAt(0).toUpperCase() || '?';
                                         
                                         return (
-                                            <tr key={send.id} className="hover:bg-slate-50/50 transition-colors group">
-                                                <td className="px-4 py-3 font-medium">
-                                                    <div className="text-slate-900 font-semibold">{dateObj.toLocaleDateString()}</div>
-                                                    <div className="text-[10px] text-muted-foreground">{dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
-                                                </td>
-                                                <td className="px-4 py-3">
-                                                    <div className="flex items-center gap-3">
-                                                        <div className="h-8 w-8 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-[10px] font-bold text-slate-600 shrink-0">
-                                                            {initial}
+                                            <div key={send.id} className="p-4 rounded-xl border border-slate-200 bg-white shadow-sm flex flex-col justify-between hover:shadow-md transition-all duration-300 text-xs">
+                                                <div>
+                                                    <div className="flex justify-between items-start gap-2">
+                                                        <div className="flex items-center gap-2.5 min-w-0">
+                                                            <div className="h-8 w-8 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-[10px] font-bold text-slate-600 shrink-0">
+                                                                {initial}
+                                                            </div>
+                                                            <div className="flex flex-col min-w-0">
+                                                                <span className="font-extrabold text-slate-800 text-sm truncate">{send.friendName}</span>
+                                                                <span className="text-[10px] text-muted-foreground truncate">{send.friendEmail}</span>
+                                                            </div>
                                                         </div>
-                                                        <div className="flex flex-col min-w-0">
-                                                            <span className="font-bold text-slate-800 truncate">{send.friendName}</span>
-                                                            <span className="text-[10px] text-muted-foreground truncate">{send.friendEmail}</span>
+                                                        {send.converted ? (
+                                                            <Badge className="bg-green-100 text-green-700 hover:bg-green-100 border-green-200 text-[10px] py-0 px-2 shrink-0">
+                                                                Registrado
+                                                            </Badge>
+                                                        ) : (
+                                                            <Badge variant="outline" className="text-blue-600 bg-blue-50 border-blue-100 text-[10px] py-0 px-2 italic shrink-0">
+                                                                Enviado
+                                                            </Badge>
+                                                        )}
+                                                    </div>
+                                                    <div className="mt-3 space-y-1.5 text-slate-600">
+                                                        <div className="flex justify-between">
+                                                            <span className="text-slate-400 font-semibold">Plantilla:</span>
+                                                            <span className="font-medium text-slate-800 capitalize">{send.template.replace(/_/g, ' ')}</span>
+                                                        </div>
+                                                        <div className="flex justify-between">
+                                                            <span className="text-slate-400 font-semibold">Fecha / Hora:</span>
+                                                            <span className="font-medium text-slate-800">
+                                                                {dateObj.toLocaleDateString()} a las {dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                            </span>
                                                         </div>
                                                     </div>
-                                                </td>
-                                                <td className="px-4 py-3">
-                                                    <Badge variant="outline" className="bg-slate-50 text-[10px] font-medium capitalize truncate max-w-[120px]">
-                                                        {send.template.replace(/_/g, ' ')}
-                                                    </Badge>
-                                                </td>
-                                                <td className="px-4 py-3">
-                                                    {send.converted ? (
-                                                        <Badge className="bg-green-100 text-green-700 hover:bg-green-100 border-green-200 text-[10px] py-0 px-2">
-                                                            Registrado
-                                                        </Badge>
-                                                    ) : (
-                                                        <Badge variant="outline" className="text-blue-600 bg-blue-50 border-blue-100 text-[10px] py-0 px-2 italic">
-                                                            Enviado
-                                                        </Badge>
-                                                    )}
-                                                </td>
-                                                <td className="px-4 py-3 text-right text-base">
-                                                    <span className="font-black text-emerald-600">+{send.rewardAmount} <span className="text-[10px]">DP</span></span>
-                                                </td>
-                                                <td className="px-4 py-3 text-center">
+                                                </div>
+                                                <div className="mt-4 pt-3 border-t flex justify-between items-center gap-2">
+                                                    <div className="flex flex-col">
+                                                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">Recompensa</span>
+                                                        <span className="font-bold text-emerald-600 text-sm mt-1">+{send.rewardAmount} DP</span>
+                                                    </div>
                                                     <Button 
                                                         variant="ghost" 
                                                         size="sm" 
-                                                        className="h-8 text-[11px] font-bold text-slate-500 hover:text-emerald-600 hover:bg-emerald-50 transition-all opacity-0 group-hover:opacity-100"
+                                                        className="h-9 text-xs font-bold text-slate-500 hover:text-emerald-600 hover:bg-emerald-50"
                                                         onClick={() => {
                                                             toast({
                                                                 title: "Detalles del Envío",
@@ -478,15 +810,53 @@ export function StatisticsView() {
                                                             });
                                                         }}
                                                     >
-                                                        Ver
+                                                        Ver Detalles
                                                     </Button>
-                                                </td>
-                                            </tr>
+                                                </div>
+                                            </div>
                                         );
                                     })}
-                                </tbody>
-                            </table>
-                        </div>
+                                </div>
+                            ) : (
+                                <div className="divide-y divide-slate-100">
+                                    {marketingSends.map((send) => {
+                                        const dateObj = new Date(send.createdAt);
+                                        return (
+                                            <div 
+                                                key={send.id} 
+                                                className="py-2.5 flex items-center justify-between gap-3 text-xs sm:text-sm cursor-pointer hover:bg-slate-50/50 px-1 rounded-lg transition-colors"
+                                                onClick={() => {
+                                                    toast({
+                                                        title: "Detalles",
+                                                        description: `Enviado a ${send.friendName} (${send.friendEmail}) el ${dateObj.toLocaleDateString()}.`,
+                                                    });
+                                                }}
+                                            >
+                                                <div className="min-w-0">
+                                                    <div className="font-semibold text-slate-800 truncate">{send.friendName}</div>
+                                                    <div className="flex items-center gap-1.5 mt-0.5 text-[10px] text-slate-400">
+                                                        <span>{send.template.replace(/_/g, ' ')}</span>
+                                                        <span className="h-1 w-1 rounded-full bg-slate-300" />
+                                                        <span>{dateObj.toLocaleDateString()}</span>
+                                                    </div>
+                                                </div>
+                                                <div className="flex items-center gap-2 shrink-0">
+                                                    {send.converted ? (
+                                                        <Badge className="bg-green-100 text-green-700 hover:bg-green-100 border-none text-[9px] py-0 px-1.5">
+                                                            Reg.
+                                                        </Badge>
+                                                    ) : (
+                                                        <Badge variant="outline" className="text-blue-600 bg-blue-50 border-none text-[9px] py-0 px-1.5 italic">
+                                                            Env.
+                                                        </Badge>
+                                                    )}
+                                                    <span className="font-bold text-emerald-600">+{send.rewardAmount} DP</span>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            )}
                         </CardContent>
                     )}
                 </Card>
@@ -526,7 +896,7 @@ export function StatisticsView() {
                                 </AccordionTrigger>
                                 <AccordionContent className="border border-t-0 p-6 rounded-b-lg">
                                     <div className="space-y-6">
-                                        <div className="flex justify-between items-center">
+                                        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                                             <div>
                                                 <h4 className="text-lg font-bold flex items-center gap-2">
                                                     {channel.label} <channel.icon className={cn("h-5 w-5", channel.color)} />
@@ -536,10 +906,10 @@ export function StatisticsView() {
                                                     <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">{t('freelancer_views.statistics.since')} 29.12.2024</span>
                                                 </div>
                                             </div>
-                                            <div className="flex bg-slate-100 p-1 rounded-lg">
-                                                <Button variant="ghost" size="sm" className="h-7 text-xs font-semibold bg-white shadow-sm">{t('freelancer_views.statistics.filter_total')}</Button>
-                                                <Button variant="ghost" size="sm" className="h-7 text-xs text-muted-foreground">{t('freelancer_views.statistics.filter_last_month')}</Button>
-                                                <Button variant="ghost" size="sm" className="h-7 text-xs text-muted-foreground">{t('freelancer_views.statistics.filter_last_3_months')}</Button>
+                                            <div className="flex bg-slate-100 p-1 rounded-lg w-full sm:w-auto overflow-x-auto shrink-0 max-w-full">
+                                                <Button variant="ghost" size="sm" className="h-7 text-xs font-semibold bg-white shadow-sm shrink-0">{t('freelancer_views.statistics.filter_total')}</Button>
+                                                <Button variant="ghost" size="sm" className="h-7 text-xs text-muted-foreground shrink-0">{t('freelancer_views.statistics.filter_last_month')}</Button>
+                                                <Button variant="ghost" size="sm" className="h-7 text-xs text-muted-foreground shrink-0">{t('freelancer_views.statistics.filter_last_3_months')}</Button>
                                             </div>
                                         </div>
 
@@ -632,8 +1002,8 @@ function KpiCard({ icon: Icon, label, value, onClick, isActive }: { icon: any, l
                     <Icon className="h-5 w-5 text-slate-700 dark:text-slate-300" />
                 </div>
                 <div className="min-w-0 flex-1">
-                    <div className="text-lg md:text-xl font-bold truncate tracking-tight">{value}</div>
-                    <div className="text-[10px] md:text-xs font-medium text-muted-foreground break-words leading-tight" title={label}>{label}</div>
+                    <div className="text-base sm:text-lg md:text-xl font-bold truncate tracking-tight">{value}</div>
+                    <div className="text-xs font-medium text-muted-foreground break-words leading-tight" title={label}>{label}</div>
                 </div>
             </CardContent>
         </Card>

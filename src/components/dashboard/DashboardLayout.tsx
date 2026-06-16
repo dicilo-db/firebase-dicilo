@@ -58,11 +58,11 @@ export function DashboardLayout({ userData, currentView, onViewChange, children,
 
                 <main className={cn(
                     "flex-1 pb-20 md:pb-0",
-                    (currentView === 'freelancer' || currentView === 'map') ? "!p-0 !pb-20 md:!pb-0" : "px-3 py-6 sm:px-4 md:p-8"
+                    (currentView === 'freelancer' || currentView === 'map' || currentView === 'calendar') ? "!p-0 !pb-20 md:!pb-0" : "px-3 py-6 sm:px-4 md:p-8"
                 )}>
                     <div className={cn(
                         "mx-auto",
-                        (currentView === 'freelancer' || currentView === 'map') ? "!max-w-none !w-full animate-in fade-in duration-300" : "max-w-5xl"
+                        (currentView === 'freelancer' || currentView === 'map' || currentView === 'calendar') ? "!max-w-none !w-full animate-in fade-in duration-300" : "max-w-5xl"
                     )}>
                         {children}
                     </div>

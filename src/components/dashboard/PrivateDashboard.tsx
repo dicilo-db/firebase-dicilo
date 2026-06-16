@@ -1237,6 +1237,32 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                                         </div>
                                     </CardContent>
                                 </Card>
+
+                                {/* Persistent PWA Installation Card */}
+                                <Card>
+                                    <CardHeader className="pb-3">
+                                        <CardTitle className="text-base sm:text-lg">Aplicación Móvil (PWA)</CardTitle>
+                                        <CardDescription>Instala Dicilo en tu dispositivo móvil para un acceso rápido y directo.</CardDescription>
+                                    </CardHeader>
+                                    <CardContent className="space-y-4">
+                                        <p className="text-xs text-slate-500 leading-relaxed">
+                                            Al instalar la aplicación como PWA, tendrás un acceso directo en tu pantalla de inicio y una navegación fluida equivalente a una app nativa, evitando tiempos de carga del navegador.
+                                        </p>
+                                        <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                                            <Button 
+                                                type="button"
+                                                variant="outline" 
+                                                className="border-[#8cc63f] text-[#5a5a5a] hover:bg-[#8cc63f]/10 font-bold w-full sm:w-auto h-11 lg:h-9"
+                                                onClick={() => {
+                                                    window.dispatchEvent(new Event('trigger-pwa-install'));
+                                                }}
+                                            >
+                                                <Download className="mr-2 h-4 w-4 text-[#8cc63f]" />
+                                                Instalar App en el Teléfono
+                                            </Button>
+                                        </div>
+                                    </CardContent>
+                                </Card>
                             </div>
                         </TabsContent>
 

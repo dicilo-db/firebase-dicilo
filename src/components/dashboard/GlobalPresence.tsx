@@ -91,11 +91,11 @@ export function GlobalPresence({ stats }: GlobalPresenceProps) {
             </div>
 
             {/* Countries Table */}
-            <Card className="bg-white border shadow-xl rounded-[2.5rem] overflow-hidden">
-                <div className="p-8 border-b bg-slate-50/50 flex justify-between items-center">
+            <Card className="bg-white border shadow-xl rounded-2xl sm:rounded-[2.5rem] overflow-hidden">
+                <div className="p-4 sm:p-8 border-b bg-slate-50/50 flex justify-between items-center">
                     <div>
-                        <h3 className="text-xl font-black text-slate-900 tracking-tight">Presencia por País</h3>
-                        <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Desglose detallado de actividad global</p>
+                        <h3 className="text-lg sm:text-xl font-black text-slate-900 tracking-tight">Presencia por País</h3>
+                        <p className="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Desglose detallado de actividad global</p>
                     </div>
                     <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-white rounded-2xl border shadow-sm">
                         <Search className="h-4 w-4 text-slate-400" />
@@ -107,38 +107,38 @@ export function GlobalPresence({ stats }: GlobalPresenceProps) {
                         <table className="w-full text-left border-collapse">
                             <thead>
                                 <tr className="bg-slate-100/50">
-                                    <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b">País</th>
-                                    <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b text-center">Agencias</th>
-                                    <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b text-center">Usuarios</th>
-                                    <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b text-right">Estatus</th>
+                                    <th className="px-3 py-3 sm:px-8 sm:py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b">País</th>
+                                    <th className="px-3 py-3 sm:px-8 sm:py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b text-center">Agencias</th>
+                                    <th className="px-3 py-3 sm:px-8 sm:py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b text-center">Usuarios</th>
+                                    <th className="px-3 py-3 sm:px-8 sm:py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b text-right">Estatus</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100">
                                 {activeCountriesList.map(([code, data]: any) => (
                                     <tr key={code} className="hover:bg-slate-50/80 transition-colors group">
-                                        <td className="px-8 py-5">
-                                            <div className="flex items-center gap-4">
-                                                <div className="h-10 w-10 flex items-center justify-center bg-slate-100 rounded-xl text-xl shadow-sm group-hover:scale-110 transition-transform">
+                                        <td className="px-3 py-3 sm:px-8 sm:py-5">
+                                            <div className="flex items-center gap-2 sm:gap-4">
+                                                <div className="h-8 w-8 sm:h-10 sm:w-10 flex items-center justify-center bg-slate-100 rounded-xl text-lg sm:text-xl shadow-sm group-hover:scale-110 transition-transform">
                                                     {getEmojiFlag(code)}
                                                 </div>
                                                 <div>
-                                                    <div className="text-sm font-black text-slate-900">{getCountryName(code)}</div>
-                                                    <div className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">{code}</div>
+                                                    <div className="text-xs sm:text-sm font-black text-slate-900">{getCountryName(code)}</div>
+                                                    <div className="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-tighter">{code}</div>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="px-8 py-5 text-center">
-                                            <span className="text-sm font-black text-purple-600 bg-purple-50 px-3 py-1 rounded-lg border border-purple-100">
+                                        <td className="px-3 py-3 sm:px-8 sm:py-5 text-center">
+                                            <span className="text-xs sm:text-sm font-black text-purple-600 bg-purple-50 px-2 py-0.5 sm:px-3 sm:py-1 rounded-lg border border-purple-100">
                                                 {data.agencies}
                                             </span>
                                         </td>
-                                        <td className="px-8 py-5 text-center">
-                                            <span className="text-sm font-black text-blue-600 bg-blue-50 px-3 py-1 rounded-lg border border-blue-100">
+                                        <td className="px-3 py-3 sm:px-8 sm:py-5 text-center">
+                                            <span className="text-xs sm:text-sm font-black text-blue-600 bg-blue-50 px-2 py-0.5 sm:px-3 sm:py-1 rounded-lg border border-blue-100">
                                                 {data.users}
                                             </span>
                                         </td>
-                                        <td className="px-8 py-5 text-right">
-                                            <Badge className="bg-green-500/10 text-green-600 border-green-200/50 text-[10px] font-black uppercase tracking-tighter px-3">
+                                        <td className="px-3 py-3 sm:px-8 sm:py-5 text-right">
+                                            <Badge className="bg-green-500/10 text-green-600 border-green-200/50 text-[9px] sm:text-[10px] font-black uppercase tracking-tighter px-2 sm:px-3">
                                                 Activo
                                             </Badge>
                                         </td>

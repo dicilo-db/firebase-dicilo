@@ -58,7 +58,12 @@ export const languageOptions = [
   { code: 'es', name: 'Español', flag: <EsFlag /> },
 ];
 
-export function LanguageSelector() {
+interface LanguageSelectorProps {
+  className?: string;
+  variant?: 'outline' | 'ghost' | 'default';
+}
+
+export function LanguageSelector({ className, variant = 'outline' }: LanguageSelectorProps) {
   const { i18n } = useTranslation();
 
   const handleLocaleChange = (newLocale: string) => {
@@ -75,7 +80,7 @@ export function LanguageSelector() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="icon">
+        <Button variant={variant} size="icon" className={className}>
           <Globe className="h-[1.2rem] w-[1.2rem]" />
           <span className="sr-only">Change language</span>
         </Button>

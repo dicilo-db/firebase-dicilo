@@ -24,6 +24,7 @@ export default function MasterCalendarPage() {
     const { toast } = useToast();
     
     const [currentDate, setCurrentDate] = useState(new Date());
+    const [selectedMobileDate, setSelectedMobileDate] = useState<Date>(new Date());
     const [appointments, setAppointments] = useState<any[]>([]);
     const [loadingData, setLoadingData] = useState(true);
     const [selectedAppt, setSelectedAppt] = useState<any>(null);
@@ -247,27 +248,27 @@ export default function MasterCalendarPage() {
     });
 
     return (
-        <div className="p-8 max-w-6xl mx-auto animate-in fade-in zoom-in duration-500">
+        <div className="p-2 sm:p-6 md:p-8 max-w-6xl mx-auto animate-in fade-in zoom-in duration-500">
             {/* Header / Hero */}
-            <div className="bg-gradient-to-r from-emerald-600 to-teal-800 p-8 rounded-3xl text-white shadow-xl mb-8 relative overflow-hidden flex justify-between items-center">
+            <div className="bg-gradient-to-r from-emerald-600 to-teal-800 p-4 sm:p-8 rounded-2xl md:rounded-3xl text-white shadow-xl mb-6 sm:mb-8 relative overflow-hidden flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div className="relative z-10">
-                    <h1 className="text-3xl font-extrabold flex items-center gap-3">
+                    <h1 className="text-xl sm:text-3xl font-extrabold flex items-center gap-2 sm:gap-3">
                         <CalendarCheck2 className="w-8 h-8 text-emerald-300" />
                         Calendario Personal
                     </h1>
-                    <p className="mt-2 text-emerald-100 text-lg">
+                    <p className="mt-1 sm:mt-2 text-emerald-100 text-sm sm:text-lg">
                         Tu organizador privado y planificador del día a día.
                     </p>
                 </div>
-                <div className="relative z-10 flex gap-2">
-                    <Button variant="secondary" onClick={today} className="bg-white/20 text-white hover:bg-white/30 border-0">Hoy</Button>
-                    <Button variant="secondary" onClick={prevMonth} className="bg-white/20 text-white hover:bg-white/30 border-0"><ChevronLeft className="w-5 h-5"/></Button>
-                    <Button variant="secondary" onClick={nextMonth} className="bg-white/20 text-white hover:bg-white/30 border-0"><ChevronRight className="w-5 h-5"/></Button>
+                <div className="relative z-10 flex gap-2 w-full sm:w-auto justify-end">
+                    <Button variant="secondary" onClick={today} className="bg-white/20 text-white hover:bg-white/30 border-0 h-11 md:h-9 px-4">Hoy</Button>
+                    <Button variant="secondary" onClick={prevMonth} className="bg-white/20 text-white hover:bg-white/30 border-0 h-11 w-11 md:h-9 md:w-9 p-0 flex items-center justify-center"><ChevronLeft className="w-5 h-5"/></Button>
+                    <Button variant="secondary" onClick={nextMonth} className="bg-white/20 text-white hover:bg-white/30 border-0 h-11 w-11 md:h-9 md:w-9 p-0 flex items-center justify-center"><ChevronRight className="w-5 h-5"/></Button>
                 </div>
             </div>
 
-            <Card className="border-slate-200 shadow-sm p-6 overflow-hidden">
-                <div className="text-2xl font-bold text-slate-800 text-center mb-6 capitalize">
+            <Card className="border-slate-200 shadow-sm p-1.5 sm:p-6 overflow-hidden">
+                <div className="text-lg sm:text-2xl font-bold text-slate-800 text-center mb-4 sm:mb-6 capitalize">
                     {format(currentDate, dateFormat, { locale: localeObj })}
                 </div>
 
@@ -278,7 +279,7 @@ export default function MasterCalendarPage() {
                         {/* Headers */}
                         <div className="grid grid-cols-7 gap-px bg-slate-200">
                             {['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'].map(d => (
-                                <div key={d} className="bg-slate-50 py-2 text-center text-sm font-semibold text-slate-600 uppercase">
+                                <div key={d} className="bg-slate-50 py-2 text-center text-[10px] sm:text-sm font-bold sm:font-semibold text-slate-600 uppercase">
                                     {d}
                                 </div>
                             ))}
@@ -287,7 +288,7 @@ export default function MasterCalendarPage() {
                         {/* Grid */}
                         <div className="grid grid-cols-7 gap-px bg-slate-200">
                             {Array.from({ length: prefixDays }).map((_, i) => (
-                                <div key={`empty-${i}`} className="bg-slate-50/50 min-h-[120px]"></div>
+                                <div key={`empty-${i}`} className="bg-slate-50/50 min-h-[50px] md:min-h-[120px]"></div>
                             ))}
                             
                             {days.map(day => {
@@ -299,25 +300,31 @@ export default function MasterCalendarPage() {
                                 });
 
                                 const isToday = isSameDay(day, new Date());
+                                const isSelected = isSameDay(day, selectedMobileDate);
 
                                 return (
                                     <div 
                                         key={day.toString()} 
-                                        className={`bg-white min-h-[120px] p-2 transition-colors hover:bg-slate-50 cursor-pointer ${isToday ? 'ring-2 ring-inset ring-emerald-500 bg-emerald-50/10' : ''}`}
+                                        className={`bg-white min-h-[45px] sm:min-h-[60px] md:min-h-[120px] p-0.5 sm:p-1 md:p-2 transition-colors hover:bg-slate-50 cursor-pointer ${isToday ? 'ring-2 ring-inset ring-emerald-500 bg-emerald-50/10' : ''} ${isSelected ? 'bg-emerald-50/20 ring-2 ring-inset ring-emerald-300' : ''}`}
                                         onDragOver={(e) => e.preventDefault()}
                                         onDrop={(e) => handleDrop(e, day)}
                                         onClick={(e) => {
-                                            // Only open block dialog if clicking empty space, not an appointment
-                                            if (e.target === e.currentTarget && user) {
-                                                setBlockDialogDay(day);
-                                                setBlockReason('');
+                                            setSelectedMobileDate(day);
+                                            // Only open block dialog if clicking empty space on desktop
+                                            if (window.innerWidth >= 768) {
+                                                if (e.target === e.currentTarget && user) {
+                                                    setBlockDialogDay(day);
+                                                    setBlockReason('');
+                                                }
                                             }
                                         }}
                                     >
-                                        <div className={`text-right text-sm font-medium p-1 mb-1 ${isToday ? 'text-emerald-700 bg-emerald-100 rounded-md w-fit ml-auto px-2' : 'text-slate-500'}`}>
+                                        <div className={`text-right text-[10px] sm:text-xs md:text-sm font-medium p-0.5 md:p-1 mb-0.5 md:mb-1 ${isToday ? 'text-emerald-700 bg-emerald-100 rounded-md w-fit ml-auto px-0.5 sm:px-1 md:px-2' : 'text-slate-500'}`}>
                                             {format(day, 'd')}
                                         </div>
-                                        <div className="space-y-1">
+                                        
+                                        {/* Desktop list view */}
+                                        <div className="hidden md:block space-y-1">
                                             {dayAppts.map((appt, idx) => (
                                                 <div 
                                                     key={appt.id || idx} 
@@ -339,12 +346,76 @@ export default function MasterCalendarPage() {
                                                 </div>
                                             ))}
                                         </div>
+
+                                        {/* Mobile dot indicators */}
+                                        <div className="flex md:hidden justify-center gap-0.5 mt-0.5 flex-wrap">
+                                            {dayAppts.slice(0, 3).map((appt, idx) => (
+                                                <span 
+                                                    key={appt.id || idx} 
+                                                    className={`h-1 w-1 rounded-full ${appt.type?.includes('block') ? 'bg-red-500' : 'bg-indigo-500'}`}
+                                                />
+                                            ))}
+                                            {dayAppts.length > 3 && (
+                                                <span className="text-[7px] text-slate-400 font-bold -mt-1">+</span>
+                                            )}
+                                        </div>
                                     </div>
                                 );
                             })}
                         </div>
                     </div>
                 )}
+
+                {/* Mobile Agenda List */}
+                <div className="block md:hidden mt-6 border-t pt-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+                        <h3 className="text-sm sm:text-base font-bold text-slate-800">
+                            Agenda del {format(selectedMobileDate, "d 'de' MMMM", { locale: localeObj })}
+                        </h3>
+                        <Button 
+                            size="sm" 
+                            variant="outline" 
+                            onClick={() => {
+                                setBlockDialogDay(selectedMobileDate);
+                                setBlockReason('');
+                            }}
+                            className="text-xs h-9 px-3 w-full sm:w-auto justify-center"
+                        >
+                            <Lock className="w-3.5 h-3.5 mr-1" />
+                            Bloquear día/hora
+                        </Button>
+                    </div>
+                    
+                    {appointments.filter(a => a.startTime && isSameDay(parseISO(a.startTime), selectedMobileDate)).length === 0 ? (
+                        <div className="text-center py-6 text-sm text-slate-400 bg-slate-50/50 rounded-xl border border-dashed">
+                            Sin citas ni bloqueos programados para hoy.
+                        </div>
+                    ) : (
+                        <div className="space-y-2">
+                            {appointments.filter(a => a.startTime && isSameDay(parseISO(a.startTime), selectedMobileDate)).map((appt, idx) => (
+                                <div 
+                                    key={appt.id || idx}
+                                    onClick={() => setSelectedAppt(appt)}
+                                    className={`p-3 rounded-xl border transition-all active:scale-[0.98] cursor-pointer ${appt.type === 'full_day_block' ? 'bg-red-50/50 border-red-200 text-red-950' : appt.type?.includes('block') ? 'bg-orange-50/50 border-orange-200 text-orange-950' : 'bg-indigo-50/30 border-indigo-100 text-slate-900'}`}
+                                >
+                                    <div className="flex items-center justify-between">
+                                        <div className="font-bold text-xs flex items-center">
+                                            {appt.type?.includes('block') ? <Lock className="w-3.5 h-3.5 mr-1.5 text-red-600" /> : <Clock className="w-3.5 h-3.5 mr-1.5 text-indigo-600" />}
+                                            {appt.type === 'full_day_block' ? 'Todo el día' : appt.type === 'time_range_block' ? `${format(parseISO(appt.startTime), 'HH:mm')} - ${format(parseISO(appt.endTime), 'HH:mm')}` : format(parseISO(appt.startTime), 'HH:mm')}
+                                        </div>
+                                        {appt.type?.includes('block') && <span className="text-[9px] font-bold text-red-700 bg-red-100/60 px-1.5 py-0.5 rounded">Bloqueo</span>}
+                                    </div>
+                                    <div className="mt-1 text-sm font-semibold">
+                                        {appt.type?.includes('block') ? (appt.reason || 'Bloqueado') : (appt.inviteeName || appt.clientName || 'Reunión')}
+                                    </div>
+                                    {appt.inviteeEmail && (
+                                        <div className="text-xs text-slate-500 mt-0.5 truncate">{appt.inviteeEmail}</div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
             </Card>
 
             <Dialog open={!!selectedAppt} onOpenChange={(open) => !open && setSelectedAppt(null)}>

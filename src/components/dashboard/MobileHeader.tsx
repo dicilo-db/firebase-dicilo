@@ -6,6 +6,7 @@ import { ChevronLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { NotificationBell } from './NotificationBell';
+import { LanguageSelector } from '../LanguageSelector';
 
 interface MobileHeaderProps {
     userData: any;
@@ -55,7 +56,10 @@ export function MobileHeader({ userData, currentView, onViewChange }: MobileHead
                     </div>
 
                     <div className="flex items-center gap-3">
-                        <NotificationBell />
+                        <LanguageSelector 
+                            variant="ghost" 
+                            className="rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors h-11 w-11 flex items-center justify-center border-0 text-slate-600 dark:text-slate-300"
+                        />
                         
                         <Avatar className="h-9 w-9 border border-slate-200">
                             <AvatarImage src={userData?.photoURL || userData?.photoUrl} />

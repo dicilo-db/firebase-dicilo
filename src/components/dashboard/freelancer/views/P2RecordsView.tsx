@@ -11,7 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { sendRecordToClient } from '@/app/actions/freelance-records';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, ChevronRight } from 'lucide-react';
 
 export function P2RecordsView() {
     const { user } = useAuth();
@@ -20,6 +20,13 @@ export function P2RecordsView() {
     const [isLoading, setIsLoading] = useState(true);
     const [isClaiming, setIsClaiming] = useState(false);
     const [sendingId, setSendingId] = useState<string | null>(null);
+    const [viewMode, setViewMode] = useState<'table' | 'cards' | 'compact'>('cards');
+
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            setViewMode(window.innerWidth < 768 ? 'cards' : 'table');
+        }
+    }, []);
 
     const loadRecords = async () => {
         if (!user) return;
@@ -136,18 +143,51 @@ export function P2RecordsView() {
             )}
 
             <Card>
-                <CardHeader>
-                    <CardTitle>Mis Registros Pendientes</CardTitle>
-                    <CardDescription>Empresas asignadas a tu cuenta que requieren ser completadas.</CardDescription>
+                <CardHeader className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b pb-4">
+                    <div>
+                        <CardTitle>Mis Registros Pendientes</CardTitle>
+                        <CardDescription>Empresas asignadas a tu cuenta que requieren ser completadas.</CardDescription>
+                    </div>
+                    {records.length > 0 && (
+                        <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 rounded-lg p-1 border">
+                            <Button
+                                type="button"
+                                size="sm"
+                                variant={viewMode === 'cards' ? 'secondary' : 'ghost'}
+                                onClick={() => setViewMode('cards')}
+                                className="text-xs h-7 px-2.5 font-bold"
+                            >
+                                Tarjetas
+                            </Button>
+                            <Button
+                                type="button"
+                                size="sm"
+                                variant={viewMode === 'table' ? 'secondary' : 'ghost'}
+                                onClick={() => setViewMode('table')}
+                                className="text-xs h-7 px-2.5 font-bold"
+                            >
+                                Tabla
+                            </Button>
+                            <Button
+                                type="button"
+                                size="sm"
+                                variant={viewMode === 'compact' ? 'secondary' : 'ghost'}
+                                onClick={() => setViewMode('compact')}
+                                className="text-xs h-7 px-2.5 font-bold"
+                            >
+                                Compacta
+                            </Button>
+                        </div>
+                    )}
                 </CardHeader>
-                <CardContent>
+                <CardContent className="pt-6">
                     {records.length === 0 ? (
                         <div className="text-center py-12 text-muted-foreground border-2 border-dashed rounded-lg bg-slate-50">
                             No tienes registros pendientes en este momento.
                             <br />
                             Haz clic en "Solicitar Paquete" para empezar.
                         </div>
-                    ) : (
+                    ) : viewMode === 'table' ? (
                         <div className="overflow-x-auto">
                             <table className="w-full text-sm text-left">
                                 <thead className="bg-slate-50 border-b">
@@ -205,6 +245,94 @@ export function P2RecordsView() {
                                     })}
                                 </tbody>
                             </table>
+                        </div>
+                    ) : viewMode === 'cards' ? (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            {records.map(record => {
+                                const requiredFields = ['name', 'email', 'phone', 'category', 'city', 'country', 'address'];
+                                const filledFields = requiredFields.filter(f => !!record[f as keyof FreelanceRecord]);
+                                const progress = Math.round((filledFields.length / requiredFields.length) * 100);
+
+                                return (
+                                    <div key={record.id} className="p-4 rounded-xl border border-slate-200 bg-white shadow-sm flex flex-col justify-between hover:shadow-md transition-all duration-300">
+                                        <div>
+                                            <div className="flex justify-between items-start gap-2">
+                                                <h4 className="font-extrabold text-slate-800 text-sm tracking-tight">{record.name || 'Sin Nombre'}</h4>
+                                                <Badge variant="outline" className="bg-slate-100 text-[10px] py-0.5 capitalize shrink-0">
+                                                    {record.verificationStatus || 'draft'}
+                                                </Badge>
+                                            </div>
+                                            <div className="mt-4 space-y-2">
+                                                <div className="flex justify-between text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                                                    <span>Progreso de Datos</span>
+                                                    <span>{progress}%</span>
+                                                </div>
+                                                <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden border">
+                                                    <div className="h-full bg-blue-500 rounded-full" style={{ width: `${progress}%` }} />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="mt-6 pt-3 border-t flex justify-end gap-2">
+                                            <Button variant="ghost" size="sm" asChild className="text-blue-600 h-9 text-xs">
+                                                <a href={`/admin/basic/${record.id}/edit`} target="_blank" rel="noopener noreferrer">
+                                                    <Edit2 className="h-3.5 w-3.5 mr-1.5" /> Editar
+                                                </a>
+                                            </Button>
+                                            {record.verificationStatus === 'draft' && (
+                                                <Button 
+                                                    variant="default" 
+                                                    size="sm" 
+                                                    onClick={() => handleSendToClient(record.id)}
+                                                    disabled={sendingId === record.id}
+                                                    className="bg-green-600 hover:bg-green-700 text-white font-bold h-9 text-xs"
+                                                >
+                                                    {sendingId === record.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : 'Enviar a Cliente'}
+                                                </Button>
+                                            )}
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    ) : (
+                        <div className="divide-y divide-slate-100">
+                            {records.map(record => {
+                                const requiredFields = ['name', 'email', 'phone', 'category', 'city', 'country', 'address'];
+                                const filledFields = requiredFields.filter(f => !!record[f as keyof FreelanceRecord]);
+                                const progress = Math.round((filledFields.length / requiredFields.length) * 100);
+
+                                return (
+                                    <div key={record.id} className="py-3 flex items-center justify-between gap-3 text-xs sm:text-sm">
+                                        <div className="min-w-0">
+                                            <div className="font-semibold text-slate-800 truncate">{record.name || 'Sin Nombre'}</div>
+                                            <div className="flex items-center gap-1.5 mt-0.5">
+                                                <span className="text-[10px] text-muted-foreground">{progress}% completado</span>
+                                                <span className="h-1 w-1 rounded-full bg-slate-300" />
+                                                <span className="text-[10px] text-slate-400 capitalize">{record.verificationStatus || 'draft'}</span>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-1 shrink-0">
+                                            <Button variant="ghost" size="icon" asChild className="h-8 w-8 text-blue-600 rounded-full" title="Editar">
+                                                <a href={`/admin/basic/${record.id}/edit`} target="_blank" rel="noopener noreferrer">
+                                                    <Edit2 className="h-3.5 w-3.5" />
+                                                </a>
+                                            </Button>
+                                            {record.verificationStatus === 'draft' && (
+                                                <Button 
+                                                    variant="ghost" 
+                                                    size="icon" 
+                                                    onClick={() => handleSendToClient(record.id)}
+                                                    disabled={sendingId === record.id}
+                                                    className="h-8 w-8 text-green-600 hover:text-green-700 rounded-full"
+                                                    title="Enviar a Cliente"
+                                                >
+                                                    {sendingId === record.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <ChevronRight className="h-4 w-4" />}
+                                                </Button>
+                                            )}
+                                        </div>
+                                    </div>
+                                );
+                            })}
                         </div>
                     )}
                 </CardContent>

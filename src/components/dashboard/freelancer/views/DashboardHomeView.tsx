@@ -173,8 +173,8 @@ export function DashboardHomeView() {
                                                 <h4 className="font-semibold text-sm truncate group-hover:text-primary transition-colors">{campaign.companyName}</h4>
                                                 <p className="text-xs text-muted-foreground truncate">{campaign.title}</p>
                                             </div>
-                                            <div className="flex items-center gap-2">
-                                                <div className="text-right hidden sm:block">
+                                            <div className="flex items-center gap-2 shrink-0">
+                                                <div className="text-right">
                                                     <div className="text-xs font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded">€{campaign.reward_per_action?.toFixed(2)}/post</div>
                                                 </div>
                                                 <Button size="icon" variant="ghost" className="h-8 w-8 text-muted-foreground group-hover:text-primary">
@@ -268,14 +268,14 @@ function StatCard({ title, value, icon: Icon, trend, subValue, color }: any) {
     return (
         <Card className="hover:shadow-md transition-shadow p-4 w-full">
             <div className="flex items-center justify-between pb-1 sm:pb-2">
-                <span className="text-[10px] sm:text-sm font-medium text-muted-foreground truncate">
+                <span className="text-xs sm:text-sm font-medium text-muted-foreground truncate">
                     {title}
                 </span>
                 <Icon className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${color} shrink-0`} />
             </div>
-            <div className="text-xs sm:text-2xl font-bold truncate">{value}</div>
+            <div className="text-lg sm:text-2xl font-bold truncate">{value}</div>
             {(trend || subValue) && (
-                <div className="text-[8px] sm:text-xs text-muted-foreground flex items-center gap-1 mt-0.5 sm:mt-1 truncate">
+                <div className="text-[10px] sm:text-xs text-muted-foreground flex items-center gap-1 mt-0.5 sm:mt-1 truncate">
                     {trend && <span className="text-green-600 bg-green-50 px-1 rounded shrink-0">{trend}</span>}
                     {subValue && <span className="truncate">{subValue}</span>}
                 </div>
