@@ -260,10 +260,10 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                         <div className="flex items-center justify-between">
                             <div>
                                 <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 flex items-center gap-3">
-                                    ¡Hola, {formData.firstName}! 👋
+                                    {t('dashboard.welcomeUser', '¡Hola, {{name}}!', { name: formData.firstName })} 👋
                                 </h1>
                                 <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1">
-                                    Bienvenido a tu panel de control
+                                    {t('dashboard.welcomeControlPanel', 'Bienvenido a tu panel de control')}
                                 </p>
                             </div>
                             <NotificationBell />
@@ -277,11 +277,11 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                                         <MessageCircle className="h-4.5 w-4.5" />
                                     </div>
                                     <div className="text-xl sm:text-2xl font-bold text-slate-800 mt-2 sm:mt-3 tracking-tight">128</div>
-                                    <div className="text-[10px] sm:text-xs font-semibold text-slate-500 mt-0.5 truncate">Conversaciones</div>
+                                    <div className="text-[10px] sm:text-xs font-semibold text-slate-500 mt-0.5 truncate">{t('dashboard.stats.conversations', 'Conversaciones')}</div>
                                 </div>
                                 <div className="flex items-center gap-1 text-[9px] sm:text-[10px] text-emerald-600 font-bold mt-1.5 sm:mt-2">
                                     <TrendingUp className="h-3 w-3" />
-                                    <span>12% vs ayer</span>
+                                    <span>12% {t('dashboard.stats.vsYesterday', 'vs ayer')}</span>
                                 </div>
                             </Card>
 
@@ -292,11 +292,11 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                                         <Users className="h-4.5 w-4.5" />
                                     </div>
                                     <div className="text-xl sm:text-2xl font-bold text-slate-800 mt-2 sm:mt-3 tracking-tight">248</div>
-                                    <div className="text-[10px] sm:text-xs font-semibold text-slate-500 mt-0.5 truncate">Contactos nuevos</div>
+                                    <div className="text-[10px] sm:text-xs font-semibold text-slate-500 mt-0.5 truncate">{t('dashboard.stats.newContacts', 'Contactos nuevos')}</div>
                                 </div>
                                 <div className="flex items-center gap-1 text-[9px] sm:text-[10px] text-emerald-600 font-bold mt-1.5 sm:mt-2">
                                     <TrendingUp className="h-3 w-3" />
-                                    <span>18% vs ayer</span>
+                                    <span>18% {t('dashboard.stats.vsYesterday', 'vs ayer')}</span>
                                 </div>
                             </Card>
 
@@ -307,11 +307,11 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                                         <Target className="h-4.5 w-4.5" />
                                     </div>
                                     <div className="text-xl sm:text-2xl font-bold text-slate-800 mt-2 sm:mt-3 tracking-tight">15</div>
-                                    <div className="text-[10px] sm:text-xs font-semibold text-slate-500 mt-0.5 truncate">Campañas activas</div>
+                                    <div className="text-[10px] sm:text-xs font-semibold text-slate-500 mt-0.5 truncate">{t('dashboard.stats.activeCampaigns', 'Campañas activas')}</div>
                                 </div>
                                 <div className="flex items-center gap-1 text-[9px] sm:text-[10px] text-emerald-600 font-bold mt-1.5 sm:mt-2">
                                     <TrendingUp className="h-3 w-3" />
-                                    <span>5% vs ayer</span>
+                                    <span>5% {t('dashboard.stats.vsYesterday', 'vs ayer')}</span>
                                 </div>
                             </Card>
 
@@ -322,11 +322,11 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                                         <BarChart3 className="h-4.5 w-4.5" />
                                     </div>
                                     <div className="text-xl sm:text-2xl font-bold text-slate-800 mt-2 sm:mt-3 tracking-tight">32.5%</div>
-                                    <div className="text-[10px] sm:text-xs font-semibold text-slate-500 mt-0.5 truncate">Tasa de conversión</div>
+                                    <div className="text-[10px] sm:text-xs font-semibold text-slate-500 mt-0.5 truncate">{t('dashboard.stats.conversionRate', 'Tasa de conversión')}</div>
                                 </div>
                                 <div className="flex items-center gap-1 text-[9px] sm:text-[10px] text-emerald-600 font-bold mt-1.5 sm:mt-2">
                                     <TrendingUp className="h-3 w-3" />
-                                    <span>8% vs ayer</span>
+                                    <span>8% {t('dashboard.stats.vsYesterday', 'vs ayer')}</span>
                                 </div>
                             </Card>
                         </div>
@@ -334,8 +334,8 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                         {/* Section 1: Acciones Rápidas (Native Mockup Grid) */}
                         <div className="space-y-3">
                             <div className="flex justify-between items-center">
-                                <h3 className="text-sm sm:text-base font-extrabold text-slate-900">Acciones rápidas</h3>
-                                <span className="text-xs text-slate-400 cursor-pointer hover:text-slate-600 transition-colors">Ver todo</span>
+                                <h3 className="text-sm sm:text-base font-extrabold text-slate-900">{t('dashboard.quickActions', 'Acciones rápidas')}</h3>
+                                <span className="text-xs text-slate-400 cursor-pointer hover:text-slate-600 transition-colors">{t('dashboard.viewAll', 'Ver todo')}</span>
                             </div>
                             <div className="flex overflow-x-auto gap-4 pb-2 scrollbar-none snap-x">
                                 {/* Action 1: Crear Chatbot */}
@@ -347,7 +347,7 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                                         <Bot className="h-6 w-6 text-blue-600" />
                                     </div>
                                     <span className="text-[10px] sm:text-xs font-bold text-slate-700 text-center mt-2 w-14 sm:w-16 line-clamp-2">
-                                        Crear Chatbot
+                                        {t('dashboard.actions.createChatbot', 'Crear Chatbot')}
                                     </span>
                                 </div>
 
@@ -360,7 +360,7 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                                         <Target className="h-6 w-6 text-emerald-600" />
                                     </div>
                                     <span className="text-[10px] sm:text-xs font-bold text-slate-700 text-center mt-2 w-14 sm:w-16 line-clamp-2">
-                                        Nueva Campaña
+                                        {t('dashboard.actions.newCampaign', 'Nueva Campaña')}
                                     </span>
                                 </div>
 
@@ -373,7 +373,7 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                                         <Users className="h-6 w-6 text-purple-600" />
                                     </div>
                                     <span className="text-[10px] sm:text-xs font-bold text-slate-700 text-center mt-2 w-14 sm:w-16 line-clamp-2">
-                                        Agregar Contacto
+                                        {t('dashboard.actions.addContact', 'Agregar Contacto')}
                                     </span>
                                 </div>
 
@@ -386,7 +386,7 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                                         <Megaphone className="h-6 w-6 text-orange-600" />
                                     </div>
                                     <span className="text-[10px] sm:text-xs font-bold text-slate-700 text-center mt-2 w-14 sm:w-16 line-clamp-2">
-                                        Nuevo Broadcast
+                                        {t('dashboard.actions.newBroadcast', 'Nuevo Broadcast')}
                                     </span>
                                 </div>
 
@@ -399,7 +399,7 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                                         <BarChart3 className="h-6 w-6 text-blue-500" />
                                     </div>
                                     <span className="text-[10px] sm:text-xs font-bold text-slate-700 text-center mt-2 w-14 sm:w-16 line-clamp-2">
-                                        Ver Reportes
+                                        {t('dashboard.actions.viewReports', 'Ver Reportes')}
                                     </span>
                                 </div>
                             </div>
@@ -407,7 +407,7 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
 
                         {/* Section 2: Launchpad de Módulos (All Menu Items Represented) */}
                         <div className="space-y-3 pt-2">
-                            <h3 className="text-sm sm:text-base font-extrabold text-slate-900">Mis Módulos de Trabajo</h3>
+                            <h3 className="text-sm sm:text-base font-extrabold text-slate-900">{t('dashboard.myWorkModules', 'Mis Módulos de Trabajo')}</h3>
                             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
                                 {/* Module 1: Mi Wallet */}
                                 <div 
@@ -417,7 +417,7 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                                     <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 transition-colors group-hover:bg-emerald-100">
                                         <CreditCard className="h-4 w-4" />
                                     </div>
-                                    <span className="text-xs font-bold text-slate-800">Mi Wallet</span>
+                                    <span className="text-xs font-bold text-slate-800">{t('dashboard.myWallet', 'Mi Wallet')}</span>
                                 </div>
 
                                 {/* Module 2: Invitar Amigos */}
@@ -428,7 +428,7 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                                     <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 transition-colors group-hover:bg-blue-100">
                                         <Share2 className="h-4 w-4" />
                                     </div>
-                                    <span className="text-xs font-bold text-slate-800">Invitar Amigos</span>
+                                    <span className="text-xs font-bold text-slate-800">{t('dashboard.inviteFriends', 'Invitar Amigos')}</span>
                                 </div>
 
                                 {/* Module 3: Calendario */}
@@ -439,7 +439,7 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                                     <div className="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center shrink-0 transition-colors group-hover:bg-rose-100">
                                         <Calendar className="h-4 w-4" />
                                     </div>
-                                    <span className="text-xs font-bold text-slate-800">Calendario</span>
+                                    <span className="text-xs font-bold text-slate-800">{t('dashboard.sidebar.calendar', 'Calendario')}</span>
                                 </div>
 
                                 {/* Module 4: Mapa de Aliados */}
@@ -450,7 +450,7 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                                     <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0 transition-colors group-hover:bg-indigo-100">
                                         <Map className="h-4 w-4" />
                                     </div>
-                                    <span className="text-xs font-bold text-slate-800">Mapa de Aliados</span>
+                                    <span className="text-xs font-bold text-slate-800">{t('dashboard.alliesMapNav', 'Mapa de Aliados')}</span>
                                 </div>
 
                                 {/* Module 5: DiciCoin */}
@@ -461,7 +461,7 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                                     <div className="w-8 h-8 rounded-lg bg-yellow-50 text-yellow-600 flex items-center justify-center shrink-0 transition-colors group-hover:bg-yellow-100">
                                         <Coins className="h-4 w-4" />
                                     </div>
-                                    <span className="text-xs font-bold text-slate-800">DiciCoin</span>
+                                    <span className="text-xs font-bold text-slate-800">{t('dashboard.dicicoin.title', 'DiciCoin')}</span>
                                 </div>
 
                                 {/* Module 6: Tu Comunidad */}
@@ -472,7 +472,7 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                                     <div className="w-8 h-8 rounded-lg bg-pink-50 text-pink-600 flex items-center justify-center shrink-0 transition-colors group-hover:bg-pink-100">
                                         <Heart className="h-4 w-4" />
                                     </div>
-                                    <span className="text-xs font-bold text-slate-800">Tu Comunidad</span>
+                                    <span className="text-xs font-bold text-slate-800">{t('dashboard.communityLabel', 'Tu Comunidad')}</span>
                                 </div>
 
                                 {/* Module 7: Mi Red Dicilo */}
@@ -483,7 +483,7 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                                     <div className="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center shrink-0 transition-colors group-hover:bg-purple-100">
                                         <Network className="h-4 w-4" />
                                     </div>
-                                    <span className="text-xs font-bold text-slate-800">Mi Red Dicilo</span>
+                                    <span className="text-xs font-bold text-slate-800">{t('dashboard.myNetwork', 'Mi Red Dicilo')}</span>
                                 </div>
 
                                 {/* Module 8: Ajustes */}
@@ -494,7 +494,7 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                                     <div className="w-8 h-8 rounded-lg bg-gray-100 text-gray-600 flex items-center justify-center shrink-0 transition-colors group-hover:bg-gray-200">
                                         <Settings className="h-4 w-4" />
                                     </div>
-                                    <span className="text-xs font-bold text-slate-800">Ajustes</span>
+                                    <span className="text-xs font-bold text-slate-800">{t('dashboard.settings', 'Ajustes')}</span>
                                 </div>
 
                                 {/* Module 9: Soporte (Tickets) */}
@@ -505,7 +505,7 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                                     <div className="w-8 h-8 rounded-lg bg-sky-50 text-sky-600 flex items-center justify-center shrink-0 transition-colors group-hover:bg-sky-100">
                                         <LifeBuoy className="h-4 w-4" />
                                     </div>
-                                    <span className="text-xs font-bold text-slate-800">Soporte</span>
+                                    <span className="text-xs font-bold text-slate-800">{t('avatarMenu.support', 'Soporte')}</span>
                                 </div>
 
                                 {/* Module 10: FAQs */}
@@ -516,7 +516,7 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                                     <div className="w-8 h-8 rounded-lg bg-teal-50 text-teal-600 flex items-center justify-center shrink-0 transition-colors group-hover:bg-teal-100">
                                         <HelpCircle className="h-4 w-4" />
                                     </div>
-                                    <span className="text-xs font-bold text-slate-800">FAQs</span>
+                                    <span className="text-xs font-bold text-slate-800">{t('avatarMenu.helpCenter', 'FAQs')}</span>
                                 </div>
 
                                 {/* Module 11: Panel Freelancer (Condicional) */}
@@ -528,7 +528,7 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                                         <div className="w-8 h-8 rounded-lg bg-[#8cc63f] text-white flex items-center justify-center shrink-0">
                                             <Briefcase className="h-4 w-4" />
                                         </div>
-                                        <span className="text-xs font-bold text-slate-800">Freelancer</span>
+                                        <span className="text-xs font-bold text-slate-800">{t('dashboard.freelancer_nav', 'Freelancer')}</span>
                                     </div>
                                 )}
 

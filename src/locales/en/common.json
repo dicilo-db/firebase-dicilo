@@ -315,6 +315,23 @@
       "calendar": "Calendar"
     },
     "welcomeUser": "Welcome, {{name}}!",
+    "welcomeControlPanel": "Welcome to your control panel",
+    "viewAll": "View all",
+    "myWorkModules": "My Work Modules",
+    "stats": {
+      "conversations": "Conversations",
+      "newContacts": "New Contacts",
+      "activeCampaigns": "Active Campaigns",
+      "conversionRate": "Conversion Rate",
+      "vsYesterday": "vs yesterday"
+    },
+    "actions": {
+      "createChatbot": "Create Chatbot",
+      "newCampaign": "New Campaign",
+      "addContact": "Add Contact",
+      "newBroadcast": "New Broadcast",
+      "viewReports": "View Reports"
+    },
     "goToWallet": "Go to Wallet",
     "promo": {
       "estimatedEarnings": "Estimated Earnings",
@@ -1795,5 +1812,49 @@
     "error": {
       "title": "An error occurred!"
     }
+  },
+  "roles": {
+    "user": "Member",
+    "freelancer": "Freelancer",
+    "team_leader": "Team Leader",
+    "sales_director": "Sales Director",
+    "company": "Company",
+    "admin": "Administrator",
+    "superadmin": "Super Admin"
+  },
+  "network": {
+    "title": "My Dicilo Network",
+    "description": "Visualize your referral tree and team.",
+    "yourDirectStructure": "Your Direct Structure",
+    "yourDirectStructureDesc": "Here you can see the evolution of your team. Invite more people and guide them to grow your network and earnings.",
+    "you": "You!",
+    "directs": "Directs",
+    "noDirectsYet": "You haven't invited anyone to your network yet."
+  },
+  "avatarMenu": {
+    "title": "User Menu",
+    "profileInfo": "User Information",
+    "fullName": "Full Name",
+    "email": "Email Address",
+    "country": "Country",
+    "language": "Selected Language",
+    "memberSince": "Registration Date",
+    "accountStatus": "Account Status",
+    "active": "Active",
+    "inactive": "Inactive",
+    "role": "Current Role",
+    "actions": "Actions",
+    "myProfile": "My Profile",
+    "editProfile": "Edit Profile",
+    "myWallet": "My Wallet",
+    "myDiciCoin": "My DiciCoin",
+    "myDp": "My DP",
+    "settings": "Settings",
+    "languageOpt": "Language",
+    "notifications": "Notifications",
+    "support": "Support",
+    "helpCenter": "Help Center",
+    "privacyPolicy": "Privacy Policy",
+    "logout": "Log Out"
   }
 }

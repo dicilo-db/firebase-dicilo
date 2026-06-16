@@ -266,7 +266,7 @@
     },
     {
       "path": "/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/src/app/actions/scanner.ts",
-      "mtime": 1768213492593.297
+      "mtime": 1781620985303.5798
     },
     {
       "path": "/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/src/app/actions/security-utils.ts",
@@ -1450,7 +1450,7 @@
     },
     {
       "path": "/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/src/components/dashboard/MobileHeader.tsx",
-      "mtime": 1781610610586.2373
+      "mtime": 1781621055062.1255
     },
     {
       "path": "/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/src/components/dashboard/MobileNavigationBar.tsx",
@@ -1458,7 +1458,7 @@
     },
     {
       "path": "/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/src/components/dashboard/MyNetworkView.tsx",
-      "mtime": 1781047295968.3667
+      "mtime": 1781621038168.5364
     },
     {
       "path": "/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/src/components/dashboard/NotificationBell.tsx",
@@ -1474,7 +1474,7 @@
     },
     {
       "path": "/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/src/components/dashboard/PrivateDashboard.tsx",
-      "mtime": 1781616451703.9622
+      "mtime": 1781621079687.8179
     },
     {
       "path": "/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/src/components/dashboard/PwaInstallHelper.tsx",
@@ -1910,7 +1910,7 @@
     },
     {
       "path": "/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/src/core/sentinel/sentinel_state.json",
-      "mtime": 1781615194519.2117
+      "mtime": 1781616601168.8691
     },
     {
       "path": "/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/src/core/sentinel/synthesis-engine.ts",
@@ -2126,7 +2126,7 @@
     },
     {
       "path": "/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/src/locales/de/common.json",
-      "mtime": 1781457084079.1445
+      "mtime": 1781621131686.0771
     },
     {
       "path": "/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/src/locales/de/dashboard-reco.json",
@@ -2206,7 +2206,7 @@
     },
     {
       "path": "/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/src/locales/en/common.json",
-      "mtime": 1781457117294.7625
+      "mtime": 1781621168714.5767
     },
     {
       "path": "/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/src/locales/en/dashboard-reco.json",
@@ -2286,7 +2286,7 @@
     },
     {
       "path": "/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/src/locales/es/common.json",
-      "mtime": 1781457100848.624
+      "mtime": 1781621104782.8884
     },
     {
       "path": "/Users/niloescolar/Library/Mobile Documents/com~apple~CloudDocs/Kunden/Dicilo - Netzwerk/Dicilo Firebase Search 2025/firebase-dicilo/src/locales/es/dashboard-reco.json",
@@ -2433,5 +2433,5 @@
       "mtime": 1772960352000
     }
   ],
-  "lastDeployment": "2026-06-16T13:30:01.164Z"
+  "lastDeployment": "2026-06-16T14:46:16.598Z"
 }

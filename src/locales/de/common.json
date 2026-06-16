@@ -454,6 +454,23 @@
       "calendar": "Kalender"
     },
     "welcomeUser": "Willkommen, {{name}}!",
+    "welcomeControlPanel": "Willkommen in Ihrem Kontrollzentrum",
+    "viewAll": "Alle anzeigen",
+    "myWorkModules": "Meine Arbeitsmodule",
+    "stats": {
+      "conversations": "Gespräche",
+      "newContacts": "Neue Kontakte",
+      "activeCampaigns": "Aktive Kampagnen",
+      "conversionRate": "Konversionsrate",
+      "vsYesterday": "vs. gestern"
+    },
+    "actions": {
+      "createChatbot": "Chatbot erstellen",
+      "newCampaign": "Neue Kampagne",
+      "addContact": "Kontakt hinzufügen",
+      "newBroadcast": "Neuer Broadcast",
+      "viewReports": "Berichte anzeigen"
+    },
     "goToWallet": "Zur Wallet",
     "promo": {
       "estimatedEarnings": "Geschätzter Gewinn",
@@ -1826,5 +1843,49 @@
     "error": {
       "title": "Ein Fehler ist aufgetreten!"
     }
+  },
+  "roles": {
+    "user": "Mitglied",
+    "freelancer": "Freelancer",
+    "team_leader": "Teamleiter",
+    "sales_director": "Vertriebsleiter",
+    "company": "Unternehmen",
+    "admin": "Administrator",
+    "superadmin": "Super-Administrator"
+  },
+  "network": {
+    "title": "Mein Dicilo-Netzwerk",
+    "description": "Visualisiere deinen Einladungsbaum und dein Team.",
+    "yourDirectStructure": "Deine direkte Struktur",
+    "yourDirectStructureDesc": "Hier siehst du die Entwicklung deines Teams. Lade mehr Personen ein und unterstütze sie, um dein Netzwerk und deine Einnahmen zu vergrößern.",
+    "you": "Du!",
+    "directs": "Direkte",
+    "noDirectsYet": "Du hast noch niemanden in dein Netzwerk eingeladen."
+  },
+  "avatarMenu": {
+    "title": "Benutzermenü",
+    "profileInfo": "Benutzerinformationen",
+    "fullName": "Vollständiger Name",
+    "email": "E-Mail-Adresse",
+    "country": "Land",
+    "language": "Ausgewählte Sprache",
+    "memberSince": "Registrierungsdatum",
+    "accountStatus": "Kontostatus",
+    "active": "Aktiv",
+    "inactive": "Inaktiv",
+    "role": "Aktuelle Rolle",
+    "actions": "Aktionen",
+    "myProfile": "Mein Profil",
+    "editProfile": "Profil bearbeiten",
+    "myWallet": "Mein Wallet",
+    "myDiciCoin": "Meine DiciCoin",
+    "myDp": "Meine DP",
+    "settings": "Einstellungen",
+    "languageOpt": "Sprache",
+    "notifications": "Benachrichtigungen",
+    "support": "Support",
+    "helpCenter": "Hilfezentrum",
+    "privacyPolicy": "Datenschutzerklärung",
+    "logout": "Abmelden"
   }
 }

@@ -299,6 +299,23 @@
       "calendar": "Calendario"
     },
     "welcomeUser": "¡Bienvenido, {{name}}!",
+    "welcomeControlPanel": "Bienvenido a tu panel de control",
+    "viewAll": "Ver todo",
+    "myWorkModules": "Mis Módulos de Trabajo",
+    "stats": {
+      "conversations": "Conversaciones",
+      "newContacts": "Contactos nuevos",
+      "activeCampaigns": "Campañas activas",
+      "conversionRate": "Tasa de conversión",
+      "vsYesterday": "vs ayer"
+    },
+    "actions": {
+      "createChatbot": "Crear Chatbot",
+      "newCampaign": "Nueva Campaña",
+      "addContact": "Agregar Contacto",
+      "newBroadcast": "Nuevo Broadcast",
+      "viewReports": "Ver Reportes"
+    },
     "totalBalance": "Balance Total",
     "communityLabel": "Comunidad",
     "connectWithNeighbors": "Conecta con tus vecinos",
@@ -1895,5 +1912,49 @@
     "error": {
       "title": "¡Ocurrió un error!"
     }
+  },
+  "roles": {
+    "user": "Miembro",
+    "freelancer": "Freelancer",
+    "team_leader": "Teamleiter",
+    "sales_director": "Vertriebsleiter",
+    "company": "Empresa",
+    "admin": "Administrador",
+    "superadmin": "Superadmin"
+  },
+  "network": {
+    "title": "Mi Red Dicilo",
+    "description": "Visualiza tu árbol de invitados y equipo.",
+    "yourDirectStructure": "Tu Estructura Directa",
+    "yourDirectStructureDesc": "Aquí podrás ver la evolución de tu equipo. Invita a más personas y guíalos para crecer tu red y tus ganancias.",
+    "you": "¡Tú!",
+    "directs": "Directos",
+    "noDirectsYet": "Todavía no has invitado a nadie a tu red."
+  },
+  "avatarMenu": {
+    "title": "Menú de Usuario",
+    "profileInfo": "Información del usuario",
+    "fullName": "Nombre completo",
+    "email": "Correo electrónico",
+    "country": "País",
+    "language": "Idioma seleccionado",
+    "memberSince": "Fecha de registro",
+    "accountStatus": "Estado de cuenta",
+    "active": "Activo",
+    "inactive": "Inactivo",
+    "role": "Rol actual",
+    "actions": "Acciones",
+    "myProfile": "Mi Perfil",
+    "editProfile": "Editar Perfil",
+    "myWallet": "Mi Wallet",
+    "myDiciCoin": "Mis DiciCoin",
+    "myDp": "Mis DP",
+    "settings": "Configuración",
+    "languageOpt": "Idioma",
+    "notifications": "Notificaciones",
+    "support": "Soporte",
+    "helpCenter": "Centro de Ayuda",
+    "privacyPolicy": "Política de Privacidad",
+    "logout": "Cerrar Sesión"
   }
 }

@@ -17,6 +17,7 @@ interface MyNetworkViewProps {
     };
 
     const TreeNodeItem = ({ node, depth = 0 }: { node: any, depth: number }) => {
+        const { t } = useTranslation('common');
         const [isExpanded, setIsExpanded] = useState(depth === 0);
         
         if (!node) return null;
@@ -33,13 +34,13 @@ interface MyNetworkViewProps {
                         <RankIcon role={node.role} />
                         <div>
                             <p className="font-semibold text-sm text-slate-800 dark:text-slate-100">
-                                {depth === 0 ? "¡Tú!" : `${node.firstName} ${node.lastName}`} 
-                                <span className="text-xs text-muted-foreground ml-2">({node.role})</span>
+                                {depth === 0 ? t('network.you', '¡Tú!') : `${node.firstName} ${node.lastName}`} 
+                                <span className="text-xs text-muted-foreground ml-2">({t('roles.' + (node.role || 'user'), node.role)})</span>
                             </p>
                             <p className="text-xs text-muted-foreground mt-0.5">
                                 {depth > 0 && `${node.email} | `}
                                 <span className="font-medium text-slate-600 dark:text-slate-300">
-                                    Directos: {node.directsCount}
+                                    {t('network.directs', 'Directos')}: {node.directsCount}
                                 </span>
                             </p>
                         </div>
@@ -105,7 +106,7 @@ export function MyNetworkView({ uid }: MyNetworkViewProps) {
                 <Network className="h-8 w-8 text-orange-500" />
                 <div>
                     <h1 className="text-2xl font-bold">{t('dashboard.myNetwork', 'Mi Red Dicilo')}</h1>
-                    <p className="text-muted-foreground">Visualiza tu árbol de invitados y equipo.</p>
+                    <p className="text-muted-foreground">{t('network.description', 'Visualiza tu árbol de invitados y equipo.')}</p>
                 </div>
             </div>
 
@@ -113,17 +114,17 @@ export function MyNetworkView({ uid }: MyNetworkViewProps) {
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                         <Users className="h-5 w-5 text-orange-500" />
-                        Tu Estructura Directa
+                        {t('network.yourDirectStructure', 'Tu Estructura Directa')}
                     </CardTitle>
                     <CardDescription>
-                        Aquí podrás ver la evolución de tu equipo. Invita a más personas y guíalos para crecer tu red y tus ganancias.
+                        {t('network.yourDirectStructureDesc', 'Aquí podrás ver la evolución de tu equipo. Invita a más personas y guíalos para crecer tu red y tus ganancias.')}
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
                     <div className="overflow-x-auto pb-6">
                         {treeNode && treeNode.directsCount === 0 ? (
                             <div className="text-center py-10 bg-white rounded-lg border border-dashed">
-                                <p className="text-muted-foreground mb-4">Todavía no has invitado a nadie a tu red.</p>
+                                <p className="text-muted-foreground mb-4">{t('network.noDirectsYet', 'Todavía no has invitado a nadie a tu red.')}</p>
                             </div>
                         ) : (
                             <TreeNodeItem node={treeNode} depth={0} />

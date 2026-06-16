@@ -1,15 +1,9 @@
 'use server';
 
-import { genkit } from 'genkit';
-import { googleAI, gemini15Flash } from '@genkit-ai/googleai';
+import { ai } from '@/ai/genkit';
 import { z } from 'zod';
 import { getAdminStorage } from '@/lib/firebase-admin';
 import { createWorker } from 'tesseract.js';
-
-const ai = genkit({
-    plugins: [googleAI({ apiKey: process.env.GEMINI_API_KEY })],
-    model: gemini15Flash,
-});
 
 const ScanResultSchema = z.object({
     businessName: z.string().describe("Name of the company or business"),
@@ -64,9 +58,9 @@ export async function processBusinessCard(formData: FormData) {
 
         console.log("OCR Text for AI:", finalOcrText.substring(0, 100) + "...");
 
-        // 3. AI Processing (Gemini 1.5 Flash Multimodal)
+        // 3. AI Processing (Gemini 2.5 Flash Multimodal)
         const response = await ai.generate({
-            model: gemini15Flash,
+            model: 'googleai/gemini-2.5-flash',
             prompt: [
                 { media: { url: dataUrl } },
                 {
