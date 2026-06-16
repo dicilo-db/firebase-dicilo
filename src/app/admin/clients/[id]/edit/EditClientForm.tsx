@@ -1358,7 +1358,17 @@ export default function EditClientForm({ initialData }: EditClientFormProps) {
         finalPayload.bodyData = data.bodyData;
       }
       if (data.description_translations) {
-        finalPayload.description_translations = data.description_translations;
+        const trans = { ...data.description_translations } as any;
+        Object.keys(trans).forEach((langKey) => {
+          if (trans[langKey] === undefined) {
+            delete trans[langKey];
+          }
+        });
+        if (Object.keys(trans).length === 0) {
+          delete finalPayload.description_translations;
+        } else {
+          finalPayload.description_translations = trans;
+        }
       }
 
       // Ensure infoCards are set directly from newData to override merge behavior that might be weird with arrays

@@ -500,6 +500,20 @@ function NewBusinessPageContent() {
         }
       }
 
+      if (finalData.description_translations) {
+        const trans = { ...finalData.description_translations };
+        Object.keys(trans).forEach((langKey) => {
+          if (trans[langKey] === undefined) {
+            delete trans[langKey];
+          }
+        });
+        if (Object.keys(trans).length === 0) {
+          delete finalData.description_translations;
+        } else {
+          finalData.description_translations = trans;
+        }
+      }
+
       Object.keys(finalData).forEach((key) => {
         if (finalData[key] === undefined || finalData[key] === '') {
           delete finalData[key];
