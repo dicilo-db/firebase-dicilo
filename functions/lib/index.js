@@ -579,8 +579,8 @@ exports.demoteToBasic = (0, https_1.onCall)((request) => __awaiter(void 0, void 
         const businessId = clientData.slug || slugify(clientData.clientName);
         // Create Business Document
         yield db.collection('businesses').doc(businessId).set({
-            name: clientData.clientName,
-            description: clientData.description,
+            name: clientData.clientName || '',
+            description: clientData.description || '',
             // Fix: Transfer translations back
             description_translations: clientData.translations || {},
             category: clientData.category || clientData.clientSubtitle || 'Uncategorized',
@@ -593,9 +593,9 @@ exports.demoteToBasic = (0, https_1.onCall)((request) => __awaiter(void 0, void 
             country: clientData.country || 'Deutschland',
             phone: clientData.phone || '',
             website: clientData.website || '',
-            imageUrl: clientData.clientLogoUrl,
+            imageUrl: clientData.clientLogoUrl || '',
             // Fix: Restore coordinates
-            coords: coords,
+            coords: coords || null,
             active: true,
             createdAt: clientData.createdAt || admin.firestore.FieldValue.serverTimestamp(),
             updatedAt: admin.firestore.FieldValue.serverTimestamp(),
