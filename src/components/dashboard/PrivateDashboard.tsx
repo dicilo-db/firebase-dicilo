@@ -269,63 +269,62 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                             <NotificationBell />
                         </div>
 
-                        {/* Top Stats Row - Premium design matches PWA native mockup */}
-                        <div className="flex md:grid md:grid-cols-4 overflow-x-auto md:overflow-x-visible gap-3 pb-3 md:pb-0 scrollbar-none snap-x snap-mandatory">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
                             {/* Card 1: Conversaciones */}
-                            <Card className="w-[150px] shrink-0 snap-start md:w-auto md:flex-1 p-4 bg-white border border-slate-100/80 shadow-sm rounded-2xl flex flex-col justify-between hover:shadow-md transition-all duration-300">
+                            <Card className="w-full p-3 sm:p-4 bg-white border border-slate-100/80 shadow-sm rounded-2xl flex flex-col justify-between hover:shadow-md transition-all duration-300">
                                 <div>
                                     <div className="w-9 h-9 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
                                         <MessageCircle className="h-4.5 w-4.5" />
                                     </div>
-                                    <div className="text-2xl font-bold text-slate-800 mt-3 tracking-tight">128</div>
-                                    <div className="text-xs font-semibold text-slate-500 mt-0.5 truncate">Conversaciones</div>
+                                    <div className="text-xl sm:text-2xl font-bold text-slate-800 mt-2 sm:mt-3 tracking-tight">128</div>
+                                    <div className="text-[10px] sm:text-xs font-semibold text-slate-500 mt-0.5 truncate">Conversaciones</div>
                                 </div>
-                                <div className="flex items-center gap-1 text-[10px] text-emerald-600 font-bold mt-2">
+                                <div className="flex items-center gap-1 text-[9px] sm:text-[10px] text-emerald-600 font-bold mt-1.5 sm:mt-2">
                                     <TrendingUp className="h-3 w-3" />
                                     <span>12% vs ayer</span>
                                 </div>
                             </Card>
 
                             {/* Card 2: Contactos nuevos */}
-                            <Card className="w-[150px] shrink-0 snap-start md:w-auto md:flex-1 p-4 bg-white border border-slate-100/80 shadow-sm rounded-2xl flex flex-col justify-between hover:shadow-md transition-all duration-300">
+                            <Card className="w-full p-3 sm:p-4 bg-white border border-slate-100/80 shadow-sm rounded-2xl flex flex-col justify-between hover:shadow-md transition-all duration-300">
                                 <div>
                                     <div className="w-9 h-9 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
                                         <Users className="h-4.5 w-4.5" />
                                     </div>
-                                    <div className="text-2xl font-bold text-slate-800 mt-3 tracking-tight">248</div>
-                                    <div className="text-xs font-semibold text-slate-500 mt-0.5 truncate">Contactos nuevos</div>
+                                    <div className="text-xl sm:text-2xl font-bold text-slate-800 mt-2 sm:mt-3 tracking-tight">248</div>
+                                    <div className="text-[10px] sm:text-xs font-semibold text-slate-500 mt-0.5 truncate">Contactos nuevos</div>
                                 </div>
-                                <div className="flex items-center gap-1 text-[10px] text-emerald-600 font-bold mt-2">
+                                <div className="flex items-center gap-1 text-[9px] sm:text-[10px] text-emerald-600 font-bold mt-1.5 sm:mt-2">
                                     <TrendingUp className="h-3 w-3" />
                                     <span>18% vs ayer</span>
                                 </div>
                             </Card>
 
                             {/* Card 3: Campañas activas */}
-                            <Card className="w-[150px] shrink-0 snap-start md:w-auto md:flex-1 p-4 bg-white border border-slate-100/80 shadow-sm rounded-2xl flex flex-col justify-between hover:shadow-md transition-all duration-300">
+                            <Card className="w-full p-3 sm:p-4 bg-white border border-slate-100/80 shadow-sm rounded-2xl flex flex-col justify-between hover:shadow-md transition-all duration-300">
                                 <div>
                                     <div className="w-9 h-9 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
                                         <Target className="h-4.5 w-4.5" />
                                     </div>
-                                    <div className="text-2xl font-bold text-slate-800 mt-3 tracking-tight">15</div>
-                                    <div className="text-xs font-semibold text-slate-500 mt-0.5 truncate">Campañas activas</div>
+                                    <div className="text-xl sm:text-2xl font-bold text-slate-800 mt-2 sm:mt-3 tracking-tight">15</div>
+                                    <div className="text-[10px] sm:text-xs font-semibold text-slate-500 mt-0.5 truncate">Campañas activas</div>
                                 </div>
-                                <div className="flex items-center gap-1 text-[10px] text-emerald-600 font-bold mt-2">
+                                <div className="flex items-center gap-1 text-[9px] sm:text-[10px] text-emerald-600 font-bold mt-1.5 sm:mt-2">
                                     <TrendingUp className="h-3 w-3" />
                                     <span>5% vs ayer</span>
                                 </div>
                             </Card>
 
                             {/* Card 4: Tasa de conversión */}
-                            <Card className="w-[150px] shrink-0 snap-start md:w-auto md:flex-1 p-4 bg-white border border-slate-100/80 shadow-sm rounded-2xl flex flex-col justify-between hover:shadow-md transition-all duration-300">
+                            <Card className="w-full p-3 sm:p-4 bg-white border border-slate-100/80 shadow-sm rounded-2xl flex flex-col justify-between hover:shadow-md transition-all duration-300">
                                 <div>
                                     <div className="w-9 h-9 rounded-full bg-orange-50 text-orange-600 flex items-center justify-center shrink-0">
                                         <BarChart3 className="h-4.5 w-4.5" />
                                     </div>
-                                    <div className="text-2xl font-bold text-slate-800 mt-3 tracking-tight">32.5%</div>
-                                    <div className="text-xs font-semibold text-slate-500 mt-0.5 truncate">Tasa de conversión</div>
+                                    <div className="text-xl sm:text-2xl font-bold text-slate-800 mt-2 sm:mt-3 tracking-tight">32.5%</div>
+                                    <div className="text-[10px] sm:text-xs font-semibold text-slate-500 mt-0.5 truncate">Tasa de conversión</div>
                                 </div>
-                                <div className="flex items-center gap-1 text-[10px] text-emerald-600 font-bold mt-2">
+                                <div className="flex items-center gap-1 text-[9px] sm:text-[10px] text-emerald-600 font-bold mt-1.5 sm:mt-2">
                                     <TrendingUp className="h-3 w-3" />
                                     <span>8% vs ayer</span>
                                 </div>
@@ -409,10 +408,10 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                         {/* Section 2: Launchpad de Módulos (All Menu Items Represented) */}
                         <div className="space-y-3 pt-2">
                             <h3 className="text-sm sm:text-base font-extrabold text-slate-900">Mis Módulos de Trabajo</h3>
-                            <div className="flex md:grid md:grid-cols-4 overflow-x-auto md:overflow-x-visible gap-3 pb-3 md:pb-0 scrollbar-none snap-x snap-mandatory">
+                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
                                 {/* Module 1: Mi Wallet */}
                                 <div 
-                                    className="bg-white border border-slate-100/80 rounded-xl p-3 flex items-center gap-3 transition-all cursor-pointer hover:shadow-md hover:-translate-y-0.5 group shrink-0 snap-start min-w-[150px] md:min-w-0 md:w-auto"
+                                    className="bg-white border border-slate-100/80 rounded-xl p-3 flex items-center gap-3 transition-all cursor-pointer hover:shadow-md hover:-translate-y-0.5 group w-full"
                                     onClick={() => handleViewChange('wallet')}
                                 >
                                     <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 transition-colors group-hover:bg-emerald-100">
@@ -423,7 +422,7 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
 
                                 {/* Module 2: Invitar Amigos */}
                                 <div 
-                                    className="bg-white border border-slate-100/80 rounded-xl p-3 flex items-center gap-3 transition-all cursor-pointer hover:shadow-md hover:-translate-y-0.5 group shrink-0 snap-start min-w-[150px] md:min-w-0 md:w-auto"
+                                    className="bg-white border border-slate-100/80 rounded-xl p-3 flex items-center gap-3 transition-all cursor-pointer hover:shadow-md hover:-translate-y-0.5 group w-full"
                                     onClick={() => handleViewChange('invite')}
                                 >
                                     <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 transition-colors group-hover:bg-blue-100">
@@ -434,7 +433,7 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
 
                                 {/* Module 3: Calendario */}
                                 <div 
-                                    className="bg-white border border-slate-100/80 rounded-xl p-3 flex items-center gap-3 transition-all cursor-pointer hover:shadow-md hover:-translate-y-0.5 group shrink-0 snap-start min-w-[150px] md:min-w-0 md:w-auto"
+                                    className="bg-white border border-slate-100/80 rounded-xl p-3 flex items-center gap-3 transition-all cursor-pointer hover:shadow-md hover:-translate-y-0.5 group w-full"
                                     onClick={() => handleViewChange('calendar')}
                                 >
                                     <div className="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center shrink-0 transition-colors group-hover:bg-rose-100">
@@ -445,7 +444,7 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
 
                                 {/* Module 4: Mapa de Aliados */}
                                 <div 
-                                    className="bg-white border border-slate-100/80 rounded-xl p-3 flex items-center gap-3 transition-all cursor-pointer hover:shadow-md hover:-translate-y-0.5 group shrink-0 snap-start min-w-[150px] md:min-w-0 md:w-auto"
+                                    className="bg-white border border-slate-100/80 rounded-xl p-3 flex items-center gap-3 transition-all cursor-pointer hover:shadow-md hover:-translate-y-0.5 group w-full"
                                     onClick={() => handleViewChange('map')}
                                 >
                                     <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0 transition-colors group-hover:bg-indigo-100">
@@ -456,7 +455,7 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
 
                                 {/* Module 5: DiciCoin */}
                                 <div 
-                                    className="bg-white border border-slate-100/80 rounded-xl p-3 flex items-center gap-3 transition-all cursor-pointer hover:shadow-md hover:-translate-y-0.5 group shrink-0 snap-start min-w-[150px] md:min-w-0 md:w-auto"
+                                    className="bg-white border border-slate-100/80 rounded-xl p-3 flex items-center gap-3 transition-all cursor-pointer hover:shadow-md hover:-translate-y-0.5 group w-full"
                                     onClick={() => handleViewChange('dicicoin')}
                                 >
                                     <div className="w-8 h-8 rounded-lg bg-yellow-50 text-yellow-600 flex items-center justify-center shrink-0 transition-colors group-hover:bg-yellow-100">
@@ -467,7 +466,7 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
 
                                 {/* Module 6: Tu Comunidad */}
                                 <div 
-                                    className="bg-white border border-slate-100/80 rounded-xl p-3 flex items-center gap-3 transition-all cursor-pointer hover:shadow-md hover:-translate-y-0.5 group shrink-0 snap-start min-w-[150px] md:min-w-0 md:w-auto"
+                                    className="bg-white border border-slate-100/80 rounded-xl p-3 flex items-center gap-3 transition-all cursor-pointer hover:shadow-md hover:-translate-y-0.5 group w-full"
                                     onClick={() => handleViewChange('community')}
                                 >
                                     <div className="w-8 h-8 rounded-lg bg-pink-50 text-pink-600 flex items-center justify-center shrink-0 transition-colors group-hover:bg-pink-100">
@@ -478,7 +477,7 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
 
                                 {/* Module 7: Mi Red Dicilo */}
                                 <div 
-                                    className="bg-white border border-slate-100/80 rounded-xl p-3 flex items-center gap-3 transition-all cursor-pointer hover:shadow-md hover:-translate-y-0.5 group shrink-0 snap-start min-w-[150px] md:min-w-0 md:w-auto"
+                                    className="bg-white border border-slate-100/80 rounded-xl p-3 flex items-center gap-3 transition-all cursor-pointer hover:shadow-md hover:-translate-y-0.5 group w-full"
                                     onClick={() => handleViewChange('my-network')}
                                 >
                                     <div className="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center shrink-0 transition-colors group-hover:bg-purple-100">
@@ -489,7 +488,7 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
 
                                 {/* Module 8: Ajustes */}
                                 <div 
-                                    className="bg-white border border-slate-100/80 rounded-xl p-3 flex items-center gap-3 transition-all cursor-pointer hover:shadow-md hover:-translate-y-0.5 group shrink-0 snap-start min-w-[150px] md:min-w-0 md:w-auto"
+                                    className="bg-white border border-slate-100/80 rounded-xl p-3 flex items-center gap-3 transition-all cursor-pointer hover:shadow-md hover:-translate-y-0.5 group w-full"
                                     onClick={() => handleViewChange('settings')}
                                 >
                                     <div className="w-8 h-8 rounded-lg bg-gray-100 text-gray-600 flex items-center justify-center shrink-0 transition-colors group-hover:bg-gray-200">
@@ -500,7 +499,7 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
 
                                 {/* Module 9: Soporte (Tickets) */}
                                 <div 
-                                    className="bg-white border border-slate-100/80 rounded-xl p-3 flex items-center gap-3 transition-all cursor-pointer hover:shadow-md hover:-translate-y-0.5 group shrink-0 snap-start min-w-[150px] md:min-w-0 md:w-auto"
+                                    className="bg-white border border-slate-100/80 rounded-xl p-3 flex items-center gap-3 transition-all cursor-pointer hover:shadow-md hover:-translate-y-0.5 group w-full"
                                     onClick={() => handleViewChange('tickets')}
                                 >
                                     <div className="w-8 h-8 rounded-lg bg-sky-50 text-sky-600 flex items-center justify-center shrink-0 transition-colors group-hover:bg-sky-100">
@@ -511,7 +510,7 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
 
                                 {/* Module 10: FAQs */}
                                 <div 
-                                    className="bg-white border border-slate-100/80 rounded-xl p-3 flex items-center gap-3 transition-all cursor-pointer hover:shadow-md hover:-translate-y-0.5 group shrink-0 snap-start min-w-[150px] md:min-w-0 md:w-auto"
+                                    className="bg-white border border-slate-100/80 rounded-xl p-3 flex items-center gap-3 transition-all cursor-pointer hover:shadow-md hover:-translate-y-0.5 group w-full"
                                     onClick={() => handleViewChange('faqs')}
                                 >
                                     <div className="w-8 h-8 rounded-lg bg-teal-50 text-teal-600 flex items-center justify-center shrink-0 transition-colors group-hover:bg-teal-100">
@@ -523,7 +522,7 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                                 {/* Module 11: Panel Freelancer (Condicional) */}
                                 {isFreelancerOrHigher && (
                                     <div 
-                                        className="bg-lime-50/50 border border-lime-200/50 rounded-xl p-3 flex items-center gap-3 transition-all cursor-pointer hover:shadow-md hover:-translate-y-0.5 group shrink-0 snap-start min-w-[150px] md:min-w-0 md:w-auto"
+                                        className="bg-lime-50/50 border border-lime-200/50 rounded-xl p-3 flex items-center gap-3 transition-all cursor-pointer hover:shadow-md hover:-translate-y-0.5 group w-full"
                                         onClick={() => handleViewChange('freelancer')}
                                     >
                                         <div className="w-8 h-8 rounded-lg bg-[#8cc63f] text-white flex items-center justify-center shrink-0">
@@ -534,9 +533,9 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                                 )}
 
                                 {/* Module 12: Admin Panel (Condicional) */}
-                                {(formData?.role === 'admin' || formData?.role === 'superadmin' || user?.email?.includes('dicilo.net')) && (
+                                {(role === 'admin' || role === 'superadmin' || user?.email?.includes('dicilo.net')) && (
                                     <div 
-                                        className="bg-red-50/50 border border-red-200/50 rounded-xl p-3 flex items-center gap-3 transition-all cursor-pointer hover:shadow-md hover:-translate-y-0.5 group shrink-0 snap-start min-w-[150px] md:min-w-0 md:w-auto"
+                                        className="bg-red-50/50 border border-red-200/50 rounded-xl p-3 flex items-center gap-3 transition-all cursor-pointer hover:shadow-md hover:-translate-y-0.5 group w-full"
                                         onClick={() => router.push('/admin')}
                                     >
                                         <div className="w-8 h-8 rounded-lg bg-red-600 text-white flex items-center justify-center shrink-0">
@@ -699,7 +698,7 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                         <div className="grid gap-6 lg:grid-cols-2 pt-4 border-t border-slate-100">
                             {/* DiciPoints Wallet (Dark Card) */}
                             <div className="flex flex-col gap-1 h-full">
-                                <div className="bg-slate-950 text-white rounded-2xl p-6 flex flex-col justify-between shadow-lg min-h-[180px] flex-1">
+                                <div className="bg-slate-950 text-white rounded-2xl p-6 flex flex-col justify-between shadow-lg aspect-[1.58/1] w-full">
                                     <div>
                                         <div className="flex justify-between items-start mb-4">
                                             <div>
@@ -729,7 +728,7 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
 
                             {/* Prepaid Card (Image Background) */}
                             <div className="flex flex-col gap-1 h-full">
-                                <div className="rounded-2xl overflow-hidden shadow-lg min-h-[180px] relative flex flex-col justify-between p-6 text-white group flex-1">
+                                <div className="rounded-2xl overflow-hidden shadow-lg aspect-[1.58/1] w-full relative flex flex-col justify-between p-6 text-white group">
                                     {/* Background Image */}
                                     <div className="absolute inset-0 z-0">
                                         <Image
