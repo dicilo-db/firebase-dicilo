@@ -2,8 +2,8 @@
 
 'use client';
 
-import React, { useEffect, useState, useCallback } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import React, { useEffect, useState, useCallback, Suspense } from 'react';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -144,6 +144,14 @@ const NewBusinessSkeleton = () => (
 );
 
 export default function NewBusinessPage() {
+  return (
+    <Suspense fallback={<NewBusinessSkeleton />}>
+      <NewBusinessPageContent />
+    </Suspense>
+  );
+}
+
+function NewBusinessPageContent() {
   const { user } = useAuthGuard(['admin', 'superadmin', 'team_office', 'freelancer']);
   const isFreelancer = user?.role === 'freelancer' && !user?.permissions?.includes('admin');
   const db = getFirestore(app);
@@ -161,6 +169,9 @@ export default function NewBusinessPage() {
   const [selectedSubcategorySlug, setSelectedSubcategorySlug] = useState<string>('');
   const [openCategory, setOpenCategory] = useState(false);
   const [openSubcategory, setOpenSubcategory] = useState(false);
+  
+  const searchParams = useSearchParams();
+  const prefilledRef = React.useRef(false);
   
   const [manualCoords, setManualCoords] = useState<string>('');
   const isTypingCoords = React.useRef(false);
@@ -304,6 +315,34 @@ export default function NewBusinessPage() {
     },
     [locale, setValue, t, toast]
   );
+
+  useEffect(() => {
+    if (prefilledRef.current) return;
+    
+    const name = searchParams.get('name');
+    const email = searchParams.get('email');
+    const city = searchParams.get('city');
+    const country = searchParams.get('country') || 'Deutschland';
+    const phone = searchParams.get('phone');
+    const address = searchParams.get('address');
+
+    let hasPrefilled = false;
+
+    if (name) { setValue('name', name, { shouldValidate: true, shouldDirty: true }); hasPrefilled = true; }
+    if (email) { setValue('email', email, { shouldValidate: true, shouldDirty: true }); hasPrefilled = true; }
+    if (city) { setValue('city', city, { shouldValidate: true, shouldDirty: true }); hasPrefilled = true; }
+    if (country) { setValue('country', country, { shouldValidate: true, shouldDirty: true }); hasPrefilled = true; }
+    if (phone) { setValue('phone', phone, { shouldValidate: true, shouldDirty: true }); hasPrefilled = true; }
+    if (address) { setValue('address', address, { shouldValidate: true, shouldDirty: true }); hasPrefilled = true; }
+
+    if (hasPrefilled) {
+      prefilledRef.current = true;
+      if (address && city) {
+        const addressToGeocode = `${address}, ${city}, ${country}`;
+        handleGeocode(addressToGeocode);
+      }
+    }
+  }, [searchParams, setValue, handleGeocode]);
 
   const triggerGeocode = useCallback(() => {
     const address = getValues('address');
@@ -666,11 +705,13 @@ export default function NewBusinessPage() {
                       <SelectValue placeholder={t('businesses.fields.selectSubcategory', 'Seleccionar Subcategoría')} />
                     </SelectTrigger>
                     <SelectContent>
-                      {selectedCategoryObj?.subcategories?.map((sub) => (
-                        <SelectItem key={sub.id} value={sub.id}>
-                          {getLocalizedName(sub)}
-                        </SelectItem>
-                      ))}
+                      {[...(selectedCategoryObj?.subcategories || [])]
+                        .sort((a, b) => getLocalizedName(a).localeCompare(getLocalizedName(b)))
+                        .map((sub) => (
+                          <SelectItem key={sub.id} value={sub.id}>
+                            {getLocalizedName(sub)}
+                          </SelectItem>
+                        ))}
                     </SelectContent>
                   </Select>
                 </div>

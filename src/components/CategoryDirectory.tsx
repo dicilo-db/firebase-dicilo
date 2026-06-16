@@ -169,17 +169,19 @@ export const CategoryDirectory = () => {
                                     <SelectValue placeholder={t('selectOption', 'Select Subcategory')} />
                                 </SelectTrigger>
                                 <SelectContent className="max-h-[300px]">
-                                    {cat.subcategories?.map((sub) => {
-                                        const subTitle = getSubName(sub);
-                                        return (
-                                            <SelectItem key={sub.id} value={sub.id}>
-                                                {subTitle}
-                                                {sub.businessCount !== undefined && sub.businessCount > 0 && (
-                                                    <span className="ml-1 text-muted-foreground">({sub.businessCount})</span>
-                                                )}
-                                            </SelectItem>
-                                        );
-                                    })}
+                                    {[...(cat.subcategories || [])]
+                                        .sort((a, b) => getSubName(a).localeCompare(getSubName(b)))
+                                        .map((sub) => {
+                                            const subTitle = getSubName(sub);
+                                            return (
+                                                <SelectItem key={sub.id} value={sub.id}>
+                                                    {subTitle}
+                                                    {sub.businessCount !== undefined && sub.businessCount > 0 && (
+                                                        <span className="ml-1 text-muted-foreground">({sub.businessCount})</span>
+                                                    )}
+                                                </SelectItem>
+                                            );
+                                        })}
                                 </SelectContent>
                             </Select>
                         </CardContent>

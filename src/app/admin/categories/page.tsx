@@ -15,6 +15,7 @@ import {
 import { db } from '@/lib/firebase';
 import { Category, Subcategory } from '@/types/category';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import {
     Card,
     CardContent,
@@ -56,6 +57,7 @@ import {
     FolderOpen,
     ChevronRight,
     ChevronDown,
+    Search,
 } from 'lucide-react';
 import * as Icons from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -79,6 +81,7 @@ export default function CategoriesPage() {
     const [expandedCategories, setExpandedCategories] = useState<Set<string>>(
         new Set()
     );
+    const [searchQuery, setSearchQuery] = useState('');
 
     // Dialog States
     const [isCategoryDialogOpen, setIsCategoryDialogOpen] = useState(false);
@@ -274,6 +277,13 @@ export default function CategoriesPage() {
                 newSubcategories.push(newSubcategory);
             }
 
+            // Sort subcategories alphabetically by German name
+            newSubcategories.sort((a, b) => {
+                const nameA = a.name?.de || '';
+                const nameB = b.name?.de || '';
+                return nameA.localeCompare(nameB);
+            });
+
             await updateDoc(categoryRef, { subcategories: newSubcategories });
             toast({ title: 'Success', description: isEdit ? 'Subcategory updated.' : 'Subcategory added.' });
         } catch (error: any) {
@@ -324,6 +334,51 @@ export default function CategoriesPage() {
         );
     }
 
+    const isSearching = searchQuery.trim().length > 0;
+
+    const filteredCategories = categories
+        .map((cat) => {
+            const queryClean = searchQuery.toLowerCase().trim();
+            if (!queryClean) return cat;
+
+            // Search in category names (de, es, en)
+            const catNameDe = cat.name?.de?.toLowerCase() || '';
+            const catNameEs = cat.name?.es?.toLowerCase() || '';
+            const catNameEn = cat.name?.en?.toLowerCase() || '';
+            const catId = cat.id?.toLowerCase() || '';
+
+            const catMatches =
+                catNameDe.includes(queryClean) ||
+                catNameEs.includes(queryClean) ||
+                catNameEn.includes(queryClean) ||
+                catId.includes(queryClean);
+
+            // Filter subcategories that match
+            const matchedSubs = (cat.subcategories || []).filter((sub) => {
+                const subNameDe = sub.name?.de?.toLowerCase() || '';
+                const subNameEs = sub.name?.es?.toLowerCase() || '';
+                const subNameEn = sub.name?.en?.toLowerCase() || '';
+                const subId = sub.id?.toLowerCase() || '';
+
+                return (
+                    subNameDe.includes(queryClean) ||
+                    subNameEs.includes(queryClean) ||
+                    subNameEn.includes(queryClean) ||
+                    subId.includes(queryClean)
+                );
+            });
+
+            if (catMatches || matchedSubs.length > 0) {
+                return {
+                    ...cat,
+                    subcategories: catMatches ? cat.subcategories : matchedSubs,
+                };
+            }
+
+            return null;
+        })
+        .filter(Boolean) as Category[];
+
     return (
         <div className="container mx-auto p-4 md:p-8 space-y-8">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -357,11 +412,22 @@ export default function CategoriesPage() {
             </div>
 
             <Card>
-                <CardHeader>
-                    <CardTitle>Categories</CardTitle>
-                    <CardDescription>
-                        {categories.length} active categories
-                    </CardDescription>
+                <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div>
+                        <CardTitle>Categories</CardTitle>
+                        <CardDescription>
+                            {categories.length} active categories
+                        </CardDescription>
+                    </div>
+                    <div className="relative w-full sm:w-72">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Input
+                            placeholder="Search categories..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="pl-9"
+                        />
+                    </div>
                 </CardHeader>
                 <CardContent>
                     <Table>
@@ -376,7 +442,7 @@ export default function CategoriesPage() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {categories.map((cat) => (
+                            {filteredCategories.map((cat) => (
                                 <React.Fragment key={cat.id}>
                                     <TableRow className="group">
                                         <TableCell>
@@ -386,7 +452,7 @@ export default function CategoriesPage() {
                                                 className="h-8 w-8"
                                                 onClick={() => toggleExpand(cat.id)}
                                             >
-                                                {expandedCategories.has(cat.id) ? (
+                                                {(expandedCategories.has(cat.id) || isSearching) ? (
                                                     <ChevronDown className="h-4 w-4" />
                                                 ) : (
                                                     <ChevronRight className="h-4 w-4 text-muted-foreground" />
@@ -434,7 +500,7 @@ export default function CategoriesPage() {
                                         </TableCell>
                                     </TableRow>
                                     {/* Subcategories Row */}
-                                    {expandedCategories.has(cat.id) && (
+                                    {(expandedCategories.has(cat.id) || isSearching) && (
                                         <TableRow className="bg-muted/30 hover:bg-muted/30">
                                             <TableCell colSpan={6} className="p-0">
                                                 <div className="p-4 pl-14 bg-muted/30 border-b">

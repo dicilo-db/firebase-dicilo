@@ -891,11 +891,13 @@ export default function EditBusinessPage() {
                       <SelectValue placeholder={t('businesses.fields.selectSubcategory', 'Seleccionar Subcategoría')} />
                     </SelectTrigger>
                     <SelectContent>
-                      {selectedCategoryObj?.subcategories?.map((sub) => (
-                        <SelectItem key={sub.id} value={sub.id}>
-                          {getLocalizedName(sub)}
-                        </SelectItem>
-                      ))}
+                      {[...(selectedCategoryObj?.subcategories || [])]
+                        .sort((a, b) => getLocalizedName(a).localeCompare(getLocalizedName(b)))
+                        .map((sub) => (
+                          <SelectItem key={sub.id} value={sub.id}>
+                            {getLocalizedName(sub)}
+                          </SelectItem>
+                        ))}
                     </SelectContent>
                   </Select>
                 </div>
