@@ -10,9 +10,12 @@ import { useRouter } from 'next/navigation';
 import {
     LayoutDashboard, DollarSign, Target, Eye,
     ArrowUpRight, Plus, Calendar, Compass,
-    Share2, ExternalLink, Sparkles
+    Share2, ExternalLink, Sparkles,
+    GraduationCap, Globe, Megaphone, Mail,
+    PieChart, Star, Building2, Link2, HelpCircle
 } from 'lucide-react';
 import Image from 'next/image';
+import NativeBookingDialog from '@/components/shared/NativeBookingDialog';
 
 // Backend Actions
 import { getFreelancerStats, FreelancerStats } from '@/app/actions/freelancer-stats';
@@ -36,6 +39,17 @@ export function DashboardHomeView() {
     const [activeCampaigns, setActiveCampaigns] = useState<Campaign[]>([]);
     const [userName, setUserName] = useState<string>('');
     const [globalStats, setGlobalStats] = useState<any | null>(null);
+
+    const handleNavigation = (tabId: string, campaignId?: string) => {
+        const params = new URLSearchParams(window.location.search);
+        params.set('tab', tabId);
+        if (campaignId) {
+            params.set('campaignId', campaignId);
+        } else {
+            params.delete('campaignId');
+        }
+        router.push(`${window.location.pathname}?${params.toString()}`);
+    };
 
     useEffect(() => {
         if (!user) return;
@@ -104,7 +118,7 @@ export function DashboardHomeView() {
                         {t('freelancer_dashboard.overview')}
                     </p>
                 </div>
-                <Button onClick={() => router.push('/dashboard/freelancer?tab=campaigns')} className="shadow-md">
+                <Button onClick={() => handleNavigation('all_campaigns')} className="shadow-md">
                     <Compass className="mr-2 h-4 w-4" /> {t('freelancer_dashboard.explore_btn')}
                 </Button>
             </div>
@@ -134,6 +148,172 @@ export function DashboardHomeView() {
                 />
             </div>
 
+            {/* SECCIÓN: MIS HERRAMIENTAS DE FREELANCER */}
+            <div className="space-y-4 pt-2">
+                <h3 className="text-sm sm:text-base font-extrabold text-slate-800 dark:text-white flex items-center gap-2">
+                    <Sparkles className="h-5 w-5 text-[#8cc63f]" />
+                    {t('freelancer_dashboard.my_tools', 'Mis Herramientas de Freelancer')}
+                </h3>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                    
+                    {/* 1. Academia Dicilo */}
+                    <div 
+                        className="bg-white border border-slate-100/80 rounded-xl p-3 flex items-center gap-3 transition-all cursor-pointer hover:shadow-md hover:-translate-y-0.5 group w-full"
+                        onClick={() => handleNavigation('academia')}
+                    >
+                        <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 group-hover:bg-blue-100 transition-colors">
+                            <GraduationCap className="h-4.5 w-4.5" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                            <span className="text-xs font-bold text-slate-800 block truncate">{t('freelancer_menu.academia', 'Academia')}</span>
+                            <span className="text-[9px] text-slate-400 block truncate">Formación</span>
+                        </div>
+                    </div>
+
+                    {/* 2. Explorar Campañas */}
+                    <div 
+                        className="bg-white border border-slate-100/80 rounded-xl p-3 flex items-center gap-3 transition-all cursor-pointer hover:shadow-md hover:-translate-y-0.5 group w-full"
+                        onClick={() => handleNavigation('all_campaigns')}
+                    >
+                        <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0 group-hover:bg-indigo-100 transition-colors">
+                            <Globe className="h-4.5 w-4.5" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                            <span className="text-xs font-bold text-slate-800 block truncate">{t('freelancer_menu.all_campaigns', 'Campañas')}</span>
+                            <span className="text-[9px] text-slate-400 block truncate">Buscar marcas</span>
+                        </div>
+                    </div>
+
+                    {/* 3. Mis Campañas */}
+                    <div 
+                        className="bg-white border border-slate-100/80 rounded-xl p-3 flex items-center gap-3 transition-all cursor-pointer hover:shadow-md hover:-translate-y-0.5 group w-full"
+                        onClick={() => handleNavigation('my_campaigns')}
+                    >
+                        <div className="w-8 h-8 rounded-lg bg-green-50 text-green-600 flex items-center justify-center shrink-0 group-hover:bg-green-100 transition-colors">
+                            <Megaphone className="h-4.5 w-4.5" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                            <span className="text-xs font-bold text-slate-800 block truncate">{t('freelancer_menu.my_campaigns', 'Mis Campañas')}</span>
+                            <span className="text-[9px] text-slate-400 block truncate">Campañas unidas</span>
+                        </div>
+                    </div>
+
+                    {/* 4. Email Marketing */}
+                    <div 
+                        className="bg-white border border-slate-100/80 rounded-xl p-3 flex items-center gap-3 transition-all cursor-pointer hover:shadow-md hover:-translate-y-0.5 group w-full"
+                        onClick={() => handleNavigation('marketing_templates')}
+                    >
+                        <div className="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center shrink-0 group-hover:bg-rose-100 transition-colors">
+                            <Mail className="h-4.5 w-4.5" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                            <span className="text-xs font-bold text-slate-800 block truncate">{t('freelancer_menu.email_marketing', 'Email Marketing')}</span>
+                            <span className="text-[9px] text-slate-400 block truncate">Mensajes</span>
+                        </div>
+                    </div>
+
+                    {/* 5. Mis Estadísticas */}
+                    <div 
+                        className="bg-white border border-slate-100/80 rounded-xl p-3 flex items-center gap-3 transition-all cursor-pointer hover:shadow-md hover:-translate-y-0.5 group w-full"
+                        onClick={() => handleNavigation('statistics')}
+                    >
+                        <div className="w-8 h-8 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center shrink-0 group-hover:bg-orange-100 transition-colors">
+                            <PieChart className="h-4.5 w-4.5" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                            <span className="text-xs font-bold text-slate-800 block truncate">{t('freelancer_menu.statistics', 'Estadísticas')}</span>
+                            <span className="text-[9px] text-slate-400 block truncate">Métricas</span>
+                        </div>
+                    </div>
+
+                    {/* 6. Marketingplan */}
+                    <div 
+                        className="bg-white border border-slate-100/80 rounded-xl p-3 flex items-center gap-3 transition-all cursor-pointer hover:shadow-md hover:-translate-y-0.5 group w-full"
+                        onClick={() => handleNavigation('marketing_plan')}
+                    >
+                        <div className="w-8 h-8 rounded-lg bg-pink-50 text-pink-600 flex items-center justify-center shrink-0 group-hover:bg-pink-100 transition-colors">
+                            <Calendar className="h-4.5 w-4.5" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                            <span className="text-xs font-bold text-slate-800 block truncate">{t('freelancer_menu.marketing_plan', 'Planificación')}</span>
+                            <span className="text-[9px] text-slate-400 block truncate">Calendario</span>
+                        </div>
+                    </div>
+
+                    {/* 7. Reseña Online */}
+                    <div 
+                        className="bg-white border border-slate-100/80 rounded-xl p-3 flex items-center gap-3 transition-all cursor-pointer hover:shadow-md hover:-translate-y-0.5 group w-full"
+                        onClick={() => handleNavigation('online_reviews')}
+                    >
+                        <div className="w-8 h-8 rounded-lg bg-yellow-50 text-yellow-600 flex items-center justify-center shrink-0 group-hover:bg-yellow-100 transition-colors">
+                            <Star className="h-4.5 w-4.5" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                            <span className="text-xs font-bold text-slate-800 block truncate">{t('freelancer_menu.online_reviews', 'Reseña Online')}</span>
+                            <span className="text-[9px] text-slate-400 block truncate">Opiniones</span>
+                        </div>
+                    </div>
+
+                    {/* 8. Registros P2 */}
+                    <div 
+                        className="bg-white border border-slate-100/80 rounded-xl p-3 flex items-center gap-3 transition-all cursor-pointer hover:shadow-md hover:-translate-y-0.5 group w-full"
+                        onClick={() => handleNavigation('p2_records')}
+                    >
+                        <div className="w-8 h-8 rounded-lg bg-slate-50 text-slate-600 flex items-center justify-center shrink-0 group-hover:bg-slate-100 transition-colors">
+                            <Building2 className="h-4.5 w-4.5" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                            <span className="text-xs font-bold text-slate-800 block truncate">{t('freelancer_menu.p2_records', 'Registros P2')}</span>
+                            <span className="text-[9px] text-slate-400 block truncate">Historial</span>
+                        </div>
+                    </div>
+
+                    {/* 9. Recomendar Empresa */}
+                    <div 
+                        className="bg-white border border-slate-100/80 rounded-xl p-3 flex items-center gap-3 transition-all cursor-pointer hover:shadow-md hover:-translate-y-0.5 group w-full"
+                        onClick={() => handleNavigation('recommend_company')}
+                    >
+                        <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 group-hover:bg-emerald-100 transition-colors">
+                            <Plus className="h-4.5 w-4.5" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                            <span className="text-xs font-bold text-slate-800 block truncate">{t('freelancer_menu.new_recommendation', 'Recomendar')}</span>
+                            <span className="text-[9px] text-slate-400 block truncate">Destacar</span>
+                        </div>
+                    </div>
+
+                    {/* 10. Conexiones */}
+                    <div 
+                        className="bg-white border border-slate-100/80 rounded-xl p-3 flex items-center gap-3 transition-all cursor-pointer hover:shadow-md hover:-translate-y-0.5 group w-full"
+                        onClick={() => handleNavigation('connections')}
+                    >
+                        <div className="w-8 h-8 rounded-lg bg-sky-50 text-sky-600 flex items-center justify-center shrink-0 group-hover:bg-sky-100 transition-colors">
+                            <Link2 className="h-4.5 w-4.5" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                            <span className="text-xs font-bold text-slate-800 block truncate">{t('freelancer_menu.connections', 'Conexiones')}</span>
+                            <span className="text-[9px] text-slate-400 block truncate">Redes</span>
+                        </div>
+                    </div>
+
+                    {/* 11. Contactar Soporte */}
+                    <NativeBookingDialog trigger={
+                        <div 
+                            className="bg-white border border-slate-100/80 rounded-xl p-3 flex items-center gap-3 transition-all cursor-pointer hover:shadow-md hover:-translate-y-0.5 group w-full"
+                        >
+                            <div className="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center shrink-0 group-hover:bg-purple-100 transition-colors">
+                                <HelpCircle className="h-4.5 w-4.5" />
+                            </div>
+                            <div className="min-w-0 flex-1">
+                                <span className="text-xs font-bold text-slate-800 block truncate">{t('dashboard.contact', 'Contacto')}</span>
+                                <span className="text-[9px] text-slate-400 block truncate">Soporte</span>
+                            </div>
+                        </div>
+                    } />
+
+                </div>
+            </div>
+
             {/* MAIN CONTENT GRID */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
@@ -147,7 +327,7 @@ export function DashboardHomeView() {
                                 <CardTitle className="text-lg font-bold">{t('freelancer_dashboard.your_campaigns')}</CardTitle>
                                 <CardDescription>{t('freelancer_dashboard.quick_actions')}</CardDescription>
                             </div>
-                            <Button variant="ghost" size="sm" onClick={() => router.push('/dashboard/freelancer?tab=my_campaigns')}>
+                            <Button variant="ghost" size="sm" onClick={() => handleNavigation('my_campaigns')}>
                                 {t('freelancer_dashboard.view_all_stats')} <ArrowUpRight className="ml-1 h-3 w-3" />
                             </Button>
                         </CardHeader>
@@ -158,7 +338,7 @@ export function DashboardHomeView() {
                                         <div
                                             key={campaign.id}
                                             className="group flex items-center gap-4 p-3 rounded-lg border bg-white dark:bg-slate-900 hover:shadow-md transition-all cursor-pointer"
-                                            onClick={() => router.push(`/dashboard/freelancer?tab=templates&campaignId=${campaign.id}`)}
+                                            onClick={() => handleNavigation('templates', campaign.id)}
                                         >
                                             <div className="relative h-12 w-12 rounded-md overflow-hidden bg-slate-100 flex-shrink-0">
                                                 {campaign.images && campaign.images[0] ? (
@@ -188,7 +368,7 @@ export function DashboardHomeView() {
                                 <div className="text-center py-10 bg-slate-50 rounded-lg border border-dashed">
                                     <Target className="h-10 w-10 mx-auto text-slate-300 mb-2" />
                                     <p className="text-muted-foreground mb-4">{t('freelancer_dashboard.no_campaigns')}</p>
-                                    <Button onClick={() => router.push('/dashboard/freelancer?tab=campaigns')}>
+                                    <Button onClick={() => handleNavigation('all_campaigns')}>
                                         {t('freelancer_dashboard.explore_btn')}
                                     </Button>
                                 </div>
@@ -218,40 +398,10 @@ export function DashboardHomeView() {
                                     <p className="font-semibold text-slate-700 dark:text-slate-300">New Campaign: HörComfort Services</p>
                                     <p className="text-xs text-muted-foreground">Starts tomorrow</p>
                                 </div>
-                                <Button className="w-full mt-2 text-xs" variant="outline" onClick={() => router.push('/dashboard/freelancer?tab=marketing_plan')}>
+                                <Button className="w-full mt-2 text-xs" variant="outline" onClick={() => handleNavigation('marketing_plan')}>
                                     View Full Plan
                                 </Button>
                             </div>
-                        </CardContent>
-                    </Card>
-
-                    {/* QUICK ACTIONS */}
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>{t('freelancer_dashboard.quick_actions')}</CardTitle>
-                        </CardHeader>
-                        <CardContent className="grid grid-cols-1 gap-3">
-                            <Button variant="outline" className="justify-start h-auto py-3" onClick={() => router.push('/dashboard/freelancer?tab=campaigns')}>
-                                <Compass className="mr-3 h-5 w-5 text-blue-500" />
-                                <div className="text-left">
-                                    <div className="font-semibold">{t('freelancer_dashboard.explore_btn')}</div>
-                                    <div className="text-[10px] text-muted-foreground">Find new brands</div>
-                                </div>
-                            </Button>
-                            <Button variant="outline" className="justify-start h-auto py-3" onClick={() => router.push('/dashboard/freelancer?tab=connections')}>
-                                <Share2 className="mr-3 h-5 w-5 text-pink-500" />
-                                <div className="text-left">
-                                    <div className="font-semibold">{t('freelancer_dashboard.connect_socials')}</div>
-                                    <div className="text-[10px] text-muted-foreground">Link Instagram, TikTok...</div>
-                                </div>
-                            </Button>
-                            <Button variant="outline" className="justify-start h-auto py-3" onClick={() => router.push('/dashboard/freelancer?tab=statistics')}>
-                                <DollarSign className="mr-3 h-5 w-5 text-green-500" />
-                                <div className="text-left">
-                                    <div className="font-semibold">{t('freelancer_dashboard.view_all_stats')}</div>
-                                    <div className="text-[10px] text-muted-foreground">Check your earnings</div>
-                                </div>
-                            </Button>
                         </CardContent>
                     </Card>
 

@@ -13,7 +13,8 @@ import {
     BarChart3, 
     Database,
     Bot,
-    Cookie
+    Cookie,
+    GraduationCap
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -97,16 +98,16 @@ export function MobileNavigationBar({ userData, currentView, onViewChange }: Mob
                     <span>Métricas</span>
                 </button>
 
-                {/* Registros P2 */}
+                {/* Academia */}
                 <button
-                    onClick={() => handleFreelancerTab('p2_records')}
+                    onClick={() => handleFreelancerTab('academia')}
                     className={cn(
                         "flex flex-col items-center justify-center flex-1 h-full py-1 text-xs transition-colors",
-                        (currentView === 'freelancer' && currentTab === 'p2_records') ? "text-primary font-bold" : "text-slate-500"
+                        (currentView === 'freelancer' && currentTab === 'academia') ? "text-primary font-bold" : "text-slate-500"
                     )}
                 >
-                    <Database className="h-5 w-5 mb-0.5" />
-                    <span>Registros</span>
+                    <GraduationCap className="h-5 w-5 mb-0.5" />
+                    <span>Academia</span>
                 </button>
             </div>
         );
