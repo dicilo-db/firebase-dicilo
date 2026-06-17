@@ -949,7 +949,7 @@ export function CommunityView({ defaultNeighborhood = 'Hamburg', currentUser }: 
                                     {t('community.feed.whats_happening', { name: displayNeighborhood })}
                                 </h3>
                             </div>
-                            <NeighborhoodFeed neighborhood={neighborhoodName} />
+                            <NeighborhoodFeed neighborhood={neighborhoodName} currentUser={currentUser} />
                         </TabsContent>
 
                         <TabsContent value="social" className="space-y-6 animate-in fade-in slide-in-from-bottom-2">

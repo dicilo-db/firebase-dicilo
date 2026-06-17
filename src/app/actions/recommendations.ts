@@ -308,3 +308,216 @@ export async function submitRecommendation(formData: FormData) {
         return { success: false, error: "Detalle de servidor: " + (error?.message || String(error)) };
     }
 }
+
+export async function editRecommendationAction(formData: FormData) {
+    try {
+        const db = getAdminDb();
+        const storage = getAdminStorage();
+
+        const recommendationId = formData.get('recommendationId') as string;
+        const userId = formData.get('userId') as string;
+        const comments = formData.get('comments') as string;
+        const rating = parseInt(formData.get('rating') as string || '4', 10);
+        const existingMediaJson = formData.get('existingMedia') as string || '[]';
+        
+        if (!recommendationId || !userId) {
+            return { success: false, error: 'Faltan parámetros obligatorios.' };
+        }
+
+        // 1. Fetch the recommendation
+        const recRef = db.collection('recommendations').doc(recommendationId);
+        const recSnap = await recRef.get();
+        if (!recSnap.exists) {
+            return { success: false, error: 'La recomendación no existe.' };
+        }
+
+        const recData = recSnap.data() || {};
+
+        // 2. Fetch user profile role
+        const userProfileSnap = await db.collection('private_profiles').doc(userId).get();
+        const userProfile = userProfileSnap.exists ? userProfileSnap.data() : null;
+        const isAdminOrSuperAdmin = userProfile?.role === 'admin' || userProfile?.role === 'superadmin';
+
+        // 3. Check authorization
+        if (recData.userId !== userId && !isAdminOrSuperAdmin) {
+            return { success: false, error: 'No tienes permiso para editar esta recomendación.' };
+        }
+
+        // 4. If not admin, verify the 12-hour limit
+        if (!isAdminOrSuperAdmin) {
+            const createdAt = recData.createdAt?.toDate ? recData.createdAt.toDate().getTime() : (recData.createdAt?.seconds ? recData.createdAt.seconds * 1000 : new Date(recData.createdAt).getTime());
+            const now = Date.now();
+            const twelveHoursInMs = 12 * 60 * 60 * 1000;
+            if (now - createdAt > twelveHoursInMs) {
+                return { success: false, error: 'Solo puedes editar la recomendación dentro de las primeras 12 horas.' };
+            }
+        }
+
+        // Parse existing media that is kept
+        let media = JSON.parse(existingMediaJson) as { type: 'image' | 'video'; url: string }[];
+
+        // Process newly uploaded files if any
+        const mediaFiles = formData.getAll('media') as File[];
+        
+        const uploadPromises = mediaFiles.map(async (file) => {
+            if (file.size === 0) return null;
+
+            try {
+                const buffer = Buffer.from(await file.arrayBuffer() as any);
+                const fileName = `${randomUUID()}`;
+                const isImage = file.type.startsWith('image/');
+                const isVideo = file.type.startsWith('video/');
+
+                let uploadBuffer = buffer;
+                let finalPath = '';
+                let contentType = file.type;
+
+                if (isImage) {
+                    if (file.type === 'image/webp') {
+                        finalPath = `recommendations/images/${fileName}.webp`;
+                        contentType = 'image/webp';
+                    } else {
+                        try {
+                            uploadBuffer = await sharp(buffer)
+                                .webp({ quality: 80 })
+                                .resize(1200, 1200, { fit: 'inside', withoutEnlargement: true })
+                                .toBuffer();
+                            finalPath = `recommendations/images/${fileName}.webp`;
+                            contentType = 'image/webp';
+                        } catch (err) {
+                            console.error("Sharp processing failed, uploading original:", err);
+                            const ext = file.name.split('.').pop() || 'jpg';
+                            finalPath = `recommendations/images/${fileName}.${ext}`;
+                        }
+                    }
+                } else if (isVideo) {
+                    const ext = file.name.split('.').pop() || 'mp4';
+                    finalPath = `recommendations/videos/${fileName}.${ext}`;
+                } else {
+                    return null;
+                }
+
+                const fileRef = storage.bucket().file(finalPath);
+                await fileRef.save(uploadBuffer, {
+                    metadata: { contentType },
+                });
+
+                await fileRef.makePublic();
+                return {
+                    type: (isImage ? 'image' : 'video') as 'image' | 'video',
+                    url: fileRef.publicUrl()
+                };
+            } catch (err) {
+                console.error("Single file upload error in edit:", err);
+                return null;
+            }
+        });
+
+        const uploadResults = await Promise.all(uploadPromises);
+        const newMedia = uploadResults.filter((item): item is { type: 'image' | 'video'; url: string } => item !== null);
+
+        // Combine existing and new media
+        media = [...media, ...newMedia];
+
+        const updates: any = {
+            comments: comments || '',
+            comment: comments || '', // backward compat
+            rating: rating,
+            media: media,
+            photoUrl: media.find(m => m.type === 'image')?.url || '',
+            updatedAt: admin.firestore.FieldValue.serverTimestamp()
+        };
+
+        await recRef.update(updates);
+
+        // If it was auto-transferred to basic business, update the business description and photos too
+        try {
+            const businessQuery = await db.collection('businesses')
+                .where('sourceRecommendationId', '==', recommendationId)
+                .limit(1)
+                .get();
+
+            if (!businessQuery.empty) {
+                const businessDoc = businessQuery.docs[0];
+                await businessDoc.ref.update({
+                    description: comments || '',
+                    photos: media.filter(m => m.type === 'image').map(m => m.url),
+                    videos: media.filter(m => m.type === 'video').map(m => m.url)
+                });
+                console.log(`[Edit Recommendation] Synced updates to basic business: ${businessDoc.id}`);
+            }
+        } catch (e) {
+            console.error("Error updating synced basic business:", e);
+        }
+
+        return { success: true };
+    } catch (error: any) {
+        console.error("Error in editRecommendationAction:", error);
+        return { success: false, error: error.message || String(error) };
+    }
+}
+
+export async function deleteRecommendationAction(recommendationId: string, userId: string) {
+    if (!recommendationId || !userId) {
+        return { success: false, error: 'Faltan parámetros obligatorios.' };
+    }
+
+    try {
+        const db = getAdminDb();
+        const recRef = db.collection('recommendations').doc(recommendationId);
+        const recSnap = await recRef.get();
+        if (!recSnap.exists) {
+            return { success: false, error: 'La recomendación no existe.' };
+        }
+
+        const recData = recSnap.data() || {};
+
+        // Fetch user profile role
+        const userProfileSnap = await db.collection('private_profiles').doc(userId).get();
+        const userProfile = userProfileSnap.exists ? userProfileSnap.data() : null;
+        const isAdminOrSuperAdmin = userProfile?.role === 'admin' || userProfile?.role === 'superadmin';
+
+        // Check authorization
+        if (recData.userId !== userId && !isAdminOrSuperAdmin) {
+            return { success: false, error: 'No tienes permiso para eliminar esta recomendación.' };
+        }
+
+        // If not admin, verify the 12-hour limit
+        if (!isAdminOrSuperAdmin) {
+            const createdAt = recData.createdAt?.toDate ? recData.createdAt.toDate().getTime() : (recData.createdAt?.seconds ? recData.createdAt.seconds * 1000 : new Date(recData.createdAt).getTime());
+            const now = Date.now();
+            const twelveHoursInMs = 12 * 60 * 60 * 1000;
+            if (now - createdAt > twelveHoursInMs) {
+                return { success: false, error: 'Solo puedes eliminar la recomendación dentro de las primeras 12 horas.' };
+            }
+        }
+
+        // Delete the recommendation
+        await recRef.delete();
+
+        // If it created an auto-transferred basic business, delete that business as well (if unclaimed)
+        try {
+            const businessQuery = await db.collection('businesses')
+                .where('sourceRecommendationId', '==', recommendationId)
+                .limit(1)
+                .get();
+
+            if (!businessQuery.empty) {
+                const businessDoc = businessQuery.docs[0];
+                const businessData = businessDoc.data();
+                // If it is NOT active (i.e. basic and unclaimed)
+                if (businessData?.active === false) {
+                    await businessDoc.ref.delete();
+                    console.log(`[Delete Recommendation] Deleted associated unclaimed basic business: ${businessDoc.id}`);
+                }
+            }
+        } catch (e) {
+            console.error("Error deleting synced basic business:", e);
+        }
+
+        return { success: true };
+    } catch (error: any) {
+        console.error("Error in deleteRecommendationAction:", error);
+        return { success: false, error: error.message || String(error) };
+    }
+}
