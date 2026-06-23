@@ -645,11 +645,11 @@ export function EmailMarketingComposer({
                             {t('adsManager.back', 'Volver a la Lista')}
                         </Button>
                     )}
-                    <div>
-                        <h2 className="text-2xl font-bold tracking-tight">{template.name}</h2>
-                        <p className="text-muted-foreground flex items-center gap-2">
-                             <Badge variant="secondary" className="text-[10px] uppercase">{template.category.replace('_', ' ')}</Badge>
-                             <span>ID: {template.id?.slice(0, 8)}</span>
+                    <div className="min-w-0">
+                        <h2 className="text-2xl font-bold tracking-tight truncate">{template.name}</h2>
+                        <p className="text-muted-foreground flex items-center gap-2 flex-wrap">
+                             <Badge variant="secondary" className="text-[10px] uppercase shrink-0">{template.category.replace('_', ' ')}</Badge>
+                             <span className="truncate">ID: {template.id?.slice(0, 8)}</span>
                         </p>
                     </div>
                 </div>
@@ -675,7 +675,7 @@ export function EmailMarketingComposer({
                 )}
             </div>
 
-            <div className="flex flex-col lg:grid lg:grid-cols-12 gap-10 items-start pb-24">
+            <div className="flex flex-col lg:grid lg:grid-cols-12 gap-6 lg:gap-10 items-stretch lg:items-start pb-24 w-full max-w-full">
                 {/* Main Form Area */}
                 <div className="lg:col-span-7 space-y-6 w-full min-w-0">
                     {/* 1. Multimedia Card */}
@@ -782,8 +782,8 @@ export function EmailMarketingComposer({
                                 setActiveLangTab(val);
                                 setTargetLanguage(val);
                             }} className="w-full">
-                                <div className="border-b px-2 bg-slate-50/30">
-                                    <TabsList className="bg-transparent h-12 gap-0 overflow-x-auto no-scrollbar justify-start">
+                                <div className="border-b px-2 bg-slate-50/30 overflow-x-auto no-scrollbar">
+                                    <TabsList className="flex bg-transparent h-12 gap-0 justify-start w-full min-w-max">
                                         {['es', 'en', 'de', 'fr', 'pt', 'it'].map(lang => (
                                             <TabsTrigger
                                                 key={lang}
@@ -862,7 +862,7 @@ export function EmailMarketingComposer({
                                 <div className="flex-1 space-y-2 min-w-0">
                                     <Label className="text-xs font-bold text-slate-500 uppercase">Tu enlace de afiliado</Label>
                                     <div className="flex items-center gap-2 bg-slate-50 p-1.5 rounded-xl border border-slate-200 shadow-inner group transition-colors hover:border-purple-200 overflow-hidden">
-                                        <div className="px-4 text-xs font-mono text-slate-600 select-all truncate flex-1 h-9 flex items-center">
+                                        <div className="px-4 text-xs font-mono text-slate-600 select-all truncate flex-1 h-9 flex items-center min-w-0">
                                             {generatedLink}
                                         </div>
                                         <Button
@@ -909,7 +909,7 @@ export function EmailMarketingComposer({
                         <CardContent className="p-6">
                             <div className="space-y-6">
                                 {/* Sender Info */}
-                                <div className="grid grid-cols-2 gap-4">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div className="space-y-2">
                                         <Label className="text-xs font-bold text-slate-500 uppercase">Tu ID (Referido)</Label>
                                         <div className="h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl flex items-center text-sm font-mono text-slate-500">
@@ -1049,7 +1049,7 @@ export function EmailMarketingComposer({
 
                 {/* Sidebar Preview Area */}
                 <div className="lg:col-span-5 space-y-6 w-full min-w-0">
-                    <div className="sticky top-8">
+                    <div className="lg:sticky lg:top-8">
                          <div className="mb-4 flex items-center justify-between px-2">
                             <h3 className="text-xs font-bold uppercase tracking-widest text-slate-500">Vista Previa Real</h3>
                             <div className="flex gap-1">
