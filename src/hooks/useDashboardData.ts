@@ -26,7 +26,7 @@ export function useDashboardData() {
             }
             setUser(currentUser);
             const adminUser = await checkAdminRole(currentUser);
-            setIsAdmin(!!adminUser);
+            setIsAdmin(adminUser ? ['admin', 'superadmin', 'team_office'].includes(adminUser.role) : false);
             await fetchDashboardData(currentUser);
         });
 

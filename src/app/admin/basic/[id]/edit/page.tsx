@@ -144,8 +144,8 @@ const EditBusinessSkeleton = () => (
 );
 
 export default function EditBusinessPage() {
-  const { user } = useAuthGuard(['admin', 'superadmin', 'team_office', 'freelancer']);
-  const isFreelancer = user?.role === 'freelancer' && !user?.permissions?.includes('admin');
+  const { user } = useAuthGuard(['admin', 'superadmin', 'team_office', 'team_leader', 'freelancer']);
+  const isFreelancer = (user?.role === 'freelancer' || user?.role === 'team_leader') && !user?.permissions?.includes('admin');
   const db = getFirestore(app);
   const functions = getFunctions(app, 'europe-west1');
   const promoteToClientFn = httpsCallable(functions, 'promoteToClient');
@@ -629,7 +629,7 @@ export default function EditBusinessPage() {
               description: t('businesses.edit.notFoundDesc'),
               variant: 'destructive',
             });
-            router.push('/admin/basic');
+            router.push(isFreelancer ? '/dashboard?view=freelancer&tab=p2_records' : '/admin/basic');
           }
         } catch (error) {
           console.error('Error fetching business:', error);
@@ -638,7 +638,7 @@ export default function EditBusinessPage() {
             description: t('businesses.edit.fetchErrorDesc'),
             variant: 'destructive',
           });
-          router.push('/admin/basic');
+          router.push(isFreelancer ? '/dashboard?view=freelancer&tab=p2_records' : '/admin/basic');
         } finally {
           setIsLoadingData(false);
         }
@@ -745,8 +745,8 @@ export default function EditBusinessPage() {
   const selectedCategoryObj = categories.find(c => c.id === selectedCategorySlug);
 
   return (
-    <div className="p-8">
-      <div className="mb-6 flex items-center justify-between">
+    <div className="p-4 sm:p-8">
+      <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <h1 className="text-2xl font-bold">
           {t('businesses.edit.title')}
         </h1>

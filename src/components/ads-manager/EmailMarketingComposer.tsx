@@ -151,29 +151,33 @@ export function EmailMarketingComposer({
     useEffect(() => {
         if (!template?.id || !user?.uid) return;
         
-        const cacheKey = `dicilo_marketing_draft_${template.id}_${user.uid}`;
-        const cached = localStorage.getItem(cacheKey);
-        
-        if (cached) {
-            try {
+        try {
+            const cacheKey = `dicilo_marketing_draft_${template.id}_${user.uid}`;
+            const cached = localStorage.getItem(cacheKey);
+            
+            if (cached) {
                 const parsed = JSON.parse(cached);
                 if (Array.isArray(parsed) && parsed.length > 0 && friends.length === 0) {
                     setFriends(parsed);
                 }
-            } catch (e) {
-                console.error("Error loading cache:", e);
             }
+        } catch (e) {
+            console.error("Error loading cache:", e);
         }
     }, [template?.id, user?.uid]);
  
     useEffect(() => {
         if (!template?.id || !user?.uid) return;
-        const cacheKey = `dicilo_marketing_draft_${template.id}_${user.uid}`;
-        
-        if (friends.length > 0) {
-            localStorage.setItem(cacheKey, JSON.stringify(friends));
-        } else {
-            localStorage.removeItem(cacheKey);
+        try {
+            const cacheKey = `dicilo_marketing_draft_${template.id}_${user.uid}`;
+            
+            if (friends.length > 0) {
+                localStorage.setItem(cacheKey, JSON.stringify(friends));
+            } else {
+                localStorage.removeItem(cacheKey);
+            }
+        } catch (e) {
+            console.error("Error saving cache:", e);
         }
     }, [friends, template?.id, user?.uid]);
  
@@ -388,8 +392,8 @@ export function EmailMarketingComposer({
     useEffect(() => {
         if (template) {
             const initialTexts = { ...texts };
-            Object.keys(template.versions).forEach(lang => {
-                if (initialTexts[lang]) {
+            Object.keys(template.versions || {}).forEach(lang => {
+                if (initialTexts[lang] && template.versions[lang]) {
                     initialTexts[lang] = {
                         subject: template.versions[lang].subject || '',
                         body: template.versions[lang].body || ''
@@ -398,12 +402,12 @@ export function EmailMarketingComposer({
             });
             setTexts(initialTexts);
 
-            setImages(template.images && template.images.length > 0 
+            setImages(template.images && Array.isArray(template.images) && template.images.length > 0 
                 ? template.images 
                 : (template.imageUrl ? [template.imageUrl] : []));
             
             // Set first available lang as active if 'es' not present
-            if (!template.versions['es']) {
+            if (template.versions && !template.versions['es']) {
                 const firstLang = Object.keys(template.versions)[0];
                 if (firstLang) setActiveLangTab(firstLang);
             }
@@ -1054,7 +1058,7 @@ export function EmailMarketingComposer({
                         </div>
 
                         {/* Integrated Preview Frame (Compact Version) */}
-                        <div className="bg-slate-800 rounded-[2.5rem] p-1.5 shadow-2xl border border-slate-700/50 max-w-[340px] mx-auto mb-8 relative">
+                        <div className="w-full max-w-[340px] bg-slate-800 rounded-[2.5rem] p-1.5 shadow-2xl border border-slate-700/50 mx-auto mb-8 relative">
                              {/* Speaker/Camera Notch */}
                             <div className="absolute top-1.5 left-1/2 -translate-x-1/2 w-16 h-4 bg-slate-800 rounded-b-xl z-20"></div>
                             
@@ -1140,20 +1144,20 @@ export function EmailMarketingComposer({
 
             {/* Sticky Action Bar */}
             <div className="fixed bottom-0 left-0 right-0 h-20 bg-white/80 backdrop-blur-md border-t z-[40] flex items-center">
-                <div className="w-full px-6 flex items-center justify-between">
+                <div className="w-full px-4 sm:px-6 flex items-center justify-between">
                     <div className="hidden md:block">
                         <p className="text-sm font-bold text-slate-700">{template.name}</p>
                         <p className="text-xs text-muted-foreground">Última edición hoy</p>
                     </div>
-                    <div className="flex items-center gap-3 w-full md:w-auto">
-                        <Button variant="ghost" className="flex-1 md:flex-none h-11 px-6 rounded-xl hover:bg-slate-100" onClick={handleBackWithConfirm}>
+                    <div className="flex items-center gap-2 sm:gap-3 w-full md:w-auto">
+                        <Button variant="ghost" className="flex-1 md:flex-none h-11 px-3 sm:px-6 rounded-xl hover:bg-slate-100 text-xs sm:text-sm" onClick={handleBackWithConfirm}>
                             {t('common:cancel', 'Cancelar')}
                         </Button>
                         <div className="flex gap-2 flex-1 md:flex-none">
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
-                                    <Button disabled={!currentData.body} variant="outline" className="h-11 px-6 rounded-xl border-slate-200">
-                                        <Share2 className="h-4 w-4 mr-2" />
+                                    <Button disabled={!currentData.body} variant="outline" className="w-full h-11 px-3 sm:px-6 rounded-xl border-slate-200 text-xs sm:text-sm">
+                                        <Share2 className="h-4 w-4 mr-1 sm:mr-2" />
                                         Compartir
                                     </Button>
                                 </DropdownMenuTrigger>
@@ -1180,10 +1184,10 @@ export function EmailMarketingComposer({
                                 <Button 
                                     onClick={handleSave} 
                                     disabled={isSaving}
-                                    className="flex-1 md:flex-none h-11 px-8 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl shadow-lg shadow-purple-500/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                                    className="w-full h-11 px-3 sm:px-8 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl shadow-lg shadow-purple-500/20 transition-all hover:scale-[1.02] active:scale-[0.98] text-xs sm:text-sm"
                                 >
-                                    {isSaving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Check className="h-4 w-4 mr-2" />}
-                                    Guardar Cambios
+                                    {isSaving ? <Loader2 className="h-4 w-4 animate-spin mr-1 sm:mr-2" /> : <Check className="h-4 w-4 mr-1 sm:mr-2" />}
+                                    Guardar<span className="hidden sm:inline"> Cambios</span>
                                 </Button>
                             )}
                         </div>

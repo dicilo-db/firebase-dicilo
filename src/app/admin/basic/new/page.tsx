@@ -152,8 +152,8 @@ export default function NewBusinessPage() {
 }
 
 function NewBusinessPageContent() {
-  const { user } = useAuthGuard(['admin', 'superadmin', 'team_office', 'freelancer']);
-  const isFreelancer = user?.role === 'freelancer' && !user?.permissions?.includes('admin');
+  const { user } = useAuthGuard(['admin', 'superadmin', 'team_office', 'team_leader', 'freelancer']);
+  const isFreelancer = (user?.role === 'freelancer' || user?.role === 'team_leader') && !user?.permissions?.includes('admin');
   const db = getFirestore(app);
   const router = useRouter();
   const { toast } = useToast();
@@ -549,7 +549,7 @@ function NewBusinessPageContent() {
         title: t('businesses.new.saveSuccessTitle'),
         description: t('businesses.new.saveSuccessDesc'),
       });
-      router.push('/admin/basic');
+      router.push(isFreelancer ? '/dashboard?view=freelancer&tab=p2_records' : '/admin/basic');
     } catch (error) {
       console.error('Error during submission:', error);
       const errorMessage =
@@ -572,8 +572,8 @@ function NewBusinessPageContent() {
   const selectedCategoryObj = categories.find(c => c.id === selectedCategorySlug);
 
   return (
-    <div className="p-8">
-      <div className="mb-6 flex items-center justify-between">
+    <div className="p-4 sm:p-8">
+      <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <h1 className="text-2xl font-bold">
           {t('businesses.new.title')}
         </h1>

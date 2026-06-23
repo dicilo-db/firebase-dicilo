@@ -915,7 +915,7 @@ export function PromoComposerView() {
 
                         {/* Preview Column */}
                         <div className="lg:col-span-5 w-full sticky top-4">
-                            <div className="aspect-[9/19] max-w-[320px] mx-auto bg-slate-900 rounded-[3rem] p-3 shadow-2xl border-[8px] border-slate-800 relative ring-4 ring-slate-100/50 dark:ring-white/5">
+                            <div className="w-full aspect-[9/19] max-w-[320px] mx-auto bg-slate-900 rounded-[3rem] p-3 shadow-2xl border-[8px] border-slate-800 relative ring-4 ring-slate-100/50 dark:ring-white/5">
                                 {/* iPhone Notch */}
                                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-slate-800 rounded-b-2xl z-20"></div>
                                 

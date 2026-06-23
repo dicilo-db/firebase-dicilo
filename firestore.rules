@@ -30,6 +30,16 @@ service cloud.firestore {
       return request.auth.token.role == 'team_office' || isAdmin();
     }
 
+    // Team Leader: Can edit and view team leads. (Includes Team Office, Admin and Superadmin)
+    function isTeamLeader() {
+      return request.auth.token.role == 'team_leader' || isTeamOffice();
+    }
+
+    // Freelancer: Can register businesses. (Includes Team Leader and above)
+    function isFreelancer() {
+      return request.auth.token.role == 'freelancer' || isTeamLeader();
+    }
+
     // General Access: Anyone with admin: true claim (view access) or specific access_admin_panel permission
     function hasDashboardAccess() {
       return request.auth.token.admin == true || hasPermission('access_admin_panel'); 
@@ -80,8 +90,8 @@ service cloud.firestore {
     match /businesses/{businessId} {
       allow read: if true;
       
-      // Create/Update: Team Office (Data entry/Edit)
-      allow create, update: if isTeamOffice();
+      // Create/Update: Freelancer and above (Data entry/Edit)
+      allow create, update: if isFreelancer();
       
       // Delete: Superadmin only
       allow delete: if isSuperAdmin();
@@ -199,7 +209,7 @@ service cloud.firestore {
 
     // Counters collection for IDs
     match /counters/{counterId} {
-      allow read, write: if hasDashboardAccess(); // Needed for generating IDs (Team Office needs this)
+      allow read, write: if hasDashboardAccess() || isFreelancer(); // Needed for generating IDs
     }
 
     // Recommendations (Collection Group)
