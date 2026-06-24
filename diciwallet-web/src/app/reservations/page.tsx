@@ -7,7 +7,8 @@ import { useLanguage } from '@/context/LanguageContext';
 import { db } from '@/lib/firebase';
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import { reserveCoin, payInstallment, listParticipationInMarketplace, runDiagnostics, updateReservationDetails } from '@/app/actions/wallet-actions';
-import { Coins, Award, Award as RarityIcon, AlertTriangle, ShieldCheck, HelpCircle, X, Check, Eye, MapPin, Phone, Mail, User, Clock } from 'lucide-react';
+import { createCoinOrder, verifyCryptoPayment } from '@/app/actions/dicicoin-actions';
+import { Coins, Award, Award as RarityIcon, AlertTriangle, ShieldCheck, HelpCircle, X, Check, Eye, MapPin, Phone, Mail, User, Clock, Copy, ShieldAlert } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
@@ -74,8 +75,18 @@ export default function ReservationsPage() {
   const [selectedCoin, setSelectedCoin] = useState<DiciCoin | null>(null);
   const [showLegalModal, setShowLegalModal] = useState(false);
   const [legalChecked, setLegalChecked] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState<'simulated_card' | 'revolut_transfer' | 'card_outside_eu'>('simulated_card');
+  const [paymentMethod, setPaymentMethod] = useState<'simulated_card' | 'revolut_transfer' | 'card_outside_eu' | 'usdt_trc20'>('simulated_card');
   const [reserveLoading, setReserveLoading] = useState(false);
+  
+  // DiciCoin purchase mode and crypto states
+  const [purchaseMode, setPurchaseMode] = useState<'reserve' | 'full' | 'fractional'>('reserve');
+  const [fractionPercentage, setFractionPercentage] = useState(51);
+  const [cryptoOrder, setCryptoOrder] = useState<any>(null);
+  const [txHashInput, setTxHashInput] = useState('');
+  const [cryptoVerifyLoading, setCryptoVerifyLoading] = useState(false);
+  const [cryptoVerifyMessage, setCryptoVerifyMessage] = useState({ text: '', type: '' });
+  const [fractions, setFractions] = useState<any[]>([]);
+  const [orders, setOrders] = useState<any[]>([]);
   
   // Shipping info form state
   const [instPaymentMethod, setInstPaymentMethod] = useState<{[key: string]: 'simulated_installment' | 'revolut_transfer' | 'card_outside_eu'}>({});
@@ -384,19 +395,74 @@ export default function ReservationsPage() {
     return () => unsubscribe();
   }, [user]);
 
+  // Escuchar fracciones del usuario
+  useEffect(() => {
+    if (!user) return;
+    const q1 = query(collection(db, 'dicicoin_fractions'), where('master_user_id', '==', user.uid));
+    const q2 = query(collection(db, 'dicicoin_fractions'), where('participant_user_id', '==', user.uid));
+    
+    const unsub1 = onSnapshot(q1, (snap) => {
+      const list: any[] = [];
+      snap.forEach(d => list.push({ id: d.id, ...d.data() }));
+      setFractions(prev => {
+        const others = prev.filter(f => f.participant_user_id === user.uid);
+        const merged = [...others, ...list];
+        const unique = Array.from(new Map(merged.map(item => [item.fraction_id || item.id, item])).values());
+        return unique;
+      });
+    });
+
+    const unsub2 = onSnapshot(q2, (snap) => {
+      const list: any[] = [];
+      snap.forEach(d => list.push({ id: d.id, ...d.data() }));
+      setFractions(prev => {
+        const others = prev.filter(f => f.master_user_id === user.uid);
+        const merged = [...others, ...list];
+        const unique = Array.from(new Map(merged.map(item => [item.fraction_id || item.id, item])).values());
+        return unique;
+      });
+    });
+
+    return () => {
+      unsub1();
+      unsub2();
+    };
+  }, [user]);
+
+  // Escuchar órdenes cripto o fiat pendientes del usuario
+  useEffect(() => {
+    if (!user) return;
+    const q = query(collection(db, 'coin_orders'), where('user_id', '==', user.uid));
+    const unsubscribe = onSnapshot(q, (snap) => {
+      const list: any[] = [];
+      snap.forEach(d => list.push({ id: d.id, ...d.data() }));
+      setOrders(list);
+    });
+    return () => unsubscribe();
+  }, [user]);
+
   // Lógica de click en cuadrícula
   const handleGridCellClick = (num: number) => {
     const coin = continentCoins[num];
     if (!coin) return;
 
-    if (coin.status === 'available') {
-      // Abrir modal de reserva
+    if (coin.status === 'available' || coin.status === 'forming_team' || coin.status === 'active_fractional') {
       setSelectedCoin(coin);
       setLegalChecked(false);
       setPaymentMethod('simulated_card');
+      setCryptoOrder(null);
+      setTxHashInput('');
+      setCryptoVerifyMessage({ text: '', type: '' });
+      
+      // Si la moneda ya es fraccionada, forzar modo de compra a fractional
+      if (coin.status === 'forming_team' || coin.status === 'active_fractional') {
+        setPurchaseMode('fractional');
+      } else {
+        setPurchaseMode('reserve');
+      }
+      
       setShowLegalModal(true);
     } else if (coin.currentOwnerId === user?.uid) {
-      // Si ya la tiene reservada/pagada, abrir el certificado directo
       setCertCoinId(coin.id);
     }
   };
@@ -413,7 +479,7 @@ export default function ReservationsPage() {
       !shippingInfo.city.trim() ||
       !shippingInfo.address.trim()
     ) {
-      alert(t('res.error_invalid_shipping'));
+      alert(t('res.error_invalid_shipping') || 'Por favor, complete todos los campos de titularidad y envío.');
       return;
     }
 
@@ -421,21 +487,95 @@ export default function ReservationsPage() {
     setMessage({ text: '', type: '' });
 
     try {
-      const res = await reserveCoin(user.uid, selectedCoin.id, shippingInfo, paymentMethod);
-      if (res.success) {
-        setMessage({ text: t(res.messageKey || 'api.success_reserve'), type: 'success' });
-        setShowLegalModal(false);
-        setSelectedCoin(null);
-        setActiveTab('my_plans');
+      // Si el método es USDT o el modo de compra es fraccionado/completo, creamos orden en Firestore
+      if (paymentMethod === 'usdt_trc20' || purchaseMode === 'full' || purchaseMode === 'fractional') {
+        const pct = purchaseMode === 'full' ? 100 : (purchaseMode === 'reserve' ? 10 : fractionPercentage);
+        const purchaseType = purchaseMode === 'full' 
+          ? 'full_dicicoin' 
+          : (purchaseMode === 'reserve' 
+              ? 'installment' 
+              : (pct >= 51 ? 'fractional_master' : 'fractional_participant'));
+
+        const mappedPaymentMethod = paymentMethod === 'usdt_trc20' 
+          ? 'usdt_trc20' 
+          : (paymentMethod === 'revolut_transfer' ? 'revolut_transfer' : 'bank_wire');
+
+        const orderRes = await createCoinOrder(
+          user.uid, 
+          selectedCoin.id, 
+          pct, 
+          purchaseType, 
+          mappedPaymentMethod
+        );
+
+        if (orderRes.success) {
+          if (paymentMethod === 'usdt_trc20') {
+            // Guardar orden cripto para desplegar la pasarela QR
+            setCryptoOrder(orderRes);
+            setTxHashInput('');
+            setCryptoVerifyMessage({ text: '', type: '' });
+          } else {
+            // Aprobación SEPA o Revolut diferida
+            setMessage({ 
+              text: 'Su orden de compra fiat ha sido creada. Realice la transferencia correspondiente por el importe especificado.', 
+              type: 'success' 
+            });
+            setShowLegalModal(false);
+            setSelectedCoin(null);
+            setActiveTab('my_plans');
+          }
+        } else {
+          setMessage({ text: orderRes.messageKey || 'Error al procesar la orden de compra.', type: 'error' });
+        }
       } else {
-        const detail = (res as any).errorDetails ? ` (${(res as any).errorDetails})` : '';
-        setMessage({ text: `${t(res.messageKey || 'api.server_error')}${detail}`, type: 'error' });
+        // Ejecución clásica de reserva fiat
+        const res = await reserveCoin(user.uid, selectedCoin.id, shippingInfo, paymentMethod as any);
+        if (res.success) {
+          setMessage({ text: t(res.messageKey || 'api.success_reserve'), type: 'success' });
+          setShowLegalModal(false);
+          setSelectedCoin(null);
+          setActiveTab('my_plans');
+        } else {
+          const detail = (res as any).errorDetails ? ` (${(res as any).errorDetails})` : '';
+          setMessage({ text: `${t(res.messageKey || 'api.server_error')}${detail}`, type: 'error' });
+        }
       }
     } catch (err: any) {
       console.error(err);
       setMessage({ text: `${t('res.error_reserve')} (${err.message || 'Error de conexión'})`, type: 'error' });
     } finally {
       setReserveLoading(false);
+    }
+  };
+
+  const handleCryptoVerify = async () => {
+    if (!user || !cryptoOrder || !txHashInput.trim()) return;
+    setCryptoVerifyLoading(true);
+    setCryptoVerifyMessage({ text: '', type: '' });
+
+    try {
+      const res = await verifyCryptoPayment(user.uid, cryptoOrder.orderId, txHashInput.trim());
+      if (res.success) {
+        if (res.status === 'paid') {
+          setCryptoVerifyMessage({ text: '¡Pago confirmado! Su DiciCoin ha sido asignada con éxito.', type: 'success' });
+          setTimeout(() => {
+            setShowLegalModal(false);
+            setSelectedCoin(null);
+            setCryptoOrder(null);
+            setTxHashInput('');
+            setActiveTab('my_plans');
+          }, 2000);
+        } else {
+          setCryptoVerifyMessage({ text: res.messageKey || 'Transacción detectada en red. Esperando confirmaciones...', type: 'warning' });
+        }
+      } else {
+        setCryptoVerifyMessage({ text: res.messageKey || 'Error de verificación de pago.', type: 'error' });
+      }
+    } catch (err: any) {
+      console.error(err);
+      setCryptoVerifyMessage({ text: 'Error al conectar con la pasarela blockchain.', type: 'error' });
+    } finally {
+      setCryptoVerifyLoading(false);
     }
   };
 
@@ -616,7 +756,7 @@ export default function ReservationsPage() {
               <div style={{ display: 'flex', justifyContent: 'center', padding: '60px 0' }}>
                 <div className="animate-spin-slow" style={{ width: '24px', height: '24px', border: '2px solid rgba(212, 175, 55, 0.1)', borderTopColor: '#D4AF37', borderRadius: '50%' }} />
               </div>
-            ) : reservations.length === 0 ? (
+            ) : (reservations.length === 0 && fractions.length === 0 && orders.filter(o => o.payment_status !== 'paid' && o.payment_status !== 'failed' && o.payment_status !== 'expired').length === 0) ? (
               <div className="glass" style={{ textAlign: 'center', padding: '60px 24px', borderRadius: 'var(--radius-md)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
                 <Coins size={40} style={{ color: 'var(--text-muted)' }} />
                 <div>
@@ -629,6 +769,105 @@ export default function ReservationsPage() {
               </div>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                
+                {/* 1. RENDER PENDING ORDERS */}
+                {orders.filter(o => o.payment_status !== 'paid' && o.payment_status !== 'failed' && o.payment_status !== 'expired').map((ord) => {
+                  const num = parseInt(ord.dicicoin_id.split('-')[1]?.replace('DC', '')) || 1;
+                  const targetCoin = continentCoins[num] || { id: ord.dicicoin_id, continent: ord.dicicoin_id.split('-')[0] };
+                  return (
+                    <div key={ord.order_id} className="glass" style={{ padding: '32px', borderRadius: 'var(--radius-md)', display: 'flex', flexDirection: 'column', gap: '20px', borderLeft: '4px solid #00E5FF' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px' }}>
+                        <div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                            <h3 style={{ fontSize: '20px', fontWeight: 800 }}>{ord.dicicoin_id}</h3>
+                            <span style={{ 
+                              fontSize: '11px', 
+                              fontWeight: 700, 
+                              padding: '2px 8px', 
+                              borderRadius: '12px',
+                              background: ord.payment_status === 'under_confirmation' ? 'rgba(212, 175, 55, 0.1)' : 'rgba(0, 229, 255, 0.1)',
+                              color: ord.payment_status === 'under_confirmation' ? '#D4AF37' : '#00E5FF',
+                              textTransform: 'uppercase'
+                            }}>
+                              {ord.payment_status === 'under_confirmation' ? 'Verificando Red' : 'Orden Pendiente'}
+                            </span>
+                          </div>
+                          <p style={{ color: 'var(--text-muted)', fontSize: '13px', marginTop: '4px' }}>
+                            Adquisición de Fracción: {ord.ownership_percentage}% ({ord.is_master_purchase ? 'Master' : 'Participante'})
+                          </p>
+                        </div>
+                        <div style={{ display: 'flex', gap: '12px' }}>
+                          {ord.payment_method === 'usdt_trc20' && (
+                            <button 
+                              onClick={() => {
+                                setSelectedCoin(targetCoin as any);
+                                setCryptoOrder({
+                                  orderId: ord.order_id,
+                                  expectedAmountUsdt: ord.expected_amount_usdt,
+                                  expectedAmountEur: ord.expected_amount_eur,
+                                  officialWallet: ord.official_wallet_address,
+                                  exchangeRate: ord.expected_amount_usdt / ord.expected_amount_eur
+                                });
+                                setTxHashInput(ord.tx_hash || '');
+                                setCryptoVerifyMessage({ text: '', type: '' });
+                                setShowLegalModal(true);
+                              }} 
+                              className="btn-gold" 
+                              style={{ padding: '10px 16px', fontSize: '13px' }}
+                            >
+                              Completar Pago / Verificar
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                      <div style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
+                        Monto Esperado: <strong>{ord.expected_amount_eur} EUR</strong> {ord.payment_method === 'usdt_trc20' && <>({ord.expected_amount_usdt} USDT)</>} | Método: <span style={{ textTransform: 'capitalize' }}>{ord.payment_method.replace('_', ' ')}</span>
+                      </div>
+                    </div>
+                  );
+                })}
+
+                {/* 2. RENDER CONFIRMED FRACTIONS */}
+                {fractions.map((frac: any) => {
+                  const isMaster = frac.master_user_id === user?.uid;
+                  return (
+                    <div key={frac.id} className="glass" style={{ padding: '32px', borderRadius: 'var(--radius-md)', display: 'flex', flexDirection: 'column', gap: '24px', borderLeft: '4px solid #2ECC71' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px' }}>
+                        <div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                            <h3 style={{ fontSize: '20px', fontWeight: 800 }}>{frac.dicicoin_id}</h3>
+                            <span style={{ 
+                              fontSize: '11px', 
+                              fontWeight: 700, 
+                              padding: '2px 8px', 
+                              borderRadius: '12px',
+                              background: 'rgba(46, 204, 113, 0.1)',
+                              color: '#2ECC71',
+                              textTransform: 'uppercase'
+                            }}>
+                              Propiedad Fraccionada ({frac.ownership_percentage}%)
+                            </span>
+                            <span style={{ fontSize: '11px', fontWeight: 700, padding: '2px 8px', borderRadius: '12px', background: 'rgba(255,255,255,0.05)', color: '#FFFFFF' }}>
+                              {isMaster ? 'MASTER' : 'PARTICIPANTE'}
+                            </span>
+                          </div>
+                          <p style={{ color: 'var(--text-muted)', fontSize: '13px', marginTop: '4px' }}>Serial Licencia: {frac.serial || 'Pendiente'}</p>
+                        </div>
+                        <div style={{ display: 'flex', gap: '12px' }}>
+                          <button onClick={() => setCertCoinId(frac.dicicoin_id)} className="btn-outline" style={{ padding: '10px 16px', fontSize: '13px' }}>
+                            <Eye size={14} />
+                            <span>Ver Certificado</span>
+                          </button>
+                        </div>
+                      </div>
+                      <div style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
+                        Inversión: <strong>{frac.amount_paid_eur} EUR</strong> {frac.amount_paid_usdt > 0 && <>({frac.amount_paid_usdt} USDT)</>} | Método: <span style={{ textTransform: 'uppercase' }}>{frac.payment_method.replace('_', ' ')}</span>
+                      </div>
+                    </div>
+                  );
+                })}
+
+                {/* 3. RENDER CLASSIC FIAT RESERVATIONS */}
                 {reservations.map((res) => {
                   const isCompleted = res.status === 'completed';
                   const isPending = res.status === 'pending_payment';
@@ -1122,308 +1361,450 @@ export default function ReservationsPage() {
             }}>
               <button 
                 id="close-legal-modal-btn"
-                onClick={() => setShowLegalModal(false)} 
+                onClick={() => {
+                  setShowLegalModal(false);
+                  setCryptoOrder(null);
+                }} 
                 style={{ position: 'absolute', top: '20px', right: '20px', background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer' }}
               >
                 <X size={20} />
               </button>
 
-              <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                <AlertTriangle size={24} style={{ color: '#D4AF37' }} />
-                <h3 style={{ fontSize: '18px', fontWeight: 700 }}>{t('res.modal_title')}</h3>
-              </div>
-
-              <p style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
-                {t('res.modal_desc')}
-              </p>
-
-              {/* Payment Method Selector */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <span className="premium-label" style={{ fontSize: '11px', fontWeight: 600 }}>{t('res.payment_method_title')}</span>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
-                  <button
-                    type="button"
-                    onClick={() => setPaymentMethod('simulated_card')}
-                    style={{
-                      padding: '12px 6px',
-                      borderRadius: 'var(--radius-sm)',
-                      background: paymentMethod === 'simulated_card' ? 'rgba(0, 229, 255, 0.1)' : 'rgba(255,255,255,0.01)',
-                      border: paymentMethod === 'simulated_card' ? '1px solid #00E5FF' : '1px solid var(--border-light)',
-                      color: paymentMethod === 'simulated_card' ? '#00E5FF' : 'var(--text-secondary)',
-                      fontSize: '12px',
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                      textAlign: 'center',
-                      transition: 'all 0.2s ease'
-                    }}
-                  >
-                    {t('res.payment_method_card')}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setPaymentMethod('revolut_transfer')}
-                    style={{
-                      padding: '12px 6px',
-                      borderRadius: 'var(--radius-sm)',
-                      background: paymentMethod === 'revolut_transfer' ? 'rgba(212, 175, 55, 0.1)' : 'rgba(255,255,255,0.01)',
-                      border: paymentMethod === 'revolut_transfer' ? '1px solid #D4AF37' : '1px solid var(--border-light)',
-                      color: paymentMethod === 'revolut_transfer' ? '#D4AF37' : 'var(--text-secondary)',
-                      fontSize: '12px',
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                      textAlign: 'center',
-                      transition: 'all 0.2s ease'
-                    }}
-                  >
-                    {t('res.payment_method_revolut')}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setPaymentMethod('card_outside_eu')}
-                    style={{
-                      padding: '12px 6px',
-                      borderRadius: 'var(--radius-sm)',
-                      background: paymentMethod === 'card_outside_eu' ? 'rgba(0, 229, 255, 0.15)' : 'rgba(255,255,255,0.01)',
-                      border: paymentMethod === 'card_outside_eu' ? '1px solid #00E5FF' : '1px solid var(--border-light)',
-                      color: paymentMethod === 'card_outside_eu' ? '#00E5FF' : 'var(--text-secondary)',
-                      fontSize: '12px',
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                      textAlign: 'center',
-                      transition: 'all 0.2s ease'
-                    }}
-                  >
-                    {t('res.payment_method_card_outside')}
-                  </button>
-                </div>
-
-                {paymentMethod === 'revolut_transfer' && (
-                  <div style={{
-                    marginTop: '8px',
-                    padding: '16px',
-                    background: 'rgba(212, 175, 55, 0.03)',
-                    border: '1px solid rgba(212, 175, 55, 0.2)',
-                    borderRadius: 'var(--radius-sm)',
-                    fontSize: '13px',
-                    lineHeight: '1.5',
-                    color: 'var(--text-secondary)'
-                  }}>
-                    <p style={{ color: '#D4AF37', fontWeight: 700, marginBottom: '8px' }}>
-                      {t('res.revolut_title')}
-                    </p>
-                    <div style={{ marginBottom: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                      <p>
-                        {t('res.revolut_desc1')}
-                      </p>
-                      <p>
-                        {t('res.revolut_desc2')}
-                      </p>
-                      <p>
-                        {t('res.revolut_desc3')}
-                      </p>
-                    </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', background: 'rgba(0,0,0,0.2)', padding: '10px', borderRadius: '4px', fontFamily: 'monospace', fontSize: '12px', color: '#FFFFFF', marginBottom: '12px' }}>
-                      <div>{t('res.revolut_beneficiary')}</div>
-                      <div>IBAN: LT60 3250 0696 7631 8667</div>
-                      <div>BIC: REVOLT21</div>
-                      <div>{t('res.revolut_intermediary')} CHASDEFX</div>
-                      <div>{t('res.revolut_concept')} <strong style={{ color: '#00E5FF' }}>DICI-RES-{selectedCoin.id}</strong></div>
-                    </div>
+              {/* Si existe orden cripto activa, mostramos pasarela de pago */}
+              {cryptoOrder ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                  <div style={{ display: 'flex', gap: '12px', alignItems: 'center', color: '#D4AF37' }}>
+                    <Coins size={24} className="animate-pulse" />
+                    <h3 style={{ fontSize: '20px', fontWeight: 800 }}>Pasarela de Pago USDT TRC20</h3>
                   </div>
-                )}
 
-                {paymentMethod === 'card_outside_eu' && (
-                  <div style={{
-                    marginTop: '8px',
-                    padding: '16px',
-                    background: 'rgba(0, 229, 255, 0.03)',
-                    border: '1px solid rgba(0, 229, 255, 0.2)',
-                    borderRadius: 'var(--radius-sm)',
-                    fontSize: '13px',
-                    lineHeight: '1.5',
-                    color: 'var(--text-secondary)'
-                  }}>
-                    <p style={{ color: '#00E5FF', fontWeight: 700, marginBottom: '8px' }}>
-                      {t('res.card_outside_title')}
-                    </p>
-                    <div style={{ marginBottom: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                      <p>
-                        {t('res.card_outside_desc1')}
-                      </p>
-                      <p>
-                        {t('res.card_outside_desc2')}
-                      </p>
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '12px' }}>
-                      <a
-                        href={PAYMENT_LINK_OUTSIDE_EU}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="btn-blue"
-                        style={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '8px',
-                          padding: '10px 20px',
-                          textDecoration: 'none',
-                          fontWeight: 700,
-                          fontSize: '13px',
-                          borderRadius: 'var(--radius-sm)',
-                          background: 'linear-gradient(135deg, #00E5FF 0%, #0083B0 100%)',
-                          color: '#FFFFFF',
-                          boxShadow: '0 0 10px rgba(0, 229, 255, 0.3)'
+                  <div style={{ background: 'rgba(255,255,255,0.01)', border: '1px solid var(--border-light)', borderRadius: 'var(--radius-sm)', padding: '16px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Monto Exacto a Transferir:</span>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <span style={{ fontSize: '26px', fontWeight: 800, color: '#00E5FF' }}>
+                        {cryptoOrder.expectedAmountUsdt} USDT
+                      </span>
+                      <button 
+                        type="button" 
+                        onClick={() => {
+                          navigator.clipboard.writeText(cryptoOrder.expectedAmountUsdt.toString());
+                          alert("Importe copiado al portapapeles");
                         }}
+                        style={{ background: 'none', border: 'none', color: '#00E5FF', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px' }}
                       >
-                        {t('res.card_outside_btn')}
-                      </a>
+                        <Copy size={14} /> Copiar
+                      </button>
                     </div>
-                    <p style={{ fontSize: '11.5px', color: 'var(--text-muted)', lineHeight: '1.4' }}>
-                      {t('res.card_outside_footer')}
-                    </p>
-                  </div>
-                )}
-              </div>
-
-              {/* Shipping Information Form */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', padding: '18px', background: 'rgba(255,255,255,0.01)', border: '1px solid var(--border-light)', borderRadius: 'var(--radius-sm)' }}>
-                <span style={{ fontWeight: 700, fontSize: '14px', color: '#D4AF37', borderBottom: '1px solid var(--border-light)', paddingBottom: '6px' }}>
-                  {t('res.cert_owner_info')}
-                </span>
-
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '12px' }}>
-                  <div>
-                    <label className="premium-label" style={{ fontSize: '11px' }}>{t('res.form_name')}</label>
-                    <div style={{ position: 'relative' }}>
-                      <User size={14} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
-                      <input 
-                        type="text" 
-                        className="premium-input" 
-                        style={{ paddingLeft: '34px', fontSize: '13px' }}
-                        value={shippingInfo.fullName}
-                        onChange={(e) => setShippingInfo(prev => ({ ...prev, fullName: e.target.value }))}
-                      />
-                    </div>
+                    <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                      Tasa de conversión: 1 EUR = {cryptoOrder.exchangeRate.toFixed(4)} USDT (Monto Base: {cryptoOrder.expectedAmountEur} EUR)
+                    </span>
                   </div>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                    <div>
-                      <label className="premium-label" style={{ fontSize: '11px' }}>{t('res.form_email')}</label>
-                      <div style={{ position: 'relative' }}>
-                        <Mail size={14} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
-                        <input 
-                          type="email" 
-                          className="premium-input" 
-                          style={{ paddingLeft: '34px', fontSize: '13px' }}
-                          value={shippingInfo.email}
-                          onChange={(e) => setShippingInfo(prev => ({ ...prev, email: e.target.value }))}
-                        />
-                      </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', padding: '16px', background: 'rgba(0,0,0,0.2)', borderRadius: 'var(--radius-sm)' }}>
+                    <span style={{ fontSize: '12px', fontWeight: 700, color: '#D4AF37' }}>Escanee el QR para pagar:</span>
+                    <div style={{ background: '#FFFFFF', padding: '12px', borderRadius: '8px' }}>
+                      <QRCodeSVG value={cryptoOrder.officialWallet} size={150} />
                     </div>
-                    <div>
-                      <label className="premium-label" style={{ fontSize: '11px' }}>{t('res.form_phone')}</label>
-                      <div style={{ position: 'relative' }}>
-                        <Phone size={14} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
-                        <input 
-                          type="text" 
-                          className="premium-input" 
-                          style={{ paddingLeft: '34px', fontSize: '13px' }}
-                          placeholder="+34 600 000 000"
-                          value={shippingInfo.phone}
-                          onChange={(e) => setShippingInfo(prev => ({ ...prev, phone: e.target.value }))}
-                        />
+                    <div style={{ width: '100%', marginTop: '8px' }}>
+                      <label className="premium-label" style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Dirección Receptora Oficial TRON / TRC20:</label>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(0,0,0,0.3)', padding: '8px 12px', borderRadius: '4px', border: '1px solid var(--border-light)' }}>
+                        <span style={{ fontSize: '12px', fontFamily: 'monospace', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flexGrow: 1, color: '#FFFFFF' }}>
+                          {cryptoOrder.officialWallet}
+                        </span>
+                        <button 
+                          type="button" 
+                          onClick={() => {
+                            navigator.clipboard.writeText(cryptoOrder.officialWallet);
+                            alert("Dirección copiada");
+                          }}
+                          style={{ background: 'none', border: 'none', color: '#D4AF37', cursor: 'pointer' }}
+                        >
+                          <Copy size={16} />
+                        </button>
                       </div>
                     </div>
                   </div>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                    <div>
-                      <label className="premium-label" style={{ fontSize: '11px' }}>{t('res.form_country')}</label>
-                      <div style={{ position: 'relative' }}>
-                        <MapPin size={14} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
-                        <input 
-                          type="text" 
-                          className="premium-input" 
-                          style={{ paddingLeft: '34px', fontSize: '13px' }}
-                          placeholder="España"
-                          value={shippingInfo.country}
-                          onChange={(e) => setShippingInfo(prev => ({ ...prev, country: e.target.value }))}
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <label className="premium-label" style={{ fontSize: '11px' }}>{t('res.form_city')}</label>
-                      <input 
-                        type="text" 
-                        className="premium-input" 
-                        style={{ fontSize: '13px' }}
-                        placeholder="Madrid"
-                        value={shippingInfo.city}
-                        onChange={(e) => setShippingInfo(prev => ({ ...prev, city: e.target.value }))}
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="premium-label" style={{ fontSize: '11px' }}>{t('res.form_address')}</label>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <label className="premium-label" htmlFor="crypto-tx-hash-input">Hash de Transacción (Tx Hash)</label>
                     <input 
+                      id="crypto-tx-hash-input"
                       type="text" 
                       className="premium-input" 
-                      style={{ fontSize: '13px' }}
-                      placeholder="Calle Gran Vía 12, 4ºB"
-                      value={shippingInfo.address}
-                      onChange={(e) => setShippingInfo(prev => ({ ...prev, address: e.target.value }))}
+                      placeholder="Ingrese el hash hexadecimal de 64 caracteres..."
+                      value={txHashInput}
+                      onChange={(e) => setTxHashInput(e.target.value.trim())}
                     />
+                    <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                      * Ingrese el hash una vez enviado el pago. El sistema requiere al menos 20 confirmaciones en la blockchain TRON para la asignación definitiva.
+                    </span>
+                  </div>
+
+                  {cryptoVerifyMessage.text && (
+                    <div style={{ 
+                      background: cryptoVerifyMessage.type === 'success' ? 'rgba(46, 204, 113, 0.1)' : (cryptoVerifyMessage.type === 'warning' ? 'rgba(212, 175, 55, 0.1)' : 'rgba(235, 87, 87, 0.1)'), 
+                      border: cryptoVerifyMessage.type === 'success' ? '1px solid rgba(46, 204, 113, 0.2)' : (cryptoVerifyMessage.type === 'warning' ? '1px solid rgba(212, 175, 55, 0.2)' : '1px solid rgba(235, 87, 87, 0.2)'), 
+                      borderRadius: 'var(--radius-sm)', 
+                      padding: '12px 14px', 
+                      color: cryptoVerifyMessage.type === 'success' ? '#2ECC71' : (cryptoVerifyMessage.type === 'warning' ? '#D4AF37' : '#EB5757'), 
+                      fontSize: '13px' 
+                    }}>
+                      {cryptoVerifyMessage.text}
+                    </div>
+                  )}
+
+                  <div style={{ display: 'flex', gap: '16px', marginTop: '8px' }}>
+                    <button 
+                      type="button" 
+                      onClick={() => setCryptoOrder(null)} 
+                      className="btn-outline" 
+                      style={{ flexGrow: 1, padding: '12px' }}
+                      disabled={cryptoVerifyLoading}
+                    >
+                      Volver
+                    </button>
+                    <button 
+                      type="button" 
+                      onClick={handleCryptoVerify} 
+                      className="btn-gold" 
+                      style={{ flexGrow: 1, padding: '12px' }}
+                      disabled={cryptoVerifyLoading || !txHashInput.trim()}
+                    >
+                      {cryptoVerifyLoading ? 'Verificando...' : 'Verificar Pago'}
+                    </button>
                   </div>
                 </div>
-              </div>
+              ) : (
+                <>
+                  <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                    <AlertTriangle size={24} style={{ color: '#D4AF37' }} />
+                    <h3 style={{ fontSize: '18px', fontWeight: 700 }}>{t('res.modal_title')}</h3>
+                  </div>
 
-              {/* Terms Checkbox */}
-              <label style={{ display: 'flex', gap: '12px', alignItems: 'flex-start', cursor: 'pointer', userSelect: 'none' }}>
-                <input 
-                  id="legal-checkbox"
-                  type="checkbox" 
-                  checked={legalChecked} 
-                  onChange={(e) => setLegalChecked(e.target.checked)} 
-                  style={{ marginTop: '3px' }}
-                />
-                <span style={{ fontSize: '12px', fontWeight: 500, lineHeight: '1.4' }}>
-                  {t('res.legal_declaration')}
-                </span>
-              </label>
+                  <p style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
+                    {t('res.modal_desc')}
+                  </p>
 
-              {message.text && (
-                <div style={{ 
-                  background: message.type === 'success' ? 'rgba(46, 204, 113, 0.1)' : 'rgba(235, 87, 87, 0.1)', 
-                  border: message.type === 'success' ? '1px solid rgba(46, 204, 113, 0.2)' : '1px solid rgba(235, 87, 87, 0.2)', 
-                  borderRadius: 'var(--radius-sm)', 
-                  padding: '12px 14px', 
-                  color: message.type === 'success' ? '#2ECC71' : '#EB5757', 
-                  fontSize: '13px' 
-                }}>
-                  {message.text}
-                </div>
+                  {/* Mode of Purchase Selector */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <span className="premium-label" style={{ fontSize: '11px', fontWeight: 600 }}>Tipo de Adquisición</span>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setPurchaseMode('reserve');
+                          if (paymentMethod === 'usdt_trc20') setPaymentMethod('simulated_card');
+                        }}
+                        disabled={selectedCoin.status === 'forming_team' || selectedCoin.status === 'active_fractional'}
+                        style={{
+                          padding: '10px 4px',
+                          borderRadius: 'var(--radius-sm)',
+                          background: purchaseMode === 'reserve' ? 'rgba(212, 175, 55, 0.1)' : 'rgba(255,255,255,0.01)',
+                          border: purchaseMode === 'reserve' ? '1px solid #D4AF37' : '1px solid var(--border-light)',
+                          color: purchaseMode === 'reserve' ? '#D4AF37' : 'var(--text-secondary)',
+                          fontSize: '11px',
+                          fontWeight: 600,
+                          cursor: 'pointer',
+                          opacity: (selectedCoin.status === 'forming_team' || selectedCoin.status === 'active_fractional') ? 0.3 : 1
+                        }}
+                      >
+                        Reserva (10%)
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setPurchaseMode('full')}
+                        disabled={selectedCoin.status === 'forming_team' || selectedCoin.status === 'active_fractional'}
+                        style={{
+                          padding: '10px 4px',
+                          borderRadius: 'var(--radius-sm)',
+                          background: purchaseMode === 'full' ? 'rgba(0, 229, 255, 0.1)' : 'rgba(255,255,255,0.01)',
+                          border: purchaseMode === 'full' ? '1px solid #00E5FF' : '1px solid var(--border-light)',
+                          color: purchaseMode === 'full' ? '#00E5FF' : 'var(--text-secondary)',
+                          fontSize: '11px',
+                          fontWeight: 600,
+                          cursor: 'pointer',
+                          opacity: (selectedCoin.status === 'forming_team' || selectedCoin.status === 'active_fractional') ? 0.3 : 1
+                        }}
+                      >
+                        Compra Completa
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setPurchaseMode('fractional')}
+                        style={{
+                          padding: '10px 4px',
+                          borderRadius: 'var(--radius-sm)',
+                          background: purchaseMode === 'fractional' ? 'rgba(46, 204, 113, 0.1)' : 'rgba(255,255,255,0.01)',
+                          border: purchaseMode === 'fractional' ? '1px solid #2ECC71' : '1px solid var(--border-light)',
+                          color: purchaseMode === 'fractional' ? '#2ECC71' : 'var(--text-secondary)',
+                          fontSize: '11px',
+                          fontWeight: 600,
+                          cursor: 'pointer'
+                        }}
+                      >
+                        Propiedad Fraccionada
+                      </button>
+                    </div>
+
+                    {purchaseMode === 'fractional' && (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', background: 'rgba(255,255,255,0.01)', padding: '12px', borderRadius: '4px', border: '1px solid var(--border-light)', marginTop: '6px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px' }}>
+                          <span>Porcentaje a comprar:</span>
+                          <strong style={{ color: '#2ECC71' }}>{fractionPercentage}%</strong>
+                        </div>
+                        <input 
+                          type="range" 
+                          min="1" 
+                          max="100" 
+                          value={fractionPercentage} 
+                          onChange={(e) => setFractionPercentage(parseInt(e.target.value))}
+                          style={{ accentColor: '#2ECC71', cursor: 'pointer' }}
+                        />
+                        <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                          * Mínimo 51% para ser Master del equipo. Si compra menos, se unirá como participante.
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Payment Method Selector */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <span className="premium-label" style={{ fontSize: '11px', fontWeight: 600 }}>{t('res.payment_method_title')}</span>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
+                      <button
+                        type="button"
+                        onClick={() => setPaymentMethod('simulated_card')}
+                        disabled={purchaseMode !== 'reserve'}
+                        style={{
+                          padding: '10px 2px',
+                          borderRadius: 'var(--radius-sm)',
+                          background: paymentMethod === 'simulated_card' ? 'rgba(0, 229, 255, 0.1)' : 'rgba(255,255,255,0.01)',
+                          border: paymentMethod === 'simulated_card' ? '1px solid #00E5FF' : '1px solid var(--border-light)',
+                          color: paymentMethod === 'simulated_card' ? '#00E5FF' : 'var(--text-secondary)',
+                          fontSize: '11px',
+                          fontWeight: 600,
+                          cursor: 'pointer',
+                          opacity: purchaseMode !== 'reserve' ? 0.3 : 1
+                        }}
+                      >
+                        {t('res.payment_method_card')}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setPaymentMethod('revolut_transfer')}
+                        style={{
+                          padding: '10px 2px',
+                          borderRadius: 'var(--radius-sm)',
+                          background: paymentMethod === 'revolut_transfer' ? 'rgba(212, 175, 55, 0.1)' : 'rgba(255,255,255,0.01)',
+                          border: paymentMethod === 'revolut_transfer' ? '1px solid #D4AF37' : '1px solid var(--border-light)',
+                          color: paymentMethod === 'revolut_transfer' ? '#D4AF37' : 'var(--text-secondary)',
+                          fontSize: '11px',
+                          fontWeight: 600,
+                          cursor: 'pointer'
+                        }}
+                      >
+                        Revolut
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setPaymentMethod('card_outside_eu')}
+                        disabled={purchaseMode !== 'reserve'}
+                        style={{
+                          padding: '10px 2px',
+                          borderRadius: 'var(--radius-sm)',
+                          background: paymentMethod === 'card_outside_eu' ? 'rgba(0, 229, 255, 0.15)' : 'rgba(255,255,255,0.01)',
+                          border: paymentMethod === 'card_outside_eu' ? '1px solid #00E5FF' : '1px solid var(--border-light)',
+                          color: paymentMethod === 'card_outside_eu' ? '#00E5FF' : 'var(--text-secondary)',
+                          fontSize: '11px',
+                          fontWeight: 600,
+                          cursor: 'pointer',
+                          opacity: purchaseMode !== 'reserve' ? 0.3 : 1
+                        }}
+                      >
+                        Fuera UE
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setPaymentMethod('usdt_trc20')}
+                        style={{
+                          padding: '10px 2px',
+                          borderRadius: 'var(--radius-sm)',
+                          background: paymentMethod === 'usdt_trc20' ? 'rgba(0, 229, 255, 0.15)' : 'rgba(255,255,255,0.01)',
+                          border: paymentMethod === 'usdt_trc20' ? '1px solid #00E5FF' : '1px solid var(--border-light)',
+                          color: paymentMethod === 'usdt_trc20' ? '#00E5FF' : 'var(--text-secondary)',
+                          fontSize: '11px',
+                          fontWeight: 600,
+                          cursor: 'pointer'
+                        }}
+                      >
+                        USDT Cripto
+                      </button>
+                    </div>
+
+                    {paymentMethod === 'revolut_transfer' && (
+                      <div style={{
+                        marginTop: '8px', padding: '16px', background: 'rgba(212, 175, 55, 0.03)',
+                        border: '1px solid rgba(212, 175, 55, 0.2)', borderRadius: 'var(--radius-sm)',
+                        fontSize: '13px', lineHeight: '1.5', color: 'var(--text-secondary)'
+                      }}>
+                        <p style={{ color: '#D4AF37', fontWeight: 700, marginBottom: '8px' }}>
+                          {t('res.revolut_title')}
+                        </p>
+                        <p style={{ marginBottom: '8px' }}>
+                          Realice una transferencia al siguiente IBAN. Indique el concepto correspondiente.
+                        </p>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', background: 'rgba(0,0,0,0.2)', padding: '10px', borderRadius: '4px', fontFamily: 'monospace', fontSize: '12px', color: '#FFFFFF' }}>
+                          <div>{t('res.revolut_beneficiary')}</div>
+                          <div>IBAN: LT60 3250 0696 7631 8667</div>
+                          <div>BIC: REVOLT21</div>
+                          <div>{t('res.revolut_concept')} <strong style={{ color: '#00E5FF' }}>DICI-RES-{selectedCoin.id}</strong></div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Shipping Information Form */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', padding: '18px', background: 'rgba(255,255,255,0.01)', border: '1px solid var(--border-light)', borderRadius: 'var(--radius-sm)' }}>
+                    <span style={{ fontWeight: 700, fontSize: '14px', color: '#D4AF37', borderBottom: '1px solid var(--border-light)', paddingBottom: '6px' }}>
+                      {t('res.cert_owner_info')}
+                    </span>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '12px' }}>
+                      <div>
+                        <label className="premium-label" style={{ fontSize: '11px' }}>{t('res.form_name')}</label>
+                        <div style={{ position: 'relative' }}>
+                          <User size={14} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                          <input 
+                            type="text" 
+                            className="premium-input" 
+                            style={{ paddingLeft: '34px', fontSize: '13px' }}
+                            value={shippingInfo.fullName}
+                            onChange={(e) => setShippingInfo(prev => ({ ...prev, fullName: e.target.value }))}
+                          />
+                        </div>
+                      </div>
+
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                        <div>
+                          <label className="premium-label" style={{ fontSize: '11px' }}>{t('res.form_email')}</label>
+                          <div style={{ position: 'relative' }}>
+                            <Mail size={14} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                            <input 
+                              type="email" 
+                              className="premium-input" 
+                              style={{ paddingLeft: '34px', fontSize: '13px' }}
+                              value={shippingInfo.email}
+                              onChange={(e) => setShippingInfo(prev => ({ ...prev, email: e.target.value }))}
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <label className="premium-label" style={{ fontSize: '11px' }}>{t('res.form_phone')}</label>
+                          <div style={{ position: 'relative' }}>
+                            <Phone size={14} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                            <input 
+                              type="text" 
+                              className="premium-input" 
+                              style={{ paddingLeft: '34px', fontSize: '13px' }}
+                              placeholder="+34 600 000 000"
+                              value={shippingInfo.phone}
+                              onChange={(e) => setShippingInfo(prev => ({ ...prev, phone: e.target.value }))}
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                        <div>
+                          <label className="premium-label" style={{ fontSize: '11px' }}>{t('res.form_country')}</label>
+                          <div style={{ position: 'relative' }}>
+                            <MapPin size={14} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                            <input 
+                              type="text" 
+                              className="premium-input" 
+                              style={{ paddingLeft: '34px', fontSize: '13px' }}
+                              placeholder="España"
+                              value={shippingInfo.country}
+                              onChange={(e) => setShippingInfo(prev => ({ ...prev, country: e.target.value }))}
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <label className="premium-label" style={{ fontSize: '11px' }}>{t('res.form_city')}</label>
+                          <input 
+                            type="text" 
+                            className="premium-input" 
+                            style={{ fontSize: '13px' }}
+                            placeholder="Madrid"
+                            value={shippingInfo.city}
+                            onChange={(e) => setShippingInfo(prev => ({ ...prev, city: e.target.value }))}
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="premium-label" style={{ fontSize: '11px' }}>{t('res.form_address')}</label>
+                        <input 
+                          type="text" 
+                          className="premium-input" 
+                          style={{ fontSize: '13px' }}
+                          placeholder="Calle Gran Vía 12, 4ºB"
+                          value={shippingInfo.address}
+                          onChange={(e) => setShippingInfo(prev => ({ ...prev, address: e.target.value }))}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Terms Checkbox */}
+                  <label style={{ display: 'flex', gap: '12px', alignItems: 'flex-start', cursor: 'pointer', userSelect: 'none' }}>
+                    <input 
+                      id="legal-checkbox"
+                      type="checkbox" 
+                      checked={legalChecked} 
+                      onChange={(e) => setLegalChecked(e.target.checked)} 
+                      style={{ marginTop: '3px' }}
+                    />
+                    <span style={{ fontSize: '12px', fontWeight: 500, lineHeight: '1.4' }}>
+                      {t('res.legal_declaration')}
+                    </span>
+                  </label>
+
+                  {message.text && (
+                    <div style={{ 
+                      background: message.type === 'success' ? 'rgba(46, 204, 113, 0.1)' : 'rgba(235, 87, 87, 0.1)', 
+                      border: message.type === 'success' ? '1px solid rgba(46, 204, 113, 0.2)' : '1px solid rgba(235, 87, 87, 0.2)', 
+                      borderRadius: 'var(--radius-sm)', 
+                      padding: '12px 14px', 
+                      color: message.type === 'success' ? '#2ECC71' : '#EB5757', 
+                      fontSize: '13px' 
+                    }}>
+                      {message.text}
+                    </div>
+                  )}
+
+                  {/* Actions */}
+                  <div style={{ display: 'flex', gap: '16px', marginTop: '8px' }}>
+                    <button 
+                      id="cancel-reserve-btn"
+                      onClick={() => setShowLegalModal(false)} 
+                      className="btn-outline" 
+                      style={{ flexGrow: 1, padding: '12px' }}
+                    >
+                      Cancelar
+                    </button>
+                    <button 
+                      id="confirm-reserve-btn"
+                      onClick={confirmReservation} 
+                      className="btn-gold" 
+                      style={{ flexGrow: 1, padding: '12px' }}
+                      disabled={!legalChecked || reserveLoading}
+                    >
+                      {reserveLoading ? t('res.btn_confirm_loading') : t('res.btn_confirm')}
+                    </button>
+                  </div>
+                </>
               )}
-
-              {/* Actions */}
-              <div style={{ display: 'flex', gap: '16px', marginTop: '8px' }}>
-                <button 
-                  id="cancel-reserve-btn"
-                  onClick={() => setShowLegalModal(false)} 
-                  className="btn-outline" 
-                  style={{ flexGrow: 1, padding: '12px' }}
-                >
-                  Cancelar
-                </button>
-                <button 
-                  id="confirm-reserve-btn"
-                  onClick={confirmReservation} 
-                  className="btn-gold" 
-                  style={{ flexGrow: 1, padding: '12px' }}
-                  disabled={!legalChecked || reserveLoading}
-                >
-                  {reserveLoading ? t('res.btn_confirm_loading') : t('res.btn_confirm')}
-                </button>
-              </div>
 
             </div>
           </div>
@@ -1544,11 +1925,7 @@ export default function ReservationsPage() {
                   <p style={{ fontSize: '20px', fontWeight: 700, color: '#FFFFFF', letterSpacing: '0.05em' }}>
                     DiciCoin ID: {certCoinId}
                   </p>
-                  <p>
-                    {t('res.cert_verification_text')}
-                  </p>
                 </div>
-
                 {/* QR Code and Meta */}
                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '32px', margin: '16px 0', flexWrap: 'wrap' }}>
                   {(() => {
@@ -1575,17 +1952,47 @@ export default function ReservationsPage() {
                     </span>
                     <span style={{ color: 'var(--text-muted)' }}>
                       {t('res.cert_license')}: <strong style={{ color: '#00E5FF', fontFamily: 'monospace', fontSize: '11px' }}>
-                        {reservations.find(r => r.coinId === certCoinId)?.serial || 'Pendiente'}
+                        {reservations.find(r => r.coinId === certCoinId)?.serial || fractions.find(f => f.dicicoin_id === certCoinId)?.serial || 'Pendiente'}
                       </strong>
                     </span>
+                    {(() => {
+                      const fracDoc = fractions.find(f => f.dicicoin_id === certCoinId);
+                      if (!fracDoc) return null;
+                      return (
+                        <>
+                          <span style={{ color: 'var(--text-muted)' }}>
+                            Participación: <strong style={{ color: '#2ECC71' }}>{fracDoc.ownership_percentage}%</strong>
+                          </span>
+                          <span style={{ color: 'var(--text-muted)' }}>
+                            Rol: <strong style={{ color: '#D4AF37' }}>{fracDoc.master_user_id === user?.uid ? 'MASTER' : 'PARTICIPANTE'}</strong>
+                          </span>
+                        </>
+                      );
+                    })()}
                   </div>
                 </div>
 
                 {/* Shipping & Holder Details display inside Certificate */}
                 {(() => {
                   const resDoc = reservations.find(r => r.coinId === certCoinId);
-                  const ship = resDoc?.shippingInfo;
-                  if (!ship) return null;
+                  let fullName = resDoc?.shippingInfo?.fullName;
+                  let email = resDoc?.shippingInfo?.email;
+                  let phone = resDoc?.shippingInfo?.phone;
+                  let address = resDoc?.shippingInfo?.address;
+                  let city = resDoc?.shippingInfo?.city;
+                  let country = resDoc?.shippingInfo?.country;
+
+                  if (!fullName && profile) {
+                    fullName = `${profile.firstName || ''} ${profile.lastName || ''}`.trim() || profile.email;
+                    email = profile.email;
+                    phone = (profile as any).phone || '';
+                    address = (profile as any).address || '';
+                    city = (profile as any).city || '';
+                    country = (profile as any).country || '';
+                  }
+
+                  if (!fullName) return null;
+
                   return (
                     <div style={{
                       textAlign: 'left',
@@ -1602,16 +2009,20 @@ export default function ReservationsPage() {
                         {t('res.cert_owner_info')}
                       </span>
                       <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '4px', color: 'var(--text-secondary)' }}>
-                        <div>{t('res.form_name')}: <strong style={{ color: '#FFFFFF' }}>{ship.fullName}</strong></div>
-                        <div>{t('res.form_email')}: <strong style={{ color: '#FFFFFF' }}>{ship.email}</strong></div>
-                        <div>{t('res.form_phone')}: <strong style={{ color: '#FFFFFF' }}>{ship.phone}</strong></div>
+                        <div>{t('res.form_name')}: <strong style={{ color: '#FFFFFF' }}>{fullName}</strong></div>
+                        {email && <div>{t('res.form_email')}: <strong style={{ color: '#FFFFFF' }}>{email}</strong></div>}
+                        {phone && <div>{t('res.form_phone')}: <strong style={{ color: '#FFFFFF' }}>{phone}</strong></div>}
                       </div>
-                      <span style={{ fontWeight: 700, color: '#D4AF37', textTransform: 'uppercase', fontSize: '11px', letterSpacing: '0.05em', marginTop: '6px' }}>
-                        {t('res.cert_shipping_dest')}
-                      </span>
-                      <div style={{ color: 'var(--text-secondary)', lineHeight: '1.4' }}>
-                        <strong>{ship.address}</strong>, {ship.city}, {ship.country}
-                      </div>
+                      {address && (
+                        <>
+                          <span style={{ fontWeight: 700, color: '#D4AF37', textTransform: 'uppercase', fontSize: '11px', letterSpacing: '0.05em', marginTop: '6px' }}>
+                            {t('res.cert_shipping_dest')}
+                          </span>
+                          <div style={{ color: 'var(--text-secondary)', lineHeight: '1.4' }}>
+                            <strong>{address}</strong>{city ? `, ${city}` : ''}{country ? `, ${country}` : ''}
+                          </div>
+                        </>
+                      )}
                     </div>
                   );
                 })()}

@@ -316,6 +316,24 @@ service cloud.firestore {
       allow write: if false; // Solo el servidor crea transacciones
     }
 
+    // Órdenes de DiciCoin (Cripto y fraccionadas)
+    match /coin_orders/{orderId} {
+      allow read: if isAuthenticated() && (resource.data.user_id == request.auth.uid || hasDashboardAccess());
+      allow write: if false; // Modificado sólo por acciones del servidor
+    }
+
+    // Propiedad fraccionada de DiciCoins
+    match /dicicoin_fractions/{fractionId} {
+      allow read: if isAuthenticated() && (resource.data.master_user_id == request.auth.uid || resource.data.participant_user_id == request.auth.uid || hasDashboardAccess());
+      allow write: if false; // Modificado sólo por acciones del servidor
+    }
+
+    // Logs de auditoría
+    match /audit_logs/{logId} {
+      allow read: if hasDashboardAccess();
+      allow write: if false; // Solo el servidor escribe auditoría
+    }
+
     // Referrals Pioneers (Marketing Leads)
     match /referrals_pioneers/{leadId} {
       allow read: if isAuthenticated() && (resource.data.referrerId == request.auth.uid || hasDashboardAccess());

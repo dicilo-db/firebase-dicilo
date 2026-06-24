@@ -17,7 +17,13 @@ import {
   rejectInstallmentPayment
 } from '@/app/actions/admin-actions';
 import { updateReservationDetails } from '@/app/actions/wallet-actions';
-import { Plus, Check, X, ShieldAlert, Award, FileText, Activity, Eye, User, Clock, AlertCircle } from 'lucide-react';
+import { 
+  adminApproveFiatOrder, 
+  adminGetFinancialSummary, 
+  adminGetAuditLogs, 
+  searchDiciCoins 
+} from '@/app/actions/dicicoin-actions';
+import { Plus, Check, X, ShieldAlert, Award, FileText, Activity, Eye, User, Clock, AlertCircle, TrendingUp, BarChart3, Database, FileSpreadsheet, Copy, ExternalLink, Search } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
@@ -48,6 +54,12 @@ interface PendingTransfer {
 export default function AdminPage() {
   const { user, profile } = useAuth();
   const { t } = useLanguage();
+
+  const getFormatDate = (timestamp: any) => {
+    if (!timestamp) return 'Reciente';
+    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+    return date.toLocaleString('es-ES');
+  };
   
   // Coin creation form state
   const [continent, setContinent] = useState('EU');
@@ -74,7 +86,17 @@ export default function AdminPage() {
   const [actionLoading, setActionLoading] = useState<{[key: string]: boolean}>({});
 
   // Tab control
-  const [activeTab, setActiveTab] = useState<'inventory' | 'pending_payments' | 'users_reservations'>('inventory');
+  const [activeTab, setActiveTab] = useState<'inventory' | 'pending_payments' | 'users_reservations' | 'financials'>('inventory');
+
+  // Superadmin Financial Dashboard states
+  const [financialSummary, setFinancialSummary] = useState<any>(null);
+  const [loadingFinancials, setLoadingFinancials] = useState(false);
+  const [auditLogs, setAuditLogs] = useState<any[]>([]);
+  const [loadingLogs, setLoadingLogs] = useState(false);
+  const [searchFilters, setSearchFilters] = useState({ serial: '', ownerId: '', continent: '', status: '' });
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [searchingCoins, setSearchingCoins] = useState(false);
+  const [fiatOrders, setFiatOrders] = useState<any[]>([]);
 
   // Reservations state
   const [allReservations, setAllReservations] = useState<any[]>([]);
@@ -252,6 +274,112 @@ export default function AdminPage() {
     });
     return () => unsubscribe();
   }, [isAdmin]);
+
+  // Load Superadmin Financial Dashboard data
+  const loadFinancialData = async () => {
+    setLoadingFinancials(true);
+    setLoadingLogs(true);
+    setMessage({ text: '', type: '' });
+    try {
+      const summaryRes = await adminGetFinancialSummary();
+      if (summaryRes.success) {
+        setFinancialSummary(summaryRes.summary);
+        setFiatOrders(summaryRes.pendingOrders || []);
+      } else {
+        setMessage({ text: 'Error al recuperar resumen financiero.', type: 'error' });
+      }
+      
+      const logsRes = await adminGetAuditLogs(50);
+      if (logsRes.success) {
+        setAuditLogs(logsRes.logs || []);
+      }
+    } catch (err: any) {
+      console.error('Error loading financials:', err);
+      setMessage({ text: 'Error de conexión al cargar datos financieros.', type: 'error' });
+    } finally {
+      setLoadingFinancials(false);
+      setLoadingLogs(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === 'financials') {
+      loadFinancialData();
+    }
+  }, [activeTab]);
+
+  const handleApproveFiat = async (orderId: string) => {
+    if (!isAdmin || !user) return;
+    if (!window.confirm("¿Está seguro de que desea aprobar esta orden manualmente? Esto asignará la propiedad/fracción de forma definitiva.")) return;
+    
+    setActionLoading(prev => ({ ...prev, [orderId]: true }));
+    setMessage({ text: '', type: '' });
+    try {
+      const res = await adminApproveFiatOrder(user.uid, orderId);
+      if (res.success) {
+        setMessage({ text: "Orden fiat aprobada manualmente con éxito.", type: 'success' });
+        loadFinancialData();
+      } else {
+        setMessage({ text: (res as any).messageKey || "Error al aprobar la orden fiat.", type: 'error' });
+      }
+    } catch (err: any) {
+      console.error(err);
+      setMessage({ text: err.message || "Error al conectar con el servidor.", type: 'error' });
+    } finally {
+      setActionLoading(prev => ({ ...prev, [orderId]: false }));
+    }
+  };
+
+  const handleSearchCoins = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSearchingCoins(true);
+    try {
+      const res = await searchDiciCoins(searchFilters);
+      if (res.success) {
+        setSearchResults(res.coins || []);
+      } else {
+        setMessage({ text: "Error al buscar monedas.", type: 'error' });
+      }
+    } catch (err: any) {
+      console.error(err);
+    } finally {
+      setSearchingCoins(false);
+    }
+  };
+
+  const exportToCSV = () => {
+    if (!financialSummary) return;
+    
+    let csvContent = "data:text/csv;charset=utf-8,";
+    csvContent += "Metrica,Valor\n";
+    csvContent += `Total EUR Recibido (Fiat),${financialSummary.totalReceivedEur} EUR\n`;
+    csvContent += `Total USDT Recibido (Cripto),${financialSummary.totalReceivedUsdt} USDT\n`;
+    csvContent += `Monedas Disponibles,${financialSummary.coinsAvailable}\n`;
+    csvContent += `Monedas Reservadas,${financialSummary.coinsReserved}\n`;
+    csvContent += `Monedas Fraccionadas,${financialSummary.coinsFractional}\n`;
+    csvContent += `Monedas Pagadas Completas,${financialSummary.coinsPaid}\n`;
+    csvContent += `Masters Activos,${financialSummary.activeMastersCount}\n`;
+    csvContent += `Participantes Activos,${financialSummary.activeParticipantsCount}\n`;
+    csvContent += `Compras USDT TRC20,${financialSummary.paymentMethodsCount?.usdt_trc20 || 0}\n`;
+    csvContent += `Compras Revolut,${financialSummary.paymentMethodsCount?.revolut_transfer || 0}\n`;
+    csvContent += `Compras Transferencia Bancaria,${financialSummary.paymentMethodsCount?.bank_wire || 0}\n\n`;
+    
+    if (fiatOrders.length > 0) {
+      csvContent += "Ordenes Pendientes:\n";
+      csvContent += "Orden ID,Usuario ID,Moneda ID,Porcentaje,Monto EUR,Monto USDT,Metodo Pago,Estado\n";
+      fiatOrders.forEach(o => {
+        csvContent += `${o.order_id},${o.user_id},${o.dicicoin_id},${o.ownership_percentage}%,${o.expected_amount_eur} EUR,${o.expected_amount_usdt || 0} USDT,${o.payment_method},${o.payment_status}\n`;
+      });
+    }
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `resumen_financiero_dicicoin_${new Date().toISOString().slice(0,10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   const handleApproveRevolutPayment = async (reservationId: string) => {
     if (!isAdmin || !user) return;
@@ -608,6 +736,24 @@ export default function AdminPage() {
           >
             {t('admin.tab_users_reservations_count').replace('{count}', String(allReservations.length))}
           </button>
+          {profile?.role === 'superadmin' && (
+            <button 
+              id="tab-financials"
+              onClick={() => setActiveTab('financials')} 
+              style={{
+                padding: '12px 8px',
+                background: 'none',
+                border: 'none',
+                color: activeTab === 'financials' ? '#D4AF37' : 'var(--text-secondary)',
+                borderBottom: activeTab === 'financials' ? '2px solid #D4AF37' : 'none',
+                fontSize: '16px',
+                fontWeight: 600,
+                cursor: 'pointer'
+              }}
+            >
+              Finanzas & Cripto (Superadmin)
+            </button>
+          )}
         </div>
 
         {activeTab === 'inventory' && (
@@ -1259,6 +1405,353 @@ export default function AdminPage() {
                 </div>
               )}
             </div>
+          </div>
+        )}
+
+        {activeTab === 'financials' && profile?.role === 'superadmin' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+            
+            {/* KPI METRICS */}
+            {loadingFinancials ? (
+              <div style={{ display: 'flex', justifyContent: 'center', padding: '60px 0' }}>
+                <div className="animate-spin-slow" style={{ width: '24px', height: '24px', border: '2px solid rgba(212, 175, 55, 0.1)', borderTopColor: '#D4AF37', borderRadius: '50%' }} />
+              </div>
+            ) : financialSummary ? (
+              <>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
+                  <div>
+                    <h3 style={{ fontSize: '20px', fontWeight: 800 }}>Resumen de Métricas Financieras</h3>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>Control de ingresos totales, métodos de cobro y distribución de licencias DiciCoin.</p>
+                  </div>
+                  <div style={{ display: 'flex', gap: '12px' }}>
+                    <button 
+                      onClick={loadFinancialData} 
+                      className="btn-outline" 
+                      style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 18px', fontSize: '13px' }}
+                    >
+                      <Activity size={14} /> Refrescar
+                    </button>
+                    <button 
+                      onClick={exportToCSV} 
+                      className="btn-gold" 
+                      style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 18px', fontSize: '13px' }}
+                    >
+                      <FileSpreadsheet size={14} /> Exportar CSV
+                    </button>
+                  </div>
+                </div>
+
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                  gap: '20px'
+                }}>
+                  <div className="glass" style={{ padding: '20px', borderRadius: 'var(--radius-sm)', borderLeft: '3px solid #2ECC71' }}>
+                    <span style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 600 }}>Total Recibido EUR (Fiat)</span>
+                    <h4 style={{ fontSize: '24px', fontWeight: 800, color: '#2ECC71', marginTop: '8px' }}>{financialSummary.totalReceivedEur} €</h4>
+                  </div>
+                  <div className="glass" style={{ padding: '20px', borderRadius: 'var(--radius-sm)', borderLeft: '3px solid #00E5FF' }}>
+                    <span style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 600 }}>Total Recibido USDT (Cripto)</span>
+                    <h4 style={{ fontSize: '24px', fontWeight: 800, color: '#00E5FF', marginTop: '8px' }}>{financialSummary.totalReceivedUsdt} USDT</h4>
+                  </div>
+                  <div className="glass" style={{ padding: '20px', borderRadius: 'var(--radius-sm)' }}>
+                    <span style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 600 }}>Masters Activos</span>
+                    <h4 style={{ fontSize: '24px', fontWeight: 800, color: '#FFFFFF', marginTop: '8px' }}>{financialSummary.activeMastersCount}</h4>
+                  </div>
+                  <div className="glass" style={{ padding: '20px', borderRadius: 'var(--radius-sm)' }}>
+                    <span style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 600 }}>Participantes Activos</span>
+                    <h4 style={{ fontSize: '24px', fontWeight: 800, color: '#FFFFFF', marginTop: '8px' }}>{financialSummary.activeParticipantsCount}</h4>
+                  </div>
+                </div>
+
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                  gap: '20px'
+                }}>
+                  <div className="glass" style={{ padding: '16px', borderRadius: 'var(--radius-sm)' }}>
+                    <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>Métricas por Método</span>
+                    <div style={{ marginTop: '10px', fontSize: '12.5px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}><span>USDT TRC20:</span><strong>{financialSummary.paymentMethodsCount?.usdt_trc20 || 0}</strong></div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}><span>Revolut Transfer:</span><strong>{financialSummary.paymentMethodsCount?.revolut_transfer || 0}</strong></div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}><span>Bank Wire:</span><strong>{financialSummary.paymentMethodsCount?.bank_wire || 0}</strong></div>
+                    </div>
+                  </div>
+                  <div className="glass" style={{ padding: '16px', borderRadius: 'var(--radius-sm)' }}>
+                    <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>Estatus Catálogo</span>
+                    <div style={{ marginTop: '10px', fontSize: '12.5px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}><span>Disponibles:</span><strong>{financialSummary.coinsAvailable}</strong></div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}><span>Reservadas/Equipo:</span><strong>{financialSummary.coinsReserved}</strong></div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}><span>Fraccionadas:</span><strong>{financialSummary.coinsFractional}</strong></div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}><span>Pagadas/Completas:</span><strong>{financialSummary.coinsPaid}</strong></div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 1. SECCIÓN: ÓRDENES FIAT/MANUALES PENDIENTES DE APROBACIÓN */}
+                <div className="glass" style={{ padding: '24px', borderRadius: 'var(--radius-md)', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <TrendingUp size={20} style={{ color: '#D4AF37' }} />
+                    <h4 style={{ fontSize: '16px', fontWeight: 800 }}>Órdenes Fiat & Manuales Pendientes</h4>
+                  </div>
+                  {fiatOrders.length === 0 ? (
+                    <div style={{ textAlign: 'center', padding: '24px', color: 'var(--text-muted)', fontSize: '13.5px' }}>
+                      No hay órdenes fiat o cripto pendientes de procesamiento en el sistema.
+                    </div>
+                  ) : (
+                    <div style={{ overflowX: 'auto' }}>
+                      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px', textAlign: 'left' }}>
+                        <thead>
+                          <tr style={{ borderBottom: '1px solid var(--border-light)', color: 'var(--text-secondary)' }}>
+                            <th style={{ padding: '10px 12px' }}>Orden ID</th>
+                            <th style={{ padding: '10px 12px' }}>Usuario ID</th>
+                            <th style={{ padding: '10px 12px' }}>Moneda / Frac</th>
+                            <th style={{ padding: '10px 12px' }}>Importe Esperado</th>
+                            <th style={{ padding: '10px 12px' }}>Método Pago</th>
+                            <th style={{ padding: '10px 12px' }}>Estado</th>
+                            <th style={{ padding: '10px 12px' }}>Acción</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {fiatOrders.map(ord => (
+                            <tr key={ord.id} style={{ borderBottom: '1px solid var(--border-light)' }}>
+                              <td style={{ padding: '12px', fontWeight: 600 }}>{ord.order_id}</td>
+                              <td style={{ padding: '12px', color: 'var(--text-muted)', fontFamily: 'monospace', fontSize: '11px' }}>{ord.user_id}</td>
+                              <td style={{ padding: '12px' }}>
+                                <strong style={{ color: '#FFFFFF' }}>{ord.dicicoin_id}</strong>
+                                <span style={{ display: 'block', fontSize: '11px', color: 'var(--text-secondary)' }}>Fracción del {ord.ownership_percentage}%</span>
+                              </td>
+                              <td style={{ padding: '12px', fontWeight: 700, color: '#D4AF37' }}>
+                                {ord.expected_amount_eur} EUR {ord.expected_amount_usdt > 0 && `(${ord.expected_amount_usdt} USDT)`}
+                              </td>
+                              <td style={{ padding: '12px', textTransform: 'capitalize' }}>{ord.payment_method?.replace(/_/g, ' ')}</td>
+                              <td style={{ padding: '12px' }}>
+                                <span style={{
+                                  fontSize: '10px',
+                                  fontWeight: 700,
+                                  padding: '2px 6px',
+                                  borderRadius: '10px',
+                                  background: 'rgba(212, 175, 55, 0.1)',
+                                  color: '#D4AF37'
+                                }}>
+                                  {ord.payment_status?.toUpperCase()}
+                                </span>
+                              </td>
+                              <td style={{ padding: '12px' }}>
+                                <button 
+                                  onClick={() => handleApproveFiat(ord.order_id)}
+                                  className="btn-gold"
+                                  style={{ padding: '6px 12px', fontSize: '11.5px' }}
+                                  disabled={actionLoading[ord.order_id]}
+                                >
+                                  Aprobar Manual
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+
+                {/* 2. SECCIÓN: INVENTARIO / BÚSQUEDA AVANZADA */}
+                <div className="glass" style={{ padding: '24px', borderRadius: 'var(--radius-md)', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <Search size={20} style={{ color: '#00E5FF' }} />
+                    <h4 style={{ fontSize: '16px', fontWeight: 800 }}>Búsqueda Avanzada de Monedas & Propietarios</h4>
+                  </div>
+                  <form onSubmit={handleSearchCoins} style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+                    gap: '16px',
+                    alignItems: 'end'
+                  }}>
+                    <div>
+                      <label className="premium-label" style={{ fontSize: '11px' }}>Continente</label>
+                      <select 
+                        className="premium-input" 
+                        value={searchFilters.continent} 
+                        onChange={(e) => setSearchFilters(prev => ({ ...prev, continent: e.target.value }))}
+                        style={{ background: '#141416' }}
+                      >
+                        <option value="">Todos</option>
+                        <option value="EU">Europa</option>
+                        <option value="LA">Latinoamérica</option>
+                        <option value="AF">África</option>
+                        <option value="AS">Asia</option>
+                        <option value="OC">Oceanía</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="premium-label" style={{ fontSize: '11px' }}>Estado</label>
+                      <select 
+                        className="premium-input" 
+                        value={searchFilters.status} 
+                        onChange={(e) => setSearchFilters(prev => ({ ...prev, status: e.target.value }))}
+                        style={{ background: '#141416' }}
+                      >
+                        <option value="">Todos</option>
+                        <option value="available">Disponible</option>
+                        <option value="forming_team">Formando Equipo</option>
+                        <option value="active_fractional">Fraccionada Activa</option>
+                        <option value="paid">Pagada / Completa</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="premium-label" style={{ fontSize: '11px' }}>Serial Digital</label>
+                      <input 
+                        type="text" 
+                        className="premium-input" 
+                        placeholder="e.g. DC-EUJ..." 
+                        value={searchFilters.serial} 
+                        onChange={(e) => setSearchFilters(prev => ({ ...prev, serial: e.target.value }))} 
+                      />
+                    </div>
+                    <div>
+                      <label className="premium-label" style={{ fontSize: '11px' }}>ID de Propietario</label>
+                      <input 
+                        type="text" 
+                        className="premium-input" 
+                        placeholder="UID del propietario..." 
+                        value={searchFilters.ownerId} 
+                        onChange={(e) => setSearchFilters(prev => ({ ...prev, ownerId: e.target.value }))} 
+                      />
+                    </div>
+                    <button type="submit" className="btn-gold" style={{ height: '42px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                      <Search size={14} /> Buscar
+                    </button>
+                  </form>
+
+                  {searchingCoins ? (
+                    <div style={{ display: 'flex', justifyContent: 'center', padding: '20px 0' }}>
+                      <div className="animate-spin-slow" style={{ width: '20px', height: '20px', border: '2px solid rgba(0, 229, 255, 0.1)', borderTopColor: '#00E5FF', borderRadius: '50%' }} />
+                    </div>
+                  ) : searchResults.length > 0 ? (
+                    <div style={{ overflowX: 'auto', marginTop: '8px' }}>
+                      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12.5px', textAlign: 'left' }}>
+                        <thead>
+                          <tr style={{ borderBottom: '1px solid var(--border-light)', color: 'var(--text-secondary)' }}>
+                            <th style={{ padding: '8px 10px' }}>Moneda ID</th>
+                            <th style={{ padding: '8px 10px' }}>Serial Licencia</th>
+                            <th style={{ padding: '8px 10px' }}>Continente</th>
+                            <th style={{ padding: '8px 10px' }}>Estado</th>
+                            <th style={{ padding: '8px 10px' }}>Monto Pagado</th>
+                            <th style={{ padding: '8px 10px' }}>Propietario / Master ID</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {searchResults.map(coin => (
+                            <tr key={coin.id} style={{ borderBottom: '1px solid var(--border-light)' }}>
+                              <td style={{ padding: '10px', fontWeight: 700, color: '#D4AF37' }}>{coin.id}</td>
+                              <td style={{ padding: '10px', fontFamily: 'monospace', fontSize: '11px', color: '#00E5FF' }}>{coin.serial || 'N/D'}</td>
+                              <td style={{ padding: '10px' }}>{coin.continent}</td>
+                              <td style={{ padding: '10px' }}>
+                                <span style={{
+                                  fontSize: '10px',
+                                  fontWeight: 700,
+                                  padding: '1px 6px',
+                                  borderRadius: '10px',
+                                  background: coin.status === 'available' ? 'rgba(46,204,113,0.1)' : 'rgba(212,175,55,0.1)',
+                                  color: coin.status === 'available' ? '#2ECC71' : '#D4AF37',
+                                  textTransform: 'uppercase'
+                                }}>
+                                  {coin.status}
+                                </span>
+                              </td>
+                              <td style={{ padding: '10px', fontWeight: 600 }}>{coin.paidAmount} €</td>
+                              <td style={{ padding: '10px', color: coin.currentOwnerId ? '#FFFFFF' : 'var(--text-muted)', fontSize: '11px', fontFamily: 'monospace' }}>
+                                {coin.currentOwnerId || 'Ninguno'}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  ) : (
+                    searchResults.length === 0 && searchFilters.serial && (
+                      <div style={{ textAlign: 'center', padding: '12px', color: 'var(--text-muted)', fontSize: '13px' }}>
+                        No se encontraron monedas que coincidan con los filtros ingresados.
+                      </div>
+                    )
+                  )}
+                </div>
+
+                {/* 3. SECCIÓN: LOGS DE AUDITORÍA GENERAL */}
+                <div className="glass" style={{ padding: '24px', borderRadius: 'var(--radius-md)', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <Database size={20} style={{ color: '#9B59B6' }} />
+                    <h4 style={{ fontSize: '16px', fontWeight: 800 }}>Historial de Auditoría en Tiempo Real</h4>
+                  </div>
+                  {loadingLogs ? (
+                    <div style={{ display: 'flex', justifyContent: 'center', padding: '20px 0' }}>
+                      <div className="animate-spin-slow" style={{ width: '20px', height: '20px', border: '2px solid rgba(155, 89, 182, 0.1)', borderTopColor: '#9B59B6', borderRadius: '50%' }} />
+                    </div>
+                  ) : auditLogs.length === 0 ? (
+                    <div style={{ textAlign: 'center', padding: '24px', color: 'var(--text-muted)' }}>
+                      No se han registrado eventos de auditoría todavía.
+                    </div>
+                  ) : (
+                    <div style={{ overflowX: 'auto' }}>
+                      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px', textAlign: 'left', minWidth: '700px' }}>
+                        <thead>
+                          <tr style={{ borderBottom: '1px solid var(--border-light)', color: 'var(--text-secondary)' }}>
+                            <th style={{ padding: '8px 10px' }}>Fecha y Hora</th>
+                            <th style={{ padding: '8px 10px' }}>Usuario ID</th>
+                            <th style={{ padding: '8px 10px' }}>Acción</th>
+                            <th style={{ padding: '8px 10px' }}>Licencia Serial</th>
+                            <th style={{ padding: '8px 10px' }}>Porcentaje</th>
+                            <th style={{ padding: '8px 10px' }}>Rol</th>
+                            <th style={{ padding: '8px 10px' }}>Monto EUR / USDT</th>
+                            <th style={{ padding: '8px 10px' }}>Hash Transacción</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {auditLogs.map(log => {
+                            const isCrypto = log.payment_type === 'usdt_trc20';
+                            return (
+                              <tr key={log.id} style={{ borderBottom: '1px solid var(--border-light)' }}>
+                                <td style={{ padding: '10px', color: 'var(--text-muted)' }}>{getFormatDate(log.timestamp)}</td>
+                                <td style={{ padding: '10px', fontFamily: 'monospace', fontSize: '11px' }}>{log.userId}</td>
+                                <td style={{ padding: '10px', fontWeight: 600 }}>
+                                  <span style={{
+                                    padding: '2px 6px',
+                                    borderRadius: '4px',
+                                    background: log.action?.includes('APPROVE') ? 'rgba(46,204,113,0.1)' : 'rgba(0, 229, 255, 0.1)',
+                                    color: log.action?.includes('APPROVE') ? '#2ECC71' : '#00E5FF'
+                                  }}>
+                                    {log.action}
+                                  </span>
+                                </td>
+                                <td style={{ padding: '10px', fontFamily: 'monospace', color: '#00E5FF' }}>{log.serial}</td>
+                                <td style={{ padding: '10px', fontWeight: 600 }}>{log.percentage}%</td>
+                                <td style={{ padding: '10px' }}>{log.role}</td>
+                                <td style={{ padding: '10px', fontWeight: 600, color: '#2ECC71' }}>
+                                  {log.amount_eur} € {log.amount_usdt > 0 && `(${log.amount_usdt} USDT)`}
+                                </td>
+                                <td style={{ padding: '10px', fontFamily: 'monospace', fontSize: '11px' }}>
+                                  {log.tx_hash === 'MANUAL_ADMIN_FIAT' ? (
+                                    <span style={{ color: 'var(--text-muted)' }}>Aprobado Manual</span>
+                                  ) : (
+                                    <span title={log.tx_hash} style={{ maxWidth: '80px', display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                      {log.tx_hash}
+                                    </span>
+                                  )}
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              </>
+            ) : (
+              <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>
+                No se pudieron cargar los datos financieros del Superadmin.
+              </div>
+            )}
           </div>
         )}
 
