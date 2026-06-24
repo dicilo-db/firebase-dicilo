@@ -7,7 +7,7 @@ import { useLanguage } from '@/context/LanguageContext';
 import { db } from '@/lib/firebase';
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import { reserveCoin, payInstallment, listParticipationInMarketplace, runDiagnostics, updateReservationDetails } from '@/app/actions/wallet-actions';
-import { createCoinOrder, verifyCryptoPayment } from '@/app/actions/dicicoin-actions';
+import { createCoinOrder, verifyCryptoPayment, getUsdtExchangeRate } from '@/app/actions/dicicoin-actions';
 import { Coins, Award, Award as RarityIcon, AlertTriangle, ShieldCheck, HelpCircle, X, Check, Eye, MapPin, Phone, Mail, User, Clock, Copy, ShieldAlert } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import html2canvas from 'html2canvas';
@@ -87,6 +87,23 @@ export default function ReservationsPage() {
   const [cryptoVerifyMessage, setCryptoVerifyMessage] = useState({ text: '', type: '' });
   const [fractions, setFractions] = useState<any[]>([]);
   const [orders, setOrders] = useState<any[]>([]);
+  
+  // Real-time USDT rate state
+  const [usdtRate, setUsdtRate] = useState<number>(1.08);
+
+  useEffect(() => {
+    const fetchRate = async () => {
+      try {
+        const res = await getUsdtExchangeRate();
+        if (res.success && res.rate > 0) {
+          setUsdtRate(res.rate);
+        }
+      } catch (err) {
+        console.error("Error loading exchange rate:", err);
+      }
+    };
+    fetchRate();
+  }, []);
   
   // Shipping info form state
   const [instPaymentMethod, setInstPaymentMethod] = useState<{[key: string]: 'simulated_installment' | 'revolut_transfer' | 'card_outside_eu' | 'usdt_trc20'}>({});
@@ -1646,23 +1663,94 @@ export default function ReservationsPage() {
                     {purchaseMode === 'fractional' && (
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', background: 'rgba(255,255,255,0.01)', padding: '12px', borderRadius: '4px', border: '1px solid var(--border-light)', marginTop: '6px' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px' }}>
-                          <span>Porcentaje a comprar:</span>
+                          <span>Seleccione la participación:</span>
                           <strong style={{ color: '#2ECC71' }}>{fractionPercentage}%</strong>
                         </div>
-                        <input 
-                          type="range" 
-                          min="1" 
-                          max="100" 
-                          value={fractionPercentage} 
-                          onChange={(e) => setFractionPercentage(parseInt(e.target.value))}
-                          style={{ accentColor: '#2ECC71', cursor: 'pointer' }}
-                        />
+                        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '4px' }}>
+                          {(() => {
+                            const soldPct = ((selectedCoin?.paidAmount || 0) / 5000) * 100;
+                            const availablePct = Math.round(100 - soldPct);
+                            const hasMasterInCoin = selectedCoin?.status === 'active_fractional' || soldPct >= 51;
+
+                            // Opciones fijas: 51, 10, 9, 5, 4
+                            const options = [51, 10, 9, 5, 4];
+                            if (availablePct > 0 && !options.includes(availablePct) && availablePct < 100) {
+                              options.push(availablePct);
+                            }
+                            options.sort((a, b) => b - a);
+
+                            return options.map((pct) => {
+                              const isMasterPackage = pct === 51;
+                              const isCurrent = fractionPercentage === pct;
+                              const isDisabled = (isMasterPackage && hasMasterInCoin) || (pct > availablePct);
+
+                              return (
+                                <button
+                                  key={pct}
+                                  type="button"
+                                  disabled={isDisabled}
+                                  onClick={() => setFractionPercentage(pct)}
+                                  style={{
+                                    padding: '8px 12px',
+                                    borderRadius: '4px',
+                                    border: isCurrent ? '1px solid #2ECC71' : '1px solid var(--border-light)',
+                                    background: isCurrent ? 'rgba(46, 204, 113, 0.15)' : 'rgba(255, 255, 255, 0.02)',
+                                    color: isCurrent ? '#2ECC71' : (isDisabled ? 'var(--text-muted)' : 'var(--text-secondary)'),
+                                    fontWeight: 700,
+                                    fontSize: '13px',
+                                    cursor: isDisabled ? 'not-allowed' : 'pointer',
+                                    opacity: isDisabled ? 0.3 : 1
+                                  }}
+                                  title={isMasterPackage && hasMasterInCoin ? 'Esta moneda ya posee un Master propietario' : ''}
+                                >
+                                  {pct}% {isMasterPackage ? '(Master)' : ''}
+                                </button>
+                              );
+                            });
+                          })()}
+                        </div>
                         <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-                          * Mínimo 51% para ser Master del equipo. Si compra menos, se unirá como participante.
+                          * Mínimo 51% para iniciar el equipo como Master. Las participaciones de 10%, 9%, 5% y 4% se venden a los participantes del equipo.
                         </span>
                       </div>
                     )}
                   </div>
+
+                  {/* Vista de precio en tiempo real */}
+                  {(() => {
+                    const pct = purchaseMode === 'full' ? 100 : (purchaseMode === 'reserve' ? 10 : fractionPercentage);
+                    const eurCost = 5000 * (pct / 100);
+                    const usdtCost = eurCost * usdtRate;
+
+                    return (
+                      <div style={{ 
+                        margin: '12px 0', 
+                        padding: '16px', 
+                        background: 'rgba(0, 229, 255, 0.03)', 
+                        border: '1px solid rgba(0, 229, 255, 0.2)', 
+                        borderRadius: 'var(--radius-sm)', 
+                        display: 'flex', 
+                        flexDirection: 'column',
+                        gap: '6px'
+                      }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Porcentaje a adquirir:</span>
+                          <strong style={{ fontSize: '14px', color: '#00E5FF' }}>{pct}%</strong>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Costo en Euros:</span>
+                          <strong style={{ fontSize: '15px', color: '#FFFFFF' }}>{eurCost.toLocaleString('es-ES')} EUR</strong>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--border-light)', paddingTop: '6px', marginTop: '4px' }}>
+                          <span style={{ fontSize: '12px', color: '#D4AF37', fontWeight: 600 }}>Costo estimado en USDT:</span>
+                          <strong style={{ fontSize: '16px', color: '#D4AF37' }}>{usdtCost.toFixed(2)} USDT</strong>
+                        </div>
+                        <span style={{ fontSize: '10px', color: 'var(--text-muted)', textAlign: 'right' }}>
+                          Cotización actual: 1 EUR = {usdtRate.toFixed(4)} USDT
+                        </span>
+                      </div>
+                    );
+                  })()}
 
                   {/* Payment Method Selector */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
