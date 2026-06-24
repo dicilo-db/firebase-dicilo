@@ -57,7 +57,8 @@ export async function createCoinOrder(
   coinId: string,
   percentage: number,
   purchaseType: 'full_dicicoin' | 'fractional_master' | 'fractional_participant' | 'installment',
-  paymentMethod: 'usdt_trc20' | 'revolut_transfer' | 'bank_wire'
+  paymentMethod: 'usdt_trc20' | 'revolut_transfer' | 'bank_wire',
+  reservationId?: string
 ) {
   if (percentage < 1 || percentage > 100) {
     return { success: false, messageKey: 'Porcentaje inválido.' };
@@ -176,6 +177,7 @@ export async function createCoinOrder(
         order_id: orderId,
         user_id: userId,
         dicicoin_id: coinId,
+        reservation_id: reservationId || null,
         serial: coinData?.serial || '',
         purchase_type: purchaseType,
         ownership_percentage: percentage,
@@ -422,21 +424,45 @@ export async function verifyCryptoPayment(userId: string, orderId: string, txHas
 
       const percentage = orderData.ownership_percentage;
       const isMaster = orderData.is_master_purchase;
+      const isInstallment = orderData.purchase_type === 'installment' && orderData.reservation_id;
 
-      if (soldPercentage + percentage > 100) {
-        throw new Error('La asignación excede el límite del 100% de la moneda.');
-      }
-
-      const isCompletePurchase = percentage === 100;
       let finalCoinStatus = 'forming_team';
+      let isCompletePurchase = percentage === 100;
+      let updatedPaidAmount = (coinData?.paidAmount || 0) + orderData.expected_amount_eur;
 
-      if (isCompletePurchase) {
-        finalCoinStatus = 'paid';
+      if (isInstallment) {
+        const reservationRef = db.collection('coin_reservations').doc(orderData.reservation_id);
+        const reservationDoc = await transaction.get(reservationRef);
+        if (!reservationDoc.exists) {
+          throw new Error('La reserva asociada a este pago no existe.');
+        }
+        const resData = reservationDoc.data();
+        updatedPaidAmount = (resData?.paidAmount || 0) + orderData.expected_amount_eur;
+        const newRemaining = (resData?.remainingAmount || 0) - orderData.expected_amount_eur;
+        const newProgress = Math.min(100, (updatedPaidAmount / resData?.totalAmount) * 100);
+        const isCompleted = newRemaining <= 0;
+        isCompletePurchase = isCompleted;
+        finalCoinStatus = isCompleted ? 'fully_paid' : 'payment_plan';
+
+        transaction.update(reservationRef, {
+          paidAmount: updatedPaidAmount,
+          remainingAmount: newRemaining,
+          progressPercentage: newProgress,
+          status: isCompleted ? 'completed' : 'active',
+          updatedAt: getTimestamp().now()
+        });
       } else {
-        if (isMaster || hasMaster || (soldPercentage + percentage >= 51)) {
-          finalCoinStatus = 'active_fractional';
+        if (soldPercentage + percentage > 100) {
+          throw new Error('La asignación excede el límite del 100% de la moneda.');
+        }
+        if (isCompletePurchase) {
+          finalCoinStatus = 'paid';
         } else {
-          finalCoinStatus = 'forming_team';
+          if (isMaster || hasMaster || (soldPercentage + percentage >= 51)) {
+            finalCoinStatus = 'active_fractional';
+          } else {
+            finalCoinStatus = 'forming_team';
+          }
         }
       }
 
@@ -469,7 +495,6 @@ export async function verifyCryptoPayment(userId: string, orderId: string, txHas
       });
 
       // C. Actualizar catálogo de monedas
-      const updatedPaidAmount = (coinData?.paidAmount || 0) + orderData.expected_amount_eur;
       transaction.update(coinRef, {
         status: finalCoinStatus,
         serial: digitalSerial,
@@ -478,24 +503,26 @@ export async function verifyCryptoPayment(userId: string, orderId: string, txHas
         updatedAt: getTimestamp().now()
       });
 
-      // D. Crear el registro de fracción
-      const fractionId = `frac_${Math.random().toString(36).substring(2, 12)}`;
-      const fractionRef = db.collection('dicicoin_fractions').doc(fractionId);
-      transaction.set(fractionRef, {
-        fraction_id: fractionId,
-        dicicoin_id: coinId,
-        serial: digitalSerial,
-        master_user_id: isMaster ? userId : null,
-        participant_user_id: !isMaster ? userId : null,
-        ownership_percentage: percentage,
-        amount_paid_eur: orderData.expected_amount_eur,
-        amount_paid_usdt: receivedUsdt,
-        payment_method: 'usdt_trc20',
-        purchase_date: getTimestamp().now(),
-        status: 'active',
-        transaction_hash: cleanedHash,
-        team_id: coinId
-      });
+      // D. Crear el registro de fracción (solo si NO es pago de cuota)
+      if (!isInstallment) {
+        const fractionId = `frac_${Math.random().toString(36).substring(2, 12)}`;
+        const fractionRef = db.collection('dicicoin_fractions').doc(fractionId);
+        transaction.set(fractionRef, {
+          fraction_id: fractionId,
+          dicicoin_id: coinId,
+          serial: digitalSerial,
+          master_user_id: isMaster ? userId : null,
+          participant_user_id: !isMaster ? userId : null,
+          ownership_percentage: percentage,
+          amount_paid_eur: orderData.expected_amount_eur,
+          amount_paid_usdt: receivedUsdt,
+          payment_method: 'usdt_trc20',
+          purchase_date: getTimestamp().now(),
+          status: 'active',
+          transaction_hash: cleanedHash,
+          team_id: coinId
+        });
+      }
 
       // E. Actualizar la wallet del usuario
       const walletRef = db.collection('wallets').doc(userId);

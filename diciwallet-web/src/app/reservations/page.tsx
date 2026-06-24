@@ -89,7 +89,7 @@ export default function ReservationsPage() {
   const [orders, setOrders] = useState<any[]>([]);
   
   // Shipping info form state
-  const [instPaymentMethod, setInstPaymentMethod] = useState<{[key: string]: 'simulated_installment' | 'revolut_transfer' | 'card_outside_eu'}>({});
+  const [instPaymentMethod, setInstPaymentMethod] = useState<{[key: string]: 'simulated_installment' | 'revolut_transfer' | 'card_outside_eu' | 'usdt_trc20'}>({});
   const [shippingInfo, setShippingInfo] = useState({
     fullName: '',
     email: '',
@@ -593,9 +593,10 @@ export default function ReservationsPage() {
     setMessage({ text: '', type: '' });
 
     const pMethod = instPaymentMethod[resId] || 'simulated_installment';
+    if (pMethod === 'usdt_trc20') return;
 
     try {
-      const res = await payInstallment(user.uid, resId, amount, pMethod);
+      const res = await payInstallment(user.uid, resId, amount, pMethod as any);
       if (res.success) {
         setMessage({ text: t(res.messageKey || 'api.success_installment'), type: 'success' });
         setPaymentAmount(prev => ({ ...prev, [resId]: '' }));
@@ -606,6 +607,59 @@ export default function ReservationsPage() {
     } catch (err: any) {
       console.error(err);
       setMessage({ text: t('res.error_reserve'), type: 'error' });
+    } finally {
+      setPaymentLoading(prev => ({ ...prev, [resId]: false }));
+    }
+  };
+
+  const handleInstallmentCryptoSubmit = async (resId: string, coinId: string) => {
+    if (!user) return;
+    const amount = parseFloat(paymentAmount[resId]);
+
+    if (isNaN(amount) || amount <= 0) {
+      alert(t('res.error_invalid_amount') || 'Ingrese un importe válido.');
+      return;
+    }
+
+    setPaymentLoading(prev => ({ ...prev, [resId]: true }));
+    setMessage({ text: '', type: '' });
+
+    try {
+      const pct = (amount / 5000) * 100;
+      const orderRes = await createCoinOrder(
+        user.uid,
+        coinId,
+        pct,
+        'installment',
+        'usdt_trc20',
+        resId
+      );
+
+      if (orderRes.success) {
+        setCryptoOrder(orderRes);
+        setTxHashInput('');
+        setCryptoVerifyMessage({ text: '', type: '' });
+        
+        // Mock simple selectedCoin object for rendering in the crypto payment gateway modal
+        setSelectedCoin({
+          id: coinId,
+          serial: '',
+          number: 1,
+          continent: coinId.substring(0, 2),
+          status: 'payment_plan',
+          valueEur: 5000,
+          reserveAmount: 500,
+          paidAmount: amount,
+          currentOwnerId: user.uid
+        });
+        
+        setShowLegalModal(true);
+      } else {
+        alert(orderRes.messageKey || 'Error al generar la orden cripto.');
+      }
+    } catch (err: any) {
+      console.error(err);
+      alert('Error de red al conectar con el servidor.');
     } finally {
       setPaymentLoading(prev => ({ ...prev, [resId]: false }));
     }
@@ -1002,6 +1056,18 @@ export default function ReservationsPage() {
                                 >
                                   {t('res.payment_method_card_outside')}
                                 </button>
+                                <button
+                                  type="button"
+                                  onClick={() => setInstPaymentMethod(prev => ({ ...prev, [res.id]: 'usdt_trc20' }))}
+                                  style={{
+                                    background: 'none', border: 'none',
+                                    color: instPaymentMethod[res.id] === 'usdt_trc20' ? '#D4AF37' : 'var(--text-muted)',
+                                    fontSize: '12px', fontWeight: 600, cursor: 'pointer',
+                                    padding: '4px 8px', borderBottom: instPaymentMethod[res.id] === 'usdt_trc20' ? '2px solid #D4AF37' : 'none'
+                                  }}
+                                >
+                                  USDT Cripto
+                                </button>
                               </div>
                             </div>
 
@@ -1096,6 +1162,37 @@ export default function ReservationsPage() {
                                     disabled={paymentLoading[res.id]}
                                   >
                                     {paymentLoading[res.id] ? t('res.btn_pay_loading') : t('res.register_payment')}
+                                  </button>
+                                </div>
+                              </div>
+                            ) : instPaymentMethod[res.id] === 'usdt_trc20' ? (
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                                <p style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
+                                  Realice el pago de su cuota enviando USDT TRC20 equivalente al importe ingresado. El sistema convertirá automáticamente de EUR a USDT y le proporcionará un código QR.
+                                </p>
+                                <div style={{ display: 'flex', gap: '12px', marginTop: '6px' }}>
+                                  <div style={{ position: 'relative', flexGrow: 1 }}>
+                                    <span style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', fontWeight: 600 }}>€</span>
+                                    <input
+                                      id={`input-pay-${res.id}`}
+                                      type="number"
+                                      className="premium-input"
+                                      style={{ paddingLeft: '32px' }}
+                                      placeholder="Importe de cuota en EUR (e.g. 500)"
+                                      value={paymentAmount[res.id] || ''}
+                                      onChange={(e) => {
+                                        const val = e.target.value;
+                                        setPaymentAmount(prev => ({ ...prev, [res.id]: val }));
+                                      }}
+                                    />
+                                  </div>
+                                  <button
+                                    onClick={() => handleInstallmentCryptoSubmit(res.id, res.coinId)}
+                                    className="btn-gold"
+                                    style={{ flexShrink: 0, padding: '12px 24px', fontSize: '14px' }}
+                                    disabled={paymentLoading[res.id]}
+                                  >
+                                    {paymentLoading[res.id] ? 'Generando...' : 'Generar Orden USDT'}
                                   </button>
                                 </div>
                               </div>
