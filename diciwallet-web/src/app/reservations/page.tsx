@@ -458,6 +458,15 @@ export default function ReservationsPage() {
     return () => unsubscribe();
   }, [user]);
 
+  // Auto-seleccionar método de pago válido si el modo de compra cambia y deshabilita las tarjetas
+  useEffect(() => {
+    if (purchaseMode !== 'reserve') {
+      if (paymentMethod === 'simulated_card' || paymentMethod === 'card_outside_eu') {
+        setPaymentMethod('usdt_trc20');
+      }
+    }
+  }, [purchaseMode, paymentMethod]);
+
   // Lógica de click en cuadrícula
   const handleGridCellClick = (num: number) => {
     const coin = continentCoins[num];
@@ -1754,7 +1763,19 @@ export default function ReservationsPage() {
 
                   {/* Payment Method Selector */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    <span className="premium-label" style={{ fontSize: '11px', fontWeight: 600 }}>{t('res.payment_method_title')}</span>
+                    <span className="premium-label" style={{ fontSize: '11px', fontWeight: 600 }}>
+                      {purchaseMode === 'reserve' 
+                        ? t('res.payment_method_title') 
+                        : purchaseMode === 'full'
+                          ? (language === 'ES' ? 'Método de Pago de Compra Completa (100% - 5.000 €)' : language === 'DE' ? 'Zahlungsmethode für vollständigen Kauf (100% - 5.000 €)' : 'Full Purchase Payment Method (100% - 5,000 €)')
+                          : (language === 'ES' 
+                              ? `Método de Pago (Propiedad Fraccionada - ${fractionPercentage}% - ${(5000 * fractionPercentage / 100).toLocaleString('es-ES')} €)` 
+                              : language === 'DE'
+                                ? `Zahlungsmethode (Fraktionaler Besitz - ${fractionPercentage}% - ${(5000 * fractionPercentage / 100).toLocaleString('de-DE')} €)`
+                                : `Payment Method (Fractional Ownership - ${fractionPercentage}% - ${(5000 * fractionPercentage / 100).toLocaleString('en-US')} €)`
+                            )
+                      }
+                    </span>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
                       <button
                         type="button"
