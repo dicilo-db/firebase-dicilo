@@ -123,7 +123,7 @@ export function DiciCoinSection({ userData, walletData, onViewHistory }: DiciCoi
                         <div className="mt-auto">
                             <Button className="w-full bg-amber-600 hover:bg-amber-700" asChild>
                                 <a href="https://dicicoin-dicilo.web.app" target="_blank" rel="noopener noreferrer">
-                                    {t('dashboard.dicicoin.commingSoon', 'Reserva tu DiciCoin')}
+                                    {t('dashboard.dicicoin.commingSoon', 'Visita DiciCoin.com')}
                                 </a>
                             </Button>
                         </div>
