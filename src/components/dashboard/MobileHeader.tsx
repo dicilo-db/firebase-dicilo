@@ -13,13 +13,15 @@ import {
     HelpCircle, 
     Lock, 
     LogOut, 
-    ChevronRight 
+    ChevronRight,
+    Menu
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { NotificationBell } from './NotificationBell';
 import { LanguageSelector, languageOptions } from '../LanguageSelector';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { FreelancerSidebar } from './freelancer/FreelancerSidebar';
 import { useAuth } from '@/context/AuthContext';
 import { useTranslation } from 'react-i18next';
 import { Badge } from '@/components/ui/badge';
@@ -35,6 +37,7 @@ export function MobileHeader({ userData, currentView, onViewChange }: MobileHead
     const { logout } = useAuth();
     const { t, i18n } = useTranslation('common');
     const [isOpen, setIsOpen] = useState(false);
+    const [isFreelancerMenuOpen, setIsFreelancerMenuOpen] = useState(false);
 
     const role = (userData?.role || (userData?.isFreelancer ? 'freelancer' : 'user')).toLowerCase();
 
@@ -239,20 +242,34 @@ export function MobileHeader({ userData, currentView, onViewChange }: MobileHead
             {isFreelancerContext ? (
                 // Freelancer Context Header
                 <>
-                    <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        className="flex items-center gap-1 text-slate-600 hover:text-slate-900 font-medium pl-1 pr-3 py-2 min-h-[44px] min-w-[44px]"
-                        onClick={() => onViewChange('overview')}
-                    >
-                        <ChevronLeft className="h-5 w-5" />
-                        <span>Volver</span>
-                    </Button>
-                    
+                    {/* Left: Hamburger menu for freelancer navigation */}
+                    <Sheet open={isFreelancerMenuOpen} onOpenChange={setIsFreelancerMenuOpen}>
+                        <SheetTrigger asChild>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-11 w-11 text-slate-700 hover:bg-slate-100 rounded-xl"
+                                aria-label="Abrir menú Freelancer"
+                            >
+                                <Menu className="h-5 w-5" />
+                            </Button>
+                        </SheetTrigger>
+                        <SheetContent className="w-[280px] p-0 overflow-hidden" side="left">
+                            <SheetHeader className="sr-only">
+                                <SheetTitle>Menú Freelancer</SheetTitle>
+                            </SheetHeader>
+                            <FreelancerSidebar
+                                className="w-full h-full border-none"
+                                onMobileClose={() => setIsFreelancerMenuOpen(false)}
+                            />
+                        </SheetContent>
+                    </Sheet>
+
                     <h1 className="text-base font-bold text-slate-900 absolute left-1/2 -translate-x-1/2">
                         Freelancer
                     </h1>
 
+                    {/* Right: User avatar menu */}
                     <Sheet open={isOpen} onOpenChange={setIsOpen}>
                         <SheetTrigger asChild>
                             <div>

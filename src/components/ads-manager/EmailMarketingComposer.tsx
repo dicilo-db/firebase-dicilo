@@ -66,7 +66,8 @@ import {
     Youtube,
     Twitter,
     MoreHorizontal,
-    Trash2
+    Trash2,
+    Eye
 } from 'lucide-react';
 
 // Context & Actions
@@ -146,6 +147,7 @@ export function EmailMarketingComposer({
 
     // Mobile Detection
     const [isMobile, setIsMobile] = useState(false);
+    const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
     // Data Protection & Cache Logic
     useEffect(() => {
@@ -630,49 +632,62 @@ export function EmailMarketingComposer({
 
 
     return (
-        <div className="w-full px-4 py-8 pb-32 animate-in fade-in slide-in-from-right-4 min-h-full">
+        <div className="w-full px-3 sm:px-4 py-6 sm:py-8 pb-32 animate-in fade-in slide-in-from-right-4 min-h-full">
             {/* Header / Navigation */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-                <div className="flex items-center gap-4">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 sm:mb-8">
+                <div className="flex items-center gap-3 min-w-0">
                     {onBack && (
                         <Button 
                             variant="outline" 
                             size="sm" 
                             onClick={onBack} 
-                            className="bg-white hover:bg-slate-50 border-slate-200 shadow-sm"
+                            className="bg-white hover:bg-slate-50 border-slate-200 shadow-sm shrink-0"
                         >
-                            <ArrowLeft className="mr-2 h-4 w-4" /> 
-                            {t('adsManager.back', 'Volver a la Lista')}
+                            <ArrowLeft className="mr-1 sm:mr-2 h-4 w-4" /> 
+                            <span className="hidden sm:inline">{t('adsManager.back', 'Volver a la Lista')}</span>
+                            <span className="sm:hidden">Volver</span>
                         </Button>
                     )}
                     <div className="min-w-0">
-                        <h2 className="text-2xl font-bold tracking-tight truncate">{template.name}</h2>
+                        <h2 className="text-lg sm:text-2xl font-bold tracking-tight truncate">{template.name}</h2>
                         <p className="text-muted-foreground flex items-center gap-2 flex-wrap">
                              <Badge variant="secondary" className="text-[10px] uppercase shrink-0">{template.category.replace('_', ' ')}</Badge>
-                             <span className="truncate">ID: {template.id?.slice(0, 8)}</span>
+                             <span className="truncate text-xs">ID: {template.id?.slice(0, 8)}</span>
                         </p>
                     </div>
                 </div>
                 
-                {!isMobile && (
-                    <div className="flex gap-3">
-                         <div className="flex items-center gap-2 bg-purple-50 px-4 py-2 rounded-xl border border-purple-100">
-                            <span className="text-sm font-bold text-purple-700 flex items-center">
-                                +
-                                <Input 
-                                    type="number" 
-                                    value={rewardAmount} 
-                                    onChange={(e) => setRewardAmount(Number(e.target.value) || 0)}
-                                    className="w-16 h-6 px-1 py-0 mx-1 text-center bg-white border-purple-200 text-purple-700 font-bold hide-arrows disabled:bg-transparent disabled:border-none"
-                                    min="0"
-                                    disabled={!isAdmin}
-                                />
-                                DP
-                            </span>
-                            <span className="text-xs text-purple-600/80 font-medium whitespace-nowrap">por envío</span>
-                        </div>
+                <div className="flex items-center gap-3 shrink-0">
+                    {/* Reward amount – always visible */}
+                    <div className="flex items-center gap-2 bg-purple-50 px-3 sm:px-4 py-2 rounded-xl border border-purple-100">
+                        <span className="text-sm font-bold text-purple-700 flex items-center">
+                            +
+                            <Input 
+                                type="number" 
+                                value={rewardAmount} 
+                                onChange={(e) => setRewardAmount(Number(e.target.value) || 0)}
+                                className="w-14 sm:w-16 h-6 px-1 py-0 mx-1 text-center bg-white border-purple-200 text-purple-700 font-bold hide-arrows disabled:bg-transparent disabled:border-none"
+                                min="0"
+                                disabled={!isAdmin}
+                            />
+                            DP
+                        </span>
+                        <span className="text-xs text-purple-600/80 font-medium whitespace-nowrap">por envío</span>
                     </div>
-                )}
+
+                    {/* Mobile preview button */}
+                    {isMobile && (
+                        <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={() => setIsPreviewOpen(true)}
+                            className="h-10 w-10 border-slate-200 rounded-xl text-slate-600 hover:bg-purple-50 hover:text-purple-600 hover:border-purple-200 transition-colors"
+                            title="Ver vista previa"
+                        >
+                            <Eye className="h-4 w-4" />
+                        </Button>
+                    )}
+                </div>
             </div>
 
             <div className="flex flex-col lg:grid lg:grid-cols-12 gap-6 lg:gap-10 items-stretch lg:items-start pb-24 w-full max-w-full">
@@ -1047,9 +1062,8 @@ export function EmailMarketingComposer({
                     </Card>
                 </div>
 
-                {/* Sidebar Preview Area */}
-                <div className="lg:col-span-5 space-y-6 w-full min-w-0">
-                    <div className="lg:sticky lg:top-8">
+                {/* Sidebar Preview Area – desktop only; on mobile shown via Sheet */}
+                <div className="hidden lg:block lg:col-span-5 space-y-6 w-full min-w-0">
                          <div className="mb-4 flex items-center justify-between px-2">
                             <h3 className="text-xs font-bold uppercase tracking-widest text-slate-500">Vista Previa Real</h3>
                             <div className="flex gap-1">
@@ -1138,9 +1152,84 @@ export function EmailMarketingComposer({
                                 </div>
                             </div>
                         </div>
+                </div>
+
+            </div>
+
+            {/* Mobile Preview Sheet */}
+            {isMobile && (
+                <div
+                    className={cn(
+                        "fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm transition-opacity duration-300",
+                        isPreviewOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+                    )}
+                    onClick={() => setIsPreviewOpen(false)}
+                >
+                    <div
+                        className={cn(
+                            "absolute bottom-0 left-0 right-0 bg-slate-100 rounded-t-3xl p-4 pb-8 transition-transform duration-300 max-h-[90vh] overflow-y-auto",
+                            isPreviewOpen ? "translate-y-0" : "translate-y-full"
+                        )}
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div className="w-10 h-1 bg-slate-300 rounded-full mx-auto mb-4" />
+                        <div className="flex items-center justify-between px-2 mb-4">
+                            <h3 className="text-xs font-bold uppercase tracking-widest text-slate-500">Vista Previa Real</h3>
+                            <Badge variant="secondary" className="bg-green-100 text-green-700 text-[10px]">EN VIVO</Badge>
+                        </div>
+
+                        {/* Phone mockup */}
+                        <div className="w-full max-w-[300px] bg-slate-800 rounded-[2.5rem] p-1.5 shadow-2xl border border-slate-700/50 mx-auto mb-6 relative">
+                            <div className="absolute top-1.5 left-1/2 -translate-x-1/2 w-16 h-4 bg-slate-800 rounded-b-xl z-20" />
+                            <div className="w-full aspect-[9/18.5] bg-slate-50 rounded-[2.2rem] overflow-hidden relative flex flex-col shadow-inner border border-slate-200">
+                                <div className="flex-1 overflow-y-auto custom-scrollbar">
+                                    <div className="h-10 flex items-center justify-between px-6 pt-3 text-[10px] font-bold text-slate-900 bg-white">
+                                        <span>9:41</span>
+                                        <div className="flex gap-1.5 items-center">
+                                            <div className="w-3.5 h-3.5 rounded-full border-2 border-slate-200" />
+                                            <div className="w-3.5 h-2.5 bg-slate-200 rounded-sm" />
+                                        </div>
+                                    </div>
+                                    <div className="bg-slate-100 border-b px-4 py-2 flex items-center justify-between shadow-sm z-10 sticky top-0">
+                                        <div className="flex items-center gap-2">
+                                            <Mail className="h-4 w-4 text-slate-500" />
+                                            <span className="text-[10px] font-bold text-slate-700">App de Correo</span>
+                                        </div>
+                                        <MoreHorizontal className="h-4 w-4 text-slate-400" />
+                                    </div>
+                                    <div className="p-4 border-b flex items-center justify-between bg-white">
+                                        <div className="flex items-center gap-3 w-full">
+                                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm ring-2 ring-purple-100 flex-shrink-0">D</div>
+                                            <div className="flex-1 min-w-0">
+                                                <div className="flex justify-between items-baseline">
+                                                    <div className="text-[11px] font-bold text-slate-900 truncate">Dicilo Ofertas</div>
+                                                    <div className="text-[9px] text-slate-400">10:42 AM</div>
+                                                </div>
+                                                <div className="text-[9px] text-slate-500 truncate">Para: mis_amigos@red.com</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="p-5 space-y-5 bg-white flex-1">
+                                        <h2 className="text-base font-bold leading-tight text-slate-900 border-b pb-3">{currentData.subject || 'Nueva Promoción Especial'}</h2>
+                                        <div className="aspect-[4/3] relative rounded-lg overflow-hidden shadow-sm bg-slate-100">
+                                            <Image src={selectedImageUrl} alt="" fill className="object-cover transition-all" />
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                                        </div>
+                                        <div className="text-[11px] leading-relaxed whitespace-pre-wrap text-slate-700">
+                                            {currentData.body || 'Tu mensaje promocional aparecerá aquí...'}
+                                        </div>
+                                        <div className="py-2">
+                                            <div className="w-full py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl text-center text-[10px] font-bold shadow-lg shadow-purple-200">
+                                                VER DETALLES DE LA OFERTA
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
+            )}
 
             {/* Sticky Action Bar */}
             <div className="fixed bottom-0 left-0 right-0 h-20 bg-white/80 backdrop-blur-md border-t z-[40] flex items-center">
