@@ -922,7 +922,7 @@ export function EmailMarketingComposer({
                         <CardContent className="p-4 sm:p-6">
                             <div className="space-y-6">
                                 {/* Sender Info */}
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div className="space-y-2">
                                         <Label className="text-xs font-bold text-slate-500 uppercase">Tu ID (Referido)</Label>
                                         <div className="h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl flex items-center text-sm font-mono text-slate-500">
@@ -944,14 +944,14 @@ export function EmailMarketingComposer({
 
                                 {/* Add Friend Form */}
                                 <div className="space-y-4">
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 items-end">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div className="space-y-2">
                                             <Label className="text-xs font-bold text-slate-500 uppercase">Empresa (Opcional)</Label>
                                             <Input
                                                 placeholder="Ej: Dicilo"
                                                 value={currentCompany}
                                                 onChange={(e) => setCurrentCompany(e.target.value)}
-                                                className="h-10 border-slate-200 focus-visible:ring-blue-500 bg-white shadow-sm"
+                                                className="h-11 border-slate-200 focus-visible:ring-blue-500 bg-white shadow-sm"
                                             />
                                         </div>
                                         <div className="space-y-2">
@@ -960,7 +960,7 @@ export function EmailMarketingComposer({
                                                 placeholder="Ej: Juan"
                                                 value={currentName}
                                                 onChange={(e) => setCurrentName(e.target.value)}
-                                                className="h-10 border-slate-200 focus-visible:ring-blue-500 bg-white shadow-sm"
+                                                className="h-11 border-slate-200 focus-visible:ring-blue-500 bg-white shadow-sm"
                                             />
                                         </div>
                                         <div className="space-y-2">
@@ -971,37 +971,35 @@ export function EmailMarketingComposer({
                                                 value={currentEmail}
                                                 onChange={(e) => setCurrentEmail(e.target.value)}
                                                 onKeyDown={(e) => e.key === 'Enter' && addFriend()}
-                                                className="h-10 border-slate-200 focus-visible:ring-blue-500 bg-white focus:border-blue-500 transition-all"
+                                                className="h-11 border-slate-200 focus-visible:ring-blue-500 bg-white focus:border-blue-500 transition-all"
                                             />
                                         </div>
                                         <div className="space-y-2">
                                             <Label className="text-xs font-bold text-slate-500 uppercase">Idioma</Label>
-                                            <div className="flex gap-2">
-                                                <Select value={currentLanguage} onValueChange={setCurrentLanguage}>
-                                                    <SelectTrigger className="h-10 border-slate-200 bg-white text-slate-700 flex-1">
-                                                        <SelectValue />
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                        <SelectItem value="es">Español</SelectItem>
-                                                        <SelectItem value="en">English</SelectItem>
-                                                        <SelectItem value="de">Deutsch</SelectItem>
-                                                        <SelectItem value="fr">Français</SelectItem>
-                                                        <SelectItem value="pt">Português</SelectItem>
-                                                        <SelectItem value="it">Italiano</SelectItem>
-                                                    </SelectContent>
-                                                </Select>
-                                                <Button
-                                                    variant="outline"
-                                                    size="icon"
-                                                    onClick={addFriend}
-                                                    disabled={friends.length >= 7 || !currentEmail.trim()}
-                                                    className="h-10 w-12 border-blue-200 text-blue-600 hover:bg-blue-50 transition-colors"
-                                                >
-                                                    <Plus className="h-5 w-5" />
-                                                </Button>
-                                            </div>
+                                            <Select value={currentLanguage} onValueChange={setCurrentLanguage}>
+                                                <SelectTrigger className="h-11 border-slate-200 bg-white text-slate-700 w-full">
+                                                    <SelectValue />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="es">Español</SelectItem>
+                                                    <SelectItem value="en">English</SelectItem>
+                                                    <SelectItem value="de">Deutsch</SelectItem>
+                                                    <SelectItem value="fr">Français</SelectItem>
+                                                    <SelectItem value="pt">Português</SelectItem>
+                                                    <SelectItem value="it">Italiano</SelectItem>
+                                                </SelectContent>
+                                            </Select>
                                         </div>
                                     </div>
+                                    {/* Add contact button — always full-width and visible on all screen sizes */}
+                                    <Button
+                                        onClick={addFriend}
+                                        disabled={friends.length >= 7 || !currentEmail.trim()}
+                                        className="w-full h-12 min-h-[44px] bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-semibold rounded-xl gap-2 text-sm transition-colors"
+                                    >
+                                        <Plus className="h-5 w-5 shrink-0" />
+                                        Agregar contacto ({friends.length}/7)
+                                    </Button>
 
                                     {/* Friends List */}
                                     <div className="space-y-2 mt-4">
