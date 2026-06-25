@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Llenando el Vaso</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@600;700;900&display=swap');
+
+:root {
+  --bg:#0a0e1a; --panel:#111827; --border:#1f2937; --txt:#f0f4ff; --muted:#6b7280;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--txt);font-family:'Nunito',sans-serif;touch-action:none}
+
+/* ── PANTALLAS ── */
+.screen{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;z-index:200;background:var(--bg);padding:20px}
+.screen.off{display:none}
+
+.logo{font-family:'Baloo 2',cursive;font-size:clamp(2rem,7vw,3.8rem);font-weight:800;text-align:center;line-height:1.05}
+.logo small{display:block;font-size:.38em;font-weight:700;color:var(--muted);letter-spacing:.14em;text-transform:uppercase}
+
+.card{background:var(--panel);border:1.5px solid var(--border);border-radius:20px;padding:18px;width:100%;max-width:420px}
+.card-lbl{font-size:.65rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px}
+
+.mode-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.mbtn{padding:12px 6px;border-radius:12px;border:2px solid var(--border);background:transparent;color:var(--txt);font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;transition:.15s all;display:flex;flex-direction:column;align-items:center;gap:5px}
+.mbtn .ico{font-size:1.5rem}
+.mbtn.sel,.mbtn:hover{border-color:#3b82f6;background:rgba(59,130,246,.12)}
+
+#pfields{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.pf{padding:10px 12px;border-radius:10px;border:1.5px solid var(--border);background:#0d1220;color:var(--txt);font-family:'Nunito',sans-serif;font-size:.88rem;outline:none;transition:.15s border-color}
+.pf:focus{border-color:#3b82f6}
+
+.btnmain{padding:15px 40px;border-radius:50px;border:none;background:linear-gradient(135deg,#3b82f6,#a855f7);color:#fff;font-family:'Baloo 2',cursive;font-size:1.25rem;font-weight:700;cursor:pointer;transition:.2s;box-shadow:0 8px 24px rgba(59,130,246,.32);width:100%;max-width:280px}
+.btnmain:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(59,130,246,.48)}
+
+.btnsec{padding:12px 24px;border-radius:12px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;transition:.15s}
+.btnsec:hover{border-color:#3b82f6;color:var(--txt)}
+
+/* ── GUÍA ── */
+#guide-modal{position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px}
+#guide-modal.off{display:none}
+.gbox{background:var(--panel);border:1.5px solid var(--border);border-radius:22px;padding:26px 22px;max-width:440px;width:100%;max-height:88vh;overflow-y:auto}
+.gbox h2{font-family:'Baloo 2',cursive;font-size:1.4rem;margin-bottom:16px}
+.gstep{display:flex;gap:12px;margin-bottom:14px;align-items:flex-start}
+.gnum{flex-shrink:0;width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#a855f7);display:flex;align-items:center;justify-content:center;font-family:'Baloo 2',cursive;font-weight:800;font-size:.95rem}
+.gstep p{font-size:.88rem;line-height:1.5;color:#cbd5e1;padding-top:4px}
+.gstep strong{color:var(--txt)}
+.gclose{margin-top:16px;width:100%;padding:13px;border-radius:12px;border:none;background:linear-gradient(135deg,#3b82f6,#a855f7);color:#fff;font-family:'Baloo 2',cursive;font-size:1.05rem;cursor:pointer}
+
+/* ── HUD ── */
+#hud{display:flex;align-items:center;gap:10px;padding:9px 14px;background:var(--panel);border-bottom:1.5px solid var(--border);flex-shrink:0}
+.hv{font-family:'Baloo 2',cursive;font-size:1.3rem;font-weight:700;line-height:1}
+.hl{font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+#bar-wrap{flex:1;height:7px;background:var(--border);border-radius:4px;overflow:hidden}
+#bar{height:100%;border-radius:4px;transition:width .15s linear,background .4s}
+.hsep{width:1px;height:30px;background:var(--border)}
+
+/* ── CUBETAS ── */
+#buckets-zone{display:flex;align-items:center;justify-content:center;gap:8px;padding:10px 14px;flex-shrink:0;border-bottom:1.5px solid var(--border);flex-wrap:wrap}
+.bucket{width:52px;height:52px;border-radius:12px;border:2.5px solid transparent;cursor:grab;display:flex;align-items:center;justify-content:center;font-size:1.4rem;transition:.15s all;flex-shrink:0;position:relative;user-select:none}
+.bucket:active{cursor:grabbing}
+.bucket:hover{transform:scale(1.08)}
+.bucket.active-drag{transform:scale(1.2);box-shadow:0 0 20px var(--gc,#fff)}
+.bucket.wrong-flash{animation:wrongFlash .4s ease}
+@keyframes wrongFlash{0%,100%{border-color:inherit}30%,70%{border-color:#ef4444;background:rgba(239,68,68,.18)}}
+
+/* ── ARENA ── */
+#arena{flex:1;position:relative;overflow:hidden;cursor:crosshair}
+
+/* ── VASO EN MOVIMIENTO ── */
+#moving-cup{position:absolute;pointer-events:none;display:flex;flex-direction:column;align-items:center;gap:3px}
+#moving-cup.off{display:none}
+.mc-lbl{font-size:.68rem;font-weight:700}
+
+/* ── CHORRO ── */
+#stream-canvas{position:absolute;inset:0;pointer-events:none;z-index:60}
+
+/* ── BADGE HINT ── */
+#hint{position:absolute;top:10px;left:50%;transform:translateX(-50%);background:var(--panel);border:1.5px solid var(--border);border-radius:40px;padding:7px 16px;display:flex;align-items:center;gap:9px;font-size:.78rem;font-weight:700;white-space:nowrap;z-index:50;box-shadow:0 4px 16px rgba(0,0,0,.4)}
+#hint-dot{width:16px;height:16px;border-radius:50%;flex-shrink:0;border:2px solid #fff3}
+#hint-arr{font-size:1rem;animation:arr .7s infinite alternate}
+@keyframes arr{from{transform:translateY(0)}to{transform:translateY(-4px)}}
+
+/* ── COUNTDOWN ── */
+#countdown{position:fixed;inset:0;background:rgba(10,14,26,.88);display:flex;align-items:center;justify-content:center;z-index:300;font-family:'Baloo 2',cursive;font-size:clamp(5rem,18vw,9rem);color:#fff}
+#countdown.off{display:none}
+#cdn{animation:cdp .7s ease}
+@keyframes cdp{0%{transform:scale(2);opacity:0}100%{transform:scale(1);opacity:1}}
+
+/* ── FIN ── */
+#screen-end .logo{font-size:clamp(1.7rem,5vw,2.8rem)}
+.rdp{font-family:'Baloo 2',cursive;font-size:clamp(2.8rem,9vw,5rem);font-weight:800;background:linear-gradient(90deg,#eab308,#f97316);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.rsub{color:var(--muted);font-size:.85rem;margin-top:-6px}
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:360px}
+.sbox{background:var(--panel);border:1.5px solid var(--border);border-radius:14px;padding:14px;text-align:center}
+.sv{font-family:'Baloo 2',cursive;font-size:1.7rem;font-weight:700}
+.sl{font-size:.68rem;color:var(--muted);margin-top:2px}
+.erow{display:flex;gap:10px;width:100%;max-width:360px}
+.erow .btnsec{flex:1;font-size:.9rem}
+
+/* ── POPUPS / PARTÍCULAS ── */
+.popup{position:fixed;font-family:'Baloo 2',cursive;font-size:1.35rem;font-weight:700;pointer-events:none;z-index:400;animation:fup .9s forwards}
+@keyframes fup{0%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-65px)}}
+.par{position:fixed;border-radius:50%;pointer-events:none;z-index:400;animation:pf var(--d,.8s) ease-out forwards}
+@keyframes pf{0%{opacity:1;transform:translate(0,0)scale(1)}100%{opacity:0;transform:translate(var(--x),var(--y))scale(0)}}
+
+/* ── PARPADEO COPA ── */
+@keyframes gblink{0%,49%{filter:drop-shadow(0 0 12px var(--gc,#fff))brightness(1.6)}50%,100%{filter:none}}
+.blinking{animation:gblink .55s infinite}
+</style>
+</head>
+<body>
+
+<!-- INICIO -->
+<div id="screen-start" class="screen">
+  <div class="logo">💧 Llenando el Vaso<small>Dicilo Points</small></div>
+  <div class="card">
+    <div class="card-lbl">Modo de juego</div>
+    <div class="mode-row">
+      <button class="mbtn sel" data-m="1" onclick="pickMode(1)"><span class="ico">🧑</span>Solo</button>
+      <button class="mbtn" data-m="2" onclick="pickMode(2)"><span class="ico">👫</span>Equipo ×2</button>
+      <button class="mbtn" data-m="4" onclick="pickMode(4)"><span class="ico">👥</span>Equipo ×4</button>
+    </div>
+    <div id="pfields"></div>
+  </div>
+  <div style="display:flex;gap:10px;width:100%;max-width:420px">
+    <button class="btnsec" onclick="showGuide()">📖 ¿Cómo jugar?</button>
+    <button class="btnmain" style="flex:1;max-width:none" onclick="doCountdown()">¡JUGAR! 🎮</button>
+  </div>
+</div>
+
+<!-- GUÍA -->
+<div id="guide-modal" class="off">
+  <div class="gbox">
+    <h2>💧 ¿Cómo se juega?</h2>
+    <div class="gstep"><div class="gnum">1</div><p>Un vaso empieza a <strong>parpadear con un color</strong> y se mueve por la pantalla.</p></div>
+    <div class="gstep"><div class="gnum">2</div><p>Mira el badge en el centro: te dice <strong>qué color buscar</strong> entre las cubetas de arriba.</p></div>
+    <div class="gstep"><div class="gnum">3</div><p><strong>Haz clic (o toca) la cubeta del color correcto</strong> — ese mismo color que tiene el vaso.</p></div>
+    <div class="gstep"><div class="gnum">4</div><p><strong>Arrastra desde la cubeta hasta el vaso</strong>. Mientras el chorro de agua caiga dentro del vaso, se va llenando.</p></div>
+    <div class="gstep"><div class="gnum">5</div><p>El vaso <strong>se mueve en zigzag, círculos o líneas</strong> — tienes que perseguirlo con el chorro para seguir llenando.</p></div>
+    <div class="gstep"><div class="gnum">6</div><p>Tienes <strong>10 segundos por vaso</strong>. Llenarlo al 100% te da <strong>100 DP</strong>. ¡Las rachas de 3+ dan 50 DP extra!</p></div>
+    <div class="gstep"><div class="gnum">7</div><p>La partida dura <strong>120 segundos</strong>. Llena <strong>10 vasos</strong> para ganar el premio en DC Points.</p></div>
+    <button class="gclose" onclick="closeGuide()">¡Entendido, a jugar! 🎮</button>
+  </div>
+</div>
+
+<!-- COUNTDOWN -->
+<div id="countdown" class="off"><span id="cdn">3</span></div>
+
+<!-- JUEGO -->
+<div id="game-wrap" class="off" style="position:fixed;inset:0;display:flex;flex-direction:column">
+  <div id="hud">
+    <div><div class="hv" id="h-dp" style="color:#eab308">0 DP</div><div class="hl">DC Points</div></div>
+    <div class="hsep"></div>
+    <div id="bar-wrap"><div id="bar" style="width:100%;background:linear-gradient(90deg,#3b82f6,#a855f7)"></div></div>
+    <div class="hsep"></div>
+    <div style="text-align:right"><div class="hv" id="h-time">120</div><div class="hl">seg</div></div>
+    <div class="hsep"></div>
+    <div style="text-align:right"><div class="hv" id="h-cups" style="color:#22c55e">0/10</div><div class="hl">vasos</div></div>
+  </div>
+  <div id="buckets-zone"></div>
+  <div id="arena">
+    <canvas id="stream-canvas"></canvas>
+    <div id="hint">
+      <div id="hint-dot"></div>
+      <span id="hint-txt">Busca este color</span>
+      <span id="hint-arr">☝️</span>
+    </div>
+    <div id="moving-cup" class="off">
+      <div class="mc-lbl" id="mc-lbl"></div>
+      <div id="mc-body"></div>
+    </div>
+  </div>
+</div>
+
+<!-- FIN -->
+<div id="screen-end" class="screen off">
+  <div class="logo" id="end-title"></div>
+  <div class="rdp" id="end-dp">0 DP</div>
+  <div class="rsub">DC Points ganados</div>
+  <div class="sgrid">
+    <div class="sbox"><div class="sv" id="s-fill">0</div><div class="sl">Vasos llenos</div></div>
+    <div class="sbox"><div class="sv" id="s-miss">0</div><div class="sl">Vasos perdidos</div></div>
+    <div class="sbox"><div class="sv" id="s-acc">0%</div><div class="sl">Precisión</div></div>
+    <div class="sbox"><div class="sv" id="s-str">0</div><div class="sl">Mejor racha</div></div>
+  </div>
+  <div id="team-res"></div>
+  <div class="erow">
+    <button class="btnsec" onclick="goStart()">🏠 Inicio</button>
+    <button class="btnmain" style="flex:1;max-width:none;padding:14px" onclick="doCountdown()">🔄 Repetir</button>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════
+   COLORES — exactamente 8, cada uno
+   coincide con una cubeta
+═══════════════════════════════════ */
+const COLORS = [
+  {id:'red',    hex:'#ef4444', name:'Rojo'    },
+  {id:'orange', hex:'#f97316', name:'Naranja' },
+  {id:'yellow', hex:'#eab308', name:'Amarillo'},
+  {id:'green',  hex:'#22c55e', name:'Verde'   },
+  {id:'blue',   hex:'#3b82f6', name:'Azul'    },
+  {id:'purple', hex:'#a855f7', name:'Morado'  },
+  {id:'pink',   hex:'#ec4899', name:'Rosa'    },
+  {id:'teal',   hex:'#14b8a6', name:'Cian'    },
+];
+
+const GAME_DUR  = 120;
+const CUP_DUR   = 10;
+const CUPS_WIN  = 10;
+const FILL_RATE = 100/5;  // llena en 5s si chorro está siempre dentro (% por seg)
+
+/* ═══════════════════════════════════
+   ESTADO
+═══════════════════════════════════ */
+let mode=1, players=['Jugador'];
+let G={};
+
+function resetG(){
+  G={
+    running:false,
+    gameTime:GAME_DUR, gameIv:null,
+    cupTime:CUP_DUR,   cupIv:null,
+    totalDP:0, filled:0, missed:0, streak:0, bestStreak:0,
+    teamDP:[], teamIdx:0,
+    color:null,
+    fill:0,
+    cx:0, cy:0,
+    moveT:0, movePattern:'h', moveRaf:null,
+    dragging:false, dragColorId:null,
+    pointerX:0, pointerY:0,
+    streaming:false,
+  };
+}
+
+/* ═══════════════════════════════════
+   MODO / INICIO
+═══════════════════════════════════ */
+function pickMode(n){
+  mode=n;
+  document.querySelectorAll('.mbtn').forEach(b=>b.classList.toggle('sel',+b.dataset.m===n));
+  const pf=document.getElementById('pfields');
+  pf.innerHTML = n>1
+    ? Array.from({length:n},(_,i)=>`<input class="pf" id="pn${i}" placeholder="Jugador ${i+1}">`).join('')
+    : '';
+}
+function getPlayers(){
+  if(mode===1) return ['Jugador'];
+  return Array.from({length:mode},(_,i)=>document.getElementById(`pn${i}`)?.value.trim()||`J${i+1}`);
+}
+function showGuide()  { $('guide-modal').classList.remove('off'); }
+function closeGuide() { $('guide-modal').classList.add('off'); }
+function goStart()    { stopGame(); show('screen-start'); hide('screen-end'); hide('game-wrap'); }
+
+/* ═══════════════════════════════════
+   COUNTDOWN
+═══════════════════════════════════ */
+function doCountdown(){
+  hide('screen-start'); hide('screen-end');
+  const ov=$('countdown'), el=$('cdn');
+  ov.classList.remove('off');
+  let n=3;
+  const tick=()=>{
+    el.textContent=n>0?n:'¡Ya!';
+    el.className=''; void el.offsetWidth; el.className='cdn';
+    if(n-->0) setTimeout(tick,900);
+    else setTimeout(()=>{ ov.classList.add('off'); initGame(); },700);
+  };
+  tick();
+}
+
+/* ═══════════════════════════════════
+   INIT JUEGO
+═══════════════════════════════════ */
+function initGame(){
+  resetG();
+  players=getPlayers();
+  G.teamDP=players.map(()=>0);
+  G.running=true;
+
+  buildBuckets();
+  sizeCanvas();
+  show('game-wrap');
+
+  window.addEventListener('resize', sizeCanvas);
+  window.addEventListener('mousemove',  onMove, {passive:true});
+  window.addEventListener('mouseup',    onUp);
+  window.addEventListener('touchmove',  onTMove, {passive:false});
+  window.addEventListener('touchend',   onUp);
+  window.addEventListener('touchcancel',onUp);
+
+  startGameTimer();
+  startStreamLoop();
+  nextCup();
+}
+
+function stopGame(){
+  G.running=false;
+  cancelAnimationFrame(G.moveRaf);
+  cancelAnimationFrame(G.streamRaf);
+  clearInterval(G.gameIv);
+  clearInterval(G.cupIv);
+  window.removeEventListener('mousemove',  onMove);
+  window.removeEventListener('mouseup',    onUp);
+  window.removeEventListener('touchmove',  onTMove);
+  window.removeEventListener('touchend',   onUp);
+  window.removeEventListener('touchcancel',onUp);
+  window.removeEventListener('resize',     sizeCanvas);
+  clearCanvas();
+}
+
+/* ═══════════════════════════════════
+   CANVAS STREAM — resize
+═══════════════════════════════════ */
+function sizeCanvas(){
+  const c=$('stream-canvas');
+  const arena=$('arena');
+  c.width=arena.clientWidth;
+  c.height=arena.clientHeight;
+}
+
+/* ═══════════════════════════════════
+   CUBETAS
+═══════════════════════════════════ */
+function buildBuckets(){
+  const z=$('buckets-zone');
+  z.innerHTML='';
+  COLORS.forEach(c=>{
+    const d=document.createElement('div');
+    d.className='bucket';
+    d.id=`bk-${c.id}`;
+    d.style.background=c.hex+'28';
+    d.style.borderColor=c.hex;
+    d.style.setProperty('--gc',c.hex);
+    d.title=c.name;
+    d.innerHTML=`<div style="display:flex;flex-direction:column;align-items:center;gap:2px;pointer-events:none">
+      <span style="font-size:1.5rem">🪣</span>
+      <div style="width:10px;height:10px;border-radius:50%;background:${c.hex}"></div>
+    </div>`;
+    d.addEventListener('mousedown',  e=>{ e.preventDefault(); startDrag(c.id,e.clientX,e.clientY); });
+    d.addEventListener('touchstart', e=>{ e.preventDefault(); const t=e.touches[0]; startDrag(c.id,t.clientX,t.clientY); },{passive:false});
+    z.appendChild(d);
+  });
+}
+
+/* ═══════════════════════════════════
+   COPA SVG
+═══════════════════════════════════ */
+function makeCupSVG(color, fillPct, w, h){
+  w=w||80; h=h||96;
+  const bw=8, tw=w-8, mid=w/2;
+  const bodyH=h-14;
+  const fh=Math.round(bodyH*fillPct/100);
+  const hex=color.hex;
+  const clipId='cc'+Math.random().toString(36).slice(2,7);
+  const path=`M${bw},0 L${tw},0 L${tw-3},${bodyH} L${mid+7},${h} L${mid-7},${h} L${bw+3},${bodyH} Z`;
+  return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" style="overflow:visible;display:block">
+    <defs><clipPath id="${clipId}"><path d="${path}"/></clipPath></defs>
+    <path d="${path}" fill="${hex}18" stroke="${hex}" stroke-width="2.5" stroke-linejoin="round"/>
+    ${fh>0?`<rect x="0" y="${bodyH-fh}" width="${w}" height="${fh+14}" fill="${hex}" opacity=".85" clip-path="url(#${clipId})"/>`:''}
+    <line x1="${bw+3}" y1="${bodyH}" x2="${tw-3}" y2="${bodyH}" stroke="${hex}" stroke-width="1.2" opacity=".35"/>
+  </svg>`;
+}
+
+/* ═══════════════════════════════════
+   SIGUIENTE COPA
+═══════════════════════════════════ */
+const PATTERNS=['h','v','z','c','d'];
+function nextCup(){
+  if(!G.running) return;
+
+  G.color = COLORS[Math.floor(Math.random()*COLORS.length)];
+  G.fill  = 0;
+  G.cupTime = CUP_DUR;
+  G.movePattern = PATTERNS[Math.floor(Math.random()*PATTERNS.length)];
+  G.moveT = 0;
+  G.dragging = false; G.dragColorId = null; G.streaming = false;
+  document.querySelectorAll('.bucket').forEach(b=>b.classList.remove('active-drag'));
+
+  const arena=$('arena');
+  G.cx = arena.clientWidth/2;
+  G.cy = arena.clientHeight/2;
+
+  $('hint-dot').style.background = G.color.hex;
+  $('hint-dot').style.boxShadow  = `0 0 8px ${G.color.hex}`;
+  $('hint-txt').textContent = G.color.name;
+
+  renderCup();
+  $('moving-cup').classList.remove('off','blinking');
+  void $('moving-cup').offsetWidth;
+  $('moving-cup').classList.add('blinking');
+  $('moving-cup').style.setProperty('--gc', G.color.hex);
+  $('mc-lbl').textContent = players[Math.floor(Math.random()*players.length)];
+  $('mc-lbl').style.color = G.color.hex;
+
+  startMoveAnim();
+  startCupTimer();
+}
+
+function renderCup(){
+  $('mc-body').innerHTML = makeCupSVG(G.color, G.fill, 80, 96);
+}
+
+/* ═══════════════════════════════════
+   MOVIMIENTO DE LA COPA
+═══════════════════════════════════ */
+function startMoveAnim(){
+  cancelAnimationFrame(G.moveRaf);
+  let last=null;
+  function frame(ts){
+    if(!G.running) return;
+    if(!last) last=ts;
+    const dt=Math.min((ts-last)/1000,0.05); last=ts;
+    G.moveT += dt;
+
+    const arena=$('arena');
+    const aw=arena.clientWidth-84, ah=arena.clientHeight-100;
+    const cx0=aw/2, cy0=ah/2+20;
+    const rx=aw*.42, ry=ah*.38;
+    const spd=1.0 + (GAME_DUR-G.gameTime)*0.005;
+
+    switch(G.movePattern){
+      case 'h': G.cx=cx0+Math.sin(G.moveT*spd)*rx; break;
+      case 'v': G.cy=cy0+Math.sin(G.moveT*spd)*ry; break;
+      case 'z':
+        G.cx=cx0+Math.sin(G.moveT*spd*1.2)*rx;
+        G.cy=cy0+Math.sin(G.moveT*spd*2.6)*ry*.45;
+        break;
+      case 'c':
+        G.cx=cx0+Math.cos(G.moveT*spd*.9)*rx*.75;
+        G.cy=cy0+Math.sin(G.moveT*spd*.9)*ry*.75;
+        break;
+      case 'd':
+        G.cx=cx0+Math.sin(G.moveT*spd)*rx;
+        G.cy=cy0+Math.cos(G.moveT*spd*.65)*ry*.5;
+        break;
+    }
+    G.cx=Math.max(4,Math.min(aw,G.cx));
+    G.cy=Math.max(44,Math.min(ah,G.cy));
+
+    const mc=$('moving-cup');
+    mc.style.left=(G.cx-40)+'px';
+    mc.style.top =(G.cy-48)+'px';
+
+    G.moveRaf=requestAnimationFrame(frame);
+  }
+  G.moveRaf=requestAnimationFrame(frame);
+}
+
+/* ═══════════════════════════════════
+   CANVAS STREAM — loop siempre activo
+═══════════════════════════════════ */
+function startStreamLoop(){
+  const canvas=$('stream-canvas');
+  const ctx=canvas.getContext('2d');
+  let last=null;
+
+  function loop(ts){
+    if(!G.running){ ctx.clearRect(0,0,canvas.width,canvas.height); return; }
+    if(!last) last=ts;
+    const dt=Math.min((ts-last)/1000,0.05); last=ts;
+
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    if(G.streaming && G.dragging && G.dragColorId===G.color.id){
+      const arenaRect=$('arena').getBoundingClientRect();
+      const px=G.pointerX-arenaRect.left;
+      const py=G.pointerY-arenaRect.top;
+
+      const onCup=isOnCup();
+
+      if(onCup){
+        G.fill=Math.min(100, G.fill + FILL_RATE*dt);
+        renderCup();
+        if(G.fill>=100){ cupFilled(); return; }
+      }
+
+      const toX=G.cx, toY=G.cy-20;
+      drawStream(ctx, px, py, toX, toY, G.color.hex, onCup);
+    }
+
+    G.streamRaf=requestAnimationFrame(loop);
+  }
+  G.streamRaf=requestAnimationFrame(loop);
+}
+
+function drawStream(ctx, x1, y1, x2, y2, hex, active){
+  const grad=ctx.createLinearGradient(x1,y1,x2,y2);
+  grad.addColorStop(0, hex+'bb');
+  grad.addColorStop(1, hex+'44');
+
+  ctx.save();
+  ctx.beginPath();
+  const cpx=(x1+x2)/2, cpy=y1+(y2-y1)*.3;
+  ctx.moveTo(x1,y1);
+  ctx.quadraticCurveTo(cpx,cpy,x2,y2);
+  ctx.strokeStyle=grad;
+  ctx.lineWidth=active?14:8;
+  ctx.lineCap='round';
+  ctx.globalAlpha=active?.9:.45;
+  ctx.stroke();
+
+  if(active){
+    ctx.beginPath();
+    ctx.arc(x2,y2+4,7,0,Math.PI*2);
+    ctx.fillStyle=hex+'99';
+    ctx.globalAlpha=.6;
+    ctx.fill();
+  }
+  ctx.restore();
+}
+
+function clearCanvas(){
+  const c=$('stream-canvas');
+  if(c) c.getContext('2d').clearRect(0,0,c.width,c.height);
+}
+
+/* ═══════════════════════════════════
+   DRAG EVENTS
+═══════════════════════════════════ */
+function startDrag(colorId, cx, cy){
+  if(!G.running || !G.color) return;
+  G.dragging=true; G.dragColorId=colorId;
+  G.pointerX=cx; G.pointerY=cy;
+  G.streaming=true;
+
+  document.querySelectorAll('.bucket').forEach(b=>b.classList.remove('active-drag'));
+  const bel=$(`bk-${colorId}`);
+  if(bel) bel.classList.add('active-drag');
+
+  if(colorId!==G.color.id){
+    if(bel){ bel.classList.add('wrong-flash'); setTimeout(()=>bel.classList.remove('wrong-flash'),450); }
+  }
+}
+
+function onMove(e){ G.pointerX=e.clientX; G.pointerY=e.clientY; }
+function onTMove(e){ e.preventDefault(); const t=e.touches[0]; G.pointerX=t.clientX; G.pointerY=t.clientY; }
+function onUp(){
+  G.dragging=false; G.streaming=false; G.dragColorId=null;
+  document.querySelectorAll('.bucket').forEach(b=>b.classList.remove('active-drag'));
+}
+
+/* ═══════════════════════════════════
+   ¿El pointer está sobre la copa?
+═══════════════════════════════════ */
+function isOnCup(){
+  const mc=$('moving-cup');
+  const r=mc.getBoundingClientRect();
+  const pad=10;
+  return G.pointerX>=r.left-pad && G.pointerX<=r.right+pad &&
+         G.pointerY>=r.top-pad  && G.pointerY<=r.bottom+pad;
+}
+
+/* ═══════════════════════════════════
+   TIMERS
+═══════════════════════════════════ */
+function startGameTimer(){
+  G.gameIv=setInterval(()=>{
+    if(!G.running) return;
+    G.gameTime--;
+    updateHUD();
+    if(G.gameTime<=0) endGame();
+  },1000);
+}
+
+function startCupTimer(){
+  clearInterval(G.cupIv);
+  G.cupIv=setInterval(()=>{
+    if(!G.running) return;
+    G.cupTime--;
+    updateTimerRing();
+    if(G.cupTime<=0){ clearInterval(G.cupIv); cupTimeUp(); }
+  },1000);
+}
+
+function updateTimerRing(){
+  const lbl=$('mc-lbl');
+  if(lbl){
+    const pct=G.cupTime/CUP_DUR;
+    lbl.textContent=`⏱ ${G.cupTime}s — ${G.color.name}`;
+    lbl.style.color=pct>.4?G.color.hex:pct>.2?'#eab308':'#ef4444';
+  }
+}
+
+/* ═══════════════════════════════════
+   COPA LLENA
+═══════════════════════════════════ */
+function cupFilled(){
+  if(!G.running) return;
+  clearInterval(G.cupIv);
+  cancelAnimationFrame(G.moveRaf);
+  G.streaming=false; G.dragging=false; clearCanvas();
+  $('moving-cup').classList.remove('blinking');
+  document.querySelectorAll('.bucket').forEach(b=>b.classList.remove('active-drag'));
+
+  G.filled++;
+  G.streak++;
+  if(G.streak>G.bestStreak) G.bestStreak=G.streak;
+  const bonus=G.streak>=3?50:0;
+  const pts=100+bonus;
+  G.totalDP+=pts;
+  if(mode>1){ G.teamDP[G.teamIdx]+=pts; G.teamIdx=(G.teamIdx+1)%mode; }
+
+  popup(`+${pts}${bonus?' 🔥':''}`, G.color.hex);
+  particles(G.color.hex);
+  updateHUD();
+
+  if(G.filled>=CUPS_WIN){ endGame(true); return; }
+  setTimeout(()=>{ if(G.running) nextCup(); },700);
+}
+
+/* ═══════════════════════════════════
+   TIEMPO AGOTADO
+═══════════════════════════════════ */
+function cupTimeUp(){
+  if(!G.running) return;
+  cancelAnimationFrame(G.moveRaf);
+  G.streaming=false; G.dragging=false; clearCanvas();
+  $('moving-cup').classList.remove('blinking');
+  document.querySelectorAll('.bucket').forEach(b=>b.classList.remove('active-drag'));
+
+  if(G.fill>25){
+    const pts=Math.round(40*G.fill/100);
+    G.totalDP+=pts;
+    popup(`+${pts}`, '#eab308');
+  } else {
+    G.missed++; G.streak=0;
+    popup('✗ ¡Tiempo!','#ef4444');
+  }
+  updateHUD();
+  setTimeout(()=>{ if(G.running) nextCup(); },600);
+}
+
+/* ═══════════════════════════════════
+   HUD
+═══════════════════════════════════ */
+function updateHUD(){
+  $('h-dp').textContent  =G.totalDP+' DP';
+  $('h-time').textContent=G.gameTime;
+  $('h-cups').textContent=G.filled+'/10';
+  const pct=G.gameTime/GAME_DUR*100;
+  const bar=$('bar');
+  bar.style.width=pct+'%';
+  bar.style.background=pct>40?'linear-gradient(90deg,#3b82f6,#a855f7)':pct>20?'linear-gradient(90deg,#eab308,#f97316)':'#ef4444';
+}
+
+/* ═══════════════════════════════════
+   FIN
+═══════════════════════════════════ */
+function endGame(win=false){
+  stopGame();
+  hide('game-wrap');
+  const tot=G.filled+G.missed||1;
+  $('end-title').innerHTML=win?'🏆 ¡Ganaste!':G.filled>=5?'👏 ¡Buen juego!':'💧 ¡Sigue practicando!';
+  $('end-dp').textContent=G.totalDP+' DP';
+  $('s-fill').textContent=G.filled;
+  $('s-miss').textContent=G.missed;
+  $('s-acc').textContent=Math.round(G.filled/tot*100)+'%';
+  $('s-str').textContent=G.bestStreak;
+
+  const tr=$('team-res');
+  if(mode>1){
+    tr.style.cssText='width:100%;max-width:360px';
+    tr.innerHTML='<div style="font-size:.65rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Puntos por jugador</div>'
+      +'<div style="display:flex;gap:8px;flex-wrap:wrap">'
+      +players.map((p,i)=>`<div style="background:var(--panel);border:1.5px solid ${COLORS[i*2]?.hex||'#3b82f6'}55;border-radius:12px;padding:12px 14px;text-align:center;min-width:72px">
+        <div style="font-family:'Baloo 2',cursive;font-size:1.4rem;color:${COLORS[i*2]?.hex||'#3b82f6'}">${G.teamDP[i]||0}</div>
+        <div style="font-size:.68rem;color:var(--muted)">${p}</div></div>`).join('')+'</div>';
+  } else { tr.innerHTML=''; }
+
+  show('screen-end');
+}
+
+/* ═══════════════════════════════════
+   EFECTOS
+═══════════════════════════════════ */
+function popup(txt,color){
+  const mc=$('moving-cup').getBoundingClientRect();
+  const el=document.createElement('div');
+  el.className='popup'; el.textContent=txt;
+  el.style.cssText=`left:${mc.left+16}px;top:${mc.top-8}px;color:${color}`;
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(),950);
+}
+function particles(hex){
+  const mc=$('moving-cup').getBoundingClientRect();
+  const cx=mc.left+mc.width/2, cy=mc.top+mc.height/2;
+  for(let i=0;i<18;i++){
+    const el=document.createElement('div');
+    el.className='par';
+    const sz=4+Math.random()*7, a=Math.random()*Math.PI*2, r=30+Math.random()*80;
+    el.style.cssText=`width:${sz}px;height:${sz}px;background:${hex};left:${cx}px;top:${cy}px;--x:${Math.cos(a)*r}px;--y:${Math.sin(a)*r-50}px;--d:${.4+Math.random()*.55}s`;
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(),900);
+  }
+}
+
+/* ═══════════════════════════════════
+   UTILS
+═══════════════════════════════════ */
+const $=id=>document.getElementById(id);
+function show(id){ $(id).classList.remove('off'); }
+function hide(id){ $(id).classList.add('off'); }
+</script>
+</body>
+</html>
