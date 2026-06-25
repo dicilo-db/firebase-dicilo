@@ -634,9 +634,9 @@ export function EmailMarketingComposer({
     return (
         <div className="w-full max-w-full overflow-x-hidden px-3 sm:px-4 py-6 sm:py-8 pb-44 md:pb-32 animate-in fade-in slide-in-from-right-4 min-h-full">
             {/* Header / Navigation */}
-            <div className="w-full max-w-full overflow-hidden mb-6 sm:mb-8 space-y-3">
+            <div className="w-full max-w-full overflow-x-hidden mb-6 sm:mb-8 space-y-3">
                 {/* Row 1: back + title */}
-                <div className="flex items-center gap-3 w-full min-w-0 overflow-hidden">
+                <div className="flex items-center gap-3 w-full min-w-0 overflow-x-hidden">
                     {onBack && (
                         <Button
                             variant="outline"
@@ -649,16 +649,16 @@ export function EmailMarketingComposer({
                             <span className="ml-1 sm:hidden">Volver</span>
                         </Button>
                     )}
-                    <div className="min-w-0 flex-1 overflow-hidden">
+                    <div className="min-w-0 flex-1 overflow-x-hidden">
                         <h2 className="text-base sm:text-2xl font-bold tracking-tight overflow-hidden text-ellipsis whitespace-nowrap">{template.name}</h2>
-                        <div className="flex items-center gap-2 mt-0.5 overflow-hidden">
+                        <div className="flex items-center gap-2 mt-0.5 overflow-x-hidden">
                             <Badge variant="secondary" className="text-[10px] uppercase shrink-0">{template.category.replace('_', ' ')}</Badge>
                             <span className="text-xs text-muted-foreground truncate">ID: {template.id?.slice(0, 8)}</span>
                         </div>
                     </div>
                 </div>
                 {/* Row 2: DP reward + preview button */}
-                <div className="flex items-center gap-3 w-full overflow-hidden">
+                <div className="flex items-center gap-3 w-full overflow-x-hidden">
                     <div className="flex items-center gap-2 bg-purple-50 px-3 py-2 rounded-xl border border-purple-100 min-w-0">
                         <span className="text-sm font-bold text-purple-700 flex items-center shrink-0">
                             +
@@ -688,9 +688,9 @@ export function EmailMarketingComposer({
                 </div>
             </div>
 
-            <div className="flex flex-col lg:grid lg:grid-cols-12 gap-6 lg:gap-10 items-stretch lg:items-start pb-24 w-full max-w-full overflow-hidden">
+            <div className="flex flex-col lg:grid lg:grid-cols-12 gap-6 lg:gap-10 items-stretch lg:items-start pb-24 w-full max-w-full">
                 {/* Main Form Area */}
-                <div className="lg:col-span-7 space-y-6 w-full min-w-0 max-w-full overflow-hidden">
+                <div className="lg:col-span-7 space-y-6 w-full min-w-0 max-w-full overflow-x-hidden">
                     {/* 1. Multimedia Card */}
                     <Card className="shadow-sm border-slate-200 overflow-hidden">
                         <div className="bg-slate-50/50 px-4 sm:px-6 py-3 sm:py-4 border-b flex items-center justify-between gap-2">
@@ -810,9 +810,9 @@ export function EmailMarketingComposer({
                                     </TabsList>
                                 </div>
 
-                                <div className="p-4 sm:p-6 space-y-6 w-full max-w-full overflow-hidden">
+                                <div className="p-4 sm:p-6 space-y-6 w-full max-w-full">
                                     {['es', 'en', 'de', 'fr', 'pt', 'it'].map(lang => (
-                                        <TabsContent key={lang} value={lang} className="mt-0 space-y-6 animate-in fade-in duration-300 w-full max-w-full overflow-hidden">
+                                        <TabsContent key={lang} value={lang} className="mt-0 space-y-6 animate-in fade-in duration-300 w-full max-w-full">
                                             <div className="grid gap-6 w-full max-w-full">
                                                 <div className="space-y-2 w-full">
                                                     <Label className="text-xs font-bold text-slate-500 uppercase">Asunto del Email</Label>
@@ -824,9 +824,9 @@ export function EmailMarketingComposer({
                                                         readOnly={!canEdit}
                                                     />
                                                 </div>
-                                                <div className="space-y-2 relative w-full">
+                                                <div className="space-y-2 relative w-full overflow-x-hidden">
                                                     <Label className="text-xs font-bold text-slate-500 uppercase">Cuerpo de la promoción</Label>
-                                                    <div className="relative group w-full">
+                                                    <div className="relative group w-full overflow-x-hidden">
                                                         <Textarea
                                                             value={texts[lang]?.body || ''}
                                                             onChange={(e) => setTexts(prev => ({ ...prev, [lang]: { ...prev[lang], body: e.target.value } }))}
