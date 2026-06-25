@@ -71,14 +71,14 @@ export function MarketingTemplatesView() {
     }
 
     return (
-        <div className="p-6 md:p-8 space-y-8 bg-slate-50/50 dark:bg-black/10 min-h-full">
+        <div className="p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8 bg-slate-50/50 dark:bg-black/10 min-h-full">
             {/* Header */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">{t('freelancer_menu.email_marketing')}</h1>
-                    <p className="text-muted-foreground">Selecciona una plantilla de marketing diseñada para enviar por email.</p>
+                    <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">{t('freelancer_menu.email_marketing')}</h1>
+                    <p className="text-sm text-muted-foreground">Selecciona una plantilla de marketing diseñada para enviar por email.</p>
                 </div>
-                <div className="relative w-full md:w-64">
+                <div className="relative w-full sm:w-64">
                     <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                     <Input
                         placeholder="Buscar plantillas..."

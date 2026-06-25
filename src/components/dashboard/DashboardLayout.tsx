@@ -29,7 +29,7 @@ export function DashboardLayout({ userData, currentView, onViewChange, children,
     const isAdmin = userData?.role === 'admin' || userData?.role === 'superadmin' || user?.email?.includes('dicilo.net'); // Basic check
 
     return (
-        <div className="flex min-h-screen bg-gray-50">
+        <div className="flex min-h-screen bg-gray-50 overflow-x-hidden">
             {/* Desktop Sidebar */}
             <div className="hidden border-r bg-white md:block">
                 {currentView === 'freelancer' ? (

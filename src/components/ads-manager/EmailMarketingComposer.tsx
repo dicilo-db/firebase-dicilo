@@ -632,7 +632,7 @@ export function EmailMarketingComposer({
 
 
     return (
-        <div className="w-full px-3 sm:px-4 py-6 sm:py-8 pb-32 animate-in fade-in slide-in-from-right-4 min-h-full">
+        <div className="w-full px-3 sm:px-4 py-6 sm:py-8 pb-44 md:pb-32 animate-in fade-in slide-in-from-right-4 min-h-full">
             {/* Header / Navigation */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 sm:mb-8">
                 <div className="flex items-center gap-3 min-w-0">
@@ -792,7 +792,7 @@ export function EmailMarketingComposer({
                                 </Button>
                             </div>
                         </div>
-                        <CardContent className="p-0 overflow-hidden">
+                        <CardContent className="p-0">
                             <Tabs value={activeLangTab} onValueChange={(val) => {
                                 setActiveLangTab(val);
                                 setTargetLanguage(val);
@@ -1232,7 +1232,7 @@ export function EmailMarketingComposer({
             )}
 
             {/* Sticky Action Bar */}
-            <div className="fixed bottom-0 left-0 right-0 h-20 bg-white/80 backdrop-blur-md border-t z-[40] flex items-center">
+            <div className="fixed bottom-16 md:bottom-0 left-0 right-0 h-20 bg-white/80 backdrop-blur-md border-t z-[40] flex items-center">
                 <div className="w-full px-4 sm:px-6 flex items-center justify-between">
                     <div className="hidden md:block">
                         <p className="text-sm font-bold text-slate-700">{template.name}</p>
