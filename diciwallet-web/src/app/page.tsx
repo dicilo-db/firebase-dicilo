@@ -30,6 +30,7 @@ const localTranslations = {
     nav_login: "Iniciar sesión",
     nav_dashboard: "Mi Wallet",
     
+    hero_badge: "Ecosistema Circular Cerrado",
     hero_title: "DiciCoin: el símbolo de acceso al ecosistema Dicilo",
     hero_subtitle: "Una moneda física, conmemorativa y coleccionable que representa pertenencia, participación temprana y acceso a beneficios internos dentro de Dicilo.",
     hero_btn_learn: "Conocer DiciCoin",
@@ -85,7 +86,8 @@ const localTranslations = {
     legal_title: "Aviso Legal Obligatorio",
     legal_text: "DiciCoin no constituye una criptomoneda de intercambio público, valor mobiliario, producto financiero, instrumento de inversión ni promesa de rendimiento o rentabilidad. Su adquisición representa la compra de un activo coleccionable físico de edición limitada con derechos simbólicos de acceso preferente dentro del ecosistema circular Dicilo.net. Toda transacción está sujeta a los términos y condiciones de la plataforma.",
 
-    footer_rights: "Todos los derechos reservados. Dicilo Ecosistema Circular."
+    footer_rights: "Todos los derechos reservados. Dicilo Ecosistema Circular.",
+    whatsapp_msg: "Hola, he visto DiciCoin y me gustaría tener mayor información. Por favor comuníquese conmigo a este número."
   },
   EN: {
     nav_home: "Home",
@@ -95,6 +97,7 @@ const localTranslations = {
     nav_login: "Login",
     nav_dashboard: "My Wallet",
     
+    hero_badge: "Closed Circular Ecosystem",
     hero_title: "DiciCoin: the access symbol to the Dicilo ecosystem",
     hero_subtitle: "A physical, commemorative and collectible coin representing membership, early participation and access to internal benefits within Dicilo.",
     hero_btn_learn: "Learn More",
@@ -150,7 +153,8 @@ const localTranslations = {
     legal_title: "Required Legal Disclaimer",
     legal_text: "DiciCoin does not constitute a publicly traded cryptocurrency, security, financial product, investment instrument, or promise of yield or profitability. Its acquisition represents the purchase of a limited edition physical collectible asset with symbolic preferential access rights within the closed circular ecosystem Dicilo.net. All transactions are subject to the platform's terms and conditions.",
 
-    footer_rights: "All rights reserved. Dicilo Circular Ecosystem."
+    footer_rights: "All rights reserved. Dicilo Circular Ecosystem.",
+    whatsapp_msg: "Hello, I have seen DiciCoin and I would like to get more information. Please contact me at this number."
   },
   DE: {
     nav_home: "Startseite",
@@ -160,6 +164,7 @@ const localTranslations = {
     nav_login: "Einloggen",
     nav_dashboard: "Meine Wallet",
     
+    hero_badge: "Geschlossenes Kreislauf-Ökosystem",
     hero_title: "DiciCoin: das Zugangssymbol zum Dicilo-Ökosystem",
     hero_subtitle: "Eine physische, limitierte Gedenkmünze, die Mitgliedschaft, frühe Beteiligung und Zugang zu internen Vorteilen in Dicilo repräsentiert.",
     hero_btn_learn: "Mehr erfahren",
@@ -215,7 +220,8 @@ const localTranslations = {
     legal_title: "Erforderlicher rechtlicher Haftungsausschluss",
     legal_text: "DiciCoin stellt keine öffentlich gehandelte Kryptowährung, kein Wertpapier, kein Finanzprodukt, kein Anlageinstrument oder eine Zusage von Ertrag oder Rentabilität dar. Ihr Erwerb repräsentiert den Kauf eines physischen Sammlerstücks in limitierter Auflage mit symbolischen bevorzugten Zugangsrechten im geschlossenen zirkulären Ökosystem Dicilo.net. Alle Transaktionen unterliegen den Bedingungen der Plattform.",
 
-    footer_rights: "Alle Rechte vorbehalten. Dicilo Zirkuläres Ökosystem."
+    footer_rights: "Alle Rechte vorbehalten. Dicilo Zirkuläres Ökosystem.",
+    whatsapp_msg: "Hallo, ich habe DiciCoin gesehen und würde gerne mehr Informationen erhalten. Bitte kontaktieren Sie mich unter dieser Nummer."
   }
 };
 
@@ -327,10 +333,10 @@ export default function LandingPage() {
         <section id="inicio" style={{ padding: '80px 5% 60px 5%', maxWidth: '1200px', margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr', gap: '40px', alignItems: 'center' }} className="hero-grid">
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
             <div className="glass" style={{ display: 'inline-flex', padding: '6px 12px', borderRadius: '20px', border: '1px solid rgba(212, 175, 55, 0.2)', width: 'fit-content', background: 'rgba(212, 175, 55, 0.04)' }}>
-              <span style={{ color: '#D4AF37', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Ecosistema Circular Cerrado</span>
+              <span style={{ color: '#D4AF37', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{t('hero_badge')}</span>
             </div>
             <h1 style={{ fontSize: '42px', fontWeight: 800, lineHeight: 1.15 }}>
-              DiciCoin: el <span className="text-gold">símbolo de acceso</span> al ecosistema Dicilo
+              {t('hero_title')}
             </h1>
             <p style={{ color: 'var(--text-secondary)', fontSize: '16px', lineHeight: 1.6, maxWidth: '580px' }}>
               {t('hero_subtitle')}
@@ -347,11 +353,11 @@ export default function LandingPage() {
           </div>
           <div style={{ display: 'flex', justifyContent: 'center', position: 'relative' }}>
             <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '80%', height: '80%', borderRadius: '50%', background: 'radial-gradient(circle, rgba(212,175,55,0.15) 0%, transparent 60%)', filter: 'blur(30px)', zIndex: -1 }} />
-            <img 
-              src="/dicicoin-physical.jpg" 
-              alt="DiciCoin Physical Collection" 
+            <img
+              src="/dicicoin-physical.png"
+              alt="DiciCoin Physical Collection"
               className="animate-glow"
-              style={{ width: '100%', maxWidth: '380px', borderRadius: '50%', border: '2px solid rgba(212, 175, 55, 0.2)', boxShadow: '0 20px 50px rgba(0,0,0,0.8), 0 0 40px rgba(212, 175, 55, 0.2)', objectFit: 'cover', aspectRatio: '1/1' }} 
+              style={{ width: '100%', maxWidth: '380px', filter: 'drop-shadow(0 20px 50px rgba(0,0,0,0.8)) drop-shadow(0 0 40px rgba(212,175,55,0.3))' }}
             />
           </div>
         </section>
@@ -560,7 +566,7 @@ export default function LandingPage() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               <span style={{ fontSize: '12px', fontWeight: 700, color: '#D4AF37', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Soporte</span>
               <button onClick={() => handleScrollToSection('faq')} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', fontSize: '13px', cursor: 'pointer', textAlign: 'left', padding: 0 }}>{t('nav_faq')}</button>
-              <a href="https://chat.whatsapp.com/IPFpYXlHJTdH0rZosQGws4" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>WhatsApp</a>
+              <a href={`https://wa.me/491788338735?text=${encodeURIComponent(t('whatsapp_msg'))}`} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>WhatsApp</a>
               <a href="https://t.me/DiciloOficial" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>Telegram</a>
             </div>
 
