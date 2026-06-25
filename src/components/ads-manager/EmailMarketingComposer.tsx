@@ -632,41 +632,41 @@ export function EmailMarketingComposer({
 
 
     return (
-        <div className="w-full px-3 sm:px-4 py-6 sm:py-8 pb-44 md:pb-32 animate-in fade-in slide-in-from-right-4 min-h-full">
+        <div className="w-full max-w-full overflow-x-hidden px-3 sm:px-4 py-6 sm:py-8 pb-44 md:pb-32 animate-in fade-in slide-in-from-right-4 min-h-full">
             {/* Header / Navigation */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 sm:mb-8">
-                <div className="flex items-center gap-3 min-w-0">
+            <div className="w-full max-w-full overflow-hidden mb-6 sm:mb-8 space-y-3">
+                {/* Row 1: back + title */}
+                <div className="flex items-center gap-3 w-full min-w-0 overflow-hidden">
                     {onBack && (
-                        <Button 
-                            variant="outline" 
-                            size="sm" 
-                            onClick={onBack} 
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={onBack}
                             className="bg-white hover:bg-slate-50 border-slate-200 shadow-sm shrink-0"
                         >
-                            <ArrowLeft className="mr-1 sm:mr-2 h-4 w-4" /> 
-                            <span className="hidden sm:inline">{t('adsManager.back', 'Volver a la Lista')}</span>
-                            <span className="sm:hidden">Volver</span>
+                            <ArrowLeft className="h-4 w-4" />
+                            <span className="ml-1 hidden sm:inline">{t('adsManager.back', 'Volver a la Lista')}</span>
+                            <span className="ml-1 sm:hidden">Volver</span>
                         </Button>
                     )}
-                    <div className="min-w-0">
-                        <h2 className="text-lg sm:text-2xl font-bold tracking-tight truncate">{template.name}</h2>
-                        <p className="text-muted-foreground flex items-center gap-2 flex-wrap">
-                             <Badge variant="secondary" className="text-[10px] uppercase shrink-0">{template.category.replace('_', ' ')}</Badge>
-                             <span className="truncate text-xs">ID: {template.id?.slice(0, 8)}</span>
-                        </p>
+                    <div className="min-w-0 flex-1 overflow-hidden">
+                        <h2 className="text-base sm:text-2xl font-bold tracking-tight overflow-hidden text-ellipsis whitespace-nowrap">{template.name}</h2>
+                        <div className="flex items-center gap-2 mt-0.5 overflow-hidden">
+                            <Badge variant="secondary" className="text-[10px] uppercase shrink-0">{template.category.replace('_', ' ')}</Badge>
+                            <span className="text-xs text-muted-foreground truncate">ID: {template.id?.slice(0, 8)}</span>
+                        </div>
                     </div>
                 </div>
-                
-                <div className="flex items-center gap-3 shrink-0">
-                    {/* Reward amount – always visible */}
-                    <div className="flex items-center gap-2 bg-purple-50 px-3 sm:px-4 py-2 rounded-xl border border-purple-100">
-                        <span className="text-sm font-bold text-purple-700 flex items-center">
+                {/* Row 2: DP reward + preview button */}
+                <div className="flex items-center gap-3 w-full overflow-hidden">
+                    <div className="flex items-center gap-2 bg-purple-50 px-3 py-2 rounded-xl border border-purple-100 min-w-0">
+                        <span className="text-sm font-bold text-purple-700 flex items-center shrink-0">
                             +
-                            <Input 
-                                type="number" 
-                                value={rewardAmount} 
+                            <Input
+                                type="number"
+                                value={rewardAmount}
                                 onChange={(e) => setRewardAmount(Number(e.target.value) || 0)}
-                                className="w-14 sm:w-16 h-6 px-1 py-0 mx-1 text-center bg-white border-purple-200 text-purple-700 font-bold hide-arrows disabled:bg-transparent disabled:border-none"
+                                className="w-12 h-6 px-1 py-0 mx-1 text-center bg-white border-purple-200 text-purple-700 font-bold hide-arrows disabled:bg-transparent disabled:border-none"
                                 min="0"
                                 disabled={!isAdmin}
                             />
@@ -674,14 +674,12 @@ export function EmailMarketingComposer({
                         </span>
                         <span className="text-xs text-purple-600/80 font-medium whitespace-nowrap">por envío</span>
                     </div>
-
-                    {/* Mobile preview button */}
                     {isMobile && (
                         <Button
                             variant="outline"
                             size="icon"
                             onClick={() => setIsPreviewOpen(true)}
-                            className="h-10 w-10 border-slate-200 rounded-xl text-slate-600 hover:bg-purple-50 hover:text-purple-600 hover:border-purple-200 transition-colors"
+                            className="h-10 w-10 border-slate-200 rounded-xl text-slate-600 hover:bg-purple-50 hover:text-purple-600 hover:border-purple-200 transition-colors shrink-0"
                             title="Ver vista previa"
                         >
                             <Eye className="h-4 w-4" />
@@ -690,9 +688,9 @@ export function EmailMarketingComposer({
                 </div>
             </div>
 
-            <div className="flex flex-col lg:grid lg:grid-cols-12 gap-6 lg:gap-10 items-stretch lg:items-start pb-24 w-full max-w-full">
+            <div className="flex flex-col lg:grid lg:grid-cols-12 gap-6 lg:gap-10 items-stretch lg:items-start pb-24 w-full max-w-full overflow-hidden">
                 {/* Main Form Area */}
-                <div className="lg:col-span-7 space-y-6 w-full min-w-0">
+                <div className="lg:col-span-7 space-y-6 w-full min-w-0 max-w-full overflow-hidden">
                     {/* 1. Multimedia Card */}
                     <Card className="shadow-sm border-slate-200 overflow-hidden">
                         <div className="bg-slate-50/50 px-4 sm:px-6 py-3 sm:py-4 border-b flex items-center justify-between gap-2">
@@ -812,27 +810,27 @@ export function EmailMarketingComposer({
                                     </TabsList>
                                 </div>
 
-                                <div className="p-4 sm:p-6 space-y-6">
+                                <div className="p-4 sm:p-6 space-y-6 w-full max-w-full overflow-hidden">
                                     {['es', 'en', 'de', 'fr', 'pt', 'it'].map(lang => (
-                                        <TabsContent key={lang} value={lang} className="mt-0 space-y-6 animate-in fade-in duration-300">
-                                            <div className="grid gap-6">
-                                                <div className="space-y-2">
+                                        <TabsContent key={lang} value={lang} className="mt-0 space-y-6 animate-in fade-in duration-300 w-full max-w-full overflow-hidden">
+                                            <div className="grid gap-6 w-full max-w-full">
+                                                <div className="space-y-2 w-full">
                                                     <Label className="text-xs font-bold text-slate-500 uppercase">Asunto del Email</Label>
-                                                    <Input 
+                                                    <Input
                                                         value={texts[lang]?.subject || ''}
                                                         onChange={(e) => setTexts(prev => ({ ...prev, [lang]: { ...prev[lang], subject: e.target.value } }))}
                                                         placeholder="Escribe un asunto atractivo..."
-                                                        className="bg-white border-slate-200 focus-visible:ring-purple-500 h-11 text-base shadow-sm"
+                                                        className="w-full max-w-full bg-white border-slate-200 focus-visible:ring-purple-500 h-11 text-sm shadow-sm"
                                                         readOnly={!canEdit}
                                                     />
                                                 </div>
-                                                <div className="space-y-2 relative">
+                                                <div className="space-y-2 relative w-full">
                                                     <Label className="text-xs font-bold text-slate-500 uppercase">Cuerpo de la promoción</Label>
-                                                    <div className="relative group">
+                                                    <div className="relative group w-full">
                                                         <Textarea
                                                             value={texts[lang]?.body || ''}
                                                             onChange={(e) => setTexts(prev => ({ ...prev, [lang]: { ...prev[lang], body: e.target.value } }))}
-                                                            className="min-h-[300px] resize-none focus-visible:ring-purple-500 bg-white border-slate-200 text-sm leading-relaxed p-5 shadow-sm rounded-xl transition-shadow hover:shadow-md"
+                                                            className="w-full max-w-full min-h-[300px] resize-none focus-visible:ring-purple-500 bg-white border-slate-200 text-sm leading-relaxed p-4 shadow-sm rounded-xl transition-shadow hover:shadow-md"
                                                             placeholder="Describe tu oferta de forma persuasiva..."
                                                             readOnly={!canEdit}
                                                         />
@@ -876,8 +874,8 @@ export function EmailMarketingComposer({
                             <div className="flex flex-col md:flex-row gap-4">
                                 <div className="flex-1 space-y-2 min-w-0">
                                     <Label className="text-xs font-bold text-slate-500 uppercase">Tu enlace de afiliado</Label>
-                                    <div className="flex items-center gap-2 bg-slate-50 p-1.5 rounded-xl border border-slate-200 shadow-inner group transition-colors hover:border-purple-200 overflow-hidden">
-                                        <div className="px-4 text-xs font-mono text-slate-600 select-all truncate flex-1 h-9 flex items-center min-w-0">
+                                    <div className="flex items-center gap-2 bg-slate-50 p-1.5 rounded-xl border border-slate-200 shadow-inner group transition-colors hover:border-purple-200 overflow-hidden max-w-full">
+                                        <div className="px-2 text-xs font-mono text-slate-600 select-all flex-1 min-w-0 overflow-hidden break-all">
                                             {generatedLink}
                                         </div>
                                         <Button
