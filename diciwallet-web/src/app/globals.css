@@ -68,7 +68,7 @@ body::before {
 body::after {
   content: '';
   position: absolute;
-  bottom: -10%;
+  bottom: 0;
   left: -10%;
   width: 50%;
   height: 50%;

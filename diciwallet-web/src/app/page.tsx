@@ -567,7 +567,7 @@ export default function LandingPage() {
               <span style={{ fontSize: '12px', fontWeight: 700, color: '#D4AF37', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Soporte</span>
               <button onClick={() => handleScrollToSection('faq')} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', fontSize: '13px', cursor: 'pointer', textAlign: 'left', padding: 0 }}>{t('nav_faq')}</button>
               <a href={`https://wa.me/491788338735?text=${encodeURIComponent(t('whatsapp_msg'))}`} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>WhatsApp</a>
-              <a href="https://t.me/DiciloOficial" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>Telegram</a>
+              <a href="https://t.me/Dicilo_der_Bot" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>Telegram</a>
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
