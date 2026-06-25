@@ -695,14 +695,14 @@ export function EmailMarketingComposer({
                 <div className="lg:col-span-7 space-y-6 w-full min-w-0">
                     {/* 1. Multimedia Card */}
                     <Card className="shadow-sm border-slate-200 overflow-hidden">
-                        <div className="bg-slate-50/50 px-6 py-4 border-b flex items-center justify-between">
-                            <div>
+                        <div className="bg-slate-50/50 px-4 sm:px-6 py-3 sm:py-4 border-b flex items-center justify-between gap-2">
+                            <div className="min-w-0">
                                 <h3 className="text-sm font-bold uppercase tracking-wider text-slate-700">1. Multimedia</h3>
                                 <p className="text-xs text-muted-foreground">Selecciona la imagen para tu mensaje</p>
                             </div>
-                            <Badge variant="outline" className="bg-white">{allImages.length} Imágenes</Badge>
+                            <Badge variant="outline" className="bg-white shrink-0">{allImages.length} Imágenes</Badge>
                         </div>
-                        <CardContent className="p-6">
+                        <CardContent className="p-3 sm:p-6">
                             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
                                 {allImages.map((img, i) => (
                                     <div 
@@ -756,7 +756,7 @@ export function EmailMarketingComposer({
 
                     {/* 2. Contenido & Traducción Card */}
                     <Card className="shadow-sm border-slate-200">
-                        <div className="bg-slate-50/50 px-6 py-3 border-b flex flex-wrap items-center justify-between gap-3">
+                        <div className="bg-slate-50/50 px-4 sm:px-6 py-3 border-b flex flex-wrap items-center justify-between gap-2 sm:gap-3">
                             <div className="flex items-center gap-2">
                                 <div className="p-1.5 bg-purple-100 rounded-lg">
                                     <Sparkles className="h-4 w-4 text-purple-600" />
@@ -792,7 +792,7 @@ export function EmailMarketingComposer({
                                 </Button>
                             </div>
                         </div>
-                        <CardContent className="p-0">
+                        <CardContent className="p-0 overflow-hidden">
                             <Tabs value={activeLangTab} onValueChange={(val) => {
                                 setActiveLangTab(val);
                                 setTargetLanguage(val);
@@ -812,7 +812,7 @@ export function EmailMarketingComposer({
                                     </TabsList>
                                 </div>
 
-                                <div className="p-6 space-y-6">
+                                <div className="p-4 sm:p-6 space-y-6">
                                     {['es', 'en', 'de', 'fr', 'pt', 'it'].map(lang => (
                                         <TabsContent key={lang} value={lang} className="mt-0 space-y-6 animate-in fade-in duration-300">
                                             <div className="grid gap-6">
@@ -836,7 +836,7 @@ export function EmailMarketingComposer({
                                                             placeholder="Describe tu oferta de forma persuasiva..."
                                                             readOnly={!canEdit}
                                                         />
-                                                        <div className="absolute top-4 right-4 flex flex-col gap-2 scale-90 md:group-hover:scale-100 transition-transform">
+                                                        <div className="absolute top-4 right-4 flex flex-col gap-2 scale-90 group-hover:scale-100 transition-transform">
                                                             <Button
                                                                 size="icon"
                                                                 variant="secondary"
@@ -869,11 +869,11 @@ export function EmailMarketingComposer({
 
                     {/* 3. Programación & Enlace Card */}
                     <Card className="shadow-sm border-slate-200">
-                        <div className="bg-slate-50/50 px-6 py-4 border-b">
+                        <div className="bg-slate-50/50 px-4 sm:px-6 py-3 sm:py-4 border-b">
                             <h3 className="text-sm font-bold uppercase tracking-wider text-slate-700">3. Configuración del Enlace</h3>
                         </div>
-                        <CardContent className="p-6 space-y-6">
-                            <div className="flex flex-col xl:flex-row gap-4">
+                        <CardContent className="p-4 sm:p-6 space-y-6">
+                            <div className="flex flex-col md:flex-row gap-4">
                                 <div className="flex-1 space-y-2 min-w-0">
                                     <Label className="text-xs font-bold text-slate-500 uppercase">Tu enlace de afiliado</Label>
                                     <div className="flex items-center gap-2 bg-slate-50 p-1.5 rounded-xl border border-slate-200 shadow-inner group transition-colors hover:border-purple-200 overflow-hidden">
@@ -891,7 +891,7 @@ export function EmailMarketingComposer({
                                     </div>
                                     <p className="text-[10px] text-muted-foreground px-1 italic">Este enlace trackeará todas las conversiones automáticamente.</p>
                                 </div>
-                                <div className="space-y-2 xl:w-[220px] shrink-0">
+                                <div className="space-y-2 md:w-[220px] shrink-0">
                                     <Label className="text-xs font-bold text-slate-500 uppercase">Programar envío (Opcional)</Label>
                                     <Popover>
                                         <PopoverTrigger asChild>
@@ -917,11 +917,11 @@ export function EmailMarketingComposer({
 
                     {/* 4. Personalizar Invitación Múltiple Card */}
                     <Card id="personalizar-invitacion" className="shadow-sm border-slate-200 border-l-4 border-l-blue-500 overflow-hidden mt-6">
-                        <div className="bg-blue-50/50 px-6 py-4 border-b">
+                        <div className="bg-blue-50/50 px-4 sm:px-6 py-3 sm:py-4 border-b">
                             <h3 className="text-sm font-bold uppercase tracking-wider text-blue-800">4. Personalizar Invitación Múltiple</h3>
                             <p className="text-xs text-muted-foreground">Agrega hasta 7 amigos y envíales una invitación personalizada de esta campaña.</p>
                         </div>
-                        <CardContent className="p-6">
+                        <CardContent className="p-4 sm:p-6">
                             <div className="space-y-6">
                                 {/* Sender Info */}
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -946,7 +946,7 @@ export function EmailMarketingComposer({
 
                                 {/* Add Friend Form */}
                                 <div className="space-y-4">
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 items-end">
                                         <div className="space-y-2">
                                             <Label className="text-xs font-bold text-slate-500 uppercase">Empresa (Opcional)</Label>
                                             <Input
