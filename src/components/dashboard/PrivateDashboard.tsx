@@ -41,6 +41,7 @@ import { AlliesMap } from './AlliesMap';
 import { MiBox } from './MiBox';
 import { SuperAdminStatsGrid } from './SuperAdminStatsGrid';
 import { MyNetworkView } from './MyNetworkView';
+import { GamesSection } from './GamesSection';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { ensureHttps, formatSocialUrl } from '@/lib/url-utils';
@@ -812,6 +813,8 @@ export function PrivateDashboard({ user, profile, initialWalletData }: PrivateDa
                 return <DiciCoinSection userData={formData} walletData={walletData} onViewHistory={() => handleViewChange('wallet')} />;
             case 'tickets':
                 return <TicketsManager />;
+            case 'games':
+                return <GamesSection />;
             case 'ads-manager':
                 return <AdsDashboard />;
             case 'calendar':

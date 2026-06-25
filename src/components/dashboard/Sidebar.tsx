@@ -26,7 +26,8 @@ import {
     Share2,
     HelpCircle,
     Network,
-    Calendar
+    Calendar,
+    Gamepad2
 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -130,6 +131,7 @@ export function Sidebar({ userData, onViewChange, currentView }: SidebarProps) {
         { id: 'map', label: t('dashboard.alliesMapNav'), icon: MapIcon, type: 'view' },
         { id: 'settings', label: t('dashboard.settings'), icon: Settings, type: 'view' },
         // Added items from header - NOW VIEWS for SPA
+        { id: 'games', label: 'Juegos', icon: Gamepad2, type: 'view' },
         { id: 'dicicoin', label: 'DiciCoin', icon: Coins, type: 'view' },
         { id: 'tickets', label: t('tickets.title', 'Tickets'), icon: LifeBuoy, type: 'view' },
         { id: 'faqs', label: t('freelancer_menu.faqs', 'FAQs'), icon: HelpCircle, type: 'view' },

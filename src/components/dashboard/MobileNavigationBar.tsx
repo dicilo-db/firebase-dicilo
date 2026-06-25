@@ -3,18 +3,19 @@
 import React from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { 
-    Home, 
-    Share2, 
-    Wallet, 
-    Briefcase, 
-    Users, 
-    Settings, 
-    Scan, 
-    BarChart3, 
+    Home,
+    Share2,
+    Wallet,
+    Briefcase,
+    Users,
+    Settings,
+    Scan,
+    BarChart3,
     Database,
     Bot,
     Cookie,
-    GraduationCap
+    GraduationCap,
+    Gamepad2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -163,16 +164,16 @@ export function MobileNavigationBar({ userData, currentView, onViewChange }: Mob
                 <span>Wallet</span>
             </button>
 
-            {/* Cookies */}
+            {/* Juegos */}
             <button
-                onClick={() => window.dispatchEvent(new Event('open-cookie-settings'))}
+                onClick={() => onViewChange('games')}
                 className={cn(
                     "flex flex-col items-center justify-center flex-1 h-full py-1 text-[10px] transition-colors",
-                    "text-slate-500 hover:text-primary"
+                    currentView === 'games' ? "text-purple-600 font-bold" : "text-slate-500"
                 )}
             >
-                <Cookie className="h-5 w-5 mb-0.5" />
-                <span>Cookies</span>
+                <Gamepad2 className="h-5 w-5 mb-0.5" />
+                <span>Juegos</span>
             </button>
 
             {/* Perfil / Settings */}
