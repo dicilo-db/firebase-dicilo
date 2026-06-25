@@ -581,8 +581,8 @@ export default function LandingPage() {
         <div style={{ borderTop: '1px solid var(--border-light)', paddingTop: '24px', maxWidth: '1200px', margin: '0 auto', width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px', fontSize: '12px', color: 'var(--text-muted)' }}>
           <span>© {new Date().getFullYear()} Dicilo. {t('footer_rights')}</span>
           <div style={{ display: 'flex', gap: '16px' }}>
-            <Link href="/privacy" style={{ hover: { color: '#00E5FF' } }}>Privacidad</Link>
-            <Link href="/imprint" style={{ hover: { color: '#00E5FF' } }}>Aviso Legal</Link>
+            <Link href="/privacy" style={{ color: 'var(--text-muted)' }}>Privacidad</Link>
+            <Link href="/imprint" style={{ color: 'var(--text-muted)' }}>Aviso Legal</Link>
           </div>
         </div>
       </footer>
