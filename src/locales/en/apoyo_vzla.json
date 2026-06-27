@@ -1,0 +1,119 @@
+{
+  "emergencyBadge": "SEISMIC EMERGENCY · June 24, 2026",
+  "heroTitle": "Together we help Venezuela",
+  "heroDesc": "After the devastating double earthquake of June 24, 2026 (M7.2 + M7.5), Venezuela urgently needs help. No bureaucracy, no middlemen — funds go directly to the affected families.",
+  "pills": {
+    "noMiddlemen": "🚀 No middlemen",
+    "transparency": "🔒 Full transparency",
+    "anyCountry": "🌍 From any country",
+    "youDecide": "💶 You decide the amount"
+  },
+  "mhcWarning": {
+    "question": "Why does the beneficiary appear as \"MILENIUM HOLDING & CONSULTING UG\"?",
+    "answer": "Dicilo is a registered trademark of MILENIUM HOLDING & CONSULTING UG, a company based in Hamburg, Germany. By transferring to that name you are donating directly to this official solidarity initiative of dicilo.net."
+  },
+  "revolutBtn": "Click here to ❤️ make your donation",
+  "revolutBtnSub": "Direct payment · Instant · No fee",
+  "supportOrgs": {
+    "title": "🤝 Organizations supporting Venezuela",
+    "subtitle": "These initiatives are also working on the ground. Visit and support them.",
+    "orgs": [
+      { "name": "Red Ayuda Venezuela", "desc": "Coordinated network of volunteers and organizations channeling humanitarian aid to the affected areas.", "url": "https://redayudavenezuela.com" },
+      { "name": "Apoyo Salud Pro", "desc": "Medical and health support platform for the earthquake victims in Venezuela.", "url": "https://apoyo.salu.pro" },
+      { "name": "Desaparecidos Terremoto Venezuela", "desc": "Registry and search for missing persons after the June 24, 2026 earthquake in Venezuela.", "url": "https://desaparecidosterremotovenezuela.com" },
+      { "name": "Hospitales en Venezuela", "desc": "Updated information on the status of hospitals and medical centres in Venezuela.", "url": "https://hospitalesenvenezuela.com" }
+    ]
+  },
+  "reference": {
+    "title": "Mandatory reference · Verwendungszweck",
+    "hint": "Write this reference exactly in the reference/reason field of your bank transfer or Revolut Pay. Not required for crypto."
+  },
+  "payments": {
+    "title": "Payment methods",
+    "revolut": {
+      "name": "Revolut Pay",
+      "subtitle": "Instant · No fee · Recommended",
+      "qrCaption": "Scan with your Revolut app or use the direct link in the app"
+    },
+    "bank": {
+      "name": "Bank Transfer",
+      "subtitle": "SEPA (Europe) · SWIFT (International)",
+      "beneficiary": "Beneficiary",
+      "bank": "Bank"
+    },
+    "usdt": {
+      "name": "Crypto — USDT TRC-20",
+      "subtitle": "Tron Network · No reference needed",
+      "warning": "Send only USDT on the TRC-20 network (Tron). Verify the network before sending to avoid losing funds."
+    },
+    "copy": "Copy",
+    "copied": "Copied"
+  },
+  "howItWorks": {
+    "title": "🗺️ How does your donation arrive?",
+    "steps": [
+      { "n": "01", "t": "You donate", "d": "Choose your preferred method. The amount is up to you — no minimum or maximum." },
+      { "n": "02", "t": "We receive", "d": "Funds enter the Venezuela Humanitarian Aid account of Dicilo / MILENIUM HOLDING. Every receipt is recorded." },
+      { "n": "03", "t": "We send", "d": "We transfer directly to our verified contacts in Venezuela through secure channels." },
+      { "n": "04", "t": "We deliver", "d": "Dicilo's own staff in Venezuela distributes funds as first-response aid. No middlemen. No bureaucracy." }
+    ]
+  },
+  "commitments": {
+    "title": "🛡️ Our commitments",
+    "items": [
+      { "t": "Direct delivery", "d": "Money doesn't pass through NGOs or agencies. Our own team in Venezuela receives and distributes funds without any intermediary." },
+      { "t": "Public transparency", "d": "We publish every donation received and every transfer made with amount, date and destination. If it didn't arrive, we don't say it did." },
+      { "t": "Real community", "d": "Dicilo is a community, not an institution. Many of us are Venezuelan or have family there. This is personal." }
+    ]
+  },
+  "emergency": {
+    "title": "🚨 The emergency",
+    "p1": "On Wednesday, June 24, 2026, Venezuela was struck by one of the most severe seismic events in its recent history. Two powerful earthquakes of magnitudes 7.2 and 7.5 occurred just 39 seconds apart, in an unusual phenomenon known as a seismic doublet.",
+    "p2": "According to the United States Geological Survey (USGS), the seismic sequence originated in the region between Morón, San Felipe and Yumare, west of Caracas, and its effects were felt across much of the national territory and even in neighboring countries. Authorities and scientific teams continue to analyze the aftershock sequence and the full extent of the damage. Experts warn that this is one of the most significant earthquakes recorded in Venezuela in over a century.",
+    "p3": "The most affected areas include La Guaira, Caracas, Miranda, Aragua, Carabobo, Falcón and Yaracuy, where numerous buildings, homes and public infrastructure suffered varying degrees of damage. In several sectors of Caracas, including neighborhoods and areas such as El Junquito, assessment and assistance work continues. In La Guaira, one of the hardest-hit states, significant structural collapses, damage to residential areas and impacts to strategic infrastructure near the country's main international airport were reported.",
+    "p4": "From the first hours after the disaster, thousands of rescue workers, firefighters, doctors, volunteers and citizens have worked tirelessly to locate survivors, treat the injured and support families who have lost everything. However, humanitarian needs remain enormous. Many people remain displaced, numerous homes have become uninhabitable, and there are still communities in need of food, drinking water, medicine, hygiene products and basic materials to begin their recovery.",
+    "p5": "Although national and international aid has begun to arrive, much remains to be done. The rescue phase is evolving into a stage of recovery and reconstruction that will require the joint effort of citizens, organizations and solidarity communities from around the world.",
+    "p6": "Every contribution represents an opportunity to bring relief to those facing one of the most difficult trials of their lives. Together we can transform solidarity into real help and accompany the Venezuelan people on the long road to recovery."
+  },
+  "activity": {
+    "title": "📋 Activity log",
+    "event1date": "June 24, 2026 · Seismic emergency",
+    "event1text": "Double earthquake M7.2 + M7.5 strikes Yaracuy state, Venezuela. Immediate opening of the emergency campaign on dicilo.net. Venezuela Humanitarian Aid account activated in Revolut Business under MILENIUM HOLDING & CONSULTING UG.",
+    "event2date": "First shipment — pending",
+    "event2text": "We will publish the total amount raised, transfer date and proof of dispatch as soon as the first shipment to Venezuela is made."
+  },
+  "footer": "An initiative of the Dicilo Community · Organized by MILENIUM HOLDING & CONSULTING UG, Hamburg 🇩🇪",
+  "backLink": "Dicilo Community",
+  "banner": {
+    "badge": "Emergency",
+    "date": "Venezuela Earthquake · Jun 24, 2026",
+    "cta": "Dicilo Helps Venezuela — Donate now, no middlemen",
+    "link": "View →"
+  },
+  "fieldOrgs": {
+    "title": "🤝 Organizations working in Venezuela",
+    "intro": "These international and local organizations have active teams on the ground in Venezuela following the double earthquake of June 24, 2026. If you want to coordinate shipments or logistics, contact each organization directly.",
+    "orgs": [
+      { "emoji": "🔴", "name": "International Red Cross (IFRC)", "zone": "Caracas · La Guaira · Yaracuy", "help": "Search & rescue · Medical care · Shelter · Drinking water", "status": "🟢 ACTIVE", "extra": "Bizum 33512 · SMS VENEZUELA to 38092", "web": [{ "label": "cruzroja.es", "url": "https://www.cruzroja.es" }, { "label": "cruzroja.org.ve", "url": "https://www.cruzroja.org.ve" }] },
+      { "emoji": "🍽️", "name": "World Central Kitchen", "zone": "Caracas · La Guaira · Coastal areas", "help": "Hot meals · Emergency food distribution", "status": "🟢 ACTIVE — deployed since Jun 25", "extra": "", "web": [{ "label": "wck.org", "url": "https://wck.org" }, { "label": "Donate", "url": "https://donate.wck.org/campaign/749360/donate" }] },
+      { "emoji": "🟦", "name": "UNICEF", "zone": "National (focus on children)", "help": "Child protection · Safe water · Emergency supplies", "status": "🟢 ACTIVE", "extra": "", "web": [{ "label": "unicef.org", "url": "https://www.unicef.org" }] },
+      { "emoji": "🌍", "name": "UN / OCHA", "zone": "National coordination", "help": "International coordination · USAR teams · Damage assessment", "status": "🟢 ACTIVE", "extra": "", "web": [{ "label": "unocha.org", "url": "https://www.unocha.org" }] },
+      { "emoji": "👶", "name": "Save the Children", "zone": "Caracas · Miranda · La Guaira", "help": "Child protection · Shelter · Food · Psychosocial support", "status": "🟢 ACTIVE", "extra": "", "web": [{ "label": "savethechildren.org", "url": "https://www.savethechildren.org" }] },
+      { "emoji": "🏥", "name": "Project HOPE", "zone": "4 active assessment zones", "help": "Medical assistance · Emergency trauma care", "status": "🟢 ACTIVE — 4 teams in the field", "extra": "", "web": [{ "label": "projecthope.org", "url": "https://www.projecthope.org" }] },
+      { "emoji": "🌐", "name": "CADENA", "zone": "Affected areas — active logistics", "help": "Emergency response · Direct supply delivery", "status": "🟢 ACTIVE", "extra": "", "web": [{ "label": "cadena.ngo", "url": "https://cadena.ngo" }] },
+      { "emoji": "🇨🇴", "name": "Colombian Red Cross + ABACO", "zone": "Colombia-Venezuela border · Bogotá (collection)", "help": "Food · Transport logistics to Venezuela", "status": "🟢 ACTIVE — 13 food banks activated", "extra": "", "web": [{ "label": "Donate", "url": "https://ayuda.cruzrojacolombiana.org" }] },
+      { "emoji": "🙏", "name": "Cáritas (Venezuela + Spain)", "zone": "Barquisimeto · Lara · National diocesan network", "help": "Collection centres · Food · Pastoral and psychological care", "status": "🟢 ACTIVE", "extra": "Cáritas España: Bizum 0089", "web": [] },
+      { "emoji": "💛", "name": "We Love Foundation + GEM", "zone": "National (funds via GoFundMe)", "help": "Food · Water · Hygiene kits · Shelter · Logistics", "status": "🟢 ACTIVE — +USD 1M raised", "extra": "", "web": [{ "label": "GoFundMe", "url": "https://www.gofundme.com/f/emergency-relief-for-venezuela-earthquake-victims" }] }
+    ],
+    "additionalTitle": "Resources & support networks",
+    "findSomeone": {
+      "title": "🔍 Looking for someone?",
+      "text": "If you have family or acquaintances you cannot reach in Venezuela, these resources may help:",
+      "links": [
+        { "label": "desaparecidosterremotovenezuela.com", "url": "https://desaparecidosterremotovenezuela.com", "desc": "Registry with +21,000 reports" },
+        { "label": "recursos-venezuela.netlify.app", "url": "https://recursos-venezuela.netlify.app", "desc": "Full directory: hospitals, collection centres, SOS maps" },
+        { "label": "Red Cross: Family Contact Restoration Service", "url": "", "desc": "" }
+      ]
+    }
+  }
+}
