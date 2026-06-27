@@ -1,8 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
-import { ArrowLeft, Trophy, Clock, Lock, Play, Gamepad2 } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { ArrowLeft, Trophy, Clock, Lock, Play, Gamepad2, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/context/AuthContext';
+import { addGameReward } from '@/app/actions/game-rewards';
+import { toast } from '@/hooks/use-toast';
 
 type Difficulty = 'Fácil' | 'Medio' | 'Difícil';
 
@@ -66,6 +69,7 @@ export function GamesSection() {
     if (activeGame) {
         return <GamePlayer game={activeGame} onBack={() => setActiveGame(null)} />;
     }
+
 
     return (
         <div className="space-y-6">
@@ -142,6 +146,35 @@ function GameCard({ game, onPlay }: { game: Game; onPlay: () => void }) {
 }
 
 function GamePlayer({ game, onBack }: { game: Game; onBack: () => void }) {
+    const { user } = useAuth();
+    const [rewarded, setRewarded] = useState(false);
+    const rewardedRef = useRef(false);
+
+    useEffect(() => {
+        const handler = async (e: MessageEvent) => {
+            if (
+                e.data?.type === 'DICILO_GAME_RESULT' &&
+                e.data?.game === game.id &&
+                e.data?.dp > 0 &&
+                !rewardedRef.current
+            ) {
+                rewardedRef.current = true;
+                setRewarded(true);
+                if (user?.uid) {
+                    const res = await addGameReward(user.uid, e.data.dp, game.title);
+                    if (res.success) {
+                        toast({
+                            title: `🏆 +${e.data.dp} DP añadidos`,
+                            description: `Tu wallet ha sido actualizada con los puntos de "${game.title}".`,
+                        });
+                    }
+                }
+            }
+        };
+        window.addEventListener('message', handler);
+        return () => window.removeEventListener('message', handler);
+    }, [game, user]);
+
     return (
         <div className="flex flex-col" style={{ minHeight: 'calc(100vh - 4rem)' }}>
             <div className="flex shrink-0 items-center gap-3 border-b border-slate-700 bg-slate-900 px-4 py-3">
@@ -157,9 +190,15 @@ function GamePlayer({ game, onBack }: { game: Game; onBack: () => void }) {
                 <span className="flex-1 truncate font-bold text-slate-100">
                     {game.icon} {game.title}
                 </span>
-                <span className="shrink-0 text-xs font-bold text-yellow-400">
-                    🏆 Gana hasta {game.dp}
-                </span>
+                {rewarded ? (
+                    <span className="shrink-0 flex items-center gap-1 text-xs font-bold text-emerald-400">
+                        <CheckCircle2 className="h-4 w-4" /> +100 DP
+                    </span>
+                ) : (
+                    <span className="shrink-0 text-xs font-bold text-yellow-400">
+                        🏆 10 vasos = {game.dp}
+                    </span>
+                )}
             </div>
 
             <iframe

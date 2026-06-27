@@ -48,13 +48,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.checkFreelancerGreenCard = exports.cleanupDuplicates = exports.fixSuperAdmin = exports.seedCategories = exports.checkIncompleteProfiles = exports.seedDatabase = exports.demoteToBasic = exports.promoteToClient = exports.notifyAdminOnClientRecommendation = exports.consentDecline = exports.consentAccept = exports.taskWorker = exports.submitRecommendation = exports.syncExistingCustomersToErp = exports.notifyAdminOnTopUp = exports.notifyAdminOnRegistration = exports.sendRegistrationToErp = exports.onAdminWrite = void 0;
+exports.fetchVzlaSismos = exports.checkFreelancerGreenCard = exports.cleanupDuplicates = exports.fixSuperAdmin = exports.seedCategories = exports.checkIncompleteProfiles = exports.seedDatabase = exports.demoteToBasic = exports.promoteToClient = exports.notifyAdminOnClientRecommendation = exports.consentDecline = exports.consentAccept = exports.taskWorker = exports.submitRecommendation = exports.syncExistingCustomersToErp = exports.notifyAdminOnTopUp = exports.notifyAdminOnRegistration = exports.sendRegistrationToErp = exports.onAdminWrite = void 0;
 /**
  * @fileoverview Cloud Functions for Firebase (Gen 2).
  * Migrated to Gen 2 to support Node 20 and explicit CPU/Memory configuration.
  */
 const firestore_1 = require("firebase-functions/v2/firestore");
 const https_1 = require("firebase-functions/v2/https");
+const scheduler_1 = require("firebase-functions/v2/scheduler");
 const v2_1 = require("firebase-functions/v2");
 const admin = __importStar(require("firebase-admin"));
 const axios_1 = __importDefault(require("axios"));
@@ -991,4 +992,60 @@ exports.checkFreelancerGreenCard = (0, firestore_1.onDocumentUpdated)({ document
             yield ((_d = event.data) === null || _d === void 0 ? void 0 : _d.after.ref.update({ notified20Euro: admin.firestore.FieldValue.delete() }));
         }
     }
+}));
+// ─── Venezuela Seismic Monitor ───────────────────────────────────────────────
+// Runs every 60 minutes, fetches USGS data for Venezuela region and saves
+// new seismic events to Firestore collection `vzla_seismic_log`.
+exports.fetchVzlaSismos = (0, scheduler_1.onSchedule)({
+    schedule: 'every 60 minutes',
+    region: 'us-central1',
+    timeoutSeconds: 60,
+}, () => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
+    const db = admin.firestore();
+    // Venezuela bounding box + M>=2.5 since the June 24 2026 main event
+    const apiUrl = 'https://earthquake.usgs.gov/fdsnws/event/1/query' +
+        '?format=geojson' +
+        '&minmagnitude=2.5' +
+        '&minlatitude=0' +
+        '&maxlatitude=14' +
+        '&minlongitude=-75' +
+        '&maxlongitude=-59' +
+        '&orderby=time' +
+        '&limit=50' +
+        '&starttime=2026-06-24T00:00:00';
+    let features = [];
+    try {
+        const res = yield axios_1.default.get(apiUrl, { timeout: 20000 });
+        features = (_b = (_a = res.data) === null || _a === void 0 ? void 0 : _a.features) !== null && _b !== void 0 ? _b : [];
+    }
+    catch (err) {
+        logger.error('USGS fetch failed', err);
+        return;
+    }
+    if (!features.length) {
+        logger.info('No USGS events returned for Venezuela');
+        return;
+    }
+    const batch = db.batch();
+    for (const f of features) {
+        const p = f.properties;
+        const g = (_d = (_c = f.geometry) === null || _c === void 0 ? void 0 : _c.coordinates) !== null && _d !== void 0 ? _d : [];
+        const docRef = db.collection('vzla_seismic_log').doc(f.id);
+        batch.set(docRef, {
+            usgsId: f.id,
+            magnitude: (_e = p.mag) !== null && _e !== void 0 ? _e : null,
+            place: (_f = p.place) !== null && _f !== void 0 ? _f : '',
+            time: new Date(p.time),
+            url: (_g = p.url) !== null && _g !== void 0 ? _g : '',
+            type: (_h = p.type) !== null && _h !== void 0 ? _h : 'earthquake',
+            status: (_j = p.status) !== null && _j !== void 0 ? _j : '',
+            lon: (_k = g[0]) !== null && _k !== void 0 ? _k : null,
+            lat: (_l = g[1]) !== null && _l !== void 0 ? _l : null,
+            depth: (_m = g[2]) !== null && _m !== void 0 ? _m : null,
+            updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        }, { merge: true });
+    }
+    yield batch.commit();
+    logger.info(`vzla_seismic_log: upserted ${features.length} events`);
 }));

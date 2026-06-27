@@ -4,6 +4,7 @@
  */
 import { onDocumentWritten, onDocumentCreated, onDocumentUpdated } from 'firebase-functions/v2/firestore';
 import { onCall, onRequest, HttpsError } from 'firebase-functions/v2/https';
+import { onSchedule } from 'firebase-functions/v2/scheduler';
 import { setGlobalOptions } from 'firebase-functions/v2';
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
@@ -1135,6 +1136,74 @@ export const checkFreelancerGreenCard = onDocumentUpdated(
         await event.data?.after.ref.update({ notified20Euro: admin.firestore.FieldValue.delete() });
       }
     }
+  }
+);
+
+// ─── Venezuela Seismic Monitor ───────────────────────────────────────────────
+// Runs every 60 minutes, fetches USGS data for Venezuela region and saves
+// new seismic events to Firestore collection `vzla_seismic_log`.
+export const fetchVzlaSismos = onSchedule(
+  {
+    schedule: 'every 60 minutes',
+    region: 'us-central1',
+    timeoutSeconds: 60,
+  },
+  async () => {
+    const db = admin.firestore();
+
+    // Venezuela bounding box + M>=2.5 since the June 24 2026 main event
+    const apiUrl =
+      'https://earthquake.usgs.gov/fdsnws/event/1/query' +
+      '?format=geojson' +
+      '&minmagnitude=2.5' +
+      '&minlatitude=0' +
+      '&maxlatitude=14' +
+      '&minlongitude=-75' +
+      '&maxlongitude=-59' +
+      '&orderby=time' +
+      '&limit=50' +
+      '&starttime=2026-06-24T00:00:00';
+
+    let features: any[] = [];
+    try {
+      const res = await axios.get(apiUrl, { timeout: 20000 });
+      features = res.data?.features ?? [];
+    } catch (err) {
+      logger.error('USGS fetch failed', err);
+      return;
+    }
+
+    if (!features.length) {
+      logger.info('No USGS events returned for Venezuela');
+      return;
+    }
+
+    const batch = db.batch();
+    for (const f of features) {
+      const p = f.properties;
+      const g = f.geometry?.coordinates ?? [];
+      const docRef = db.collection('vzla_seismic_log').doc(f.id);
+      batch.set(
+        docRef,
+        {
+          usgsId:    f.id,
+          magnitude: p.mag ?? null,
+          place:     p.place ?? '',
+          time:      new Date(p.time),
+          url:       p.url ?? '',
+          type:      p.type ?? 'earthquake',
+          status:    p.status ?? '',
+          lon:       g[0] ?? null,
+          lat:       g[1] ?? null,
+          depth:     g[2] ?? null,
+          updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        },
+        { merge: true }
+      );
+    }
+
+    await batch.commit();
+    logger.info(`vzla_seismic_log: upserted ${features.length} events`);
   }
 );
 

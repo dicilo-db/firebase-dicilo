@@ -47,6 +47,9 @@ import social_es from './locales/es/social.json';
 import client_de from './locales/de/client.json';
 import client_en from './locales/en/client.json';
 import client_es from './locales/es/client.json';
+import apoyo_vzla_de from './locales/de/apoyo_vzla.json';
+import apoyo_vzla_en from './locales/en/apoyo_vzla.json';
+import apoyo_vzla_es from './locales/es/apoyo_vzla.json';
 
 const resources = {
   de: {
@@ -64,6 +67,7 @@ const resources = {
     login: login_de,
     social: social_de,
     client: client_de,
+    apoyo_vzla: apoyo_vzla_de,
   },
   en: {
     common: common_en,
@@ -80,6 +84,7 @@ const resources = {
     login: login_en,
     social: social_en,
     client: client_en,
+    apoyo_vzla: apoyo_vzla_en,
   },
   es: {
     common: common_es,
@@ -96,6 +101,7 @@ const resources = {
     login: login_es,
     social: social_es,
     client: client_es,
+    apoyo_vzla: apoyo_vzla_es,
   },
 };
 
