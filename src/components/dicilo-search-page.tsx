@@ -223,7 +223,7 @@ export default function DiciloSearchPage({
   const [mapCenter, setMapCenter] = useState<[number, number]>([
     53.5511, 9.9937,
   ]);
-  const [mapZoom, setMapZoom] = useState(12);
+  const [mapZoom, setMapZoom] = useState(10);
   const [selectedBusinessId, setSelectedBusinessId] = useState<string | null>(
     null
   );
