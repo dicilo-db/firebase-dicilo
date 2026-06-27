@@ -399,6 +399,34 @@
                     "order": "DESCENDING"
                 }
             ]
+        },
+        {
+            "collectionGroup": "vzla_field_reports",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
+                    "fieldPath": "status",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "createdAt",
+                    "order": "DESCENDING"
+                }
+            ]
+        },
+        {
+            "collectionGroup": "vzla_api_keys",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
+                    "fieldPath": "key",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "active",
+                    "order": "ASCENDING"
+                }
+            ]
         }
     ],
     "fieldOverrides": [
