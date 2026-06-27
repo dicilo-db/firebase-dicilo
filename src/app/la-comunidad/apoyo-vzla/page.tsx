@@ -60,8 +60,11 @@ export default function ApoyoVzlaPage() {
   const findLinks: FindLink[] = t('fieldOrgs.findSomeone.links', { returnObjects: true }) as any;
 
   type SeismicEvent = { id: string; magnitude: number; place: string; time: string; url: string; depth: number };
+  type FieldReport = { id: string; org: string; orgType: string; zone: string; message: string; category: string; peopleHelped?: number; createdAt: string };
+
   const [sismos, setSismos] = useState<SeismicEvent[]>([]);
   const [sismosLoading, setSismosLoading] = useState(true);
+  const [fieldReports, setFieldReports] = useState<FieldReport[]>([]);
 
   useEffect(() => {
     let interval: ReturnType<typeof setInterval>;
@@ -77,6 +80,17 @@ export default function ApoyoVzlaPage() {
     load();
     interval = setInterval(load, 5 * 60 * 1000); // refresh every 5 min
     return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const loadReports = async () => {
+      try {
+        const res = await fetch('/api/apoyo-vzla');
+        const data = await res.json();
+        if (Array.isArray(data.fieldReports)) setFieldReports(data.fieldReports);
+      } catch { /* silent */ }
+    };
+    loadReports();
   }, []);
 
   const mapContainerRef = useRef<HTMLDivElement>(null);
@@ -461,6 +475,37 @@ export default function ApoyoVzlaPage() {
                   <p className="text-sm text-slate-700 leading-relaxed">{t('activity.event1text')}</p>
                 </div>
               </div>
+
+              {/* Field reports from partner organizations */}
+              {fieldReports.length > 0 && fieldReports.map((r, i) => {
+                const date = r.createdAt ? new Date(r.createdAt) : null;
+                const dateStr = date
+                  ? date.toLocaleDateString('es-VE', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+                  : '';
+                const categoryEmoji: Record<string, string> = {
+                  delivery: '📦', rescue: '🚒', medical: '🏥', shelter: '🏠',
+                  food: '🍽️', water: '💧', missing: '🔍', update: '📢', general: '📋',
+                };
+                return (
+                  <div key={r.id} className="flex gap-4">
+                    <div className="flex flex-col items-center">
+                      <div className="w-3 h-3 rounded-full shrink-0 mt-0.5 bg-emerald-500" />
+                      <div className="w-0.5 flex-1 bg-slate-100 mt-1" />
+                    </div>
+                    <div className="pb-3">
+                      <div className="flex items-center gap-2 mb-0.5 flex-wrap">
+                        <span className="text-xs font-bold text-emerald-700">{categoryEmoji[r.category] ?? '📋'} {r.org}</span>
+                        {r.zone && <span className="text-xs text-slate-400">· {r.zone}</span>}
+                        {dateStr && <span className="text-xs text-slate-400">{dateStr}</span>}
+                      </div>
+                      <p className="text-sm text-slate-700 leading-relaxed">{r.message}</p>
+                      {r.peopleHelped != null && r.peopleHelped > 0 && (
+                        <p className="text-xs text-emerald-600 mt-0.5">👥 {r.peopleHelped.toLocaleString()} personas atendidas</p>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
 
               {/* USGS live events */}
               {sismosLoading && (
