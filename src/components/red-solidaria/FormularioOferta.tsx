@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CATEGORIAS, CATEGORIA_EMOJI, type CategoriaAyuda } from '@/types/red-solidaria';
 import { useGeolocalizacion } from '@/hooks/useGeolocalizacion';
