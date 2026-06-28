@@ -41,13 +41,17 @@ export function FormularioOferta({ onSuccess, onCancel }: Props) {
   const siguientePaso = () => setPaso((p) => Math.min(p + 1, PASO_TOTAL));
   const anteriorPaso  = () => setPaso((p) => Math.max(p - 1, 1));
 
+  // Sync GPS position to form when detected
+  useEffect(() => {
+    if (geoEstado === 'success' && pos && form.lat === 0) {
+      setForm((f) => ({ ...f, lat: pos.lat, lng: pos.lng }));
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [geoEstado, pos]);
+
   const usarGPS = () => {
     obtener();
   };
-
-  if (geoEstado === 'success' && pos && form.lat === 0) {
-    setForm((f) => ({ ...f, lat: pos.lat, lng: pos.lng }));
-  }
 
   const puedeSiguiente = (): boolean => {
     if (paso === 1) return form.categoria !== '';

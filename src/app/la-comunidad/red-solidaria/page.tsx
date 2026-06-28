@@ -3,16 +3,28 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import { Header } from '@/components/header';
 import Footer from '@/components/footer';
-import { ContadoresLive } from '@/components/red-solidaria/ContadoresLive';
-import { MapaRedSolidaria } from '@/components/red-solidaria/MapaRedSolidaria';
 import { TarjetaOferta } from '@/components/red-solidaria/TarjetaOferta';
 import { TarjetaCentro } from '@/components/red-solidaria/TarjetaCentro';
-import { FormularioOferta } from '@/components/red-solidaria/FormularioOferta';
 import { useGeolocalizacion } from '@/hooks/useGeolocalizacion';
 import type { Oferta, CentroAcopio, CategoriaAyuda } from '@/types/red-solidaria';
 import { CATEGORIAS, CATEGORIA_EMOJI } from '@/types/red-solidaria';
+
+// Componentes que usan APIs del navegador (Leaflet, GPS, fetch) — solo cliente
+const ContadoresLive = dynamic(
+  () => import('@/components/red-solidaria/ContadoresLive').then((m) => m.ContadoresLive),
+  { ssr: false, loading: () => <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 h-20 animate-pulse bg-slate-100 rounded-xl" /> }
+);
+const MapaRedSolidaria = dynamic(
+  () => import('@/components/red-solidaria/MapaRedSolidaria').then((m) => m.MapaRedSolidaria),
+  { ssr: false, loading: () => <div className="h-[400px] bg-slate-100 animate-pulse rounded-xl" /> }
+);
+const FormularioOferta = dynamic(
+  () => import('@/components/red-solidaria/FormularioOferta').then((m) => m.FormularioOferta),
+  { ssr: false }
+);
 
 export default function RedSolidariaPage() {
   const { t, i18n } = useTranslation('red_solidaria');
