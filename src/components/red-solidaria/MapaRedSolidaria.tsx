@@ -57,8 +57,8 @@ export function MapaRedSolidaria({
       }
 
       const map = L.map(containerRef.current, {
-        center: [userLat ?? 10.5, userLng ?? -66.9],
-        zoom: 8,
+        center: [userLat ?? 8.0, userLng ?? -66.0],
+        zoom: 5,
         zoomControl: true,
       });
 

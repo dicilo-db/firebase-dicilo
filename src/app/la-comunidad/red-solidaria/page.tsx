@@ -73,6 +73,10 @@ export default function RedSolidariaPage() {
     setTimeout(() => setExito(''), 6000);
   };
 
+  const handleActualizada = (id: string, cambios: Partial<Oferta>) => {
+    setOfertas((prev) => prev.map((o) => o.id === id ? { ...o, ...cambios } as Oferta : o));
+  };
+
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
       <Header />
@@ -237,7 +241,7 @@ export default function RedSolidariaPage() {
                 <div className="text-center text-sm text-slate-400 py-8">{t('mapa.sinOfertas')}</div>
               )}
               {ofertasFiltradas.map((oferta) => (
-                <TarjetaOferta key={oferta.id} oferta={oferta} />
+                <TarjetaOferta key={oferta.id} oferta={oferta} onActualizada={handleActualizada} />
               ))}
               {mostrarCentros && centros.map((centro) => (
                 <TarjetaCentro key={centro.id} centro={centro} />
