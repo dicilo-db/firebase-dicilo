@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useRef } from 'react';
+import 'leaflet/dist/leaflet.css';
 import type { Oferta, CentroAcopio, CategoriaAyuda } from '@/types/red-solidaria';
 import { CATEGORIA_EMOJI } from '@/types/red-solidaria';
 
@@ -48,17 +49,9 @@ export function MapaRedSolidaria({
       const L = (await import('leaflet')).default;
       if (cancelled || !containerRef.current || mapRef.current) return;
 
-      if (!document.getElementById('leaflet-css-rs')) {
-        const link = document.createElement('link');
-        link.id   = 'leaflet-css-rs';
-        link.rel  = 'stylesheet';
-        link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
-        document.head.appendChild(link);
-      }
-
       const map = L.map(containerRef.current, {
-        center: [userLat ?? 8.0, userLng ?? -66.0],
-        zoom: 5,
+        center: [userLat ?? 8.0, userLng ?? -66.5],
+        zoom: 6,
         zoomControl: true,
       });
 

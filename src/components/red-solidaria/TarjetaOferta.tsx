@@ -33,6 +33,8 @@ export function TarjetaOferta({ oferta, distanciaKm, onContactar, onActualizada 
     descripcion:     oferta.descripcion,
     cantidad:        oferta.cantidad ?? '',
     sector:          oferta.sector,
+    lat:             String(oferta.lat ?? ''),
+    lng:             String(oferta.lng ?? ''),
     disponibleHasta: oferta.disponibleHasta ? toLocalDatetime(oferta.disponibleHasta) : '',
   });
 
@@ -52,6 +54,9 @@ export function TarjetaOferta({ oferta, distanciaKm, onContactar, onActualizada 
         cantidad:    form.cantidad || null,
         sector:      form.sector,
       };
+      const lat = parseFloat(form.lat);
+      const lng = parseFloat(form.lng);
+      if (!isNaN(lat) && !isNaN(lng)) { body.lat = lat; body.lng = lng; }
       if (form.disponibleHasta) {
         body.disponibleHasta = new Date(form.disponibleHasta).toISOString();
       }
@@ -117,6 +122,31 @@ export function TarjetaOferta({ oferta, distanciaKm, onContactar, onActualizada 
               onChange={(e) => setForm((f) => ({ ...f, disponibleHasta: e.target.value }))}
               className="w-full text-sm border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-400"
             />
+          </div>
+          <div>
+            <label className="text-xs font-medium text-slate-600 block mb-1">
+              Coordenadas GPS{' '}
+              <span className="text-slate-400 font-normal">
+                — búscalas en <a href="https://www.google.com/maps" target="_blank" rel="noopener" className="underline">Google Maps</a> (click derecho → copiar coordenadas)
+              </span>
+            </label>
+            <div className="grid grid-cols-2 gap-2">
+              <input
+                type="text"
+                value={form.lat}
+                onChange={(e) => setForm((f) => ({ ...f, lat: e.target.value }))}
+                placeholder="Latitud ej: 10.4241"
+                className="text-sm border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-400"
+              />
+              <input
+                type="text"
+                value={form.lng}
+                onChange={(e) => setForm((f) => ({ ...f, lng: e.target.value }))}
+                placeholder="Longitud ej: -71.4407"
+                className="text-sm border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-400"
+              />
+            </div>
+            <p className="text-xs text-slate-400 mt-1">Cabimas, Zulia → 10.4241, -71.4407</p>
           </div>
           {error && <p className="text-xs text-red-600">{error}</p>}
           <div className="flex gap-2 pt-1">
