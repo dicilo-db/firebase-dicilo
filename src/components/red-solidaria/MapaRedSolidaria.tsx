@@ -39,11 +39,14 @@ export function MapaRedSolidaria({
 
   // Initialize map once
   useEffect(() => {
-    if (!containerRef.current || mapRef.current) return;
-    let map: any;
+    if (!containerRef.current) return;
+
+    // cancelled prevents the async race in React StrictMode (double-invoke)
+    let cancelled = false;
 
     const init = async () => {
       const L = (await import('leaflet')).default;
+      if (cancelled || !containerRef.current || mapRef.current) return;
 
       if (!document.getElementById('leaflet-css-rs')) {
         const link = document.createElement('link');
@@ -52,9 +55,8 @@ export function MapaRedSolidaria({
         link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
         document.head.appendChild(link);
       }
-      if (!containerRef.current) return;
 
-      map = L.map(containerRef.current, {
+      const map = L.map(containerRef.current, {
         center: [userLat ?? 10.5, userLng ?? -66.9],
         zoom: 8,
         zoomControl: true,
@@ -71,8 +73,15 @@ export function MapaRedSolidaria({
     };
 
     init();
+
     return () => {
-      if (mapRef.current) { mapRef.current.remove(); mapRef.current = null; }
+      cancelled = true;
+      if (mapRef.current) {
+        mapRef.current.remove();
+        mapRef.current = null;
+      }
+      layerOfertas.current = null;
+      layerCentros.current = null;
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
