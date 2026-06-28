@@ -418,13 +418,6 @@
             ]
         },
         {
-            "collectionGroup": "red_solidaria_centros",
-            "queryScope": "COLLECTION",
-            "fields": [
-                { "fieldPath": "creadoEn", "order": "DESCENDING" }
-            ]
-        },
-        {
             "collectionGroup": "vzla_field_reports",
             "queryScope": "COLLECTION",
             "fields": [
