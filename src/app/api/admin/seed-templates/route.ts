@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { getAdminDb } from '@/lib/firebase-admin';
 import { EmailTemplate } from '@/actions/email-templates';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
     try {
         const db = getAdminDb();

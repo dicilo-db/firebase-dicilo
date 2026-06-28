@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { sendSmtpEmail } from '@/lib/mail-service';
 import { getAdminDb } from '@/lib/firebase-admin';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(req: NextRequest) {
     // Only allow manual trigger by providing a secret query param for safety
     if (req.nextUrl.searchParams.get('secret') !== 'test1234') {

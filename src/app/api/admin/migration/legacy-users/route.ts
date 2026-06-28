@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
-import { getAdminDb, getAdminAuth } from '@/lib/firebase-admin';
+import { getAdminDb } from '@/lib/firebase-admin';
 import * as admin from 'firebase-admin';
+
+export const dynamic = 'force-dynamic';
 
 // SECURITY: This endpoint should be protected. 
 // For this script, we assume a header check or valid Admin session.
