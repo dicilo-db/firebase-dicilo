@@ -9,8 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getEmailI18n = getEmailI18n;
-exports.render = render;
+exports.render = exports.getEmailI18n = void 0;
 function getEmailI18n(lang, db) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -82,6 +81,8 @@ function getEmailI18n(lang, db) {
         return fallback[lang];
     });
 }
+exports.getEmailI18n = getEmailI18n;
 function render(tpl, vars) {
     return tpl.replace(/{{(.*?)}}/g, (_, k) => { var _a; return (_a = vars[k.trim()]) !== null && _a !== void 0 ? _a : ''; });
 }
+exports.render = render;

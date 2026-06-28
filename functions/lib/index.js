@@ -15,23 +15,13 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
@@ -371,7 +361,7 @@ exports.submitRecommendation = (0, https_1.onCall)((request) => __awaiter(void 0
     return { success: true, recommendationId };
 }));
 exports.taskWorker = (0, firestore_1.onDocumentCreated)('recommendation_tasks/{taskId}', (event) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+    var _c;
     const snapshot = event.data;
     if (!snapshot)
         return;
@@ -394,7 +384,7 @@ exports.taskWorker = (0, firestore_1.onDocumentCreated)('recommendation_tasks/{t
             subject: (0, i18n_1.render)(i18n['consent.subject'], { name: recommenderName }),
             html,
         });
-        yield ((_a = event.data) === null || _a === void 0 ? void 0 : _a.ref.update({
+        yield ((_c = event.data) === null || _c === void 0 ? void 0 : _c.ref.update({
             status: 'sent',
             sentAt: admin.firestore.FieldValue.serverTimestamp(),
         }));
@@ -403,7 +393,7 @@ exports.taskWorker = (0, firestore_1.onDocumentCreated)('recommendation_tasks/{t
 const handleConsent = (req, // v2 Request type is compatible with Express req
 res, // v2 Response type is compatible with Express res
 newStatus) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+    var _d;
     const taskId = req.query.taskId;
     if (!taskId) {
         res.status(400).send('Missing taskId parameter.');
@@ -420,7 +410,7 @@ newStatus) => __awaiter(void 0, void 0, void 0, function* () {
         handledAt: admin.firestore.FieldValue.serverTimestamp(),
     });
     if (newStatus === 'accepted') {
-        const recommendationRef = db.doc(`recommendations/${(_a = taskSnap.data()) === null || _a === void 0 ? void 0 : _a.recommendationId}`);
+        const recommendationRef = db.doc(`recommendations/${(_d = taskSnap.data()) === null || _d === void 0 ? void 0 : _d.recommendationId}`);
         yield recommendationRef.update({ acceptedCount: admin.firestore.FieldValue.increment(1) });
     }
     res
@@ -551,7 +541,7 @@ exports.promoteToClient = (0, https_1.onCall)((request) => __awaiter(void 0, voi
     }
 }));
 exports.demoteToBasic = (0, https_1.onCall)((request) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+    var _e;
     if (!request.auth ||
         (request.auth.token.role !== 'admin' &&
             request.auth.token.role !== 'superadmin')) {
@@ -582,7 +572,7 @@ exports.demoteToBasic = (0, https_1.onCall)((request) => __awaiter(void 0, void 
         // Create Business Document
         yield db.collection('businesses').doc(businessId).set({
             name: clientData.clientName || '',
-            description: clientData.description || ((_a = clientData.bodyData) === null || _a === void 0 ? void 0 : _a.description) || '',
+            description: clientData.description || ((_e = clientData.bodyData) === null || _e === void 0 ? void 0 : _e.description) || '',
             // Fix: Transfer translations back
             description_translations: clientData.translations || {},
             category: clientData.category || 'Uncategorized',
@@ -653,7 +643,7 @@ const slugify = (text) => text
     .replace(/[^\w\-]+/g, '')
     .replace(/\-\-+/g, '-');
 exports.seedDatabase = (0, https_1.onRequest)({ timeoutSeconds: 540, memory: '512MiB' }, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+    var _f;
     const businessesCollection = db.collection('businesses');
     let count = 0;
     let updatedCount = 0;
@@ -679,7 +669,7 @@ exports.seedDatabase = (0, https_1.onRequest)({ timeoutSeconds: 540, memory: '51
                 logger.info(`Geocoding ${business.name}...`);
                 coords = yield geocodeAddress(business.address);
             }
-            yield docRef.set(Object.assign(Object.assign({}, business), { coords: coords, createdAt: docSnap.exists ? (_a = docSnap.data()) === null || _a === void 0 ? void 0 : _a.createdAt : admin.firestore.FieldValue.serverTimestamp(), updatedAt: admin.firestore.FieldValue.serverTimestamp(), status: 'verified' }), { merge: true });
+            yield docRef.set(Object.assign(Object.assign({}, business), { coords: coords, createdAt: docSnap.exists ? (_f = docSnap.data()) === null || _f === void 0 ? void 0 : _f.createdAt : admin.firestore.FieldValue.serverTimestamp(), updatedAt: admin.firestore.FieldValue.serverTimestamp(), status: 'verified' }), { merge: true });
             if (docSnap.exists)
                 updatedCount++;
             else
@@ -925,10 +915,10 @@ __exportStar(require("./mlm"), exports);
 // --- Reports & Audits ---
 __exportStar(require("./reports"), exports);
 exports.checkFreelancerGreenCard = (0, firestore_1.onDocumentUpdated)({ document: 'wallets/{uid}', region: 'europe-west1' }, (event) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d;
+    var _g, _h, _j, _k;
     const uid = event.params.uid;
-    const beforeData = (_a = event.data) === null || _a === void 0 ? void 0 : _a.before.data();
-    const afterData = (_b = event.data) === null || _b === void 0 ? void 0 : _b.after.data();
+    const beforeData = (_g = event.data) === null || _g === void 0 ? void 0 : _g.before.data();
+    const afterData = (_h = event.data) === null || _h === void 0 ? void 0 : _h.after.data();
     if (!afterData)
         return;
     const eurBalanceBefore = (beforeData === null || beforeData === void 0 ? void 0 : beforeData.eurBalance) || 0;
@@ -950,7 +940,7 @@ exports.checkFreelancerGreenCard = (0, firestore_1.onDocumentUpdated)({ document
         }
         logger.info(`Collaborator ${uid} reached 20 $ o €! Sending notifications...`);
         // 1. Update the wallet FIRST to prevent duplicate triggers if the email fails or takes long
-        yield ((_c = event.data) === null || _c === void 0 ? void 0 : _c.after.ref.update({ notified20Euro: true }));
+        yield ((_j = event.data) === null || _j === void 0 ? void 0 : _j.after.ref.update({ notified20Euro: true }));
         const currencySymbol = eurBalanceAfter >= 20 ? '€' : '$';
         const balanceAmount = eurBalanceAfter >= 20 ? eurBalanceAfter : usdBalanceAfter;
         // 2. Prepare and send emails
@@ -989,7 +979,7 @@ exports.checkFreelancerGreenCard = (0, firestore_1.onDocumentUpdated)({ document
         catch (error) {
             logger.error(`Error sending 20 Euro/USD emails for ${uid}:`, error);
             // If email fails, revert the flag so it triggers again on next update
-            yield ((_d = event.data) === null || _d === void 0 ? void 0 : _d.after.ref.update({ notified20Euro: admin.firestore.FieldValue.delete() }));
+            yield ((_k = event.data) === null || _k === void 0 ? void 0 : _k.after.ref.update({ notified20Euro: admin.firestore.FieldValue.delete() }));
         }
     }
 }));
@@ -1001,7 +991,7 @@ exports.fetchVzlaSismos = (0, scheduler_1.onSchedule)({
     region: 'us-central1',
     timeoutSeconds: 60,
 }, () => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
+    var _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x;
     const db = admin.firestore();
     // Venezuela bounding box + M>=2.5 since the June 24 2026 main event
     const apiUrl = 'https://earthquake.usgs.gov/fdsnws/event/1/query' +
@@ -1017,7 +1007,7 @@ exports.fetchVzlaSismos = (0, scheduler_1.onSchedule)({
     let features = [];
     try {
         const res = yield axios_1.default.get(apiUrl, { timeout: 20000 });
-        features = (_b = (_a = res.data) === null || _a === void 0 ? void 0 : _a.features) !== null && _b !== void 0 ? _b : [];
+        features = (_m = (_l = res.data) === null || _l === void 0 ? void 0 : _l.features) !== null && _m !== void 0 ? _m : [];
     }
     catch (err) {
         logger.error('USGS fetch failed', err);
@@ -1030,19 +1020,19 @@ exports.fetchVzlaSismos = (0, scheduler_1.onSchedule)({
     const batch = db.batch();
     for (const f of features) {
         const p = f.properties;
-        const g = (_d = (_c = f.geometry) === null || _c === void 0 ? void 0 : _c.coordinates) !== null && _d !== void 0 ? _d : [];
+        const g = (_p = (_o = f.geometry) === null || _o === void 0 ? void 0 : _o.coordinates) !== null && _p !== void 0 ? _p : [];
         const docRef = db.collection('vzla_seismic_log').doc(f.id);
         batch.set(docRef, {
             usgsId: f.id,
-            magnitude: (_e = p.mag) !== null && _e !== void 0 ? _e : null,
-            place: (_f = p.place) !== null && _f !== void 0 ? _f : '',
+            magnitude: (_q = p.mag) !== null && _q !== void 0 ? _q : null,
+            place: (_r = p.place) !== null && _r !== void 0 ? _r : '',
             time: new Date(p.time),
-            url: (_g = p.url) !== null && _g !== void 0 ? _g : '',
-            type: (_h = p.type) !== null && _h !== void 0 ? _h : 'earthquake',
-            status: (_j = p.status) !== null && _j !== void 0 ? _j : '',
-            lon: (_k = g[0]) !== null && _k !== void 0 ? _k : null,
-            lat: (_l = g[1]) !== null && _l !== void 0 ? _l : null,
-            depth: (_m = g[2]) !== null && _m !== void 0 ? _m : null,
+            url: (_s = p.url) !== null && _s !== void 0 ? _s : '',
+            type: (_t = p.type) !== null && _t !== void 0 ? _t : 'earthquake',
+            status: (_u = p.status) !== null && _u !== void 0 ? _u : '',
+            lon: (_v = g[0]) !== null && _v !== void 0 ? _v : null,
+            lat: (_w = g[1]) !== null && _w !== void 0 ? _w : null,
+            depth: (_x = g[2]) !== null && _x !== void 0 ? _x : null,
             updatedAt: admin.firestore.FieldValue.serverTimestamp(),
         }, { merge: true });
     }

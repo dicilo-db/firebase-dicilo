@@ -3,8 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.encrypt = encrypt;
-exports.decrypt = decrypt;
+exports.decrypt = exports.encrypt = void 0;
 const crypto_1 = __importDefault(require("crypto"));
 const ALGORITHM = 'aes-256-gcm';
 const IV_LENGTH = 12;
@@ -25,6 +24,7 @@ function encrypt(text, masterKey) {
     // Format: salt:iv:tag:encrypted
     return `${salt.toString('hex')}:${iv.toString('hex')}:${tag.toString('hex')}:${encrypted.toString('hex')}`;
 }
+exports.encrypt = encrypt;
 /**
  * Decrypts a string using a master key (from environment)
  */
@@ -40,3 +40,4 @@ function decrypt(cipheredText, masterKey) {
     const decrypted = Buffer.concat([decipher.update(encrypted), decipher.final()]);
     return decrypted.toString('utf8');
 }
+exports.decrypt = decrypt;
