@@ -340,6 +340,19 @@ service cloud.firestore {
       allow write: if false; // Updated securely via Server Actions
     }
 
+    // Apoyo Venezuela — Partner API collections
+    // These are written/read ONLY via the Admin SDK (server-side Next.js API routes).
+    // Direct client-side access is fully blocked here as a second layer of defense.
+    match /vzla_field_reports/{docId} {
+      allow read, write: if false;
+    }
+    match /vzla_api_keys/{docId} {
+      allow read, write: if false;
+    }
+    match /vzla_seismic_log/{docId} {
+      allow read, write: if false;
+    }
+
     // Default deny
     match /{document=**} {
       allow read, write: if false;
