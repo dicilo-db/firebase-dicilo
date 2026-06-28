@@ -13,7 +13,6 @@ import { FormularioOferta } from '@/components/red-solidaria/FormularioOferta';
 import { useGeolocalizacion } from '@/hooks/useGeolocalizacion';
 import type { Oferta, CentroAcopio, CategoriaAyuda } from '@/types/red-solidaria';
 import { CATEGORIAS, CATEGORIA_EMOJI } from '@/types/red-solidaria';
-import '@/i18n';
 
 export default function RedSolidariaPage() {
   const { t, i18n } = useTranslation('red_solidaria');
