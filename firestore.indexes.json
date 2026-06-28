@@ -401,6 +401,30 @@
             ]
         },
         {
+            "collectionGroup": "red_solidaria_ofertas",
+            "queryScope": "COLLECTION",
+            "fields": [
+                { "fieldPath": "estado",    "order": "ASCENDING"  },
+                { "fieldPath": "creadoEn",  "order": "DESCENDING" }
+            ]
+        },
+        {
+            "collectionGroup": "red_solidaria_ofertas",
+            "queryScope": "COLLECTION",
+            "fields": [
+                { "fieldPath": "estado",    "order": "ASCENDING"  },
+                { "fieldPath": "categoria", "order": "ASCENDING"  },
+                { "fieldPath": "creadoEn",  "order": "DESCENDING" }
+            ]
+        },
+        {
+            "collectionGroup": "red_solidaria_centros",
+            "queryScope": "COLLECTION",
+            "fields": [
+                { "fieldPath": "creadoEn", "order": "DESCENDING" }
+            ]
+        },
+        {
             "collectionGroup": "vzla_field_reports",
             "queryScope": "COLLECTION",
             "fields": [

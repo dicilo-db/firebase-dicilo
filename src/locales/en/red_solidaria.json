@@ -1,0 +1,124 @@
+{
+  "nav": {
+    "campana": "Aid Campaign",
+    "redSolidaria": "Solidarity Network"
+  },
+  "langWarning": {
+    "title": "This platform is primarily in Spanish",
+    "desc": "Aid coordination and donations operate within Venezuela. For the best experience, we recommend using the Spanish version of this page."
+  },
+  "hero": {
+    "badge": "SOLIDARITY NETWORK · PHASE 1",
+    "title": "Connect what you have with those who need it",
+    "desc": "Post what you can donate or what you need. The system connects donors with nearby collection centers in real time.",
+    "btnDonar": "I have something to donate",
+    "btnNecesitar": "I need help",
+    "btnCentro": "Register collection center"
+  },
+  "stats": {
+    "ofertasActivas": "Active offers",
+    "centrosRegistrados": "Collection centers",
+    "entregasCompletadas": "Completed deliveries",
+    "personasAlcanzadas": "People reached"
+  },
+  "mapa": {
+    "title": "Real-time aid map",
+    "capas": "Map layers",
+    "ofertas": "Available offers",
+    "centros": "Collection centers",
+    "filtrarCategoria": "Filter by category",
+    "todas": "All",
+    "centrarUbicacion": "Center on my location",
+    "radio": "Radius",
+    "ofertasEnZona": "active offers in this area",
+    "cargando": "Loading map...",
+    "sinOfertas": "No offers in this area yet. Be the first to post!"
+  },
+  "categorias": {
+    "alimentos": "Food",
+    "agua": "Water",
+    "medicamentos": "Medicine",
+    "ropa": "Clothing",
+    "hogar": "Household Items",
+    "herramientas": "Tools",
+    "transporte": "Transportation",
+    "servicio_medico": "Medical Care",
+    "otro": "Other"
+  },
+  "estados": {
+    "disponible": "Available",
+    "reservado": "Reserved",
+    "entregado": "Delivered"
+  },
+  "urgencia": {
+    "alta": "Urgent",
+    "media": "Needed",
+    "baja": "When possible"
+  },
+  "tarjetaOferta": {
+    "publicado": "Posted",
+    "expira": "Expires",
+    "cantidad": "Quantity",
+    "disponibleHasta": "Available until",
+    "verDetalle": "View details",
+    "necesito": "I need this",
+    "tengo": "I have this",
+    "donacion": "Donation",
+    "solicitud": "Request",
+    "sector": "Area"
+  },
+  "tarjetaCentro": {
+    "verificado": "Verified by Dicilo",
+    "noVerificado": "Pending verification",
+    "horario": "Hours",
+    "responsable": "Contact person",
+    "necesidades": "Current needs",
+    "sinNecesidades": "No needs registered",
+    "verPerfil": "View full profile"
+  },
+  "formulario": {
+    "titulo": "Post an aid offer",
+    "paso1": {
+      "titulo": "What do you have to offer?",
+      "subtitulo": "Select the category that best describes your donation"
+    },
+    "paso2": {
+      "titulo": "Tell us more",
+      "descripcion": "Description",
+      "descripcionPlaceholder": "E.g.: 10 kg flour, rice and pasta...",
+      "cantidad": "Approximate quantity (optional)",
+      "cantidadPlaceholder": "E.g.: 5 boxes, 20 kg, 3 bags..."
+    },
+    "paso3": {
+      "titulo": "Where are you?",
+      "usarGPS": "Use my current location",
+      "gpsActivo": "Location detected",
+      "gpsError": "Could not detect your location. Please enter it manually.",
+      "sector": "Neighborhood / City / Area",
+      "sectorPlaceholder": "E.g.: Petare, Caracas"
+    },
+    "paso4": {
+      "titulo": "Final details",
+      "disponibleHasta": "How long is this available?",
+      "whatsapp": "Your WhatsApp number",
+      "whatsappPlaceholder": "+58 412 0000000",
+      "whatsappNote": "Only shared with matched parties. Never published publicly.",
+      "tipo": "Is this a donation or a request?",
+      "tipoDonacion": "I am donating",
+      "tipoSolicitud": "I need to receive"
+    },
+    "preview": "Preview of your offer",
+    "publicar": "Post offer",
+    "publicando": "Posting...",
+    "exito": "Offer posted! It will appear on the map in seconds.",
+    "error": "There was an error posting. Please try again.",
+    "siguiente": "Next",
+    "anterior": "Back",
+    "cancelar": "Cancel",
+    "pasoDe": "Step {{paso}} of {{total}}"
+  },
+  "privacidad": {
+    "nota": "Your WhatsApp number is protected and only shared upon confirmed match. We comply with GDPR (company registered in Germany)."
+  },
+  "backLink": "← Back to Aid Campaign"
+}

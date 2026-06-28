@@ -50,6 +50,9 @@ import client_es from './locales/es/client.json';
 import apoyo_vzla_de from './locales/de/apoyo_vzla.json';
 import apoyo_vzla_en from './locales/en/apoyo_vzla.json';
 import apoyo_vzla_es from './locales/es/apoyo_vzla.json';
+import red_solidaria_de from './locales/de/red_solidaria.json';
+import red_solidaria_en from './locales/en/red_solidaria.json';
+import red_solidaria_es from './locales/es/red_solidaria.json';
 
 const resources = {
   de: {
@@ -68,6 +71,7 @@ const resources = {
     social: social_de,
     client: client_de,
     apoyo_vzla: apoyo_vzla_de,
+    red_solidaria: red_solidaria_de,
   },
   en: {
     common: common_en,
@@ -85,6 +89,7 @@ const resources = {
     social: social_en,
     client: client_en,
     apoyo_vzla: apoyo_vzla_en,
+    red_solidaria: red_solidaria_en,
   },
   es: {
     common: common_es,
@@ -102,6 +107,7 @@ const resources = {
     social: social_es,
     client: client_es,
     apoyo_vzla: apoyo_vzla_es,
+    red_solidaria: red_solidaria_es,
   },
 };
 

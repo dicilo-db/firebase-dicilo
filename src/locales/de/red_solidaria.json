@@ -1,0 +1,124 @@
+{
+  "nav": {
+    "campana": "Hilfskampagne",
+    "redSolidaria": "Solidaritätsnetzwerk"
+  },
+  "langWarning": {
+    "title": "Diese Plattform ist hauptsächlich auf Spanisch",
+    "desc": "Die Hilfskoordination und Spendenabwicklung erfolgt innerhalb Venezuelas. Für die beste Erfahrung empfehlen wir die spanische Version dieser Seite."
+  },
+  "hero": {
+    "badge": "SOLIDARITÄTSNETZWERK · PHASE 1",
+    "title": "Verbinde was du hast mit denen, die es brauchen",
+    "desc": "Veröffentliche was du spenden kannst oder was du benötigst. Das System verbindet Spender mit nahe gelegenen Sammelstellen in Echtzeit.",
+    "btnDonar": "Ich habe etwas zu spenden",
+    "btnNecesitar": "Ich brauche Hilfe",
+    "btnCentro": "Sammelstelle registrieren"
+  },
+  "stats": {
+    "ofertasActivas": "Aktive Angebote",
+    "centrosRegistrados": "Sammelstellen",
+    "entregasCompletadas": "Abgeschlossene Lieferungen",
+    "personasAlcanzadas": "Erreichte Personen"
+  },
+  "mapa": {
+    "title": "Echtzeit-Hilfskarte",
+    "capas": "Kartenebenen",
+    "ofertas": "Verfügbare Angebote",
+    "centros": "Sammelstellen",
+    "filtrarCategoria": "Nach Kategorie filtern",
+    "todas": "Alle",
+    "centrarUbicacion": "Auf meinen Standort zentrieren",
+    "radio": "Radius",
+    "ofertasEnZona": "aktive Angebote in diesem Bereich",
+    "cargando": "Karte wird geladen...",
+    "sinOfertas": "Noch keine Angebote in diesem Bereich. Sei der Erste!"
+  },
+  "categorias": {
+    "alimentos": "Lebensmittel",
+    "agua": "Wasser",
+    "medicamentos": "Medikamente",
+    "ropa": "Kleidung",
+    "hogar": "Haushaltsgegenstände",
+    "herramientas": "Werkzeug",
+    "transporte": "Transport",
+    "servicio_medico": "Medizinische Versorgung",
+    "otro": "Sonstiges"
+  },
+  "estados": {
+    "disponible": "Verfügbar",
+    "reservado": "Reserviert",
+    "entregado": "Geliefert"
+  },
+  "urgencia": {
+    "alta": "Dringend",
+    "media": "Benötigt",
+    "baja": "Wenn möglich"
+  },
+  "tarjetaOferta": {
+    "publicado": "Veröffentlicht",
+    "expira": "Läuft ab",
+    "cantidad": "Menge",
+    "disponibleHasta": "Verfügbar bis",
+    "verDetalle": "Details anzeigen",
+    "necesito": "Ich brauche das",
+    "tengo": "Ich habe das",
+    "donacion": "Spende",
+    "solicitud": "Anfrage",
+    "sector": "Bereich"
+  },
+  "tarjetaCentro": {
+    "verificado": "Von Dicilo verifiziert",
+    "noVerificado": "Verifizierung ausstehend",
+    "horario": "Öffnungszeiten",
+    "responsable": "Ansprechpartner",
+    "necesidades": "Aktuelle Bedürfnisse",
+    "sinNecesidades": "Keine Bedürfnisse registriert",
+    "verPerfil": "Vollständiges Profil anzeigen"
+  },
+  "formulario": {
+    "titulo": "Hilfsangebot veröffentlichen",
+    "paso1": {
+      "titulo": "Was haben Sie anzubieten?",
+      "subtitulo": "Wählen Sie die Kategorie, die Ihre Spende am besten beschreibt"
+    },
+    "paso2": {
+      "titulo": "Erzählen Sie uns mehr",
+      "descripcion": "Beschreibung",
+      "descripcionPlaceholder": "z.B.: 10 kg Mehl, Reis und Nudeln...",
+      "cantidad": "Ungefähre Menge (optional)",
+      "cantidadPlaceholder": "z.B.: 5 Kartons, 20 kg, 3 Taschen..."
+    },
+    "paso3": {
+      "titulo": "Wo befinden Sie sich?",
+      "usarGPS": "Meinen aktuellen Standort verwenden",
+      "gpsActivo": "Standort erkannt",
+      "gpsError": "Standort konnte nicht erkannt werden. Bitte manuell eingeben.",
+      "sector": "Stadtviertel / Stadt / Bereich",
+      "sectorPlaceholder": "z.B.: Petare, Caracas"
+    },
+    "paso4": {
+      "titulo": "Letzte Details",
+      "disponibleHasta": "Wie lange ist das Angebot verfügbar?",
+      "whatsapp": "Ihre WhatsApp-Nummer",
+      "whatsappPlaceholder": "+58 412 0000000",
+      "whatsappNote": "Wird nur bei bestätigtem Match geteilt. Nie öffentlich veröffentlicht.",
+      "tipo": "Ist es eine Spende oder eine Anfrage?",
+      "tipoDonacion": "Ich spende",
+      "tipoSolicitud": "Ich brauche etwas"
+    },
+    "preview": "Vorschau Ihres Angebots",
+    "publicar": "Angebot veröffentlichen",
+    "publicando": "Wird veröffentlicht...",
+    "exito": "Angebot veröffentlicht! Es erscheint in wenigen Sekunden auf der Karte.",
+    "error": "Fehler beim Veröffentlichen. Bitte erneut versuchen.",
+    "siguiente": "Weiter",
+    "anterior": "Zurück",
+    "cancelar": "Abbrechen",
+    "pasoDe": "Schritt {{paso}} von {{total}}"
+  },
+  "privacidad": {
+    "nota": "Ihre WhatsApp-Nummer ist geschützt und wird nur bei bestätigtem Match geteilt. Wir sind DSGVO-konform (Unternehmen in Deutschland registriert)."
+  },
+  "backLink": "← Zurück zur Hilfskampagne"
+}

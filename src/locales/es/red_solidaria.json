@@ -1,0 +1,124 @@
+{
+  "nav": {
+    "campana": "Campaña de Ayuda",
+    "redSolidaria": "Red Solidaria"
+  },
+  "langWarning": {
+    "title": "Esta plataforma funciona principalmente en español",
+    "desc": "Las donaciones y la coordinación en terreno se realizan dentro de Venezuela. Para la mejor experiencia, usa la versión en español."
+  },
+  "hero": {
+    "badge": "RED SOLIDARIA · FASE 1",
+    "title": "Conecta lo que tienes con quien lo necesita",
+    "desc": "Publica lo que puedes donar o lo que necesitas. El sistema conecta donantes con centros de acopio cercanos en tiempo real.",
+    "btnDonar": "Tengo algo para donar",
+    "btnNecesitar": "Necesito ayuda",
+    "btnCentro": "Registrar centro de acopio"
+  },
+  "stats": {
+    "ofertasActivas": "Ofertas activas",
+    "centrosRegistrados": "Centros de acopio",
+    "entregasCompletadas": "Entregas completadas",
+    "personasAlcanzadas": "Personas alcanzadas"
+  },
+  "mapa": {
+    "title": "Mapa de ayuda en tiempo real",
+    "capas": "Capas del mapa",
+    "ofertas": "Ofertas disponibles",
+    "centros": "Centros de acopio",
+    "filtrarCategoria": "Filtrar por categoría",
+    "todas": "Todas",
+    "centrarUbicacion": "Centrar en mi ubicación",
+    "radio": "Radio",
+    "ofertasEnZona": "ofertas activas en esta área",
+    "cargando": "Cargando mapa...",
+    "sinOfertas": "No hay ofertas en esta zona aún. ¡Sé el primero en publicar!"
+  },
+  "categorias": {
+    "alimentos": "Alimentos",
+    "agua": "Agua",
+    "medicamentos": "Medicamentos",
+    "ropa": "Ropa",
+    "hogar": "Artículos del Hogar",
+    "herramientas": "Herramientas",
+    "transporte": "Transporte",
+    "servicio_medico": "Atención Médica",
+    "otro": "Otro"
+  },
+  "estados": {
+    "disponible": "Disponible",
+    "reservado": "Reservado",
+    "entregado": "Entregado"
+  },
+  "urgencia": {
+    "alta": "Urgente",
+    "media": "Necesario",
+    "baja": "Cuando puedas"
+  },
+  "tarjetaOferta": {
+    "publicado": "Publicado",
+    "expira": "Expira",
+    "cantidad": "Cantidad",
+    "disponibleHasta": "Disponible hasta",
+    "verDetalle": "Ver detalle",
+    "necesito": "Necesito esto",
+    "tengo": "Tengo esto",
+    "donacion": "Donación",
+    "solicitud": "Solicitud",
+    "sector": "Sector"
+  },
+  "tarjetaCentro": {
+    "verificado": "Verificado por Dicilo",
+    "noVerificado": "Pendiente verificación",
+    "horario": "Horario",
+    "responsable": "Responsable",
+    "necesidades": "Necesidades actuales",
+    "sinNecesidades": "Sin necesidades registradas",
+    "verPerfil": "Ver perfil completo"
+  },
+  "formulario": {
+    "titulo": "Publicar oferta de ayuda",
+    "paso1": {
+      "titulo": "¿Qué tienes para ofrecer?",
+      "subtitulo": "Selecciona la categoría que mejor describe tu donación"
+    },
+    "paso2": {
+      "titulo": "Cuéntanos más",
+      "descripcion": "Descripción",
+      "descripcionPlaceholder": "Ej: 10 kg de harina PAN, arroz y pasta...",
+      "cantidad": "Cantidad aproximada (opcional)",
+      "cantidadPlaceholder": "Ej: 5 cajas, 20 kg, 3 bolsas..."
+    },
+    "paso3": {
+      "titulo": "¿Dónde estás?",
+      "usarGPS": "Usar mi ubicación actual",
+      "gpsActivo": "Ubicación detectada",
+      "gpsError": "No pudimos detectar tu ubicación. Escríbela manualmente.",
+      "sector": "Sector / Barrio / Ciudad",
+      "sectorPlaceholder": "Ej: Petare, Caracas"
+    },
+    "paso4": {
+      "titulo": "Últimos detalles",
+      "disponibleHasta": "¿Hasta cuándo está disponible?",
+      "whatsapp": "Tu número de WhatsApp",
+      "whatsappPlaceholder": "+58 412 0000000",
+      "whatsappNote": "Solo se comparte con quien acepte tu oferta. Nunca se publica públicamente.",
+      "tipo": "¿Es una donación o una solicitud?",
+      "tipoDonacion": "Estoy donando",
+      "tipoSolicitud": "Necesito recibir"
+    },
+    "preview": "Vista previa de tu oferta",
+    "publicar": "Publicar oferta",
+    "publicando": "Publicando...",
+    "exito": "¡Oferta publicada! Aparecerá en el mapa en segundos.",
+    "error": "Hubo un error al publicar. Inténtalo de nuevo.",
+    "siguiente": "Siguiente",
+    "anterior": "Anterior",
+    "cancelar": "Cancelar",
+    "pasoDe": "Paso {{paso}} de {{total}}"
+  },
+  "privacidad": {
+    "nota": "Tu número de WhatsApp está protegido y solo se comparte cuando hay un match confirmado. Cumplimos con el RGPD (empresa registrada en Alemania)."
+  },
+  "backLink": "← Volver a Campaña de Ayuda"
+}

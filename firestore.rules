@@ -340,6 +340,16 @@ service cloud.firestore {
       allow write: if false; // Updated securely via Server Actions
     }
 
+    // Red Solidaria — donation matching platform
+    // All writes/reads go through Next.js Admin SDK API routes.
+    // Direct client-side access is fully blocked here.
+    match /red_solidaria_ofertas/{docId} {
+      allow read, write: if false;
+    }
+    match /red_solidaria_centros/{docId} {
+      allow read, write: if false;
+    }
+
     // Apoyo Venezuela — Partner API collections
     // These are written/read ONLY via the Admin SDK (server-side Next.js API routes).
     // Direct client-side access is fully blocked here as a second layer of defense.
