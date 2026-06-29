@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { getAdminDb } from '@/lib/firebase-admin';
 import { FieldValue } from 'firebase-admin/firestore';
+import { sendSmtpEmail } from '@/lib/mail-service';
 
 export const revalidate = 0;
 
@@ -72,6 +73,45 @@ export async function POST(request: NextRequest) {
       creadoEn: FieldValue.serverTimestamp(),
       source: 'web_v1',
     });
+
+    // Notify team — non-blocking, registration succeeds even if email fails
+    const necesidadesList = data.necesidades
+      .map((n) => `<li><strong>${n.categoria}</strong> (urgencia: ${n.urgencia})</li>`)
+      .join('');
+
+    sendSmtpEmail({
+      to: 'ayudavzla@dicilo.net',
+      subject: `🏠 Nuevo centro de acopio pendiente de verificación — ${data.nombre}`,
+      html: `
+        <div style="font-family:sans-serif;max-width:560px;margin:0 auto">
+          <div style="background:#1e3a5f;padding:24px;border-radius:12px 12px 0 0">
+            <h1 style="color:#fff;margin:0;font-size:20px">🏠 Nuevo Centro de Acopio</h1>
+            <p style="color:#94a3b8;margin:4px 0 0;font-size:13px">Pendiente de verificación — Red Solidaria Dicilo</p>
+          </div>
+          <div style="background:#f8fafc;padding:24px;border:1px solid #e2e8f0;border-top:none;border-radius:0 0 12px 12px">
+            <table style="width:100%;border-collapse:collapse;font-size:14px">
+              <tr><td style="padding:8px 0;color:#64748b;width:120px">ID Firestore</td><td style="padding:8px 0;font-weight:600">${docRef.id}</td></tr>
+              <tr><td style="padding:8px 0;color:#64748b">Nombre</td><td style="padding:8px 0;font-weight:600">${data.nombre}</td></tr>
+              <tr><td style="padding:8px 0;color:#64748b">Sector</td><td style="padding:8px 0">${data.sector}</td></tr>
+              <tr><td style="padding:8px 0;color:#64748b">WhatsApp</td><td style="padding:8px 0">${data.whatsapp}</td></tr>
+              ${data.horario ? `<tr><td style="padding:8px 0;color:#64748b">Horario</td><td style="padding:8px 0">${data.horario}</td></tr>` : ''}
+              ${data.capacidad ? `<tr><td style="padding:8px 0;color:#64748b">Capacidad</td><td style="padding:8px 0">${data.capacidad}</td></tr>` : ''}
+              <tr><td style="padding:8px 0;color:#64748b">Coordenadas</td><td style="padding:8px 0">${data.lat}, ${data.lng}</td></tr>
+            </table>
+            ${necesidadesList ? `
+            <div style="margin-top:16px">
+              <p style="font-weight:600;font-size:13px;color:#334155;margin:0 0 6px">Categorías que recibe:</p>
+              <ul style="margin:0;padding-left:18px;font-size:13px;color:#475569">${necesidadesList}</ul>
+            </div>` : ''}
+            <div style="margin-top:24px;background:#fef3c7;border:1px solid #fde68a;border-radius:8px;padding:12px">
+              <p style="margin:0;font-size:13px;color:#92400e">
+                ✅ Para aprobar: abre Firestore → <strong>red_solidaria_centros</strong> → documento <strong>${docRef.id}</strong> → cambia <strong>verificado</strong> a <code>true</code>
+              </p>
+            </div>
+          </div>
+        </div>
+      `,
+    }).catch((emailErr) => console.error('[centros] email notification failed:', emailErr));
 
     return NextResponse.json(
       {
