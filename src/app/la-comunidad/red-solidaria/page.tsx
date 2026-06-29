@@ -12,7 +12,6 @@ import { useGeolocalizacion } from '@/hooks/useGeolocalizacion';
 import type { Oferta, CentroAcopio, CategoriaAyuda } from '@/types/red-solidaria';
 import { CATEGORIAS, CATEGORIA_EMOJI } from '@/types/red-solidaria';
 
-// Componentes que usan APIs del navegador (Leaflet, GPS, fetch) — solo cliente
 const ContadoresLive = dynamic(
   () => import('@/components/red-solidaria/ContadoresLive').then((m) => m.ContadoresLive),
   { ssr: false, loading: () => <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 h-20 animate-pulse bg-slate-100 rounded-xl" /> }
@@ -25,20 +24,36 @@ const FormularioOferta = dynamic(
   () => import('@/components/red-solidaria/FormularioOferta').then((m) => m.FormularioOferta),
   { ssr: false }
 );
+const FormularioCentro = dynamic(
+  () => import('@/components/red-solidaria/FormularioCentro').then((m) => m.FormularioCentro),
+  { ssr: false }
+);
 
 export default function RedSolidariaPage() {
   const { t, i18n } = useTranslation('red_solidaria');
-  const { pos, obtener } = useGeolocalizacion();
+  const { pos } = useGeolocalizacion();
 
-  const [ofertas,       setOfertas]       = useState<Oferta[]>([]);
-  const [centros,       setCentros]       = useState<CentroAcopio[]>([]);
-  const [cargando,      setCargando]      = useState(true);
-  const [mostrarForm,   setMostrarForm]   = useState(false);
-  const [exito,         setExito]         = useState('');
-  const [mostrarOfertas,setMostrarOfertas]= useState(true);
-  const [mostrarCentros,setMostrarCentros]= useState(true);
+  const [ofertas,        setOfertas]        = useState<Oferta[]>([]);
+  const [centros,        setCentros]        = useState<CentroAcopio[]>([]);
+  const [cargando,       setCargando]       = useState(true);
+  const [mostrarForm,    setMostrarForm]    = useState(false);
+  const [tipoForm,       setTipoForm]       = useState<'donacion' | 'solicitud'>('donacion');
+  const [mostrarCentroForm, setMostrarCentroForm] = useState(false);
+  const [exito,          setExito]          = useState('');
+  const [mostrarOfertas, setMostrarOfertas] = useState(true);
+  const [mostrarCentros, setMostrarCentros] = useState(true);
   const [categoriaFiltro, setCategoriaFiltro] = useState<CategoriaAyuda | 'todas'>('todas');
-  const [vistaActiva,   setVistaActiva]   = useState<'mapa' | 'lista'>('mapa');
+  const [vistaActiva,    setVistaActiva]    = useState<'mapa' | 'lista'>('mapa');
+
+  // Admin mode: ?admin=dicilo2026 in URL enables delete buttons
+  const [adminMode, setAdminMode] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      setAdminMode(params.get('admin') === 'dicilo2026');
+    }
+  }, []);
 
   const esIdiomaNativo = i18n.language?.startsWith('es');
 
@@ -67,14 +82,35 @@ export default function RedSolidariaPage() {
     ? ofertas
     : ofertas.filter((o) => o.categoria === categoriaFiltro);
 
-  const handleExito = (id: string) => {
+  const abrirFormDonar = () => { setTipoForm('donacion'); setMostrarForm(true); };
+  const abrirFormPedir = () => { setTipoForm('solicitud'); setMostrarForm(true); };
+
+  const handleExito = (id: string, centrosCount?: number) => {
     setMostrarForm(false);
-    setExito(t('formulario.exito'));
-    setTimeout(() => setExito(''), 6000);
+    const msg = centrosCount && centrosCount > 0
+      ? `✅ Publicado correctamente — ${centrosCount} centro${centrosCount > 1 ? 's' : ''} verificado${centrosCount > 1 ? 's' : ''} en tu zona`
+      : '✅ Publicado correctamente';
+    setExito(msg);
+    setTimeout(() => setExito(''), 7000);
+    // Refresh list
+    fetch('/api/red-solidaria/ofertas').then(r => r.json()).then(d => { if (d.ofertas) setOfertas(d.ofertas); });
+  };
+
+  const handleCentroExito = () => {
+    setMostrarCentroForm(false);
+    setExito('🏠 Centro registrado — en revisión por el equipo Dicilo');
+    setTimeout(() => setExito(''), 7000);
+    fetch('/api/red-solidaria/centros').then(r => r.json()).then(d => { if (d.centros) setCentros(d.centros); });
   };
 
   const handleActualizada = (id: string, cambios: Partial<Oferta>) => {
     setOfertas((prev) => prev.map((o) => o.id === id ? { ...o, ...cambios } as Oferta : o));
+  };
+
+  const handleEliminar = async (id: string) => {
+    if (!confirm('¿Eliminar esta oferta? Esta acción no se puede deshacer.')) return;
+    await fetch(`/api/red-solidaria/ofertas/${id}`, { method: 'DELETE' });
+    setOfertas((prev) => prev.filter((o) => o.id !== id));
   };
 
   return (
@@ -112,9 +148,6 @@ export default function RedSolidariaPage() {
             <div>
               <p className="text-sm font-semibold text-amber-800">{t('langWarning.title')}</p>
               <p className="text-xs text-amber-700 mt-0.5">{t('langWarning.desc')}</p>
-              <Link href="/la-comunidad/apoyo-vzla?lang=es" className="text-xs text-amber-700 underline mt-1 inline-block">
-                Ver en español →
-              </Link>
             </div>
           </div>
         )}
@@ -122,7 +155,7 @@ export default function RedSolidariaPage() {
         {/* Success toast */}
         {exito && (
           <div className="rounded-xl bg-emerald-50 border border-emerald-200 px-4 py-3 text-sm font-medium text-emerald-800">
-            ✅ {exito}
+            {exito}
           </div>
         )}
 
@@ -139,16 +172,22 @@ export default function RedSolidariaPage() {
           </p>
           <div className="flex flex-wrap gap-2">
             <button
-              onClick={() => setMostrarForm(true)}
+              onClick={abrirFormDonar}
               className="rounded-xl bg-emerald-500 hover:bg-emerald-400 px-5 py-3 text-sm font-bold text-white min-h-[48px] transition-colors shadow-lg"
             >
               📦 {t('hero.btnDonar')}
             </button>
             <button
-              onClick={() => setMostrarForm(true)}
-              className="rounded-xl bg-white/10 hover:bg-white/20 border border-white/30 px-5 py-3 text-sm font-semibold text-white min-h-[48px] transition-colors"
+              onClick={abrirFormPedir}
+              className="rounded-xl bg-blue-500 hover:bg-blue-400 px-5 py-3 text-sm font-bold text-white min-h-[48px] transition-colors shadow-lg"
             >
               🙏 {t('hero.btnNecesitar')}
+            </button>
+            <button
+              onClick={() => setMostrarCentroForm(true)}
+              className="rounded-xl bg-white/10 hover:bg-white/20 border border-white/30 px-5 py-3 text-sm font-semibold text-white min-h-[48px] transition-colors"
+            >
+              🏠 Registrar centro
             </button>
           </div>
         </div>
@@ -156,7 +195,7 @@ export default function RedSolidariaPage() {
         {/* Live counters */}
         <ContadoresLive />
 
-        {/* Map controls */}
+        {/* Map + list section */}
         <div className="rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden">
           <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between flex-wrap gap-2">
             <h2 className="font-bold text-slate-800 text-sm">{t('mapa.title')}</h2>
@@ -179,29 +218,19 @@ export default function RedSolidariaPage() {
           {/* Layer toggles */}
           <div className="px-4 py-2 border-b border-slate-100 flex flex-wrap gap-3">
             <label className="flex items-center gap-1.5 text-xs text-slate-600 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={mostrarOfertas}
-                onChange={(e) => setMostrarOfertas(e.target.checked)}
-                className="accent-emerald-500"
-              />
+              <input type="checkbox" checked={mostrarOfertas} onChange={(e) => setMostrarOfertas(e.target.checked)} className="accent-emerald-500" />
               <span className="font-medium">📦 {t('mapa.ofertas')}</span>
               <span className="text-slate-400">({ofertasFiltradas.length})</span>
             </label>
             <label className="flex items-center gap-1.5 text-xs text-slate-600 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={mostrarCentros}
-                onChange={(e) => setMostrarCentros(e.target.checked)}
-                className="accent-blue-500"
-              />
+              <input type="checkbox" checked={mostrarCentros} onChange={(e) => setMostrarCentros(e.target.checked)} className="accent-blue-500" />
               <span className="font-medium">🏠 {t('mapa.centros')}</span>
               <span className="text-slate-400">({centros.length})</span>
             </label>
           </div>
 
           {/* Category filter pills */}
-          <div className="px-4 py-2 border-b border-slate-100 flex gap-1.5 overflow-x-auto scrollbar-hide pb-3">
+          <div className="px-4 py-2 border-b border-slate-100 flex gap-1.5 overflow-x-auto pb-3">
             <button
               onClick={() => setCategoriaFiltro('todas')}
               className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${categoriaFiltro === 'todas' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
@@ -223,7 +252,7 @@ export default function RedSolidariaPage() {
           {vistaActiva === 'mapa' ? (
             <div className="p-2">
               <MapaRedSolidaria
-                ofertas={ofertas}
+                ofertas={ofertasFiltradas}
                 centros={centros}
                 mostrarOfertas={mostrarOfertas}
                 mostrarCentros={mostrarCentros}
@@ -237,11 +266,16 @@ export default function RedSolidariaPage() {
               {cargando && (
                 <div className="text-center text-sm text-slate-400 py-8">Cargando...</div>
               )}
-              {!cargando && ofertasFiltradas.length === 0 && (
+              {!cargando && ofertasFiltradas.length === 0 && centros.length === 0 && (
                 <div className="text-center text-sm text-slate-400 py-8">{t('mapa.sinOfertas')}</div>
               )}
-              {ofertasFiltradas.map((oferta) => (
-                <TarjetaOferta key={oferta.id} oferta={oferta} onActualizada={handleActualizada} />
+              {mostrarOfertas && ofertasFiltradas.map((oferta) => (
+                <TarjetaOferta
+                  key={oferta.id}
+                  oferta={oferta}
+                  onActualizada={handleActualizada}
+                  onEliminar={adminMode ? handleEliminar : undefined}
+                />
               ))}
               {mostrarCentros && centros.map((centro) => (
                 <TarjetaCentro key={centro.id} centro={centro} />
@@ -249,6 +283,13 @@ export default function RedSolidariaPage() {
             </div>
           )}
         </div>
+
+        {/* Admin mode notice */}
+        {adminMode && (
+          <div className="rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-xs text-red-700 font-medium">
+            🔑 Modo administrador activo — los botones de eliminar están visibles
+          </div>
+        )}
 
         {/* Privacy note */}
         <div className="rounded-xl bg-slate-100 border border-slate-200 px-4 py-3 text-xs text-slate-500">
@@ -266,22 +307,37 @@ export default function RedSolidariaPage() {
 
       <Footer />
 
-      {/* Formulario modal */}
+      {/* Formulario donar/pedir */}
       {mostrarForm && (
         <FormularioOferta
+          tipoInicial={tipoForm}
           onSuccess={handleExito}
           onCancel={() => setMostrarForm(false)}
         />
       )}
 
+      {/* Formulario centro */}
+      {mostrarCentroForm && (
+        <FormularioCentro
+          onSuccess={handleCentroExito}
+          onCancel={() => setMostrarCentroForm(false)}
+        />
+      )}
+
       {/* Floating CTA (mobile) */}
-      {!mostrarForm && (
-        <div className="fixed bottom-6 right-4 z-40 sm:hidden">
+      {!mostrarForm && !mostrarCentroForm && (
+        <div className="fixed bottom-6 right-4 z-40 sm:hidden flex flex-col gap-2 items-end">
           <button
-            onClick={() => setMostrarForm(true)}
-            className="flex items-center gap-2 rounded-full bg-emerald-600 text-white px-5 py-3.5 font-bold text-sm shadow-xl hover:bg-emerald-500 transition-colors"
+            onClick={abrirFormPedir}
+            className="flex items-center gap-2 rounded-full bg-blue-600 text-white px-4 py-3 font-bold text-sm shadow-xl hover:bg-blue-500 transition-colors"
           >
-            + {t('hero.btnDonar')}
+            🙏 Necesito ayuda
+          </button>
+          <button
+            onClick={abrirFormDonar}
+            className="flex items-center gap-2 rounded-full bg-emerald-600 text-white px-4 py-3 font-bold text-sm shadow-xl hover:bg-emerald-500 transition-colors"
+          >
+            📦 Donar
           </button>
         </div>
       )}

@@ -9,6 +9,7 @@ interface Props {
   distanciaKm?: number;
   onContactar?: () => void;
   onActualizada?: (id: string, cambios: Partial<Oferta>) => void;
+  onEliminar?: (id: string) => void;
 }
 
 const ESTADO_COLOR: Record<string, string> = {
@@ -17,7 +18,7 @@ const ESTADO_COLOR: Record<string, string> = {
   entregado:  'bg-slate-100 text-slate-500',
 };
 
-export function TarjetaOferta({ oferta, distanciaKm, onContactar, onActualizada }: Props) {
+export function TarjetaOferta({ oferta, distanciaKm, onContactar, onActualizada, onEliminar }: Props) {
   const { t } = useTranslation('red_solidaria');
   const [editando, setEditando]   = useState(false);
   const [guardando, setGuardando] = useState(false);
@@ -184,13 +185,24 @@ export function TarjetaOferta({ oferta, distanciaKm, onContactar, onActualizada 
             {distanciaKm != null && (
               <span className="text-xs text-blue-600 font-medium">📍 {distanciaKm} km</span>
             )}
-            <button
-              onClick={() => setEditando(true)}
-              className="ml-auto text-xs text-slate-400 hover:text-emerald-600 transition-colors px-1.5 py-0.5 rounded hover:bg-emerald-50"
-              title="Editar oferta"
-            >
-              ✏️ Editar
-            </button>
+            <div className="ml-auto flex gap-1">
+              <button
+                onClick={() => setEditando(true)}
+                className="text-xs text-slate-400 hover:text-emerald-600 transition-colors px-1.5 py-0.5 rounded hover:bg-emerald-50"
+                title="Editar oferta"
+              >
+                ✏️ Editar
+              </button>
+              {onEliminar && (
+                <button
+                  onClick={() => onEliminar(oferta.id)}
+                  className="text-xs text-slate-400 hover:text-red-600 transition-colors px-1.5 py-0.5 rounded hover:bg-red-50"
+                  title="Eliminar oferta"
+                >
+                  🗑️
+                </button>
+              )}
+            </div>
           </div>
           <p className="text-sm font-semibold text-slate-800 truncate">
             {t(`categorias.${oferta.categoria}`)}
