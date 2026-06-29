@@ -9,18 +9,19 @@ const CATEGORIAS = ['alimentos','agua','medicamentos','ropa','hogar','herramient
 
 const centroSchema = z.object({
   nombre:      z.string().min(3).max(120),
-  direccion:   z.string().min(5).max(300),
+  direccion:   z.string().min(5).max(300).optional(),
   sector:      z.string().min(2).max(200),
   lat:         z.number().min(-90).max(90),
   lng:         z.number().min(-180).max(180),
-  horario:     z.string().min(3).max(200),
-  responsable: z.string().min(2).max(120),
-  whatsapp:    z.string().min(7).max(20),
+  horario:     z.string().min(3).max(200).optional(),
+  responsable: z.string().min(2).max(120).optional(),
+  whatsapp:    z.string().min(7).max(30),
+  capacidad:   z.string().max(100).optional(),
   necesidades: z.array(z.object({
     categoria:   z.enum(CATEGORIAS),
-    descripcion: z.string().max(300),
+    descripcion: z.string().max(300).default(''),
     urgencia:    z.enum(['alta', 'media', 'baja']),
-  })).max(20),
+  })).min(1).max(20),
 });
 
 export async function GET() {

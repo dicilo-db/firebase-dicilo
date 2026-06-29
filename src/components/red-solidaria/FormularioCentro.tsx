@@ -79,10 +79,10 @@ export function FormularioCentro({ onSuccess, onCancel }: Props) {
           sector:    `${form.sector}, ${form.estadoVE}`,
           lat:       estadoObj?.lat ?? 10.5,
           lng:       estadoObj?.lng ?? -66.9,
-          horario:   form.horario || undefined,
-          telefono:  form.telefono,
+          horario:   form.horario.length >= 3 ? form.horario : undefined,
+          whatsapp:  form.telefono,
           capacidad: form.capacidad || undefined,
-          necesidades: necesidades.map((cat) => ({ categoria: cat, urgencia: 'media' })),
+          necesidades: necesidades.map((cat) => ({ categoria: cat, urgencia: 'media', descripcion: '' })),
         }),
       });
       const data = await res.json();

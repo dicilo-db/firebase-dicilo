@@ -12,6 +12,7 @@ interface Props {
   categoriaFiltro: CategoriaAyuda | 'todas';
   userLat?: number;
   userLng?: number;
+  height?: string | number;
   onOfertaClick?: (oferta: Oferta) => void;
   onCentroClick?: (centro: CentroAcopio) => void;
 }
@@ -30,6 +31,7 @@ export function MapaRedSolidaria({
   categoriaFiltro,
   userLat,
   userLng,
+  height = '380px',
   onOfertaClick,
   onCentroClick,
 }: Props) {
@@ -166,10 +168,12 @@ export function MapaRedSolidaria({
     mapRef.current.setView([userLat, userLng], 12);
   }, [userLat, userLng]);
 
+  const h = typeof height === 'number' ? `${height}px` : height;
+
   return (
     <div
       ref={containerRef}
-      style={{ height: '400px', width: '100%', borderRadius: '12px', overflow: 'hidden' }}
+      style={{ height: h, width: '100%' }}
     />
   );
 }
