@@ -19,7 +19,7 @@ const ContadoresLive = dynamic(
 );
 const MapaRedSolidaria = dynamic(
   () => import('@/components/red-solidaria/MapaRedSolidaria').then((m) => m.MapaRedSolidaria),
-  { ssr: false, loading: () => <div className="bg-slate-100 animate-pulse" style={{ height: '42vh' }} /> }
+  { ssr: false, loading: () => <div className="bg-slate-100 animate-pulse rounded-b-2xl" style={{ height: '440px' }} /> }
 );
 const FormularioOferta = dynamic(
   () => import('@/components/red-solidaria/FormularioOferta').then((m) => m.FormularioOferta),
@@ -30,7 +30,6 @@ const FormularioCentro = dynamic(
   { ssr: false }
 );
 
-// Inner component that uses useSearchParams (requires Suspense boundary)
 function RedSolidariaContent() {
   const { t, i18n } = useTranslation('red_solidaria');
   const { pos } = useGeolocalizacion();
@@ -46,8 +45,8 @@ function RedSolidariaContent() {
   const [exito,             setExito]             = useState('');
   const [mostrarOfertas,    setMostrarOfertas]    = useState(true);
   const [mostrarCentros,    setMostrarCentros]    = useState(true);
-  const [mostrarMapa,       setMostrarMapa]       = useState(true);
   const [categoriaFiltro,   setCategoriaFiltro]   = useState<CategoriaAyuda | 'todas'>('todas');
+  const [vistaActiva,       setVistaActiva]       = useState<'mapa' | 'lista'>('mapa');
 
   const esIdiomaNativo = i18n.language?.startsWith('es');
 
@@ -91,7 +90,7 @@ function RedSolidariaContent() {
 
   const handleCentroExito = () => {
     setMostrarCentroForm(false);
-    setExito('🏠 Centro registrado — en revisión por el equipo Dicilo');
+    setExito('🏠 Centro registrado — en revisión por el equipo Dicilo (24h)');
     setTimeout(() => setExito(''), 7000);
     fetch('/api/red-solidaria/centros').then(r => r.json()).then(d => { if (d.centros) setCentros(d.centros); });
   };
@@ -100,10 +99,16 @@ function RedSolidariaContent() {
     setOfertas((prev) => prev.map((o) => o.id === id ? { ...o, ...cambios } as Oferta : o));
   };
 
-  const handleEliminar = async (id: string) => {
+  const handleEliminarOferta = async (id: string) => {
     if (!confirm('¿Eliminar esta oferta? No se puede deshacer.')) return;
     await fetch(`/api/red-solidaria/ofertas/${id}`, { method: 'DELETE' });
     setOfertas((prev) => prev.filter((o) => o.id !== id));
+  };
+
+  const handleEliminarCentro = async (id: string) => {
+    if (!confirm('¿Eliminar este centro? No se puede deshacer.')) return;
+    await fetch(`/api/red-solidaria/centros/${id}`, { method: 'DELETE' });
+    setCentros((prev) => prev.filter((c) => c.id !== id));
   };
 
   const totalResultados = (mostrarOfertas ? ofertasFiltradas.length : 0) + (mostrarCentros ? centros.length : 0);
@@ -119,7 +124,7 @@ function RedSolidariaContent() {
         <div className="flex-1 bg-[#CF142B]" />
       </div>
 
-      {/* Section navigation tabs - sticky */}
+      {/* Section navigation tabs */}
       <div className="sticky top-0 z-30 bg-white border-b border-slate-200 shadow-sm">
         <div className="w-full max-w-4xl mx-auto px-4 flex">
           <Link
@@ -156,8 +161,8 @@ function RedSolidariaContent() {
 
         {/* Admin notice */}
         {adminMode && (
-          <div className="rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-xs text-red-700 font-medium flex items-center gap-2">
-            🔑 Modo administrador activo — botones 🗑️ visibles en cada oferta
+          <div className="rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-xs text-red-700 font-medium">
+            🔑 Modo administrador — botones 🗑️ visibles en ofertas y centros
           </div>
         )}
 
@@ -197,21 +202,38 @@ function RedSolidariaContent() {
         {/* Live counters */}
         <ContadoresLive />
 
-        {/* ─── STICKY MAP SECTION ───────────────────────────────── */}
-        <div className="sticky top-[44px] z-20 rounded-2xl overflow-hidden border border-slate-200 shadow-md bg-white">
-          {/* Map controls header */}
+        {/* ── PROMINENT VIEW TOGGLE ──────────────────────────────── */}
+        <div className="grid grid-cols-2 gap-3">
+          <button
+            onClick={() => setVistaActiva('mapa')}
+            className={`flex flex-col items-center gap-1.5 py-4 rounded-2xl font-bold text-sm transition-all ${
+              vistaActiva === 'mapa'
+                ? 'bg-slate-900 text-white shadow-lg scale-[1.02]'
+                : 'bg-white border-2 border-slate-200 text-slate-600 hover:border-slate-400 hover:shadow-sm'
+            }`}
+          >
+            <span className="text-2xl">🗺️</span>
+            <span>Ver en mapa</span>
+          </button>
+          <button
+            onClick={() => setVistaActiva('lista')}
+            className={`flex flex-col items-center gap-1.5 py-4 rounded-2xl font-bold text-sm transition-all ${
+              vistaActiva === 'lista'
+                ? 'bg-slate-900 text-white shadow-lg scale-[1.02]'
+                : 'bg-white border-2 border-slate-200 text-slate-600 hover:border-slate-400 hover:shadow-sm'
+            }`}
+          >
+            <span className="text-2xl">📋</span>
+            <span>Ver lista <span className="font-normal text-xs opacity-70">({totalResultados})</span></span>
+          </button>
+        </div>
+
+        {/* ── MAP / LIST SECTION ─────────────────────────────────── */}
+        <div className="rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden">
+          {/* Controls header */}
           <div className="px-4 pt-3 pb-2 border-b border-slate-100">
-            <div className="flex items-center justify-between mb-2">
-              <h2 className="font-bold text-slate-800 text-sm">{t('mapa.title')}</h2>
-              <button
-                onClick={() => setMostrarMapa((v) => !v)}
-                className="text-xs text-slate-400 hover:text-slate-600 flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-slate-100 transition-colors"
-              >
-                {mostrarMapa ? '▲ Ocultar mapa' : '▼ Mostrar mapa'}
-              </button>
-            </div>
             {/* Layer toggles */}
-            <div className="flex flex-wrap gap-3 mb-2">
+            <div className="flex flex-wrap gap-4 mb-2">
               <label className="flex items-center gap-1.5 text-xs text-slate-600 cursor-pointer">
                 <input type="checkbox" checked={mostrarOfertas} onChange={(e) => setMostrarOfertas(e.target.checked)} className="accent-emerald-500" />
                 <span className="font-medium">📦 {t('mapa.ofertas')}</span>
@@ -243,48 +265,49 @@ function RedSolidariaContent() {
             </div>
           </div>
 
-          {/* Map canvas */}
-          {mostrarMapa && (
+          {/* Map view */}
+          {vistaActiva === 'mapa' && (
             <MapaRedSolidaria
               ofertas={ofertasFiltradas}
               centros={centros}
               mostrarOfertas={mostrarOfertas}
               mostrarCentros={mostrarCentros}
               categoriaFiltro={categoriaFiltro}
-              height="42vh"
+              height="440px"
               userLat={pos?.lat}
               userLng={pos?.lng}
             />
           )}
-        </div>
 
-        {/* ─── SCROLLABLE LIST ──────────────────────────────────── */}
-        <div className="rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden">
-          <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
-            <h2 className="font-semibold text-slate-700 text-sm">
-              📋 {totalResultados} resultado{totalResultados !== 1 ? 's' : ''}
-              {categoriaFiltro !== 'todas' && <span className="text-slate-400"> · {t(`categorias.${categoriaFiltro}`)}</span>}
-            </h2>
-          </div>
-          <div className="p-4 space-y-3">
-            {cargando && (
-              <div className="text-center text-sm text-slate-400 py-8">Cargando...</div>
-            )}
-            {!cargando && totalResultados === 0 && (
-              <div className="text-center text-sm text-slate-400 py-8">{t('mapa.sinOfertas')}</div>
-            )}
-            {mostrarOfertas && ofertasFiltradas.map((oferta) => (
-              <TarjetaOferta
-                key={oferta.id}
-                oferta={oferta}
-                onActualizada={handleActualizada}
-                onEliminar={adminMode ? handleEliminar : undefined}
-              />
-            ))}
-            {mostrarCentros && centros.map((centro) => (
-              <TarjetaCentro key={centro.id} centro={centro} />
-            ))}
-          </div>
+          {/* List view */}
+          {vistaActiva === 'lista' && (
+            <div className="p-4 space-y-3">
+              {cargando && (
+                <div className="text-center text-sm text-slate-400 py-8">Cargando...</div>
+              )}
+              {!cargando && totalResultados === 0 && (
+                <div className="text-center py-10">
+                  <p className="text-3xl mb-3">📭</p>
+                  <p className="text-sm text-slate-500">{t('mapa.sinOfertas')}</p>
+                </div>
+              )}
+              {mostrarOfertas && ofertasFiltradas.map((oferta) => (
+                <TarjetaOferta
+                  key={oferta.id}
+                  oferta={oferta}
+                  onActualizada={handleActualizada}
+                  onEliminar={adminMode ? handleEliminarOferta : undefined}
+                />
+              ))}
+              {mostrarCentros && centros.map((centro) => (
+                <TarjetaCentro
+                  key={centro.id}
+                  centro={centro}
+                  onEliminar={adminMode ? handleEliminarCentro : undefined}
+                />
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Privacy note */}
@@ -341,7 +364,6 @@ function RedSolidariaContent() {
   );
 }
 
-// Suspense wrapper required for useSearchParams in Next.js App Router
 export default function RedSolidariaPage() {
   return (
     <Suspense>

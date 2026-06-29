@@ -6,6 +6,7 @@ import { CATEGORIA_EMOJI } from '@/types/red-solidaria';
 interface Props {
   centro: CentroAcopio;
   distanciaKm?: number;
+  onEliminar?: (id: string) => void;
 }
 
 const URGENCIA_COLOR: Record<string, string> = {
@@ -14,11 +15,11 @@ const URGENCIA_COLOR: Record<string, string> = {
   baja:  'text-slate-500',
 };
 
-export function TarjetaCentro({ centro, distanciaKm }: Props) {
+export function TarjetaCentro({ centro, distanciaKm, onEliminar }: Props) {
   const { t } = useTranslation('red_solidaria');
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm hover:shadow-md transition-shadow">
+    <div className="rounded-xl border border-blue-100 bg-white p-4 shadow-sm hover:shadow-md transition-shadow">
       <div className="flex items-start gap-3">
         <div className="text-3xl shrink-0">🏠</div>
         <div className="flex-1 min-w-0">
@@ -28,12 +29,21 @@ export function TarjetaCentro({ centro, distanciaKm }: Props) {
                 ✓ {t('tarjetaCentro.verificado')}
               </span>
             ) : (
-              <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 text-slate-500">
-                {t('tarjetaCentro.noVerificado')}
+              <span className="text-xs px-2 py-0.5 rounded-full bg-amber-100 text-amber-700">
+                ⏳ {t('tarjetaCentro.noVerificado')}
               </span>
             )}
             {distanciaKm != null && (
               <span className="text-xs text-blue-600 font-medium">📍 {distanciaKm} km</span>
+            )}
+            {onEliminar && (
+              <button
+                onClick={() => onEliminar(centro.id)}
+                className="ml-auto text-xs text-slate-400 hover:text-red-600 transition-colors px-1.5 py-0.5 rounded hover:bg-red-50"
+                title="Eliminar centro"
+              >
+                🗑️
+              </button>
             )}
           </div>
           <p className="text-sm font-bold text-slate-800">{centro.nombre}</p>
